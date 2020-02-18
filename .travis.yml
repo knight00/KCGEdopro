@@ -19,7 +19,6 @@ addons:
     - libasound2-dev
     - libpulse-dev
   homebrew:
-    update: true
     packages:
     - dylibbundler
     - gpatch
