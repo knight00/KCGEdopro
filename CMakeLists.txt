@@ -31,9 +31,11 @@ find_package(nlohmann_json CONFIG REQUIRED)
 find_library(DISCORD_RPC_PAYLOAD_LIBRARY NAMES discord-rpc)
 
 find_package(Threads REQUIRED)
-find_library(COCOA_FRAMEWORK Cocoa)
-find_library(IOKIT_FRAMEWORK IOKit)
-find_library(GL_FRAMEWORK OpenGL)
+if(APPLE)
+	find_library(COCOA_FRAMEWORK Cocoa)
+	find_library(IOKIT_FRAMEWORK IOKit)
+	find_library(GL_FRAMEWORK OpenGL)
+endif()
 
 # Doesn't get set on Linux
 if(NOT DEFINED SQLite3_LIBRARY)
@@ -68,10 +70,14 @@ target_link_libraries(EDOPro PRIVATE
 	${DISCORD_RPC_PAYLOAD_LIBRARY}
 	fmt::fmt
 	nlohmann_json::nlohmann_json
-	${COCOA_FRAMEWORK}
-	${IOKIT_FRAMEWORK}
-	${GL_FRAMEWORK}
 	Threads::Threads)
+
+if(APPLE)
+	target_link_libraries(EDOPro PRIVATE
+		${COCOA_FRAMEWORK}
+		${IOKIT_FRAMEWORK}
+		${GL_FRAMEWORK})
+endif()
 
 add_subdirectory(ocgcore)
 add_subdirectory(gframe)
