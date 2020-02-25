@@ -18,11 +18,11 @@ option(EDOPRO_FIELDS_URL "Default field background URL template" $ENV{FIELDS_URL
 option(EDOPRO_DISCORD_APP_ID "Discord App ID" $ENV{DISCORD_APP_ID})
 
 if(NOT DEFINED WIN32)
-	find_package(freetype REQUIRED)
+	find_package(Freetype REQUIRED)
 	find_package(Irrlicht REQUIRED)
 endif()
 
-find_package(libevent CONFIG REQUIRED)
+find_package(Libevent CONFIG REQUIRED)
 find_package(sqlite3 REQUIRED)
 find_package(CURL CONFIG REQUIRED)
 find_package(libgit2 REQUIRED)
@@ -35,6 +35,9 @@ if(APPLE)
 	find_library(COCOA_FRAMEWORK Cocoa)
 	find_library(IOKIT_FRAMEWORK IOKit)
 	find_library(GL_FRAMEWORK OpenGL)
+elseif(UNIX)
+	find_package(OpenGL REQUIRED)
+	find_package(X11 REQUIRED)
 endif()
 
 # Doesn't get set on Linux
@@ -77,6 +80,10 @@ if(APPLE)
 		${COCOA_FRAMEWORK}
 		${IOKIT_FRAMEWORK}
 		${GL_FRAMEWORK})
+elseif(UNIX)
+	target_link_libraries(EDOPro PRIVATE
+		OpenGL::GL
+		${X11_LIBRARIES})
 endif()
 
 add_subdirectory(ocgcore)

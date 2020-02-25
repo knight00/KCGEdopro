@@ -49,6 +49,8 @@ set(EDOPRO_CLIENT_SOURCE
 	${CMAKE_CURRENT_SOURCE_DIR}/config.h
 	${CMAKE_CURRENT_SOURCE_DIR}/core_utils.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/core_utils.h
+	${CMAKE_CURRENT_SOURCE_DIR}/custom_skin_enum.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/custom_skin_enum.h
 	${CMAKE_CURRENT_SOURCE_DIR}/data_manager.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/data_manager.h
 	${CMAKE_CURRENT_SOURCE_DIR}/deck_con.cpp
@@ -65,6 +67,8 @@ set(EDOPRO_CLIENT_SOURCE
 	${CMAKE_CURRENT_SOURCE_DIR}/event_handler.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/game.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/game.h
+	${CMAKE_CURRENT_SOURCE_DIR}/game_config.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/game_config.h
 	${CMAKE_CURRENT_SOURCE_DIR}/generic_duel.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/generic_duel.h
 	${CMAKE_CURRENT_SOURCE_DIR}/gframe.cpp
@@ -92,6 +96,8 @@ set(EDOPRO_CLIENT_SOURCE
 	${CMAKE_CURRENT_SOURCE_DIR}/repo_manager.h
 	${CMAKE_CURRENT_SOURCE_DIR}/server_lobby.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/server_lobby.h
+	${CMAKE_CURRENT_SOURCE_DIR}/settings_window.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/settings_window.h
 	${CMAKE_CURRENT_SOURCE_DIR}/single_mode.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/single_mode.h
 	${CMAKE_CURRENT_SOURCE_DIR}/sound_backend.h
@@ -110,8 +116,11 @@ set(EDOPRO_CLIENT_SOURCE
 	${CMAKE_CURRENT_SOURCE_DIR}/windbot.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/windbot.h)
 
-target_sources(EDOPro PRIVATE ${EDOPRO_CLIENT_SOURCE}
-	${CMAKE_CURRENT_SOURCE_DIR}/discord_register_url_osx.m
-	${CMAKE_CURRENT_SOURCE_DIR}/osx_menu.m
-	)
+target_sources(EDOPro PRIVATE ${EDOPRO_CLIENT_SOURCE})
 target_sources(EDOProStatic PRIVATE ${EDOPRO_CLIENT_SOURCE})
+
+if(APPLE)
+	target_sources(EDOPro PRIVATE
+		${CMAKE_CURRENT_SOURCE_DIR}/discord_register_url_osx.m
+		${CMAKE_CURRENT_SOURCE_DIR}/osx_menu.m)
+endif()
