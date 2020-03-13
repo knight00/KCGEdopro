@@ -25,6 +25,7 @@ addons:
     - dylibbundler
     - p7zip
     - freetype
+    - sqlite3
     - curl
     - libgit2
     - fmt
@@ -55,6 +56,11 @@ matrix:
     - VCPKG_ROOT=./vcpkg
     - VCPKG_LIBS="libevent sdl2-mixer-fixdynamic[libflac,mpg123,libvorbis] discord-rpc-payload"
     - VCPKG_CACHE_7Z_URL=https://github.com/kevinlul/edopro-vcpkg-cache/releases/download/latest/installed_x64-osx.7z
+    before_cache: brew cleanup
+    cache:
+      directories:
+        - $HOME/Library/Caches/Homebrew
+        - /usr/local/Homebrew
 before_install: ./travis/install-premake5.sh
 install: ./travis/dependencies.sh
 script: ./travis/build.sh
