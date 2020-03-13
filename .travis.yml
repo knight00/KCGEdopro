@@ -25,7 +25,6 @@ addons:
     - dylibbundler
     - p7zip
     - freetype
-    - sqlite3
     - curl
     - libgit2
     - fmt
