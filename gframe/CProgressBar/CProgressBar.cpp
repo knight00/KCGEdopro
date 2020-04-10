@@ -33,6 +33,10 @@ void IProgressBar::setProgress(irr::s32 _progress) {
 	else
 		progress = _progress;
 	progressText->setText((std::to_wstring(progress) + L"%").c_str());
+	if(progress<50)
+		progressText->setOverrideColor({ 255,255,255,255 });
+	else
+		progressText->setOverrideColor({ 255,0,0,0 });
 }
 void IProgressBar::draw() {
 	if(!IsVisible)
