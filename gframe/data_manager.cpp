@@ -53,6 +53,10 @@ bool DataManager::LoadDB(const std::string& file) {
 			if(level < 0) {
 				cd->level = -(level & 0xff);
 			}
+			/////////////kdiy///////
+			else if ((level & 0xff) > 0xf)
+				cd->level = -((level & 0xff) - 0xf);
+			/////////////kdiy///////			
 			else
 				cd->level = level & 0xff;
 			cd->lscale = (level >> 24) & 0xff;

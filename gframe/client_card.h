@@ -14,7 +14,10 @@ struct CardData {
 	uint32_t alias;
 	uint16_t* setcodes;
 	uint32_t type;
-	uint32_t level;
+	////////kdiy////////
+	//uint32_t level;
+	int32_t level;
+	////////kdiy////////
 	uint32_t attribute;
 	uint32_t race;
 	int32_t attack;
@@ -28,7 +31,10 @@ struct CardDataC {
 	uint32_t alias;
 	uint16_t* setcodes_p;
 	uint32_t type;
-	uint32_t level;
+	////////kdiy////////
+	//uint32_t level;
+	int32_t level;
+	////////kdiy////////
 	uint32_t attribute;
 	uint32_t race;
 	int32_t attack;

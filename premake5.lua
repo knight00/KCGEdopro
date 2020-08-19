@@ -39,8 +39,11 @@ workspace "ygo"
 	subproject = true
 	include "ocgcore"
 	include "gframe"
+	include "lua"
 	if os.istarget("windows") then
 		include "event"
 		include "sqlite3"
-		include "lua"
+		-- include "lua"
 	end
+
+	
