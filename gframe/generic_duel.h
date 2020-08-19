@@ -74,6 +74,11 @@ protected:
 	void Catchup(DuelPlayer* dp);
 	int GetPos(DuelPlayer* dp);
 	void OrderPlayers(std::vector<duelist>& players, int offset = 0);
+	template<typename T>
+	void IteratePlayersAndObs(T func);
+	template<typename T>
+	void IteratePlayers(T func);
+	bool IteratePlayers(std::function<bool(duelist& dueler)> func);
 	struct {
 		std::vector<duelist> home;
 		std::vector<duelist> opposing;
@@ -92,7 +97,7 @@ protected:
 	int turn_count;
 	std::vector<char> match_result;
 	unsigned short time_limit[2];
-	unsigned short time_elapsed;
+	short grace_period;
 	CoreUtils::Packet last_select_packet;
 	CoreUtils::Packet last_select_hint;
 	int retry_count;
