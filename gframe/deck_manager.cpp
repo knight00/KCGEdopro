@@ -2,18 +2,17 @@
 #include "deck_manager.h"
 #include "data_manager.h"
 #include "game.h"
-#include <IGUIEditBox.h>
 #include <algorithm>
 #include <fstream>
-#include "Base64.h"
 
 namespace ygo {
 
-bool DeckManager::LoadLFListSingle(const path_string& path) {
-	bool loaded = false;
+DeckManager deckManager;
+
+void DeckManager::LoadLFListSingle(const path_string& path) {
 	std::ifstream infile(path, std::ifstream::in);
 	if(!infile.is_open())
-		return loaded;
+		return;
 	LFList lflist;
 	lflist.hash = 0;
 	std::string str;
@@ -30,7 +29,6 @@ bool DeckManager::LoadLFListSingle(const path_string& path) {
 			lflist.content.clear();
 			lflist.hash = 0x7dfcee6a;
 			lflist.whitelist = false;
-			loaded = true;
 			continue;
 		}
 		const std::string key("$whitelist");
@@ -61,44 +59,25 @@ bool DeckManager::LoadLFListSingle(const path_string& path) {
 	if(lflist.hash)
 		_lfList.push_back(lflist);
 	infile.close();
-	return loaded;
 }
 bool DeckManager::LoadLFListFolder(path_string path) {
-	path = Utils::NormalizePath(path);
 	bool loaded = false;
-	auto lflists = Utils::FindFiles(path, std::vector<path_string>({ EPRO_TEXT("conf") }));
+	auto lflists = Utils::FindfolderFiles(path, std::vector<path_string>({ TEXT("conf") }));
 	for (const auto& lflist : lflists) {
-		loaded = LoadLFListSingle(path + lflist);
+		LoadLFListSingle(path + lflist);
 	}
 	return loaded;
 }
 void DeckManager::LoadLFList() {
-	LoadLFListSingle(EPRO_TEXT("./expansions/lflist.conf"));
-	LoadLFListSingle(EPRO_TEXT("./lflist.conf"));
-	LoadLFListFolder(EPRO_TEXT("./lflists/"));
+	LoadLFListSingle(TEXT("./expansions/lflist.conf"));
+	LoadLFListSingle(TEXT("./lflist.conf"));
+	LoadLFListFolder(TEXT("./lflists/"));
 	LFList nolimit;
-	nolimit.listName = L"N/A"; // N/A
+	nolimit.listName = L"N/A";
 	nolimit.hash = 0;
 	nolimit.content.clear();
 	nolimit.whitelist = false;
 	_lfList.push_back(nolimit);
-	null_lflist_index = _lfList.size() - 1;
-}
-//moves the "N/A" lflist at the bottom of the vector
-void DeckManager::RefreshLFList() {
-	if(null_lflist_index != -1 && null_lflist_index != _lfList.size() -1) {
-		auto it = _lfList.begin() + null_lflist_index;
-		std::rotate(it, it + 1, _lfList.end());
-		null_lflist_index = _lfList.size() - 1;
-	}
-}
-LFList* DeckManager::GetLFList(int lfhash) {
-	auto it = std::find_if(_lfList.begin(), _lfList.end(), [lfhash](LFList list) {return list.hash == (unsigned int)lfhash; });
-	return it != _lfList.end() ? &*it : nullptr;
-}
-std::wstring DeckManager::GetLFListName(int lfhash) {
-	auto lflist = GetLFList(lfhash);
-	return lflist ? lflist->listName.c_str() : gDataManager->unknown_string;
 }
 int DeckManager::TypeCount(std::vector<CardDataC*> cards, int type) {
 	int count = 0;
@@ -156,7 +135,7 @@ inline DeckError CheckCards(const std::vector<CardDataC*> &cards, LFList* curlis
 	}
 	return { DeckError::NONE };
 }
-DeckError DeckManager::CheckDeck(Deck& deck, int lfhash, DuelAllowedCards allowedCards, bool doubled, int forbiddentypes) {
+DeckError DeckManager::CheckDeck(Deck& deck, int lfhash, DuelAllowedCards allowedCards, bool doubled, int forbiddentypes, bool speed) {
 	std::unordered_map<int, int> ccount;
 	LFList* curlist = nullptr;
 	for(auto& list : _lfList) {
@@ -171,7 +150,6 @@ DeckError DeckManager::CheckDeck(Deck& deck, int lfhash, DuelAllowedCards allowe
 	auto list = &curlist->content;
 	if(TypeCount(deck.main, forbiddentypes) > 0 || TypeCount(deck.extra, forbiddentypes) > 0 || TypeCount(deck.side, forbiddentypes) > 0)
 		return ret.type = DeckError::FORBTYPE, ret;
-	bool speed = mainGame->extra_rules & DECK_LIMIT_20;
 	int minmain = 40, maxmain = 60, maxextra = 15, maxside = 15;
 	if(doubled){
 		if(speed){
@@ -225,7 +203,6 @@ DeckError DeckManager::CheckDeck(Deck& deck, int lfhash, DuelAllowedCards allowe
 int DeckManager::LoadDeck(Deck& deck, int* dbuf, int mainc, int sidec, int mainc2, int sidec2) {
 	std::vector<int> mainvect;
 	std::vector<int> sidevect;
-#ifndef __ANDROID__
 	mainvect.insert(mainvect.end(), dbuf, dbuf + mainc);
 	dbuf += mainc;
 	sidevect.insert(sidevect.end(), dbuf, dbuf + sidec);
@@ -233,54 +210,42 @@ int DeckManager::LoadDeck(Deck& deck, int* dbuf, int mainc, int sidec, int mainc
 	mainvect.insert(mainvect.end(), dbuf, dbuf + mainc2);
 	dbuf += mainc2;
 	sidevect.insert(sidevect.end(), dbuf, dbuf + sidec2);
-#else
-	auto ins = [](std::vector<int>& vec, int* start, int* end) {
-		while(start != end) {
-			vec.push_back(*start);
-			start++;
-		}
-	};
-	int* start = dbuf;
-	ins(mainvect, dbuf, dbuf + mainc);
-	dbuf += mainc;
-	ins(sidevect, dbuf, dbuf + sidec);
-	dbuf += sidec;
-	ins(mainvect, dbuf, dbuf + mainc2);
-	dbuf += mainc2;
-	ins(sidevect, dbuf, dbuf + sidec2);
-#endif
 	return LoadDeck(deck, mainvect, sidevect);
 }
 int DeckManager::LoadDeck(Deck& deck, std::vector<int> mainlist, std::vector<int> sidelist) {
 	deck.clear();
 	int errorcode = 0;
-	CardDataC* cd = nullptr;
+	CardData cd;
 	for(auto code : mainlist) {
-		if(!(cd = gDataManager->GetCardData(code))) {
+		if(!dataManager.GetData(code, &cd)) {
 			errorcode = code;
 			continue;
 		}
-		if(cd->type & TYPE_TOKEN)
+		if(cd.type & TYPE_TOKEN)
 			continue;
-		else if((cd->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_XYZ) || (cd->type & TYPE_LINK && cd->type & TYPE_MONSTER))) {
-			deck.extra.push_back(cd);
+		else if((cd.type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_XYZ) || (cd.type & TYPE_LINK && cd.type & TYPE_MONSTER))) {
+			deck.extra.push_back(dataManager.GetCardData(code));
 		} else {
-			deck.main.push_back(cd);
+			deck.main.push_back(dataManager.GetCardData(code));
 		}
 	}
 	for(auto code : sidelist) {
-		if(!(cd = gDataManager->GetCardData(code))) {
+		if(!dataManager.GetData(code, &cd)) {
 			errorcode = code;
 			continue;
 		}
-		if(cd->type & TYPE_TOKEN)
+		if(cd.type & TYPE_TOKEN)
 			continue;
-		deck.side.push_back(cd);
+		deck.side.push_back(dataManager.GetCardData(code));	//verified by GetData()
 	}
 	return errorcode;
 }
-bool LoadCardList(const path_string& name, std::vector<int>* mainlist = nullptr, std::vector<int>* sidelist = nullptr, int* retmainc = nullptr, int* retsidec = nullptr) {
+bool LoadCardList(const std::wstring& name, std::vector<int>* mainlist = nullptr, std::vector<int>* sidelist = nullptr, int* retmainc = nullptr, int* retsidec = nullptr) {
+#ifdef _WIN32
 	std::ifstream deck(name, std::ifstream::in);
+#else
+	std::ifstream deck(BufferIO::EncodeUTF8s(name), std::ifstream::in);
+#endif
 	if(!deck.is_open())
 		return false;
 	std::vector<int> res;
@@ -300,7 +265,7 @@ bool LoadCardList(const path_string& name, std::vector<int>* mainlist = nullptr,
 		if(str.find_first_of("0123456789") != std::string::npos) {
 			int code = 0;
 			try {
-				code = std::stoul(str);
+				code = std::stoi(str);
 			} catch (...){
 				continue;
 			}
@@ -346,202 +311,4 @@ bool DeckManager::LoadSide(Deck& deck, int* dbuf, int mainc, int sidec) {
 	deck = ndeck;
 	return true;
 }
-bool DeckManager::LoadDeck(const path_string& file, Deck* deck) {
-	std::vector<int> mainlist;
-	std::vector<int> sidelist;
-	if(!LoadCardList(fmt::format(EPRO_TEXT("./deck/{}.ydk"), file.c_str()), &mainlist, &sidelist)) {
-		if(!LoadCardList(file, &mainlist, &sidelist))
-			return false;
-	}
-	if(deck)
-		LoadDeck(*deck, mainlist, sidelist);
-	else
-		LoadDeck(current_deck, mainlist, sidelist);
-	return true;
-}
-bool DeckManager::LoadDeckDouble(const path_string& file, const path_string& file2, Deck* deck) {
-	std::vector<int> mainlist;
-	std::vector<int> sidelist;
-	LoadCardList(fmt::format(EPRO_TEXT("./deck/{}.ydk"), file.c_str()), &mainlist, &sidelist);
-	LoadCardList(fmt::format(EPRO_TEXT("./deck/{}.ydk"), file2.c_str()), &mainlist, &sidelist);
-	if(deck)
-		LoadDeck(*deck, mainlist, sidelist);
-	else
-		LoadDeck(current_deck, mainlist, sidelist);
-	return true;
-}
-bool DeckManager::SaveDeck(Deck& deck, const path_string& name) {
-	std::ofstream deckfile(fmt::format(EPRO_TEXT("./deck/{}.ydk"), name.c_str()), std::ofstream::out);
-	if(!deckfile.is_open())
-		return false;
-	deckfile << "#created by " << BufferIO::EncodeUTF8s(mainGame->ebNickName->getText()) << "\n#main\n";
-	for(auto card : deck.main)
-		deckfile << std::to_string(card->code) << "\n";
-	deckfile << "#extra\n";
-	for(auto card : deck.extra)
-		deckfile << std::to_string(card->code) << "\n";
-	deckfile << "!side\n";
-	for(auto card : deck.side)
-		deckfile << std::to_string(card->code) << "\n";
-	deckfile.close();
-	return true;
-}
-bool DeckManager::SaveDeck(const path_string& name, std::vector<int> mainlist, std::vector<int> extralist, std::vector<int> sidelist) {
-	std::ofstream deckfile(fmt::format(EPRO_TEXT("./deck/{}.ydk"), name.c_str()), std::ofstream::out);
-	if(!deckfile.is_open())
-		return false;
-	deckfile << "#created by " << BufferIO::EncodeUTF8s(mainGame->ebNickName->getText()) << "\n#main\n";
-	for(auto card : mainlist)
-		deckfile << std::to_string(card) << "\n";
-	deckfile << "#extra\n";
-	for(auto card : extralist)
-		deckfile << std::to_string(card) << "\n";
-	deckfile << "!side\n";
-	for(auto card : sidelist)
-		deckfile << std::to_string(card) << "\n";
-	deckfile.close();
-	return true;
-}
-const wchar_t* DeckManager::ExportDeckBase64(Deck& deck) {
-	static std::wstring res;
-	auto decktbuf = [&res=res](const std::vector<CardDataC*>& src) {
-		static std::vector<int> cards;
-		cards.resize(src.size());
-		auto buf = cards.data();
-		for(size_t i = 0; i < src.size(); i++) {
-			buf[i] = src[i]->code;
-		}
-		res += base64_encode((uint8_t*)buf, cards.size() * 4) + L"!";
-	};
-	res = L"ydke://";
-	decktbuf(deck.main);
-	decktbuf(deck.extra);
-	decktbuf(deck.side);
-	return res.data();
-}
-const wchar_t * DeckManager::ExportDeckCardNames(Deck deck) {
-	static std::wstring res;
-	res.clear();
-	std::sort(deck.main.begin(), deck.main.end(), ClientCard::deck_sort_lv);
-	std::sort(deck.extra.begin(), deck.extra.end(), ClientCard::deck_sort_lv);
-	std::sort(deck.side.begin(), deck.side.end(), ClientCard::deck_sort_lv);
-	auto serialize = [&res=res](const std::vector<CardDataC*>& list) {
-		uint32 prev = 0;
-		uint32 count = 0;
-		for(const auto& card : list) {
-			auto code = card->code;
-			if(card->alias && abs((int)(card->alias - card->code)) < 10) {
-				code = card->alias;
-			}
-			if(!prev) {
-				prev = code;
-				count = 1;
-			} else if(prev && code != prev) {
-				res.append(gDataManager->GetName(prev)).append(L" x").append(fmt::to_wstring(count)).append(L"\n");
-				count = 1;
-				prev = code;
-			} else {
-				count++;
-			}
-		}
-		if(prev)
-			res.append(gDataManager->GetName(prev)).append(L" x").append(fmt::to_wstring(count)).append(L"\n");
-	};
-	bool prev = false;
-	if(deck.main.size()) {
-		res.append(L"Main Deck:\n");
-		serialize(deck.main);
-		prev = true;
-	}
-	if(deck.extra.size()) {
-		if(prev)
-			res.append(L"\n\n");
-		res.append(L"Extra Deck:\n");
-		serialize(deck.extra);
-		prev = true;
-	}
-	if(deck.side.size()) {
-		if(prev)
-			res.append(L"\n\n");
-		res.append(L"Side Deck:\n");
-		serialize(deck.side);
-	}
-	return res.c_str();
-}
-void DeckManager::ImportDeckBase64(Deck& deck, const wchar_t* buffer) {
-	static std::vector<uint8_t> deck_data;
-	buffer += (sizeof(L"ydke://") / sizeof(wchar_t)) - 1;
-	auto buf = buffer;
-	size_t delimiters[3];
-	int delim = 0;
-	for(int i = 0; delim < 3 && buf[i]; i++) {
-		if(buf[i] == L'!') {
-			delimiters[delim++] = i;
-		}
-	}
-	if(delim != 3)
-		return;
-	deck_data = base64_decode(buf, wcslen(buf));
-	auto tmpbuf = base64_decode(buf + delimiters[0] + 1, delimiters[1] - delimiters[0]);
-	deck_data.insert(deck_data.end(), tmpbuf.begin(), tmpbuf.end());
-	int mainc = deck_data.size() / 4;
-	tmpbuf = base64_decode(buf + delimiters[1] + 1, delimiters[2] - delimiters[1]);
-	deck_data.insert(deck_data.end(), tmpbuf.begin(), tmpbuf.end());
-	int sidec = (deck_data.size() / 4) - mainc;
-	LoadDeck(deck, (int*)deck_data.data(), mainc, sidec);
-}
-bool DeckManager::DeleteDeck(Deck& deck, const path_string& name) {
-	return Utils::FileDelete(fmt::format(EPRO_TEXT("./deck/{}.ydk"), name.c_str()));
-}
-bool DeckManager::RenameDeck(const path_string& oldname, const path_string& newname) {
-	return Utils::FileMove(EPRO_TEXT("./deck/") + oldname + EPRO_TEXT(".ydk"), EPRO_TEXT("./deck/") + newname + EPRO_TEXT(".ydk"));
-}
-////////kdiy/////
-// bool DeckManager::CreateCategory(const wchar_t* name) {
-// 	if(!FileSystem::IsDirExists(L"./deck") && !FileSystem::MakeDir(L"./deck"))
-// 		return false;
-// 	if(name[0] == 0)
-// 		return false;
-// 	wchar_t localname[256];
-// 	myswprintf(localname, L"./deck/%ls", name);
-// 	return FileSystem::MakeDir(localname);
-// }
-// bool DeckManager::RenameCategory(const wchar_t* oldname, const wchar_t* newname) {
-// 	if(!FileSystem::IsDirExists(L"./deck") && !FileSystem::MakeDir(L"./deck"))
-// 		return false;
-// 	if(newname[0] == 0)
-// 		return false;
-// 	wchar_t oldlocalname[256];
-// 	wchar_t newlocalname[256];
-// 	myswprintf(oldlocalname, L"./deck/%ls", oldname);
-// 	myswprintf(newlocalname, L"./deck/%ls", newname);
-// 	return FileSystem::Rename(oldlocalname, newlocalname);
-// }
-// bool DeckManager::DeleteCategory(const wchar_t* name) {
-// 	wchar_t localname[256];
-// 	myswprintf(localname, L"./deck/%ls", name);
-// 	if(!FileSystem::IsDirExists(localname))
-// 		return false;
-// 	return FileSystem::DeleteDir(localname);
-// }
-// void DeckManager::GetCategoryPath(wchar_t* ret, int index, const wchar_t* text) {
-// 	wchar_t catepath[256];
-// 	switch(index) {
-// 	case 0:
-// 		myswprintf(catepath, L"./pack");
-// 		break;
-// 	case 1:
-// 		myswprintf(catepath, mainGame->gameConf.bot_deck_path);
-// 		break;
-// 	case -1:
-// 	case 2:
-// 	case 3:
-// 		myswprintf(catepath, L"./deck");
-// 		break;
-// 	default:
-// 		myswprintf(catepath, L"./deck/%ls", text);
-// 	}
-// 	BufferIO::CopyWStr(catepath, ret, 256);
-// }
-////////kdiy/////
 }

@@ -36,25 +36,20 @@ struct loc_info {
 	uint32_t sequence;
 	uint32_t position;
 };
-loc_info ReadLocInfo(char*& p, bool compat);
+loc_info ReadLocInfo(char*& p, bool compat = false);
 class Query {
 public:
 	Query() {};
-	Query(char*& buff, bool compat = false, int len = 0) { if(compat) ParseCompat(buff, len); else Parse(buff); };
+	Query(char*& buff) { Parse(buff); };
 	void Parse(char*& buff);
-	void ParseCompat(char* buff, int len);
 	bool onfield_skipped = false;
 	uint32_t flag;
 	uint32_t code;
 	uint32_t position;
 	uint32_t alias;
 	uint32_t type;
-	////////////kdiy///////	
-	//uint32_t level;
-	int32_t level;
-	int32_t rank;
-	//uint32_t rank;
-	////////////kdiy///////	
+	uint32_t level;
+	uint32_t rank;
 	uint32_t link;
 	uint32_t attribute;
 	uint32_t race;
@@ -85,9 +80,8 @@ class QueryStream {
 public:
 	std::vector<Query> queries;
 	QueryStream() {};
-	QueryStream(char*& buff, bool compat = false, int len = 0) { if(compat) ParseCompat(buff, len); else Parse(buff); };
+	QueryStream(char*& buff) { Parse(buff); };
 	void Parse(char*& buff);
-	void ParseCompat(char*& buff, int len);
 	void GenerateBuffer(std::vector<uint8_t>& buffer, bool check_hidden);
 	void GeneratePublicBuffer(std::vector<uint8_t>& buffer);
 };

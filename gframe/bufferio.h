@@ -5,6 +5,10 @@
 #include <vector>
 #include <cstring>
 
+#ifdef _MSC_VER
+#pragma warning(disable: 4244)
+#endif
+
 class BufferIO {
 public:
 	static void insert_data(std::vector<uint8_t>& vec, void* val, size_t len) {
@@ -20,10 +24,6 @@ public:
 		vec.resize(vec_size + val_size);
 		std::memcpy(&vec[vec_size], &val, val_size);
 	}
-	inline static void Read(char*& p, void* dest, size_t size) {
-		memcpy(dest, p, size);
-		p += size;
-	}
 	template<typename T>
 	inline static T Read(char*& p) {
 		T ret;
@@ -31,10 +31,37 @@ public:
 		p += sizeof(T);
 		return ret;
 	}
+	inline static int64_t ReadInt64(char*& p) {
+		return Read<int64_t>(p);
+	}
+	inline static int32_t ReadInt32(char*& p) {
+		return Read<int32_t>(p);
+	}
+	inline static int16_t ReadInt16(char*& p) {
+		return Read<int16_t>(p);
+	}
+	inline static int8_t ReadInt8(char*& p) {
+		return Read<int8_t>(p);
+	}
+	inline static uint8_t ReadUInt8(char*& p) {
+		return Read<uint8_t>(p);
+	}
 	template<typename T>
 	inline static void Write(char*& p, T value) {
 		std::memcpy(p, &value, sizeof(T));
 		p += sizeof(T);
+	}
+	inline static void WriteInt64(char*& p, long long val) {
+		Write<int64_t>(p, val);
+	}
+	inline static void WriteInt32(char*& p, int val) {
+		Write<int32_t>(p, val);
+	}
+	inline static void WriteInt16(char*& p, short val) {
+		Write<int16_t>(p, val);
+	}
+	inline static void WriteInt8(char*& p, char val) {
+		Write<int8_t>(p, val);
 	}
 	template<typename T1, typename T2>
 	inline static int CopyWStr(T1* src, T2* pstr, int bufsize) {
@@ -62,7 +89,7 @@ public:
 		char* pstr = str;
 		while(*wsrc != 0) {
 			if(*wsrc < 0x80) {
-				*str = static_cast<char>(*wsrc);
+				*str = *wsrc;
 				++str;
 			} else if(*wsrc < 0x800) {
 				str[0] = ((*wsrc >> 6) & 0x1f) | 0xc0;
@@ -74,21 +101,21 @@ public:
 				str[2] = ((*wsrc) & 0x3f) | 0x80;
 				str += 3;
 			} else {
-				if(sizeof(wchar_t) == 2) {
-					unsigned unicode = 0;
-					unicode |= (*wsrc++ & 0x3ff) << 10;
-					unicode |= *wsrc & 0x3ff;
-					unicode += 0x10000;
-					str[0] = ((unicode >> 18) & 0x7) | 0xf0;
-					str[1] = ((unicode >> 12) & 0x3f) | 0x80;
-					str[2] = ((unicode >> 6) & 0x3f) | 0x80;
-					str[3] = ((unicode) & 0x3f) | 0x80;
-				} else {
-					str[0] = ((*wsrc >> 18) & 0x7) | 0xf0;
-					str[1] = ((*wsrc >> 12) & 0x3f) | 0x80;
-					str[2] = ((*wsrc >> 6) & 0x3f) | 0x80;
-					str[3] = ((*wsrc) & 0x3f) | 0x80;
-				}
+#ifdef _WIN32
+				unsigned unicode = 0;
+				unicode |= (*wsrc++ & 0x3ff) << 10;
+				unicode |= *wsrc & 0x3ff;
+				unicode += 0x10000;
+				str[0] = ((unicode >> 18) & 0x7) | 0xf0;
+				str[1] = ((unicode >> 12) & 0x3f) | 0x80;
+				str[2] = ((unicode >> 6) & 0x3f) | 0x80;
+				str[3] = ((unicode) & 0x3f) | 0x80;
+#else
+				str[0] = ((*wsrc >> 18) & 0x7) | 0xf0;
+				str[1] = ((*wsrc >> 12) & 0x3f) | 0x80;
+				str[2] = ((*wsrc >> 6) & 0x3f) | 0x80;
+				str[3] = ((*wsrc) & 0x3f) | 0x80;
+#endif // _WIN32
 				str += 4;
 			}
 			wsrc++;
@@ -111,14 +138,14 @@ public:
 				*wp = (((unsigned)p[0] & 0xf) << 12) | (((unsigned)p[1] & 0x3f) << 6) | ((unsigned)p[2] & 0x3f);
 				p += 3;
 			} else if((*p & 0xf8) == 0xf0) {
-				if(sizeof(wchar_t) == 2) {
-					unsigned unicode = (((unsigned)p[0] & 0x7) << 18) | (((unsigned)p[1] & 0x3f) << 12) | (((unsigned)p[2] & 0x3f) << 6) | ((unsigned)p[3] & 0x3f);
-					unicode -= 0x10000;
-					*wp++ = (unicode >> 10) | 0xd800;
-					*wp = (unicode & 0x3ff) | 0xdc00;
-				} else {
-					*wp = (((unsigned)p[0] & 0x7) << 18) | (((unsigned)p[1] & 0x3f) << 12) | (((unsigned)p[2] & 0x3f) << 6) | ((unsigned)p[3] & 0x3f);
-				}
+#ifdef _WIN32
+				unsigned unicode = (((unsigned)p[0] & 0x7) << 18) | (((unsigned)p[1] & 0x3f) << 12) | (((unsigned)p[2] & 0x3f) << 6) | ((unsigned)p[3] & 0x3f);
+				unicode -= 0x10000;
+				*wp++ = (unicode >> 10) | 0xd800;
+				*wp = (unicode & 0x3ff) | 0xdc00;
+#else
+				*wp = (((unsigned)p[0] & 0x7) << 18) | (((unsigned)p[1] & 0x3f) << 12) | (((unsigned)p[2] & 0x3f) << 6) | ((unsigned)p[3] & 0x3f);
+#endif // _WIN32
 				p += 4;
 			} else
 				p++;
@@ -128,20 +155,67 @@ public:
 		return wp - wstr;
 	}
 	static std::string EncodeUTF8s(const std::wstring& source) {
-		thread_local std::vector<char> res;
-		res.reserve(source.size() * 4 + 1);
-		EncodeUTF8(source.c_str(), const_cast<char*>(res.data()));
-		return res.data();
+		std::string res;
+		for(size_t i = 0; i < source.size(); i++) {
+			auto c = source[i];
+			if(c < 0x80) {
+				res += ((char)c);
+			} else if(c < 0x800) {
+				res += ((char)(((c >> 6) & 0x1f) | 0xc0));
+				res += ((char)((c & 0x3f) | 0x80));
+			} else if(c < 0x10000 && (c < 0xd800 || c > 0xdfff)) {
+				res += ((char)(((c >> 12) & 0xf) | 0xe0));
+				res += ((char)(((c >> 6) & 0x3f) | 0x80));
+				res += ((char)(((c) & 0x3f) | 0x80));
+			} else {
+#ifdef _WIN32
+				unsigned unicode = 0;
+				unicode |= (c & 0x3ff) << 10;
+				c = source[++i];
+				unicode |= c & 0x3ff;
+				unicode += 0x10000;
+				res += ((char)(((unicode >> 18) & 0x7) | 0xf0));
+				res += ((char)(((unicode >> 12) & 0x3f) | 0x80));
+				res += ((char)(((unicode >> 6) & 0x3f) | 0x80));
+				res += ((char)(((unicode) & 0x3f) | 0x80));
+#else
+				res += ((char)(((c >> 18) & 0x7) | 0xf0));
+				res += ((char)(((c >> 12) & 0x3f) | 0x80));
+				res += ((char)(((c >> 6) & 0x3f) | 0x80));
+				res += ((char)(((c) & 0x3f) | 0x80));
+#endif
+			}
+		}
+		return res;
 	}
 	// UTF-8 to UTF-16/UTF-32
 	static std::wstring DecodeUTF8s(const std::string& source) {
-		thread_local std::vector<wchar_t> res;
-		if(sizeof(wchar_t) == 2)
-			res.reserve(source.size() * 2 + 1);
-		else
-			res.reserve(source.size() + 1);
-		DecodeUTF8(source.c_str(), const_cast<wchar_t*>(res.data()));
-		return res.data();
+		std::wstring res = L"";
+		for(size_t i = 0; i < source.size();) {
+			auto c = source[i];
+			if((c & 0x80) == 0) {
+				res += ((wchar_t)c);
+				i++;
+			} else if((c & 0xe0) == 0xc0) {
+				res += ((wchar_t)((((unsigned)c & 0x1f) << 6) | ((unsigned)source[i + 1] & 0x3f)));
+				i += 2;
+			} else if((c & 0xf0) == 0xe0) {
+				res += ((wchar_t)((((unsigned)c & 0xf) << 12) | (((unsigned)source[i + 1] & 0x3f) << 6) | ((unsigned)source[i + 2] & 0x3f)));
+				i += 3;
+			} else if((c & 0xf8) == 0xf0) {
+#ifdef _WIN32
+				unsigned unicode = (((unsigned)c & 0x7) << 18) | (((unsigned)source[i + 1] & 0x3f) << 12) | (((unsigned)source[i + 2] & 0x3f) << 6) | ((unsigned)source[i + 3] & 0x3f);
+				unicode -= 0x10000;
+				res += ((wchar_t)((unicode >> 10) | 0xd800));
+				res += ((wchar_t)((unicode & 0x3ff) | 0xdc00));
+#else
+				res += ((wchar_t)((((unsigned)c & 0x7) << 18) | (((unsigned)source[i + 1] & 0x3f) << 12) | (((unsigned)source[i + 2] & 0x3f) << 6) | ((unsigned)source[i + 3] & 0x3f)));
+#endif // _WIN32
+				i += 4;
+			} else
+				i++;
+		}
+		return res;
 	}
 	static int GetVal(const wchar_t* pstr) {
 		int ret = 0;

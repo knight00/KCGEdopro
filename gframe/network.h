@@ -78,9 +78,6 @@ struct CTOS_JoinGame {
 struct CTOS_Kick {
 	uint8_t pos;
 };
-struct CTOS_RematchResponse {
-	uint8_t rematch;
-};
 enum ERROR_TYPE : uint8_t {
 	JOINERROR = 0x1,
 	DECKERROR,
@@ -112,7 +109,6 @@ struct DeckError {
 	} count;
 	uint32_t code;
 	DeckError(DERR_TYPE _type) :type(_type) {};
-	DeckError() {};
 };
 struct JoinError {
 	ERROR_TYPE etype = ERROR_TYPE::JOINERROR;
@@ -123,7 +119,6 @@ struct JoinError {
 	};
 	JERR_TYPE error;
 	JoinError(JERR_TYPE type) :error(type) {};
-	JoinError() {};
 };
 struct VersionError {
 	ERROR_TYPE etype = ERROR_TYPE::VERERROR2;
@@ -137,7 +132,9 @@ struct VersionError {
 	};
 	ClientVersion version;
 	VersionError(ClientVersion _version) :version(_version) {};
-	VersionError() {};
+};
+struct CTOS_RematchResponse {
+	unsigned char rematch;
 };
 struct STOC_ErrorMsg {
 	ERROR_TYPE type;
@@ -208,9 +205,9 @@ public:
 	virtual void PlayerKick(DuelPlayer* dp, uint8_t pos) {}
 	virtual void UpdateDeck(DuelPlayer* dp, void* pdata, uint32_t len) {}
 	virtual void StartDuel(DuelPlayer* dp) {}
-	virtual void HandResult(DuelPlayer* dp, uint8_t res) {}
-	virtual void RematchResult(DuelPlayer* dp, uint8_t rematch) {}
-	virtual void TPResult(DuelPlayer* dp, uint8_t tp) {}
+	virtual void HandResult(DuelPlayer* dp, unsigned char res) {}
+	virtual void RematchResult(DuelPlayer* dp, unsigned char rematch) {}
+	virtual void TPResult(DuelPlayer* dp, unsigned char tp) {}
 	virtual void Process() {}
 	virtual int32_t Analyze(CoreUtils::Packet packet) {
 		return 0;
@@ -324,10 +321,6 @@ public:
 #define DECK_MASTER         0x800
 #define ACTION_DUEL         0x1000
 #define DECK_LIMIT_20       0x2000
-////kdiy///////
-#define KCG_System          0x4000
-#define Field_System        0x8000
-////kdiy///////
 
 #define DUEL_STAGE_BEGIN		0
 #define DUEL_STAGE_FINGER		1

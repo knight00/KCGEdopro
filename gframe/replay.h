@@ -6,7 +6,6 @@
 #include <ctime>
 #include <vector>
 #include <fstream>
-#include "text_types.h"
 
 namespace ygo {
 
@@ -16,7 +15,7 @@ namespace ygo {
 #define REPLAY_SINGLE_MODE	0x8
 #define REPLAY_LUA64		0x10
 #define REPLAY_NEWREPLAY	0x20
-#define REPLAY_HAND_TEST	0x40
+#define REPLAY_RELAY		0x40
 
 #define REPLAY_YRP1			0x31707279
 #define REPLAY_YRPX			0x58707279
@@ -59,7 +58,7 @@ class Replay {
 public:
 	Replay();
 	~Replay();
-	void BeginRecord(bool write = true, path_string name = EPRO_TEXT("./replay/_LastReplay.yrpX"));
+	void BeginRecord(path_string name = TEXT(""));
 	void WriteStream(const ReplayStream& stream);
 	void WritePacket(const ReplayPacket& p);
 	template <typename  T>
@@ -69,22 +68,6 @@ public:
 	void WriteData(const void* data, unsigned int length, bool flush = true);
 	void Flush();
 	void EndRecord(size_t size = 0x20000);
-	void SaveReplay(const path_string& name);
-	bool OpenReplay(const path_string& name);
-	bool OpenReplayFromBuffer(std::vector<uint8_t> contents);
-	bool IsExportable();
-	static bool DeleteReplay(const path_string& name);
-	static bool RenameReplay(const path_string& oldname, const path_string& newname);
-	bool GetNextResponse(ReplayResponse* res);
-	const std::vector<std::wstring>& GetPlayerNames();
-	const ReplayDeckList& GetPlayerDecks();
-	const std::vector<int>& GetRuleCards();
-	ReplayStream packets_stream;
-	void Rewind();
-	void Reset();
-	int GetPlayersCount(int side);
-	int GetTurnsCount();
-	path_string GetReplayName();
 	std::unique_ptr<Replay> yrp;
 	ReplayHeader pheader;
 	std::vector<uint8_t> replay_data;
@@ -100,32 +83,18 @@ public:
 	duel_parameters params;
 	std::string scriptname;
 private:
-	bool ReadData(void* data, unsigned int length);
-	bool ReadData(std::vector<uint8_t>& data, unsigned int length);
-	template <typename  T>
-	T Read();
-	bool ReadNextResponse(ReplayResponse* res);
-	bool ReadName(wchar_t* data);
-	bool ReadNextPacket(ReplayPacket* packet);
-	std::ofstream fp;
-	size_t data_position;
-	void ParseNames();
-	void ParseParams();
-	void ParseDecks();
-	void ParseStream();
-	bool ParseResponses();
 	bool is_recording;
 	bool is_replaying;
 	bool can_read;
+	std::ofstream fp;
 	std::vector<ReplayResponse> responses;
 	std::vector<std::wstring> players;
 	size_t home_count;
 	size_t opposing_count;
-	path_string replay_name;
+	std::wstring replay_name;
 	ReplayDeckList decks;
 	std::vector<int> replay_custom_rule_cards;
 	std::vector<ReplayResponse>::iterator responses_iterator;
-	int turn_count;
 };
 template<typename T>
 inline void Replay::Write(T data, bool flush) {

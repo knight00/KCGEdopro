@@ -1,7 +1,7 @@
 #include "core_utils.h"
 #include "bufferio.h"
 #include "dllinterface.h"
-#include "common.h"
+#include <common.h>
 
 namespace CoreUtils {
 
@@ -43,17 +43,17 @@ void Query::Parse(char*& current) {
 			PARSE_SINGLE(QUERY_IS_HIDDEN, is_hidden)
 			PARSE_SINGLE(QUERY_COVER, cover)
 			case QUERY_REASON_CARD: {
-				reason_card = ReadLocInfo(current, false);
+				reason_card = ReadLocInfo(current);
 				break;
 			}
 			case QUERY_EQUIP_CARD: {
-				equip_card = ReadLocInfo(current, false);
+				equip_card = ReadLocInfo(current);
 				break;
 			}
 			case QUERY_TARGET_CARD: {
 				uint32_t count = BufferIO::Read<uint32_t>(current);
 				for(uint32_t i = 0; i < count; i++)
-					target_cards.push_back(ReadLocInfo(current, false));
+					target_cards.push_back(ReadLocInfo(current));
 				break;
 			}
 			case QUERY_OVERLAY_CARD: {
@@ -84,58 +84,6 @@ void Query::Parse(char*& current) {
 	}
 }
 #undef PARSE_SINGLE
-#define PARSE_SINGLE(query,value) if(flag & query) {\
-value = BufferIO::Read<uint32_t>(current);\
-}
-
-void Query::ParseCompat(char* current, int len) {
-	if(len <= 8) {
-		onfield_skipped = true;
-		return;
-	}
-	flag = BufferIO::Read<int32_t>(current);
-	PARSE_SINGLE(QUERY_CODE, code)
-	if(flag & QUERY_POSITION)
-		position = (BufferIO::Read<uint32_t>(current) >> 24) & 0xff;
-	PARSE_SINGLE(QUERY_ALIAS, alias)
-	PARSE_SINGLE(QUERY_TYPE, type)
-	PARSE_SINGLE(QUERY_LEVEL, level)
-	PARSE_SINGLE(QUERY_RANK, rank)
-	PARSE_SINGLE(QUERY_ATTRIBUTE, attribute)
-	PARSE_SINGLE(QUERY_RACE, race)
-	PARSE_SINGLE(QUERY_ATTACK, attack)
-	PARSE_SINGLE(QUERY_DEFENSE, defense)
-	PARSE_SINGLE(QUERY_BASE_ATTACK, base_attack)
-	PARSE_SINGLE(QUERY_BASE_DEFENSE, base_defense)
-	PARSE_SINGLE(QUERY_REASON, reason)
-	if(flag & QUERY_REASON_CARD)
-		reason_card = ReadLocInfo(current, true);
-	if(flag &  QUERY_EQUIP_CARD)
-		equip_card = ReadLocInfo(current, true);
-	if(flag & QUERY_TARGET_CARD) {
-		uint32_t count = BufferIO::Read<uint32_t>(current);
-		for(uint32_t i = 0; i < count; i++)
-			target_cards.push_back(ReadLocInfo(current, true));
-	}
-	if(flag & QUERY_OVERLAY_CARD) {
-		uint32_t count = BufferIO::Read<uint32_t>(current);
-		for(uint32_t i = 0; i < count; i++)
-			overlay_cards.push_back(BufferIO::Read<uint32_t>(current));
-	}
-	if(flag & QUERY_COUNTERS) {
-		uint32_t count = BufferIO::Read<uint32_t>(current);
-		for(uint32_t i = 0; i < count; i++)
-			counters.push_back(BufferIO::Read<uint32_t>(current));
-	}
-	PARSE_SINGLE(QUERY_OWNER, owner)
-	PARSE_SINGLE(QUERY_STATUS, status)
-	PARSE_SINGLE(QUERY_LSCALE, lscale)
-	PARSE_SINGLE(QUERY_RSCALE, rscale)
-	if(flag & QUERY_LINK) {
-		link = BufferIO::Read<uint32_t>(current);
-		link_marker = BufferIO::Read<uint32_t>(current);
-	}
-}
 
 template<typename T>
 void insert_value(std::vector<uint8_t>& vec, const T& _val) {
@@ -154,21 +102,25 @@ void Query::GenerateBuffer(std::vector<uint8_t>& buffer, bool is_public, bool ch
 	for(uint64_t _flag = 1; _flag <= QUERY_END; _flag <<= 1) {
 		if((this->flag & _flag) != _flag)
 			continue;
+#ifndef COMPETITIVE
 		if(((is_public || (check_hidden && ((this->flag & QUERY_IS_HIDDEN) && is_hidden))) && !IsPublicQuery(_flag))) {
 			continue;
 		}
+#endif
 		if((_flag == QUERY_REASON_CARD && reason_card.location == 0) ||
 			(_flag == QUERY_EQUIP_CARD && equip_card.location == 0))
 			continue;
 		insert_value<uint16_t>(buffer, GetSize(_flag) + sizeof(uint32_t));
 		insert_value<uint32>(buffer, _flag);
-		/*if(((is_public || (check_hidden && ((this->flag & QUERY_IS_HIDDEN) && is_hidden))) && !IsPublicQuery(_flag))) {
+#ifdef COMPETITIVE
+		if(((is_public || (check_hidden && ((this->flag & QUERY_IS_HIDDEN) && is_hidden))) && !IsPublicQuery(_flag))) {
 			const auto vec_size = buffer.size();
 			const auto flag_size = GetSize(_flag);
 			buffer.resize(vec_size + flag_size);
 			std::memset(&buffer[vec_size], 0, flag_size);
 			continue;
-		}*/
+		}
+#endif
 		INSERT(QUERY_CODE, code)
 		INSERT(QUERY_POSITION, position)
 		INSERT(QUERY_ALIAS, alias)
@@ -367,15 +319,6 @@ void QueryStream::Parse(char*& buff) {
 	char* current = buff;
 	while((current - buff) < size) {
 		queries.emplace_back(current);
-	}
-}
-
-void QueryStream::ParseCompat(char*& buff, int len) {
-	char* start = buff;
-	while((buff - start) < len) {
-		int size = BufferIO::Read<int32_t>(buff);
-		queries.emplace_back(buff, true, size);
-		buff += size - 4;
 	}
 }
 
