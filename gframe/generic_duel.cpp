@@ -635,8 +635,7 @@ void GenericDuel::TPResult(DuelPlayer* dp, unsigned char tp) {
 		new_replay.WriteData(dueler.player->name, 40, false);
 	}
 	replay_stream.clear();
-	time_limit[0] = host_info.time_limit;
-	time_limit[1] = host_info.time_limit;
+	time_limit[0] = time_limit[1] = host_info.time_limit ? (host_info.time_limit + 5) : 0;
 	int opt = host_info.duel_flag;
 	if(host_info.no_shuffle_deck)
 		opt |= DUEL_PSEUDO_SHUFFLE;
@@ -849,7 +848,7 @@ void GenericDuel::BeforeParsing(CoreUtils::Packet& packet, int& return_value, bo
 		RefreshSzone(1);
 		RefreshHand(0);
 		RefreshHand(1);
-		record_last = false;
+		record_last = true;
 		break;
 	}
 	case MSG_SELECT_CHAIN:
@@ -858,14 +857,14 @@ void GenericDuel::BeforeParsing(CoreUtils::Packet& packet, int& return_value, bo
 		RefreshMzone(1);
 		RefreshSzone(0);
 		RefreshSzone(1);
-		record_last = false;
+		record_last = true;
 		break;
 	}
 	case MSG_FLIPSUMMONING: {
 		pbuf += 4;
 		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf);
 		RefreshSingle(info.controler, info.location, info.sequence);
-		record_last = false;
+		record_last = true;
 		break;
 	}
 	default:
@@ -1229,8 +1228,7 @@ void GenericDuel::AfterParsing(CoreUtils::Packet& packet, int& return_value, boo
 		break;
 	}
 	case MSG_NEW_TURN: {
-		time_limit[0] = host_info.time_limit;
-		time_limit[1] = host_info.time_limit;
+		time_limit[0] = time_limit[1] = host_info.time_limit ? (host_info.time_limit + 5) : 0;
 		turn_count++;
 		break;
 	}
@@ -1334,19 +1332,10 @@ int GenericDuel::Analyze(CoreUtils::Packet packet) {
 	BeforeParsing(packet, return_value, record, record_last);
 	Sending(packet, return_value, record, record_last);
 	AfterParsing(packet, return_value, record, record_last);
-	if(record) {
-		if(!record_last) {
-			new_replay.WritePacket(packetcpy);
-			new_replay.WriteStream(replay_stream);
-		} else {
-			new_replay.WriteStream(replay_stream);
-			new_replay.WritePacket(packetcpy);
-		}
-		new_replay.Flush();
-	} else {
-		new_replay.WriteStream(replay_stream);
-		new_replay.Flush();
-	}
+	if(record)
+		replay_stream.insert(record_last ? replay_stream.end() : replay_stream.begin(), packetcpy);
+	new_replay.WriteStream(replay_stream);
+	new_replay.Flush();
 	if(return_value == 1) {
 		last_select_packet = std::move(packetcpy);
 	} else if(had_hint)
@@ -1427,12 +1416,12 @@ void GenericDuel::WaitforResponse(int playerid) {
 	if(host_info.time_limit) {
 		STOC_TimeLimit sctl;
 		sctl.player = playerid;
-		sctl.left_time = time_limit[playerid];
+		sctl.left_time = std::max<int32_t>(time_limit[playerid] - 5, 0);
 		NetServer::SendPacketToPlayer(nullptr, STOC_TIME_LIMIT, sctl);
 		IteratePlayers([](duelist& dueler) {
 			NetServer::ReSendToPlayer(dueler.player);
 		});
-		grace_period = 5;
+		grace_period = 0;
 	}
 	cur_player[playerid]->state = CTOS_RESPONSE;
 }
@@ -1551,7 +1540,6 @@ void GenericDuel::GenericTimer(evutil_socket_t fd, short events, void* arg) {
 			wbuf[1] = 1 - player;
 			wbuf[2] = 0x3;
 			NetServer::SendBufferToPlayer(nullptr, STOC_GAME_MSG, wbuf, 3);
-			auto& players = sd->players;
 			sd->IteratePlayers([](duelist& dueler) {
 				NetServer::ReSendToPlayer(dueler.player);
 			});
