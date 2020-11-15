@@ -123,6 +123,9 @@ OCG_Duel Game::SetupDuel(OCG_DuelOptions opts) {
 	OCG_CreateDuel(&pduel, opts);
 	LoadScript(pduel, "constant.lua");
 	LoadScript(pduel, "utility.lua");
+	/////kdiy////
+	LoadScript(pduel, "proc_fun.lua");
+	/////kdiy////
 	return pduel;
 }
 int Game::ScriptReader(void* payload, OCG_Duel duel, const char* name) {
