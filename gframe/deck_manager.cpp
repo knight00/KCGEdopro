@@ -69,6 +69,9 @@ bool DeckManager::LoadLFListFolder(path_string path) {
 	return loaded;
 }
 void DeckManager::LoadLFList() {
+	///////kdiy////////
+	LoadLFListSingle(TEXT("./ksexpansions/lflist.conf"));
+	///////kdiy////////	
 	LoadLFListSingle(TEXT("./expansions/lflist.conf"));
 	LoadLFListSingle(TEXT("./lflist.conf"));
 	LoadLFListFolder(TEXT("./lflists/"));

@@ -48,6 +48,11 @@ void Game::LoadExpansionDB() {
 	auto files = Utils::FindfolderFiles(TEXT("./expansions/"), { TEXT("cdb") }, 2);
 	for(auto& file : files)
 		dataManager.LoadDB(Utils::ToUTF8IfNeeded(TEXT("./expansions/" + file)));
+	///////kdiy////////
+	auto kfiles = Utils::FindfolderFiles(TEXT("./kexpansions/"), { TEXT("cdb") }, 2);
+	for(auto& file : kfiles)
+		dataManager.LoadDB(Utils::ToUTF8IfNeeded(TEXT("./kexpansions/" + file)));	
+	///////kdiy////////		
 }
 void Game::AddDebugMsg(const std::string& msg) {
 	fprintf(stderr, "%s\n", msg.c_str());
