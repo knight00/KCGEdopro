@@ -140,6 +140,11 @@ void Game::MessageHandler(void* payload, const char* string, int type) {
 	static_cast<Game*>(payload)->AddDebugMsg(string);
 }
 void Game::PopulateResourcesDirectories() {
+	////////kdiy//////////
+	script_dirs.push_back(TEXT("./kexpansions/script/"));
+	auto kexpansions_subdirs = Utils::FindSubfolders(TEXT("./kexpansions/script/"));
+	script_dirs.insert(script_dirs.end(), kexpansions_subdirs.begin(), kexpansions_subdirs.end());
+	////////kdiy//////////
 	script_dirs.push_back(TEXT("./expansions/script/"));
 	auto expansions_subdirs = Utils::FindSubfolders(TEXT("./expansions/script/"));
 	script_dirs.insert(script_dirs.end(), expansions_subdirs.begin(), expansions_subdirs.end());
