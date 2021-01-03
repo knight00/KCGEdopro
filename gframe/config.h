@@ -83,10 +83,10 @@ extern bool exit_on_return;
 extern bool open_file;
 extern std::wstring open_file_name;
 
-#define EDOPRO_VERSION_MAJOR 38
-#define EDOPRO_VERSION_MINOR 1
-#define EDOPRO_VERSION_PATCH 3
-#define EDOPRO_VERSION_CODENAME L"KCG"
+#define EDOPRO_VERSION_MAJOR 39
+#define EDOPRO_VERSION_MINOR 0
+#define EDOPRO_VERSION_PATCH 1
+#define EDOPRO_VERSION_CODENAME L"Utopia"
 #define CLIENT_VERSION (EDOPRO_VERSION_MAJOR & 0xff | ((EDOPRO_VERSION_MINOR & 0xff) << 8) | ((OCG_VERSION_MAJOR & 0xff) << 16) | ((OCG_VERSION_MINOR & 0xff) << 24))
 #define EXPAND_VERSION(ver) (ver) & 0xff, (((ver) >> 8) & 0xff), (((ver) >> 16) & 0xff), (((ver) >> 24) & 0xff)
 
