@@ -55,6 +55,9 @@ struct CardData {
 	uint32_t lscale;
 	uint32_t rscale;
 	uint32_t link_marker;
+	//////kdiy///////	
+	uint32_t ot;
+	//////kdiy///////	
 };
 struct CardDataC {
 	uint32_t code;
