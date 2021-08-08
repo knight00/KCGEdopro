@@ -111,7 +111,10 @@ bool WindBotPanel::LaunchSelected(int port, epro::wstringview pass) {
 		}
 	}
 	// 1 = scissors, 2 = rock, 3 = paper
-	auto res = bots[engine].Launch(port, pass, !chkMute->isChecked(), chkThrowRock->isChecked() * 2, overridedeck);
+	/////kdiy//////
+	//auto res = bots[engine].Launch(port, pass, !chkMute->isChecked(), chkThrowRock->isChecked() * 2, overridedeck);
+	auto res = bots[engine].Launch(port, pass, !chkMute->isChecked(), chkThrowRock->isChecked() * 2, overridedeck, chkSeed->isChecked());
+	/////kdiy//////
 #if !defined(_WIN32) && !defined(__ANDROID__)
 	if(res > 0)
 		windbotsPids.push_back(res);

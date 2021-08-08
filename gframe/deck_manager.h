@@ -40,6 +40,9 @@ enum class DuelAllowedCards {
 	ALLOWED_CARDS_TCG_ONLY,
 	ALLOWED_CARDS_OCG_TCG,
 	ALLOWED_CARDS_WITH_PRERELEASE,
+	///////kdiy///////////////
+	ALLOWED_CARDS_WITH_ANIME,
+	///////kdiy///////////////
 	ALLOWED_CARDS_ANY
 };
 class DeckManager {

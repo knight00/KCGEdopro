@@ -204,6 +204,10 @@ bool GameConfig::Load(const epro::path_char* filename) {
 				botThrowRock = !!std::stoi(str);
 			else if(type == "botMute")
 				botMute = !!std::stoi(str);
+			/////kdiy//////
+			else if(type == "botSeed")
+				botSeed = !!std::stoi(str);
+			/////kdiy//////	
 			else if(type == "lastServer")
 				lastServer = BufferIO::DecodeUTF8(str);
 			else if(type == "textfont") {
@@ -386,6 +390,9 @@ bool GameConfig::Save(const epro::path_char* filename) {
 	conf_file << "lastport = "                 << BufferIO::EncodeUTF8(lastport) << "\n";
 	conf_file << "botThrowRock = "             << botThrowRock << "\n";
 	conf_file << "botMute = "                  << botMute << "\n";
+	///kdiy//////////
+	conf_file << "botSeed = "                  << botSeed << "\n";
+	///kdiy//////////
 	SERIALIZE(lastBot);
 	conf_file << "lastServer = "               << BufferIO::EncodeUTF8(lastServer) << "\n";
 	conf_file << "game_version = "             << game_version << "\n";

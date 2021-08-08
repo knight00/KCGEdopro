@@ -32,7 +32,10 @@ struct WindBot {
 	using launch_ret_t = pid_t;
 	static epro::path_string executablePath;
 #endif
-	launch_ret_t Launch(int port, epro::wstringview pass, bool chat, int hand, const wchar_t* overridedeck) const;
+    ////kdiy//////
+	//launch_ret_t Launch(int port, epro::wstringview pass, bool chat, int hand, const wchar_t* overridedeck) const;
+	launch_ret_t Launch(int port, epro::wstringview pass, bool chat, int hand, const wchar_t* overridedeck, bool seed) const;
+	////kdiy//////
 
 	static uint32_t version;
 

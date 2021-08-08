@@ -628,6 +628,10 @@ bool Game::Initialize() {
 	defaultStrings.emplace_back(gBot.chkThrowRock, 2052);
 	gBot.chkMute = env->addCheckBox(gGameConfig->botMute, Scale(10, 135, 200, 160), gBot.window, -1, gDataManager->GetSysString(2053).data());
 	defaultStrings.emplace_back(gBot.chkMute, 2053);
+	///////kdiy/////////	
+	gBot.chkSeed = env->addCheckBox(gGameConfig->botSeed, Scale(230, 105, 420, 130), gBot.window, -1, gDataManager->GetSysString(8027).data());
+	defaultStrings.emplace_back(gBot.chkSeed, 8027);
+	///////kdiy/////////	
 	gBot.cbBotDeck = AddComboBox(env, Scale(10, 165, 200, 190), gBot.window, COMBOBOX_BOT_DECK);
 	///////kdiy/////////	
 	// gBot.stBotEngine = env->addStaticText(gDataManager->GetSysString(2082).data(), Scale(10, 195, 200, 220), false, false, gBot.window);
@@ -2406,6 +2410,9 @@ void Game::SaveConfig() {
 	gGameConfig->noShuffleDeck = chkNoShuffleDeck->isChecked();
 	gGameConfig->botThrowRock = gBot.chkThrowRock->isChecked();
 	gGameConfig->botMute = gBot.chkMute->isChecked();
+	/////kdiy//////
+	gGameConfig->botSeed = gBot.chkSeed->isChecked();
+	/////kdiy//////
 	auto lastServerIndex = serverChoice->getSelected();
 	if (lastServerIndex >= 0)
 		gGameConfig->lastServer = serverChoice->getItem(lastServerIndex);
@@ -3205,7 +3212,10 @@ void Game::ReloadCBRace() {
 void Game::ReloadCBFilterRule() {
 	cbFilterRule->clear();
 	cbFilterRule->addItem(fmt::format(L"[{}]", gDataManager->GetSysString(1225)).data());
-	for (auto i = 1900; i <= 1904; ++i)
+	/////kdiy////////////
+	//for (auto i = 1900; i <= 1904; ++i)
+	for (auto i = 1900; i <= 1905; ++i)
+	/////kdiy////////////
 		cbFilterRule->addItem(gDataManager->GetSysString(i).data());
 }
 void Game::ReloadCBDuelRule(irr::gui::IGUIComboBox* cb) {
@@ -3222,7 +3232,10 @@ void Game::ReloadCBDuelRule(irr::gui::IGUIComboBox* cb) {
 }
 void Game::ReloadCBRule() {
 	cbRule->clear();
-	for (auto i = 1900; i <= 1904; ++i)
+	/////kdiy////////////
+	//for (auto i = 1900; i <= 1904; ++i)
+	for (auto i = 1900; i <= 1905; ++i)
+	/////kdiy////////////
 		cbRule->addItem(gDataManager->GetSysString(i).data());
 }
 void Game::ReloadCBCurrentSkin() {

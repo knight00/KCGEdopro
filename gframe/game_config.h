@@ -63,6 +63,9 @@ struct GameConfig
 	bool noShuffleDeck{ false };
 	bool botThrowRock{ false };
 	bool botMute{ false };
+	///kdiy//////////
+	bool botSeed{ false };
+	///kdiy//////////
 	int lastBot{ 0 };
 	std::wstring lastServer;
 	std::wstring textfont{ L"fonts/NotoSansJP-Regular.otf" };
