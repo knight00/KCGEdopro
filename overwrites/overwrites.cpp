@@ -461,6 +461,10 @@ MAKELOADER(DecodePointer, PVOID, (PVOID ptr), (ptr)) {
 	return (PVOID)((UINT_PTR)ptr ^ 0xDEADBEEF);
 }
 
-unsigned long __stdcall if_nametoindex(const char* ifname) {
+extern "C" ULONG __stdcall handledif_nametoindex(PCSTR* InterfaceName) {
+	return 0;
+}
+
+extern "C" ULONG __stdcall if_nametoindex(PCSTR * InterfaceName) {
 	return 0;
 }

@@ -2,6 +2,7 @@
 #include <fstream>
 #include <curl/curl.h>
 #include <fmt/format.h>
+#include <errno.h>
 #include "logging.h"
 #include "utils.h"
 #include "game_config.h"
@@ -74,12 +75,15 @@ const epro::path_char* GetExtension(char* header) {
 void ImageDownloader::DownloadPic() {
 	Utils::SetThreadName("PicDownloader");
 	curl_payload payload;
-	CURL* curl = [&payload] {
+	char curl_error_buffer[CURL_ERROR_SIZE];
+	CURL* curl = [&payload, &curl_error_buffer] {
 		auto curl = curl_easy_init();
 		if(!curl)
 			return curl;
+		curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, curl_error_buffer);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &payload);
+		curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
 		if(gGameConfig->ssl_certificate_path.size() && Utils::FileExists(Utils::ToPathString(gGameConfig->ssl_certificate_path)))
 			curl_easy_setopt(curl, CURLOPT_CAINFO, gGameConfig->ssl_certificate_path.data());
 #ifdef _WIN32
@@ -153,29 +157,36 @@ void ImageDownloader::DownloadPic() {
 			if(src.type != type)
 				continue;
 			auto fp = fileopen(name.data(), "wb");
-			if(fp != nullptr) {
-				SetPayloadAndUrl(fmt::format(src.url, code), fp);
-				CURLcode res = curl_easy_perform(curl);
-				fclose(fp);
-				if(res == CURLE_OK) {
-					////kdiy////////
-					//ext = GetExtension(payload.header);
-					//if (!Utils::FileMove(name, dest_folder + ext))
-					    //Utils::FileDelete(name);
-					if (src.hd == 1) {
-						ext2 = GetExtension(payload.header);
-						if (!Utils::FileMove(name, dest_folder2 + ext2))
-							Utils::FileDelete(name);
-					} else {
-						ext = GetExtension(payload.header);
-						if (!Utils::FileMove(name, dest_folder + ext))
-							Utils::FileDelete(name);
-					}
-					////kdiy////////
-					break;
-				} else
-					Utils::FileDelete(name);
+			if(fp == nullptr) {
+				ygo::ErrorLog(fmt::format("Failed opening {} for write.", Utils::ToUTF8IfNeeded(name)));
+				ygo::ErrorLog(fmt::format("Error: {}.", strerror(errno)));
+				continue;
 			}
+			SetPayloadAndUrl(fmt::format(src.url, code), fp);
+			CURLcode res = curl_easy_perform(curl);
+			fclose(fp);
+			if(res == CURLE_OK) {
+				////kdiy////////
+				//ext = GetExtension(payload.header);
+				//if (!Utils::FileMove(name, dest_folder + ext))
+					//Utils::FileDelete(name);
+				if (src.hd == 1) {
+					ext2 = GetExtension(payload.header);
+					if (!Utils::FileMove(name, dest_folder2 + ext2))
+						Utils::FileDelete(name);
+				} else {
+					ext = GetExtension(payload.header);
+					if (!Utils::FileMove(name, dest_folder + ext))
+						Utils::FileDelete(name);
+				}
+				////kdiy////////
+				break;
+			}
+			if(gGameConfig->logDownloadErrors) {
+				ygo::ErrorLog(fmt::format("Failed downloading pic for {}", code));
+				ygo::ErrorLog(fmt::format("Curl error: ({}) {} ({})", res, curl_easy_strerror(res), curl_error_buffer));
+			}
+			Utils::FileDelete(name);
 		}
 		lck.lock();
 		////kdiy////////

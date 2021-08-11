@@ -22,7 +22,7 @@
 #include "log.h"
 #include "joystick_wrapper.h"
 #include "utils_gui.h"
-#ifdef __APPLE__
+#ifdef EDOPRO_MACOS
 #include "osx_menu.h"
 #endif
 
@@ -184,6 +184,25 @@ inline void ThreadsCleanup() {
 #endif
 }
 
+//clang below version 11 (llvm version 8) has a bug with brace class initialization
+//where it can't properly deduce the destructors of its members
+//https://reviews.llvm.org/D45898
+//https://bugs.llvm.org/show_bug.cgi?id=28280
+//add a workaround to construct the game object manually still on the stack by using
+//a buffer and using in place new
+#if defined(__clang_major__) && __clang_major__ <= 10
+class StackGame {
+	typename std::aligned_storage<sizeof(ygo::Game), alignof(ygo::Game)>::type game_buf[1];
+	ygo::Game* get() { return reinterpret_cast<ygo::Game*>(&game_buf[0]); }
+public:
+	StackGame() { new (&game_buf[0]) ygo::Game(); }
+	~StackGame() { get()->~Game(); }
+	ygo::Game* operator&() { return get(); }
+};
+#else
+using StackGame = ygo::Game;
+#endif
+
 int _tmain(int argc, epro::path_char* argv[]) {
 	epro::path_stringview dest{};
 	int skipped = 0;
@@ -231,7 +250,7 @@ int _tmain(int argc, epro::path_char* argv[]) {
 	if(!data->configs->showConsole)
 		FreeConsole();
 #endif
-#ifdef __APPLE__
+#ifdef EDOPRO_MACOS
 	EDOPRO_SetupMenuBar([]() {
 		ygo::gGameConfig->fullscreen = !ygo::gGameConfig->fullscreen;
 		ygo::mainGame->gSettings.chkFullscreen->setChecked(ygo::gGameConfig->fullscreen);
@@ -242,7 +261,7 @@ int _tmain(int argc, epro::path_char* argv[]) {
 	bool firstlaunch = true;
 	bool reset = false;
 	do {
-		ygo::Game _game{};
+		StackGame _game{};
 		ygo::mainGame = &_game;
 		if(data->tmp_device) {
 			ygo::mainGame->device = data->tmp_device;

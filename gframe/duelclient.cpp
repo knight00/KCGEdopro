@@ -4,6 +4,8 @@
 #if !defined(_WIN32) && !defined(__ANDROID__)
 #include <sys/types.h>
 #include <signal.h>
+#include <ifaddrs.h>
+#include <net/if.h>
 #endif
 #ifndef _WIN32
 #include <arpa/inet.h>
@@ -76,7 +78,7 @@ bool PlayAnimeC(std::wstring text, bool custom=false);
 ////kdiy//////
 
 std::pair<uint32_t, uint16_t> DuelClient::ResolveServer(epro::stringview address, int port) {
-	uint32_t remote_addr = htonl(inet_addr(address.data()));
+	uint32_t remote_addr = inet_addr(address.data());
 	if(remote_addr == -1) {
 		evutil_addrinfo hints{};
 		evutil_addrinfo *answer = nullptr;
@@ -86,14 +88,9 @@ std::pair<uint32_t, uint16_t> DuelClient::ResolveServer(epro::stringview address
 		hints.ai_flags = EVUTIL_AI_ADDRCONFIG;
 		if(evutil_getaddrinfo(address.data(), fmt::to_string(port).data(), &hints, &answer) != 0)
 			throw std::runtime_error("Host not resolved");
-
-		char ip[46];
-		auto& sin_addr = ((sockaddr_in*)answer->ai_addr)->sin_addr;
-		auto res = evutil_inet_ntop(AF_INET, &sin_addr, ip, sizeof(ip));
+		auto* in_answer = reinterpret_cast<sockaddr_in*>(answer->ai_addr);
+		remote_addr = in_answer->sin_addr.s_addr;
 		evutil_freeaddrinfo(answer);
-		if(res == nullptr)
-			throw std::runtime_error("Host not resolved");
-		remote_addr = htonl(inet_addr(ip));
 	}
 	return { remote_addr, static_cast<uint16_t>(port) };
 }
@@ -107,7 +104,7 @@ bool DuelClient::StartClient(uint32_t ip, uint16_t port, uint32_t gameid, bool c
 	sockaddr_in sin;
 	memset(&sin, 0, sizeof(sin));
 	sin.sin_family = AF_INET;
-	sin.sin_addr.s_addr = htonl(ip);
+	sin.sin_addr.s_addr = ip;
 	sin.sin_port = htons(port);
 	client_bev = bufferevent_socket_new(client_base, -1, BEV_OPT_CLOSE_ON_FREE);
 	bufferevent_setcb(client_bev, ClientRead, nullptr, ClientEvent, (void*)create_game);
@@ -2725,7 +2722,7 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 		if(!mainGame->dInfo.isCatchingUp) {
 			for(int i = 0; i < 5; ++i) {
 				for(const auto& pcard : mainGame->dField.deck[player]) {
-					float milliseconds = 3.0f * 1000.0f / 60.0f;
+					constexpr float milliseconds = 3.0f * 1000.0f / 60.0f;
 					pcard->dPos.set((rand() * 1.2f / RAND_MAX - 0.2f) / milliseconds, 0, 0);
 					pcard->dRot.set(0, 0, 0);
 					pcard->is_moving = true;
@@ -2799,7 +2796,7 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 			for(int i = 0; i < 5; ++i) {
 				for(const auto& pcard : mainGame->dField.extra[player]) {
 					if(!(pcard->position & POS_FACEUP)) {
-						float milliseconds = 3.0f * 1000.0f / 60.0f;
+						constexpr float milliseconds = 3.0f * 1000.0f / 60.0f;
 						pcard->dPos.set((rand() * 1.2f / RAND_MAX - 0.2f) / milliseconds, 0, 0);
 						pcard->dRot.set(0, 0, 0);
 						pcard->is_moving = true;
@@ -2910,7 +2907,7 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 			mc[i] = lst[previous.controler][previous.sequence];
 			mc[i]->SetCode(0);
 			if(!mainGame->dInfo.isCatchingUp) {
-				float milliseconds = 10.0f * 1000.0f / 60.0f;
+				constexpr float milliseconds = 10.0f * 1000.0f / 60.0f;
 				mc[i]->dPos.set((3.95f - mc[i]->curPos.X) / milliseconds, 0, 0.5f / milliseconds);
 				mc[i]->dRot.set(0, 0, 0);
 				mc[i]->is_moving = true;
@@ -4089,6 +4086,8 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 		return true;
 	}
 	case MSG_MISSED_EFFECT: {
+		if(mainGame->dInfo.isCatchingUp)
+			return true;
 		CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		uint32_t code = BufferIO::Read<uint32_t>(pbuf);
 		std::unique_lock<std::mutex> lock(mainGame->gMutex);
@@ -4633,17 +4632,42 @@ void DuelClient::BeginRefreshHost() {
 #ifdef __ANDROID__
 	addresses[0] = porting::getLocalIP();
 	if(addresses[0] == -1) {
+		mainGame->btnLanRefresh->setEnabled(true);
+		is_refreshing = false;
 		return;
 	}
-#else
+#elif defined(_WIN32)
 	char hname[256];
 	gethostname(hname, 256);
 	hostent* host = gethostbyname(hname);
-	if(!host || host->h_addrtype != AF_INET)
+	if(!host || host->h_addrtype != AF_INET) {
+		mainGame->btnLanRefresh->setEnabled(true);
+		is_refreshing = false;
 		return;
+	}
 	auto list = reinterpret_cast<in_addr**>(host->h_addr_list);
 	for(int i = 0; i < 8 && list[i] != 0; ++i)
 		addresses[i] = list[i]->s_addr;
+#else
+	ifaddrs* allInterfaces;
+	// Get list of all interfaces on the local machine:
+	if(getifaddrs(&allInterfaces) == 0) {
+		int i = 0;
+		// For each interface ...
+		for(ifaddrs* interface = allInterfaces; interface != nullptr && i < 8; interface = interface->ifa_next) {
+			unsigned int flags = interface->ifa_flags;
+			sockaddr* addr = interface->ifa_addr;
+			// Check for running IPv4 interfaces.
+			if((flags & (IFF_UP | IFF_RUNNING)) == (IFF_UP | IFF_RUNNING)) {
+				if(addr->sa_family == AF_INET) {
+					auto addr_in = reinterpret_cast<sockaddr_in*>(addr);
+					if(addr_in->sin_addr.s_addr != 0)
+						addresses[i++] = addr_in->sin_addr.s_addr;
+				}
+			}
+		}
+		freeifaddrs(allInterfaces);
+	}
 #endif
 	evutil_socket_t reply = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	sockaddr_in reply_addr;
@@ -4651,8 +4675,10 @@ void DuelClient::BeginRefreshHost() {
 	reply_addr.sin_family = AF_INET;
 	reply_addr.sin_port = htons(7921);
 	reply_addr.sin_addr.s_addr = 0;
-	if(bind(reply, (sockaddr*)&reply_addr, sizeof(reply_addr)) == -1) {
+	if(bind(reply, reinterpret_cast<sockaddr*>(&reply_addr), sizeof(reply_addr)) == -1) {
 		evutil_closesocket(reply);
+		mainGame->btnLanRefresh->setEnabled(true);
+		is_refreshing = false;
 		return;
 	}
 	timeval timeout = { 3, 0 };
@@ -4679,12 +4705,12 @@ void DuelClient::BeginRefreshHost() {
 		ev_socklen_t opt = true;
 		setsockopt(sSend, SOL_SOCKET, SO_BROADCAST, (const char*)&opt,
 				   sizeof(ev_socklen_t));
-		if(bind(sSend, (sockaddr*)&local, sizeof(sockaddr)) == -1) {
+		if(bind(sSend, reinterpret_cast<sockaddr*>(&local), sizeof(local)) == -1) {
 			evutil_closesocket(sSend);
 			continue;
 		}
-		sendto(sSend, (const char*)&hReq, sizeof(HostRequest), 0,
-			(sockaddr*)&sockTo, sizeof(sockaddr));
+		sendto(sSend, reinterpret_cast<const char*>(&hReq), sizeof(HostRequest), 0,
+			   reinterpret_cast<sockaddr*>(&sockTo), sizeof(sockTo));
 		evutil_closesocket(sSend);
 	}
 }
@@ -4718,16 +4744,14 @@ void DuelClient::BroadcastReply(evutil_socket_t fd, short events, void* arg) {
 			pHP->ipaddr = ipaddr;
 			hosts.push_back(*pHP);
 			int rule;
-			auto GetRuleString = [&]()-> epro::wstringview {
-				static std::wstring tmp;
+			auto GetRuleString = [&]()-> std::wstring {
 				if(pHP->host.handshake == SERVER_HANDSHAKE) {
 					mainGame->GetMasterRule((pHP->host.duel_flag_low | ((uint64_t)pHP->host.duel_flag_high) << 32) & ~(DUEL_RELAY | DUEL_TCG_SEGOC_NONPUBLIC | DUEL_PSEUDO_SHUFFLE), pHP->host.forbiddentypes, &rule);
 				} else
 					rule = pHP->host.duel_rule;
 				if(rule == 6)
 					return L"Custom MR";
-				tmp = fmt::format(L"MR {}", (rule == 0) ? 3 : rule);
-				return tmp;
+				return fmt::format(L"MR {}", (rule == 0) ? 3 : rule);
 			};
 			auto GetIsCustom = [&pHP,&rule] {
 				if(pHP->host.draw_count == 1 && pHP->host.start_hand == 5 && pHP->host.start_lp == 8000
