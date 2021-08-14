@@ -874,7 +874,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				} else if (prev_operation == ACTION_SHOW_CHANGELOG) {
 					///kdiy//////////
 					// Utils::SystemOpen(EPRO_TEXT("https://github.com/edo9300/edopro/releases?referrer=") EDOPRO_USERAGENT);
-					Utils::SystemOpen(EPRO_TEXT("https://edokcg.i234.me/kcg-v6-5/"));
+					Utils::SystemOpen(EPRO_TEXT("https://edokcg.i234.me/wordpress/kcg-v6-5/"));
 					///kdiy//////////
 				}
 				prev_operation = 0;
