@@ -80,7 +80,7 @@ WindBot::launch_ret_t WindBot::Launch(int port, epro::wstringview pass, bool cha
 							/////kdiy////////	
 							{"Chat", fmt::to_string(static_cast<int>(chat))},
 							/////kdiy////////	
-							{"Seed", fmt::to_string(static_cast<int>(seed))}
+							{"Seed", fmt::to_string(static_cast<int>(seed))},
 							/////kdiy////////	
 							{"Hand", fmt::to_string(hand)}	
 						  });
