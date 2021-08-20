@@ -728,7 +728,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				}
 				else {
 					////kdiy///////////
-					mainGame->RefreshDeck(mainGame->aiDeckSelect2,mainGame->aiDeckSelect, true);
+					mainGame->RefreshDeck(mainGame->gBot.aiDeckSelect2,mainGame->gBot.aiDeckSelect, true);
 					////kdiy///////////
 					mainGame->ShowElement(mainGame->gBot.window);
 				}
@@ -737,9 +737,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			case BUTTON_BOT_ADD: {
 				try {
 					////////kdiy/////
-					if (mainGame->aiDeckSelect->getSelected() != -1) {
-					   gGameConfig->lastAIdeckfolder = mainGame->aiDeckSelect2->getItem(mainGame->aiDeckSelect2->getSelected());
-					   gGameConfig->lastAIdeck = mainGame->aiDeckSelect->getItem(mainGame->aiDeckSelect->getSelected());
+					if (mainGame->gBot.aiDeckSelect->getSelected() != -1) {
+					   gGameConfig->lastAIdeckfolder = mainGame->gBot.aiDeckSelect2->getItem(mainGame->gBot.aiDeckSelect2->getSelected());
+					   gGameConfig->lastAIdeck = mainGame->gBot.aiDeckSelect->getItem(mainGame->gBot.aiDeckSelect->getSelected());
 					   mainGame->RefreshAiDecks(1);
 					}
 					////////kdiy/////
@@ -1301,15 +1301,15 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				///////kdiy//////////
 				const auto& bot = mainGame->gBot.bots[mainGame->gBot.CurrentIndex()];
 				if (bot.deck == L"AI_perfectdicky") {
-					mainGame->aiDeckSelect->setVisible(true);
-					mainGame->aiDeckSelect->setEnabled(true);
-					mainGame->aiDeckSelect2->setVisible(true);
-					mainGame->aiDeckSelect2->setEnabled(true);
+					mainGame->gBot.aiDeckSelect->setVisible(true);
+					mainGame->gBot.aiDeckSelect->setEnabled(true);
+					mainGame->gBot.aiDeckSelect2->setVisible(true);
+					mainGame->gBot.aiDeckSelect2->setEnabled(true);
 				} else {
-					mainGame->aiDeckSelect->setVisible(false);
-					mainGame->aiDeckSelect->setEnabled(false);
-					mainGame->aiDeckSelect2->setVisible(false);
-					mainGame->aiDeckSelect2->setEnabled(false);
+					mainGame->gBot.aiDeckSelect->setVisible(false);
+					mainGame->gBot.aiDeckSelect->setEnabled(false);
+					mainGame->gBot.aiDeckSelect2->setVisible(false);
+					mainGame->gBot.aiDeckSelect2->setEnabled(false);
 				}
 				///////kdiy//////////
 				mainGame->gBot.UpdateEngine();
@@ -1321,10 +1321,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
 			///////kdiy//////////
 			case COMBOBOX_aiDeck2: {
-				int sel = mainGame->aiDeckSelect->getSelected();
-				int sel2 = mainGame->aiDeckSelect2->getSelected();
+				int sel = mainGame->gBot.aiDeckSelect->getSelected();
+				int sel2 = mainGame->gBot.aiDeckSelect2->getSelected();
 				if(sel2 >= 0)
-				    mainGame->RefreshDeck(mainGame->aiDeckSelect2, mainGame->aiDeckSelect);
+				    mainGame->RefreshDeck(mainGame->gBot.aiDeckSelect2, mainGame->gBot.aiDeckSelect);
 				break;
 			}
 			case COMBOBOX_cbDeckSelect: {

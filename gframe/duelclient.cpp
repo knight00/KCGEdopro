@@ -896,18 +896,18 @@ void DuelClient::HandleSTOCPacketLan2(char* data, uint32_t len) {
 		mainGame->RefreshDeck(mainGame->cbDeck2Select2, mainGame->cbDeckSelect2, true);
 		mainGame->cbDeckSelect->setEnabled(true);
 		mainGame->cbDeck2Select->setEnabled(true);
-		mainGame->RefreshDeck(mainGame->aiDeckSelect2, mainGame->aiDeckSelect, true);
+		mainGame->RefreshDeck(mainGame->gBot.aiDeckSelect2, mainGame->gBot.aiDeckSelect, true);
 		const auto& bot = mainGame->gBot.bots[mainGame->gBot.CurrentIndex()];
 		if (bot.deck == L"AI_perfectdicky") {
-			mainGame->aiDeckSelect->setVisible(true);
-			mainGame->aiDeckSelect->setEnabled(true);
-			mainGame->aiDeckSelect2->setVisible(true);
-			mainGame->aiDeckSelect2->setEnabled(true);
+			mainGame->gBot.aiDeckSelect->setVisible(true);
+			mainGame->gBot.aiDeckSelect->setEnabled(true);
+			mainGame->gBot.aiDeckSelect2->setVisible(true);
+			mainGame->gBot.aiDeckSelect2->setEnabled(true);
 		} else {
-			mainGame->aiDeckSelect->setVisible(false);
-			mainGame->aiDeckSelect->setEnabled(false);
-			mainGame->aiDeckSelect2->setVisible(false);
-			mainGame->aiDeckSelect2->setEnabled(false);
+			mainGame->gBot.aiDeckSelect->setVisible(false);
+			mainGame->gBot.aiDeckSelect->setEnabled(false);
+			mainGame->gBot.aiDeckSelect2->setVisible(false);
+			mainGame->gBot.aiDeckSelect2->setEnabled(false);
 		}
 		////////kdiy////////		
 		if (!mainGame->dInfo.compat_mode && pkt.info.extra_rules & DOUBLE_DECK) {
@@ -3169,15 +3169,13 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 				pcard->is_showtarget = false;
 				pcard->is_showchaintarget = false;
 				//////kdiy///
-				if(reason == 0 && previous.controler == current.controler && previous.location == current.location) {
-					if(!mainGame->dInfo.isCatchingUp) {
-						mainGame->WaitFrameSignal(5, lock);
-					}
-					return true;
-				}
+				if(!(reason == 0 && previous.controler == current.controler && previous.location == current.location && previous.sequence == current.sequence))
 				//////kdiy///	
 				mainGame->dField.RemoveCard(previous.controler, previous.location, previous.sequence);
 				pcard->position = current.position;
+				//////kdiy///
+				if(!(reason == 0 && previous.controler == current.controler && previous.location == current.location && previous.sequence == current.sequence))
+				//////kdiy///	
 				mainGame->dField.AddCard(pcard, current.controler, current.location, current.sequence);
 				if(!mainGame->dInfo.isCatchingUp) {
 					if (previous.location == current.location && previous.controler == current.controler && (current.location & (LOCATION_DECK | LOCATION_GRAVE | LOCATION_REMOVED | LOCATION_EXTRA))) {

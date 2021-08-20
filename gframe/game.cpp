@@ -641,10 +641,10 @@ bool Game::Initialize() {
 	gBot.cbBotEngine->setVisible(false);
 	gBot.stBotEngine = env->addStaticText(gDataManager->GetSysString(1254).data(), Scale(10, 205, 82, 225), false, false, gBot.window);
 	defaultStrings.emplace_back(gBot.stBotEngine, 1254);
-	aiDeckSelect2 = AddComboBox(env, Scale(92, 200, 182, 225), gBot.window, COMBOBOX_aiDeck2);
-	aiDeckSelect2->setMaxSelectionRows(10);
-	aiDeckSelect = AddComboBox(env, Scale(187, 200, 452, 225), gBot.window);
-	aiDeckSelect->setMaxSelectionRows(10);
+	gBot.aiDeckSelect2 = AddComboBox(env, Scale(92, 200, 182, 225), gBot.window, COMBOBOX_aiDeck2);
+	gBot.aiDeckSelect2->setMaxSelectionRows(10);
+	gBot.aiDeckSelect = AddComboBox(env, Scale(187, 200, 452, 225), gBot.window);
+	gBot.aiDeckSelect->setMaxSelectionRows(10);
 	//gBot.btnAdd = env->addButton(Scale(10, 260, 200, 285), gBot.window, BUTTON_BOT_ADD, gDataManager->GetSysString(2054).data());
 	gBot.btnAdd = env->addButton(Scale(10, 230, 200, 255), gBot.window, BUTTON_BOT_ADD, gDataManager->GetSysString(2054).data());
 	///////kdiy/////////
@@ -2247,11 +2247,11 @@ void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck2, irr::gui::IGUIComboBox* 
 			}
 			if(count == 0) continue;
 			auto itemIndex = cbDeck2->addItem(Utils::ToUnicodeIfNeeded(_folder).data());
-			if(!(cbDeck2 == aiDeckSelect2 && cbDeck == aiDeckSelect)
+			if(!(cbDeck2 == gBot.aiDeckSelect2 && cbDeck == gBot.aiDeckSelect)
 			  && Utils::ToPathString(gGameConfig->lastdeckfolder) == _folder) {
 				selecteddeckfolder = itemIndex;
 			}
-			else if ((cbDeck2 == aiDeckSelect2 && cbDeck == aiDeckSelect)
+			else if ((cbDeck2 == gBot.aiDeckSelect2 && cbDeck == gBot.aiDeckSelect)
 			  && Utils::ToPathString(gGameConfig->lastAIdeckfolder) == _folder) {
 				selecteddeckfolder = itemIndex;
 			}
@@ -2274,12 +2274,12 @@ void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck2, irr::gui::IGUIComboBox* 
 	// 	}
 	// }
 	for(size_t i = 0; i < cbDeck->getItemCount(); ++i) {
-		if(!(cbDeck2 == aiDeckSelect2 && cbDeck == aiDeckSelect)
+		if(!(cbDeck2 == gBot.aiDeckSelect2 && cbDeck == gBot.aiDeckSelect)
 			&& gGameConfig->lastdeckfolder == cbDeck2->getItem(cbDeck2->getSelected()) && gGameConfig->lastdeck == cbDeck->getItem(i)) {
 			selecteddeck = i;	
 			break;
 		}
-		else if((cbDeck2 == aiDeckSelect2 && cbDeck == aiDeckSelect)
+		else if((cbDeck2 == gBot.aiDeckSelect2 && cbDeck == gBot.aiDeckSelect)
 			  && gGameConfig->lastAIdeckfolder == cbDeck2->getItem(cbDeck2->getSelected()) && gGameConfig->lastAIdeck == cbDeck->getItem(i)) {
 			selecteddeck = i;
 			break;
@@ -2345,8 +2345,8 @@ void Game::RefreshAiDecks(int a) {
 					bot.deck = BufferIO::DecodeUTF8(obj.at("deck").get_ref<std::string&>());
 					/////kdiy////////
 					bot.dialog = BufferIO::DecodeUTF8(obj.at("dialog").get_ref<std::string&>());
-					bot.deckfolder = a == 1 ? mainGame->aiDeckSelect2->getItem(mainGame->aiDeckSelect2->getSelected()) : L"";
-					bot.deckpath = a == 1 ? mainGame->aiDeckSelect->getItem(mainGame->aiDeckSelect->getSelected()) : L"";
+					bot.deckfolder = a == 1 ? gBot.aiDeckSelect2->getItem(gBot.aiDeckSelect2->getSelected()) : L"";
+					bot.deckpath = a == 1 ? gBot.aiDeckSelect->getItem(gBot.aiDeckSelect->getSelected()) : L"";
 					/////kdiy////////	
 					bot.deckfile = fmt::format(L"AI_{}", bot.deck);
 					bot.difficulty = obj.at("difficulty").get<int>();

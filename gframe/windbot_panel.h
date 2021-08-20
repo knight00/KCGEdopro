@@ -34,6 +34,8 @@ struct WindBotPanel {
 	irr::gui::IGUICheckBox* chkThrowRock;
 	irr::gui::IGUICheckBox* chkMute;
 	/////kdiy//////
+	irr::gui::IGUIComboBox* aiDeckSelect;
+	irr::gui::IGUIComboBox* aiDeckSelect2;
 	irr::gui::IGUICheckBox* chkSeed;
 	/////kdiy//////
 	irr::gui::IGUIStaticText* stBotEngine;

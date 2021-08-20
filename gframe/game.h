@@ -511,8 +511,6 @@ public:
 	irr::gui::IGUIStaticText* stHostPrepOB;
 	irr::gui::IGUIStaticText* stDeckSelect;
 	//////////kdiy/////////
-	irr::gui::IGUIComboBox* aiDeckSelect;
-	irr::gui::IGUIComboBox* aiDeckSelect2;
 	irr::gui::IGUIStaticText* clearpics;
 	irr::gui::IGUIButton* btnClearpics;
 	irr::gui::IGUIStaticText* repo;
