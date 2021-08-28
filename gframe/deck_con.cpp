@@ -564,7 +564,8 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 				mainGame->ebStar->setText(L"");
 				mainGame->ebScale->setText(L"");
 				switch(mainGame->cbCardType->getSelected()) {
-				case 0: {
+				case 0:
+				case 4: {
 					mainGame->cbRace->setEnabled(false);
 					mainGame->cbAttribute->setEnabled(false);
 					mainGame->ebAttack->setEnabled(false);
@@ -1209,6 +1210,11 @@ bool DeckBuilder::CheckCard(CardDataM* data, SEARCH_MODIFIER modifier, const std
 			return false;
 		break;
 	}
+	case 4: {
+		if(!(data->_data.type & TYPE_SKILL))
+			return false;
+		break;
+	}
 	}
 	if(filter_effect && !(data->_data.category & filter_effect))
 		return false;
@@ -1339,7 +1345,7 @@ void DeckBuilder::ClearFilter() {
 void DeckBuilder::SortList() {
 	auto left = results.begin();
 	for(auto it = results.begin(); it != results.end(); ++it) {
-		if(searched_terms.find(Utils::ToUpperNoAccents<std::wstring>(gDataManager->GetName((*it)->code).data())) != searched_terms.end()) {
+		if(searched_terms.find(std::wstring{ gDataManager->GetUppercaseName((*it)->code) }) != searched_terms.end()) {
 			std::iter_swap(left, it);
 			++left;
 		}

@@ -64,6 +64,10 @@ namespace ygo {
 #define AddComboBox(env, ...) env->addComboBox(__VA_ARGS__)
 #endif
 
+static inline epro::path_string NoSkinLabel() {
+	return Utils::ToPathString(gDataManager->GetSysString(2065));
+}
+
 Game::~Game() {
 	if(guiFont)
 		guiFont->drop();
@@ -1795,10 +1799,10 @@ bool Game::MainLoop() {
 				if(!repo->is_language) {
 					for(auto& file : files) {
 						const auto db_path = data_path + file;
-						bool db_loaded = gDataManager->LoadDB(db_path);
-						if(db_loaded)
+						if(gDataManager->LoadDB(db_path)) {
 							WindBot::AddDatabase(db_path);
-						refresh_db = db_loaded || refresh_db;
+							refresh_db = true;
+						}
 					}
 					gDataManager->LoadStrings(data_path + EPRO_TEXT("strings.conf"));
 				} else {
@@ -1810,11 +1814,9 @@ bool Game::MainLoop() {
 					auto langpath = Utils::ToPathString(repo->language);
 					auto lang = Utils::ToUpperNoAccents(langpath);
 					auto it = std::find_if(locales.begin(), locales.end(),
-										   [&lang]
-					(const std::pair<epro::path_string, std::vector<epro::path_string>>& locale)->bool
-					{
-						return Utils::ToUpperNoAccents(locale.first) == lang;
-					});
+										   [&lang](const auto& locale) {
+											   return Utils::ToUpperNoAccents(locale.first) == lang;
+										   });
 					if(it != locales.end()) {
 						it->second.push_back(std::move(data_path));
 					} else {
@@ -1851,7 +1853,6 @@ bool Game::MainLoop() {
 						btnHandTest->setEnabled(true);
 						btnHandTestSettings->setEnabled(true);
 						stHandTestSettings->setEnabled(true);
-						lstReplayList->addFilteredExtensions({ L"yrp", L"yrpx" });
 					}
 					break;
 				}
@@ -2107,9 +2108,6 @@ bool Game::MainLoop() {
 #endif //YGOPRO_BUILD_DLL
 	//device->drop();
 	return restart;
-}
-epro::path_string Game::NoSkinLabel() {
-	return Utils::ToPathString(gDataManager->GetSysString(2065));
 }
 bool Game::ApplySkin(const epro::path_string& skinname, bool reload, bool firstrun) {
 	static epro::path_string prev_skin = EPRO_TEXT("");
@@ -3117,12 +3115,14 @@ void Game::ReloadCBCardType() {
 	cbCardType->addItem(gDataManager->GetSysString(1312).data());
 	cbCardType->addItem(gDataManager->GetSysString(1313).data());
 	cbCardType->addItem(gDataManager->GetSysString(1314).data());
+	cbCardType->addItem(gDataManager->GetSysString(1077).data());
 }
 void Game::ReloadCBCardType2() {
 	cbCardType2->clear();
 	cbCardType2->setEnabled(true);
 	switch (cbCardType->getSelected()) {
 	case 0:
+	case 4:
 		cbCardType2->setEnabled(false);
 		cbCardType2->addItem(gDataManager->GetSysString(1310).data(), 0);
 		break;
@@ -3201,14 +3201,14 @@ void Game::ReloadCBLimit() {
 void Game::ReloadCBAttribute() {
 	cbAttribute->clear();
 	cbAttribute->addItem(gDataManager->GetSysString(1310).data(), 0);
-	for (int filter = 0x1; filter != 0x80; filter <<= 1)
-		cbAttribute->addItem(gDataManager->FormatAttribute(filter).data(), filter);
+	for (uint32_t filter = 0x1, i = 1010; filter <= ATTRIBUTE_DIVINE; filter <<= 1, i++)
+		cbAttribute->addItem(gDataManager->GetSysString(i).data(), filter);
 }
 void Game::ReloadCBRace() {
 	cbRace->clear();
 	cbRace->addItem(gDataManager->GetSysString(1310).data(), 0);
-	for (int filter = 0x1; filter != 0x2000000; filter <<= 1)
-		cbRace->addItem(gDataManager->FormatRace(filter).data(), filter);
+	for(uint32_t filter = 0x1, i = 1020; filter <= RACE_MAX; i++, filter <<= 1)
+		cbRace->addItem(gDataManager->GetSysString(i).data(), filter);
 }
 void Game::ReloadCBFilterRule() {
 	cbFilterRule->clear();

@@ -345,6 +345,18 @@ epro::wstringview DataManager::GetText(uint32_t code) {
 		return unknown_string;
 	return csit->second.GetStrings()->text;
 }
+epro::wstringview DataManager::GetUppercaseName(uint32_t code) {
+	auto csit = cards.find(code);
+	if(csit == cards.end() || csit->second.GetStrings()->name.empty())
+		return unknown_string;
+	return csit->second.GetStrings()->uppercase_name;
+}
+epro::wstringview DataManager::GetUppercaseText(uint32_t code) {
+	auto csit = cards.find(code);
+	if(csit == cards.end() || csit->second.GetStrings()->text.empty())
+		return unknown_string;
+	return csit->second.GetStrings()->uppercase_text;
+}
 epro::wstringview DataManager::GetDesc(uint64_t strCode, bool compat) {
 	uint32_t code = 0;
 	uint32_t stringid = 0;
@@ -414,9 +426,7 @@ epro::wstringview DataManager::FormatLocation(uint32_t location, int sequence) {
 }
 std::wstring DataManager::FormatAttribute(uint32_t attribute) {
 	std::wstring res;
-	uint32_t filter = 1;
-	int i = 1010;
-	for(; filter != 0x80; filter <<= 1, ++i) {
+	for(uint32_t i = 1010, filter = 1; filter <= ATTRIBUTE_DIVINE; filter <<= 1, ++i) {
 		if(attribute & filter) {
 			if(!res.empty())
 				res += L'|';
@@ -429,8 +439,7 @@ std::wstring DataManager::FormatAttribute(uint32_t attribute) {
 }
 std::wstring DataManager::FormatRace(uint32_t race, bool isSkill) {
 	std::wstring res;
-	uint32_t filter = 1;
-	for(int i = isSkill ? 2100 : 1020; filter != 0x2000000; filter <<= 1, ++i) {
+	for(uint32_t i = isSkill ? 2100 : 1020, filter = 1; filter <= RACE_MAX; filter <<= 1, ++i) {
 		if(race & filter) {
 			if(!res.empty())
 				res += L'|';
@@ -450,8 +459,7 @@ std::wstring DataManager::FormatType(uint32_t type) {
 			res += L'|';
 		appendstring(res, GetSysString(1078));
 	}
-	int i = 1050;
-	for(uint32_t filter = 1; filter != TYPE_SKILL; filter <<= 1, ++i) {
+	for(uint32_t i = 1050, filter = 1; filter != TYPE_SKILL; filter <<= 1, ++i) {
 		if(type & filter) {
 			if(!res.empty())
 				res += L'|';

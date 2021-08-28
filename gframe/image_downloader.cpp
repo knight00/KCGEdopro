@@ -115,12 +115,13 @@ void ImageDownloader::DownloadPic() {
 				return;
 			}
 		}
-		auto file = std::move(to_download.front());
+		downloading.push_back(std::move(to_download.front()));
 		to_download.pop_front();
+		auto& file = downloading.back();
 		auto type = file.type;
 		auto code = file.code;
-		downloading_images[type][file.code].status = downloadStatus::DOWNLOADING;
-		downloading.push_back(std::move(file));
+		auto& map_elem = downloading_images[type][code];
+		map_elem.status = downloadStatus::DOWNLOADING;
 		lck.unlock();
 		auto name = fmt::format(EPRO_TEXT("./pics/temp/{}"), code);
 		if(type == imgType::THUMB)
@@ -147,7 +148,6 @@ void ImageDownloader::DownloadPic() {
 			}
 			return fmt::format(dest, code);
 		}();
-		auto& map = downloading_images[type];
 		const epro::path_char* ext = nullptr;
 		////kdiy////////
 		const epro::path_char* ext2 = nullptr;
@@ -191,21 +191,21 @@ void ImageDownloader::DownloadPic() {
 		lck.lock();
 		////kdiy////////
 		//if(ext) {
-		// 	map[code].status = downloadStatus::DOWNLOADED;
-		// 	map[code].path = dest_folder + ext;
+		    // map_elem.status = downloadStatus::DOWNLOADED;
+			// map_elem.path = dest_folder + ext;
 		// } else
-		// 	map[code].status = downloadStatus::DOWNLOAD_ERROR;	
+		// 	map_elem.status = downloadStatus::DOWNLOAD_ERROR;
 		if(gGameConfig->hdpic == 0 && ext) {	
-			map[code].status = downloadStatus::DOWNLOADED;
-			map[code].path = dest_folder + ext;
+			map_elem.status = downloadStatus::DOWNLOADED;
+			map_elem.path = dest_folder + ext;
 		} else if(gGameConfig->hdpic == 1 && ext2) {	
-			map[code].status = downloadStatus::DOWNLOADED;
-			map[code].path = dest_folder2 + ext2;
+			map_elem.status = downloadStatus::DOWNLOADED;
+			map_elem.path = dest_folder2 + ext2;
 		} else if(gGameConfig->hdpic == 1 && ext) {	
-			map[code].status = downloadStatus::DOWNLOADED;
-			map[code].path = dest_folder + ext;	
+			map_elem.status = downloadStatus::DOWNLOADED;
+			map_elem.path = dest_folder + ext;	
 		} else {
-			map[code].status = downloadStatus::DOWNLOAD_ERROR;
+			map_elem.status = downloadStatus::DOWNLOAD_ERROR;
 		}
 		////kdiy////////	
 	}

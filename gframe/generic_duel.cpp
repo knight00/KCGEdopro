@@ -1392,8 +1392,7 @@ void GenericDuel::RefreshLocation(uint8_t player, uint32_t flag, uint8_t locatio
 	auto buff = OCG_DuelQueryLocation(pduel, &len, { flag, player, location });
 	if(len == 0)
 		return;
-	char* a = (char*)buff;
-	CoreUtils::QueryStream query(a);
+	CoreUtils::QueryStream query((char*)buff);
 	query.GenerateBuffer(buffer, false);
 	replay_stream.emplace_back((char*)buffer.data(), buffer.size() - 1);
 	buffer.resize(3);
@@ -1420,8 +1419,7 @@ void GenericDuel::RefreshSingle(uint8_t player, uint8_t location, uint8_t sequen
 	auto buff = OCG_DuelQuery(pduel, &len, { flag, player, location, sequence });
 	if(buff == nullptr)
 		return;
-	char* a = (char*)buff;
-	CoreUtils::Query query(a);
+	CoreUtils::Query query((char*)buff);
 	query.GenerateBuffer(buffer, false, false);
 	replay_stream.emplace_back((char*)buffer.data(), buffer.size() - 1);
 	buffer.resize(4);
