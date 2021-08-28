@@ -107,6 +107,12 @@ bool WindBotPanel::LaunchSelected(int port, epro::wstringview pass) {
 			tmpdeck = fmt::format(L"{}/{}.ydk", absolute_deck_path, cbBotDeck->getItem(cbBotDeck->getSelected()));
 			overridedeck = tmpdeck.data();
 		} else {
+			/////kdiy//////
+			if(bots[index].deck == L"AI_perfectdicky") {
+				tmpdeck = fmt::format(L"deck/{}/{}.ydk", aiDeckSelect2->getItem(aiDeckSelect2->getSelected()), aiDeckSelect->getItem(aiDeckSelect->getSelected()));
+				overridedeck = tmpdeck.data();
+			} else
+			/////kdiy//////
 			overridedeck = bots[index].deckfile.data();
 		}
 	}
