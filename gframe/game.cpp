@@ -635,6 +635,7 @@ bool Game::Initialize() {
 	///////kdiy/////////	
 	gBot.chkSeed = env->addCheckBox(gGameConfig->botSeed, Scale(230, 105, 420, 130), gBot.window, -1, gDataManager->GetSysString(8027).data());
 	defaultStrings.emplace_back(gBot.chkSeed, 8027);
+	gBot.chkSeed->setEnabled(false);
 	///////kdiy/////////	
 	gBot.cbBotDeck = AddComboBox(env, Scale(10, 165, 200, 190), gBot.window, COMBOBOX_BOT_DECK);
 	///////kdiy/////////	

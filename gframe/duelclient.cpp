@@ -909,6 +909,12 @@ void DuelClient::HandleSTOCPacketLan2(char* data, uint32_t len) {
 			mainGame->gBot.aiDeckSelect2->setVisible(false);
 			mainGame->gBot.aiDeckSelect2->setEnabled(false);
 		}
+		if (bot.deck == L"AI_perfectdicky" || bot.deck == L"AI_Numeron" || bot.deck == L"AI_Hope") {
+			mainGame->gBot.chkSeed->setEnabled(true);
+		} else {
+			mainGame->gBot.chkSeed->setEnabled(false);
+			mainGame->gBot.chkSeed->setChecked(false);
+		}
 		////////kdiy////////		
 		if (!mainGame->dInfo.compat_mode && pkt.info.extra_rules & DOUBLE_DECK) {
 			mainGame->cbDeckSelect2->setVisible(true);

@@ -1311,6 +1311,12 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					mainGame->gBot.aiDeckSelect2->setVisible(false);
 					mainGame->gBot.aiDeckSelect2->setEnabled(false);
 				}
+				if (bot.deck == L"AI_perfectdicky" || bot.deck == L"AI_Numeron" || bot.deck == L"AI_Hope") {
+					mainGame->gBot.chkSeed->setEnabled(true);
+				} else {
+				    mainGame->gBot.chkSeed->setEnabled(false);
+					mainGame->gBot.chkSeed->setChecked(false);
+				}
 				///////kdiy//////////
 				mainGame->gBot.UpdateEngine();
 				break;
