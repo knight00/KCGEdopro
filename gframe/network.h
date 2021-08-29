@@ -212,7 +212,10 @@ public:
 	virtual void LeaveGame(DuelPlayer* dp) {}
 	virtual void ToDuelist(DuelPlayer* dp) {}
 	virtual void ToObserver(DuelPlayer* dp) {}
-	virtual void PlayerReady(DuelPlayer* dp, bool is_ready) {}
+	/////kdiy//////////
+	//virtual void PlayerReady(DuelPlayer* dp, bool ready) {}
+	virtual void PlayerReady(DuelPlayer* dp, bool ready, bool ai=false) {}
+	/////kdiy//////////
 	virtual void PlayerKick(DuelPlayer* dp, uint8_t pos) {}
 	virtual void UpdateDeck(DuelPlayer* dp, void* pdata, uint32_t len) {}
 	virtual void StartDuel(DuelPlayer* dp) {}
@@ -268,6 +271,9 @@ public:
 #define CTOS_HS_TODUELIST	0x20
 #define CTOS_HS_TOOBSERVER	0x21
 #define CTOS_HS_READY		0x22
+/////kdiy//////////
+#define CTOS_AI_READY		0x28
+/////kdiy//////////
 #define CTOS_HS_NOTREADY	0x23
 #define CTOS_HS_KICK		0x24
 #define CTOS_HS_START		0x25

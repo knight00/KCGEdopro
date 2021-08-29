@@ -21,7 +21,10 @@ public:
 	virtual void LeaveGame(DuelPlayer* dp);
 	virtual void ToDuelist(DuelPlayer* dp);
 	virtual void ToObserver(DuelPlayer* dp);
-	virtual void PlayerReady(DuelPlayer* dp, bool ready);
+	/////kdiy//////////
+	//virtual void PlayerReady(DuelPlayer* dp, bool ready);
+	virtual void PlayerReady(DuelPlayer* dp, bool ready, bool ai=false);
+	/////kdiy//////////
 	virtual void PlayerKick(DuelPlayer* dp, uint8_t pos);
 	virtual void UpdateDeck(DuelPlayer* dp, void* pdata, uint32_t len);
 	virtual void StartDuel(DuelPlayer* dp);

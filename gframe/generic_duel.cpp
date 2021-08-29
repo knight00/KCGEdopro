@@ -372,7 +372,10 @@ void GenericDuel::ToObserver(DuelPlayer* dp) {
 	sctc.type = (dp == host_player ? 0x10 : 0) | dp->type;
 	NetServer::SendPacketToPlayer(dp, STOC_TYPE_CHANGE, sctc);
 }
-void GenericDuel::PlayerReady(DuelPlayer* dp, bool is_ready) {
+/////kdiy//////////
+//void GenericDuel::PlayerReady(DuelPlayer* dp, bool is_ready) {
+void GenericDuel::PlayerReady(DuelPlayer* dp, bool is_ready, bool ai) {
+/////kdiy//////////	
 	if(dp->type >= (players.home_size + players.opposing_size))
 		return;
 	auto& dueler = GetAtPos(dp->type);
@@ -380,7 +383,10 @@ void GenericDuel::PlayerReady(DuelPlayer* dp, bool is_ready) {
 		return;
 	if(is_ready) {
 		DeckError scem{ DeckError::NONE };
-		if(!host_info.no_check_deck) {
+		/////kdiy//////////	
+		//if(!host_info.no_check_deck) {
+		if(!host_info.no_check_deck && !ai) {
+		/////kdiy//////////		
 			if(dueler.deck_error) {
 				scem.type = DeckError::UNKNOWNCARD;
 				scem.code = dueler.deck_error;

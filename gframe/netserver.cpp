@@ -301,6 +301,14 @@ void NetServer::HandleCTOSPacket(DuelPlayer* dp, char* data, uint32_t len) {
 		duel_mode->PlayerReady(dp, (CTOS_HS_NOTREADY - pktType) != 0);
 		break;
 	}
+	/////kdiy//////////
+	case CTOS_AI_READY: {
+		if(!duel_mode || duel_mode->pduel)
+			break;
+		duel_mode->PlayerReady(dp, (CTOS_HS_NOTREADY - pktType) != 0, true);
+		break;
+	}
+	/////kdiy//////////	
 	case CTOS_HS_KICK: {
 		if(!duel_mode || duel_mode->pduel)
 			break;
