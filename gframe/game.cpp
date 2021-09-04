@@ -223,6 +223,13 @@ bool Game::Initialize() {
 	offset += 35;
 	btnLanMode = env->addButton(OFFSET(10, 30, 270, 60), wMainMenu, BUTTON_LAN_MODE, gDataManager->GetSysString(1200).data());
 	defaultStrings.emplace_back(btnLanMode, 1200);
+	/////kdiy////////
+	#ifdef __ANDROID__
+	#ifndef VIP
+	btnLanMode->setEnabled(false);
+	#endif
+	#endif
+	/////kdiy////////
 	offset += 35;
 	btnSingleMode = env->addButton(OFFSET(10, 65, 270, 95), wMainMenu, BUTTON_SINGLE_MODE, gDataManager->GetSysString(1201).data());
 	defaultStrings.emplace_back(btnSingleMode, 1201);
