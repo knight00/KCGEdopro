@@ -911,6 +911,7 @@ void DuelClient::HandleSTOCPacketLan2(char* data, uint32_t len) {
 		}
 		if (bot.deck == L"AI_perfectdicky" || bot.deck == L"AI_Numeron" || bot.deck == L"AI_Hope") {
 			mainGame->gBot.chkSeed->setEnabled(true);
+			mainGame->gBot.chkSeed->setChecked(gGameConfig->botSeed);
 		} else {
 			mainGame->gBot.chkSeed->setEnabled(false);
 			mainGame->gBot.chkSeed->setChecked(false);
