@@ -530,19 +530,19 @@ bool Game::Initialize() {
 	btnCharacter->setImageSize(Scale(0, 0, 200, 300).getSize());
 	//btnCharacter->setImage(imageManager.tcharacter);
 
-	wCharacterSelect = env->addWindow(Scale(0, 315, 200, 335));
+	wCharacterSelect = env->addWindow(Scale(0, 315, 200, 340));
 	wCharacterSelect->getCloseButton()->setVisible(false);
 	wCharacterSelect->setDraggable(false);
 	wCharacterSelect->setDrawTitlebar(false);
 	wCharacterSelect->setDrawBackground(false);
 	wCharacterSelect->setVisible(false);
-	btnCharacterSelect = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 20, 20), wCharacterSelect, BUTTON_CHARACTER_SELECT);
-	btnCharacterSelect->setDrawBorder(false);
-	btnCharacterSelect->setImageSize(Scale(0, 0, 20, 20).getSize());
+	btnCharacterSelect = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 25, 25), wCharacterSelect, BUTTON_CHARACTER_SELECT);
+	btnCharacterSelect->setDrawBorder(true);
+	btnCharacterSelect->setImageSize(Scale(0, 0, 25, 25).getSize());
 	btnCharacterSelect->setImage(imageManager.tcharacterselect);
-	btnCharacterSelect2 = irr::gui::CGUIImageButton::addImageButton(env, Scale(180, 0, 200, 20), wCharacterSelect, BUTTON_CHARACTER_SELECT2);
-	btnCharacterSelect2->setDrawBorder(false);
-	btnCharacterSelect2->setImageSize(Scale(0, 0, 20, 20).getSize());
+	btnCharacterSelect2 = irr::gui::CGUIImageButton::addImageButton(env, Scale(175, 0, 200, 30), wCharacterSelect, BUTTON_CHARACTER_SELECT2);
+	btnCharacterSelect2->setDrawBorder(true);
+	btnCharacterSelect2->setImageSize(Scale(0, 0, 25, 25).getSize());
 	btnCharacterSelect2->setImage(imageManager.tcharacterselect2);
 	irr::core::dimension2di avatarsize = { Scale<irr::s32>(CARD_IMG_WIDTH * 0.5f), Scale<irr::s32>(CARD_IMG_HEIGHT * 0.5f) };
 	
@@ -3415,7 +3415,7 @@ void Game::OnResize() {
 	//btnHandTestSettings->setRelativePosition(Resize(205, 140, 295, 180));
 	btnHandTestSettings->setRelativePosition(Resize(205, 190, 295, 230));
 	wCharacter->setRelativePosition(Scale(0, 15, 200, 315));
-	wCharacterSelect->setRelativePosition(Scale(0, 315, 200, 335));
+	wCharacterSelect->setRelativePosition(Scale(0, 315, 200, 340));
 	wAvatar[0]->setRelativePosition(Resize(320, 10, 427, 212));
 	wAvatar[1]->setRelativePosition(Resize(896, 10, 1003, 212));
 	//////kdiy//////
