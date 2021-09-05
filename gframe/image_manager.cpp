@@ -892,8 +892,8 @@ ImageManager::image_path ImageManager::LoadCardTexture(uint32_t code, imgType ty
 		if(timestamp_id != source_timestamp_id.load())
 			return fail;
 		const auto file = gImageDownloader->GetDownloadPath(code, type);
-		if((img = LoadImg(driver->createImageFromFile({ file.data(), (irr::u32)file.size() }))) != nullptr)
-			return std::make_pair(img, file);
+		if((img = LoadImg(driver->createImageFromFile({ file.data(), static_cast<irr::u32>(file.size()) }))) != nullptr)
+			return std::make_pair(img, epro::path_string{ file });
 		return fail;
 	} else if(status == ImageDownloader::downloadStatus::NONE) {
 		for(auto& path : (type == imgType::ART) ? mainGame->pic_dirs : mainGame->cover_dirs) {
@@ -914,7 +914,7 @@ ImageManager::image_path ImageManager::LoadCardTexture(uint32_t code, imgType ty
 					archiveFile->drop();
 				} else {
 					file = fmt::format(EPRO_TEXT("{}{}{}"), path, code, extension);
-					base_img = driver->createImageFromFile({ file.data(), (irr::u32)file.size() });
+					base_img = driver->createImageFromFile({ file.data(), static_cast<irr::u32>(file.size()) });
 				}
 				if((img = LoadImg(base_img)) != nullptr)
 					return std::make_pair(img, file);
@@ -1007,41 +1007,37 @@ irr::video::ITexture* ImageManager::GetTextureField(uint32_t code) {
 	if(code == 0)
 		return nullptr;
 	auto tit = tFields.find(code);
-	if(tit == tFields.end()) {
-		auto status = gImageDownloader->GetDownloadStatus(code, imgType::FIELD);
-		bool should_download = status == ImageDownloader::downloadStatus::NONE;
-		irr::video::ITexture* img = nullptr;
-		if(!should_download) {
-			if(status == ImageDownloader::downloadStatus::DOWNLOADED) {
-				const auto path = gImageDownloader->GetDownloadPath(code, imgType::FIELD);
-				img = driver->getTexture({ path.data(), (irr::u32)path.size() });
+	if(tit != tFields.end())
+		return tit->second;
+	auto status = gImageDownloader->GetDownloadStatus(code, imgType::FIELD);
+	if(status != ImageDownloader::downloadStatus::NONE) {
+		if(status == ImageDownloader::downloadStatus::DOWNLOADED) {
+			const auto path = gImageDownloader->GetDownloadPath(code, imgType::FIELD);
+			auto downloaded = driver->getTexture({ path.data(), static_cast<irr::u32>(path.size()) });
+			tFields.emplace(code, downloaded);
+			return downloaded;
+		}
+		return nullptr;
+	}
+	for(auto& path : mainGame->field_dirs) {
+		for(auto extension : { EPRO_TEXT(".png"), EPRO_TEXT(".jpg") }) {
+			irr::video::ITexture* img;
+			if(path == EPRO_TEXT("archives")) {
+				auto archiveFile = Utils::FindFileInArchives(EPRO_TEXT("pics/field/"), fmt::format(EPRO_TEXT("{}{}"), code, extension));
+				if(!archiveFile)
+					continue;
+				img = driver->getTexture(archiveFile);
+				archiveFile->drop();
 			} else
-				return nullptr;
-		} else {
-			for(auto& path : mainGame->field_dirs) {
-				for(auto extension : { EPRO_TEXT(".png"), EPRO_TEXT(".jpg") }) {
-					if(path == EPRO_TEXT("archives")) {
-						auto archiveFile = Utils::FindFileInArchives(EPRO_TEXT("pics/field/"), fmt::format(EPRO_TEXT("{}{}"), code, extension));
-						if (!archiveFile)
-							continue;
-						img = driver->getTexture(archiveFile);
-						archiveFile->drop();
-						if(img)
-							break;
-					} else {
-						if((img = driver->getTexture(fmt::format(EPRO_TEXT("{}{}{}"), path, code, extension).data())))
-							break;
-					}
-				}
+				img = driver->getTexture(fmt::format(EPRO_TEXT("{}{}{}"), path, code, extension).data());
+			if(img) {
+				tFields.emplace(code, img);
+				return img;
 			}
 		}
-		if(should_download && !img)
-		    gImageDownloader->AddToDownloadQueue(code, imgType::FIELD);
-		else
-			tFields[code] = img;
-		return img;
 	}
-	return (tit->second) ? tit->second : nullptr;
+	gImageDownloader->AddToDownloadQueue(code, imgType::FIELD);
+	return nullptr;
 }
 
 
@@ -1233,10 +1229,9 @@ irr::video::ITexture* ImageManager::guiScalingResizeCached(irr::video::ITexture*
 						 srcrect.getHeight(),
 						 destrect.getWidth(),
 						 destrect.getHeight());
-	irr::io::path scalename{ scale_name.data(), (irr::u32)scale_name.size() };
 
 	// Search for existing scaled texture.
-	irr::video::ITexture* scaled = g_txrCache[scalename];
+	irr::video::ITexture*& scaled = g_txrCache[scale_name];
 	if(scaled)
 		return scaled;
 
@@ -1272,9 +1267,8 @@ irr::video::ITexture* ImageManager::guiScalingResizeCached(irr::video::ITexture*
 #endif
 
 	// Convert the scaled image back into a texture.
-	scaled = driver->addTexture(scalename, destimg);
+	scaled = driver->addTexture({ scale_name.data(), static_cast<irr::u32>(scale_name.size()) }, destimg);
 	destimg->drop();
-	g_txrCache[scalename] = scaled;
 
 	return scaled;
 }
