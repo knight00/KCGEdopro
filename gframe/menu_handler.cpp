@@ -525,7 +525,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				auto pw = mainGame->ebPw->getText();
 				std::string t(Update_PW);
 				std::wstring a(t.begin(), t.end());
-				std::wstring a2 = L"KCG";
+				std::wstring a2 = L"KEdopro";
 				if(!Utils::FileExists(EPRO_TEXT("./updates/configs.json"))) {
 					if(a.compare(pw) == 0) {
 					    gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame, true);
@@ -1202,7 +1202,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					auto pw = mainGame->ebPw->getText();
 					std::string t(Update_PW);
 					std::wstring a(t.begin(), t.end());
-					std::wstring a2 = L"KCG";
+					std::wstring a2 = L"KEdopro";
 					if(!Utils::FileExists(EPRO_TEXT("./updates/configs.json"))) {
 						if(a.compare(pw) == 0) {
 							gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame, true);

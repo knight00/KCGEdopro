@@ -3111,6 +3111,13 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 			}
 			//////kdiy///
 		}
+		//////kdiy///
+		if(reason == 0 && previous.controler == current.controler && previous.location == current.location && previous.sequence == current.sequence && previous.position == current.position) {
+		    ClientCard* pcard = new ClientCard{};
+		    pcard->SetCode(code);
+			return true;
+		}
+		//////kdiy///
 		auto lock = LockIf();
 		if (previous.location == 0) {
 			ClientCard* pcard = new ClientCard{};
@@ -3175,14 +3182,8 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 				pcard->is_showequip = false;
 				pcard->is_showtarget = false;
 				pcard->is_showchaintarget = false;
-				//////kdiy///
-				if(!(reason == 0 && previous.controler == current.controler && previous.location == current.location && previous.sequence == current.sequence))
-				//////kdiy///	
 				mainGame->dField.RemoveCard(previous.controler, previous.location, previous.sequence);
 				pcard->position = current.position;
-				//////kdiy///
-				if(!(reason == 0 && previous.controler == current.controler && previous.location == current.location && previous.sequence == current.sequence))
-				//////kdiy///	
 				mainGame->dField.AddCard(pcard, current.controler, current.location, current.sequence);
 				if(!mainGame->dInfo.isCatchingUp) {
 					if (previous.location == current.location && previous.controler == current.controler && (current.location & (LOCATION_DECK | LOCATION_GRAVE | LOCATION_REMOVED | LOCATION_EXTRA))) {

@@ -17,9 +17,9 @@ extern bool show_changelog;
 #define EDOPRO_VERSION_CODENAME L"Utopia"
 /////kdiy///////
 #ifdef VIP
-#define KCG_VERSION L"7.6-VIP"
+#define KCG_VERSION L"7.7-VIP"
 #else
-#define KCG_VERSION L"7.6"
+#define KCG_VERSION L"7.7"
 #endif
 /////kdiy///////
 #define EDOPRO_VERSION_STRING L"EDOPro-KCG V" KCG_VERSION " | " STR(EDOPRO_VERSION_MAJOR) "." STR(EDOPRO_VERSION_MINOR) "." STR(EDOPRO_VERSION_PATCH) " \"" EDOPRO_VERSION_CODENAME "\""
