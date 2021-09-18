@@ -116,7 +116,8 @@ public:
 	A(character[8])
 	A(tcharacterselect)	
 	A(tcharacterselect2)
-	A(scharacter[6])	
+	A(scharacter[6])
+	A(QQ)
 	/////////kdiy////	
 	A(tSettings)
 #undef A

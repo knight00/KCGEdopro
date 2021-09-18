@@ -97,6 +97,7 @@ bool ImageManager::Initial() {
 	timestamp_id = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	textures_path = BASE_PATH;
 	/////kdiy//////
+	QQ = driver->getTexture(EPRO_TEXT("./textures/QQ.jpg"));
 	icon[0] = driver->getTexture(0);
 	icon[1] = driver->getTexture(EPRO_TEXT("./textures/character/player/mini_icon.png"));
 	icon[2] = driver->getTexture(EPRO_TEXT("./textures/character/atem/mini_icon.png"));

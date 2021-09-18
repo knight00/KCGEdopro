@@ -150,8 +150,11 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 		case irr::gui::EGET_BUTTON_CLICKED: {
 			switch(id) {
 			////////kdiy///////
+			case BUTTON_QQ: {
+				Utils::SystemOpen(EPRO_TEXT("https://jq.qq.com/?_wv=1027&k=S1vfY66P"));
+				break;
+			}
 			case BUTTON_PLUGIN: {
-				//mainGame->HideElement(mainGame->wMainMenu);
 				if (!mainGame->mgSettings.window->isVisible())
 					mainGame->PopupElement(mainGame->mgSettings.window);
 				mainGame->env->setFocus(mainGame->mgSettings.window);	
@@ -165,6 +168,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			case BUTTON_ONLINE_MULTIPLAYER: {
 				mainGame->isHostingOnline = true;
 				mainGame->HideElement(mainGame->wMainMenu);
+				////kdiy////////
+				mainGame->HideElement(mainGame->wQQ);
+				////kdiy////////
 				mainGame->ShowElement(mainGame->wRoomListPlaceholder);
 				break;
 			}
@@ -202,6 +208,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			case BUTTON_JOIN_CANCEL2: {
 				mainGame->HideElement(mainGame->wRoomListPlaceholder);
 				mainGame->ShowElement(mainGame->wMainMenu);
+				////kdiy////////
+				mainGame->ShowElement(mainGame->wQQ);
+				////kdiy////////
 				break;
 			}
 			case BUTTON_ROOMPASSWORD_OK: {
@@ -219,6 +228,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->btnJoinHost->setEnabled(true);
 				mainGame->btnJoinCancel->setEnabled(true);
 				mainGame->HideElement(mainGame->wMainMenu);
+				////kdiy////////
+				mainGame->HideElement(mainGame->wQQ);
+				////kdiy////////
 				mainGame->ShowElement(mainGame->wLanWindow);
 				break;
 			}
@@ -251,6 +263,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			case BUTTON_JOIN_CANCEL: {
 				mainGame->HideElement(mainGame->wLanWindow);
 				mainGame->ShowElement(mainGame->wMainMenu);
+				////kdiy////////
+				mainGame->ShowElement(mainGame->wQQ);
+				////kdiy////////
 				if(exit_on_return)
 					mainGame->device->closeDevice();
 				break;
@@ -656,6 +671,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_REPLAY_MODE: {
 				mainGame->HideElement(mainGame->wMainMenu);
+				////kdiy////////
+				mainGame->HideElement(mainGame->wQQ);
+				////kdiy////////
 				mainGame->stReplayInfo->setText(L"");
 				mainGame->btnLoadReplay->setEnabled(false);
 				mainGame->btnDeleteReplay->setEnabled(false);
@@ -670,6 +688,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_SINGLE_MODE: {
 				mainGame->HideElement(mainGame->wMainMenu);
+				////kdiy////////
+				mainGame->HideElement(mainGame->wQQ);
+				////kdiy////////
 				mainGame->stSinglePlayInfo->setText(L"");
 				mainGame->btnLoadSinglePlay->setEnabled(false);
 				mainGame->btnDeleteSinglePlay->setEnabled(false);
@@ -720,6 +741,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			case BUTTON_CANCEL_REPLAY: {
 				mainGame->HideElement(mainGame->wReplay);
 				mainGame->ShowElement(mainGame->wMainMenu);
+				////kdiy////////
+				mainGame->ShowElement(mainGame->wQQ);
+				////kdiy////////
 				break;
 			}
 			case BUTTON_HP_AI_TOGGLE: {
@@ -813,6 +837,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					break;
 				mainGame->HideElement(mainGame->wSinglePlay);
 				mainGame->ShowElement(mainGame->wMainMenu);
+				////kdiy////////
+				mainGame->ShowElement(mainGame->wQQ);
+				////kdiy////////
 				break;
 			}
 			case BUTTON_DECK_EDIT: {
@@ -841,6 +868,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					mainGame->ebDeckname->setText(L"");
 				}
 				mainGame->HideElement(mainGame->wMainMenu);
+				////kdiy////////
+				mainGame->HideElement(mainGame->wQQ);
+				////kdiy////////
 				mainGame->deckBuilder.Initialize();
 				break;
 			}
@@ -1428,6 +1458,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 						//////kdiy/////
 						mainGame->cbDBDecks->setSelected(-1);
 						mainGame->HideElement(mainGame->wMainMenu);
+						//////kdiy/////
+						mainGame->HideElement(mainGame->wQQ);
+						//////kdiy/////
 						mainGame->deckBuilder.Initialize();
 						return true;
 					} else if(mainGame->coreloaded && extension == L"lua" && !mainGame->wReplay->isVisible()) {

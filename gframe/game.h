@@ -394,6 +394,13 @@ public:
 	int mainMenuLeftX;
 	int mainMenuRightX;
 	irr::gui::IGUIWindow* wMainMenu;
+	/////kdiy/////////
+	irr::gui::IGUIWindow* wQQMessage;
+	irr::gui::IGUIStaticText* stQQMessage;
+	irr::gui::IGUIButton* btnQQMsgOK;
+	irr::gui::IGUIWindow* wQQ;
+	irr::gui::CGUIImageButton* btnQQ;
+	/////kdiy/////////
 	irr::gui::IGUIWindow* wCommitsLog;
 	irr::gui::IGUIContextMenu* mTopMenu;
 	irr::gui::IGUIContextMenu* mRepositoriesInfo;

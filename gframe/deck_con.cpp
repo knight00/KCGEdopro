@@ -135,6 +135,9 @@ void DeckBuilder::Terminate(bool showmenu) {
 		mainGame->wInfos->setVisible(false);
 		mainGame->btnLeaveGame->setVisible(false);
 		mainGame->PopupElement(mainGame->wMainMenu);
+		////kdiy////////
+		mainGame->PopupElement(mainGame->wQQ);
+		////kdiy////////
 		mainGame->ClearTextures();
 		mainGame->ClearCardInfo(0);
 		gdeckManager->ClearDummies();
