@@ -78,6 +78,14 @@ newoption {
     trigger = "vip",
     description = "VIP functions support"
 }
+newoption {
+    trigger = "git_username",
+    description = "Git Username"
+}
+newoption {
+    trigger = "git_pw",
+    description = "Git Password"
+}
 -----kdiy-----
 workspace "ygo"
 	location "build"

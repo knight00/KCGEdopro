@@ -9,6 +9,9 @@
 #include "logging.h"
 #include "utils.h"
 #include "libgit2.hpp"
+////kdiy////////
+#include <regex>
+////kdiy////////
 
 static constexpr int MAX_HISTORY_LENGTH = 100;
 static constexpr int FETCH_OBJECTS_PERCENTAGE = 60;
@@ -142,8 +145,15 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 			GitRepo tmp_repo;
 			JSON_SET_IF_VALID(url, string, std::string);
 			////kdiy//////////
-			if(tmp_repo.url.substr(0,8) == "default/")
+			if(tmp_repo.url.substr(0,8) == "default/") {
+				#ifdef Git_username
+				std::string t = Git_username + std::string(":") + Git_pw;
+				t = std::regex_replace(t, std::regex("@"), "%40");
+				tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg" + tmp_repo.url.substr(7,tmp_repo.url.length());
+				#else
 			    tmp_repo.url = "https://e.coding.net/edokcg/edokcg" + tmp_repo.url.substr(7,tmp_repo.url.length());
+				#endif
+			}
 			////kdiy//////////				
 			JSON_SET_IF_VALID(should_update, boolean, bool);
 			if(tmp_repo.url == "default") {
