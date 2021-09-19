@@ -251,13 +251,17 @@ bool Game::Initialize() {
 	mainMenuLeftX = 510 - mainMenuWidth / 2;
 	mainMenuRightX = 510 + mainMenuWidth / 2;
 	////kdiy////////
-	wQQMessage = env->addWindow(Scale(490, 200, 880, 340), false, EPRO_TEXT("DANGER!!"));
+	wQQMessage = env->addWindow(Scale(490, 200, 880, 340), false, L"DANGER!!");
 	wQQMessage->getCloseButton()->setVisible(false);
 	wQQMessage->setVisible(false);
 	stQQMessage = irr::gui::CGUICustomText::addCustomText(L"", false, env, wQQMessage, -1, Scale(20, 20, 390, 100));
 	stQQMessage->setWordWrap(true);
 	stQQMessage->setTextAlignment(irr::gui::EGUIA_UPPERLEFT, irr::gui::EGUIA_CENTER);
-	btnQQMsgOK = env->addButton(Scale(130, 105, 220, 130), wQQMessage, BUTTON_QQ, EPRO_TEXT("加群"));
+	#ifdef __ANDROID__
+	btnQQMsgOK = env->addButton(Scale(130, 105, 220, 130), wQQMessage, BUTTON_QQ, L"Join Our QQ");
+	#else
+	btnQQMsgOK = env->addButton(Scale(130, 105, 220, 130), wQQMessage, BUTTON_QQ, L"加群");
+	#endif
 	int QQWidth = std::max(100, static_cast<int>(titleWidth / dpi_scale + 15));
 	wQQ = env->addWindow(Scale(mainMenuRightX+10, 200, mainMenuRightX+150, 450));
 	wQQ->getCloseButton()->setVisible(false);
@@ -1744,7 +1748,11 @@ bool Game::Initialize() {
 		btnLanMode->setEnabled(false);
 		btnOnlineMode->setEnabled(false);
 		btnQQ->setVisible(false);
-        stQQMessage->setText(EPRO_TEXT("經自動檢測,此客戶端被惡意修改,請在正式QQ群(874342483)內下載"));
+		#ifdef __ANDROID__
+		stQQMessage->setText(L"DANGER!! Malware Detected! This is being modified! Add QQ:874342483 to download normal one");
+		#else
+		stQQMessage->setText(L"經自動檢測,此客戶端被惡意修改,請在正式QQ群(874342483)內下載");
+        #endif
 		PopupElement(wQQMessage);
     }
 	free(new_md5);
