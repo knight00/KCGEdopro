@@ -146,7 +146,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 			JSON_SET_IF_VALID(url, string, std::string);
 			////kdiy//////////
 			if(tmp_repo.url.substr(0,8) == "default/") {
-				#ifdef Git_username
+				#ifdef Git_username && Git_pw
 				std::string t = Git_username + std::string(":") + Git_pw;
 				t = std::regex_replace(t, std::regex("@"), "%40");
 				tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg" + tmp_repo.url.substr(7,tmp_repo.url.length());

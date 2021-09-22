@@ -1974,7 +1974,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				break;
 			}
 			case BUTTON_HOME: {
-                Utils::SystemOpen(EPRO_TEXT("https://edokcg.i234.me/edokcg"));
+                Utils::SystemOpen(EPRO_TEXT("https://edokcg.i234.me/wordpress/edopro-kcg/"));
 				break;
 			}
 			case BUTTON_FOLDER: {
@@ -2012,14 +2012,6 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
                 Utils::SystemOpen(EPRO_TEXT("https://www.bilibili.com/video/BV1a54y127Xx?p=2"));
 				break;
 			}	
-			case BUTTON_DIY: {
-                Utils::SystemOpen(EPRO_TEXT("https://edokcg.i234.me/wordpress/diy%e8%a3%9c%e4%b8%81%e4%b8%8b%e8%bc%89/"));
-				break;
-			}	
-			case BUTTON_Chpics: {
-                Utils::SystemOpen(EPRO_TEXT("https://edokcg.i234.me/wordpress/%e9%ab%98%e6%b8%85%e5%8d%a1%e5%9c%96%e4%b8%8b%e8%bc%89/"));
-				break;
-			}		
 			//////kdiy///////
 			case BUTTON_APPLY_RESTART: {
 				try {

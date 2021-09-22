@@ -540,13 +540,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				auto pw = mainGame->ebPw->getText();
 				std::string t(Update_PW);
 				std::wstring a(t.begin(), t.end());
-				std::wstring a2 = L"KEdopro";
 				if(!Utils::FileExists(EPRO_TEXT("./updates/configs.json"))) {
 					if(a.compare(pw) == 0) {
 					    gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame, true);
-						mainGame->PopupElement(mainGame->updateWindow);
-					} else if(a2.compare(pw) == 0) {
-					    gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame);
 						mainGame->PopupElement(mainGame->updateWindow);
 					}
 					break;
@@ -893,8 +889,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				} else if(prev_operation == ACTION_UPDATE_PROMPT) {
 					///kdiy//////////
 					// gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame);
-					// mainGame->PopupElement(mainGame->updateWindow);
-					#ifdef Update_PW
+					// mainGame->PopupElement(mainGame->updateWindow);					
+					#ifdef VIP && Update_PW
 					mainGame->PopupElement(mainGame->pwupdateWindow);
 					#else
 					gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame);
@@ -1232,13 +1228,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					auto pw = mainGame->ebPw->getText();
 					std::string t(Update_PW);
 					std::wstring a(t.begin(), t.end());
-					std::wstring a2 = L"KEdopro";
 					if(!Utils::FileExists(EPRO_TEXT("./updates/configs.json"))) {
 						if(a.compare(pw) == 0) {
 							gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame, true);
-							mainGame->PopupElement(mainGame->updateWindow);
-						} else if(a2.compare(pw) == 0) {
-							gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame);
 							mainGame->PopupElement(mainGame->updateWindow);
 						}
 						break;

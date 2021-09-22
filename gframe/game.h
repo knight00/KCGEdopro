@@ -527,14 +527,11 @@ public:
 	irr::gui::IGUIButton* btnTut;
 	irr::gui::IGUIStaticText* tut2;
 	irr::gui::IGUIButton* btnTut2;
-	irr::gui::IGUIStaticText* diy;
-	irr::gui::IGUIButton* btnDIY;
 	irr::gui::IGUIStaticText* homepage;	
 	irr::gui::IGUIButton* btHome;
 	irr::gui::IGUIStaticText* folder;	
 	irr::gui::IGUIButton* btnFolder;
 	irr::gui::IGUIStaticText* hdpics;
-	irr::gui::IGUIButton* btnChpics;
 	irr::gui::IGUIComboBox* cbpics;
 	//////////kdiy/////////
 	irr::gui::IGUIButton* btnHostPrepReady;

@@ -260,7 +260,7 @@ bool Game::Initialize() {
 	#ifdef __ANDROID__
 	btnQQMsgOK = env->addButton(Scale(130, 105, 220, 130), wQQMessage, BUTTON_QQ, L"Join Our QQ");
 	#else
-	btnQQMsgOK = env->addButton(Scale(130, 105, 220, 130), wQQMessage, BUTTON_QQ, L"¥[¸s");
+	btnQQMsgOK = env->addButton(Scale(130, 105, 220, 130), wQQMessage, BUTTON_QQ, L"ï¿½[ï¿½s");
 	#endif
 	int QQWidth = std::max(100, static_cast<int>(titleWidth / dpi_scale + 15));
 	wQQ = env->addWindow(Scale(mainMenuRightX+10, 200, mainMenuRightX+150, 450));
@@ -319,10 +319,6 @@ bool Game::Initialize() {
 	defaultStrings.emplace_back(homepage, 8020);
 	btHome = env->addButton(Scale(115, mgheight, 195, mgheight+mgheight2), mgSettings.window, BUTTON_HOME, gDataManager->GetSysString(8020).data());
 	defaultStrings.emplace_back(btHome, 8020);		
-	diy = env->addStaticText(gDataManager->GetSysString(8012).data(), Scale(245, mgheight+10, 335, mgheight+mgheight2-10), false, false, mgSettings.window);
-	defaultStrings.emplace_back(diy, 8012);
-	btnDIY = env->addButton(Scale(345, mgheight, 425, mgheight+mgheight2), mgSettings.window, BUTTON_DIY, gDataManager->GetSysString(8011).data());
-	defaultStrings.emplace_back(btnDIY, 8011);	
 	mgSettings.chkEnableSummonSound = env->addCheckBox(gGameConfig->enablessound, Scale(445, mgheight+10, 535, mgheight+mgheight2-10), mgSettings.window, CHECKBOX_ENABLE_SSOUND, gDataManager->GetSysString(8013).data());
 	defaultStrings.emplace_back(mgSettings.chkEnableSummonSound, 8013);
 	mgSettings.chkEnableSummonAnime = env->addCheckBox(gGameConfig->enablesanime, Scale(555, mgheight+10, 645, mgheight+mgheight2-10), mgSettings.window, CHECKBOX_ENABLE_SANIME, gDataManager->GetSysString(8017).data());
@@ -337,10 +333,6 @@ bool Game::Initialize() {
 	defaultStrings.emplace_back(intro, 8004);	
 	btnIntro = env->addButton(Scale(115, mgheight, 195, mgheight+mgheight2), mgSettings.window, BUTTON_INTRO, gDataManager->GetSysString(8003).data());
 	defaultStrings.emplace_back(btnIntro, 8003);
-	hdpics = env->addStaticText(gDataManager->GetSysString(8024).data(), Scale(245, mgheight+10, 335, mgheight+mgheight2-10), false, false, mgSettings.window);
-	defaultStrings.emplace_back(hdpics, 8024);
-	btnChpics = env->addButton(Scale(345, mgheight, 425, mgheight+mgheight2), mgSettings.window, BUTTON_Chpics, gDataManager->GetSysString(8024).data());
-	defaultStrings.emplace_back(btnChpics, 8024);
 	mgSettings.chkEnableActivateSound = env->addCheckBox(gGameConfig->enablecsound, Scale(445, mgheight+10, 535, mgheight+mgheight2-10), mgSettings.window, CHECKBOX_ENABLE_CSOUND, gDataManager->GetSysString(8014).data());
 	defaultStrings.emplace_back(mgSettings.chkEnableActivateSound, 8014);
 	mgSettings.chkEnableActivateAnime = env->addCheckBox(gGameConfig->enablecanime, Scale(555, mgheight+10, 645, mgheight+mgheight2-10), mgSettings.window, CHECKBOX_ENABLE_CANIME, gDataManager->GetSysString(8018).data());
@@ -369,7 +361,9 @@ bool Game::Initialize() {
 	defaultStrings.emplace_back(tut2, 8008);	
 	btnTut2 = env->addButton(Scale(115, mgheight, 195, mgheight+mgheight2), mgSettings.window, BUTTON_TUT2, gDataManager->GetSysString(8007).data());
 	defaultStrings.emplace_back(btnTut2, 8007);	
-    cbpics = AddComboBox(env, Scale(445, mgheight+10, 645, mgheight+mgheight2-10), mgSettings.window);
+	hdpics = env->addStaticText(gDataManager->GetSysString(8024).data(), Scale(445, mgheight+10, 535, mgheight+mgheight2-10), false, false, mgSettings.window);
+	defaultStrings.emplace_back(hdpics, 8024);
+    cbpics = AddComboBox(env, Scale(540, mgheight+10, 645, mgheight+mgheight2-10), mgSettings.window);
 	ReloadCBpic();
 	cbpics->setSelected(gGameConfig->hdpic);
 	//cbpics->setSelected(0);		
@@ -1751,7 +1745,7 @@ bool Game::Initialize() {
 		#ifdef __ANDROID__
 		stQQMessage->setText(L"DANGER!! Malware Detected! This is being modified! Add QQ:874342483 to download normal one");
 		#else
-		stQQMessage->setText(L"¸g¦Û°ÊÀË´ú,¦¹«È¤áºÝ³Q´c·N­×§ï,½Ð¦b¥¿¦¡QQ¸s(874342483)¤º¤U¸ü");
+		stQQMessage->setText(L"ï¿½gï¿½Û°ï¿½ï¿½Ë´ï¿½,ï¿½ï¿½ï¿½È¤ï¿½Ý³Qï¿½cï¿½Nï¿½×§ï¿½,ï¿½Ð¦bï¿½ï¿½ï¿½ï¿½QQï¿½s(874342483)ï¿½ï¿½ï¿½Uï¿½ï¿½");
         #endif
 		PopupElement(wQQMessage);
     }
@@ -2128,6 +2122,9 @@ bool Game::MainLoop() {
 			PopupElement(wQuery);
 			update_prompted = true;
 		} else if (show_changelog) {
+			/////kdiy//////////
+			Utils::SystemOpen(EPRO_TEXT("https://jq.qq.com/?_wv=1027&k=S1vfY66P"));
+			/////kdiy//////////
 			std::lock_guard<std::mutex> lock(gMutex);
 			menuHandler.prev_operation = ACTION_SHOW_CHANGELOG;
 			stQMessage->setText(gDataManager->GetSysString(1451).data());
