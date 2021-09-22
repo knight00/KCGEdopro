@@ -215,15 +215,26 @@ bool Game::Initialize() {
 	wAbout->setDrawTitlebar(false);
 	wAbout->setDrawBackground(false);
 	stAbout = irr::gui::CGUICustomText::addCustomText(L"EDOPro-KCG\n"
-		L"by perfectdicky\n"
-		L"https://edokcg.i234.me/edokcg/\n"
-		L"QQ: 874342483\n"
-		L"\n"
-		L"Totally Free of charge\n"
-		L"Copyright (C) 2020-2021  Edoardo Lolletti (edo9300) and others\n"
-		L"https://github.com/knight00/KCGEdopro\n"
-		L"https://github.com/knight00/ocgcore-KCG\n"
-		L"This project is not affiliated with or endorsed by Shueisha or Konami.", false, env, wAbout, -1, Scale(10, 10, 440, 690));
+											L"by perfectdicky (QQ: 874342483)\n"
+											L"\n"
+											L"Totally Free of charge\n"
+											L"Copyright (C) 2020-2021  Edoardo Lolletti (edo9300) and others\n"
+											L"Card scripts and supporting resources by Project Ignis.\n"
+											L"https://github.com/knight00/KCGEdopro\n"
+											L"https://github.com/knight00/ocgcore-KCG\n"
+											L"Software components licensed under the GNU AGPLv3 or later. See LICENSE for more details.\n"
+											L"Supporting resources and app icon are distributed under separate licenses in their subfolders.\n"
+											L"\n"
+											L"Project Ignis:\n"
+											L"ahtelel, Cybercatman, Dragon3989, DyXel, edo9300, EerieCode, "
+											L"Gideon, Hatter, Hel, Icematoro, Larry126, LogicalNonsense, pyrQ, "
+											L"Sanct, senpaizuri, Steeldarkeagel, TheRazgriz, WolfOfWolves, Yamato\n"
+											L"Default background and icon: LogicalNonsense\n"
+											L"Default fields: Icematoro\n"
+											L"\n"
+											L"Forked from Fluorohydride's YGOPro, maintainers DailyShana, mercury233.\n"
+											L"Yu-Gi-Oh! is a trademark of Shueisha and Konami.\n"
+											L"This project is not affiliated with or endorsed by Shueisha or Konami.", false, env, wAbout, -1, Scale(10, 10, 440, 690));
 	((irr::gui::CGUICustomText*)stAbout)->enableScrollBar();
 	((irr::gui::CGUICustomText*)stAbout)->setWordWrap(true);
 	((irr::gui::CGUICustomContextMenu*)mAbout)->addItem(wAbout, -1);
@@ -1461,6 +1472,12 @@ bool Game::Initialize() {
 	btnExportDeck = env->addButton(Scale(470, 325, 570, 350), wReplay, BUTTON_EXPORT_DECK, gDataManager->GetSysString(1358).data());
 	defaultStrings.emplace_back(btnExportDeck, 1358);
 	btnExportDeck->setEnabled(false);
+	btnShareReplay = env->addButton(Scale(360, 325, 460, 350), wReplay, BUTTON_SHARE_REPLAY, gDataManager->GetSysString(1378).data());
+	defaultStrings.emplace_back(btnShareReplay, 1378);
+	btnShareReplay->setEnabled(false);
+#ifndef __ANDROID__
+	btnShareReplay->setVisible(false);
+#endif
 	chkYrp = env->addCheckBox(false, Scale(360, 250, 560, 270), wReplay, -1, gDataManager->GetSysString(1356).data());
 	defaultStrings.emplace_back(chkYrp, 1356);
  	tmpptr = env->addStaticText(gDataManager->GetSysString(1353).data(), Scale(360, 275, 570, 295), false, true, wReplay);
@@ -1482,6 +1499,12 @@ bool Game::Initialize() {
 	btnOpenSinglePlay = env->addButton(Scale(470, 325, 570, 350), wSinglePlay, BUTTON_OPEN_SINGLEPLAY, gDataManager->GetSysString(1377).data());
 	defaultStrings.emplace_back(btnOpenSinglePlay, 1377);
 	btnOpenSinglePlay->setEnabled(false);
+	btnShareSinglePlay = env->addButton(Scale(360, 325, 460, 350), wSinglePlay, BUTTON_SHARE_SINGLEPLAY, gDataManager->GetSysString(1378).data());
+	defaultStrings.emplace_back(btnShareSinglePlay, 1378);
+	btnShareSinglePlay->setEnabled(false);
+#ifndef __ANDROID__
+	btnShareSinglePlay->setVisible(false);
+#endif
 	btnDeleteSinglePlay = env->addButton(Scale(360, 355, 460, 380), wSinglePlay, BUTTON_DELETE_SINGLEPLAY, gDataManager->GetSysString(1361).data());
 	defaultStrings.emplace_back(btnDeleteSinglePlay, 1361);
 	btnDeleteSinglePlay->setEnabled(false);

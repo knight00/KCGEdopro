@@ -548,6 +548,7 @@ public:
 	irr::gui::IGUIButton* btnRenameReplay;
 	irr::gui::IGUIButton* btnReplayCancel;
 	irr::gui::IGUIButton* btnExportDeck;
+	irr::gui::IGUIButton* btnShareReplay;
 	irr::gui::IGUIEditBox* ebRepStartTurn;
 	//puzzle mode
 	irr::gui::IGUIWindow* wSinglePlay;
@@ -557,6 +558,7 @@ public:
 	irr::gui::IGUIButton* btnDeleteSinglePlay;
 	irr::gui::IGUIButton* btnRenameSinglePlay;
 	irr::gui::IGUIButton* btnOpenSinglePlay;
+	irr::gui::IGUIButton* btnShareSinglePlay;
 	irr::gui::IGUIButton* btnSinglePlayCancel;
 	//hand
 	irr::gui::IGUIWindow* wHand;
