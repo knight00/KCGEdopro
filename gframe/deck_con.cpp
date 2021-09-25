@@ -95,6 +95,7 @@ void DeckBuilder::Initialize(bool refresh) {
 	mainGame->btnSideReload->setVisible(false);
 	mainGame->btnHandTest->setVisible(true);
 	mainGame->btnHandTestSettings->setVisible(true);
+	mainGame->btnYdkeManage->setVisible(true);
 	filterList = &gdeckManager->_lfList[mainGame->cbDBLFList->getSelected()];
 	if(refresh) {
 		ClearSearch();
@@ -144,6 +145,7 @@ void DeckBuilder::Terminate(bool showmenu) {
 	}
 	mainGame->btnHandTest->setVisible(false);
 	mainGame->btnHandTestSettings->setVisible(false);
+	mainGame->btnYdkeManage->setVisible(false);
 	mainGame->wHandTest->setVisible(false);
 	mainGame->device->setEventReceiver(&mainGame->menuHandler);
 	mainGame->wACMessage->setVisible(false);
@@ -160,6 +162,25 @@ void DeckBuilder::Terminate(bool showmenu) {
 	gGameConfig->lastlflist = gdeckManager->_lfList[mainGame->cbDBLFList->getSelected()].hash;
 	if(exit_on_return)
 		mainGame->device->closeDevice();
+}
+static void ImportDeck() {
+	const wchar_t* deck_string = Utils::OSOperator->getTextFromClipboard();
+	if(deck_string) {
+		if(wcsncmp(L"ydke://", deck_string, sizeof(L"ydke://") / sizeof(wchar_t) - 1) == 0)
+			DeckManager::ImportDeckBase64(gdeckManager->current_deck, deck_string);
+		else
+			(void)DeckManager::ImportDeckBase64Omega(gdeckManager->current_deck, deck_string);
+	}
+}
+static void ExportDeck(bool plain_text) {
+	auto deck_string = plain_text ? DeckManager::ExportDeckCardNames(gdeckManager->current_deck) : DeckManager::ExportDeckBase64(gdeckManager->current_deck);
+	if(deck_string) {
+		Utils::OSOperator->copyToClipboard(deck_string);
+		mainGame->stACMessage->setText(gDataManager->GetSysString(1368).data());
+	} else {
+		mainGame->stACMessage->setText(gDataManager->GetSysString(1369).data());
+	}
+	mainGame->PopupElement(mainGame->wACMessage, 20);
 }
 bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 	bool stopPropagation = false;
@@ -218,6 +239,27 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 			case BUTTON_HAND_TEST_CANCEL: {
 				mainGame->HideElement(mainGame->wHandTest);
 				mainGame->env->setFocus(mainGame->btnHandTestSettings);
+				break;
+			}
+			case BUTTON_DECK_YDKE_MANAGE: {
+				mainGame->PopupElement(mainGame->wYdkeManage);
+				break;
+			}
+			case BUTTON_IMPORT_YDKE: {
+				ImportDeck();
+				break;
+			}
+			case BUTTON_EXPORT_YDKE: {
+				ExportDeck(false);
+				break;
+			}
+			case BUTTON_EXPORT_DECK_PLAINTEXT: {
+				ExportDeck(true);
+				break;
+			}
+			case BUTTON_CLOSE_YDKE_WINDOW: {
+				mainGame->HideElement(mainGame->wYdkeManage);
+				mainGame->env->setFocus(mainGame->btnYdkeManage);
 				break;
 			}
 			case BUTTON_CLEAR_DECK: {
@@ -833,28 +875,13 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 		if(event.KeyInput.PressedDown && !mainGame->HasFocus(irr::gui::EGUIET_EDIT_BOX)) {
 			switch(event.KeyInput.Key) {
 			case irr::KEY_KEY_C: {
-				if(event.KeyInput.Control) {
-					auto deck_string = event.KeyInput.Shift ? DeckManager::ExportDeckCardNames(gdeckManager->current_deck) : DeckManager::ExportDeckBase64(gdeckManager->current_deck);
-					if(deck_string) {
-						Utils::OSOperator->copyToClipboard(deck_string);
-						mainGame->stACMessage->setText(gDataManager->GetSysString(1368).data());
-					} else {
-						mainGame->stACMessage->setText(gDataManager->GetSysString(1369).data());
-					}
-					mainGame->PopupElement(mainGame->wACMessage, 20);
-				}
+				if(event.KeyInput.Control)
+					ExportDeck(event.KeyInput.Shift);
 				break;
 			}
 			case irr::KEY_KEY_V: {
-				if(event.KeyInput.Control && !mainGame->HasFocus(irr::gui::EGUIET_EDIT_BOX)) {
-					const wchar_t* deck_string = Utils::OSOperator->getTextFromClipboard();
-					if(deck_string) {
-						if(wcsncmp(L"ydke://", deck_string, sizeof(L"ydke://") / sizeof(wchar_t) - 1) == 0)
-							DeckManager::ImportDeckBase64(gdeckManager->current_deck, deck_string);
-						else
-							(void)DeckManager::ImportDeckBase64Omega(gdeckManager->current_deck, deck_string);
-					}
-				}
+				if(event.KeyInput.Control && !mainGame->HasFocus(irr::gui::EGUIET_EDIT_BOX))
+					ImportDeck();
 				break;
 			}
 			default:
