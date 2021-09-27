@@ -906,19 +906,22 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					}
 				} else if(prev_operation == ACTION_UPDATE_PROMPT) {
 					///kdiy//////////
+					Utils::SystemOpen(EPRO_TEXT("https://jq.qq.com/?_wv=1027&k=S1vfY66P"));
 					// gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame);
-					// mainGame->PopupElement(mainGame->updateWindow);					
+					// mainGame->PopupElement(mainGame->updateWindow);
 					#ifdef VIP && Update_PW
 					mainGame->PopupElement(mainGame->pwupdateWindow);
 					#else
 					gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame);
 					mainGame->PopupElement(mainGame->updateWindow);
 					#endif
+					mainGame->btnNo->setEnabled(true);
 					///kdiy//////////
 				} else if (prev_operation == ACTION_SHOW_CHANGELOG) {
 					///kdiy//////////
 					// Utils::SystemOpen(EPRO_TEXT("https://github.com/edo9300/edopro/releases?referrer=") EDOPRO_USERAGENT);
 					Utils::SystemOpen(EPRO_TEXT("https://edokcg.i234.me/wordpress/kcg-v6-5/"));
+					mainGame->btnNo->setEnabled(true);
 					///kdiy//////////
 				}
 				prev_operation = 0;

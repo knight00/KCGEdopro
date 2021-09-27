@@ -268,11 +268,11 @@ bool Game::Initialize() {
 	stQQMessage = irr::gui::CGUICustomText::addCustomText(L"", false, env, wQQMessage, -1, Scale(20, 20, 390, 100));
 	stQQMessage->setWordWrap(true);
 	stQQMessage->setTextAlignment(irr::gui::EGUIA_UPPERLEFT, irr::gui::EGUIA_CENTER);
-	#ifdef __ANDROID__
-	btnQQMsgOK = env->addButton(Scale(130, 105, 220, 130), wQQMessage, BUTTON_QQ, L"Join Our QQ");
-	#else
-	btnQQMsgOK = env->addButton(Scale(130, 105, 220, 130), wQQMessage, BUTTON_QQ, L"�[�s");
-	#endif
+	//#ifdef __ANDROID__
+	btnQQMsgOK = env->addButton(Scale(130, 105, 220, 130), wQQMessage, BUTTON_QQ, L"Join Our QQ, Download UPDATE");
+	// #else
+	// btnQQMsgOK = env->addButton(Scale(130, 105, 220, 130), wQQMessage, BUTTON_QQ, L"�[�s");
+	// #endif
 	int QQWidth = std::max(100, static_cast<int>(titleWidth / dpi_scale + 15));
 	wQQ = env->addWindow(Scale(mainMenuRightX+10, 200, mainMenuRightX+150, 450));
 	wQQ->getCloseButton()->setVisible(false);
@@ -995,6 +995,10 @@ bool Game::Initialize() {
 #ifdef UPDATE_URL
 	gSettings.chkUpdates = env->addCheckBox(gGameConfig->noClientUpdates, Scale(340, 155, 645, 180), sPanel, -1, gDataManager->GetSysString(1466).data());
 	defaultStrings.emplace_back(gSettings.chkUpdates, 1466);
+	////kdiy////////
+	gSettings.chkUpdates->setEnabled(false);
+	gSettings.chkUpdates->setVisible(false);
+	////kdiy////////
 #endif
 	// audio
 	gSettings.chkEnableSound = env->addCheckBox(gGameConfig->enablesound, Scale(340, 185, 645, 210), sPanel, CHECKBOX_ENABLE_SOUND, gDataManager->GetSysString(2047).data());
@@ -1795,11 +1799,11 @@ bool Game::Initialize() {
 		btnLanMode->setEnabled(false);
 		btnOnlineMode->setEnabled(false);
 		btnQQ->setVisible(false);
-		#ifdef __ANDROID__
+		// #ifdef __ANDROID__
 		stQQMessage->setText(L"DANGER!! Malware Detected! This is being modified! Add QQ:874342483 to download normal one");
-		#else
-		stQQMessage->setText(L"�g�۰��˴�,���Ȥ�ݳQ�c�N�ק�,�Цb����QQ�s(874342483)���U��");
-        #endif
+		// #else
+		// stQQMessage->setText(L"�g�۰��˴�,���Ȥ�ݳQ�c�N�ק�,�Цb����QQ�s(874342483)���U��");
+        //#endif
 		PopupElement(wQQMessage);
     }
 	free(new_md5);
@@ -1951,8 +1955,10 @@ bool Game::MainLoop() {
 										   });
 					if(it != locales.end()) {
 						it->second.push_back(std::move(data_path));
-					} else {
-						Utils::MakeDirectory(EPRO_TEXT("./config/languages/") + langpath);
+					} else {	
+						///kdiy//////
+						// Utils::MakeDirectory(EPRO_TEXT("./config/languages/") + langpath);
+						///kdiy//////
 						locales.emplace_back(std::move(langpath), std::vector<epro::path_string>{ std::move(data_path) });
 						gSettings.cbCurrentLocale->addItem(BufferIO::DecodeUTF8(repo->language).data());
 					}
@@ -2173,16 +2179,19 @@ bool Game::MainLoop() {
 			stQMessage->setText(fmt::format(L"{}\n{}", gDataManager->GetSysString(1460), gDataManager->GetSysString(1461)).data());
 			SetCentered(wQuery);
 			PopupElement(wQuery);
+			//kdiy////////
+			btnNo->setEnabled(false);
+			//kdiy////////
 			update_prompted = true;
 		} else if (show_changelog) {
-			/////kdiy//////////
-			Utils::SystemOpen(EPRO_TEXT("https://jq.qq.com/?_wv=1027&k=S1vfY66P"));
-			/////kdiy//////////
 			std::lock_guard<std::mutex> lock(gMutex);
 			menuHandler.prev_operation = ACTION_SHOW_CHANGELOG;
 			stQMessage->setText(gDataManager->GetSysString(1451).data());
 			SetCentered(wQuery);
 			PopupElement(wQuery);
+			//kdiy////////
+			btnNo->setEnabled(false);
+			//kdiy////////
 			show_changelog = false;
 		}
 		if(!update_checked && gClientUpdater->UpdateDownloaded()) {
@@ -2560,7 +2569,10 @@ void Game::SaveConfig() {
 	gGameConfig->chkHideHintButton = tabSettings.chkHideChainButtons->isChecked();
 	gGameConfig->chkAnime = chkAnime->isChecked();
 #ifdef UPDATE_URL
-	gGameConfig->noClientUpdates = gSettings.chkUpdates->isChecked();
+    ////kdiy////////
+	//gGameConfig->noClientUpdates = gSettings.chkUpdates->isChecked();
+	gGameConfig->noClientUpdates = false;
+	////kdiy////////
 #endif
 	gGameConfig->Save(EPRO_TEXT("./config/system.conf"));
 }
@@ -3996,7 +4008,10 @@ void Game::ApplyLocale(size_t index, bool forced) {
 			return;
 		}
 	} else
-		gGameConfig->locale = EPRO_TEXT("en");
+	    ////kdiy//////////
+		//gGameConfig->locale = EPRO_TEXT("en");
+		gGameConfig->locale = EPRO_TEXT("chs");
+		////kdiy//////////
 	ReloadElementsStrings();
 }
 
