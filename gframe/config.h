@@ -12,8 +12,8 @@ extern epro::path_string open_file_name;
 extern bool show_changelog;
 
 #define EDOPRO_VERSION_MAJOR 39
-#define EDOPRO_VERSION_MINOR 1
-#define EDOPRO_VERSION_PATCH 2
+#define EDOPRO_VERSION_MINOR 2
+#define EDOPRO_VERSION_PATCH 1
 #define EDOPRO_VERSION_CODENAME L"Utopia"
 /////kdiy///////
 #ifdef VIP
