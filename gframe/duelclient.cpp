@@ -3376,8 +3376,8 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 	case MSG_SUMMONED: {
 		event_string = gDataManager->GetSysString(1604).data();
 		/////kdiy//////
-		if(!pbuf) return true;
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
+		if(!code) return true;
 		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		const auto player = mainGame->LocalPlayer(info.controler);
 		int character = mainGame->dInfo.current_player[player];
@@ -3419,8 +3419,8 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 	case MSG_SPSUMMONED: {
 		event_string = gDataManager->GetSysString(1606).data();
 		/////kdiy//////
-		if(!pbuf) return true;
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
+		if(!code) return true;
 		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		const auto player = mainGame->LocalPlayer(info.controler);
 		int character = mainGame->dInfo.current_player[player];
@@ -3470,8 +3470,8 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 	case MSG_FLIPSUMMONED: {
 		event_string = gDataManager->GetSysString(1608).data();
 		/////kdiy//////
-		if(!pbuf) return true;
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
+		if(!code) return true;
 		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		info.controler = mainGame->LocalPlayer(info.controler);
 		const auto player = info.controler;

@@ -166,9 +166,10 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 	GitRepo tmp_repo3;
 	tmp_repo3.url = "https://" + t + "@e.coding.net/edokcg/edokcg/Ch.git";
 	tmp_repo3.repo_name = "Language";
-	tmp_repo3.repo_path = "./config/lanugages";
+	tmp_repo3.repo_path = "./config/languages";
+	tmp_repo3.data_path = "";
 	tmp_repo3.is_language = true;
-	tmp_repo3.should_update = true;
+	//tmp_repo3.language = "";
 	if(tmp_repo3.Sanitize())
 		AddRepo(std::move(tmp_repo3));
 

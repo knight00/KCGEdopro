@@ -955,7 +955,10 @@ bool Game::Initialize() {
 	defaultStrings.emplace_back(gSettings.stCurrentLocale, 2067);
 	PopulateLocales();
 	gSettings.cbCurrentLocale = AddComboBox(env, Scale(95, 335, 320, 360), sPanel, COMBOBOX_CURRENT_LOCALE);
-	int selectedLocale = gSettings.cbCurrentLocale->addItem(L"English");
+	/////kdiy////////////
+	//int selectedLocale = gSettings.cbCurrentLocale->addItem(L"English");
+	int selectedLocale = gSettings.cbCurrentLocale->addItem(L"Ch");
+	/////kdiy////////////
 	for(auto& _locale : locales) {
 		auto& locale = _locale.first;
 		auto itemIndex = gSettings.cbCurrentLocale->addItem(Utils::ToUnicodeIfNeeded(locale).data());
@@ -1944,7 +1947,14 @@ bool Game::MainLoop() {
 				} else {
 					if(Utils::ToUTF8IfNeeded(gGameConfig->locale) == repo->language) {
 						for(auto& file : files)
+						////kdiy//////////////
+							//refresh_db = gDataManager->LoadLocaleDB(data_path + file) || refresh_db;
+						{
+							if(!(data_path == EPRO_TEXT("./config/languages/") && (Utils::ToPathString(repo->language) == EPRO_TEXT("Chs") || Utils::ToPathString(repo->language) == EPRO_TEXT("Cht") || Utils::ToPathString(repo->language) == EPRO_TEXT("English")) && (file == EPRO_TEXT("ACS.cdb") || file == EPRO_TEXT("ADIY.cdb") || file == EPRO_TEXT("anime.cdb") || file == EPRO_TEXT("cards-skills.cdb") || file == EPRO_TEXT("KCG.cdb")|| file == EPRO_TEXT("neet.cdb")|| file == EPRO_TEXT("ocgtcg.cdb")|| file == EPRO_TEXT("prerelease.cdb")|| file == EPRO_TEXT("rush.cdb"))))
+								continue;
 							refresh_db = gDataManager->LoadLocaleDB(data_path + file) || refresh_db;
+						}
+						////kdiy//////////////
 						gDataManager->LoadLocaleStrings(data_path + EPRO_TEXT("strings.conf"));
 					}
 					auto langpath = Utils::ToPathString(repo->language);
@@ -1956,9 +1966,7 @@ bool Game::MainLoop() {
 					if(it != locales.end()) {
 						it->second.push_back(std::move(data_path));
 					} else {	
-						///kdiy//////
-						// Utils::MakeDirectory(EPRO_TEXT("./config/languages/") + langpath);
-						///kdiy//////
+						Utils::MakeDirectory(EPRO_TEXT("./config/languages/") + langpath);
 						locales.emplace_back(std::move(langpath), std::vector<epro::path_string>{ std::move(data_path) });
 						gSettings.cbCurrentLocale->addItem(BufferIO::DecodeUTF8(repo->language).data());
 					}
@@ -3985,6 +3993,9 @@ void Game::PopulateResourcesDirectories() {
 void Game::PopulateLocales() {
 	locales.clear();
 	for(auto& locale : Utils::FindSubfolders(EPRO_TEXT("./config/languages/"), 1, false)) {
+		//////kdiy//////////
+		if(locale == EPRO_TEXT("Chs") || locale == EPRO_TEXT("Cht") || locale == EPRO_TEXT("English"))	
+		//////kdiy//////////	
 		locales.emplace_back(locale, std::vector<epro::path_string>());
 	}
 }
@@ -4003,6 +4014,10 @@ void Game::ApplyLocale(size_t index, bool forced) {
 			gGameConfig->locale = locales[index - 1].first;
 			auto locale = fmt::format(EPRO_TEXT("./config/languages/{}"), gGameConfig->locale);
 			for(auto& file : Utils::FindFiles(locale, { EPRO_TEXT("cdb") })) {
+				////kdiy//////////////
+				if(!((gGameConfig->locale == EPRO_TEXT("Chs") || gGameConfig->locale == EPRO_TEXT("Cht") || gGameConfig->locale == EPRO_TEXT("English")) && (file == EPRO_TEXT("ACS.cdb") || file == EPRO_TEXT("ADIY.cdb") || file == EPRO_TEXT("anime.cdb") || file == EPRO_TEXT("cards-skills.cdb") || file == EPRO_TEXT("KCG.cdb")|| file == EPRO_TEXT("neet.cdb")|| file == EPRO_TEXT("ocgtcg.cdb")|| file == EPRO_TEXT("prerelease.cdb")|| file == EPRO_TEXT("rush.cdb"))))
+					continue;
+				////kdiy//////////////
 				gDataManager->LoadLocaleDB(fmt::format(EPRO_TEXT("{}/{}"), locale, file));
 			}
 			gDataManager->LoadLocaleStrings(fmt::format(EPRO_TEXT("{}/strings.conf"), locale));
@@ -4010,7 +4025,14 @@ void Game::ApplyLocale(size_t index, bool forced) {
 			bool refresh_db = false;
 			for(auto& path : extra) {
 				for(auto& file : Utils::FindFiles(path, { EPRO_TEXT("cdb") }, 0))
-					refresh_db = gDataManager->LoadLocaleDB(path + file) || refresh_db;
+				    ////kdiy//////////////
+					//refresh_db = gDataManager->LoadLocaleDB(path + file) || refresh_db;
+					{
+						if(!(file == EPRO_TEXT("ACS.cdb") || file == EPRO_TEXT("ADIY.cdb") || file == EPRO_TEXT("anime.cdb") || file == EPRO_TEXT("cards-skills.cdb") || file == EPRO_TEXT("KCG.cdb")|| file == EPRO_TEXT("neet.cdb")|| file == EPRO_TEXT("ocgtcg.cdb")|| file == EPRO_TEXT("prerelease.cdb")|| file == EPRO_TEXT("rush.cdb")))
+						    continue;
+						refresh_db = gDataManager->LoadLocaleDB(path + file) || refresh_db;
+					}
+					////kdiy//////////////
 				gDataManager->LoadLocaleStrings(path + EPRO_TEXT("strings.conf"));
 			}
 			if(refresh_db && is_building && deckBuilder.results.size())
@@ -4022,7 +4044,7 @@ void Game::ApplyLocale(size_t index, bool forced) {
 	} else
 	    ////kdiy//////////
 		//gGameConfig->locale = EPRO_TEXT("en");
-		gGameConfig->locale = EPRO_TEXT("chs");
+		gGameConfig->locale = EPRO_TEXT("Chs");
 		////kdiy//////////
 	ReloadElementsStrings();
 }
