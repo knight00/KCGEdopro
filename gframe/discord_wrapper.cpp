@@ -73,10 +73,9 @@ void DiscordWrapper::UpdatePresence(PresenceType type) {
 	}
 	if(!running)
 		return;
-	PresenceType previous = presence;
+	if(presence == type)
+		return;
 	presence = type;
-	if(previous != presence)
-		start = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	if(type == CLEAR) {
 		Discord_ClearPresence();
 		return;
@@ -140,7 +139,7 @@ void DiscordWrapper::UpdatePresence(PresenceType type) {
 			break;
 	}
 	discordPresence.state = presenceState.data();
-	discordPresence.startTimestamp = start;
+	discordPresence.startTimestamp = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	discordPresence.largeImageKey = "game-icon";
 	discordPresence.partyId = partyid.data();
 	Discord_UpdatePresence(&discordPresence);
@@ -218,7 +217,7 @@ static void OnJoin(const char* secret, void* payload) {
 }
 
 static void OnSpectate(const char* secret, void* payload) {
-	fmt::print("Join: {}\n", secret);
+	fmt::print("Join Spectating: {}\n", secret);
 }
 
 static void OnJoinRequest(const DiscordUser* request, void* payload) {
@@ -226,7 +225,10 @@ static void OnJoinRequest(const DiscordUser* request, void* payload) {
 			   request->username,
 			   request->discriminator,
 			   request->userId);
-	Discord_Respond(request->userId, DISCORD_REPLY_YES);
+	if(ygo::mainGame->dInfo.secret.pass.empty())
+		Discord_Respond(request->userId, DISCORD_REPLY_YES);
+	else
+		Discord_Respond(request->userId, DISCORD_REPLY_NO);
 }
 #endif
 
