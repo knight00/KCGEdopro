@@ -1327,7 +1327,7 @@ bool Game::Initialize() {
 	btnHandTest->setEnabled(coreloaded);
 	//////kdiy//////
 	//btnHandTestSettings = env->addButton(Scale(205, 140, 295, 180), 0, BUTTON_HAND_TEST_SETTINGS, L"");
-	btnHandTestSettings = env->addButton(Scale(205, 190, 295, 230), 0, BUTTON_HAND_TEST_SETTINGS, L"");
+	btnHandTestSettings = env->addButton(Scale(205, 235, 295, 275), 0, BUTTON_HAND_TEST_SETTINGS, L"");
 	//////kdiy//////
 	btnHandTestSettings->setVisible(false);
 	btnHandTestSettings->setEnabled(coreloaded);
@@ -3573,9 +3573,11 @@ void Game::OnResize() {
 	//btnHandTest->setRelativePosition(Resize(205, 90, 295, 130));
 	btnHandTest->setRelativePosition(Resize(205, 190, 295, 230));
 	//btnHandTestSettings->setRelativePosition(Resize(205, 140, 295, 180));
-	btnHandTestSettings->setRelativePosition(Resize(205, 190, 295, 230));
+	btnHandTestSettings->setRelativePosition(Resize(205, 235, 295, 275));
+	//////kdiy//////
 	btnYdkeManage->setRelativePosition(Resize(205, 190, 295, 230));
 	SetCentered(wYdkeManage, false);
+	//////kdiy//////
 	wCharacter->setRelativePosition(Scale(0, 15, 200, 315));
 	wCharacterSelect->setRelativePosition(Scale(0, 315, 200, 340));
 	wAvatar[0]->setRelativePosition(Resize(320, 10, 427, 212));

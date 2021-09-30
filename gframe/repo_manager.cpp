@@ -140,60 +140,65 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 	#endif
 	std::string t = Git_username + std::string(":") + Git_pw;
 	t = std::regex_replace(t, std::regex("@"), "%40");
-
-	GitRepo tmp_repo1;
-	tmp_repo1.url = "https://" + t + "@e.coding.net/edokcg/edokcg/Official.git";
-	tmp_repo1.repo_name = "Official";
-	tmp_repo1.repo_path = "./repositories/official";
-	tmp_repo1.data_path = "";
-	tmp_repo1.script_path = "script";
-	tmp_repo1.should_update = true;
-	if(tmp_repo1.Sanitize())
-		AddRepo(std::move(tmp_repo1));
-				
-	GitRepo tmp_repo2;
-	tmp_repo2.url = "https://" + t + "@e.coding.net/edokcg/edokcg/KCG.git";
-	tmp_repo2.repo_name = "KCG";
-	tmp_repo2.repo_path = "./repositories/main";
-	tmp_repo2.data_path = "";
-	tmp_repo2.script_path = "script";
-	tmp_repo2.has_core = true;
-	tmp_repo2.core_path = "bin";
-	tmp_repo2.should_update = true;
-	if(tmp_repo2.Sanitize())
-		AddRepo(std::move(tmp_repo2));
-
-	GitRepo tmp_repo3;
-	tmp_repo3.url = "https://" + t + "@e.coding.net/edokcg/edokcg/Ch.git";
-	tmp_repo3.repo_name = "Language";
-	tmp_repo3.repo_path = "./config/languages";
-	tmp_repo3.data_path = "";
-	tmp_repo3.is_language = true;
-	//tmp_repo3.language = "";
-	if(tmp_repo3.Sanitize())
-		AddRepo(std::move(tmp_repo3));
-
-	GitRepo tmp_repo4;
-	tmp_repo4.url = "https://" + t + "@e.coding.net/edokcg/edokcg/LFLists.git";
-	tmp_repo4.repo_name = "LFLists";
-	tmp_repo4.repo_path = "./repositories/lflists";
-	tmp_repo4.lflist_path = "";
-	tmp_repo4.should_update = true;
-	if(tmp_repo4.Sanitize())
-		AddRepo(std::move(tmp_repo4));
-
-	GitRepo tmp_repo5;
-	tmp_repo5.url = "https://" + t + "@e.coding.net/edokcg/edokcg/Puzzles.git";
-	tmp_repo5.repo_name = "Puzzles";
-	tmp_repo5.repo_path = "./puzzles/Canon collection";
-	tmp_repo5.should_update = true;
-	if(tmp_repo5.Sanitize())
-		AddRepo(std::move(tmp_repo5));
+	std::string tmp_repo1 = "./repositories/delta";
+	std::string tmp_repo2 = "./repositories/kcg";
+	std::string tmp_repo3 = "./config/languages";
+	std::string tmp_repo4 = "./repositories/lflists";
+	std::string tmp_repo5 = "./puzzles/Canon collection";
 	////kdiy//////////
 	auto cit = configs.find("repos");
 	if(cit != configs.end() && cit->is_array()) {
 		for(auto& obj : *cit) {
 			{
+				////kdiy//////////
+				GitRepo tmp_repo;
+				JSON_SET_IF_VALID(repo_path, string, std::string);
+				JSON_SET_IF_VALID(repo_name, string, std::string);
+				if(tmp_repo.repo_path == tmp_repo1 || tmp_repo.repo_path == tmp_repo2 || tmp_repo.repo_path == tmp_repo3 || tmp_repo.repo_path == tmp_repo4 || tmp_repo.repo_path == tmp_repo5) {
+					if(tmp_repo.repo_path == tmp_repo1) {
+						if(tmp_repo.repo_name.empty()) 
+						    tmp_repo.repo_name = "Official";
+						tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/Official.git";
+						tmp_repo.data_path = "";
+						tmp_repo.script_path = "script";
+					}
+					if(tmp_repo.repo_path == tmp_repo2) {
+						if(tmp_repo.repo_name.empty()) 
+						    tmp_repo.repo_name = "KCG";
+						tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/kcgedo_top.git";
+						tmp_repo.data_path = "";
+						tmp_repo.script_path = "script";
+						tmp_repo.has_core = true;
+						tmp_repo.core_path = "bin";
+					}
+					if(tmp_repo.repo_path == tmp_repo3) {
+						if(tmp_repo.repo_name.empty()) 
+						    tmp_repo.repo_name = "Language";
+						tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/Ch.git";
+						tmp_repo.data_path = "";
+						tmp_repo.is_language = true;
+					}
+					if(tmp_repo.repo_path == tmp_repo4) {
+						if(tmp_repo.repo_name.empty()) 
+						    tmp_repo.repo_name = "LFLists";
+						tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/LFLists.git";
+						tmp_repo.lflist_path = "";
+					}
+					if(tmp_repo.repo_path == tmp_repo5) {
+						if(tmp_repo.repo_name.empty()) 
+						    tmp_repo.repo_name = "Puzzles";
+						tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/Puzzles.git";
+					}
+					auto it = obj.find("admin_update");
+				    if(it != obj.end() && it->is_boolean() && !it->get<bool>())
+					    tmp_repo.should_update = false;
+					else
+						tmp_repo.should_update = true;
+					if(tmp_repo.Sanitize())
+						AddRepo(std::move(tmp_repo));
+					continue;
+				}
+				////kdiy//////////
 				auto it = obj.find("should_read");
 				if(it != obj.end() && it->is_boolean() && !it->get<bool>())
 					continue;
@@ -203,12 +208,11 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 			////kdiy//////////
 			if(tmp_repo.url.substr(0,8) == "default/") {
 				#ifdef Git_username && Git_pw
-				std::string t = Git_username + std::string(":") + Git_pw;
-				t = std::regex_replace(t, std::regex("@"), "%40");
 				tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg" + tmp_repo.url.substr(7,tmp_repo.url.length());
 				#else
 			    tmp_repo.url = "https://e.coding.net/edokcg/edokcg" + tmp_repo.url.substr(7,tmp_repo.url.length());
 				#endif
+				JSON_SET_IF_VALID(should_update, boolean, bool);
  				JSON_SET_IF_VALID(repo_path, string, std::string);
  				JSON_SET_IF_VALID(repo_name, string, std::string);
 				JSON_SET_IF_VALID(data_path, string, std::string);
