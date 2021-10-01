@@ -145,6 +145,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 	std::string tmp_repo3 = "./config/languages";
 	std::string tmp_repo4 = "./repositories/lflists";
 	std::string tmp_repo5 = "./puzzles/Canon collection";
+	bool repo3chk = false, repo4chk = false;
 	////kdiy//////////
 	auto cit = configs.find("repos");
 	if(cit != configs.end() && cit->is_array()) {
@@ -177,12 +178,14 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 						tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/Ch.git";
 						tmp_repo.data_path = "";
 						tmp_repo.is_language = true;
+						repo3chk = true;
 					}
 					if(tmp_repo.repo_path == tmp_repo4) {
 						if(tmp_repo.repo_name.empty()) 
 						    tmp_repo.repo_name = "LFLists";
 						tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/LFLists.git";
 						tmp_repo.lflist_path = "";
+						repo4chk = true;
 					}
 					if(tmp_repo.repo_path == tmp_repo5) {
 						if(tmp_repo.repo_name.empty()) 
@@ -263,6 +266,27 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 			if(tmp_repo.Sanitize())
 				AddRepo(std::move(tmp_repo));
 		}
+		////kdiy//////////	
+		if(!repo3chk) {
+		    GitRepo tmp_repo3;
+			tmp_repo3.repo_name = "Language";
+			tmp_repo3.url = "https://" + t + "@e.coding.net/edokcg/edokcg/Ch.git";
+			tmp_repo3.data_path = "";
+			tmp_repo3.is_language = true;
+			tmp_repo3.should_update = true;
+			if(tmp_repo3.Sanitize())
+				AddRepo(std::move(tmp_repo3));
+		}
+		if(!repo4chk) {
+		    GitRepo tmp_repo4;
+			tmp_repo4.repo_name = "LFLists";
+			tmp_repo4.url = "https://" + t + "@e.coding.net/edokcg/edokcg/LFLists.git";
+			tmp_repo4.lflist_path = "";
+			tmp_repo4.should_update = true;
+			if(tmp_repo4.Sanitize())
+				AddRepo(std::move(tmp_repo4));
+		}
+		////kdiy//////////	
 	}
 }
 
