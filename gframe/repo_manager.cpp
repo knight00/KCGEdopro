@@ -166,7 +166,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 					if(tmp_repo.repo_path == tmp_repo2) {
 						if(tmp_repo.repo_name.empty()) 
 						    tmp_repo.repo_name = "KCG";
-						tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/kcgedo_top.git";
+						tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/KCG.git";
 						tmp_repo.data_path = "";
 						tmp_repo.script_path = "script";
 						tmp_repo.has_core = true;
@@ -184,7 +184,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 						if(tmp_repo.repo_name.empty()) 
 						    tmp_repo.repo_name = "LFLists";
 						tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/LFLists.git";
-						tmp_repo.lflist_path = "";
+						tmp_repo.lflist_path = ".";
 						repo4chk = true;
 					}
 					if(tmp_repo.repo_path == tmp_repo5) {
@@ -281,7 +281,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 		    GitRepo tmp_repo4;
 			tmp_repo4.repo_name = "LFLists";
 			tmp_repo4.url = "https://" + t + "@e.coding.net/edokcg/edokcg/LFLists.git";
-			tmp_repo4.lflist_path = "";
+			tmp_repo4.lflist_path = ".";
 			tmp_repo4.should_update = true;
 			if(tmp_repo4.Sanitize())
 				AddRepo(std::move(tmp_repo4));
