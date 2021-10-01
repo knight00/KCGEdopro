@@ -266,28 +266,30 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 			if(tmp_repo.Sanitize())
 				AddRepo(std::move(tmp_repo));
 		}
-		////kdiy//////////	
-		if(!repo3chk) {
-		    GitRepo tmp_repo3;
-			tmp_repo3.repo_name = "Language";
-			tmp_repo3.url = "https://" + t + "@e.coding.net/edokcg/edokcg/Ch.git";
-			tmp_repo3.data_path = "";
-			tmp_repo3.is_language = true;
-			tmp_repo3.should_update = true;
-			if(tmp_repo3.Sanitize())
-				AddRepo(std::move(tmp_repo3));
-		}
-		if(!repo4chk) {
-		    GitRepo tmp_repo4;
-			tmp_repo4.repo_name = "LFLists";
-			tmp_repo4.url = "https://" + t + "@e.coding.net/edokcg/edokcg/LFLists.git";
-			tmp_repo4.lflist_path = ".";
-			tmp_repo4.should_update = true;
-			if(tmp_repo4.Sanitize())
-				AddRepo(std::move(tmp_repo4));
-		}
-		////kdiy//////////	
 	}
+	////kdiy//////////	
+	if(!repo3chk) {
+		GitRepo tmp_repo;
+		tmp_repo.repo_name = "Language";
+		tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/Ch.git";
+		tmp_repo.repo_path = tmp_repo3;
+		tmp_repo.data_path = "";
+		tmp_repo.is_language = true;
+		tmp_repo.should_update = true;
+		if(tmp_repo.Sanitize())
+			AddRepo(std::move(tmp_repo));
+	}
+	if(!repo4chk) {
+		GitRepo tmp_repo;
+		tmp_repo.repo_name = "LFLists";
+		tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/LFLists.git";
+		tmp_repo.repo_path = tmp_repo4;
+		tmp_repo.lflist_path = ".";
+		tmp_repo.should_update = true;
+		if(tmp_repo.Sanitize())
+			AddRepo(std::move(tmp_repo));
+	}
+	////kdiy//////////	
 }
 
 void RepoManager::TerminateThreads() {
