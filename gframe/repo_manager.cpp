@@ -135,9 +135,9 @@ std::map<std::string, int> RepoManager::GetRepoStatus() {
 
 void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 	////kdiy//////////
-	#ifndef Git_username && Git_pw
+#ifndef Git_username && Git_pw
 	return;
-	#endif
+#endif
 	std::string t = Git_username + std::string(":") + Git_pw;
 	t = std::regex_replace(t, std::regex("@"), "%40");
 	std::string tmp_repo1 = "./repositories/delta";
@@ -266,30 +266,31 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 			if(tmp_repo.Sanitize())
 				AddRepo(std::move(tmp_repo));
 		}
+		////kdiy//////////	
+		if(!repo3chk) {
+			GitRepo tmp_repo;
+			tmp_repo.repo_name = "Language";
+			tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/Ch.git";
+			tmp_repo.repo_path = tmp_repo3;
+			tmp_repo.data_path = "";
+			tmp_repo.is_language = true;
+			tmp_repo.should_update = true;
+			if(tmp_repo.Sanitize())
+			    AddRepo(std::move(tmp_repo));
+		}
+		if(!repo4chk) {
+			GitRepo tmp_repo;
+			tmp_repo.repo_name = "LFLists";
+			tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/LFLists.git";
+			tmp_repo.repo_path = tmp_repo4;
+			tmp_repo.lflist_path = ".";
+			tmp_repo.should_update = true;
+			if(tmp_repo.Sanitize())
+			    AddRepo(std::move(tmp_repo));
+		}
+		return;
+		////kdiy//////////	
 	}
-	////kdiy//////////	
-	if(!repo3chk) {
-		GitRepo tmp_repo;
-		tmp_repo.repo_name = "Language";
-		tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/Ch.git";
-		tmp_repo.repo_path = tmp_repo3;
-		tmp_repo.data_path = "";
-		tmp_repo.is_language = true;
-		tmp_repo.should_update = true;
-		if(tmp_repo.Sanitize())
-			AddRepo(std::move(tmp_repo));
-	}
-	if(!repo4chk) {
-		GitRepo tmp_repo;
-		tmp_repo.repo_name = "LFLists";
-		tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/LFLists.git";
-		tmp_repo.repo_path = tmp_repo4;
-		tmp_repo.lflist_path = ".";
-		tmp_repo.should_update = true;
-		if(tmp_repo.Sanitize())
-			AddRepo(std::move(tmp_repo));
-	}
-	////kdiy//////////	
 }
 
 void RepoManager::TerminateThreads() {

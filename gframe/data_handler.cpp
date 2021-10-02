@@ -142,6 +142,9 @@ DataHandler::DataHandler(epro::path_stringview working_dir) {
 	gitManager = std::unique_ptr<RepoManager>(new RepoManager());
 	sounds = std::unique_ptr<SoundManager>(new SoundManager(configs->soundVolume / 100.0, configs->musicVolume / 100.0, configs->enablesound, configs->enablemusic, Utils::working_dir));
 	gitManager->LoadRepositoriesFromJson(configs->user_configs);
+	////kdiy//////////
+	if(!Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
+	////kdiy//////////
 	gitManager->LoadRepositoriesFromJson(configs->configs);
 	imageDownloader = std::unique_ptr<ImageDownloader>(new ImageDownloader());
 	LoadDatabases();
