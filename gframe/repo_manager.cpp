@@ -148,6 +148,27 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 	bool repo3chk = false, repo4chk = false;
 	////kdiy//////////
 	auto cit = configs.find("repos");
+	if(cit == configs.end()) {
+		GitRepo repo1;
+		repo1.repo_name = "Language";
+		repo1.url = "https://" + t + "@e.coding.net/edokcg/edokcg/Ch.git";
+		repo1.repo_path = tmp_repo3;
+		repo1.data_path = "";
+		repo1.is_language = true;
+		repo1.should_update = true;
+		if(repo1.Sanitize())
+			AddRepo(std::move(repo1));
+		GitRepo repo2;
+		repo2.repo_name = "LFLists";
+		repo2.url = "https://" + t + "@e.coding.net/edokcg/edokcg/LFLists.git";
+		repo2.repo_path = tmp_repo4;
+		repo2.lflist_path = ".";
+		repo2.should_update = true;
+		if(repo2.Sanitize())
+			AddRepo(std::move(repo2));	
+		return;
+	}
+	////kdiy//////////
 	if(cit != configs.end() && cit->is_array()) {
 		for(auto& obj : *cit) {
 			{
