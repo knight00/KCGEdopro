@@ -137,7 +137,9 @@ void DeckBuilder::Terminate(bool showmenu) {
 		mainGame->btnLeaveGame->setVisible(false);
 		mainGame->PopupElement(mainGame->wMainMenu);
 		////kdiy////////
+		#ifdef EK
 		mainGame->PopupElement(mainGame->wQQ);
+		#endif
 		////kdiy////////
 		mainGame->ClearTextures();
 		mainGame->ClearCardInfo(0);

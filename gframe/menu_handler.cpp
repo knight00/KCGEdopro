@@ -175,7 +175,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->isHostingOnline = true;
 				mainGame->HideElement(mainGame->wMainMenu);
 				////kdiy////////
+				#ifdef EK
 				mainGame->HideElement(mainGame->wQQ);
+				#endif
 				////kdiy////////
 				mainGame->ShowElement(mainGame->wRoomListPlaceholder);
 				break;
@@ -215,7 +217,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->HideElement(mainGame->wRoomListPlaceholder);
 				mainGame->ShowElement(mainGame->wMainMenu);
 				////kdiy////////
+				#ifdef EK
 				mainGame->ShowElement(mainGame->wQQ);
+				#endif
 				////kdiy////////
 				break;
 			}
@@ -235,7 +239,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->btnJoinCancel->setEnabled(true);
 				mainGame->HideElement(mainGame->wMainMenu);
 				////kdiy////////
+				#ifdef EK
 				mainGame->HideElement(mainGame->wQQ);
+				#endif
 				////kdiy////////
 				mainGame->ShowElement(mainGame->wLanWindow);
 				break;
@@ -270,7 +276,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->HideElement(mainGame->wLanWindow);
 				mainGame->ShowElement(mainGame->wMainMenu);
 				////kdiy////////
+				#ifdef EK
 				mainGame->ShowElement(mainGame->wQQ);
+				#endif
 				////kdiy////////
 				if(exit_on_return)
 					mainGame->device->closeDevice();
@@ -674,7 +682,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			case BUTTON_REPLAY_MODE: {
 				mainGame->HideElement(mainGame->wMainMenu);
 				////kdiy////////
+				#ifdef EK
 				mainGame->HideElement(mainGame->wQQ);
+				#endif
 				////kdiy////////
 				mainGame->stReplayInfo->setText(L"");
 				mainGame->btnLoadReplay->setEnabled(false);
@@ -692,7 +702,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			case BUTTON_SINGLE_MODE: {
 				mainGame->HideElement(mainGame->wMainMenu);
 				////kdiy////////
+				#ifdef EK
 				mainGame->HideElement(mainGame->wQQ);
+				#endif
 				////kdiy////////
 				mainGame->stSinglePlayInfo->setText(L"");
 				mainGame->btnLoadSinglePlay->setEnabled(false);
@@ -746,7 +758,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->HideElement(mainGame->wReplay);
 				mainGame->ShowElement(mainGame->wMainMenu);
 				////kdiy////////
+				#ifdef EK
 				mainGame->ShowElement(mainGame->wQQ);
+				#endif
 				////kdiy////////
 				break;
 			}
@@ -858,7 +872,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->HideElement(mainGame->wSinglePlay);
 				mainGame->ShowElement(mainGame->wMainMenu);
 				////kdiy////////
+				#ifdef EK
 				mainGame->ShowElement(mainGame->wQQ);
+				#endif
 				////kdiy////////
 				break;
 			}
@@ -889,7 +905,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				}
 				mainGame->HideElement(mainGame->wMainMenu);
 				////kdiy////////
+				#ifdef EK
 				mainGame->HideElement(mainGame->wQQ);
+				#endif
 				////kdiy////////
 				mainGame->deckBuilder.Initialize();
 				break;
@@ -1300,6 +1318,14 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 		//////kdiy////////		
 		case irr::gui::EGET_COMBO_BOX_CHANGED: {
 			switch (id) {
+			//////kdiy////////
+			// case COMBOBOX_LOCAL_SERVER: {
+			// 	int selected = mainGame->serverChoice2->getSelected();
+			// 	if (selected < 0) break;
+			// 	mainGame->ebJoinHost->setText(L"5");
+			// 	break;
+			// }
+			//////kdiy////////	
 			case COMBOBOX_HOST_LFLIST: {
 				int selected = mainGame->cbHostLFList->getSelected();
 				if (selected < 0) break;
@@ -1499,7 +1525,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 						mainGame->cbDBDecks->setSelected(-1);
 						mainGame->HideElement(mainGame->wMainMenu);
 						//////kdiy/////
+						#ifdef EK
 						mainGame->HideElement(mainGame->wQQ);
+						#endif
 						//////kdiy/////
 						mainGame->deckBuilder.Initialize();
 						return true;

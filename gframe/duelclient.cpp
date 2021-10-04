@@ -3374,10 +3374,12 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 		return true;
 	}
 	case MSG_SUMMONED: {
-		event_string = gDataManager->GetSysString(1604).data();
-		/////kdiy//////
+		event_string = gDataManager->GetSysString(1604).data();		
+		return true;
+	}
+	/////kdiy//////		
+	case MSG_SUMMONED_KCG: {
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
-		if(!code) return true;
 		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		const auto player = mainGame->LocalPlayer(info.controler);
 		int character = mainGame->dInfo.current_player[player];
@@ -3393,10 +3395,10 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 			std::unique_lock<std::mutex> lock(mainGame->gMutex);
 		    PlayChant(SoundManager::CHANT::SUMMON, code, code2, character);
 			mainGame->WaitFrameSignal(30, lock);
-		}
-		/////kdiy//////			
+		}		
 		return true;
 	}
+	/////kdiy//////			
 	case MSG_SPSUMMONING: {
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
 		/////kdiy//////				
@@ -3417,27 +3419,7 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 		return true;
 	}
 	case MSG_SPSUMMONED: {
-		event_string = gDataManager->GetSysString(1606).data();
-		/////kdiy//////
-		const auto code = BufferIO::Read<uint32_t>(pbuf);
-		if(!code) return true;
-		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
-		const auto player = mainGame->LocalPlayer(info.controler);
-		int character = mainGame->dInfo.current_player[player];
-		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
-		auto cd = gDataManager->GetCardData(code);
-		uint32_t code2 = 0;
-		if(cd->alias) code2 = cd->alias;
-		if(gGameConfig->enablesanime) {
-			if(!(cd->alias && PlayAnime(code2, 0)))
-				PlayAnime(code, 0);
-		}
-		if(gGameConfig->enablessound && !mainGame->dInfo.isCatchingUp) {
-			std::unique_lock<std::mutex> lock(mainGame->gMutex);
-		    PlayChant(SoundManager::CHANT::SUMMON, code, code2, character);
-			mainGame->WaitFrameSignal(30, lock);
-		}
-		/////kdiy//////						
+		event_string = gDataManager->GetSysString(1606).data();	
 		return true;
 	}
 	case MSG_FLIPSUMMONING: {
@@ -3469,27 +3451,6 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 	}
 	case MSG_FLIPSUMMONED: {
 		event_string = gDataManager->GetSysString(1608).data();
-		/////kdiy//////
-		const auto code = BufferIO::Read<uint32_t>(pbuf);
-		if(!code) return true;
-		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
-		info.controler = mainGame->LocalPlayer(info.controler);
-		const auto player = info.controler;
-		int character = mainGame->dInfo.current_player[player];
-		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
-		auto cd = gDataManager->GetCardData(code);
-		uint32_t code2 = 0;
-		if(cd->alias) code2 = cd->alias;
-		if(gGameConfig->enablesanime) {
-			if(!(cd->alias && PlayAnime(code2, 0)))
-				PlayAnime(code, 0);
-		}
-		if(gGameConfig->enablessound && !mainGame->dInfo.isCatchingUp) {
-			std::unique_lock<std::mutex> lock(mainGame->gMutex);
-		    PlayChant(SoundManager::CHANT::SUMMON, code, code2, character);
-			mainGame->WaitFrameSignal(30, lock);
-		}
-		/////kdiy//////			
 		return true;
 	}
 	case MSG_CHAINING: {

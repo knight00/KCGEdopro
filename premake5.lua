@@ -86,6 +86,10 @@ newoption {
     trigger = "git_pw",
     description = "Git Password"
 }
+newoption {
+    trigger = "ek",
+    description = "EK"
+}
 -----kdiy-----
 workspace "ygo"
 	location "build"

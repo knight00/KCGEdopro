@@ -103,7 +103,9 @@ void CheckArguments(int argc, epro::path_char* argv[]) {
 				exit_on_return = !keep_on_return;
 				ygo::mainGame->HideElement(ygo::mainGame->wMainMenu);
 				////kdiy////////
+				#ifdef EK
 				ygo::mainGame->HideElement(ygo::mainGame->wQQ);
+				#endif
 				////kdiy////////
 				ClickButton(ygo::mainGame->btnHostConfirm);
 				break;
@@ -111,7 +113,9 @@ void CheckArguments(int argc, epro::path_char* argv[]) {
 				exit_on_return = !keep_on_return;
 				ygo::mainGame->HideElement(ygo::mainGame->wMainMenu);
 				////kdiy////////
+				#ifdef EK
 				ygo::mainGame->HideElement(ygo::mainGame->wQQ);
+				#endif
 				////kdiy////////
 				ClickButton(ygo::mainGame->btnJoinHost);
 				break;

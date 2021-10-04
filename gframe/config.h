@@ -17,12 +17,17 @@ extern bool show_changelog;
 #define EDOPRO_VERSION_CODENAME L"Utopia"
 /////kdiy///////
 #ifdef VIP
-#define KCG_VERSION L"8-VIP"
+#define KCG_VERSION L"V8.1-VIP"
 #else
-#define KCG_VERSION L"8"
+#define KCG_VERSION L"V8.1"
+#endif
+#ifdef EK
+#define IS_KCG L"EDOPro-KCG"
+#else
+#define IS_KCG L"EDOPro-KCG_GX"
 #endif
 /////kdiy///////
-#define EDOPRO_VERSION_STRING L"EDOPro-KCG V" KCG_VERSION " | " STR(EDOPRO_VERSION_MAJOR) "." STR(EDOPRO_VERSION_MINOR) "." STR(EDOPRO_VERSION_PATCH) " \"" EDOPRO_VERSION_CODENAME "\""
+#define EDOPRO_VERSION_STRING IS_KCG " " KCG_VERSION " | " STR(EDOPRO_VERSION_MAJOR) "." STR(EDOPRO_VERSION_MINOR) "." STR(EDOPRO_VERSION_PATCH) " \"" EDOPRO_VERSION_CODENAME "\""
 #define CLIENT_VERSION (EDOPRO_VERSION_MAJOR & 0xff | ((EDOPRO_VERSION_MINOR & 0xff) << 8) | ((OCG_VERSION_MAJOR & 0xff) << 16) | ((OCG_VERSION_MINOR & 0xff) << 24))
 #define EXPAND_VERSION(ver) (ver) & 0xff, (((ver) >> 8) & 0xff), (((ver) >> 16) & 0xff), (((ver) >> 24) & 0xff)
 

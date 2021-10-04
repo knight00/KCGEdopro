@@ -46,6 +46,9 @@ local ygopro_config=function(static_core)
 	if _OPTIONS["git_pw"] then
 		defines { "Git_pw=" .. _OPTIONS["git_pw"] }
 	end
+	if _OPTIONS["ek"] then
+		defines { "EK=" .. _OPTIONS["ek"] }
+	end
 	--------kdiy-----
 	includedirs "../ocgcore"
 	links { "clzma", "freetype", "Irrlicht" }

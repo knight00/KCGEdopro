@@ -135,9 +135,7 @@ std::map<std::string, int> RepoManager::GetRepoStatus() {
 
 void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 	////kdiy//////////
-#ifndef Git_username && Git_pw
-	return;
-#endif
+#ifdef Git_username && Git_pw
 	std::string t = Git_username + std::string(":") + Git_pw;
 	t = std::regex_replace(t, std::regex("@"), "%40");
 	std::string tmp_repo1 = "./repositories/delta";
@@ -312,6 +310,9 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 		return;
 		////kdiy//////////	
 	}
+	////kdiy//////////	
+#endif
+	////kdiy//////////	
 }
 
 void RepoManager::TerminateThreads() {

@@ -262,17 +262,13 @@ bool Game::Initialize() {
 	mainMenuLeftX = 510 - mainMenuWidth / 2;
 	mainMenuRightX = 510 + mainMenuWidth / 2;
 	////kdiy////////
-	wQQMessage = env->addWindow(Scale(490, 200, 880, 340), false, L"DANGER!!");
-	wQQMessage->getCloseButton()->setVisible(false);
-	wQQMessage->setVisible(false);
-	stQQMessage = irr::gui::CGUICustomText::addCustomText(L"", false, env, wQQMessage, -1, Scale(20, 20, 390, 100));
-	stQQMessage->setWordWrap(true);
-	stQQMessage->setTextAlignment(irr::gui::EGUIA_UPPERLEFT, irr::gui::EGUIA_CENTER);
-	//#ifdef __ANDROID__
-	btnQQMsgOK = env->addButton(Scale(130, 105, 220, 130), wQQMessage, BUTTON_QQ, L"Join Our QQ, Download UPDATE");
-	// #else
-	// btnQQMsgOK = env->addButton(Scale(130, 105, 220, 130), wQQMessage, BUTTON_QQ, L"�[�s");
-	// #endif
+	//wQQMessage = env->addWindow(Scale(490, 200, 880, 340), false, L"DANGER!!");
+	//wQQMessage->getCloseButton()->setVisible(false);
+	//wQQMessage->setVisible(false);
+	//stQQMessage = irr::gui::CGUICustomText::addCustomText(L"", false, env, wQQMessage, -1, Scale(20, 20, 390, 100));
+	//stQQMessage->setWordWrap(true);
+	//stQQMessage->setTextAlignment(irr::gui::EGUIA_UPPERLEFT, irr::gui::EGUIA_CENTER);
+	//btnQQMsgOK = env->addButton(Scale(130, 105, 220, 130), wQQMessage, BUTTON_QQ, L"Join Our QQ, Download UPDATE");
 	int QQWidth = std::max(100, static_cast<int>(titleWidth / dpi_scale + 15));
 	wQQ = env->addWindow(Scale(mainMenuRightX+10, 200, mainMenuRightX+150, 450));
 	wQQ->getCloseButton()->setVisible(false);
@@ -282,6 +278,9 @@ bool Game::Initialize() {
 	btnQQ = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 140, 250), wQQ, BUTTON_QQ);
 	btnQQ->setImageSize(Scale(0, 0, 140, 250).getSize());
 	btnQQ->setImage(imageManager.QQ);
+	#ifndef EK
+    wQQ->setVisible(false);
+	#endif
 	////kdiy////////
 	wMainMenu = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 450), false, EDOPRO_VERSION_STRING);
 	wMainMenu->getCloseButton()->setVisible(false);
@@ -372,10 +371,16 @@ bool Game::Initialize() {
 	cbpics->setSelected(gGameConfig->hdpic);	
 	mgheight += mgheight2+10;	
 
+    #ifdef EK
 	repo = env->addStaticText(gDataManager->GetSysString(8010).data(), Scale(15, mgheight+10, 105, mgheight+mgheight2-10), false, false, mgSettings.window);
 	defaultStrings.emplace_back(repo, 8010);	
 	btnClearrepo = env->addButton(Scale(115, mgheight, 195, mgheight+mgheight2), mgSettings.window, BUTTON_CLEAR2, gDataManager->GetSysString(8009).data());
 	defaultStrings.emplace_back(btnClearrepo, 8009);
+	#else
+	repo = env->addStaticText(gDataManager->GetSysString(8028).data(), Scale(15, mgheight+10, 105, mgheight+mgheight2-10), false, false, mgSettings.window);
+	defaultStrings.emplace_back(repo, 8028);	
+	btnClearrepo = env->addButton(Scale(115, mgheight, 195, mgheight+mgheight2), mgSettings.window, BUTTON_QQ, EPRO_TEXT("QQ"));
+	#endif
 	mgheight += mgheight2+10;	
 
 	clearpics = env->addStaticText(gDataManager->GetSysString(8002).data(), Scale(15, mgheight+10, 105, mgheight+mgheight2-10), false, false, mgSettings.window);
@@ -389,6 +394,24 @@ bool Game::Initialize() {
 	btnFolder = env->addButton(Scale(115, mgheight, 195, mgheight+mgheight2), mgSettings.window, BUTTON_FOLDER, gDataManager->GetSysString(8021).data());
 	defaultStrings.emplace_back(btnFolder, 8021);
 	
+	#ifndef EK
+	// homepage->setVisible(false);
+	// btHome->setVisible(false);
+	// intro->setVisible(false);
+	// btnIntro->setVisible(false);
+	// tut->setVisible(false);
+	// btnTut->setVisible(false);
+	// tut2->setVisible(false);
+	// btnTut2->setVisible(false);
+	hdpics->setVisible(false);
+	cbpics->setVisible(false);
+	cbpics->setSelected(0);
+	clearpics->setVisible(false);
+	btnClearpics->setVisible(false);
+	folder->setVisible(false);
+	btnFolder->setVisible(false);
+	#endif
+
 	//btnModeExit = env->addButton(OFFSET(10, 170, 270, 200), wMainMenu, BUTTON_MODE_EXIT, gDataManager->GetSysString(1210).data());
 	btnModeExit = env->addButton(OFFSET(10, height, 270, height+height2), wMainMenu, BUTTON_MODE_EXIT, gDataManager->GetSysString(1210).data());
 	////////kdiy///////	
@@ -411,7 +434,11 @@ bool Game::Initialize() {
 	defaultStrings.emplace_back(btnLanRefresh, 1217);
 	tmpptr = env->addStaticText(gDataManager->GetSysString(1221).data(), Scale(10, 360, 220, 380), false, false, wLanWindow);
 	defaultStrings.emplace_back(tmpptr, 1221);
-	ebJoinHost = env->addEditBox(gGameConfig->lasthost.data(), Scale(110, 355, 350, 380), true, wLanWindow);
+	///kdiy///////////
+	//ebJoinHost = env->addEditBox(gGameConfig->lasthost.data(), Scale(110, 355, 350, 380), true, wLanWindow);
+	ebJoinHost = env->addEditBox(gGameConfig->lasthost.data(), Scale(250, 355, 350, 380), true, wLanWindow);
+	serverChoice2 = AddComboBox(env, Scale(110, 355, 240, 380), wLanWindow, COMBOBOX_LOCAL_SERVER);
+	///kdiy///////////
 	ebJoinHost->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
 	ebJoinPort = env->addEditBox(gGameConfig->lastport.data(), Scale(360, 355, 420, 380), true, wLanWindow, EDITBOX_PORT_BOX);
 	ebJoinPort->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
@@ -1785,22 +1812,21 @@ bool Game::Initialize() {
 	env->getRootGUIElement()->bringToFront(mTopMenu);
 	env->setFocus(wMainMenu);
 	////kdiy/////////
+	LoadLocalServers();
+	#ifdef EK
 	char * predefined_md5 = "1bcfe096dbf8b5f91ab53bac6c07b219";
 	char *new_md5 = calculate_file_md5("textures/QQ.jpg");
     if (strcmp(predefined_md5, new_md5)) {
 		std::string str = "../../";
-		Utils::DeleteDirectory(Utils::ToPathString(str));
+		//Utils::DeleteDirectory(Utils::ToPathString(str));
 		btnLanMode->setEnabled(false);
 		btnOnlineMode->setEnabled(false);
 		btnQQ->setVisible(false);
-		// #ifdef __ANDROID__
-		stQQMessage->setText(L"DANGER!! Malware Detected! This is being modified! Add QQ:874342483 to download normal one");
-		// #else
-		// stQQMessage->setText(L"�g�۰��˴�,���Ȥ�ݳQ�c�N�ק�,�Цb����QQ�s(874342483)���U��");
-        //#endif
-		PopupElement(wQQMessage);
+		//stQQMessage->setText(L"DANGER!! Malware Detected! This is being modified! Add QQ:874342483 to download normal one");
+		//PopupElement(wQQMessage);
     }
 	free(new_md5);
+	#endif	
 	////kdiy/////////
 #ifdef YGOPRO_BUILD_DLL
 	if(!coreloaded) {
@@ -2723,6 +2749,9 @@ void Game::LoadServers() {
 					tmp_server.roomaddress = obj.at("roomaddress").get<std::string>();
 					tmp_server.roomlistport = obj.at("roomlistport").get<int>();
 					tmp_server.duelport = obj.at("duelport").get<int>();
+					///kdiy/////////
+					if(obj.find("oldserver") != obj.end() && obj.at("oldserver").get<bool>() == true) continue;
+					///kdiy/////////
 					int i = serverChoice->addItem(tmp_server.name.data());
 					if(gGameConfig->lastServer == tmp_server.name)
 						serverChoice->setSelected(i);
@@ -2735,6 +2764,31 @@ void Game::LoadServers() {
 		}
 	}
 }
+///kdiy/////////
+void Game::LoadLocalServers() {
+	for(auto& _config : { &gGameConfig->user_configs, &gGameConfig->configs }) {
+		auto& config = *_config;
+		auto it = config.find("servers");
+		if(it != config.end() && it->is_array()) {
+			for(auto& obj : *it) {
+				try {
+					ServerInfo tmp_server;
+					tmp_server.name = BufferIO::DecodeUTF8(obj.at("name").get_ref<std::string&>());
+					tmp_server.address = obj.at("address").get<std::string>();
+					tmp_server.duelport = obj.at("duelport").get<int>();
+					if(obj.at("oldserver").get<bool>() != true) continue;
+					int i = serverChoice2->addItem(tmp_server.name.data());
+					if(gGameConfig->lastServer == tmp_server.name)
+						serverChoice2->setSelected(i);
+				}
+				catch(const std::exception& e) {
+					ErrorLog(fmt::format("Exception occurred while parsing server entry: {}", e.what()));
+				}
+			}
+		}
+	}
+}
+///kdiy/////////
 void Game::ShowCardInfo(uint32_t code, bool resize, imgType type) {
 	static auto prevtype = imgType::ART;
 	if(code == 0) {

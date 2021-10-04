@@ -64,6 +64,7 @@ enum GUI {
 	////kdiy///
 	COMBOBOX_cbDeckSelect,
 	COMBOBOX_cbDeckSelect2,
+	COMBOBOX_LOCAL_SERVER,
 	////kdiy///
 	BUTTON_HP_READY,
 	BUTTON_HP_NOTREADY,

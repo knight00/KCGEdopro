@@ -165,6 +165,9 @@ public:
 	void LoadGithubRepositories();
 	void UpdateRepoInfo(const GitRepo* repo, RepoGui* grepo);
 	void LoadServers();
+	///kdiy//////////
+	void LoadLocalServers();
+	///kdiy//////////
 	void ShowCardInfo(uint32_t code, bool resize = false, imgType type = imgType::ART);
 	void RefreshCardInfoTextPositions();
 	void ClearCardInfo(int player = 0);
@@ -747,6 +750,9 @@ public:
 	irr::gui::IGUITable* roomListTable;
 	irr::gui::IGUIStaticText* wRoomListPlaceholder;
 	irr::gui::IGUIComboBox* serverChoice;
+	/////kdiy/////////
+	irr::gui::IGUIComboBox* serverChoice2;
+	/////kdiy/////////
 	irr::gui::IGUIEditBox* ebNickNameOnline;
 	irr::gui::IGUIButton* btnCreateHost2;
 	irr::gui::IGUIComboBox* cbFilterRule;
