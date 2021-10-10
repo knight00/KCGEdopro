@@ -215,6 +215,10 @@ bool GameConfig::Load(const epro::path_char* filename) {
 			/////kdiy//////
 			else if(type == "botSeed")
 				botSeed = !!std::stoi(str);
+			else if(type == "lastLocalServer")
+				lastLocalServer = BufferIO::DecodeUTF8(str);
+			else if(type == "duelrule")
+				duelrule = BufferIO::DecodeUTF8(str);
 			/////kdiy//////	
 			else if(type == "lastServer")
 				lastServer = BufferIO::DecodeUTF8(str);
@@ -404,6 +408,8 @@ bool GameConfig::Save(const epro::path_char* filename) {
 	conf_file << "botMute = "                  << botMute << "\n";
 	///kdiy//////////
 	conf_file << "botSeed = "                  << botSeed << "\n";
+	conf_file << "lastLocalServer = "          << BufferIO::EncodeUTF8(lastLocalServer) << "\n";
+	conf_file << "duelrule = "                 << BufferIO::EncodeUTF8(duelrule) << "\n";
 	///kdiy//////////
 	SERIALIZE(lastBot);
 	conf_file << "lastServer = "               << BufferIO::EncodeUTF8(lastServer) << "\n";

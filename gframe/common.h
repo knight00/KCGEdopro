@@ -269,9 +269,6 @@
 #define MSG_SPSUMMONED           63
 #define MSG_FLIPSUMMONING        64
 #define MSG_FLIPSUMMONED         65
-/////kdiy//////
-#define MSG_SUMMONED_KCG         69
-/////kdiy//////
 #define MSG_CHAINING             70
 #define MSG_CHAINED              71
 #define MSG_CHAIN_SOLVING        72

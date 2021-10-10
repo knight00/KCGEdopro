@@ -1067,9 +1067,18 @@ void GenericDuel::Sending(CoreUtils::Packet& packet, int& return_value, bool& re
 	case MSG_MOVE: {
 		pbufw = pbuf;
 		pbuf += 4;
-		/*CoreUtils::loc_info previous = */CoreUtils::ReadLocInfo(pbuf, false);
+		//////kdiy///
+		// /*CoreUtils::loc_info previous = */CoreUtils::ReadLocInfo(pbuf, false);
+		CoreUtils::loc_info previous = CoreUtils::ReadLocInfo(pbuf, false);
+		//////kdiy///
 		CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, false);
 		player = current.controler;
+		//////kdiy///
+		const auto reason = BufferIO::Read<uint32_t>(pbuf);
+		if(reason == 0 && previous.controler == current.controler && previous.location == current.location && previous.sequence == current.sequence && previous.position == current.position) {
+		    break;
+		}
+		//////kdiy///
 		SEND(nullptr);
 		for(auto& dueler : (player == 0) ? players.home : players.opposing)
 			NetServer::ReSendToPlayer(dueler);

@@ -66,6 +66,8 @@ struct GameConfig
 	bool botMute{ false };
 	///kdiy//////////
 	bool botSeed{ false };
+	std::wstring lastLocalServer;
+	std::wstring duelrule;
 	///kdiy//////////
 	int lastBot{ 0 };
 	std::wstring lastServer;

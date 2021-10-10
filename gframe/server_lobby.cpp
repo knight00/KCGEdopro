@@ -22,6 +22,9 @@ namespace ygo {
 
 std::vector<RoomInfo> ServerLobby::roomsVector;
 std::vector<ServerInfo> ServerLobby::serversVector;
+///kdiy////////
+std::vector<ServerInfo> ServerLobby::serversVector2;
+///kdiy////////
 std::atomic_bool ServerLobby::is_refreshing{ false };
 std::atomic_bool ServerLobby::has_refreshed{ false };
 

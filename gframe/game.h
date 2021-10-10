@@ -167,6 +167,8 @@ public:
 	void LoadServers();
 	///kdiy//////////
 	void LoadLocalServers();
+	void ReloadLocalCBDuelRule();
+	void ReloadLocalCBRule();
 	///kdiy//////////
 	void ShowCardInfo(uint32_t code, bool resize = false, imgType type = imgType::ART);
 	void RefreshCardInfoTextPositions();
@@ -403,6 +405,8 @@ public:
 	irr::gui::IGUIButton* btnQQMsgOK;
 	irr::gui::IGUIWindow* wQQ;
 	irr::gui::CGUIImageButton* btnQQ;
+	irr::gui::IGUIButton* btnQQ2;
+	irr::gui::IGUIButton* btnQQ22;
 	/////kdiy/////////
 	irr::gui::IGUIWindow* wCommitsLog;
 	irr::gui::IGUIContextMenu* mTopMenu;
@@ -477,7 +481,32 @@ public:
 	irr::gui::IGUICheckBox* chkTcgRulings;
 	irr::gui::IGUIButton* btnHostConfirm;
 	irr::gui::IGUIButton* btnHostCancel;
+	irr::gui::IGUIStaticText* stHostPort;
+	irr::gui::IGUIEditBox* ebHostPort;
+	irr::gui::IGUIStaticText* stHostNotes;
+	irr::gui::IGUIEditBox* ebHostNotes;
+	irr::gui::IGUIStaticText* stVersus;
+	irr::gui::IGUIStaticText* stBestof;
 	///////kdiy//////////
+	irr::gui::IGUIWindow* wCreateHost2;
+	irr::gui::IGUIComboBox* cbHostLFList2;
+	irr::gui::IGUIComboBox* cbRule2;
+	irr::gui::IGUIEditBox* ebTimeLimit2;
+	irr::gui::IGUIEditBox* ebStartLP2;
+	irr::gui::IGUIEditBox* ebStartHand2;
+	irr::gui::IGUIEditBox* ebDrawCount2;
+	irr::gui::IGUIEditBox* ebJoinPass2;
+	irr::gui::IGUIComboBox* cbDuelRule2;
+	irr::gui::IGUICheckBox* chkNoCheckDeck2;
+	irr::gui::IGUICheckBox* chkNoShuffleDeck2;
+	irr::gui::IGUICheckBox* chkNoLFlist2;
+	irr::gui::IGUICheckBox* chkAI;
+	irr::gui::IGUIComboBox* cbAI;
+	irr::gui::IGUICheckBox* chkTag;
+	irr::gui::IGUICheckBox* chkMatch;
+	irr::gui::IGUIButton* btnSimpleJoinHost;
+	irr::gui::IGUIButton* btnHostConfirm2;
+	irr::gui::IGUIButton* btnHostCancel2;
 	uint8_t character[6] = {0,0,0,0,0,0};
 	uint8_t choose_player = -1;
 	irr::gui::IGUIWindow* wCharacter;
@@ -487,13 +516,7 @@ public:
 	irr::gui::CGUIImageButton* btnCharacterSelect2;
 	irr::gui::IGUIWindow* wAvatar[2];
 	irr::gui::CGUIImageButton* avatarbutton[2];
-	///////kdiy//////////
-	irr::gui::IGUIStaticText* stHostPort;
-	irr::gui::IGUIEditBox* ebHostPort;
-	irr::gui::IGUIStaticText* stHostNotes;
-	irr::gui::IGUIEditBox* ebHostNotes;
-	irr::gui::IGUIStaticText* stVersus;
-	irr::gui::IGUIStaticText* stBestof;
+	///////kdiy//////////	
 #define sizeofarr(arr) (sizeof(arr)/sizeof(decltype(*arr)))
 	//host panel
 	irr::gui::IGUIWindow* wHostPrepare;

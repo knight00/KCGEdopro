@@ -160,6 +160,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				Utils::SystemOpen(EPRO_TEXT("https://jq.qq.com/?_wv=1027&k=S1vfY66P"));
 				break;
 			}
+			case BUTTON_QQ2: {
+				Utils::SystemOpen(EPRO_TEXT("https://qm.qq.com/cgi-bin/qm/qr?k=0BcdVu6E2gUjyc_WmL25uLNYib2mTPoV"));
+				break;
+			}
 			case BUTTON_PLUGIN: {
 				if (!mainGame->mgSettings.window->isVisible())
 					mainGame->PopupElement(mainGame->mgSettings.window);
@@ -445,6 +449,90 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			/////kdiy/////
+			case BUTTON_SIMPLE_CREATE_HOST: {
+				if (wcslen(mainGame->ebNickName->getText())) {
+					mainGame->HideElement(mainGame->wLanWindow);
+					mainGame->ShowElement(mainGame->wCreateHost2);
+					for (const auto& bot : mainGame->gBot.bots)
+					    mainGame->cbAI->addItem(bot.name.data());
+				}
+				break;
+			}
+			case BUTTON_LOCAL_HOST_CONFIRM: {
+				auto selected = mainGame->serverChoice2->getSelected();
+				if (selected < 0) break;
+				std::pair<uint32_t, uint16_t> serverinfo;
+				try {
+					ServerInfo server = ServerLobby::serversVector2[selected];
+					serverinfo = DuelClient::ResolveServer(server.address, server.duelport);
+					std::wstring pass = L"";
+					std::wstring symbol = L"#";
+					if(mainGame->chkAI->isChecked()) {
+					    pass += L"AI";
+						if(wcslen(mainGame->ebJoinPass2->getText()) <= 0)
+						    symbol = L"";
+					}
+					if(mainGame->chkTag->isChecked()) 
+					    pass += pass == L"" ? L"T" : L",T";
+					else 
+					    pass += pass == L"" ? L"S" : L",S";
+					if(mainGame->chkNoCheckDeck2->isChecked()) 
+					    pass += L",NC";
+					if(mainGame->chkNoShuffleDeck2->isChecked()) 
+					    pass += L",NS";
+					if(mainGame->chkNoLFlist2->isChecked()) 
+					    pass += L",NF";
+					if(mainGame->chkMatch->isChecked()) 
+					    pass += L",M";
+					if(mainGame->cbRule2->getSelected() == 1)
+					    pass += L",TO";
+					else if(mainGame->cbRule2->getSelected() == 2)
+					    pass += L",OT";
+					if (std::stoi(mainGame->ebStartLP2->getText()) != 8000)
+					    pass += L",LP" + Utils::ToUnicodeIfNeeded(mainGame->ebStartLP2->getText());
+					if (std::stoi(mainGame->ebTimeLimit2->getText()) != 3)
+						pass += L",TM" + Utils::ToPathString(mainGame->ebTimeLimit2->getText());
+					if (std::stoi(mainGame->ebStartHand2->getText()) != 5)
+						pass += L",ST" + Utils::ToPathString(mainGame->ebStartHand2->getText());
+					if (std::stoi(mainGame->ebDrawCount2->getText()) != 1)
+						pass += L",DR" + Utils::ToPathString(mainGame->ebDrawCount2->getText());
+					if (mainGame->cbDuelRule2->getSelected() != 4)
+						pass += L",MR" + Utils::ToUpperChar(mainGame->cbDuelRule2->getSelected() + 1);
+					pass += symbol;
+					if(pass.length()>=20) {
+						mainGame->PopupMessage(gDataManager->GetSysString(8033));
+						break;
+					}
+					mainGame->dInfo.secret.pass = pass;
+					if(DuelClient::StartClient(serverinfo.first, serverinfo.second, 0, false)) {
+						mainGame->btnCreateHost->setEnabled(false);
+						mainGame->btnJoinHost->setEnabled(false);
+						mainGame->btnJoinCancel->setEnabled(false);
+						for(size_t i = 0; i < mainGame->cbDeck2Select->getItemCount(); ++i) {
+							if(gGameConfig->lastdeckfolder == mainGame->cbDeck2Select->getItem(i)) {
+								mainGame->cbDeck2Select->setSelected(i);
+								mainGame->cbDeck2Select2->setSelected(i);
+							}
+						}
+					}
+					break;
+				}
+				catch(...) {
+					mainGame->PopupMessage(gDataManager->GetSysString(1412));
+					break;
+				}
+			}
+			case BUTTON_LOCAL_HOST_CANCEL: {
+				if(DuelClient::IsConnected())
+					break;
+				mainGame->dInfo.isInLobby = false;
+				mainGame->btnCreateHost->setEnabled(mainGame->coreloaded);
+				if(mainGame->wRules->isVisible())
+					mainGame->HideElement(mainGame->wRules);
+				mainGame->HideElement(mainGame->wCreateHost2);
+				mainGame->ShowElement(mainGame->wLanWindow);
+				break;
+			}
 			case BUTTON_ICON0: {
 				for(int i = 1; i < 6; ++i) {
 					mainGame->icon[i]->setEnabled(false);
@@ -1160,6 +1248,13 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				//ServerLobby::RefreshRooms();
 				break;
 			}
+			///////kdiy////	
+			case CHECKBOX_AI: {
+				if(mainGame->chkAI->isChecked())
+				    mainGame->cbAI->setEnabled(true);
+				break;
+			}
+			///////kdiy////	
 			case CHECKBOX_HP_READY: {
 				if(!caller->isEnabled())
 					break;
@@ -1317,15 +1412,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 		}	
 		//////kdiy////////		
 		case irr::gui::EGET_COMBO_BOX_CHANGED: {
-			switch (id) {
-			//////kdiy////////
-			// case COMBOBOX_LOCAL_SERVER: {
-			// 	int selected = mainGame->serverChoice2->getSelected();
-			// 	if (selected < 0) break;
-			// 	mainGame->ebJoinHost->setText(L"5");
-			// 	break;
-			// }
-			//////kdiy////////	
+			switch (id) {	
 			case COMBOBOX_HOST_LFLIST: {
 				int selected = mainGame->cbHostLFList->getSelected();
 				if (selected < 0) break;

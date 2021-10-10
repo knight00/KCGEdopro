@@ -159,7 +159,10 @@ bool Game::Initialize() {
 	filesystem->grab();
 	coreloaded = true;
 #ifdef YGOPRO_BUILD_DLL
+    ///kdiy//////////////
 	if(!(ocgcore = LoadOCGcore(Utils::working_dir)) && !(ocgcore = LoadOCGcore(fmt::format(EPRO_TEXT("{}/expansions/"), Utils::working_dir))))
+	// if(!(ocgcore = LoadOCGcore(Utils::working_dir)) && !(ocgcore = LoadOCGcore(fmt::format(EPRO_TEXT("{}/expansions/"), Utils::working_dir))) && !(ocgcore = LoadOCGcore(fmt::format(EPRO_TEXT("{}/repositories/kcg/bin/"), Utils::working_dir))))
+	///kdiy//////////////
 		coreloaded = false;
 #endif
 	skinSystem = new CGUISkinSystem(fmt::format(EPRO_TEXT("{}/skin"), Utils::working_dir).data(), device);
@@ -217,20 +220,15 @@ bool Game::Initialize() {
 	stAbout = irr::gui::CGUICustomText::addCustomText(L"EDOPro-KCG\n"
 											L"by perfectdicky (QQ: 874342483)\n"
 											L"\n"
-											L"Totally Free of charge\n"
-											L"Copyright (C) 2020-2021  Edoardo Lolletti (edo9300) and others\n"
-											L"Card scripts and supporting resources by Project Ignis.\n"
 											L"https://github.com/knight00/KCGEdopro\n"
 											L"https://github.com/knight00/ocgcore-KCG\n"
-											L"Software components licensed under the GNU AGPLv3 or later. See LICENSE for more details.\n"
-											L"Supporting resources and app icon are distributed under separate licenses in their subfolders.\n"
+											L"Licensed under the GNU AGPLv3 or later.\n"
+											L"Copyright (C) Edoardo Lolletti (edo9300) and Project Ignis.\n"
 											L"\n"
 											L"Project Ignis:\n"
 											L"ahtelel, Cybercatman, Dragon3989, DyXel, edo9300, EerieCode, "
 											L"Gideon, Hatter, Hel, Icematoro, Larry126, LogicalNonsense, pyrQ, "
 											L"Sanct, senpaizuri, Steeldarkeagel, TheRazgriz, WolfOfWolves, Yamato\n"
-											L"Default background and icon: LogicalNonsense\n"
-											L"Default fields: Icematoro\n"
 											L"\n"
 											L"Forked from Fluorohydride's YGOPro, maintainers DailyShana, mercury233.\n"
 											L"Yu-Gi-Oh! is a trademark of Shueisha and Konami.\n"
@@ -282,7 +280,7 @@ bool Game::Initialize() {
     wQQ->setVisible(false);
 	#endif
 	////kdiy////////
-	wMainMenu = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 450), false, EDOPRO_VERSION_STRING);
+	wMainMenu = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 450), false, EDOPRO_VERSION_STRING);	
 	wMainMenu->getCloseButton()->setVisible(false);
 	//wMainMenu->setVisible(!is_from_discord);
 #define OFFSET(x1, y1, x2, y2) Scale(10, 30 + offset, mainMenuWidth - 10, 60 + offset)
@@ -371,16 +369,10 @@ bool Game::Initialize() {
 	cbpics->setSelected(gGameConfig->hdpic);	
 	mgheight += mgheight2+10;	
 
-    #ifdef EK
-	repo = env->addStaticText(gDataManager->GetSysString(8010).data(), Scale(15, mgheight+10, 105, mgheight+mgheight2-10), false, false, mgSettings.window);
+    repo = env->addStaticText(gDataManager->GetSysString(8010).data(), Scale(15, mgheight+10, 105, mgheight+mgheight2-10), false, false, mgSettings.window);
 	defaultStrings.emplace_back(repo, 8010);	
 	btnClearrepo = env->addButton(Scale(115, mgheight, 195, mgheight+mgheight2), mgSettings.window, BUTTON_CLEAR2, gDataManager->GetSysString(8009).data());
 	defaultStrings.emplace_back(btnClearrepo, 8009);
-	#else
-	repo = env->addStaticText(gDataManager->GetSysString(8028).data(), Scale(15, mgheight+10, 105, mgheight+mgheight2-10), false, false, mgSettings.window);
-	defaultStrings.emplace_back(repo, 8028);	
-	btnClearrepo = env->addButton(Scale(115, mgheight, 195, mgheight+mgheight2), mgSettings.window, BUTTON_QQ, EPRO_TEXT("QQ"));
-	#endif
 	mgheight += mgheight2+10;	
 
 	clearpics = env->addStaticText(gDataManager->GetSysString(8002).data(), Scale(15, mgheight+10, 105, mgheight+mgheight2-10), false, false, mgSettings.window);
@@ -412,8 +404,26 @@ bool Game::Initialize() {
 	btnFolder->setVisible(false);
 	#endif
 
+	btnQQ2 = env->addButton(Scale(10, height, (mainMenuWidth - 20)/2 + 10 -2, height+height2), wMainMenu, BUTTON_QQ2, gDataManager->GetSysString(8029).data());
+	defaultStrings.emplace_back(btnQQ2, 8029);
+	btnQQ22 = env->addButton(Scale((mainMenuWidth - 20)/2 + 10 +2, height, mainMenuWidth - 10, height+height2), wMainMenu, BUTTON_QQ, gDataManager->GetSysString(8028).data());
+	defaultStrings.emplace_back(btnQQ22, 8028);
+	#ifdef EK
+	btnQQ2->setVisible(false);
+	btnQQ22->setVisible(false);
+	#else
+	btnQQ2->setVisible(true);
+	btnQQ22->setVisible(true);
+	#endif
+
 	//btnModeExit = env->addButton(OFFSET(10, 170, 270, 200), wMainMenu, BUTTON_MODE_EXIT, gDataManager->GetSysString(1210).data());
+	#ifdef EK
 	btnModeExit = env->addButton(OFFSET(10, height, 270, height+height2), wMainMenu, BUTTON_MODE_EXIT, gDataManager->GetSysString(1210).data());
+	#else
+	height += 35;
+	offset += 35;
+	btnModeExit = env->addButton(OFFSET(10, height, 270, height+height2), wMainMenu, BUTTON_MODE_EXIT, gDataManager->GetSysString(1210).data());
+	#endif
 	////////kdiy///////	
 	defaultStrings.emplace_back(btnModeExit, 1210);
 	offset += 35;
@@ -434,11 +444,7 @@ bool Game::Initialize() {
 	defaultStrings.emplace_back(btnLanRefresh, 1217);
 	tmpptr = env->addStaticText(gDataManager->GetSysString(1221).data(), Scale(10, 360, 220, 380), false, false, wLanWindow);
 	defaultStrings.emplace_back(tmpptr, 1221);
-	///kdiy///////////
-	//ebJoinHost = env->addEditBox(gGameConfig->lasthost.data(), Scale(110, 355, 350, 380), true, wLanWindow);
-	ebJoinHost = env->addEditBox(gGameConfig->lasthost.data(), Scale(250, 355, 350, 380), true, wLanWindow);
-	serverChoice2 = AddComboBox(env, Scale(110, 355, 240, 380), wLanWindow, COMBOBOX_LOCAL_SERVER);
-	///kdiy///////////
+	ebJoinHost = env->addEditBox(gGameConfig->lasthost.data(), Scale(110, 355, 350, 380), true, wLanWindow);
 	ebJoinHost->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
 	ebJoinPort = env->addEditBox(gGameConfig->lastport.data(), Scale(360, 355, 420, 380), true, wLanWindow, EDITBOX_PORT_BOX);
 	ebJoinPort->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
@@ -468,7 +474,7 @@ bool Game::Initialize() {
 	cbRule->setSelected(gGameConfig->lastallowedcards);
 	tmpptr = env->addStaticText(gDataManager->GetSysString(1227).data(), Scale(20, 90, 220, 110), false, false, wCreateHost);
 	defaultStrings.emplace_back(tmpptr, 1227);
-#define WStr(i) fmt::to_wstring<int>(i).data()
+#define WStr(i) fmt::to_wstring<int>(i).data()	
 	ebTeam1 = env->addEditBox(WStr(gGameConfig->team1count), Scale(140, 85, 170, 110), true, wCreateHost, EDITBOX_TEAM_COUNT);
 	ebTeam1->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
 	auto vsstring = env->addStaticText(gDataManager->GetSysString(1380).data(), Scale(175, 85, 195, 110), false, false, wCreateHost);
@@ -598,7 +604,76 @@ bool Game::Initialize() {
 	defaultStrings.emplace_back(btnHostConfirm, 1211);
 	btnHostCancel = env->addButton(Scale(260, 385, 370, 410), wCreateHost, BUTTON_HOST_CANCEL, gDataManager->GetSysString(1212).data());
 	defaultStrings.emplace_back(btnHostCancel, 1212);
+	
+	stHostPort = env->addStaticText(gDataManager->GetSysString(1238).data(), Scale(10, 390, 220, 410), false, false, wCreateHost);
+	defaultStrings.emplace_back(stHostPort, 1238);
+	ebHostPort = env->addEditBox(gGameConfig->serverport.data(), Scale(110, 385, 250, 410), true, wCreateHost, EDITBOX_PORT_BOX);
+	ebHostPort->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+	stHostNotes = env->addStaticText(gDataManager->GetSysString(2024).data(), Scale(10, 390, 220, 410), false, false, wCreateHost);
+	defaultStrings.emplace_back(stHostNotes, 2024);
+	stHostNotes->setVisible(false);
+	ebHostNotes = env->addEditBox(L"", Scale(110, 385, 250, 410), true, wCreateHost);
+	ebHostNotes->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+	ebHostNotes->setVisible(false);
 	///////kdiy///////
+	btnSimpleJoinHost = env->addButton(Scale(460, 325, 570, 350), wLanWindow, BUTTON_SIMPLE_CREATE_HOST, gDataManager->GetSysString(8030).data());
+	defaultStrings.emplace_back(btnSimpleJoinHost, 8030);	
+	wCreateHost2 = env->addWindow(Scale(320, 100, 700, 520), false, gDataManager->GetSysString(1224).data());
+	defaultStrings.emplace_back(wCreateHost2, 1224);
+	wCreateHost2->getCloseButton()->setVisible(false);
+	wCreateHost2->setVisible(false);
+	tmpptr = env->addStaticText(gDataManager->GetSysString(1225).data(), Scale(20, 30, 220, 80), false, false, wCreateHost2);
+	defaultStrings.emplace_back(tmpptr, 1225);
+	cbRule2 = AddComboBox(env, Scale(140, 25, 300, 50), wCreateHost2);
+	ReloadLocalCBRule();
+	cbRule2->setSelected(0);
+	chkAI = env->addCheckBox(false, Scale(20, 55, 120, 80), wCreateHost2, CHECKBOX_AI, gDataManager->GetSysString(2054).data());
+	defaultStrings.emplace_back(chkAI, 2054);
+	cbAI = AddComboBox(env, Scale(140, 60, 360, 80), wCreateHost2);
+	cbAI->addItem(L"");
+	cbAI->setEnabled(false);
+	tmpptr = env->addStaticText(gDataManager->GetSysString(8032).data(), Scale(20, 120, 320, 140), false, false, wCreateHost2);
+	defaultStrings.emplace_back(tmpptr, 8032);		
+	ebTimeLimit2 = env->addEditBox(L"3", Scale(140, 115, 220, 140), true, wCreateHost2, EDITBOX_NUMERIC);
+	ebTimeLimit2->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+	tmpptr = env->addStaticText(gDataManager->GetSysString(1236).data(), Scale(20, 150, 220, 170), false, false, wCreateHost2);
+	defaultStrings.emplace_back(tmpptr, 1236);
+	cbDuelRule2 = AddComboBox(env, Scale(140, 145, 300, 170), wCreateHost2, COMBOBOX_DUEL_RULE);
+	ReloadLocalCBDuelRule();
+	chkNoCheckDeck2 = env->addCheckBox(gGameConfig->noCheckDeck, Scale(20, 180, 120, 200), wCreateHost2, -1, gDataManager->GetSysString(1229).data());
+	defaultStrings.emplace_back(chkNoCheckDeck2, 1229);
+	chkNoShuffleDeck2 = env->addCheckBox(gGameConfig->noShuffleDeck, Scale(140, 180, 240, 200), wCreateHost2, -1, gDataManager->GetSysString(1230).data());
+	defaultStrings.emplace_back(chkNoShuffleDeck2, 1230);
+	chkNoLFlist2 = env->addCheckBox(false, Scale(260, 180, 360, 200), wCreateHost2, -1, gDataManager->GetSysString(8031).data());
+	defaultStrings.emplace_back(chkNoLFlist2, 8031);
+	chkTag = env->addCheckBox(false, Scale(140, 210, 240, 230), wCreateHost2, -1, gDataManager->GetSysString(1246).data());
+	defaultStrings.emplace_back(chkTag, 1246);
+	chkMatch = env->addCheckBox(false, Scale(260, 210, 360, 230), wCreateHost2, -1, gDataManager->GetSysString(1245).data());
+	defaultStrings.emplace_back(chkMatch, 1245);
+	tmpptr = env->addStaticText(gDataManager->GetSysString(1231).data(), Scale(20, 240, 320, 260), false, false, wCreateHost2);
+	defaultStrings.emplace_back(tmpptr, 1231);
+	ebStartLP2 = env->addEditBox(WStr(gGameConfig->startLP), Scale(140, 235, 220, 260), true, wCreateHost2, EDITBOX_NUMERIC);
+	ebStartLP2->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+	tmpptr = env->addStaticText(gDataManager->GetSysString(1232).data(), Scale(20, 270, 320, 290), false, false, wCreateHost2);
+	defaultStrings.emplace_back(tmpptr, 1232);
+	ebStartHand2 = env->addEditBox(WStr(gGameConfig->startHand), Scale(140, 265, 220, 290), true, wCreateHost2, EDITBOX_NUMERIC);
+	ebStartHand2->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+	tmpptr = env->addStaticText(gDataManager->GetSysString(1233).data(), Scale(20, 300, 320, 320), false, false, wCreateHost2);
+	defaultStrings.emplace_back(tmpptr, 1233);
+	ebDrawCount2 = env->addEditBox(WStr(gGameConfig->drawCount), Scale(140, 295, 220, 320), true, wCreateHost2, EDITBOX_NUMERIC);
+	ebDrawCount2->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+	tmpptr = env->addStaticText(gDataManager->GetSysString(2041).data(), Scale(10, 330, 220, 350), false, false, wCreateHost2);
+	defaultStrings.emplace_back(tmpptr, 2041);
+	serverChoice2 = AddComboBox(env, Scale(110, 325, 250, 350), wCreateHost2);
+ 	tmpptr = env->addStaticText(gDataManager->GetSysString(1222).data(), Scale(10, 360, 220, 380), false, false, wCreateHost2);
+	defaultStrings.emplace_back(tmpptr, 1222);
+	ebJoinPass2 = env->addEditBox(L"", Scale(110, 355, 250, 380), true, wCreateHost2);
+	ebJoinPass2->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+	btnHostConfirm2 = env->addButton(Scale(260, 355, 370, 380), wCreateHost2, BUTTON_LOCAL_HOST_CONFIRM, gDataManager->GetSysString(1211).data());
+	defaultStrings.emplace_back(btnHostConfirm2, 1211);
+	btnHostCancel2 = env->addButton(Scale(260, 385, 370, 410), wCreateHost2, BUTTON_LOCAL_HOST_CANCEL, gDataManager->GetSysString(1212).data());
+	defaultStrings.emplace_back(btnHostCancel2, 1212);
+
 	wCharacter = env->addWindow(Scale(0, 15, 200, 315));
 	wCharacter->getCloseButton()->setVisible(false);
 	wCharacter->setDraggable(false);
@@ -647,16 +722,7 @@ bool Game::Initialize() {
 	avatarbutton[1]->setImageSize(Scale(0, 0, 105, 200).getSize());
 	avatarbutton[1]->setDrawBorder(false);	
 	///////kdiy///////
-	stHostPort = env->addStaticText(gDataManager->GetSysString(1238).data(), Scale(10, 390, 220, 410), false, false, wCreateHost);
-	defaultStrings.emplace_back(stHostPort, 1238);
-	ebHostPort = env->addEditBox(gGameConfig->serverport.data(), Scale(110, 385, 250, 410), true, wCreateHost, EDITBOX_PORT_BOX);
-	ebHostPort->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-	stHostNotes = env->addStaticText(gDataManager->GetSysString(2024).data(), Scale(10, 390, 220, 410), false, false, wCreateHost);
-	defaultStrings.emplace_back(stHostNotes, 2024);
-	stHostNotes->setVisible(false);
-	ebHostNotes = env->addEditBox(L"", Scale(110, 385, 250, 410), true, wCreateHost);
-	ebHostNotes->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-	ebHostNotes->setVisible(false);
+
 	//host(single)
 	wHostPrepare = env->addWindow(Scale(270, 120, 750, 440), false, gDataManager->GetSysString(1250).data());
 	defaultStrings.emplace_back(wHostPrepare, 1250);
@@ -2592,6 +2658,12 @@ void Game::SaveConfig() {
 	gGameConfig->botMute = gBot.chkMute->isChecked();
 	/////kdiy//////
 	gGameConfig->botSeed = gBot.chkSeed->isChecked();
+	auto lastLocalServerIndex = serverChoice2->getSelected();
+	if (lastLocalServerIndex >= 0)
+		gGameConfig->lastLocalServer = serverChoice2->getItem(lastLocalServerIndex);
+	auto duelruleIndex = cbDuelRule2->getSelected();
+	if (duelruleIndex >= 0)
+		gGameConfig->duelrule = cbDuelRule2->getItem(duelruleIndex);	
 	/////kdiy//////
 	auto lastServerIndex = serverChoice->getSelected();
 	if (lastServerIndex >= 0)
@@ -2776,10 +2848,11 @@ void Game::LoadLocalServers() {
 					tmp_server.name = BufferIO::DecodeUTF8(obj.at("name").get_ref<std::string&>());
 					tmp_server.address = obj.at("address").get<std::string>();
 					tmp_server.duelport = obj.at("duelport").get<int>();
-					if(obj.at("oldserver").get<bool>() != true) continue;
+					if(obj.find("oldserver") == obj.end() || obj.at("oldserver").get<bool>() == false) continue;
 					int i = serverChoice2->addItem(tmp_server.name.data());
-					if(gGameConfig->lastServer == tmp_server.name)
+					if(gGameConfig->lastLocalServer == tmp_server.name)
 						serverChoice2->setSelected(i);
+					ServerLobby::serversVector2.push_back(std::move(tmp_server));	
 				}
 				catch(const std::exception& e) {
 					ErrorLog(fmt::format("Exception occurred while parsing server entry: {}", e.what()));
@@ -3451,6 +3524,23 @@ void Game::ReloadCBRule() {
 	/////kdiy////////////
 		cbRule->addItem(gDataManager->GetSysString(i).data());
 }
+/////kdiy////////////
+void Game::ReloadLocalCBDuelRule() {
+	cbDuelRule2->clear();
+	for (auto i = 1260; i <= 1264; ++i) {
+		int j = cbDuelRule2->addItem(gDataManager->GetSysString(i).data());
+		if(gGameConfig->duelrule == cbDuelRule2->getItem(j))
+			cbDuelRule2->setSelected(j);
+	}
+}
+void Game::ReloadLocalCBRule() {
+	cbRule2->clear();
+	for (auto i = 1900; i <= 1905; ++i) {
+		if(i == 1903 || i == 1904) continue;
+	    cbRule2->addItem(gDataManager->GetSysString(i).data());
+	}
+}
+/////kdiy////////////
 void Game::ReloadCBCurrentSkin() {
 	gSettings.cbCurrentSkin->clear();
 	int selectedSkin = gSettings.cbCurrentSkin->addItem(gDataManager->GetSysString(2065).data());
@@ -3538,6 +3628,11 @@ void Game::ReloadElementsStrings() {
 		ReloadCBDuelRule();
 		cbDuelRule->setSelected(prev);
 	}
+	//////kdiy/////////
+	prev = cbDuelRule2->getSelected();
+	ReloadLocalCBDuelRule();
+	cbDuelRule2->setSelected(prev);
+	//////kdiy/////////
 
 	prev = cbHandTestDuelRule->getSelected();
 	ReloadCBDuelRule(cbHandTestDuelRule);
@@ -3546,6 +3641,11 @@ void Game::ReloadElementsStrings() {
 	prev = cbRule->getSelected();
 	ReloadCBRule();
 	cbRule->setSelected(prev);
+	//////kdiy/////////
+	prev = cbRule2->getSelected();
+	ReloadLocalCBRule();
+	cbRule2->setSelected(prev);
+	//////kdiy/////////
 
 	prev = gSettings.cbCoreLogOutput->getSelected();
 	ReloadCBCoreLogOutput();
@@ -3586,7 +3686,11 @@ void Game::OnResize() {
 	wRoomListPlaceholder->setRelativePosition(irr::core::recti(0, 0, window_size.Width, window_size.Height));
 	////////kdiy///////	
 	// wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 450));
-	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 480));
+	#ifdef EK
+	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 485));
+	#else
+	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 520));
+	#endif
 	wQQ->setRelativePosition(ResizeWin(mainMenuRightX+10, 200, mainMenuRightX+150, 450));
 	////////kdiy///////	
 	wBtnSettings->setRelativePosition(ResizeWin(0, 610, 30, 640));

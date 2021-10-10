@@ -26,6 +26,9 @@ class ServerLobby {
 public:
 	static std::vector<RoomInfo> roomsVector;
 	static std::vector<ServerInfo> serversVector;
+	///kdiy////////
+	static std::vector<ServerInfo> serversVector2;
+	///kdiy////////
 	static void RefreshRooms();
 	static bool HasRefreshedRooms();
 	static void GetRoomsThread();
