@@ -406,6 +406,9 @@ void DuelClient::HandleSTOCPacketLan2(char* data, uint32_t len) {
 				mainGame->btnJoinHost->setEnabled(true);
 				mainGame->btnJoinCancel->setEnabled(true);
 				mainGame->HideElement(mainGame->wCreateHost);
+				////////kdiy////////
+				mainGame->HideElement(mainGame->wCreateHost2);
+				////////kdiy////////
 				mainGame->HideElement(mainGame->wHostPrepare);
 				mainGame->HideElement(mainGame->wHostPrepareL);
 				mainGame->HideElement(mainGame->wHostPrepareR);
@@ -3115,14 +3118,23 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 			}
 			//////kdiy///
 		}
+		auto lock = LockIf();
 		//////kdiy///
-		if(reason == 0 && previous.controler == current.controler && previous.location == current.location && previous.sequence == current.sequence && previous.position == current.position) {
-		    ClientCard* pcard = new ClientCard{};
-		    pcard->SetCode(code);
+		if(reason == 0 && code != 0 && previous.controler == current.controler && previous.location == current.location && previous.sequence == current.sequence && previous.position == current.position) {
+			if(!(previous.location & LOCATION_OVERLAY)) {
+			    ClientCard* pcard = mainGame->dField.GetCard(previous.controler, previous.location, previous.sequence);
+				pcard->code = code;
+		    } else {
+				ClientCard* olcard = mainGame->dField.GetCard(previous.controler, previous.location & (~LOCATION_OVERLAY) & 0xff, previous.sequence);
+				ClientCard* pcard = olcard->overlayed[previous.position];
+				pcard->code = code;
+			}
+			if(!mainGame->dInfo.isCatchingUp) {
+				mainGame->WaitFrameSignal(5, lock);
+			}
 			return true;
 		}
 		//////kdiy///
-		auto lock = LockIf();
 		if (previous.location == 0) {
 			ClientCard* pcard = new ClientCard{};
 			pcard->position = current.position;
