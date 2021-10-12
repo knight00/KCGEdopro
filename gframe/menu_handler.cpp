@@ -453,14 +453,12 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				if (wcslen(mainGame->ebNickName->getText())) {
 					mainGame->HideElement(mainGame->wLanWindow);
 					mainGame->ShowElement(mainGame->wCreateHost2);
-					for (const auto& bot : mainGame->gBot.bots)
-					    mainGame->cbAI->addItem(bot.name.data());
 				}
 				break;
 			}
 			case BUTTON_LOCAL_HOST_CONFIRM: {
 				auto selected = mainGame->serverChoice2->getSelected();
-				if (selected < 0) break;
+				if(selected < 0) break;
 				std::pair<uint32_t, uint16_t> serverinfo;
 				try {
 					ServerInfo server = ServerLobby::serversVector2[selected];
@@ -476,30 +474,34 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					    pass += pass == L"" ? L"T" : L",T";
 					else 
 					    pass += pass == L"" ? L"S" : L",S";
+					if(mainGame->chkMatch->isChecked()) 
+					    pass += L",M";
+					if(mainGame->cbRule2->getSelected() == 1)
+					    pass += L",TO";
+					else if(mainGame->cbRule2->getSelected() == 2)
+					    pass += L",OT";	
+					if (std::stoi(mainGame->ebTimeLimit2->getText()) != 3)
+						pass += L",TM" + Utils::ToPathString(mainGame->ebTimeLimit2->getText());
+					if (mainGame->cbDuelRule2->getSelected() != 4)
+						pass += L",MR" + Utils::ToUpperChar(mainGame->cbDuelRule2->getSelected() + 1);		
 					if(mainGame->chkNoCheckDeck2->isChecked()) 
 					    pass += L",NC";
 					if(mainGame->chkNoShuffleDeck2->isChecked()) 
 					    pass += L",NS";
 					if(mainGame->chkNoLFlist2->isChecked()) 
 					    pass += L",NF";
-					if(mainGame->chkMatch->isChecked()) 
-					    pass += L",M";
-					if(mainGame->cbRule2->getSelected() == 1)
-					    pass += L",TO";
-					else if(mainGame->cbRule2->getSelected() == 2)
-					    pass += L",OT";
 					if (std::stoi(mainGame->ebStartLP2->getText()) != 8000)
 					    pass += L",LP" + Utils::ToUnicodeIfNeeded(mainGame->ebStartLP2->getText());
-					if (std::stoi(mainGame->ebTimeLimit2->getText()) != 3)
-						pass += L",TM" + Utils::ToPathString(mainGame->ebTimeLimit2->getText());
 					if (std::stoi(mainGame->ebStartHand2->getText()) != 5)
 						pass += L",ST" + Utils::ToPathString(mainGame->ebStartHand2->getText());
 					if (std::stoi(mainGame->ebDrawCount2->getText()) != 1)
 						pass += L",DR" + Utils::ToPathString(mainGame->ebDrawCount2->getText());
-					if (mainGame->cbDuelRule2->getSelected() != 4)
-						pass += L",MR" + Utils::ToUpperChar(mainGame->cbDuelRule2->getSelected() + 1);
 					pass += symbol;
-					if(pass.length()>=20) {
+					if(wcslen(mainGame->ebJoinPass2->getText()) > 0)
+						pass += Utils::ToPathString(mainGame->ebJoinPass2->getText());
+					if(mainGame->chkdefaultlocal->isChecked())
+					    pass = L"";	
+					if(pass.length() > 20) {
 						mainGame->PopupMessage(gDataManager->GetSysString(8033));
 						break;
 					}
@@ -1238,6 +1240,28 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 		}
 		case irr::gui::EGET_CHECKBOX_CHANGED: {
 			switch(id) {
+			////kdiy///////
+			case CHECKBOX_DEFAULT_LOCAL: {
+				bool chk = true;
+				if(mainGame->chkdefaultlocal->isChecked()) {
+					chk = false;
+				}
+				mainGame->cbRule2->setEnabled(chk);
+				mainGame->chkAI->setEnabled(chk);
+				mainGame->ebTimeLimit2->setEnabled(chk);
+				mainGame->cbDuelRule2->setEnabled(chk);
+				mainGame->chkNoCheckDeck2->setEnabled(chk);
+				mainGame->chkNoShuffleDeck2->setEnabled(chk);
+				mainGame->chkNoLFlist2->setEnabled(chk);
+				mainGame->chkTag->setEnabled(chk);
+				mainGame->chkMatch->setEnabled(chk);
+				mainGame->ebStartLP2->setEnabled(chk);
+				mainGame->ebStartHand2->setEnabled(chk);
+				mainGame->ebDrawCount2->setEnabled(chk);
+				mainGame->ebJoinPass2->setEnabled(chk);
+				break;
+			}
+			////kdiy///////
 			case CHECK_SHOW_LOCKED_ROOMS: {
 				ServerLobby::FillOnlineRooms();
 				break;
@@ -1248,13 +1272,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				//ServerLobby::RefreshRooms();
 				break;
 			}
-			///////kdiy////	
-			case CHECKBOX_AI: {
-				if(mainGame->chkAI->isChecked())
-				    mainGame->cbAI->setEnabled(true);
-				break;
-			}
-			///////kdiy////	
 			case CHECKBOX_HP_READY: {
 				if(!caller->isEnabled())
 					break;

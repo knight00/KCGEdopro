@@ -298,9 +298,9 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 ////kdiy//////////	
 #endif
 #ifndef EK
-    auto cit = configs.find("repos");
-	if(cit != configs.end() && cit->is_array()) {
-		for(auto& obj : *cit) {
+    auto cit2 = configs.find("repos");
+	if(cit2 != configs.end() && cit2->is_array()) {
+		for(auto& obj : *cit2) {
 			{
 				GitRepo tmp_repo;
 				JSON_SET_IF_VALID(url, string, std::string);

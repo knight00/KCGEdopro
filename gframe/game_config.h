@@ -67,7 +67,9 @@ struct GameConfig
 	///kdiy//////////
 	bool botSeed{ false };
 	std::wstring lastLocalServer;
-	std::wstring duelrule;
+	uint32_t lastlocalallowedcards{ 0 };
+	uint32_t localtimeLimit{ 3 };
+	uint32_t duelrule{ 4 };
 	///kdiy//////////
 	int lastBot{ 0 };
 	std::wstring lastServer;

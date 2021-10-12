@@ -489,6 +489,8 @@ public:
 	irr::gui::IGUIStaticText* stBestof;
 	///////kdiy//////////
 	irr::gui::IGUIWindow* wCreateHost2;
+	irr::gui::IGUICheckBox* chkdefaultlocal;
+	irr::gui::IGUICheckBox* chkAI;
 	irr::gui::IGUIComboBox* cbHostLFList2;
 	irr::gui::IGUIComboBox* cbRule2;
 	irr::gui::IGUIEditBox* ebTimeLimit2;
@@ -500,8 +502,6 @@ public:
 	irr::gui::IGUICheckBox* chkNoCheckDeck2;
 	irr::gui::IGUICheckBox* chkNoShuffleDeck2;
 	irr::gui::IGUICheckBox* chkNoLFlist2;
-	irr::gui::IGUICheckBox* chkAI;
-	irr::gui::IGUIComboBox* cbAI;
 	irr::gui::IGUICheckBox* chkTag;
 	irr::gui::IGUICheckBox* chkMatch;
 	irr::gui::IGUIButton* btnSimpleJoinHost;

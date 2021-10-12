@@ -184,6 +184,11 @@ bool GameConfig::Load(const epro::path_char* filename) {
 			DESERIALIZE_UNSIGNED(startLP)
 			DESERIALIZE_UNSIGNED(startHand)
 			DESERIALIZE_UNSIGNED(drawCount)
+			///kdiy/////////////
+			DESERIALIZE_UNSIGNED(lastlocalallowedcards)
+			DESERIALIZE_UNSIGNED(localtimeLimit)
+			DESERIALIZE_UNSIGNED(duelrule)
+			///kdiy/////////////
 			DESERIALIZE_UNSIGNED(lastBot)
 #define DESERIALIZE_BOOL(name) else if (type == #name) name = !!std::stoi(str);
 			DESERIALIZE_BOOL(relayDuel)
@@ -217,8 +222,6 @@ bool GameConfig::Load(const epro::path_char* filename) {
 				botSeed = !!std::stoi(str);
 			else if(type == "lastLocalServer")
 				lastLocalServer = BufferIO::DecodeUTF8(str);
-			else if(type == "duelrule")
-				duelrule = BufferIO::DecodeUTF8(str);
 			/////kdiy//////	
 			else if(type == "lastServer")
 				lastServer = BufferIO::DecodeUTF8(str);
@@ -409,7 +412,9 @@ bool GameConfig::Save(const epro::path_char* filename) {
 	///kdiy//////////
 	conf_file << "botSeed = "                  << botSeed << "\n";
 	conf_file << "lastLocalServer = "          << BufferIO::EncodeUTF8(lastLocalServer) << "\n";
-	conf_file << "duelrule = "                 << BufferIO::EncodeUTF8(duelrule) << "\n";
+	conf_file << "lastlocalallowedcards = "   << lastlocalallowedcards << "\n";
+	SERIALIZE(localtimeLimit);
+	conf_file << "duelrule = "                 << duelrule << "\n";
 	///kdiy//////////
 	SERIALIZE(lastBot);
 	conf_file << "lastServer = "               << BufferIO::EncodeUTF8(lastServer) << "\n";
