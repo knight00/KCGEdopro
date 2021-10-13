@@ -138,11 +138,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 #if defined(Git_username) && defined(Git_pw)
 	std::string t = Git_username + std::string(":") + Git_pw;
 	t = std::regex_replace(t, std::regex("@"), "%40");
-	std::string tmp_repo1 = "./repositories/delta";
-	std::string tmp_repo2 = "./repositories/kcg";
 	std::string tmp_repo3 = "./config/languages";
-	std::string tmp_repo4 = "./repositories/lflists";
-	std::string tmp_repo5 = "./puzzles/Canon collection";
 	bool repo3chk = false;
 	////kdiy//////////
 	auto cit = configs.find("repos");
@@ -167,23 +163,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 				GitRepo tmp_repo;
 				JSON_SET_IF_VALID(repo_path, string, std::string);
 				JSON_SET_IF_VALID(repo_name, string, std::string);
-				if(tmp_repo.repo_path == tmp_repo1 || tmp_repo.repo_path == tmp_repo2 || tmp_repo.repo_path == tmp_repo3 || tmp_repo.repo_path == tmp_repo4 || tmp_repo.repo_path == tmp_repo5) {
-					if(tmp_repo.repo_path == tmp_repo1) {
-						if(tmp_repo.repo_name.empty()) 
-						    tmp_repo.repo_name = "Official";
-						tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/Official.git";
-						tmp_repo.data_path = "";
-						tmp_repo.script_path = "script";
-					}
-					if(tmp_repo.repo_path == tmp_repo2) {
-						if(tmp_repo.repo_name.empty()) 
-						    tmp_repo.repo_name = "KCG";
-						tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/KCG.git";
-						tmp_repo.data_path = "";
-						tmp_repo.script_path = "script";
-						tmp_repo.has_core = true;
-						tmp_repo.core_path = "bin";
-					}
+				if(tmp_repo.repo_path == tmp_repo3) {
 					if(tmp_repo.repo_path == tmp_repo3) {
 						if(tmp_repo.repo_name.empty()) 
 						    tmp_repo.repo_name = "Language";
@@ -191,17 +171,6 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 						tmp_repo.data_path = "";
 						tmp_repo.is_language = true;
 						repo3chk = true;
-					}
-					if(tmp_repo.repo_path == tmp_repo4) {
-						if(tmp_repo.repo_name.empty()) 
-						    tmp_repo.repo_name = "LFLists";
-						tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/LFLists.git";
-						tmp_repo.lflist_path = ".";
-					}
-					if(tmp_repo.repo_path == tmp_repo5) {
-						if(tmp_repo.repo_name.empty()) 
-						    tmp_repo.repo_name = "Puzzles";
-						tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/Puzzles.git";
 					}
 					auto it = obj.find("admin_update");
 				    if(it != obj.end() && it->is_boolean() && !it->get<bool>())

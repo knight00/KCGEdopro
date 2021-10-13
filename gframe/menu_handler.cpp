@@ -654,7 +654,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				if(Utils::FileExists(EPRO_TEXT("./updates/configs.json")))
 				    update_trial = 3;
 				if(update_trial > 2) {
-					Utils::DeleteDirectory(EPRO_TEXT("./repositories/"));
+					Utils::DeleteDirectory(EPRO_TEXT("./script/"));
 					if(!Utils::FileExists(EPRO_TEXT("./updates/configs.json")) && Utils::FileExists(EPRO_TEXT("./config/configs.json")))
 					    Utils::FileCopy(EPRO_TEXT("./config/configs.json"), EPRO_TEXT("./updates/configs.json"));
 					Utils::FileDelete(EPRO_TEXT("./config/configs.json"));
@@ -1416,7 +1416,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					if(Utils::FileExists(EPRO_TEXT("./updates/configs.json")))
 					    update_trial = 3;
 					if(update_trial > 2) {
-						Utils::DeleteDirectory(EPRO_TEXT("./repositories/"));
+						Utils::DeleteDirectory(EPRO_TEXT("./script/"));
 						if(!Utils::FileExists(EPRO_TEXT("./updates/configs.json")) && Utils::FileExists(EPRO_TEXT("./config/configs.json")))
 						    Utils::FileCopy(EPRO_TEXT("./config/configs.json"), EPRO_TEXT("./updates/configs.json"));
 						Utils::FileDelete(EPRO_TEXT("./config/configs.json"));

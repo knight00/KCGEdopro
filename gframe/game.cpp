@@ -1954,21 +1954,21 @@ static inline void BuildProjectionMatrix(irr::core::matrix4& mProjection, irr::f
 bool Game::MainLoop() {
 	irr::core::matrix4 mProjection;
 	/////kfun////////////
-	// camera = smgr->addCameraSceneNode(0);
-	// BuildProjectionMatrix(mProjection, CAMERA_LEFT, CAMERA_RIGHT, CAMERA_BOTTOM, CAMERA_TOP, 1.0f, 100.0f);
-	// camera->setProjectionMatrix(mProjection);
-	irr::scene::ISceneNode *target = smgr->addEmptySceneNode(0, 200);
-    target->setPosition(irr::core::vector3df(0, 0, 0));
-	camera = smgr->addCameraSceneNode(target, irr::core::vector3df(5, 0, 0), irr::core::vector3df(0, 0, 0));
-	irr::core::matrix4 projMat;
-    irr::f32 orth_w = (float)(driver->getScreenSize().Width - 256) / (float)driver->getScreenSize().Height;
-    orth_w = 15 * orth_w;
-    projMat.buildProjectionMatrixOrthoLH(orth_w, 6.5, 0.2, 25);
-	camera->setProjectionMatrix(projMat, true);
+	camera = smgr->addCameraSceneNode(0);
+	BuildProjectionMatrix(mProjection, CAMERA_LEFT, CAMERA_RIGHT, CAMERA_BOTTOM, CAMERA_TOP, 1.0f, 100.0f);
+	camera->setProjectionMatrix(mProjection);
+	// irr::scene::ISceneNode *target = smgr->addEmptySceneNode(0, 200);
+    // target->setPosition(irr::core::vector3df(0, 0, 0));
+	// camera = smgr->addCameraSceneNode(target, irr::core::vector3df(5, 0, 0), irr::core::vector3df(0, 0, 0));
+	// irr::core::matrix4 projMat;
+    // irr::f32 orth_w = (float)(driver->getScreenSize().Width - 256) / (float)driver->getScreenSize().Height;
+    // orth_w = 18 * orth_w;
+    // projMat.buildProjectionMatrixOrthoLH(orth_w, 5, 0.2, 35);
+	// camera->setProjectionMatrix(projMat, true);
 	/////kfun////////////
 	camera->setPosition(irr::core::vector3df(FIELD_X, FIELD_Y, FIELD_Z));
 	/////kfun////////////
-	// camera->setTarget(irr::core::vector3df(FIELD_X, 0, 0));
+	camera->setTarget(irr::core::vector3df(FIELD_X, 0, 0));
 	/////kfun////////////
 	camera->setUpVector(irr::core::vector3df(0, 0, 1));
 
