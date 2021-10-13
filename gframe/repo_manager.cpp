@@ -190,7 +190,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 			JSON_SET_IF_VALID(url, string, std::string);
 			////kdiy//////////
 			if(tmp_repo.url.substr(0,8) == "default/") {
-				#ifdef Git_username && Git_pw
+				#if defined(Git_username) && defined(Git_pw)
 				tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg" + tmp_repo.url.substr(7,tmp_repo.url.length());
 				#else
 			    tmp_repo.url = "https://e.coding.net/edokcg/edokcg" + tmp_repo.url.substr(7,tmp_repo.url.length());
@@ -274,7 +274,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 				GitRepo tmp_repo;
 				JSON_SET_IF_VALID(url, string, std::string);
 				if(tmp_repo.url.substr(0,8) == "default/") {
-				#ifdef Git_username && Git_pw
+				#if defined(Git_username) && defined(Git_pw)
 				tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg" + tmp_repo.url.substr(7,tmp_repo.url.length());
 				#else
 			    tmp_repo.url = "https://e.coding.net/edokcg/edokcg" + tmp_repo.url.substr(7,tmp_repo.url.length());

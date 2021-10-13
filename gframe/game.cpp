@@ -402,26 +402,19 @@ bool Game::Initialize() {
 	btnClearpics->setVisible(false);
 	folder->setVisible(false);
 	btnFolder->setVisible(false);
-	#endif
 
+    height += 35;
+	offset += 35;
 	btnQQ2 = env->addButton(Scale(10, height, (mainMenuWidth - 20)/2 + 10 -2, height+height2), wMainMenu, BUTTON_QQ2, gDataManager->GetSysString(8029).data());
 	defaultStrings.emplace_back(btnQQ2, 8029);
 	btnQQ22 = env->addButton(Scale((mainMenuWidth - 20)/2 + 10 +2, height, mainMenuWidth - 10, height+height2), wMainMenu, BUTTON_QQ, gDataManager->GetSysString(8028).data());
 	defaultStrings.emplace_back(btnQQ22, 8028);
-	#ifdef EK
-	btnQQ2->setVisible(false);
-	btnQQ22->setVisible(false);
-	#else
-	btnQQ2->setVisible(true);
-	btnQQ22->setVisible(true);
 	#endif
 
 	//btnModeExit = env->addButton(OFFSET(10, 170, 270, 200), wMainMenu, BUTTON_MODE_EXIT, gDataManager->GetSysString(1210).data());
 	#ifdef EK
 	btnModeExit = env->addButton(OFFSET(10, height, 270, height+height2), wMainMenu, BUTTON_MODE_EXIT, gDataManager->GetSysString(1210).data());
 	#else
-	height += 35;
-	offset += 35;
 	btnModeExit = env->addButton(OFFSET(10, height, 270, height+height2), wMainMenu, BUTTON_MODE_EXIT, gDataManager->GetSysString(1210).data());
 	#endif
 	////////kdiy///////	

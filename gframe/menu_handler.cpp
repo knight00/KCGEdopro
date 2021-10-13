@@ -481,9 +481,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					else if(mainGame->cbRule2->getSelected() == 2)
 					    pass += L",OT";	
 					if (std::stoi(mainGame->ebTimeLimit2->getText()) != 3)
-						pass += L",TM" + Utils::ToPathString(mainGame->ebTimeLimit2->getText());
+						pass += fmt::format(L",TM{}",mainGame->ebTimeLimit2->getText());
 					if (mainGame->cbDuelRule2->getSelected() != 4)
-						pass += L",MR" + Utils::ToUpperChar(mainGame->cbDuelRule2->getSelected() + 1);		
+						pass += fmt::format(L",MR{}", mainGame->cbDuelRule2->getSelected() + 1);	
 					if(mainGame->chkNoCheckDeck2->isChecked()) 
 					    pass += L",NC";
 					if(mainGame->chkNoShuffleDeck2->isChecked()) 
@@ -491,14 +491,14 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					if(mainGame->chkNoLFlist2->isChecked()) 
 					    pass += L",NF";
 					if (std::stoi(mainGame->ebStartLP2->getText()) != 8000)
-					    pass += L",LP" + Utils::ToUnicodeIfNeeded(mainGame->ebStartLP2->getText());
+					    pass += fmt::format(L",LP{}", mainGame->ebStartLP2->getText());
 					if (std::stoi(mainGame->ebStartHand2->getText()) != 5)
-						pass += L",ST" + Utils::ToPathString(mainGame->ebStartHand2->getText());
+						pass += fmt::format(L",ST{}", mainGame->ebStartHand2->getText());
 					if (std::stoi(mainGame->ebDrawCount2->getText()) != 1)
-						pass += L",DR" + Utils::ToPathString(mainGame->ebDrawCount2->getText());
+						pass += fmt::format(L",DR{}", mainGame->ebDrawCount2->getText());
 					pass += symbol;
 					if(wcslen(mainGame->ebJoinPass2->getText()) > 0)
-						pass += Utils::ToPathString(mainGame->ebJoinPass2->getText());
+						pass += std::wstring(mainGame->ebJoinPass2->getText());
 					if(mainGame->chkdefaultlocal->isChecked())
 					    pass = L"";	
 					if(pass.length() > 20) {
