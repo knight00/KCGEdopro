@@ -225,7 +225,6 @@ void SoundManager::RefreshChantsList() {
 		}
 		/////kdiy///////
 	}
-#endif
 }
 void SoundManager::PlaySoundEffect(SFX sound) {
 #ifdef BACKEND
