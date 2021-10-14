@@ -188,7 +188,7 @@ void ServerLobby::GetRoomsThread() {
 		curl_easy_setopt(curl_handle, CURLOPT_URL, fmt::format("http://{}:{}/api/getrooms", "123.57.231.225", 18001).data());
 		else
 		///////kdiy/////////
-		curl_easy_setopt(curl_handle, CURLOPT_URL, fmt::format("http://{}:{}/api/getrooms", serverInfo.roomaddress, serverInfo.roomlistport).data());
+		curl_easy_setopt(curl_handle, CURLOPT_URL, fmt::format("{}://{}:{}/api/getrooms", ServerInfo::GetProtocolString(serverInfo.protocol), serverInfo.roomaddress, serverInfo.roomlistport).data());
 	/*} else {
 		curl_easy_setopt(curl_handle, CURLOPT_URL, fmt::format("http://{}:{}/api/getrooms", serverInfo.roomaddress, serverInfo.roomlistport).data());
 	}*/

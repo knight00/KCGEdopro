@@ -1188,7 +1188,7 @@ bool Game::Initialize() {
 	defaultStrings.emplace_back(wQuery, 560);
 	wQuery->getCloseButton()->setVisible(false);
 	wQuery->setVisible(false);
-	stQMessage = irr::gui::CGUICustomText::addCustomText(L"", false, env, wQuery, -1, Scale(20, 20, 350, 100));
+	stQMessage = irr::gui::CGUICustomText::addCustomText(L"", false, env, wQuery, -1, Scale(10, 20, 350, 100));
 	stQMessage->setWordWrap(true);
 	stQMessage->setTextAlignment(irr::gui::EGUIA_UPPERLEFT, irr::gui::EGUIA_CENTER);
 	btnYes = env->addButton(Scale(100, 105, 150, 130), wQuery, BUTTON_YES, gDataManager->GetSysString(1213).data());
@@ -2828,8 +2828,14 @@ void Game::LoadServers() {
 					if(obj.find("oldserver") != obj.end() && obj.at("oldserver").get<bool>() == true) continue;
 					///kdiy/////////
 					tmp_server.roomaddress = obj.at("roomaddress").get<std::string>();
-					tmp_server.roomlistport = obj.at("roomlistport").get<int>();
-					tmp_server.duelport = obj.at("duelport").get<int>();
+					tmp_server.roomlistport = obj.at("roomlistport").get<uint16_t>();
+					tmp_server.duelport = obj.at("duelport").get<uint16_t>();
+					{
+						auto it = obj.find("roomlistprotocol");
+						if(it != obj.end() && it->is_string()) {
+							tmp_server.protocol = ServerInfo::GetProtocol(it->get_ref<std::string&>());
+						}
+					}
 					int i = serverChoice->addItem(tmp_server.name.data());
 					if(gGameConfig->lastServer == tmp_server.name)
 						serverChoice->setSelected(i);
