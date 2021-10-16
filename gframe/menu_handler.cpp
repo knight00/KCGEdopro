@@ -1527,6 +1527,15 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			///////kdiy//////////
+			case COMBOBOX_PICS: {
+				int sel = mainGame->cbpics->getSelected();
+				if(sel > 0)
+				    try {
+						gGameConfig->dpi_scale = static_cast<uint32_t>(std::stol(mainGame->gSettings.ebDpiScale->getText())) / 100.0;
+						mainGame->restart = true;
+					} catch(...){}
+				break;
+			}
 			case COMBOBOX_aiDeck2: {
 				int sel = mainGame->gBot.aiDeckSelect->getSelected();
 				int sel2 = mainGame->gBot.aiDeckSelect2->getSelected();

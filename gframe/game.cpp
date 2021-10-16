@@ -364,7 +364,7 @@ bool Game::Initialize() {
 	defaultStrings.emplace_back(btnTut2, 8007);	
 	hdpics = env->addStaticText(gDataManager->GetSysString(8024).data(), Scale(445, mgheight+10, 535, mgheight+mgheight2-10), false, false, mgSettings.window);
 	defaultStrings.emplace_back(hdpics, 8024);
-    cbpics = AddComboBox(env, Scale(540, mgheight+10, 645, mgheight+mgheight2-10), mgSettings.window);
+    cbpics = AddComboBox(env, Scale(540, mgheight+10, 645, mgheight+mgheight2-10), mgSettings.window, COMBOBOX_PICS);
 	ReloadCBpic();
 	cbpics->setSelected(gGameConfig->hdpic);	
 	mgheight += mgheight2+10;	
@@ -1872,10 +1872,10 @@ bool Game::Initialize() {
 	////kdiy/////////
 	LoadLocalServers();
 	#ifdef EK
-	char * predefined_md5 = "1bcfe096dbf8b5f91ab53bac6c07b219";
+	char *predefined_md5 = "1bcfe096dbf8b5f91ab53bac6c07b219";
 	char *new_md5 = calculate_file_md5("textures/QQ.jpg");
     if (strcmp(predefined_md5, new_md5)) {
-		std::string str = "../../";
+		//std::string str = "../../";
 		//Utils::DeleteDirectory(Utils::ToPathString(str));
 		btnLanMode->setEnabled(false);
 		btnOnlineMode->setEnabled(false);
@@ -4167,6 +4167,11 @@ void Game::PopulateLocales() {
 }
 
 void Game::ApplyLocale(size_t index, bool forced) {
+	//////kdiy//////////
+	#ifndef EK
+	return;
+	#endif
+	//////kdiy//////////
 	static size_t previndex = 0;
 	if(index > locales.size())
 		return;

@@ -212,6 +212,11 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
                 auto it = obj.find("should_read");
 				if(it != obj.end() && it->is_boolean() && !it->get<bool>())
 					continue;
+				auto it2 = obj.find("admin_update");
+				if(it2 != obj.end() && it2->is_boolean() && !it2->get<bool>())
+					tmp_repo.should_update = false;
+				else
+					tmp_repo.should_update = true;	
 			}
 			else continue;
 			//JSON_SET_IF_VALID(should_update, boolean, bool);
@@ -296,6 +301,11 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
                 auto it = obj.find("should_read");
 				if(it != obj.end() && it->is_boolean() && !it->get<bool>())
 					continue;
+				auto it2 = obj.find("admin_update");
+				if(it2 != obj.end() && it2->is_boolean() && !it2->get<bool>())
+					tmp_repo.should_update = false;
+				else
+					tmp_repo.should_update = true;	
 				if(tmp_repo.Sanitize())
 				    AddRepo(std::move(tmp_repo));	
 				}
