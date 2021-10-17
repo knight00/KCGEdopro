@@ -58,13 +58,11 @@ void DataHandler::LoadPicUrls() {
 					//kdiy//////
 					if(url == "jp") {
 						if(type == "pic") {
-						    if(gGameConfig->hdpic == 1) {
 #ifdef DEFAULT_JHDPIC_URL
                                 imageDownloader->AddDownloadResource({ DEFAULT_JHDPIC_URL, imgType::ART, 1 });
 #else
 							continue;
 #endif							
-							} else continue;
 						}							
 					} else					
 					//kdiy//////

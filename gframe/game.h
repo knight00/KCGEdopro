@@ -322,9 +322,6 @@ public:
 	void PopulateResourcesDirectories();
 	std::vector<epro::path_string> field_dirs;
 	std::vector<epro::path_string> pic_dirs;
-	////kdiy//////////
-	std::vector<epro::path_string> hdpic_dirs;
-	////kdiy//////////
 	std::vector<epro::path_string> cover_dirs;
 	std::vector<epro::path_string> script_dirs;
 	std::vector<epro::path_string> cores_to_load;
