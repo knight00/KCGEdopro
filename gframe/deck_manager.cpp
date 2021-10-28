@@ -18,7 +18,7 @@
 namespace ygo {
 CardDataC* DeckManager::GetDummyOrMappedCardData(uint32_t code) {
 	if(!load_dummies)
-		return GetMappedCardData(code);
+		return gDataManager->GetMappedCardData(code);
 	auto it = dummy_entries.find(code);
 	if(it != dummy_entries.end())
 		return it->second;
@@ -28,12 +28,6 @@ CardDataC* DeckManager::GetDummyOrMappedCardData(uint32_t code) {
 	dummy_entries[code] = tmp;
 	return tmp;
 }
-CardDataC* DeckManager::GetMappedCardData(uint32_t code) {
-	auto it = mapped_ids.find(code);
-	if(it != mapped_ids.end())
-		return gDataManager->GetCardData(it->second);
-	return nullptr;
-}
 void DeckManager::ClearDummies() {
 	for(auto& card : dummy_entries) {
 		delete card.second;
@@ -41,7 +35,7 @@ void DeckManager::ClearDummies() {
 	dummy_entries.clear();
 }
 bool DeckManager::LoadLFListSingle(const epro::path_string& path) {
-	static const char key[] = "$whitelist";
+	static constexpr auto key = "$whitelist"_sv;
 #if defined(__MINGW32__) && defined(UNICODE)
 	auto fd = _wopen(path.data(), _O_RDONLY);
 	if(fd == -1)
@@ -75,7 +69,7 @@ bool DeckManager::LoadLFListSingle(const epro::path_string& path) {
 			loaded = true;
 			continue;
 		}
-		if(str.rfind(key, 0) == 0) {
+		if(str.rfind(key.data(), 0, key.size()) == 0) {
 			lflist.whitelist = true;
 			continue;
 		}
@@ -101,8 +95,8 @@ bool DeckManager::LoadLFListSingle(const epro::path_string& path) {
 		_lfList.push_back(lflist);
 	return loaded;
 }
-bool DeckManager::LoadLFListFolder(epro::path_string path) {
-	path = Utils::NormalizePath(path);
+bool DeckManager::LoadLFListFolder(epro::path_stringview _path) {
+	auto path = Utils::NormalizePath(_path);
 	bool loaded = false;
 	auto lflists = Utils::FindFiles(path, { EPRO_TEXT("conf") });
 	for (const auto& lflist : lflists) {
@@ -301,11 +295,11 @@ uint32_t DeckManager::LoadDeck(Deck& deck, const cardlist_type& mainlist, const 
 	const bool loadalways = !!extralist;
 	for(auto code : mainlist) {
 		if(!(cd = gDataManager->GetCardData(code))) {
-			if(!loadalways) {
+			cd = gdeckManager->GetDummyOrMappedCardData(code);
+			if((!cd || cd->code == 0) && !loadalways) {
 				errorcode = code;
 				continue;
 			}
-			cd = gdeckManager->GetDummyOrMappedCardData(code);
 		}
 		if(!cd || cd->type & TYPE_TOKEN)
 			continue;
@@ -318,11 +312,11 @@ uint32_t DeckManager::LoadDeck(Deck& deck, const cardlist_type& mainlist, const 
 	if(extralist) {
 		for(auto code : *extralist) {
 			if(!(cd = gDataManager->GetCardData(code))) {
-				if(!loadalways) {
+				cd = gdeckManager->GetDummyOrMappedCardData(code);
+				if((!cd || cd->code == 0) && !loadalways) {
 					errorcode = code;
 					continue;
 				}
-				cd = gdeckManager->GetDummyOrMappedCardData(code);
 			}
 			if(!cd || cd->type & TYPE_TOKEN)
 				continue;
@@ -331,11 +325,11 @@ uint32_t DeckManager::LoadDeck(Deck& deck, const cardlist_type& mainlist, const 
 	}
 	for(auto code : sidelist) {
 		if(!(cd = gDataManager->GetCardData(code))) {
-			if(!loadalways) {
+			cd = gdeckManager->GetDummyOrMappedCardData(code);
+			if((!cd || cd->code == 0) && !loadalways) {
 				errorcode = code;
 				continue;
 			}
-			cd = gdeckManager->GetDummyOrMappedCardData(code);
 		}
 		if(!cd || cd->type & TYPE_TOKEN)
 			continue;

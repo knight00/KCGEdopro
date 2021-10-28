@@ -57,6 +57,12 @@ namespace porting {
 #define EnableMaterial2D(enable) ((void)0)
 #endif
 
+#if IRRLICHT_VERSION_MAJOR==1 && IRRLICHT_VERSION_MINOR==9
+#define ClearZBuffer(driver) do {driver->clearBuffers(irr::video::ECBF_DEPTH);} while(0)
+#else
+#define ClearZBuffer(driver) do {driver->clearZBuffer();} while(0)
+#endif
+
 uint16_t PRO_VERSION = 0x1352;
 
 namespace ygo {
@@ -2030,6 +2036,7 @@ bool Game::MainLoop() {
 						}
 					}
 					gDataManager->LoadStrings(data_path + EPRO_TEXT("strings.conf"));
+					gDataManager->LoadIdsMapping(data_path + EPRO_TEXT("mappings.json"));
 				} else {
 					if(Utils::ToUTF8IfNeeded(gGameConfig->locale) == repo->language) {
 						for(auto& file : files)
@@ -2146,10 +2153,6 @@ bool Game::MainLoop() {
 		atkdy = (float)sin(atkframe);
 		driver->beginScene(true, true, irr::video::SColor(0, 0, 0, 0));
 		gMutex.lock();
-		if(should_refresh_hands && dInfo.isInDuel) {
-			should_refresh_hands = false;
-			dField.RefreshHandHitboxes();
-		}
 		if(dInfo.isInDuel) {
 			if(dInfo.isReplay)
 				discord.UpdatePresence(DiscordWrapper::REPLAY);
@@ -2180,7 +2183,7 @@ bool Game::MainLoop() {
 			DrawMisc();
 			smgr->drawAll();
 			driver->setMaterial(irr::video::IdentityMaterial);
-			driver->clearZBuffer();//Without this, "animations" are drawn behind everything
+			ClearZBuffer(driver);//Without this, "animations" are drawn behind everything
 			EnableMaterial2D(false);
 		} else if(is_building) {
 			if(is_siding)
@@ -2199,6 +2202,10 @@ bool Game::MainLoop() {
 				discord.UpdatePresence(DiscordWrapper::MENU);
 			gSoundManager->PlayBGM(SoundManager::BGM::MENU, gGameConfig->loopMusic);
 			DrawBackImage(imageManager.tBackGround_menu, resized);
+		}
+		if(should_refresh_hands && dInfo.isInDuel) {
+			should_refresh_hands = false;
+			dField.RefreshHandHitboxes();
 		}
 #ifndef __ANDROID__
 		// text width is actual size, other pixels are relative to the assumed 1024x640

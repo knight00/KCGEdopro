@@ -50,9 +50,7 @@ private:
 	int null_lflist_index = -1;
 	std::unordered_map<uint32_t, CardDataC*> dummy_entries;
 	CardDataC* GetDummyOrMappedCardData(uint32_t code);
-	CardDataC* GetMappedCardData(uint32_t code);
 	bool load_dummies{ true };
-	std::map<uint32_t, uint32_t> mapped_ids;
 public:
 	Deck current_deck;
 	Deck sent_deck;
@@ -66,7 +64,7 @@ public:
 	}
 	void ClearDummies();
 	bool LoadLFListSingle(const epro::path_string& path);
-	bool LoadLFListFolder(epro::path_string path);
+	bool LoadLFListFolder(epro::path_stringview path);
 	void LoadLFList();
 	void RefreshLFList();
 	void RefreshDeck(Deck & deck);

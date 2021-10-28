@@ -3,6 +3,7 @@
 #include <fmt/format.h>
 #include <IReadFile.h>
 #include <sqlite3.h>
+#include <nlohmann/json.hpp>
 #include "ireadfile_sqlite.h"
 #include "bufferio.h"
 #include "logging.h"
@@ -241,13 +242,15 @@ bool DataManager::LoadStrings(const epro::path_string& file) {
 			if(type == "system") {
 				_sysStrings.SetMain(std::stoi(value), BufferIO::DecodeUTF8(str));
 			} else {
-				LocaleStringHelper* obj = nullptr;
+				LocaleStringHelper* obj;
 				if(type == "victory")
 					obj = &_victoryStrings;
 				else if(type == "counter")
 					obj = &_counterStrings;
 				else if(type == "setname")
 					obj = &_setnameStrings;
+				else
+					continue;
 				obj->SetMain(std::stoi(value, 0, 16), BufferIO::DecodeUTF8(str));
 			}
 		}
@@ -285,19 +288,53 @@ bool DataManager::LoadLocaleStrings(const epro::path_string& file) {
 			if(type == "system") {
 				_sysStrings.SetLocale(std::stoi(value), BufferIO::DecodeUTF8(str));
 			} else {
-				LocaleStringHelper* obj = nullptr;
+				LocaleStringHelper* obj;
 				if(type == "victory")
 					obj = &_victoryStrings;
 				else if(type == "counter")
 					obj = &_counterStrings;
 				else if(type == "setname")
 					obj = &_setnameStrings;
-				if(obj)
-					obj->SetLocale(std::stoi(value, 0, 16), BufferIO::DecodeUTF8(str));
+				else
+					continue;
+				obj->SetLocale(std::stoi(value, 0, 16), BufferIO::DecodeUTF8(str));
 			}
 		}
 		catch(...) {}
 	}
+	return true;
+}
+bool DataManager::LoadIdsMapping(const epro::path_string& file) {
+#if defined(__MINGW32__) && defined(UNICODE)
+	auto fd = _wopen(file.data(), _O_RDONLY);
+	if(fd == -1)
+		return false;
+	__gnu_cxx::stdio_filebuf<char> b(fd, std::ios::in);
+	std::istream mappings_file(&b);
+#else
+	std::ifstream mappings_file(file);
+#endif
+	if(mappings_file.fail())
+		return false;
+	nlohmann::json mappings;
+	try {
+		mappings_file >> mappings;
+	} catch(const std::exception& e) {
+		ErrorLog(fmt::format("Failed to load id mappings json \"{}\": {}", Utils::ToUTF8IfNeeded(file), e.what()));
+		return false;
+	}
+	auto cit = mappings.find("mappings");
+	if(cit == mappings.end() || !cit->is_array())
+		return false;
+	try {
+		for(auto& obj : *cit) {
+			auto pair = obj.get<std::pair<uint32_t, uint32_t>>();
+			mapped_ids[pair.first] = pair.second;
+		}
+	} catch(const std::exception& e) {
+		ErrorLog(fmt::format("Error while parsing mappings json \"{}\": {}", Utils::ToUTF8IfNeeded(file), e.what()));
+		return false;
+	};
 	return true;
 }
 void DataManager::ClearLocaleStrings() {
@@ -317,6 +354,12 @@ CardDataC* DataManager::GetCardData(uint32_t code) {
 	auto it = cards.find(code);
 	if(it != cards.end())
 		return &it->second._data;
+	return nullptr;
+}
+CardDataC* DataManager::GetMappedCardData(uint32_t code) {
+	auto it = mapped_ids.find(code);
+	if(it != mapped_ids.end())
+		return gDataManager->GetCardData(it->second);
 	return nullptr;
 }
 bool DataManager::GetString(uint32_t code, CardString* pStr) {
@@ -540,7 +583,7 @@ inline bool check_skills(CardDataC* p1, CardDataC* p2) {
 	}
 	return is_skill(p2->type);
 }
-bool card_sorter(CardDataC* p1, CardDataC* p2, bool(*sortoop)(CardDataC* p1, CardDataC* p2)) {
+static bool card_sorter(CardDataC* p1, CardDataC* p2, bool(*sortoop)(CardDataC* p1, CardDataC* p2)) {
 	if(check_either_skills(p1->type, p2->type))
 		return check_skills(p1, p2);
 	if((p1->type & 0x7) != (p2->type & 0x7))

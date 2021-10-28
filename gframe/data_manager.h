@@ -118,8 +118,10 @@ public:
 	}
 	bool LoadStrings(const epro::path_string& file);
 	bool LoadLocaleStrings(const epro::path_string& file);
+	bool LoadIdsMapping(const epro::path_string& file);
 	void ClearLocaleStrings();
 	CardDataC* GetCardData(uint32_t code);
+	CardDataC* GetMappedCardData(uint32_t code);
 	bool GetString(uint32_t code, CardString* pStr);
 	epro::wstringview GetName(uint32_t code);
 	epro::wstringview GetText(uint32_t code);
@@ -193,6 +195,7 @@ private:
 	LocaleStringHelper _setnameStrings;
 	LocaleStringHelper _sysStrings;
 	std::string cur_database;
+	std::map<uint32_t, uint32_t> mapped_ids;
 };
 
 extern DataManager* gDataManager;
