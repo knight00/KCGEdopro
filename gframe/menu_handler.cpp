@@ -472,30 +472,32 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					}
 					if(mainGame->chkTag->isChecked()) 
 					    pass += pass == L"" ? L"T" : L",T";
-					else 
-					    pass += pass == L"" ? L"S" : L",S";
+					else {
+						if(wcslen(mainGame->ebJoinPass2->getText()) <= 0)
+					        pass += pass == L"" ? L"S" : L",S";
+					}
 					if(mainGame->chkMatch->isChecked()) 
-					    pass += L",M";
+						pass += pass == L"" ? L"M" : L",M";
 					if(mainGame->cbRule2->getSelected() == 1)
-					    pass += L",TO";
+						pass += pass == L"" ? L"TO" : L",TO";
 					else if(mainGame->cbRule2->getSelected() == 2)
-					    pass += L",OT";	
+						pass += pass == L"" ? L"OT" : L",OT";
 					if (std::stoi(mainGame->ebTimeLimit2->getText()) != 3)
-						pass += fmt::format(L",TM{}",mainGame->ebTimeLimit2->getText());
+						pass += fmt::format(pass == L"" ? L"TM{}" : L",TM{}",mainGame->ebTimeLimit2->getText());
 					if (mainGame->cbDuelRule2->getSelected() != 4)
-						pass += fmt::format(L",MR{}", mainGame->cbDuelRule2->getSelected() + 1);	
+						pass += fmt::format(pass == L"" ? L"MR{}" : L",MR{}", mainGame->cbDuelRule2->getSelected() + 1);
 					if(mainGame->chkNoCheckDeck2->isChecked()) 
-					    pass += L",NC";
+						pass += pass == L"" ? L"NC" : L",NC";
 					if(mainGame->chkNoShuffleDeck2->isChecked()) 
-					    pass += L",NS";
+						pass += pass == L"" ? L"NS" : L",NS";
 					if(mainGame->chkNoLFlist2->isChecked()) 
-					    pass += L",NF";
+						pass += pass == L"" ? L"NF" : L",NF";
 					if (std::stoi(mainGame->ebStartLP2->getText()) != 8000)
-					    pass += fmt::format(L",LP{}", mainGame->ebStartLP2->getText());
+					    pass += fmt::format(pass == L"" ? L"LP{}" : L",LP{}", mainGame->ebStartLP2->getText());
 					if (std::stoi(mainGame->ebStartHand2->getText()) != 5)
-						pass += fmt::format(L",ST{}", mainGame->ebStartHand2->getText());
+						pass += fmt::format(pass == L"" ? L"ST{}" : L",ST{}", mainGame->ebStartHand2->getText());
 					if (std::stoi(mainGame->ebDrawCount2->getText()) != 1)
-						pass += fmt::format(L",DR{}", mainGame->ebDrawCount2->getText());
+						pass += fmt::format(pass == L"" ? L"DR{}" : L",DR{}", mainGame->ebDrawCount2->getText());
 					pass += symbol;
 					if(wcslen(mainGame->ebJoinPass2->getText()) > 0)
 						pass += std::wstring(mainGame->ebJoinPass2->getText());
@@ -1030,7 +1032,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					Utils::SystemOpen(EPRO_TEXT("https://jq.qq.com/?_wv=1027&k=S1vfY66P"));
 					// gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame);
 					// mainGame->PopupElement(mainGame->updateWindow);
-					#ifdef VIP && Update_PW
+					#if defined(VIP) && defined(Update_PW)
 					mainGame->PopupElement(mainGame->pwupdateWindow);
 					#else
 					gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame);

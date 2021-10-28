@@ -165,10 +165,7 @@ bool Game::Initialize() {
 	filesystem->grab();
 	coreloaded = true;
 #ifdef YGOPRO_BUILD_DLL
-    ///kdiy//////////////
 	if(!(ocgcore = LoadOCGcore(Utils::working_dir)) && !(ocgcore = LoadOCGcore(fmt::format(EPRO_TEXT("{}/expansions/"), Utils::working_dir))))
-	// if(!(ocgcore = LoadOCGcore(Utils::working_dir)) && !(ocgcore = LoadOCGcore(fmt::format(EPRO_TEXT("{}/expansions/"), Utils::working_dir))) && !(ocgcore = LoadOCGcore(fmt::format(EPRO_TEXT("{}/repositories/kcg/bin/"), Utils::working_dir))))
-	///kdiy//////////////
 		coreloaded = false;
 #endif
 	skinSystem = new CGUISkinSystem(fmt::format(EPRO_TEXT("{}/skin"), Utils::working_dir).data(), device);
