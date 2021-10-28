@@ -316,6 +316,9 @@
 #define MSG_MATCH_KILL           170
 #define MSG_CUSTOM_MSG           180
 #define MSG_REMOVE_CARDS         190
+////kdiy/////////
+#define MSG_CHANGE               200
+////kdiy/////////
 
 #define OLD_REPLAY_MODE          231
 

@@ -500,6 +500,10 @@ namespace ygo {
 			return porting::openFile(fmt::format("{}/{}", working_dir, arg));
 		case OPEN_URL:
 			return porting::openUrl(arg);
+		///kdiy////////
+		case OPEN_ANIME:
+			return porting::openAnime(fmt::format("{}/{}", working_dir, arg));
+		///kdiy////////	
 		case SHARE_FILE:
 			return porting::shareFile(fmt::format("{}/{}", working_dir, arg));
 		}

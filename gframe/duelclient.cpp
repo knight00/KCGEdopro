@@ -3086,6 +3086,26 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 		}
 		return true;
 	}
+	//////kdiy///
+	case MSG_CHANGE: {
+		const auto code = BufferIO::Read<uint32_t>(pbuf);
+		CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+		current.controler = mainGame->LocalPlayer(current.controler);
+		//auto lock = LockIf();
+		if(!(current.location & LOCATION_OVERLAY)) {
+			ClientCard* pcard = mainGame->dField.GetCard(current.controler, current.location, current.sequence);
+			pcard->code = code;
+		} else {
+			ClientCard* olcard = mainGame->dField.GetCard(current.controler, current.location & (~LOCATION_OVERLAY) & 0xff, current.sequence);
+			ClientCard* pcard = olcard->overlayed[current.position];
+			pcard->code = code;
+		}
+		// if(!mainGame->dInfo.isCatchingUp) {
+		// 	mainGame->WaitFrameSignal(5, lock);
+		// }
+		return true;
+	}
+	//////kdiy///
 	case MSG_MOVE: {
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
 		CoreUtils::loc_info previous = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
@@ -3119,22 +3139,6 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 			//////kdiy///
 		}
 		auto lock = LockIf();
-		//////kdiy///
-		if(reason == 0 && code != 0 && previous.controler == current.controler && previous.location == current.location && previous.sequence == current.sequence && previous.position == current.position) {
-			if(!(previous.location & LOCATION_OVERLAY)) {
-			    ClientCard* pcard = mainGame->dField.GetCard(previous.controler, previous.location, previous.sequence);
-				pcard->code = code;
-		    } else {
-				ClientCard* olcard = mainGame->dField.GetCard(previous.controler, previous.location & (~LOCATION_OVERLAY) & 0xff, previous.sequence);
-				ClientCard* pcard = olcard->overlayed[previous.position];
-				pcard->code = code;
-			}
-			if(!mainGame->dInfo.isCatchingUp) {
-				mainGame->WaitFrameSignal(5, lock);
-			}
-			return true;
-		}
-		//////kdiy///
 		if (previous.location == 0) {
 			ClientCard* pcard = new ClientCard{};
 			pcard->position = current.position;
@@ -4848,10 +4852,10 @@ void DuelClient::ReplayPrompt(bool local_stream) {
 }
 //////kdiy////////		
 bool PlayAnime(uint32_t code, uint8_t cat) {
-	#ifdef _WIN32 
 	if(!gGameConfig->enableanime) return false;
-	std::wstring s2 = L"plugin\\MPC-HCPortable\\MPC-HCPortable.exe";
 	std::wstring s1 = L"movies\\";
+#ifdef _WIN32
+	std::wstring s2 = L"plugin\\MPC-HCPortable\\MPC-HCPortable.exe";
 	GetFileAttributes(s2.c_str());
 	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s2.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
 		return false;			
@@ -4884,13 +4888,28 @@ bool PlayAnime(uint32_t code, uint8_t cat) {
 	CloseHandle(ShExecInfo.hProcess);
 	gSoundManager->PauseMusic(false);
 	return true;
+#else
+	#ifdef __ANDROID__
+	std::wstring text;	
+	if(cat==0 && gGameConfig->enablesanime) {
+		s1 += text + L"s" + std::to_wstring(code) + L".mp4";
+	}
+	if(cat==1 && gGameConfig->enablecanime) {
+		s1 += text + L"c" + std::to_wstring(code) + L".mp4";
+	}
+	if(cat==2 && gGameConfig->enableaanime) {
+		s1 += text + L"a" + std::to_wstring(code) + L".mp4";
+	}
+	Utils::SystemOpen(Utils::ToPathString(s1), Utils::OPEN_ANIME);
+	return true;
 	#else
 	return false;
 	#endif
+#endif
 }
 bool PlayAnimeC(std::wstring text, bool custom) {
-	#ifdef _WIN32 
 	if(!gGameConfig->enableanime) return false;
+	#ifdef _WIN32 
 	std::wstring s2 = L"plugin\\MPC-HCPortable\\MPC-HCPortable.exe";
 	std::wstring s1;
 	if(custom) s1 = L"movies\\custom\\";

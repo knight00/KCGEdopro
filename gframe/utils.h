@@ -145,6 +145,9 @@ namespace ygo {
 		enum OpenType {
 			OPEN_URL,
 			OPEN_FILE,
+			///kdiy////////
+			OPEN_ANIME,
+			///kdiy////////
 			SHARE_FILE,
 		};
 
