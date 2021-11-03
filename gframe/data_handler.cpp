@@ -93,7 +93,7 @@ void DataHandler::LoadPicUrls() {
 					}
 				}
 				catch(const std::exception& e) {
-					ErrorLog(fmt::format("Exception occurred: {}", e.what()));
+					ErrorLog("Exception occurred: {}", e.what());
 				}
 			}
 		}

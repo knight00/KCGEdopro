@@ -427,7 +427,8 @@ void RepoManager::CloneOrUpdateTask() {
 						history.partial_history.clear();
 						history.warning = e.what();
 						////kdiy//////////
-						//ErrorLog(fmt::format("Warning occurred in repo {}: {}", url, e.what()));
+						//ErrorLog("Warning occurred in repo {}: {}", url, history.warning);
+						ErrorLog("Warning occurred in repo {}",  _repo.repo_name);
 						////kdiy//////////
 					}
 				}
@@ -456,7 +457,8 @@ void RepoManager::CloneOrUpdateTask() {
 		catch(const std::exception& e) {
 			history.error = e.what();
 			////kdiy//////////
-			//ErrorLog(fmt::format("Exception occurred in repo {}: {}", _repo.url, e.what()));
+			//ErrorLog("Exception occurred in repo {}: {}", _repo.url, history.error);
+			ErrorLog("Exception occurred in repo {}", _repo.repo_name);
 			////kdiy//////////
 		}
 		lck.lock();

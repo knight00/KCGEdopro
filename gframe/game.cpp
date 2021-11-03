@@ -2576,7 +2576,7 @@ void Game::RefreshAiDecks(int a) {
 			windbots >> j;
 		}
 		catch(const std::exception& e) {
-			ErrorLog(fmt::format("Failed to load WindBot Ignite config json: {}", e.what()));
+			ErrorLog("Failed to load WindBot Ignite config json: {}", e.what());
 		}
 		if(j.is_array()) {
 #if !defined(__ANDROID__) && !defined(_WIN32)
@@ -2617,7 +2617,7 @@ void Game::RefreshAiDecks(int a) {
 						gBot.bots.push_back(std::move(bot));
 				}
 				catch(const std::exception& e) {
-					ErrorLog(fmt::format("Failed to parse WindBot Ignite config json entry: {}", e.what()));
+					ErrorLog("Failed to parse WindBot Ignite config json entry: {}", e.what());
 				}
 			}
 			if(generic_engine_bot.deck.size()) {
@@ -2753,23 +2753,23 @@ void Game::LoadGithubRepositories() {
 }
 void Game::UpdateRepoInfo(const GitRepo* repo, RepoGui* grepo) {
 	if(repo->history.error.size()) {
-		////ktest/////////
-		//ErrorLog(fmt::format("The repo {} couldn't be cloned", repo->url));
-		ErrorLog(fmt::format("The repo {} couldn't be cloned", ""));
-		//ErrorLog(fmt::format("Error: {}", repo->history.error));
-		////ktest/////////
+		////kdiy/////////
+		//ErrorLog("The repo {} couldn't be cloned", repo->url);
+		ErrorLog("The repo {} couldn't be cloned", repo->repo_name);
+		//ErrorLog("Error: {}", repo->history.error);
+		////kdiy/////////
 		grepo->history_button1->setText(gDataManager->GetSysString(1434).data());
 		defaultStrings.emplace_back(grepo->history_button1, 1434);
 		grepo->history_button1->setEnabled(true);
 		grepo->history_button2->setText(gDataManager->GetSysString(1434).data());
 		defaultStrings.emplace_back(grepo->history_button2, 1434);
 		grepo->history_button2->setEnabled(true);
-		////ktest/////////
+		////kdiy/////////
 		//grepo->commit_history_full = fmt::format(L"{}\n{}",
 												//fmt::format(gDataManager->GetSysString(1435), BufferIO::DecodeUTF8(repo->url)),
 												//fmt::format(gDataManager->GetSysString(1436), BufferIO::DecodeUTF8(repo->history.error))
 		grepo->commit_history_full = fmt::format(L"{}", gDataManager->GetSysString(1436)
-		////ktest/////////										
+		////kdiy/////////										
 		);
 		grepo->commit_history_partial = grepo->commit_history_full;
 		return;
@@ -2846,7 +2846,7 @@ void Game::LoadServers() {
 					ServerLobby::serversVector.push_back(std::move(tmp_server));
 				}
 				catch(const std::exception& e) {
-					ErrorLog(fmt::format("Exception occurred while parsing server entry: {}", e.what()));
+					ErrorLog("Exception occurred while parsing server entry: {}", e.what());
 				}
 			}
 		}
@@ -3092,7 +3092,7 @@ void Game::AddDebugMsg(epro::stringview msg) {
 	if (gGameConfig->coreLogOutput & CORE_LOG_TO_CHAT)
 		AddChatMsg(BufferIO::DecodeUTF8(msg), 9, 2);
 	if (gGameConfig->coreLogOutput & CORE_LOG_TO_FILE)
-		ErrorLog(fmt::format("{}: {}", BufferIO::EncodeUTF8(gDataManager->GetSysString(1440)), msg));
+		ErrorLog("{}: {}", BufferIO::EncodeUTF8(gDataManager->GetSysString(1440)), msg);
 }
 void Game::ClearTextures() {
 	matManager.mCard.setTexture(0, 0);
