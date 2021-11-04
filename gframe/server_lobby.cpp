@@ -212,9 +212,10 @@ void ServerLobby::GetRoomsThread() {
 	if(res != CURLE_OK) {
 		if(gGameConfig->logDownloadErrors) {
 			ErrorLog("Error updating the room list:");
-			////ktest/////////
+			////kdiy/////////
 			//ErrorLog("Curl error: ({}) {} ({})", res, curl_easy_strerror(res), curl_error_buffer);
-			////ktest/////////
+			////kdiy/////////
+			}
 		//error
 		mainGame->PopupMessage(gDataManager->GetSysString(2037));
 		mainGame->btnLanRefresh2->setEnabled(true);

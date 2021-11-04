@@ -620,9 +620,7 @@ void GenericDuel::TPResult(DuelPlayer* dp, uint8_t tp) {
 			std::shuffle(dueler.pdeck.main.begin(), dueler.pdeck.main.end(), rnd);
 			});
 	}
-	///////ktest/////////
 	new_replay.Write<uint64_t>(opt);
-	///////ktest/////////
 	last_replay.Write<uint32_t>(host_info.start_lp, false);
 	last_replay.Write<uint32_t>(host_info.start_hand, false);
 	last_replay.Write<uint32_t>(host_info.draw_count, false);

@@ -1041,11 +1041,11 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					mainGame->btnNo->setEnabled(true);
 					///kdiy//////////
 				} else if (prev_operation == ACTION_SHOW_CHANGELOG) {
-					///kdiy//////////
+					///kupdate//////////
 					// Utils::SystemOpen(EPRO_TEXT("https://github.com/edo9300/edopro/releases?referrer=") EDOPRO_USERAGENT);
-					Utils::SystemOpen(EPRO_TEXT("https://edokcg.i234.me/wordpress/kcg-v6-5/"));
+					Utils::SystemOpen(EPRO_TEXT("https://edokcg.i234.me/wordpress/kcg-v9/"));
 					mainGame->btnNo->setEnabled(true);
-					///kdiy//////////
+					///kupdate//////////
 				}
 				prev_operation = 0;
 				prev_sel = -1;
