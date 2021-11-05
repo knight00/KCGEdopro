@@ -4853,26 +4853,21 @@ void DuelClient::ReplayPrompt(bool local_stream) {
 //////kdiy////////		
 bool PlayAnime(uint32_t code, uint8_t cat) {
 	if(!gGameConfig->enableanime) return false;
+	std::wstring s1;
+	if (cat == 0 && gGameConfig->enablesanime) {
+		s1 = fmt::format(EPRO_TEXT("./movies/s{}.mp4"), code);
+	}
+	else if (cat == 1 && gGameConfig->enablecanime) {
+		s1 = fmt::format(EPRO_TEXT("./movies/c{}.mp4"), code);
+	}
+	else if (cat == 2 && gGameConfig->enableaanime) {
+		s1 = fmt::format(EPRO_TEXT("./movies/a{}.mp4"), code);
+	}
+	if (!Utils::FileExists(s1)) return false;
 #ifdef _WIN32
-	std::wstring s2 = L"plugin\\MPC-HCPortable\\MPC-HCPortable.exe";
-	GetFileAttributes(s2.c_str());
-	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s2.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
-		return false;
-	std::wstring s1 = L"movies\\";
-	std::wstring text;
-	if(cat == 0 && gGameConfig->enablesanime) {
-		s1 += text + L"s" + std::to_wstring(code) + L".mp4";
-	}
-	if(cat == 1 && gGameConfig->enablecanime) {
-		s1 += text + L"c" + std::to_wstring(code) + L".mp4";
-	}
-	if(cat == 2 && gGameConfig->enableaanime) {
-		s1 += text + L"a" + std::to_wstring(code) + L".mp4";
-	}
-	GetFileAttributes(s1.c_str());
-	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s1.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
-		return false;
-	gSoundManager->PauseMusic(true);	
+	std::wstring s2 = L"./plugin/MPC-HCPortable/MPC-HCPortable.exe";
+	if (!Utils::FileExists(s2)) return false;
+	gSoundManager->PauseMusic(true);
 	SHELLEXECUTEINFO ShExecInfo = {0};
 	ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
 	ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
@@ -4890,16 +4885,7 @@ bool PlayAnime(uint32_t code, uint8_t cat) {
 	return true;
 #else
 	#ifdef __ANDROID__
-	std::wstring s3;
-	if (cat == 0 && gGameConfig->enablesanime) {
-		s3 = fmt::format(EPRO_TEXT("./movies/s{}.mp4"), code);
-	} else if (cat == 1 && gGameConfig->enablecanime) {
-		s3 = fmt::format(EPRO_TEXT("./movies/c{}.mp4"), code);
-	} else if(cat == 2 && gGameConfig->enableaanime) {
-		s3 = fmt::format(EPRO_TEXT("./movies/a{}.mp4"), code);
-	}
-	if(!Utils::FileExists(s3)) return false;
-	Utils::SystemOpen(s3, Utils::OPEN_ANIME);
+	Utils::SystemOpen(s1, Utils::OPEN_ANIME);
 	return true;
 	#else
 	return false;
