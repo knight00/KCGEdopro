@@ -4884,8 +4884,7 @@ bool PlayAnime(uint32_t code, uint8_t cat) {
 	CloseHandle(ShExecInfo.hProcess);
 	gSoundManager->PauseMusic(false);
 	return true;
-#else
-	#ifdef __ANDROID__
+#elif __ANDROID__
     auto a = L"";
 	if (cat == 0 && gGameConfig->enablesanime)
 		a = L"s";
@@ -4894,26 +4893,25 @@ bool PlayAnime(uint32_t code, uint8_t cat) {
 	else if (cat == 2 && gGameConfig->enableaanime)
 		a = L"a";
 	auto s1 = fmt::format(EPRO_TEXT("./movies/{}{}.mp4"), Utils::ToPathString(a), code);
-	if(!Utils::FileExists(s1)) return false;	
-	Utils::SystemOpen(s1, Utils::OPEN_ANIME);
+	if(!Utils::FileExists(s1)) return false;
+	porting::openAnime(s1);
 	return true;
-	#else
+#else
 	return false;
-	#endif
 #endif
 }
 bool PlayAnimeC(std::wstring text, bool custom) {
 	if(!gGameConfig->enableanime) return false;
-	#ifdef _WIN32 
+#ifdef _WIN32 
 	std::wstring s2 = L"plugin\\MPC-HCPortable\\MPC-HCPortable.exe";
+	GetFileAttributes(s2.c_str());
+	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s2.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
+		return false;	
 	std::wstring s1;
 	if(custom) s1 = L"movies\\custom\\";
 	else s1 = L"movies\\";
 	s1 += text;
-	s1 += L".mp4";
-	GetFileAttributes(s2.c_str());
-	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s2.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
-		return false;				
+	s1 += L".mp4";				
 	GetFileAttributes(s1.c_str());
 	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s1.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
 		return false;
@@ -4933,9 +4931,9 @@ bool PlayAnimeC(std::wstring text, bool custom) {
 	CloseHandle(ShExecInfo.hProcess);
 	gSoundManager->PauseMusic(false);
 	return true;
-	#else
+#else
 	return false;
-	#endif
+#endif
 }
 //////kdiy////////		
 }
