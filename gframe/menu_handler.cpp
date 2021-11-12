@@ -656,7 +656,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				if(Utils::FileExists(EPRO_TEXT("./updates/configs.json")))
 				    update_trial = 3;
 				if(update_trial > 2) {
-					Utils::DeleteDirectory(EPRO_TEXT("./script/"));
+					Utils::DeleteDirectory(EPRO_TEXT("./lua/"));
 					if(!Utils::FileExists(EPRO_TEXT("./updates/configs.json")) && Utils::FileExists(EPRO_TEXT("./config/configs.json")))
 					    Utils::FileCopy(EPRO_TEXT("./config/configs.json"), EPRO_TEXT("./updates/configs.json"));
 					Utils::FileDelete(EPRO_TEXT("./config/configs.json"));
@@ -1029,16 +1029,16 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					}
 				} else if(prev_operation == ACTION_UPDATE_PROMPT) {
 					///kdiy//////////
-					Utils::SystemOpen(EPRO_TEXT("https://jq.qq.com/?_wv=1027&k=S1vfY66P"));
 					// gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame);
-					// mainGame->PopupElement(mainGame->updateWindow);
-					#if defined(VIP) && defined(Update_PW)
+					// mainGame->PopupElement(mainGame->updateWindow);					
+					Utils::SystemOpen(EPRO_TEXT("https://jq.qq.com/?_wv=1027&k=S1vfY66P"));
+					#if defined(Update_PW)
 					mainGame->PopupElement(mainGame->pwupdateWindow);
 					#else
 					gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame);
-					mainGame->PopupElement(mainGame->updateWindow);
 					#endif
-					mainGame->btnNo->setEnabled(true);
+					mainGame->PopupElement(mainGame->updateWindow);
+					mainGame->btnNo->setVisible(false);
 					///kdiy//////////
 				} else if (prev_operation == ACTION_SHOW_CHANGELOG) {
 					///kupdate//////////
@@ -1418,7 +1418,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					if(Utils::FileExists(EPRO_TEXT("./updates/configs.json")))
 					    update_trial = 3;
 					if(update_trial > 2) {
-						Utils::DeleteDirectory(EPRO_TEXT("./script/"));
+						Utils::DeleteDirectory(EPRO_TEXT("./lua/"));
 						if(!Utils::FileExists(EPRO_TEXT("./updates/configs.json")) && Utils::FileExists(EPRO_TEXT("./config/configs.json")))
 						    Utils::FileCopy(EPRO_TEXT("./config/configs.json"), EPRO_TEXT("./updates/configs.json"));
 						Utils::FileDelete(EPRO_TEXT("./config/configs.json"));
