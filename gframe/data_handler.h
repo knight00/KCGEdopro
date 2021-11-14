@@ -21,6 +21,9 @@ class DataHandler {
 	irr::io::IFileSystem* filesystem = nullptr;
 	void LoadDatabases();
 	void LoadZipArchives();
+	////////kdiy////////
+	void LoadKZipArchives();
+	////////kdiy////////
 	void LoadArchivesDB();
 	void LoadPicUrls();
 

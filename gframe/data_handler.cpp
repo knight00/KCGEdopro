@@ -105,9 +105,9 @@ void DataHandler::LoadZipArchives() {
 		////////kdiy////////
 		//filesystem->addFileArchive(fmt::format(EPRO_TEXT("./expansions/{}"), file).data(), true, false, irr::io::EFAT_ZIP, "", &tmp_archive);
 		#if defined(Zip)
-		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./expansions/{}"), file).data(), true, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
+		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./expansions/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
 		#else
-		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./expansions/{}"), file).data(), true, false, irr::io::EFAT_ZIP, "", &tmp_archive);
+		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./expansions/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive);
 		#endif
 		////////kdiy////////
 		if(tmp_archive) {
@@ -115,6 +115,21 @@ void DataHandler::LoadZipArchives() {
 		}
 	}
 }
+////////kdiy////////
+void DataHandler::LoadKZipArchives() {
+	irr::io::IFileArchive* tmp_archive2 = nullptr;
+	for(auto& file : Utils::FindFiles(EPRO_TEXT("./repositories/kcg/script/kcg/"), { EPRO_TEXT("zip") })) {
+		#if defined(Zip)
+		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./repositories/kcg/script/kcg/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive2);
+		#else
+		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./repositories/kcg/script/kcg/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive2);
+		#endif
+		if(tmp_archive2) {
+			Utils::archives.emplace_back(tmp_archive2);
+		}
+	}
+}
+////////kdiy////////
 DataHandler::DataHandler(epro::path_stringview working_dir) {
 	configs = std::unique_ptr<GameConfig>(new GameConfig);
 	gGameConfig = configs.get();
@@ -149,6 +164,9 @@ DataHandler::DataHandler(epro::path_stringview working_dir) {
 	if(!Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
 	////kdiy//////////
 	gitManager->LoadRepositoriesFromJson(configs->configs);
+	////kdiy//////////
+	LoadKZipArchives();
+	////kdiy//////////
 	imageDownloader = std::unique_ptr<ImageDownloader>(new ImageDownloader());
 	LoadDatabases();
 	LoadPicUrls();

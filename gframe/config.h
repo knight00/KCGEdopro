@@ -15,11 +15,11 @@ extern bool show_changelog;
 #define EDOPRO_VERSION_MINOR 2
 #define EDOPRO_VERSION_PATCH 1
 #define EDOPRO_VERSION_CODENAME L"Utopia"
-/////kdiy///////
+/////kupdate///////
 #ifdef VIP
-#define KCG_VERSION L"V9-VIP"
+#define KCG_VERSION L"V9.1-VIP"
 #else
-#define KCG_VERSION L"V9"
+#define KCG_VERSION L"V9.1"
 #endif
 #ifdef EK
 #define IS_KCG L"EDOPro-KCG"

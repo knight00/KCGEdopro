@@ -4932,6 +4932,8 @@ bool PlayAnimeC(std::wstring text, bool custom) {
 	gSoundManager->PauseMusic(false);
 	return true;
 #else
+    auto s1 = fmt::format(EPRO_TEXT("./movies/custom/{}.mp4"), Utils::ToPathString(text));
+	if(!Utils::FileExists(s1)) return false;
 	return false;
 #endif
 }
