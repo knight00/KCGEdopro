@@ -17,18 +17,13 @@
 namespace ygo {
 
 constexpr wchar_t const* DataManager::unknown_string;
+static constexpr auto SELECT_STMT =
+R"(SELECT datas.id,datas.ot,datas.alias,datas.setcode,datas.type,datas.atk,datas.def,datas.level,datas.race,datas.attribute,datas.category,texts.name,texts.desc,texts.str1,texts.str2,texts.str3,texts.str4,texts.str5,texts.str6,texts.str7,texts.str8,texts.str9,texts.str10,texts.str11,texts.str12,texts.str13,texts.str14,texts.str15,texts.str16
+FROM datas,texts WHERE texts.id = datas.id ORDER BY texts.id;)"_sv;
 
-static constexpr epro::stringview SELECT_STMT{
-R"(
-SELECT datas.id,datas.ot,datas.alias,datas.setcode,datas.type,datas.atk,datas.def,datas.level,datas.race,datas.attribute,datas.category,texts.name,texts.desc,texts.str1,texts.str2,texts.str3,texts.str4,texts.str5,texts.str6,texts.str7,texts.str8,texts.str9,texts.str10,texts.str11,texts.str12,texts.str13,texts.str14,texts.str15,texts.str16
-FROM datas,texts WHERE texts.id = datas.id ORDER BY texts.id;
-)"_sv };
-
-static constexpr epro::stringview SELECT_STMT_LOCALE{
-R"(
-SELECT id,name,desc,str1,str2,str3,str4,str5,str6,str7,str8,str9,str10,str11,str12,str13,str14,str15,str16
-FROM texts ORDER BY texts.id;
-)"_sv };
+static constexpr auto SELECT_STMT_LOCALE =
+R"(SELECT id,name,desc,str1,str2,str3,str4,str5,str6,str7,str8,str9,str10,str11,str12,str13,str14,str15,str16
+FROM texts ORDER BY texts.id;)"_sv;
 
 DataManager::DataManager() : irrvfs(irrsqlite_createfilesystem()) {
 	if(sqlite3_threadsafe())
@@ -73,6 +68,30 @@ sqlite3* DataManager::OpenDb(irr::io::IReadFile* reader) {
 	return pDB;
 }
 
+static inline bool GetWstring(std::wstring& out, sqlite3_stmt* stmt, int iCol) {
+	out.clear();
+#if WCHAR_MAX == UINT16_MAX
+	auto* text = (const wchar_t*)sqlite3_column_text16(stmt, iCol);
+	if(text != nullptr) {
+		auto len = static_cast<size_t>(sqlite3_column_bytes16(stmt, iCol)) / sizeof(wchar_t);
+		if(len != 0) {
+			out = { text, len };
+			return true;
+		}
+	}
+#else
+	auto* text = (const char*)sqlite3_column_text(stmt, iCol);
+	if(text != nullptr) {
+		auto len = static_cast<size_t>(sqlite3_column_bytes(stmt, iCol));
+		if(len != 0) {
+			out = BufferIO::DecodeUTF8({ text, len });
+			return true;
+		}
+	}
+#endif
+	return false;
+}
+
 bool DataManager::ParseDB(sqlite3* pDB) {
 	if(pDB == nullptr)
 		return false;
@@ -85,13 +104,23 @@ bool DataManager::ParseDB(sqlite3* pDB) {
 			continue;
 		if(step != SQLITE_ROW)
 			return Error(pDB, pStmt);
-		CardString cs{};
-		CardDataC cd{};
-		cd.code = sqlite3_column_int(pStmt, 0);
-		cd.ot = sqlite3_column_int(pStmt, 1);
-		cd.alias = sqlite3_column_int(pStmt, 2);
+		uint32_t code = static_cast<uint32_t>(sqlite3_column_int64(pStmt, 0));
+		auto ptr = &cards[code];
+		CardString*& localestring = ptr->_locale_strings;
+		localestring = nullptr;
+		if(indexesiterator != indexes.end()) {
+			while(indexesiterator != indexes.end() && indexesiterator->first < code)
+				indexesiterator++;
+			if(indexesiterator != indexes.end() && indexesiterator->first == code)
+				localestring = indexesiterator->second.second;
+		}
+		CardString& cs = ptr->_strings;
+		CardDataC& cd = ptr->_data;
+		cd.code = code;
+		cd.ot = static_cast<uint32_t>(sqlite3_column_int64(pStmt, 1));
+		cd.alias = static_cast<uint32_t>(sqlite3_column_int64(pStmt, 2));
 		cd.setcodes_p = nullptr;
-		auto setcodes = sqlite3_column_int64(pStmt, 3);
+		uint64_t setcodes = sqlite3_column_int64(pStmt, 3);
 		for(int i = 0; i < 4; i++) {
 			uint16_t setcode = (setcodes >> (i * 16)) & 0xffff;
 			if(setcode)
@@ -101,7 +130,7 @@ bool DataManager::ParseDB(sqlite3* pDB) {
 			cd.setcodes.push_back(0);
 			cd.setcodes_p = cd.setcodes.data();
 		}
-		cd.type = sqlite3_column_int(pStmt, 4);
+		cd.type = static_cast<uint32_t>(sqlite3_column_int64(pStmt, 4));
 		/////////////kdiy///////
 		int attack = sqlite3_column_int(pStmt, 5);
 		if(attack >= 999999)
@@ -121,46 +150,40 @@ bool DataManager::ParseDB(sqlite3* pDB) {
 			cd.defense = 0;
 		} else
 			cd.link_marker = 0;
+
 		int level = sqlite3_column_int(pStmt, 7);
-		if(level < 0) {
+		if(level < 0)
 			cd.level = -(level & 0xff);
 		/////////////kdiy///////
-		} else if ((level & 0xff) > 0xf) {
+		else if ((level & 0xff) > 0xf)
 			cd.level = -((level & 0xff) - 0xf);
 		/////////////kdiy///////	
-		} else
+		else
 			cd.level = level & 0xff;
+
 		cd.lscale = (level >> 24) & 0xff;
 		cd.rscale = (level >> 16) & 0xff;
-		cd.race = sqlite3_column_int(pStmt, 8);
-		cd.attribute = sqlite3_column_int(pStmt, 9);
-		cd.category = sqlite3_column_int(pStmt, 10);
-		if(const char* text = (const char*)sqlite3_column_text(pStmt, 11)) {
-			cs.name = BufferIO::DecodeUTF8(text);
+		cd.race = static_cast<uint32_t>(sqlite3_column_int64(pStmt, 8));
+		cd.attribute = static_cast<uint32_t>(sqlite3_column_int64(pStmt, 9));
+		cd.category = static_cast<uint32_t>(sqlite3_column_int64(pStmt, 10));
+
+		if(GetWstring(cs.name, pStmt, 11))
 			cs.uppercase_name = Utils::ToUpperNoAccents(cs.name);
-		}
-		if(const char* text = (const char*)sqlite3_column_text(pStmt, 12)) {
-			cs.text = BufferIO::DecodeUTF8(text);
-			cs.uppercase_text = Utils::ToUpperNoAccents(cs.text);
-		}
-		for(int i = 0; i < 16; ++i) {
-			if(const char* text = (const char*)sqlite3_column_text(pStmt, i + 13)) {
-				cs.desc[i] = BufferIO::DecodeUTF8(text);
-			}
-		}
-		CardString* localestring = nullptr;
-		if(indexesiterator != indexes.end()) {
-			while(indexesiterator != indexes.end() && indexesiterator->first < cd.code)
-				indexesiterator++;
-			if(indexesiterator != indexes.end() && indexesiterator->first == cd.code)
-				localestring = indexesiterator->second.second;
-		}
-		auto ptr = &(cards[cd.code] = { std::move(cd), std::move(cs), localestring });
-		if(localestring) {
+		else
+			cs.uppercase_name.clear();
+
+		if(GetWstring(cs.text, pStmt, 12))
+			cs.uppercase_text = Utils::ToUpperNoAccents(cs.name);
+		else
+			cs.uppercase_text.clear();
+
+		for(int i = 0; i < 16; ++i)
+			(void)GetWstring(cs.desc[i], pStmt, i + 13);
+
+		if(localestring)
 			indexesiterator->second.first = ptr;
-		} else {
+		else
 			indexesiterator = indexes.emplace_hint(indexesiterator, cd.code, std::make_pair(ptr, localestring));
-		}
 	}
 	sqlite3_finalize(pStmt);
 	sqlite3_close(pDB);
@@ -178,21 +201,25 @@ bool DataManager::ParseLocaleDB(sqlite3* pDB) {
 			continue;
 		if(step != SQLITE_ROW)
 			return Error(pDB, pStmt);
-		CardString cs{};
-		auto code = (uint32_t)sqlite3_column_int64(pStmt, 0);
-		if(const char* text = (const char*)sqlite3_column_text(pStmt, 1)) {
-			cs.name = BufferIO::DecodeUTF8(text);
+
+		auto code = static_cast<uint32_t>(sqlite3_column_int64(pStmt, 0));
+
+		CardString& cs = locales[code];
+		auto ptr = &cs;
+
+		if(GetWstring(cs.name, pStmt, 1))
 			cs.uppercase_name = Utils::ToUpperNoAccents(cs.name);
-		}
-		if(const char* text = (const char*)sqlite3_column_text(pStmt, 2)) {
-			cs.text = BufferIO::DecodeUTF8(text);
-			cs.uppercase_text = Utils::ToUpperNoAccents(cs.text);
-		}
-		for(int i = 0; i < 16; ++i) {
-			if(const char* text = (const char*)sqlite3_column_text(pStmt, i + 3)) {
-				cs.desc[i] = BufferIO::DecodeUTF8(text);
-			}
-		}
+		else
+			cs.uppercase_name.clear();
+
+		if(GetWstring(cs.text, pStmt, 2))
+			cs.uppercase_text = Utils::ToUpperNoAccents(cs.name);
+		else
+			(void)cs.uppercase_text.clear();
+
+		for(int i = 0; i < 16; ++i)
+			GetWstring(cs.desc[i], pStmt, i + 3);
+
 		CardDataM* card_data = nullptr;
 		if(indexesiterator != indexes.end()) {
 			while(indexesiterator != indexes.end() && indexesiterator->first < code)
@@ -200,7 +227,6 @@ bool DataManager::ParseLocaleDB(sqlite3* pDB) {
 			if(indexesiterator != indexes.end() && indexesiterator->first == code)
 				card_data = indexesiterator->second.first;
 		}
-		auto ptr = &(locales[code] = std::move(cs));
 		if(card_data) {
 			card_data->_locale_strings = ptr;
 			indexesiterator->second.second = ptr;

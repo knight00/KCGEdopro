@@ -2,7 +2,7 @@
 #define SOUNDMANAGER_H
 
 #include <memory>
-#include "random_fwd.h"
+#include "RNG/mt19937.h"
 #include <map>
 #include "text_types.h"
 #include "sound_backend.h"
@@ -102,7 +102,7 @@ private:
 	std::string bgm_now = "";
 	////////kdiy////	
 	int bgm_scene = -1;
-	randengine rnd;
+	RNG::mt19937 rnd;
 	std::unique_ptr<SoundBackend> mixer;
 	void RefreshSoundsList();
 	void RefreshBGMDir(epro::path_stringview path, BGM scene);

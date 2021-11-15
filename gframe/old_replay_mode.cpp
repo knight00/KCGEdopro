@@ -1,9 +1,9 @@
 #include "replay_mode.h"
 #include <fmt/format.h>
+#include "RNG/mt19937.h"
 #include "duelclient.h"
 #include "game.h"
 #include "single_mode.h"
-#include "random_fwd.h"
 
 //////kdiy///////
 // #include "sound_manager.h"
@@ -112,8 +112,8 @@ namespace ygo {
 		const ReplayHeader& rh = cur_yrp->pheader;
 		uint32_t seed = rh.seed;
 		if(!(rh.flag & REPLAY_DIRECT_SEED))
-			seed = randengine(seed)();
-		auto names = ReplayMode::cur_yrp->GetPlayerNames();
+			seed = RNG::mt19937(seed)();
+		const auto& names = ReplayMode::cur_yrp->GetPlayerNames();
 		mainGame->dInfo.selfnames.clear();
 		mainGame->dInfo.opponames.clear();
 		mainGame->dInfo.selfnames.insert(mainGame->dInfo.selfnames.end(), names.begin(), names.begin() + ReplayMode::cur_yrp->GetPlayersCount(0));
@@ -130,16 +130,16 @@ namespace ygo {
 		mainGame->dInfo.lp[1] = start_lp;
 		mainGame->dInfo.startlp = start_lp;
 		///////////kdiy///////////
-		//mainGame->dInfo.strLP[0] = fmt::to_wstring(mainGame->dInfo.lp[0]);
-		//mainGame->dInfo.strLP[1] = fmt::to_wstring(mainGame->dInfo.lp[1]);
-		if(mainGame->dInfo.lp[0] >= 8888888)
+		//mainGame->dInfo.strLP[0] = fmt::to_wstring(start_lp);
+		//mainGame->dInfo.strLP[1] = mainGame->dInfo.strLP[0];
+		if(start_lp >= 8888888)
 			mainGame->dInfo.strLP[0] = L"\u221E";
 		else
-		    mainGame->dInfo.strLP[0] = fmt::to_wstring(mainGame->dInfo.lp[0]);
-		if(mainGame->dInfo.lp[1] >= 8888888)
+		    mainGame->dInfo.strLP[0] = fmt::to_wstring(start_lp);
+		if(start_lp >= 8888888)
 			mainGame->dInfo.strLP[1] = L"\u221E";
 		else
-			mainGame->dInfo.strLP[1] = fmt::to_wstring(mainGame->dInfo.lp[1]);
+			mainGame->dInfo.strLP[1] = mainGame->dInfo.strLP[0];
 		///////////kdiy///////////
 		mainGame->dInfo.turn = 0;
 		if (!mainGame->dInfo.isSingleMode || (rh.flag & REPLAY_HAND_TEST)) {

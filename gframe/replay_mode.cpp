@@ -84,15 +84,15 @@ int ReplayMode::ReplayThread() {
 	mainGame->dInfo.current_player[0] = 0;
 	mainGame->dInfo.current_player[1] = 0;
 	if(!mainGame->dInfo.isRelay)
-		mainGame->dInfo.current_player[1] = mainGame->dInfo.team2 - 1;			
-	auto names = ReplayMode::cur_replay.GetPlayerNames();
+		mainGame->dInfo.current_player[1] = mainGame->dInfo.team2 - 1;
+	const auto& names = ReplayMode::cur_replay.GetPlayerNames();
 	mainGame->dInfo.selfnames.clear();
 	mainGame->dInfo.opponames.clear();
 	mainGame->dInfo.selfnames.insert(mainGame->dInfo.selfnames.end(), names.begin(), names.begin() + mainGame->dInfo.team1);
 	mainGame->dInfo.opponames.insert(mainGame->dInfo.opponames.end(), names.begin() + mainGame->dInfo.team1, names.end());
-	///////////kdiy///////////
+	///////////ktest///////////
 	//gSoundManager->character[6] = cur_replay.params.character[6];
-	///////////kdiy///////////		
+	///////////ktest///////////		
 	mainGame->dInfo.duel_params = cur_replay.params.duel_flags;	
 	mainGame->dInfo.duel_field = mainGame->GetMasterRule(mainGame->dInfo.duel_params);
 	mainGame->SetPhaseButtons();
