@@ -4931,10 +4931,11 @@ bool PlayAnimeC(std::wstring text, bool custom) {
 	CloseHandle(ShExecInfo.hProcess);
 	gSoundManager->PauseMusic(false);
 	return true;
-#else
+#elif __ANDROID__
     auto s1 = fmt::format(EPRO_TEXT("./movies/custom/{}.mp4"), Utils::ToPathString(text));
 	if(!Utils::FileExists(s1)) return false;
 	return false;
+#else	
 #endif
 }
 //////kdiy////////		
