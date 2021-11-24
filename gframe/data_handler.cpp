@@ -118,6 +118,36 @@ void DataHandler::LoadZipArchives() {
 ////////kdiy////////
 void DataHandler::LoadKZipArchives() {
 	irr::io::IFileArchive* tmp_archive2 = nullptr;
+	for(auto& file : Utils::FindFiles(EPRO_TEXT("./repositories//"), { EPRO_TEXT("zip") })) {
+		#if defined(Zip)
+		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./repositories/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive2);
+		#else
+		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./repositories/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive2);
+		#endif
+		if(tmp_archive2) {
+			Utils::archives.emplace_back(tmp_archive2);
+		}
+	}
+	for(auto& file : Utils::FindFiles(EPRO_TEXT("./repositories/kcg/"), { EPRO_TEXT("zip") })) {
+		#if defined(Zip)
+		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./repositories/kcg//{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive2);
+		#else
+		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./repositories/kcg/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive2);
+		#endif
+		if(tmp_archive2) {
+			Utils::archives.emplace_back(tmp_archive2);
+		}
+	}
+	for(auto& file : Utils::FindFiles(EPRO_TEXT("./repositories/kcg/script/"), { EPRO_TEXT("zip") })) {
+		#if defined(Zip)
+		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./repositories/kcg/script/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive2);
+		#else
+		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./repositories/kcg/script/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive2);
+		#endif
+		if(tmp_archive2) {
+			Utils::archives.emplace_back(tmp_archive2);
+		}
+	}
 	for(auto& file : Utils::FindFiles(EPRO_TEXT("./repositories/kcg/script/kcg/"), { EPRO_TEXT("zip") })) {
 		#if defined(Zip)
 		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./repositories/kcg/script/kcg/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive2);
