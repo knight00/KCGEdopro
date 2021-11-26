@@ -1798,6 +1798,8 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 					mainGame->dField.grave_act[pcard->controler] = true;
 				else if (pcard->location == LOCATION_REMOVED)
 					mainGame->dField.remove_act[pcard->controler] = true;
+				else if (pcard->location == LOCATION_EXTRA)
+					mainGame->dField.extra_act[pcard->controler] = true;
 			}
 		}
 		mainGame->dField.attackable_cards.clear();
@@ -1857,19 +1859,27 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 			pcard = mainGame->dField.GetCard(con, loc, seq);
 			mainGame->dField.spsummonable_cards.push_back(pcard);
 			pcard->cmdFlag |= COMMAND_SPSUMMON;
-			if (pcard->location == LOCATION_DECK) {
+			switch(pcard->location) {
+			case LOCATION_DECK:
 				pcard->SetCode(code);
 				mainGame->dField.deck_act[pcard->controler] = true;
-			} else if (pcard->location == LOCATION_GRAVE)
+				break;
+			case LOCATION_GRAVE:
 				mainGame->dField.grave_act[pcard->controler] = true;
-			else if (pcard->location == LOCATION_REMOVED)
+				break;
+			case LOCATION_REMOVED:
 				mainGame->dField.remove_act[pcard->controler] = true;
-			else if (pcard->location == LOCATION_EXTRA)
+				break;
+			case LOCATION_EXTRA:
 				mainGame->dField.extra_act[pcard->controler] = true;
-			else {
+				break;
+			case LOCATION_SZONE: {
 				int seq = mainGame->dInfo.duel_field == 4 ? (mainGame->dInfo.duel_params & DUEL_3_COLUMNS_FIELD) ? 1 : 0 : 6;
-				if (pcard->location == LOCATION_SZONE && pcard->sequence == seq && (pcard->type & TYPE_PENDULUM) && !pcard->equipTarget)
+				if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && pcard->sequence == seq)
 					mainGame->dField.pzone_act[pcard->controler] = true;
+				break;
+			}
+			default: break;
 			}
 		}
 		mainGame->dField.reposable_cards.clear();
@@ -1946,6 +1956,8 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 					mainGame->dField.grave_act[pcard->controler] = true;
 				else if (pcard->location == LOCATION_REMOVED)
 					mainGame->dField.remove_act[pcard->controler] = true;
+				else if (pcard->location == LOCATION_EXTRA)
+					mainGame->dField.extra_act[pcard->controler] = true;
 			}
 		}
 		std::lock_guard<std::mutex> lock(mainGame->gMutex);
@@ -2751,6 +2763,7 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 			if(rev) {
 				for(const auto& pcard : mainGame->dField.deck[player])
 					mainGame->dField.MoveCard(pcard, 10);
+				mainGame->WaitFrameSignal(10, lock);
 			}
 		}
 		return true;
