@@ -176,6 +176,9 @@ workspace "ygo"
 		optimize "Size"
 		flags "LinkTimeOptimization"
 		targetdir "bin/release"
+	
+	filter { "system:linux", "configurations:Release" }
+		linkoptions { "-static-libgcc", "-static-libstdc++" }
 
 	subproject = true
 	if not _OPTIONS["prebuilt-core"] then

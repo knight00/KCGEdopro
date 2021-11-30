@@ -141,7 +141,6 @@ local ygopro_config=function(static_core)
 		files { "*.m", "*.mm" }
 		defines "LUA_USE_MACOSX"
 		includedirs { "/usr/local/include/irrlicht" }
-		linkoptions { "-Wl,-rpath ./" }
 		links { "curl", "Cocoa.framework", "IOKit.framework", "OpenGL.framework", "Security.framework" }
 		if _OPTIONS["update-url"] then
 			links "crypto"
@@ -176,7 +175,6 @@ local ygopro_config=function(static_core)
 		else
 			includedirs "/usr/include/irrlicht"
 		end
-		linkoptions { "-Wl,-rpath=./" }
 		if static_core then
 			links  "lua:static"
 		end
