@@ -327,7 +327,7 @@ bool Game::Initialize() {
 	defaultStrings.emplace_back(mgSettings.chkEnableSummonSound, 8013);
 	mgSettings.chkEnableSummonAnime = env->addCheckBox(gGameConfig->enablesanime, Scale(555, mgheight+10, 645, mgheight+mgheight2-10), mgSettings.window, CHECKBOX_ENABLE_SANIME, gDataManager->GetSysString(8017).data());
 	defaultStrings.emplace_back(mgSettings.chkEnableSummonAnime, 8017);
-	#if !defined(__ANDROID__) && !defined(_WIN32)
+	#if !defined(_WIN32)
 	mgSettings.chkEnableSummonAnime->setChecked(false);
 	mgSettings.chkEnableSummonAnime->setEnabled(false);
 	#endif
@@ -341,7 +341,7 @@ bool Game::Initialize() {
 	defaultStrings.emplace_back(mgSettings.chkEnableActivateSound, 8014);
 	mgSettings.chkEnableActivateAnime = env->addCheckBox(gGameConfig->enablecanime, Scale(555, mgheight+10, 645, mgheight+mgheight2-10), mgSettings.window, CHECKBOX_ENABLE_CANIME, gDataManager->GetSysString(8018).data());
 	defaultStrings.emplace_back(mgSettings.chkEnableActivateAnime, 8018);
-	#if !defined(__ANDROID__) && !defined(_WIN32)
+	#if !defined(_WIN32)
 	mgSettings.chkEnableActivateAnime->setChecked(false);
 	mgSettings.chkEnableActivateAnime->setEnabled(false);
 	#endif
@@ -355,7 +355,7 @@ bool Game::Initialize() {
 	defaultStrings.emplace_back(mgSettings.chkEnableAttackSound, 8015);
 	mgSettings.chkEnableAttackAnime = env->addCheckBox(gGameConfig->enableaanime, Scale(555, mgheight+10, 645, mgheight+mgheight2-10), mgSettings.window, CHECKBOX_ENABLE_AANIME, gDataManager->GetSysString(8019).data());
 	defaultStrings.emplace_back(mgSettings.chkEnableAttackAnime, 8019);
-	#if !defined(__ANDROID__) && !defined(_WIN32)
+	#if !defined(_WIN32)
 	mgSettings.chkEnableAttackAnime->setChecked(false);
 	mgSettings.chkEnableAttackAnime->setEnabled(false);
 	#endif
@@ -955,7 +955,7 @@ bool Game::Initialize() {
 	//////kdiy///////////
 	tabSettings.chkEnableAnime = env->addCheckBox(gGameConfig->enableanime, Scale(130, 290, 280, 315), tabPanel, CHECKBOX_ENABLE_ANIME, gDataManager->GetSysString(8016).data());
 	defaultStrings.emplace_back(tabSettings.chkEnableAnime, 8016);
-	#if !defined(__ANDROID__) && !defined(_WIN32)
+	#if !defined(_WIN32)
 	tabSettings.chkEnableAnime->setChecked(false);
 	tabSettings.chkEnableAnime->setEnabled(false);
 	#endif
@@ -1101,7 +1101,7 @@ bool Game::Initialize() {
 	//////kdiy///////////
 	gSettings.chkEnableAnime = env->addCheckBox(gGameConfig->enableanime, Scale(450, 245, 645, 270), sPanel, CHECKBOX_ENABLE_ANIME, gDataManager->GetSysString(8016).data());
 	defaultStrings.emplace_back(gSettings.chkEnableAnime, 8016);
-	#if !defined(__ANDROID__) && !defined(_WIN32)
+	#if !defined(_WIN32)
 	gSettings.chkEnableAnime->setChecked(false);
 	gSettings.chkEnableAnime->setEnabled(false);
 	#endif

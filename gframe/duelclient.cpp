@@ -4907,7 +4907,7 @@ bool PlayAnime(uint32_t code, uint8_t cat) {
 		a = L"a";
 	auto s1 = fmt::format(EPRO_TEXT("./movies/{}{}.mp4"), Utils::ToPathString(a), code);
 	if(!Utils::FileExists(s1)) return false;
-	porting::openAnime(s1);
+	//porting::openAnime(s1);
 	return true;
 #else
 	return false;
