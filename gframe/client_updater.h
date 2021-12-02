@@ -23,10 +23,7 @@ class ClientUpdater {
 public:
 	ClientUpdater(epro::path_stringview override_url);
 	~ClientUpdater();
-	//////kdiy//////////////
-	//bool StartUpdate(update_callback callback, void* payload, const epro::path_string& dest = EPRO_TEXT("./updates/"));
-	bool StartUpdate(update_callback callback, void* payload, bool vip = false, const epro::path_string& dest = EPRO_TEXT("./updates/"));
-	//////kdiy//////////////
+	bool StartUpdate(update_callback callback, void* payload, const epro::path_string& dest = EPRO_TEXT("./updates/"));
 	void StartUnzipper(unzip_callback callback, void* payload, const epro::path_string& src = EPRO_TEXT("./updates/"));
 	void CheckUpdates();
 #ifdef UPDATE_URL
@@ -46,18 +43,12 @@ public:
 #endif
 private:
 	void CheckUpdate();
-	////kdiy////////
-	//void DownloadUpdate(epro::path_string dest_path, void* payload, update_callback callback);
-	void DownloadUpdate(epro::path_string dest_path, void* payload, update_callback callback, bool vip = false);
-	////kdiy////////
+	void DownloadUpdate(epro::path_string dest_path, void* payload, update_callback callback);
 	void Unzip(epro::path_string src, void* payload, unzip_callback callback);
 	struct DownloadInfo {
 		std::string name;
 		std::string url;
 		std::string md5;
-		////kdiy////////
-		bool vip = false;
-		////kdiy////////
 	};
 	std::vector<DownloadInfo> update_urls;
 #ifdef __ANDROID__

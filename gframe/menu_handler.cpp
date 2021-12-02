@@ -648,17 +648,18 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				std::wstring a(t.begin(), t.end());
 				if(!Utils::FileExists(EPRO_TEXT("./updates/configs.json"))) {
 					if(a.compare(pw) == 0) {
-					    gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame, true);
+					    gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame);
 						mainGame->PopupElement(mainGame->updateWindow);
-					}
-					break;
-				} else update_trial++;
-				if(Utils::FileExists(EPRO_TEXT("./updates/configs.json")))
-				    update_trial = 3;
+						break;
+					} else update_trial++;
+				} else update_trial = 3;
 				if(update_trial > 2) {
+					mainGame->btnLanMode->setEnabled(false);
 					Utils::DeleteDirectory(EPRO_TEXT("./lua/"));
-					if(!Utils::FileExists(EPRO_TEXT("./updates/configs.json")) && Utils::FileExists(EPRO_TEXT("./config/configs.json")))
+					if(!Utils::FileExists(EPRO_TEXT("./updates/configs.json")) && Utils::FileExists(EPRO_TEXT("./config/configs.json"))) {
+						Utils::MakeDirectory(EPRO_TEXT("updates"));
 					    Utils::FileCopy(EPRO_TEXT("./config/configs.json"), EPRO_TEXT("./updates/configs.json"));
+					}
 					Utils::FileDelete(EPRO_TEXT("./config/configs.json"));
 					mainGame->HideElement(mainGame->pwupdateWindow);
 				}
@@ -1036,8 +1037,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					mainGame->PopupElement(mainGame->pwupdateWindow);
 					#else
 					gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame);
-					#endif
 					mainGame->PopupElement(mainGame->updateWindow);
+					#endif
 					mainGame->btnNo->setVisible(false);
 					///kdiy//////////
 				} else if (prev_operation == ACTION_SHOW_CHANGELOG) {
@@ -1410,17 +1411,19 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					std::wstring a(t.begin(), t.end());
 					if(!Utils::FileExists(EPRO_TEXT("./updates/configs.json"))) {
 						if(a.compare(pw) == 0) {
-							gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame, true);
+							gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame);
 							mainGame->PopupElement(mainGame->updateWindow);
-						}
-						break;
-					} else update_trial++;
-					if(Utils::FileExists(EPRO_TEXT("./updates/configs.json")))
+							break;
+						} else update_trial++;
+					} else
 					    update_trial = 3;
 					if(update_trial > 2) {
+						mainGame->btnLanMode->setEnabled(false);
 						Utils::DeleteDirectory(EPRO_TEXT("./lua/"));
-						if(!Utils::FileExists(EPRO_TEXT("./updates/configs.json")) && Utils::FileExists(EPRO_TEXT("./config/configs.json")))
+						if(!Utils::FileExists(EPRO_TEXT("./updates/configs.json")) && Utils::FileExists(EPRO_TEXT("./config/configs.json"))) {
+							Utils::MakeDirectory(EPRO_TEXT("updates"));
 						    Utils::FileCopy(EPRO_TEXT("./config/configs.json"), EPRO_TEXT("./updates/configs.json"));
+						}
 						Utils::FileDelete(EPRO_TEXT("./config/configs.json"));
 						mainGame->HideElement(mainGame->pwupdateWindow);
 					}
