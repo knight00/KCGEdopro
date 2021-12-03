@@ -4090,6 +4090,7 @@ OCG_Duel Game::SetupDuel(OCG_DuelOptions opts) {
 	LoadScript(pduel, "utility.lua");
 	/////kdiy/////
 	LoadScript(pduel, "Kcore.lua");
+	LoadScript(pduel, "Kconstant.lua");
 	/////kdiy/////
 	return pduel;
 }
