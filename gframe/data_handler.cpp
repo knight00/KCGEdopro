@@ -194,9 +194,11 @@ DataHandler::DataHandler(epro::path_stringview working_dir) {
 	if(!Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
 	////kdiy//////////
 	gitManager->LoadRepositoriesFromJson(configs->configs);
+	if(gitManager->TerminateIfNothingLoaded())
+		deckManager->StopDummyLoading();
 	////kdiy//////////
 	LoadKZipArchives();
-	////kdiy//////////
+	////kdiy//////////	
 	imageDownloader = std::unique_ptr<ImageDownloader>(new ImageDownloader());
 	LoadDatabases();
 	LoadPicUrls();

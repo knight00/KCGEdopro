@@ -92,6 +92,7 @@ size_t RepoManager::GetUpdatingReposNumber() const {
 
 std::vector<const GitRepo*> RepoManager::GetAllRepos() const {
 	std::vector<const GitRepo*> res;
+	res.reserve(all_repos_count);
 	for(const auto& repo : all_repos)
 		res.insert(res.begin(), &repo);
 	return res;
@@ -317,6 +318,13 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 ////kdiy//////////	
 }
 
+bool RepoManager::TerminateIfNothingLoaded() {
+	if(all_repos_count > 0)
+		return false;
+	TerminateThreads();
+	return true;
+}
+
 void RepoManager::TerminateThreads() {
 	if(fetchReturnValue != -1) {
 		fetchReturnValue = -1;
@@ -339,7 +347,8 @@ void RepoManager::AddRepo(GitRepo&& repo) {
 	auto* _repo = &all_repos.front();
 	available_repos.push_back(_repo);
 	to_sync.push(_repo);
-	cv.notify_all();
+	all_repos_count++;
+	cv.notify_one();
 }
 
 void RepoManager::SetRepoPercentage(const std::string& path, int percent)
