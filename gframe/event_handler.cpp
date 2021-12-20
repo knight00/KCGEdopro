@@ -1612,12 +1612,26 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						if(mcard->location & (0xe|0x400)) {
 							std::wstring str(gDataManager->GetName(mcard->code));
 							///////kdiy/////////
+							if(mcard->alias && (mcard->alias == 27 || mcard->alias == 28 || mcard->alias == 29 || mcard->alias == 36) && wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
+								std::wstring str2(gDataManager->GetSetName(0xcf));
+								str.insert(0, str2);
+							} else if(mcard->alias && mcard->alias == 102 && wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
+								std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x23)));
+								str.insert(0, str2);
+							} else if(mcard->alias && mcard->alias == 347 && wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
+							    std::wstring str2(fmt::format(L"{} ", gDataManager->GetName(mcard->alias)));
+								str.insert(0, str2);
+							}
 							//if(mcard->type & TYPE_MONSTER) {
 							if((!(mcard->type & (TYPE_SPELL | TYPE_TRAP)) || (mcard->type & TYPE_TRAPMONSTER)) && !mcard->equipTarget) {
 							///////kdiy/////////
 								if(mcard->alias && (mcard->alias < mcard->code - 10 || mcard->alias > mcard->code + 10)
 										&& wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
-									str.append(fmt::format(L"\n({})",gDataManager->GetName(mcard->alias)));
+									///////kdiy/////////		
+									//str.append(fmt::format(L"\n({})",gDataManager->GetName(mcard->alias)));
+									if(mcard->alias != 27 && mcard->alias != 28 && mcard->alias != 29 && mcard->alias != 36 && mcard->alias != 102 && mcard->alias != 347)
+									    str.append(fmt::format(L"\n({})",gDataManager->GetName(mcard->alias)));
+									///////kdiy/////////
 								}
 								//////kdiy/////
 								//if (mcard->type & TYPE_LINK) {

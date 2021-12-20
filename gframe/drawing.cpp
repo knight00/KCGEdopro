@@ -701,7 +701,7 @@ void Game::DrawMisc() {
 			/////////kdiy////////////
 			//if (pcard && pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)))
 			if(pcard && pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && (!(pcard->type & (TYPE_SPELL | TYPE_TRAP)) || (pcard->type & TYPE_TRAPMONSTER)))
-				/////////kdiy////////////			
+			/////////kdiy////////////			
 				DrawStatus(pcard);
 		}
 		/////////kdiy////////////
