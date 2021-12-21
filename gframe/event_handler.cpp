@@ -1612,9 +1612,18 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						if(mcard->location & (0xe|0x400)) {
 							std::wstring str(gDataManager->GetName(mcard->code));
 							///////kdiy/////////
-							if(mcard->alias && (mcard->alias == 27 || mcard->alias == 28 || mcard->alias == 29 || mcard->alias == 36) && wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
+							if(mcard->alias && mcard->alias == 27 && wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
+								std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x1073)));
+								str.insert(0, str2);
+							} else if(mcard->alias && mcard->alias == 28 && wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
 								std::wstring str2(gDataManager->GetSetName(0xcf));
 								str.insert(0, str2);
+							} else if(mcard->alias && mcard->alias == 29 && wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
+								std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x4073)));
+								str.insert(0, str2);
+							} else if(mcard->alias && mcard->alias == 36 && wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
+								std::wstring str2(gDataManager->GetSetName(0x2048));
+								str.insert(0, str2, str2.size()-3);
 							} else if(mcard->alias && mcard->alias == 102 && wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
 								std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x23)));
 								str.insert(0, str2);
