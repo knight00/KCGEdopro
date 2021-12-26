@@ -36,7 +36,7 @@ struct WindBotPanel {
 	/////kdiy//////
 	irr::gui::IGUIComboBox* aiDeckSelect;
 	irr::gui::IGUIComboBox* aiDeckSelect2;
-	irr::gui::IGUICheckBox* chkSeed;
+	irr::gui::IGUIComboBox* chkSeed;
 	/////kdiy//////
 	irr::gui::IGUIStaticText* stBotEngine;
 	irr::gui::IGUIStaticText* deckProperties;

@@ -783,9 +783,13 @@ bool Game::Initialize() {
 	gBot.chkMute = env->addCheckBox(gGameConfig->botMute, Scale(10, 135, 200, 160), gBot.window, -1, gDataManager->GetSysString(2053).data());
 	defaultStrings.emplace_back(gBot.chkMute, 2053);
 	///////kdiy/////////	
-	gBot.chkSeed = env->addCheckBox(gGameConfig->botSeed, Scale(230, 105, 420, 130), gBot.window, -1, gDataManager->GetSysString(8027).data());
-	defaultStrings.emplace_back(gBot.chkSeed, 8027);
-	gBot.chkSeed->setEnabled(false);
+	gBot.chkSeed = AddComboBox(env, Scale(230, 105, 420, 130), gBot.window);
+	gBot.chkSeed->clear();
+	for (auto i = 8036; i <= 8039; ++i) {
+		int j = gBot.chkSeed->addItem(gDataManager->GetSysString(i).data());
+		if(gGameConfig->botSeed == j)
+			gBot.chkSeed->setSelected(j);
+	}
 	///////kdiy/////////	
 	gBot.cbBotDeck = AddComboBox(env, Scale(10, 165, 200, 190), gBot.window, COMBOBOX_BOT_DECK);
 	///////kdiy/////////	
@@ -2667,7 +2671,7 @@ void Game::SaveConfig() {
 	gGameConfig->botThrowRock = gBot.chkThrowRock->isChecked();
 	gGameConfig->botMute = gBot.chkMute->isChecked();
 	/////kdiy//////
-	gGameConfig->botSeed = gBot.chkSeed->isChecked();
+	gGameConfig->botSeed = gBot.chkSeed->getSelected();
 	auto lastLocalServerIndex = serverChoice2->getSelected();
 	if (lastLocalServerIndex >= 0)
 		gGameConfig->lastLocalServer = serverChoice2->getItem(lastLocalServerIndex);
@@ -3277,6 +3281,16 @@ void Game::UpdateExtraRules(bool set) {
 		chkRules[5]->setEnabled(false);
 		chkRules[6]->setEnabled(false);
 	}
+	/////kdiy///////////
+	if(chkRules[14]->isChecked()) {
+		chkRules[0]->setEnabled(false);
+		chkRules[1]->setEnabled(false);
+		chkRules[2]->setEnabled(false);
+		chkRules[3]->setEnabled(false);
+		chkRules[4]->setEnabled(false);
+		chkRules[11]->setEnabled(false);
+	}
+	/////kdiy///////////
 	extra_rules = 0;
 	for(int flag = 1, i = 0; i < sizeofarr(chkRules); i++, flag = flag << 1) {
 		if(chkRules[i]->isChecked())

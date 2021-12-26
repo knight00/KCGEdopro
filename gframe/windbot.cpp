@@ -37,7 +37,7 @@ std::string WindBot::serialized_databases{};
 
 /////kdiy//////
 //WindBot::launch_ret_t WindBot::Launch(int port, epro::wstringview pass, bool chat, int hand, const wchar_t* overridedeck) const {
-WindBot::launch_ret_t WindBot::Launch(int port, epro::wstringview pass, bool chat, int hand, const wchar_t* overridedeck, bool seed) const {
+WindBot::launch_ret_t WindBot::Launch(int port, epro::wstringview pass, bool chat, int hand, const wchar_t* overridedeck, int seed) const {
 /////kdiy//////	
 #ifndef __ANDROID__
 	if(!serialized) {

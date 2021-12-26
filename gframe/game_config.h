@@ -65,7 +65,7 @@ struct GameConfig
 	bool botThrowRock{ false };
 	bool botMute{ false };
 	///kdiy//////////
-	bool botSeed{ false };
+	uint32_t botSeed{ 0 };
 	std::wstring lastLocalServer;
 	uint32_t lastlocalallowedcards{ 0 };
 	uint32_t localtimeLimit{ 3 };
