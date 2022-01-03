@@ -1980,16 +1980,7 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 		info.controler = mainGame->LocalPlayer(info.controler);
 		uint64_t desc = CompatRead<uint32_t, uint64_t>(pbuf);
 		std::wstring text;
-		if(desc == 0) {
-			text = fmt::format(L"{}\n{}", event_string,
-							   fmt::sprintf(gDataManager->GetSysString(200), gDataManager->GetName(code), gDataManager->FormatLocation(info.location, info.sequence)));
-		} else if(desc == 221) {
-			text = fmt::format(L"{}\n{}\n{}", event_string,
-							   fmt::sprintf(gDataManager->GetSysString(221), gDataManager->GetName(code), gDataManager->FormatLocation(info.location, info.sequence)),
-							   gDataManager->GetSysString(223));
-		} else {
-			text = fmt::sprintf(gDataManager->GetDesc(desc, mainGame->dInfo.compat_mode), gDataManager->GetName(code));
-		}
+		////kdiy///////////
 		std::lock_guard<std::mutex> lock(mainGame->gMutex);
 		ClientCard* pcard = mainGame->dField.GetCard(info.controler, info.location, info.sequence);
 		if (pcard->code != code)
@@ -1998,6 +1989,61 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 			pcard->is_highlighting = true;
 			mainGame->dField.highlighting_card = pcard;
 		}
+		std::wstring str(gDataManager->GetName(code));
+		if(pcard->alias && pcard->alias == 27 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x1073)));
+			str.insert(0, str2);
+		} else if(pcard->alias && pcard->alias == 28 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+			std::wstring str2(gDataManager->GetSetName(0xcf));
+			str.insert(0, str2);
+		} else if(pcard->alias && pcard->alias == 29 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x4073)));
+			str.insert(0, str2);
+		} else if(pcard->alias && pcard->alias == 36 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+			std::wstring str2(gDataManager->GetSetName(0x2048));
+			str.insert(0, str2, str2.size()-3);
+		} else if(pcard->alias && (pcard->alias == 42 || pcard->alias == 43 || pcard->alias == 44) && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0xa1)));
+			str.insert(0, str2);
+		} else if(pcard->alias && pcard->alias == 102 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x23)));
+			str.insert(0, str2);
+		} else if(pcard->alias && pcard->alias == 347 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetName(pcard->alias)));
+			str.insert(0, str2);
+		} else if(pcard->alias && pcard->alias == 213 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+			str.append(fmt::format(L"{}", gDataManager->GetSetName(0x104f)));
+		}
+		////kdiy///////////
+		if(desc == 0) {
+			text = fmt::format(L"{}\n{}", event_string,
+			                   ////kdiy///////////
+							   //fmt::sprintf(gDataManager->GetSysString(200), gDataManager->GetName(code), gDataManager->FormatLocation(info.location, info.sequence)));
+							   fmt::sprintf(gDataManager->GetSysString(200), str, gDataManager->FormatLocation(info.location, info.sequence)));
+							   ////kdiy///////////
+		} else if(desc == 221) {
+			text = fmt::format(L"{}\n{}\n{}", event_string,
+			                   ////kdiy///////////
+							   //fmt::sprintf(gDataManager->GetSysString(221), gDataManager->GetName(code), gDataManager->FormatLocation(info.location, info.sequence)),
+							   fmt::sprintf(gDataManager->GetSysString(221), str, gDataManager->FormatLocation(info.location, info.sequence)),
+							   ////kdiy///////////
+							   gDataManager->GetSysString(223));
+		} else {
+			////kdiy///////////
+			//text = fmt::sprintf(gDataManager->GetDesc(desc, mainGame->dInfo.compat_mode), gDataManager->GetName(code));
+			text = fmt::sprintf(gDataManager->GetDesc(desc, mainGame->dInfo.compat_mode), str);
+			////kdiy///////////
+		}
+		////kdiy///////////
+		// std::lock_guard<std::mutex> lock(mainGame->gMutex);
+		// ClientCard* pcard = mainGame->dField.GetCard(info.controler, info.location, info.sequence);
+		// if (pcard->code != code)
+		// 	pcard->SetCode(code);
+		// if(info.location != LOCATION_DECK) {
+		// 	pcard->is_highlighting = true;
+		// 	mainGame->dField.highlighting_card = pcard;
+		// }
+		////kdiy///////////
 		mainGame->stQMessage->setText(text.data());
 		mainGame->PopupElement(mainGame->wQuery);
 		return false;
@@ -2563,7 +2609,35 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 		for(uint32_t i = 0; i < count; ++i) {
 			std::unique_lock<std::mutex> lock(mainGame->gMutex);
 			pcard = *(mainGame->dField.deck[player].rbegin() + i);
-			mainGame->AddLog(fmt::format(L"*[{}]", gDataManager->GetName(pcard->code)), pcard->code);
+			////kdiy///////////
+			std::wstring str(gDataManager->GetName(pcard->code));
+			if(pcard->alias && pcard->alias == 27 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x1073)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 28 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(gDataManager->GetSetName(0xcf));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 29 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x4073)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 36 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(gDataManager->GetSetName(0x2048));
+				str.insert(0, str2, str2.size()-3);
+			} else if(pcard->alias && (pcard->alias == 42 || pcard->alias == 43 || pcard->alias == 44) && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0xa1)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 102 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x23)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 347 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetName(pcard->alias)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 213 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+				str.append(fmt::format(L"{}", gDataManager->GetSetName(0x104f)));
+			}
+			//mainGame->AddLog(fmt::format(L"*[{}]", gDataManager->GetName(pcard->code)), pcard->code);
+			mainGame->AddLog(fmt::format(L"*[{}]", str), pcard->code);
+			////kdiy///////////
 			constexpr float milliseconds = 5.0f * 1000.0f / 60.0f;
 			float shift = -0.75f / milliseconds;
 			if (player == 1) shift *= -1.0f;
@@ -2599,7 +2673,35 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 		for(uint32_t i = 0; i < count; ++i) {
 			pcard = *(backit + i);
 			std::unique_lock<std::mutex> lock(mainGame->gMutex);
-			mainGame->AddLog(fmt::format(L"*[{}]", gDataManager->GetName(pcard->code)), pcard->code);
+			////kdiy///////////
+			std::wstring str(gDataManager->GetName(pcard->code));
+			if(pcard->alias && pcard->alias == 27 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x1073)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 28 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(gDataManager->GetSetName(0xcf));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 29 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x4073)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 36 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(gDataManager->GetSetName(0x2048));
+				str.insert(0, str2, str2.size()-3);
+			} else if(pcard->alias && (pcard->alias == 42 || pcard->alias == 43 || pcard->alias == 44) && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0xa1)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 102 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x23)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 347 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetName(pcard->alias)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 213 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+				str.append(fmt::format(L"{}", gDataManager->GetSetName(0x104f)));
+			}
+			//mainGame->AddLog(fmt::format(L"*[{}]", gDataManager->GetName(pcard->code)), pcard->code);
+			mainGame->AddLog(fmt::format(L"*[{}]", str), pcard->code);
+			////kdiy///////////
 			constexpr float milliseconds = 5.0f * 1000.0f / 60.0f;
 			if (player == 0)
 				pcard->dPos.set(0, -1.0f / milliseconds, 0);
@@ -2639,7 +2741,35 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 				pcard = mainGame->dField.GetCard(c, l, s);
 			if (code != 0)
 				pcard->SetCode(code);
-			mainGame->AddLog(fmt::format(L"*[{}]", gDataManager->GetName(code)), code);
+			////kdiy///////////
+			std::wstring str(gDataManager->GetName(code));
+			if(pcard->alias && pcard->alias == 27 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x1073)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 28 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(gDataManager->GetSetName(0xcf));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 29 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x4073)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 36 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(gDataManager->GetSetName(0x2048));
+				str.insert(0, str2, str2.size()-3);
+			} else if(pcard->alias && (pcard->alias == 42 || pcard->alias == 43 || pcard->alias == 44) && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0xa1)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 102 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x23)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 347 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetName(pcard->alias)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 213 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				str.append(fmt::format(L"{}", gDataManager->GetSetName(0x104f)));
+			}
+			//mainGame->AddLog(fmt::format(L"*[{}]", gDataManager->GetName(code)), code);
+			mainGame->AddLog(fmt::format(L"*[{}]", str), code);
+			////kdiy///////////
 			if (l & (LOCATION_EXTRA | LOCATION_DECK) || l == 0) {
 				if(count == 1 && l != 0) {
 					constexpr float milliseconds = 5.0f * 1000.0f / 60.0f;
@@ -3385,10 +3515,41 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 		/////kdiy//////			
 		/*CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);*/			
 			Play(SoundManager::SFX::SUMMON);
-		/////kdiy//////			
+		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+		const auto player = mainGame->LocalPlayer(info.controler);	
+		/////kdiy//////
 		if(!mainGame->dInfo.isCatchingUp) {
 			std::unique_lock<std::mutex> lock(mainGame->gMutex);
-			event_string = fmt::sprintf(gDataManager->GetSysString(1603), gDataManager->GetName(code));
+			////kdiy///////////
+			ClientCard* pcard = mainGame->dField.GetCard(player, info.location, info.sequence);	
+			std::wstring str(gDataManager->GetName(code));
+			if(pcard->alias && pcard->alias == 27 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x1073)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 28 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(gDataManager->GetSetName(0xcf));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 29 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x4073)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 36 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(gDataManager->GetSetName(0x2048));
+				str.insert(0, str2, str2.size()-3);
+			} else if(pcard->alias && (pcard->alias == 42 || pcard->alias == 43 || pcard->alias == 44) && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0xa1)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 102 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x23)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 347 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetName(pcard->alias)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 213 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				str.append(fmt::format(L"{}", gDataManager->GetSetName(0x104f)));
+			}
+			//event_string = fmt::sprintf(gDataManager->GetSysString(1603), gDataManager->GetName(code));
+			event_string = fmt::sprintf(gDataManager->GetSysString(1603), str);
+			////kdiy///////////
 			mainGame->showcardcode = code;
 			mainGame->showcarddif = 0;
 			mainGame->showcardp = 0;
@@ -3405,8 +3566,6 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 			if(!(cd->alias && PlayAnime(code2, 0)))
 				PlayAnime(code, 0);
 		}
-		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
-		const auto player = mainGame->LocalPlayer(info.controler);
 		int character = mainGame->dInfo.current_player[player];
 		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
 		if(gGameConfig->enablessound && !mainGame->dInfo.isCatchingUp) {
@@ -3425,6 +3584,8 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 		const auto code = BufferIO::Read<uint32_t>(pbuf);	
 		/////kdiy//////		
 		//if(!PlayChant(SoundManager::CHANT::SUMMON, code))
+		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+		const auto player = mainGame->LocalPlayer(info.controler);
 		bool chklast = true;
 		if(code == 0) {
 		    const auto code = BufferIO::Read<uint32_t>(pbuf);
@@ -3435,7 +3596,36 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 			Play(SoundManager::SFX::SPECIAL_SUMMON);			
 		if(!mainGame->dInfo.isCatchingUp) {
 			std::unique_lock<std::mutex> lock(mainGame->gMutex);
-			event_string = fmt::sprintf(gDataManager->GetSysString(1605), gDataManager->GetName(code));
+			////kdiy///////////
+			ClientCard* pcard = mainGame->dField.GetCard(player, info.location, info.sequence);	
+			std::wstring str(gDataManager->GetName(code));
+			if(pcard->alias && pcard->alias == 27 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x1073)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 28 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(gDataManager->GetSetName(0xcf));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 29 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x4073)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 36 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(gDataManager->GetSetName(0x2048));
+				str.insert(0, str2, str2.size()-3);
+			} else if(pcard->alias && (pcard->alias == 42 || pcard->alias == 43 || pcard->alias == 44) && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0xa1)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 102 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x23)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 347 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetName(pcard->alias)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 213 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				str.append(fmt::format(L"{}", gDataManager->GetSetName(0x104f)));
+			}
+			//event_string = fmt::sprintf(gDataManager->GetSysString(1605), gDataManager->GetName(code));
+			event_string = fmt::sprintf(gDataManager->GetSysString(1605), str);
+			////kdiy///////////
 			mainGame->showcardcode = code;
 			mainGame->showcarddif = 1;
 			mainGame->showcard = 5;
@@ -3452,8 +3642,6 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 			if(!(cd->alias && PlayAnime(code2, 0)))
 				PlayAnime(code, 0);
 		}
-		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
-		const auto player = mainGame->LocalPlayer(info.controler);
 		int character = mainGame->dInfo.current_player[player];
 		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
 		if(gGameConfig->enablessound && !mainGame->dInfo.isCatchingUp) {
@@ -3482,7 +3670,36 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 		pcard->position = info.position;
 		if(!mainGame->dInfo.isCatchingUp) {
 			std::unique_lock<std::mutex> lock(mainGame->gMutex);
-			event_string = fmt::sprintf(gDataManager->GetSysString(1607), gDataManager->GetName(code));
+			////kdiy///////////
+			ClientCard* pcard = mainGame->dField.GetCard(info.controler, info.location, info.sequence);	
+			std::wstring str(gDataManager->GetName(code));
+			if(pcard->alias && pcard->alias == 27 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x1073)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 28 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(gDataManager->GetSetName(0xcf));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 29 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x4073)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 36 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(gDataManager->GetSetName(0x2048));
+				str.insert(0, str2, str2.size()-3);
+			} else if(pcard->alias && (pcard->alias == 42 || pcard->alias == 43 || pcard->alias == 44) && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0xa1)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 102 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x23)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 347 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetName(pcard->alias)));
+				str.insert(0, str2);
+			} else if(pcard->alias && pcard->alias == 213 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+				str.append(fmt::format(L"{}", gDataManager->GetSetName(0x104f)));
+			}
+			//event_string = fmt::sprintf(gDataManager->GetSysString(1607), gDataManager->GetName(code));
+			event_string = fmt::sprintf(gDataManager->GetSysString(1607), str);
+			////kdiy///////////
 			mainGame->dField.MoveCard(pcard, 10);
 			mainGame->WaitFrameSignal(11, lock);
 			mainGame->showcardcode = code;
@@ -4048,14 +4265,72 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 		float xa = mainGame->dField.attacker->curPos.X;
 		float ya = mainGame->dField.attacker->curPos.Y;
 		float xd, yd;
+		////kdiy///////////
+		std::wstring str(gDataManager->GetName(mainGame->dField.attacker->code));
+		if(mainGame->dField.attacker->alias && mainGame->dField.attacker->alias == 27 && wcscmp(gDataManager->GetName(mainGame->dField.attacker->code).data(), gDataManager->GetName(mainGame->dField.attacker->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x1073)));
+			str.insert(0, str2);
+		} else if(mainGame->dField.attacker->alias && mainGame->dField.attacker->alias == 28 && wcscmp(gDataManager->GetName(mainGame->dField.attacker->code).data(), gDataManager->GetName(mainGame->dField.attacker->alias).data())) {
+			std::wstring str2(gDataManager->GetSetName(0xcf));
+			str.insert(0, str2);
+		} else if(mainGame->dField.attacker->alias && mainGame->dField.attacker->alias == 29 && wcscmp(gDataManager->GetName(mainGame->dField.attacker->code).data(), gDataManager->GetName(mainGame->dField.attacker->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x4073)));
+			str.insert(0, str2);
+		} else if(mainGame->dField.attacker->alias && mainGame->dField.attacker->alias == 36 && wcscmp(gDataManager->GetName(mainGame->dField.attacker->code).data(), gDataManager->GetName(mainGame->dField.attacker->alias).data())) {
+			std::wstring str2(gDataManager->GetSetName(0x2048));
+			str.insert(0, str2, str2.size()-3);
+		} else if(mainGame->dField.attacker->alias && (mainGame->dField.attacker->alias == 42 || mainGame->dField.attacker->alias == 43 || mainGame->dField.attacker->alias == 44) && wcscmp(gDataManager->GetName(mainGame->dField.attacker->code).data(), gDataManager->GetName(mainGame->dField.attacker->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0xa1)));
+			str.insert(0, str2);
+		} else if(mainGame->dField.attacker->alias && mainGame->dField.attacker->alias == 102 && wcscmp(gDataManager->GetName(mainGame->dField.attacker->code).data(), gDataManager->GetName(mainGame->dField.attacker->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x23)));
+			str.insert(0, str2);
+		} else if(mainGame->dField.attacker->alias && mainGame->dField.attacker->alias == 347 && wcscmp(gDataManager->GetName(mainGame->dField.attacker->code).data(), gDataManager->GetName(mainGame->dField.attacker->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetName(mainGame->dField.attacker->alias)));
+			str.insert(0, str2);
+		} else if(mainGame->dField.attacker->alias && mainGame->dField.attacker->alias == 213 && wcscmp(gDataManager->GetName(mainGame->dField.attacker->code).data(), gDataManager->GetName(mainGame->dField.attacker->alias).data())) {
+			str.append(fmt::format(L"{}", gDataManager->GetSetName(0x104f)));
+		}
+		////kdiy///////////
 		if (!is_direct) {
 			mainGame->dField.attack_target = mainGame->dField.GetCard(info2.controler, info2.location, info2.sequence);
-			event_string = fmt::format(gDataManager->GetSysString(1619), gDataManager->GetName(mainGame->dField.attacker->code),
-				gDataManager->GetName(mainGame->dField.attack_target->code));
+			////kdiy///////////
+			std::wstring str1(gDataManager->GetName(mainGame->dField.attack_target->code));
+			if(mainGame->dField.attack_target->alias && mainGame->dField.attack_target->alias == 27 && wcscmp(gDataManager->GetName(mainGame->dField.attack_target->code).data(), gDataManager->GetName(mainGame->dField.attack_target->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x1073)));
+				str1.insert(0, str2);
+			} else if(mainGame->dField.attack_target->alias && mainGame->dField.attack_target->alias == 28 && wcscmp(gDataManager->GetName(mainGame->dField.attack_target->code).data(), gDataManager->GetName(mainGame->dField.attack_target->alias).data())) {
+				std::wstring str2(gDataManager->GetSetName(0xcf));
+				str1.insert(0, str2);
+			} else if(mainGame->dField.attack_target->alias && mainGame->dField.attack_target->alias == 29 && wcscmp(gDataManager->GetName(mainGame->dField.attack_target->code).data(), gDataManager->GetName(mainGame->dField.attack_target->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x4073)));
+				str1.insert(0, str2);
+			} else if(mainGame->dField.attack_target->alias && mainGame->dField.attack_target->alias == 36 && wcscmp(gDataManager->GetName(mainGame->dField.attack_target->code).data(), gDataManager->GetName(mainGame->dField.attack_target->alias).data())) {
+				std::wstring str2(gDataManager->GetSetName(0x2048));
+				str1.insert(0, str2, str2.size()-3);
+			} else if(mainGame->dField.attack_target->alias && (mainGame->dField.attack_target->alias == 42 || mainGame->dField.attack_target->alias == 43 || mainGame->dField.attack_target->alias == 44) && wcscmp(gDataManager->GetName(mainGame->dField.attack_target->code).data(), gDataManager->GetName(mainGame->dField.attack_target->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0xa1)));
+				str1.insert(0, str2);
+			} else if(mainGame->dField.attack_target->alias && mainGame->dField.attack_target->alias == 102 && wcscmp(gDataManager->GetName(mainGame->dField.attack_target->code).data(), gDataManager->GetName(mainGame->dField.attack_target->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x23)));
+				str1.insert(0, str2);
+			} else if(mainGame->dField.attack_target->alias && mainGame->dField.attack_target->alias == 347 && wcscmp(gDataManager->GetName(mainGame->dField.attack_target->code).data(), gDataManager->GetName(mainGame->dField.attack_target->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetName(mainGame->dField.attack_target->alias)));
+				str1.insert(0, str2);
+			} else if(mainGame->dField.attack_target->alias && mainGame->dField.attack_target->alias == 213 && wcscmp(gDataManager->GetName(mainGame->dField.attack_target->code).data(), gDataManager->GetName(mainGame->dField.attack_target->alias).data())) {
+				str1.append(fmt::format(L"{}", gDataManager->GetSetName(0x104f)));
+			}			
+			//event_string = fmt::format(gDataManager->GetSysString(1619), gDataManager->GetName(mainGame->dField.attacker->code),
+				//gDataManager->GetName(mainGame->dField.attack_target->code));
+			event_string = fmt::format(gDataManager->GetSysString(1619), str, str1);
+			////kdiy///////////
 			xd = mainGame->dField.attack_target->curPos.X;
 			yd = mainGame->dField.attack_target->curPos.Y;
 		} else {
-			event_string = fmt::format(gDataManager->GetSysString(1620), gDataManager->GetName(mainGame->dField.attacker->code));
+			////kdiy///////////
+			//event_string = fmt::format(gDataManager->GetSysString(1620), gDataManager->GetName(mainGame->dField.attacker->code));
+			event_string = fmt::format(gDataManager->GetSysString(1620), str);
+			////kdiy///////////
 			xd = 3.95f;
 			yd = (info1.controler == 0) ? -3.5f : 3.5f;
 		}
@@ -4108,7 +4383,35 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 		return true;
 	}
 	case MSG_ATTACK_DISABLED: {
-		event_string = fmt::sprintf(gDataManager->GetSysString(1621), gDataManager->GetName(mainGame->dField.attacker->code));
+		////kdiy///////////
+		std::wstring str(gDataManager->GetName(mainGame->dField.attacker->code));
+		if(mainGame->dField.attacker->alias && mainGame->dField.attacker->alias == 27 && wcscmp(gDataManager->GetName(mainGame->dField.attacker->code).data(), gDataManager->GetName(mainGame->dField.attacker->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x1073)));
+			str.insert(0, str2);
+		} else if(mainGame->dField.attacker->alias && mainGame->dField.attacker->alias == 28 && wcscmp(gDataManager->GetName(mainGame->dField.attacker->code).data(), gDataManager->GetName(mainGame->dField.attacker->alias).data())) {
+			std::wstring str2(gDataManager->GetSetName(0xcf));
+			str.insert(0, str2);
+		} else if(mainGame->dField.attacker->alias && mainGame->dField.attacker->alias == 29 && wcscmp(gDataManager->GetName(mainGame->dField.attacker->code).data(), gDataManager->GetName(mainGame->dField.attacker->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x4073)));
+			str.insert(0, str2);
+		} else if(mainGame->dField.attacker->alias && mainGame->dField.attacker->alias == 36 && wcscmp(gDataManager->GetName(mainGame->dField.attacker->code).data(), gDataManager->GetName(mainGame->dField.attacker->alias).data())) {
+			std::wstring str2(gDataManager->GetSetName(0x2048));
+			str.insert(0, str2, str2.size()-3);
+		} else if(mainGame->dField.attacker->alias && (mainGame->dField.attacker->alias == 42 || mainGame->dField.attacker->alias == 43 || mainGame->dField.attacker->alias == 44) && wcscmp(gDataManager->GetName(mainGame->dField.attacker->code).data(), gDataManager->GetName(mainGame->dField.attacker->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0xa1)));
+			str.insert(0, str2);
+		} else if(mainGame->dField.attacker->alias && mainGame->dField.attacker->alias == 102 && wcscmp(gDataManager->GetName(mainGame->dField.attacker->code).data(), gDataManager->GetName(mainGame->dField.attacker->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x23)));
+			str.insert(0, str2);
+		} else if(mainGame->dField.attacker->alias && mainGame->dField.attacker->alias == 347 && wcscmp(gDataManager->GetName(mainGame->dField.attacker->code).data(), gDataManager->GetName(mainGame->dField.attacker->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetName(mainGame->dField.attacker->alias)));
+			str.insert(0, str2);
+		} else if(mainGame->dField.attacker->alias && mainGame->dField.attacker->alias == 213 && wcscmp(gDataManager->GetName(mainGame->dField.attacker->code).data(), gDataManager->GetName(mainGame->dField.attacker->alias).data())) {
+			str.append(fmt::format(L"{}", gDataManager->GetSetName(0x104f)));
+		}
+		//event_string = fmt::sprintf(gDataManager->GetSysString(1621), gDataManager->GetName(mainGame->dField.attacker->code));
+		event_string = fmt::sprintf(gDataManager->GetSysString(1621), str);
+		////kdiy///////////
 		return true;
 	}
 	case MSG_DAMAGE_STEP_START: {
@@ -4120,10 +4423,43 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 	case MSG_MISSED_EFFECT: {
 		if(mainGame->dInfo.isCatchingUp)
 			return true;
-		CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+		////kdiy///////////
+		//CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+		info.controler = mainGame->LocalPlayer(info.controler);
+		ClientCard* pcard = mainGame->dField.GetCard(info.controler, info.location, info.sequence);	
+		////kdiy///////////
 		uint32_t code = BufferIO::Read<uint32_t>(pbuf);
 		std::unique_lock<std::mutex> lock(mainGame->gMutex);
-		mainGame->AddLog(fmt::sprintf(gDataManager->GetSysString(1622), gDataManager->GetName(code)), code);
+		////kdiy///////////
+		std::wstring str(gDataManager->GetName(code));
+		if(pcard->alias && pcard->alias == 27 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x1073)));
+			str.insert(0, str2);
+		} else if(pcard->alias && pcard->alias == 28 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+			std::wstring str2(gDataManager->GetSetName(0xcf));
+			str.insert(0, str2);
+		} else if(pcard->alias && pcard->alias == 29 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x4073)));
+			str.insert(0, str2);
+		} else if(pcard->alias && pcard->alias == 36 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+			std::wstring str2(gDataManager->GetSetName(0x2048));
+			str.insert(0, str2, str2.size()-3);
+		} else if(pcard->alias && (pcard->alias == 42 || pcard->alias == 43 || pcard->alias == 44) && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0xa1)));
+			str.insert(0, str2);
+		} else if(pcard->alias && pcard->alias == 102 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x23)));
+			str.insert(0, str2);
+		} else if(pcard->alias && pcard->alias == 347 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetName(pcard->alias)));
+			str.insert(0, str2);
+		} else if(pcard->alias && pcard->alias == 213 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
+			str.append(fmt::format(L"{}", gDataManager->GetSetName(0x104f)));
+		}
+		//mainGame->AddLog(fmt::sprintf(gDataManager->GetSysString(1622), gDataManager->GetName(code)), code);
+		mainGame->AddLog(fmt::sprintf(gDataManager->GetSysString(1622), str), code);
+		////kdiy///////////
 		return true;
 	}
 	case MSG_TOSS_COIN: {

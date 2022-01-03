@@ -1633,6 +1633,8 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 							} else if(mcard->alias && mcard->alias == 347 && wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
 							    std::wstring str2(fmt::format(L"{} ", gDataManager->GetName(mcard->alias)));
 								str.insert(0, str2);
+							} else if(mcard->alias && mcard->alias == 213 && wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
+								str.append(fmt::format(L"{}", gDataManager->GetSetName(0x104f)));
 							}
 							//if(mcard->type & TYPE_MONSTER) {
 							if((!(mcard->type & (TYPE_SPELL | TYPE_TRAP)) || (mcard->type & TYPE_TRAPMONSTER)) && !mcard->equipTarget) {
@@ -1641,7 +1643,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 										&& wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
 									///////kdiy/////////		
 									//str.append(fmt::format(L"\n({})",gDataManager->GetName(mcard->alias)));
-									if(mcard->alias != 27 && mcard->alias != 28 && mcard->alias != 29 && mcard->alias != 36 && mcard->alias != 42 && mcard->alias != 43 && mcard->alias != 44 && mcard->alias != 102 && mcard->alias != 347)
+									if(mcard->alias != 27 && mcard->alias != 28 && mcard->alias != 29 && mcard->alias != 36 && mcard->alias != 42 && mcard->alias != 43 && mcard->alias != 44 && mcard->alias != 102 && mcard->alias != 347 && mcard->alias != 213)
 									    str.append(fmt::format(L"\n({})",gDataManager->GetName(mcard->alias)));
 									///////kdiy/////////
 								}
@@ -2919,6 +2921,32 @@ void ClientField::ShowCardInfoInList(ClientCard* pcard, irr::gui::IGUIElement* e
 	std::wstring str(L"");
 	if(pcard->code) {
 		str.append(gDataManager->GetName(pcard->code).data());
+		////kdiy///////////
+		if(pcard->alias && pcard->alias == 27 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x1073)));
+			str.insert(0, str2);
+		} else if(pcard->alias && pcard->alias == 28 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+			std::wstring str2(gDataManager->GetSetName(0xcf));
+			str.insert(0, str2);
+		} else if(pcard->alias && pcard->alias == 29 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x4073)));
+			str.insert(0, str2);
+		} else if(pcard->alias && pcard->alias == 36 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+			std::wstring str2(gDataManager->GetSetName(0x2048));
+			str.insert(0, str2, str2.size()-3);
+		} else if(pcard->alias && (pcard->alias == 42 || pcard->alias == 43 || pcard->alias == 44) && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0xa1)));
+			str.insert(0, str2);
+		} else if(pcard->alias && pcard->alias == 102 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x23)));
+			str.insert(0, str2);
+		} else if(pcard->alias && pcard->alias == 347 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+			std::wstring str2(fmt::format(L"{} ", gDataManager->GetName(pcard->alias)));
+			str.insert(0, str2);
+		} else if(pcard->alias && pcard->alias == 213 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
+			str.append(fmt::format(L"{}", gDataManager->GetSetName(0x104f)));
+		}
+		////kdiy///////////
 	}
 	if((pcard->status & STATUS_PROC_COMPLETE)
 		&& (pcard->type & (TYPE_RITUAL | TYPE_FUSION | TYPE_SYNCHRO | TYPE_XYZ | TYPE_LINK | TYPE_SPSUMMON)))
@@ -2930,6 +2958,32 @@ void ClientField::ShowCardInfoInList(ClientCard* pcard, irr::gui::IGUIElement* e
 		}
 		if(chit.target.find(pcard) != chit.target.end()) {
 			str.append(L"\n").append(fmt::sprintf(gDataManager->GetSysString(217), i + 1, gDataManager->GetName(chit.chain_card->code)));
+			////kdiy///////////
+			if(chit.chain_card->alias && chit.chain_card->alias == 27 && wcscmp(gDataManager->GetName(chit.chain_card->code).data(), gDataManager->GetName(chit.chain_card->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x1073)));
+				str.insert(0, str2);
+			} else if(chit.chain_card->alias && chit.chain_card->alias == 28 && wcscmp(gDataManager->GetName(chit.chain_card->code).data(), gDataManager->GetName(chit.chain_card->alias).data())) {
+				std::wstring str2(gDataManager->GetSetName(0xcf));
+				str.insert(0, str2);
+			} else if(chit.chain_card->alias && chit.chain_card->alias == 29 && wcscmp(gDataManager->GetName(chit.chain_card->code).data(), gDataManager->GetName(chit.chain_card->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x4073)));
+				str.insert(0, str2);
+			} else if(chit.chain_card->alias && chit.chain_card->alias == 36 && wcscmp(gDataManager->GetName(chit.chain_card->code).data(), gDataManager->GetName(chit.chain_card->alias).data())) {
+				std::wstring str2(gDataManager->GetSetName(0x2048));
+				str.insert(0, str2, str2.size()-3);
+			} else if(chit.chain_card->alias && (chit.chain_card->alias == 42 || chit.chain_card->alias == 43 || chit.chain_card->alias == 44) && wcscmp(gDataManager->GetName(chit.chain_card->code).data(), gDataManager->GetName(chit.chain_card->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0xa1)));
+				str.insert(0, str2);
+			} else if(chit.chain_card->alias && chit.chain_card->alias == 102 && wcscmp(gDataManager->GetName(chit.chain_card->code).data(), gDataManager->GetName(chit.chain_card->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x23)));
+				str.insert(0, str2);
+			} else if(chit.chain_card->alias && chit.chain_card->alias == 347 && wcscmp(gDataManager->GetName(chit.chain_card->code).data(), gDataManager->GetName(chit.chain_card->alias).data())) {
+				std::wstring str2(fmt::format(L"{} ", gDataManager->GetName(chit.chain_card->alias)));
+				str.insert(0, str2);
+			} else if(chit.chain_card->alias && chit.chain_card->alias == 213 && wcscmp(gDataManager->GetName(chit.chain_card->code).data(), gDataManager->GetName(chit.chain_card->alias).data())) {
+				str.append(fmt::format(L"{}", gDataManager->GetSetName(0x104f)));
+			}
+			////kdiy///////////
 		}
 	}
 	if(str.length() > 0) {
