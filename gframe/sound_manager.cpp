@@ -90,7 +90,7 @@ void SoundManager::RefreshBGMList() {
 }
 void SoundManager::RefreshSoundsList() {
 #ifdef BACKEND
-	static constexpr std::pair<SFX, epro::path_stringview> fx[] = {
+	static constexpr std::pair<SFX, epro::path_stringview> fx[]{
 		{SUMMON, EPRO_TEXT("./sound/summon.{}"_sv)},
 		{SPECIAL_SUMMON, EPRO_TEXT("./sound/specialsummon.{}"_sv)},
 		{ACTIVATE, EPRO_TEXT("./sound/activate.{}"_sv)},
@@ -139,8 +139,7 @@ void SoundManager::RefreshBGMDir(epro::path_stringview path, BGM scene) {
 }
 void SoundManager::RefreshChantsList() {
 #ifdef BACKEND
-	static constexpr std::pair<CHANT, epro::path_stringview> types[] = {
-#endif		
+	static constexpr std::pair<CHANT, epro::path_stringview> types[]{
 		/////kdiy///////
 		{CHANT::SET,       EPRO_TEXT("set"_sv)},
 		{CHANT::EQUIP,     EPRO_TEXT("equip"_sv)},
@@ -158,16 +157,13 @@ void SoundManager::RefreshChantsList() {
 		{CHANT::ACTIVATE,  EPRO_TEXT("activate"_sv)}
 	};
 	/////kdiy//////
-	for (auto list : ChantsList) {
+	for (auto list : ChantsList)
 		list.clear();
-	}
 	int i=-1;
 	for(int i=0; i< 10; i++)
     {
 		for (int j = 0; j < totcharacter; j++)
-		{
 			ChantSPList[i][j].clear();
-		}
 	}
 	/////kdiy///////
 	for (const auto& chantType : types) {
@@ -181,9 +177,8 @@ void SoundManager::RefreshChantsList() {
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/donthousand/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/shark/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/yuma/{}"), chantType.second));
-		for (auto path : searchPath) {
+		for (auto path : searchPath)
 			Utils::MakeDirectory(path);
-		}
 		if(chantType.first != CHANT::SUMMON && chantType.first != CHANT::ATTACK && chantType.first != CHANT::ACTIVATE) {
 			if(chantType.first == CHANT::SET) i=0;		
 			if(chantType.first == CHANT::EQUIP) i=1;
@@ -225,22 +220,28 @@ void SoundManager::RefreshChantsList() {
 		}
 		/////kdiy///////
 	}
+#endif	
 }
 void SoundManager::PlaySoundEffect(SFX sound) {
 #ifdef BACKEND
 	if(!soundsEnabled) return;
 	if(sound >= SFX::SFX_TOTAL_SIZE) return;
-	if(SFXList[sound].empty()) return;
-	mixer->PlaySound(SFXList[sound]);
+	const auto& soundfile = SFXList[sound];
+	if(soundfile.empty()) return;
+	mixer->PlaySound(soundfile);
 #endif
 }
 void SoundManager::PlayBGM(BGM scene, bool loop) {
 #ifdef BACKEND
-	auto& list = BGMList[scene];
+	if(!musicEnabled)
+		return;
+	const auto& list = BGMList[scene];
 	int count = list.size();
-	if(musicEnabled && (scene != bgm_scene || !mixer->MusicPlaying()) && count > 0) {
+	if(count == 0)
+		return;
+	if(scene != bgm_scene || !mixer->MusicPlaying()) {
 		bgm_scene = scene;
-		int bgm = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+		auto bgm = (std::uniform_int_distribution<>(0, count - 1))(rnd);
 		const std::string BGMName = fmt::format("{}/./sound/BGM/{}", working_dir, list[bgm]);
 		/////kdiy/////
 		std::string bgm_custom = "BGM/custom/";
@@ -284,6 +285,14 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 #ifdef BACKEND
 	if(!soundsEnabled) return false;
 	///////kdiy//////
+// 	auto key = std::make_pair(chant, code);
+// 	auto chant_it = ChantsList.find(key);
+// 	if(chant_it == ChantsList.end())
+// 		return false;
+// 	mixer->PlaySound(chant_it->second);
+// 	return true;
+// #else
+// 	return false;	
 	if(player < 0) return false;
 	if(code == 0) {
 		int i=-1;
@@ -308,22 +317,23 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 			return true;
 		}
 	} else {
-	auto key = std::make_pair(chant, code);
-	auto key2 = std::make_pair(chant, code2);
-	std::map<std::pair<CHANT, uint32_t>, std::string> clist;
-	clist = ChantsList[character[player]];
-	if (clist.count(key)) {
-		mixer->PlaySound(clist[key]);
+		auto key = std::make_pair(chant, code);
+		auto chant_it = ChantsList[character[player]].find(key);
+		auto key2 = std::make_pair(chant, code2);
+		auto chant_it2 = ChantsList[character[player]].find(key2);
+		if(chant_it == ChantsList[character[player]].end()) {
+			if(chant_it2 == ChantsList[character[player]].end())
+				return false;
+			else
+			    mixer->PlaySound(chant_it2->second);
+		}
+		mixer->PlaySound(chant_it->second);
 		return true;
-	}
-	else if (clist.count(key2)) {
-		mixer->PlaySound(clist[key2]);
-		return true;
-	}
 	}
 	///////kdiy//////
-#endif
+#else
 	return false;
+#endif
 }
 void SoundManager::SetSoundVolume(double volume) {
 #ifdef BACKEND

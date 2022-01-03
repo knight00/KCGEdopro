@@ -16,7 +16,7 @@
 
 namespace ygo {
 
-constexpr wchar_t const* DataManager::unknown_string;
+constexpr epro::wstringview DataManager::unknown_string;
 static constexpr auto SELECT_STMT =
 R"(SELECT datas.id,datas.ot,datas.alias,datas.setcode,datas.type,datas.atk,datas.def,datas.level,datas.race,datas.attribute,datas.category,texts.name,texts.desc,texts.str1,texts.str2,texts.str3,texts.str4,texts.str5,texts.str6,texts.str7,texts.str8,texts.str9,texts.str10,texts.str11,texts.str12,texts.str13,texts.str14,texts.str15,texts.str16
 FROM datas,texts WHERE texts.id = datas.id ORDER BY texts.id;)"_sv;
@@ -69,13 +69,12 @@ sqlite3* DataManager::OpenDb(irr::io::IReadFile* reader) {
 }
 
 static inline bool GetWstring(std::wstring& out, sqlite3_stmt* stmt, int iCol) {
-	out.clear();
 #if WCHAR_MAX == UINT16_MAX
 	auto* text = (const wchar_t*)sqlite3_column_text16(stmt, iCol);
 	if(text != nullptr) {
 		auto len = static_cast<size_t>(sqlite3_column_bytes16(stmt, iCol)) / sizeof(wchar_t);
 		if(len != 0) {
-			out = { text, len };
+			out.assign(text, len);
 			return true;
 		}
 	}
@@ -89,6 +88,7 @@ static inline bool GetWstring(std::wstring& out, sqlite3_stmt* stmt, int iCol) {
 		}
 	}
 #endif
+	out.clear();
 	return false;
 }
 
@@ -369,70 +369,60 @@ void DataManager::ClearLocaleStrings() {
 	_counterStrings.ClearLocales();
 	_setnameStrings.ClearLocales();
 }
-bool DataManager::Error(sqlite3* pDB, sqlite3_stmt* pStmt) {
+bool DataManager::Error(sqlite3* pDB, sqlite3_stmt* pStmt) const {
 	ErrorLog("Error when loading database ({}): {}", cur_database, sqlite3_errmsg(pDB));
 	if(pStmt)
 		sqlite3_finalize(pStmt);
 	sqlite3_close(pDB);
 	return false;
 }
-CardDataC* DataManager::GetCardData(uint32_t code) {
+const CardDataC* DataManager::GetCardData(uint32_t code) const {
 	auto it = cards.find(code);
 	if(it != cards.end())
 		return &it->second._data;
 	return nullptr;
 }
-CardDataC* DataManager::GetMappedCardData(uint32_t code) {
+const CardDataC* DataManager::GetMappedCardData(uint32_t code) const {
 	auto it = mapped_ids.find(code);
 	if(it != mapped_ids.end())
 		return gDataManager->GetCardData(it->second);
 	return nullptr;
 }
-bool DataManager::GetString(uint32_t code, CardString* pStr) {
-	auto csit = cards.find(code);
-	if(csit == cards.end()) {
-		pStr->name = unknown_string;
-		pStr->text = unknown_string;
-		return false;
-	}
-	*pStr = *csit->second.GetStrings();
-	return true;
-}
-epro::wstringview DataManager::GetName(uint32_t code) {
+epro::wstringview DataManager::GetName(uint32_t code) const {
 	auto csit = cards.find(code);
 	if(csit == cards.end() || csit->second.GetStrings()->name.empty())
 		return unknown_string;
 	return csit->second.GetStrings()->name;
 }
-epro::wstringview DataManager::GetText(uint32_t code) {
+epro::wstringview DataManager::GetText(uint32_t code) const {
 	auto csit = cards.find(code);
 	if(csit == cards.end() || csit->second.GetStrings()->text.empty())
 		return unknown_string;
 	return csit->second.GetStrings()->text;
 }
-epro::wstringview DataManager::GetUppercaseName(uint32_t code) {
+epro::wstringview DataManager::GetUppercaseName(uint32_t code) const {
 	auto csit = cards.find(code);
 	if(csit == cards.end() || csit->second.GetStrings()->name.empty())
 		return unknown_string;
 	return csit->second.GetStrings()->uppercase_name;
 }
-epro::wstringview DataManager::GetUppercaseText(uint32_t code) {
+epro::wstringview DataManager::GetUppercaseText(uint32_t code) const {
 	auto csit = cards.find(code);
 	if(csit == cards.end() || csit->second.GetStrings()->text.empty())
 		return unknown_string;
 	return csit->second.GetStrings()->uppercase_text;
 }
-epro::wstringview DataManager::GetDesc(uint64_t strCode, bool compat) {
+epro::wstringview DataManager::GetDesc(uint64_t strCode, bool compat) const {
 	uint32_t code = 0;
 	uint32_t stringid = 0;
 	if(compat) {
 		if(strCode < 10000)
 			return GetSysString(strCode);
-		code = strCode >> 4;
-		stringid = strCode & 0xf;
+		code = static_cast<uint32_t>(strCode >> 4);
+		stringid = static_cast<uint32_t>(strCode & 0xf);
 	} else {
-		code = strCode >> 20;
-		stringid = strCode & 0xfffff;
+		code = static_cast<uint32_t>(strCode >> 20);
+		stringid = static_cast<uint32_t>(strCode & 0xfffff);
 	}
 	if(code == 0)
 		return GetSysString(stringid);
@@ -441,7 +431,7 @@ epro::wstringview DataManager::GetDesc(uint64_t strCode, bool compat) {
 		return unknown_string;
 	return csit->second.GetStrings()->desc[stringid];
 }
-std::vector<uint16_t> DataManager::GetSetCode(std::vector<std::wstring>& setname) {
+std::vector<uint16_t> DataManager::GetSetCode(std::vector<std::wstring>& setname) const {
 	std::vector<uint16_t> res;
 	for(auto& string : _setnameStrings.map) {
 		if(string.second.first.empty())
@@ -461,7 +451,7 @@ std::vector<uint16_t> DataManager::GetSetCode(std::vector<std::wstring>& setname
 	}
 	return res;
 }
-std::wstring DataManager::GetNumString(int num, bool bracket) {
+std::wstring DataManager::GetNumString(int num, bool bracket) const {
 	if(!bracket)
 		return fmt::to_wstring(num);
 	return fmt::format(L"({})", num);
@@ -471,7 +461,7 @@ static inline void appendstring(T1& to, const T2& what) {
 	to.append(what.data(), what.size());
 }
 
-epro::wstringview DataManager::FormatLocation(uint32_t location, int sequence) {
+epro::wstringview DataManager::FormatLocation(uint32_t location, int sequence) const {
 	if(location == 0x8) {
 		if(sequence < 5)
 			return GetSysString(1003);
@@ -489,7 +479,7 @@ epro::wstringview DataManager::FormatLocation(uint32_t location, int sequence) {
 	else
 		return unknown_string;
 }
-std::wstring DataManager::FormatAttribute(uint32_t attribute) {
+std::wstring DataManager::FormatAttribute(uint32_t attribute) const {
 	std::wstring res;
 	for(uint32_t i = 1010, filter = 1; filter <= ATTRIBUTE_DIVINE; filter <<= 1, ++i) {
 		if(attribute & filter) {
@@ -499,10 +489,10 @@ std::wstring DataManager::FormatAttribute(uint32_t attribute) {
 		}
 	}
 	if(res.empty())
-		return unknown_string;
+		return std::wstring{ unknown_string };
 	return res;
 }
-std::wstring DataManager::FormatRace(uint32_t race, bool isSkill) {
+std::wstring DataManager::FormatRace(uint32_t race, bool isSkill) const {
 	std::wstring res;
 	for(uint32_t i = isSkill ? 2100 : 1020; race; race >>= 1, ++i) {
 		if(race & 0x1u) {
@@ -512,10 +502,10 @@ std::wstring DataManager::FormatRace(uint32_t race, bool isSkill) {
 		}
 	}
 	if(res.empty())
-		return unknown_string;
+		return std::wstring{ unknown_string };
 	return res;
 }
-std::wstring DataManager::FormatType(uint32_t type) {
+std::wstring DataManager::FormatType(uint32_t type) const {
 	std::wstring res;
 	if(type & TYPE_SKILL)
 		appendstring(res, GetSysString(1077));
@@ -532,11 +522,11 @@ std::wstring DataManager::FormatType(uint32_t type) {
 		}
 	}
 	if(res.empty())
-		return unknown_string;
+		return std::wstring{ unknown_string };
 	return res;
 }
-std::wstring DataManager::FormatScope(uint32_t scope, bool hideOCGTCG) {
-	static constexpr std::pair<int, int> SCOPES[] = {
+std::wstring DataManager::FormatScope(uint32_t scope, bool hideOCGTCG) const {
+	static constexpr std::pair<uint32_t, uint32_t> SCOPES[]{
 		{SCOPE_OCG, 1900},
 		{SCOPE_TCG, 1901},
 		{SCOPE_ANIME, 1265},
@@ -559,7 +549,7 @@ std::wstring DataManager::FormatScope(uint32_t scope, bool hideOCGTCG) {
 	}
 	return buffer;
 }
-std::wstring DataManager::FormatSetName(const std::vector<uint16_t>& setcodes) {
+std::wstring DataManager::FormatSetName(const std::vector<uint16_t>& setcodes) const {
 	std::wstring res;
 	for(auto& setcode : setcodes) {
 		if(!setcode)
@@ -568,13 +558,13 @@ std::wstring DataManager::FormatSetName(const std::vector<uint16_t>& setcodes) {
 		if(!res.empty())
 			res += L'|';
 		if(name.empty())
-			res.append(unknown_string);
+			appendstring(res, unknown_string);
 		else
 			appendstring(res, name);
 	}
 	return res;
 }
-std::wstring DataManager::FormatLinkMarker(uint32_t link_marker) {
+std::wstring DataManager::FormatLinkMarker(uint32_t link_marker) const {
 	return fmt::format(L"{}{}{}{}{}{}{}{}",
 					   (link_marker & LINK_MARKER_TOP_LEFT)		? L"[\u2196]" : L"",
 					   (link_marker & LINK_MARKER_TOP)			? L"[\u2191]" : L"",
@@ -590,6 +580,7 @@ void DataManager::CardReader(void* payload, uint32_t code, OCG_CardData* data) {
 	if(carddata != nullptr)
 		memcpy(data, carddata, sizeof(CardData));
 }
+
 inline bool is_skill(uint32_t type) {
 	return (type & (TYPE_SKILL | TYPE_ACTION));
 }
@@ -599,32 +590,41 @@ inline bool check_both_skills(uint32_t type1, uint32_t type2) {
 inline bool check_either_skills(uint32_t type1, uint32_t type2) {
 	return is_skill(type1) || is_skill(type2);
 }
-inline bool check_skills(CardDataC* p1, CardDataC* p2) {
+static constexpr uint32_t monster_spell_trap = TYPE_MONSTER | TYPE_SPELL | TYPE_TRAP;
+static constexpr uint32_t not_monster_spell_trap = ~monster_spell_trap;
+static constexpr uint32_t spsummon_proc_types = TYPE_LINK | TYPE_XYZ | TYPE_SYNCHRO | TYPE_RITUAL | TYPE_FUSION;
+
+inline bool check_skills(const CardDataC* p1, const CardDataC* p2) {
 	if(check_both_skills(p1->type, p2->type)) {
-		if((p1->type & 0xfffffff8) == (p2->type & 0xfffffff8)) {
+		if((p1->type & not_monster_spell_trap) == (p2->type & not_monster_spell_trap)) {
 			return p1->code < p2->code;
 		} else {
-			return (p1->type & 0xfffffff8) < (p2->type & 0xfffffff8);
+			return (p1->type & not_monster_spell_trap) < (p2->type & not_monster_spell_trap);
 		}
 	}
 	return is_skill(p2->type);
 }
-static bool card_sorter(CardDataC* p1, CardDataC* p2, bool(*sortoop)(CardDataC* p1, CardDataC* p2)) {
+static bool card_sorter(const CardDataC* p1, const CardDataC* p2, bool(*sortoop)(const CardDataC* p1, const CardDataC* p2)) {
 	if(check_either_skills(p1->type, p2->type))
 		return check_skills(p1, p2);
-	if((p1->type & 0x7) != (p2->type & 0x7))
-		return (p1->type & 0x7) < (p2->type & 0x7);
-	if((p1->type & 0x7) == 1) {
+	if((p1->type & monster_spell_trap) != (p2->type & monster_spell_trap))
+		return (p1->type & monster_spell_trap) < (p2->type & monster_spell_trap);
+	if((p1->type & monster_spell_trap) == 1) {
 		return sortoop(p1, p2);
 	}
-	if((p1->type & 0xfffffff8) != (p2->type & 0xfffffff8))
-		return (p1->type & 0xfffffff8) < (p2->type & 0xfffffff8);
+	if((p1->type & not_monster_spell_trap) != (p2->type & not_monster_spell_trap))
+		return (p1->type & not_monster_spell_trap) < (p2->type & not_monster_spell_trap);
 	return p1->code < p2->code;
 }
-bool DataManager::deck_sort_lv(CardDataC* p1, CardDataC* p2) {
-	return card_sorter(p1, p2, [](CardDataC* p1, CardDataC* p2)->bool {
-		int type1 = (p1->type & 0x48020c0) ? (p1->type & 0x48020c1) : (p1->type & 0x31);
-		int type2 = (p2->type & 0x48020c0) ? (p2->type & 0x48020c1) : (p2->type & 0x31);
+inline uint32_t get_monster_card_type(uint32_t type) {
+	if(type & spsummon_proc_types)
+		return type & (spsummon_proc_types | TYPE_MONSTER);
+	return type & (TYPE_NORMAL | TYPE_EFFECT | TYPE_MONSTER);
+}
+bool DataManager::deck_sort_lv(const CardDataC* p1, const CardDataC* p2) {
+	return card_sorter(p1, p2, [](const CardDataC* p1, const CardDataC* p2)->bool {
+		uint32_t type1 = get_monster_card_type(p1->type);
+		uint32_t type2 = get_monster_card_type(p2->type);
 		if(type1 != type2)
 			return type1 < type2;
 		if(p1->level != p2->level)
@@ -636,38 +636,38 @@ bool DataManager::deck_sort_lv(CardDataC* p1, CardDataC* p2) {
 		return p1->code < p2->code;
 	});
 }
-bool DataManager::deck_sort_atk(CardDataC* p1, CardDataC* p2) {
-	return card_sorter(p1, p2, [](CardDataC* p1, CardDataC* p2)->bool {
+bool DataManager::deck_sort_atk(const CardDataC* p1, const CardDataC* p2) {
+	return card_sorter(p1, p2, [](const CardDataC* p1, const CardDataC* p2)->bool {
 		if(p1->attack != p2->attack)
 			return p1->attack > p2->attack;
 		if(p1->defense != p2->defense)
 			return p1->defense > p2->defense;
 		if(p1->level != p2->level)
 			return p1->level > p2->level;
-		int type1 = (p1->type & 0x48020c0) ? (p1->type & 0x48020c1) : (p1->type & 0x31);
-		int type2 = (p2->type & 0x48020c0) ? (p2->type & 0x48020c1) : (p2->type & 0x31);
+		uint32_t type1 = get_monster_card_type(p1->type);
+		uint32_t type2 = get_monster_card_type(p2->type);
 		if(type1 != type2)
 			return type1 < type2;
 		return p1->code < p2->code;
 	});
 }
-bool DataManager::deck_sort_def(CardDataC* p1, CardDataC* p2) {
-	return card_sorter(p1, p2, [](CardDataC* p1, CardDataC* p2)->bool {
+bool DataManager::deck_sort_def(const CardDataC* p1, const CardDataC* p2) {
+	return card_sorter(p1, p2, [](const CardDataC* p1, const CardDataC* p2)->bool {
 		if(p1->defense != p2->defense)
 			return p1->defense > p2->defense;
 		if(p1->attack != p2->attack)
 			return p1->attack > p2->attack;
 		if(p1->level != p2->level)
 			return p1->level > p2->level;
-		int type1 = (p1->type & 0x48020c0) ? (p1->type & 0x48020c1) : (p1->type & 0x31);
-		int type2 = (p2->type & 0x48020c0) ? (p2->type & 0x48020c1) : (p2->type & 0x31);
+		uint32_t type1 = get_monster_card_type(p1->type);
+		uint32_t type2 = get_monster_card_type(p2->type);
 		if(type1 != type2)
 			return type1 < type2;
 		return p1->code < p2->code;
 	});
 }
-bool DataManager::deck_sort_name(CardDataC* p1, CardDataC* p2) {
-	int res = gDataManager->GetName(p1->code).compare(gDataManager->GetName(p2->code));
+bool DataManager::deck_sort_name(const CardDataC* p1, const CardDataC* p2) {
+	int res = gDataManager->GetUppercaseName(p1->code).compare(gDataManager->GetUppercaseName(p2->code));
 	if(res != 0)
 		return res < 0;
 	return p1->code < p2->code;
