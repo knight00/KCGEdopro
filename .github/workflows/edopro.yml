@@ -3,7 +3,7 @@ on: [push, pull_request]
 env:
   BUILD_CONFIG: release
   COVERS_URL: ${{ secrets.COVERS_URL }}
-  DEPENDENCIES_BASE_URL: https://github.com/edo9300/edopro-vcpkg-cache/releases/download/20220102
+  DEPENDENCIES_BASE_URL: https://github.com/edo9300/edopro-vcpkg-cache/releases/download/20220106-3
   DEPLOY_DIR: deploy
   DEPLOY_REPO: ${{ secrets.DEPLOY_REPO }}
   DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
@@ -13,7 +13,7 @@ env:
   UPDATE_URL: ${{ secrets.UPDATE_URL }}
 jobs:
   Windows:
-    runs-on: windows-2016
+    runs-on: windows-2019
     if: >-
       !(
         contains(github.event.head_commit.message, '[ci skip]') ||
