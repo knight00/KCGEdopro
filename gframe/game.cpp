@@ -789,8 +789,10 @@ bool Game::Initialize() {
 	gBot.chkSeed->clear();
 	for (auto i = 8036; i <= 8039; ++i) {
 		int j = gBot.chkSeed->addItem(gDataManager->GetSysString(i).data());
-		if(gGameConfig->botSeed == j)
+		if(j != 0 && gGameConfig->botSeed == j && (gBot.bots[gBot.CurrentIndex()].deck == L"AI_perfectdicky" || gBot.bots[gBot.CurrentIndex()].deck == L"AI_Numeron" || gBot.bots[gBot.CurrentIndex()].deck == L"AI_Hope") )
 			gBot.chkSeed->setSelected(j);
+		else
+		    gBot.chkSeed->setSelected(0);
 	}
 	///////kdiy/////////	
 	gBot.cbBotDeck = AddComboBox(env, Scale(10, 165, 200, 190), gBot.window, COMBOBOX_BOT_DECK);
