@@ -2444,7 +2444,10 @@ bool Game::ApplySkin(const epro::path_string& skinname, bool reload, bool firstr
 #include "custom_skin_enum.inl"
 #undef DECLR
 #undef CLR
-			imageManager.ChangeTextures(fmt::format(EPRO_TEXT("./skin/{}/textures/"), prev_skin));
+            //kdiy//////////
+			//imageManager.ChangeTextures(fmt::format(EPRO_TEXT("./skin/{}/textures/"), prev_skin));
+			imageManager.ChangeTextures(EPRO_TEXT("./textures/"));
+			//kdiy//////////
 		} else {
 			applied = false;
 			auto skin = env->createSkin(irr::gui::EGST_WINDOWS_METALLIC);

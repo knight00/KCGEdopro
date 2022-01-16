@@ -1674,6 +1674,9 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 								}
 							} else {
 								if(mcard->alias && (mcard->alias < mcard->code - 10 || mcard->alias > mcard->code + 10)) {
+									///////kdiy/////////
+									if(mcard->alias != 27 && mcard->alias != 28 && mcard->alias != 29 && mcard->alias != 36 && mcard->alias != 42 && mcard->alias != 43 && mcard->alias != 44 && mcard->alias != 102 && mcard->alias != 347 && mcard->alias != 213)
+									///////kdiy/////////
 									str.append(fmt::format(L"\n({})", gDataManager->GetName(mcard->alias)));
 								}
 								if(mcard->location == LOCATION_SZONE && (mcard->type & TYPE_PENDULUM)) {
