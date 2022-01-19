@@ -330,7 +330,8 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 		mixer->PlaySound(chant_it->second);
 		return true;
 	}
-	///////kdiy//////
+	return false;
+///////kdiy//////
 #else
 	return false;
 #endif
