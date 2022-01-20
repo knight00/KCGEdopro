@@ -159,7 +159,7 @@ void SoundManager::RefreshChantsList() {
 	/////kdiy//////
 	for (auto list : ChantsList)
 		list.clear();
-	int i=-1;
+	int i = -1;
 	for(int i=0; i< 10; i++)
     {
 		for (int j = 0; j < totcharacter; j++)
@@ -204,7 +204,6 @@ void SoundManager::RefreshChantsList() {
 			// auto scode = Utils::GetFileName(file);
 		for(int x=0; x< totcharacter; x++) {	
 			for (auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
-				const auto filepath = fmt::format(EPRO_TEXT("{}/{}"), searchPath[x], file);
 				auto scode = Utils::GetFileName(file);
 				try {
 					uint32_t code = static_cast<uint32_t>(std::stoul(scode));
