@@ -167,8 +167,10 @@ void SoundManager::RefreshChantsList() {
 	}
 	/////kdiy///////
 	for (const auto& chantType : types) {
-		std::vector<epro::path_string> searchPath;
 		/////kdiy///////
+		// const epro::path_string searchPath = fmt::format(EPRO_TEXT("./sound/{}"), chantType.second);
+		// Utils::MakeDirectory(searchPath);
+		std::vector<epro::path_string> searchPath;
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/player/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/atem/{}"), chantType.second));
@@ -199,9 +201,9 @@ void SoundManager::RefreshChantsList() {
 			}		
 		} else {
 		//for (auto& file : Utils::FindFiles(searchPath, mixer->GetSupportedSoundExtensions())) {
+			// auto scode = Utils::GetFileName(file);
 		for(int x=0; x< totcharacter; x++) {	
 			for (auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
-				//const auto filepath = fmt::format(EPRO_TEXT("{}/{}"), searchPath, file);
 				const auto filepath = fmt::format(EPRO_TEXT("{}/{}"), searchPath[x], file);
 				auto scode = Utils::GetFileName(file);
 				try {
