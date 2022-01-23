@@ -41,12 +41,6 @@ struct GameConfig
 	std::wstring nickname{ L"Player" };
 	std::wstring gamename{ L"Game" };
 	std::wstring lastdeck;
-	////////kdiy////////
-	std::wstring lastdeckfolder{ L"" };
-	std::wstring lastAIdeckfolder{ L"" };
-	std::wstring lastAIdeck{ L"" };
-	uint8_t hdpic{ 0 };
-	////////kdiy////////
 	uint32_t lastlflist{ 0 };
 	uint32_t lastallowedcards{ 3 };
 	uint64_t lastDuelParam{ 0x2E800 }; //#define DUEL_MODE_MR5
@@ -65,11 +59,23 @@ struct GameConfig
 	bool botThrowRock{ false };
 	bool botMute{ false };
 	///kdiy//////////
+	std::wstring lastdeckfolder{ L"" };
+	std::wstring lastAIdeckfolder{ L"" };
+	std::wstring lastAIdeck{ L"" };
+	uint8_t hdpic{ 0 };	
 	uint32_t botSeed{ 0 };
 	std::wstring lastLocalServer;
 	uint32_t lastlocalallowedcards{ 0 };
 	uint32_t localtimeLimit{ 3 };
 	uint32_t duelrule{ 4 };
+	bool enablessound{ true };
+	bool enablecsound{ true };
+	bool enableasound{ true };
+	bool enableanime{ false };
+	bool enablesanime{ false };
+	bool enablecanime{ false };
+	bool enableaanime{ false };
+	bool enableextralimit{ false };
 	///kdiy//////////
 	int lastBot{ 0 };
 	std::wstring lastServer;
@@ -112,15 +118,6 @@ struct GameConfig
 	bool enablemusic{ false };
 	bool discordIntegration{ true };
 	bool enablesound{ true };
-	///////kdiy////////
-	bool enablessound{ true };
-	bool enablecsound{ true };
-	bool enableasound{ true };
-	bool enableanime{ false };
-	bool enablesanime{ false };
-	bool enablecanime{ false };
-	bool enableaanime{ false };
-	///////kdiy////////
 	bool saveHandTest{ true };
 	int musicVolume{ 20 };
 	int soundVolume{ 20 };

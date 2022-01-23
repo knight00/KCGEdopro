@@ -1412,7 +1412,10 @@ bool DeckBuilder::push_extra(const CardDataC* pointer, int seq, bool forced) {
 	if(!(pointer->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_XYZ | TYPE_LINK)) || pointer->type == (TYPE_SPELL | TYPE_LINK))
 		return false;
 	auto& container = gdeckManager->current_deck.extra;
-	if(!mainGame->is_siding && !forced && (int)container.size() >= 15)
+	//kdiy///////
+	//if(!mainGame->is_siding && !forced && (int)container.size() >= 15)
+	if(!mainGame->is_siding && !forced && ((!gGameConfig->enableextralimit && (int)container.size() >= 15) || (int)container.size() >= 100))
+	//kdiy///////
 		return false;
 	if(seq >= 0 && seq < (int)container.size())
 		container.insert(container.begin() + seq, pointer);

@@ -314,7 +314,9 @@ bool GameConfig::Load(const epro::path_char* filename) {
 			else if(type == "enable_activate_anime")
 				enablecanime = !!std::stoi(str);	
 			else if(type == "enable_attack_anime")
-				enableaanime = !!std::stoi(str);					
+				enableaanime = !!std::stoi(str);
+			else if(type == "enable_noextralimit")
+				enableextralimit = !!std::stoi(str);				
 			//////kdiy//////////
 			else if(type == "music_volume")
 				musicVolume = std::min(std::max(std::stoi(str), 0), 100);
@@ -446,6 +448,7 @@ bool GameConfig::Save(const epro::path_char* filename) {
 	conf_file << "accurate_bg_resize = "       << accurate_bg_resize << "\n";
 	conf_file << "enable_music = "             << enablemusic << "\n";
 	conf_file << "enable_sound = "             << enablesound << "\n";
+	///kdiy//////////
 	conf_file << "enable_summon_sound = "      << enablessound << "\n";
 	conf_file << "enable_activate_sound = "    << enablecsound << "\n";
 	conf_file << "enable_attack_sound = "      << enableasound << "\n";
@@ -453,6 +456,8 @@ bool GameConfig::Save(const epro::path_char* filename) {
 	conf_file << "enable_summon_anime = "      << enablesanime << "\n";
 	conf_file << "enable_activate_anime = "    << enablecanime << "\n";
 	conf_file << "enable_attack_anime = "      << enableaanime << "\n";
+	conf_file << "enable_noextralimit = "        << enableextralimit << "\n";
+	///kdiy//////////
 	conf_file << "music_volume = "             << musicVolume << "\n";
 	conf_file << "sound_volume = "             << soundVolume << "\n";
 	SERIALIZE(loopMusic);

@@ -529,17 +529,15 @@ public:
 	irr::gui::IGUIButton* btnHostPrepKick[6];
 	irr::gui::IGUIComboBox* cbDeckSelect;
 	irr::gui::IGUIComboBox* cbDeckSelect2;
-	//////////kdiy/////////
-	irr::gui::CGUIImageButton* icon[6];
-	irr::gui::IGUIComboBox* cbDeck2Select;
-	irr::gui::IGUIComboBox* cbDeck2Select2;	
-	//////////kdiy/////////
 	irr::gui::IGUIStaticText* stHostPrepRule;
 	irr::gui::IGUIStaticText* stHostPrepRuleR;
 	irr::gui::IGUIStaticText* stHostPrepRuleL;
 	irr::gui::IGUIStaticText* stHostPrepOB;
 	irr::gui::IGUIStaticText* stDeckSelect;
 	//////////kdiy/////////
+	irr::gui::CGUIImageButton* icon[6];
+	irr::gui::IGUIComboBox* cbDeck2Select;
+	irr::gui::IGUIComboBox* cbDeck2Select2;	
 	irr::gui::IGUIStaticText* clearpics;
 	irr::gui::IGUIButton* btnClearpics;
 	irr::gui::IGUIStaticText* repo;

@@ -378,6 +378,8 @@ bool Game::Initialize() {
 	defaultStrings.emplace_back(repo, 8010);	
 	btnClearrepo = env->addButton(Scale(115, mgheight, 195, mgheight+mgheight2), mgSettings.window, BUTTON_CLEAR2, gDataManager->GetSysString(8009).data());
 	defaultStrings.emplace_back(btnClearrepo, 8009);
+	mgSettings.chkNoExtraLimit = env->addCheckBox(gGameConfig->enableextralimit, Scale(445, mgheight+10, 645, mgheight+mgheight2-10), mgSettings.window, CHECKBOX_ENABLE_EXTRA_NOLIMIT, gDataManager->GetSysString(8027).data());
+	defaultStrings.emplace_back(mgSettings.chkNoExtraLimit, 8027);
 	mgheight += mgheight2+10;	
 
 	clearpics = env->addStaticText(gDataManager->GetSysString(8002).data(), Scale(15, mgheight+10, 105, mgheight+mgheight2-10), false, false, mgSettings.window);
@@ -789,7 +791,7 @@ bool Game::Initialize() {
 	gBot.chkSeed->clear();
 	for (auto i = 8036; i <= 8039; ++i) {
 		int j = gBot.chkSeed->addItem(gDataManager->GetSysString(i).data());
-		if(j != 0 && gGameConfig->botSeed == j && (gBot.bots[gBot.CurrentIndex()].deck == L"AI_perfectdicky" || gBot.bots[gBot.CurrentIndex()].deck == L"AI_Numeron" || gBot.bots[gBot.CurrentIndex()].deck == L"AI_Hope"))
+		if(j != 0 && gGameConfig->botSeed == j && (gBot.bots[gBot.CurrentIndex()].deck == L"AI_perfectdicky" || gBot.bots[gBot.CurrentIndex()].deck == L"AI_Numeron" || gBot.bots[gBot.CurrentIndex()].deck == L"AI_Hope" ))
 			gBot.chkSeed->setSelected(j);
 		else
 		    gBot.chkSeed->setSelected(0);

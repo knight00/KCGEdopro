@@ -2159,6 +2159,10 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				mainGame->mgSettings.chkEnableAttackAnime->setChecked(gGameConfig->enableaanime);
 				return true;
 			}
+			case CHECKBOX_ENABLE_EXTRA_NOLIMIT: {
+				gGameConfig->enableextralimit = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
+				return true;
+			}
 			/////kdiy/////////
 			case CHECKBOX_QUICK_ANIMATION: {
 				gGameConfig->quick_animation = mainGame->tabSettings.chkQuickAnimation->isChecked();

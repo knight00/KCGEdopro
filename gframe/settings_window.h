@@ -86,6 +86,7 @@ struct SettingsWindow {
 	irr::gui::IGUICheckBox* chkEnableSummonAnime;
 	irr::gui::IGUICheckBox* chkEnableActivateAnime;
 	irr::gui::IGUICheckBox* chkEnableAttackAnime;
+	irr::gui::IGUICheckBox* chkNoExtraLimit;
 	///////kdiy////////	
 	irr::gui::IGUIStaticText* stMusicVolume;
 	irr::gui::IGUIScrollBar* scrMusicVolume;
