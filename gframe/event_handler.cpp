@@ -2161,6 +2161,9 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			}
 			case CHECKBOX_ENABLE_EXTRA_NOLIMIT: {
 				gGameConfig->enableextralimit = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
+				#ifndef VIP 
+				gGameConfig->enableextralimit = false;
+				#endif
 				return true;
 			}
 			/////kdiy/////////

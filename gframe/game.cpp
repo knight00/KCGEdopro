@@ -380,6 +380,9 @@ bool Game::Initialize() {
 	defaultStrings.emplace_back(btnClearrepo, 8009);
 	mgSettings.chkNoExtraLimit = env->addCheckBox(gGameConfig->enableextralimit, Scale(445, mgheight+10, 645, mgheight+mgheight2-10), mgSettings.window, CHECKBOX_ENABLE_EXTRA_NOLIMIT, gDataManager->GetSysString(8027).data());
 	defaultStrings.emplace_back(mgSettings.chkNoExtraLimit, 8027);
+	#ifndef VIP 
+		mgSettings.chkNoExtraLimit->setChecked(false);
+	#endif
 	mgheight += mgheight2+10;	
 
 	clearpics = env->addStaticText(gDataManager->GetSysString(8002).data(), Scale(15, mgheight+10, 105, mgheight+mgheight2-10), false, false, mgSettings.window);
@@ -394,14 +397,6 @@ bool Game::Initialize() {
 	defaultStrings.emplace_back(btnFolder, 8021);
 	
 	#ifndef EK
-	// homepage->setVisible(false);
-	// btHome->setVisible(false);
-	// intro->setVisible(false);
-	// btnIntro->setVisible(false);
-	// tut->setVisible(false);
-	// btnTut->setVisible(false);
-	// tut2->setVisible(false);
-	// btnTut2->setVisible(false);
 	hdpics->setVisible(false);
 	cbpics->setVisible(false);
 	cbpics->setSelected(0);
