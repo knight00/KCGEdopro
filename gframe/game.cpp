@@ -786,7 +786,7 @@ bool Game::Initialize() {
 	gBot.chkSeed->clear();
 	for (auto i = 8036; i <= 8039; ++i) {
 		int j = gBot.chkSeed->addItem(gDataManager->GetSysString(i).data());
-		if(j != 0 && gGameConfig->botSeed == j && (gBot.bots[gBot.CurrentIndex()].deck == L"AI_perfectdicky" || gBot.bots[gBot.CurrentIndex()].deck == L"AI_Numeron" || gBot.bots[gBot.CurrentIndex()].deck == L"AI_Hope" ))
+		if(gGameConfig->botSeed == j)
 			gBot.chkSeed->setSelected(j);
 		else
 		    gBot.chkSeed->setSelected(0);
