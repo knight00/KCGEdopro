@@ -62,9 +62,24 @@ namespace ygo {
 #define TEXTURE_ATEM                41
 #define TEXTURE_KAIBA               42
 #define TEXTURE_JOEY                43
-#define TEXTURE_DONTHOUSAND         44
-#define TEXTURE_SHARK               45
-#define TEXTURE_YUMA                46
+#define TEXTURE_BAKURA              44
+#define TEXTURE_JUDAI               45
+#define TEXTURE_MANJOME             46
+#define TEXTURE_KAISA               47
+#define TEXTURE_PHORNIX             48
+#define TEXTURE_JOHN                49
+#define TEXTURE_YUSEI               50
+#define TEXTURE_JACK                51
+#define TEXTURE_ARKI                52
+#define TEXTURE_LUKA                53
+#define TEXTURE_YUMA                54
+#define TEXTURE_SHARK               55
+#define TEXTURE_KAITO               56
+#define TEXTURE_DONTHOUSAND         57
+#define TEXTURE_YUYA                58
+#define TEXTURE_DECLAN              59
+#define TEXTURE_PLAYMAKER           60
+#define TEXTURE_REVOLVER            61
 ////////kdiy/////
 
 #define X(x) (textures_path + EPRO_TEXT(x)).data()
@@ -112,9 +127,24 @@ bool ImageManager::Initial() {
 	icon[2] = driver->getTexture(EPRO_TEXT("./textures/character/atem/mini_icon.png"));
 	icon[3] = driver->getTexture(EPRO_TEXT("./textures/character/kaiba/mini_icon.png"));
 	icon[4] = driver->getTexture(EPRO_TEXT("./textures/character/joey/mini_icon.png"));
-	icon[5] = driver->getTexture(EPRO_TEXT("./textures/character/DonThousand/mini_icon.png"));
-	icon[6] = driver->getTexture(EPRO_TEXT("./textures/character/shark/mini_icon.png"));
-	icon[7] = driver->getTexture(EPRO_TEXT("./textures/character/yuma/mini_icon.png"));
+	icon[5] = driver->getTexture(EPRO_TEXT("./textures/character/bakura/mini_icon.png"));
+	icon[6] = driver->getTexture(EPRO_TEXT("./textures/character/judai/mini_icon.png"));
+	icon[7] = driver->getTexture(EPRO_TEXT("./textures/character/manjome/mini_icon.png"));
+	icon[8] = driver->getTexture(EPRO_TEXT("./textures/character/kaisa/mini_icon.png"));
+	icon[9] = driver->getTexture(EPRO_TEXT("./textures/character/phoenix/mini_icon.png"));
+	icon[10] = driver->getTexture(EPRO_TEXT("./textures/character/john/mini_icon.png"));
+	icon[11] = driver->getTexture(EPRO_TEXT("./textures/character/yusei/mini_icon.png"));
+	icon[12] = driver->getTexture(EPRO_TEXT("./textures/character/jack/mini_icon.png"));
+	icon[13] = driver->getTexture(EPRO_TEXT("./textures/character/arki/mini_icon.png"));
+	icon[14] = driver->getTexture(EPRO_TEXT("./textures/character/luka/mini_icon.png"));
+	icon[15] = driver->getTexture(EPRO_TEXT("./textures/character/yuma/mini_icon.png"));
+	icon[16] = driver->getTexture(EPRO_TEXT("./textures/character/shark/mini_icon.png"));
+	icon[17] = driver->getTexture(EPRO_TEXT("./textures/character/kaito/mini_icon.png"));
+	icon[18] = driver->getTexture(EPRO_TEXT("./textures/character/DonThousand/mini_icon.png"));
+	icon[19] = driver->getTexture(EPRO_TEXT("./textures/character/yuya/mini_icon.png"));
+	icon[20] = driver->getTexture(EPRO_TEXT("./textures/character/declan/mini_icon.png"));
+	icon[21] = driver->getTexture(EPRO_TEXT("./textures/character/playmaker/mini_icon.png"));
+	icon[22] = driver->getTexture(EPRO_TEXT("./textures/character/revolver/mini_icon.png"));
 	character[0] = driver->getTexture(0);
 	scharacter[0] = driver->getTexture(0);
 	scharacter[1] = driver->getTexture(0);
@@ -138,19 +168,79 @@ bool ImageManager::Initial() {
 	    character[4] = GetRandomImage(TEXTURE_JOEY);
 		if (!character[4]) 
 		    character[4] = driver->getTexture(EPRO_TEXT("./textures/character/joey/icon.png"));
-		CHECK_RETURN(character[4], "character/joey/icon");			
-	    character[5] = GetRandomImage(TEXTURE_DONTHOUSAND);
+		CHECK_RETURN(character[4], "character/joey/icon");
+		character[5] = GetRandomImage(TEXTURE_BAKURA);
 		if (!character[5]) 
-		    character[5] = driver->getTexture(EPRO_TEXT("./textures/character/DonThousand/icon.png"));
-		CHECK_RETURN(character[5], "character/DonThousand/icon");			
-	    character[6] = GetRandomImage(TEXTURE_SHARK);
+		    character[5] = driver->getTexture(EPRO_TEXT("./textures/character/bakura/icon.png"));
+		CHECK_RETURN(character[5], "character/bakura/icon");			
+	    character[6] = GetRandomImage(TEXTURE_JUDAI);
 		if (!character[6]) 
-		    character[6] = driver->getTexture(EPRO_TEXT("./textures/character/shark/icon.png"));
-		CHECK_RETURN(character[6], "character/shark/icon");			
-	    character[7] = GetRandomImage(TEXTURE_YUMA);
+		    character[6] = driver->getTexture(EPRO_TEXT("./textures/character/judai/icon.png"));
+		CHECK_RETURN(character[6], "character/judai/icon");
+	    character[7] = GetRandomImage(TEXTURE_MANJOME);
 		if (!character[7]) 
-		    character[7] = driver->getTexture(EPRO_TEXT("./textures/character/yuma/icon.png"));
-		CHECK_RETURN(character[7], "character/yuma/icon");			
+		    character[7] = driver->getTexture(EPRO_TEXT("./textures/character/manjome/icon.png"));
+		CHECK_RETURN(character[7], "character/manjome/icon");
+	    character[8] = GetRandomImage(TEXTURE_KAISA);
+		if (!character[8]) 
+		    character[8] = driver->getTexture(EPRO_TEXT("./textures/character/kaisa/icon.png"));
+		CHECK_RETURN(character[8], "character/kaisa/icon");	
+	    character[9] = GetRandomImage(TEXTURE_PHORNIX);
+		if (!character[9]) 
+		    character[9] = driver->getTexture(EPRO_TEXT("./textures/character/phoenix/icon.png"));
+		CHECK_RETURN(character[9], "character/phoenix/icon");
+	    character[10] = GetRandomImage(TEXTURE_JOHN);
+		if (!character[10]) 
+		    character[10] = driver->getTexture(EPRO_TEXT("./textures/character/john/icon.png"));
+		CHECK_RETURN(character[10], "character/john/icon");
+	    character[11] = GetRandomImage(TEXTURE_YUSEI);
+		if (!character[11]) 
+		    character[11] = driver->getTexture(EPRO_TEXT("./textures/character/yusei/icon.png"));
+		CHECK_RETURN(character[11], "character/yusei/icon");
+	    character[12] = GetRandomImage(TEXTURE_JACK);
+		if (!character[12]) 
+		    character[12] = driver->getTexture(EPRO_TEXT("./textures/character/jack/icon.png"));
+		CHECK_RETURN(character[12], "character/jack/icon");
+	    character[13] = GetRandomImage(TEXTURE_ARKI);
+		if (!character[13]) 
+		    character[13] = driver->getTexture(EPRO_TEXT("./textures/character/arki/icon.png"));
+		CHECK_RETURN(character[13], "character/arki/icon");
+	    character[14] = GetRandomImage(TEXTURE_LUKA);
+		if (!character[14]) 
+		    character[14] = driver->getTexture(EPRO_TEXT("./textures/character/luka/icon.png"));
+		CHECK_RETURN(character[14], "character/luka/icon");
+		character[15] = GetRandomImage(TEXTURE_YUMA);
+		if (!character[15]) 
+		    character[15] = driver->getTexture(EPRO_TEXT("./textures/character/yuma/icon.png"));
+		CHECK_RETURN(character[15], "character/yuma/icon");
+	    character[16] = GetRandomImage(TEXTURE_SHARK);
+		if (!character[16]) 
+		    character[16] = driver->getTexture(EPRO_TEXT("./textures/character/shark/icon.png"));
+		CHECK_RETURN(character[16], "character/shark/icon");
+	    character[17] = GetRandomImage(TEXTURE_KAITO);
+		if (!character[17]) 
+		    character[17] = driver->getTexture(EPRO_TEXT("./textures/character/kaito/icon.png"));
+		CHECK_RETURN(character[17], "character/kaito/icon");		
+		character[18] = GetRandomImage(TEXTURE_DONTHOUSAND);
+		if (!character[18]) 
+		    character[18] = driver->getTexture(EPRO_TEXT("./textures/character/DonThousand/icon.png"));
+		CHECK_RETURN(character[18], "character/DonThousand/icon");			
+		character[19] = GetRandomImage(TEXTURE_YUYA);
+		if (!character[19]) 
+		    character[19] = driver->getTexture(EPRO_TEXT("./textures/character/yuya/icon.png"));
+		CHECK_RETURN(character[19], "character/yuya/icon");	
+		character[20] = GetRandomImage(TEXTURE_DECLAN);
+		if (!character[20]) 
+		    character[20] = driver->getTexture(EPRO_TEXT("./textures/character/declan/icon.png"));
+		CHECK_RETURN(character[20], "character/declan/icon");				
+		character[21] = GetRandomImage(TEXTURE_PLAYMAKER);
+		if (!character[21]) 
+		    character[21] = driver->getTexture(EPRO_TEXT("./textures/character/playmaker/icon.png"));
+		CHECK_RETURN(character[21], "character/playmaker/icon");	
+		character[22] = GetRandomImage(TEXTURE_REVOLVER);
+		if (!character[22]) 
+		    character[22] = driver->getTexture(EPRO_TEXT("./textures/character/revolver/icon.png"));
+		CHECK_RETURN(character[22], "character/revolver/icon");			
 	#else
 		character[1] = driver->getTexture(0);
 		character[2] = driver->getTexture(0);
@@ -159,6 +249,21 @@ bool ImageManager::Initial() {
 		character[5] = driver->getTexture(0);
 		character[6] = driver->getTexture(0);
 		character[7] = driver->getTexture(0);
+		character[8] = driver->getTexture(0);
+		character[9] = driver->getTexture(0);
+		character[10] = driver->getTexture(0);
+		character[11] = driver->getTexture(0);
+		character[12] = driver->getTexture(0);
+		character[13] = driver->getTexture(0);
+		character[14] = driver->getTexture(0);
+		character[15] = driver->getTexture(0);
+		character[16] = driver->getTexture(0);
+		character[17] = driver->getTexture(0);
+		character[18] = driver->getTexture(0);
+		character[19] = driver->getTexture(0);
+		character[20] = driver->getTexture(0);
+		character[21] = driver->getTexture(0);
+		character[22] = driver->getTexture(0);
 	#endif
 	tcharacterselect = driver->getTexture(EPRO_TEXT("./textures/character/left.png"));
 	tcharacterselect2 = driver->getTexture(EPRO_TEXT("./textures/character/right.png"));
@@ -396,10 +501,28 @@ void ImageManager::RefreshRandomImageList() {
 	RefreshImageDir(EPRO_TEXT("character/atem/icon"), TEXTURE_ATEM);
 	RefreshImageDir(EPRO_TEXT("character/kaiba/icon"), TEXTURE_KAIBA);
 	RefreshImageDir(EPRO_TEXT("character/joey/icon"), TEXTURE_JOEY);
+	RefreshImageDir(EPRO_TEXT("character/bakura/icon"), TEXTURE_BAKURA);
+	RefreshImageDir(EPRO_TEXT("character/judai/icon"), TEXTURE_JUDAI);
+	RefreshImageDir(EPRO_TEXT("character/manjome/icon"), TEXTURE_MANJOME);
+	RefreshImageDir(EPRO_TEXT("character/kaisa/icon"), TEXTURE_KAISA);
+	RefreshImageDir(EPRO_TEXT("character/phoenix/icon"), TEXTURE_PHORNIX);
+	RefreshImageDir(EPRO_TEXT("character/john/icon"), TEXTURE_JOHN);
+	RefreshImageDir(EPRO_TEXT("character/yusei/icon"), TEXTURE_YUSEI);
+	RefreshImageDir(EPRO_TEXT("character/jack/icon"), TEXTURE_JACK);
+	RefreshImageDir(EPRO_TEXT("character/arki/icon"), TEXTURE_ARKI);
+	RefreshImageDir(EPRO_TEXT("character/luka/icon"), TEXTURE_LUKA);
+	RefreshImageDir(EPRO_TEXT("character/yuma/icon"), TEXTURE_YUMA);	
+	RefreshImageDir(EPRO_TEXT("character/shark/icon"), TEXTURE_SHARK);
+	RefreshImageDir(EPRO_TEXT("character/kaito/icon"), TEXTURE_KAITO);	
 	RefreshImageDir(EPRO_TEXT("character/Donthousand/icon"), TEXTURE_DONTHOUSAND);
+	RefreshImageDir(EPRO_TEXT("character/yuya/icon"), TEXTURE_YUYA);
+	RefreshImageDir(EPRO_TEXT("character/declan/icon"), TEXTURE_DECLAN);
 	RefreshImageDir(EPRO_TEXT("character/shark/icon"), TEXTURE_SHARK);
 	RefreshImageDir(EPRO_TEXT("character/yuma/icon"), TEXTURE_YUMA);
-	for (int i = 0; i < 47; ++i) {
+	RefreshImageDir(EPRO_TEXT("character/playmaker/icon"), TEXTURE_PLAYMAKER);
+	RefreshImageDir(EPRO_TEXT("character/revolver/icon"), TEXTURE_REVOLVER);
+
+	for (int i = 0; i < 39+totcharacter; ++i) {
 		saved_image_id[i] = -1;
 	}
 }
@@ -462,25 +585,71 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 	#ifdef VIP
 		character[1] = GetRandomImage(TEXTURE_PLAYER);
 		if (!character[1])
-		    character[1] = driver->getTexture(EPRO_TEXT("./textures/character/player/icon.png"));	
+		    character[1] = driver->getTexture(EPRO_TEXT("./textures/character/player/icon.png"));
 	    character[2] = GetRandomImage(TEXTURE_ATEM);
 		if (!character[2]) 
-		    character[2] = driver->getTexture(EPRO_TEXT("./textures/character/atem/icon.png"));		
+		    character[2] = driver->getTexture(EPRO_TEXT("./textures/character/atem/icon.png"));
 	    character[3] = GetRandomImage(TEXTURE_KAIBA);
 		if (!character[3]) 
-		    character[3] = driver->getTexture(EPRO_TEXT("./textures/character/kaiba/icon.png"));	
+		    character[3] = driver->getTexture(EPRO_TEXT("./textures/character/kaiba/icon.png"));
 	    character[4] = GetRandomImage(TEXTURE_JOEY);
 		if (!character[4]) 
-		    character[4] = driver->getTexture(EPRO_TEXT("./textures/character/joey/icon.png"));		
-	    character[5] = GetRandomImage(TEXTURE_DONTHOUSAND);
+		    character[4] = driver->getTexture(EPRO_TEXT("./textures/character/joey/icon.png"));
+		character[5] = GetRandomImage(TEXTURE_BAKURA);
 		if (!character[5]) 
-		    character[5] = driver->getTexture(EPRO_TEXT("./textures/character/DonThousand/icon.png"));			
-	    character[6] = GetRandomImage(TEXTURE_SHARK);
+		    character[5] = driver->getTexture(EPRO_TEXT("./textures/character/bakura/icon.png"));
+	    character[6] = GetRandomImage(TEXTURE_JUDAI);
 		if (!character[6]) 
-		    character[6] = driver->getTexture(EPRO_TEXT("./textures/character/shark/icon.png"));	
-	    character[7] = GetRandomImage(TEXTURE_YUMA);
+		    character[6] = driver->getTexture(EPRO_TEXT("./textures/character/judai/icon.png"));
+	    character[7] = GetRandomImage(TEXTURE_MANJOME);
 		if (!character[7]) 
-		    character[7] = driver->getTexture(EPRO_TEXT("./textures/character/yuma/icon.png"));	
+		    character[7] = driver->getTexture(EPRO_TEXT("./textures/character/manjome/icon.png"));
+	    character[8] = GetRandomImage(TEXTURE_KAISA);
+		if (!character[8]) 
+		    character[8] = driver->getTexture(EPRO_TEXT("./textures/character/kaisa/icon.png"));
+	    character[9] = GetRandomImage(TEXTURE_PHORNIX);
+		if (!character[9]) 
+		    character[9] = driver->getTexture(EPRO_TEXT("./textures/character/phoenix/icon.png"));
+	    character[10] = GetRandomImage(TEXTURE_JOHN);
+		if (!character[10]) 
+		    character[10] = driver->getTexture(EPRO_TEXT("./textures/character/john/icon.png"));
+	    character[11] = GetRandomImage(TEXTURE_YUSEI);
+		if (!character[11]) 
+		    character[11] = driver->getTexture(EPRO_TEXT("./textures/character/yusei/icon.png"));
+	    character[12] = GetRandomImage(TEXTURE_JACK);
+		if (!character[12]) 
+		    character[12] = driver->getTexture(EPRO_TEXT("./textures/character/jack/icon.png"));
+	    character[13] = GetRandomImage(TEXTURE_ARKI);
+		if (!character[13]) 
+		    character[13] = driver->getTexture(EPRO_TEXT("./textures/character/arki/icon.png"));
+	    character[14] = GetRandomImage(TEXTURE_LUKA);
+		if (!character[14]) 
+		    character[14] = driver->getTexture(EPRO_TEXT("./textures/character/luka/icon.png"));
+		character[15] = GetRandomImage(TEXTURE_YUMA);
+		if (!character[15]) 
+		    character[15] = driver->getTexture(EPRO_TEXT("./textures/character/yuma/icon.png"));
+	    character[16] = GetRandomImage(TEXTURE_SHARK);
+		if (!character[16]) 
+		    character[16] = driver->getTexture(EPRO_TEXT("./textures/character/shark/icon.png"));
+	    character[17] = GetRandomImage(TEXTURE_KAITO);
+		if (!character[17]) 
+		    character[17] = driver->getTexture(EPRO_TEXT("./textures/character/kaito/icon.png"));
+		character[18] = GetRandomImage(TEXTURE_DONTHOUSAND);
+		if (!character[18]) 
+		    character[18] = driver->getTexture(EPRO_TEXT("./textures/character/DonThousand/icon.png"));
+		character[19] = GetRandomImage(TEXTURE_YUYA);
+		if (!character[19]) 
+		    character[19] = driver->getTexture(EPRO_TEXT("./textures/character/yuya/icon.png"));
+		character[20] = GetRandomImage(TEXTURE_DECLAN);
+		if (!character[20]) 
+		    character[20] = driver->getTexture(EPRO_TEXT("./textures/character/declan/icon.png"));
+		character[21] = GetRandomImage(TEXTURE_PLAYMAKER);
+		if (!character[21]) 
+		    character[21] = driver->getTexture(EPRO_TEXT("./textures/character/playmaker/icon.png"));
+		character[22] = GetRandomImage(TEXTURE_REVOLVER);
+		if (!character[22]) 
+		    character[22] = driver->getTexture(EPRO_TEXT("./textures/character/revolver/icon.png"));
+
 	#else
 		character[1] = driver->getTexture(0);
 		character[2] = driver->getTexture(0);
@@ -489,6 +658,21 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 		character[5] = driver->getTexture(0);
 		character[6] = driver->getTexture(0);
 		character[7] = driver->getTexture(0);
+		character[8] = driver->getTexture(0);
+		character[9] = driver->getTexture(0);
+		character[10] = driver->getTexture(0);
+		character[11] = driver->getTexture(0);
+		character[12] = driver->getTexture(0);
+		character[13] = driver->getTexture(0);
+		character[14] = driver->getTexture(0);
+		character[15] = driver->getTexture(0);
+		character[16] = driver->getTexture(0);
+		character[17] = driver->getTexture(0);
+		character[18] = driver->getTexture(0);
+		character[19] = driver->getTexture(0);
+		character[20] = driver->getTexture(0);
+		character[21] = driver->getTexture(0);
+		character[22] = driver->getTexture(0);
 	#endif
 	tAct = GetRandomImage(TEXTURE_ACTIVATE);
 	tAttack = GetRandomImage(TEXTURE_ATTACK);

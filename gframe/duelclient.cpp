@@ -3736,9 +3736,9 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
 		/////kdiy//////	
 		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
-		const auto player = mainGame->LocalPlayer(info.controler);
-		int character = mainGame->dInfo.current_player[player];
-		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
+		const auto cc = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
+		int character = mainGame->dInfo.current_player[cc];
+		if((cc == 0 && !mainGame->dInfo.isTeam1) || (cc == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[cc] + mainGame->dInfo.team1;
 		auto cd = gDataManager->GetCardData(code);
 		uint32_t code2 = 0;
 		if(cd->alias) code2 = cd->alias;
@@ -3751,9 +3751,9 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 			if(!(cd->alias && PlayAnime(code2, 1)))
 				PlayAnime(code, 1);
 		}
-		//CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);		
-		/////kdiy//////				
-		const auto cc = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
+		//CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);	
+		//const auto cc = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));	
+		/////kdiy//////
 		const auto cl = BufferIO::Read<uint8_t>(pbuf);
 		const auto cs = CompatRead<uint8_t, uint32_t>(pbuf);
 		const auto desc = CompatRead<uint32_t, uint64_t>(pbuf);
