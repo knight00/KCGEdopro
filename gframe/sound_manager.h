@@ -97,7 +97,7 @@ private:
 	std::vector<std::string> BGMList[8];
 	std::string SFXList[SFX::SFX_TOTAL_SIZE];
 	////////kdiy////
-	std::map<std::pair<CHANT, uint32_t>, std::string> ChantsList[10];
+	std::map<std::pair<CHANT, uint32_t>, std::string> ChantsList[23];
 	std::vector<std::string> ChantSPList[10][23];
 	std::string bgm_now = "";
 	////////kdiy////

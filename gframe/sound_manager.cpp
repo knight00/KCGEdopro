@@ -76,6 +76,7 @@ void SoundManager::RefreshBGMList() {
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/luka"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yuma"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/shark"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/kaito"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/donthousand"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yuya"));	
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/declan"));
@@ -202,6 +203,7 @@ void SoundManager::RefreshChantsList() {
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/luka/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/yuma/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/shark/{}"), chantType.second));
+		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/kaito/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/donthousand/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/yuya/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/declan/{}"), chantType.second));
