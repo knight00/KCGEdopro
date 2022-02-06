@@ -353,13 +353,13 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 		auto chant_it = ChantsList[character[player]].find(key);
 		auto key2 = std::make_pair(chant, code2);
 		auto chant_it2 = ChantsList[character[player]].find(key2);
-		if(chant_it == ChantsList[character[player]].end()) {
-			if(chant_it2 == ChantsList[character[player]].end())
+		if(chant_it2 == ChantsList[character[player]].end()) {
+			if(chant_it == ChantsList[character[player]].end())
 				return false;
 			else
-			    mixer->PlaySound(chant_it2->second);
+			    mixer->PlaySound(chant_it->second);
 		}
-		mixer->PlaySound(chant_it->second);
+		mixer->PlaySound(chant_it2->second);
 		return true;
 	}
 	return false;
