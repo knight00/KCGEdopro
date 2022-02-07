@@ -43,6 +43,9 @@ void DataHandler::LoadArchivesDB() {
 			if(reader == nullptr)
 				continue;
 			dataManager->LoadDB(reader);
+			/////kdiy///////////
+			WindBot::AddDatabase(reader);
+			/////kdiy///////////
 			reader->drop();
 		}
 	}
