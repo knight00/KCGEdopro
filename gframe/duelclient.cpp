@@ -5212,15 +5212,19 @@ bool PlayAnime(uint32_t code, uint32_t code2, uint8_t cat) {
 	return true;
 #elif __ANDROID__
     auto a = L"";
-	if (cat == 0 && gGameConfig->enablesanime)
+	if (cat == 0)
 		a = L"s";
-	else if (cat == 1 && gGameConfig->enablecanime)
+	if (cat == 1
 		a = L"c";
-	else if (cat == 2 && gGameConfig->enableaanime)
+	if (cat == 2)
 		a = L"a";
 	auto s1 = fmt::format(EPRO_TEXT("./movies/{}{}.mp4"), Utils::ToPathString(a), code);
-	if(!Utils::FileExists(s1)) return false;
-	//porting::openAnime(s1);
+	if(!Utils::FileExists(s1)) {
+		s1 = fmt::format(EPRO_TEXT("./movies/{}{}.mp4"), Utils::ToPathString(a), code2);
+		if(!Utils::FileExists(s1))
+		    return false;
+	}
+	porting::openAnime(s1);
 	return true;
 #else
 	return false;
