@@ -5167,8 +5167,8 @@ void DuelClient::ReplayPrompt(bool local_stream) {
 bool PlayAnime(uint32_t code, uint32_t code2, uint8_t cat) {
 	if(!gGameConfig->enableanime) return false;
 	if(cat == 1 && !gGameConfig->enablecanime) return false;
-	if(cat == 0 && !gGameConfig->enableaanime) return false;
-	if(cat == 2 && !gGameConfig->enablesanime) return false;
+	if(cat == 2 && !gGameConfig->enableaanime) return false;
+	if(cat == 0 && !gGameConfig->enablesanime) return false;
 #ifdef _WIN32
     std::wstring s2 = L"plugin\\MPC-HCPortable\\MPC-HCPortable.exe";
 	GetFileAttributes(s2.c_str());
@@ -5214,7 +5214,7 @@ bool PlayAnime(uint32_t code, uint32_t code2, uint8_t cat) {
     auto a = L"";
 	if (cat == 0)
 		a = L"s";
-	if (cat == 1
+	if (cat == 1)
 		a = L"c";
 	if (cat == 2)
 		a = L"a";
