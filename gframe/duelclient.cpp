@@ -5224,8 +5224,8 @@ bool PlayAnime(uint32_t code, uint32_t code2, uint8_t cat) {
 		if(!Utils::FileExists(s1))
 		    return false;
 	}
-	porting::openAnime(s1);
-	return true;
+	// porting::openAnime(s1);
+	return false;
 #else
 	return false;
 #endif

@@ -64,6 +64,7 @@ void SoundManager::RefreshBGMList() {
     Utils::MakeDirectory(EPRO_TEXT("./sound/character/atem"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/kaiba"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/joey"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/marik"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/bakura"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/judai"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/manjome"));
@@ -73,7 +74,6 @@ void SoundManager::RefreshBGMList() {
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yusei"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/jack"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/arki"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/luka"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yuma"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/shark"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/kaito"));
@@ -191,6 +191,7 @@ void SoundManager::RefreshChantsList() {
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/atem/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/kaiba/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/joey/{}"), chantType.second));
+		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/marik/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/bakura/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/judai/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/manjome/{}"), chantType.second));
@@ -200,7 +201,6 @@ void SoundManager::RefreshChantsList() {
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/yusei/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/jack/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/arki/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/luka/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/yuma/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/shark/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/kaito/{}"), chantType.second));
