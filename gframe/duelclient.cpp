@@ -142,7 +142,7 @@ bool DuelClient::StartClient(uint32_t ip, uint16_t port, uint32_t gameid, bool c
 void DuelClient::ConnectTimeout(evutil_socket_t fd, short events, void* arg) {
 	if(connect_state & 0x7)
 		return;
-	if(!is_closing && !exit_on_return) {
+	if(!is_closing) {
 		temp_ver = 0;
 		std::lock_guard<std::mutex> lock(mainGame->gMutex);
 		mainGame->btnCreateHost->setEnabled(mainGame->coreloaded);
@@ -162,7 +162,7 @@ void DuelClient::ConnectTimeout(evutil_socket_t fd, short events, void* arg) {
 void DuelClient::StopClient(bool is_exiting) {
 	mainGame->frameSignal.SetNoWait(true);
 	if((connect_state & 0x7) != 0) {
-		is_closing = is_exiting || exit_on_return;
+		is_closing = is_exiting;
 		to_analyze_mutex.lock();
 		to_analyze.clear();
 		event_base_loopbreak(client_base);
@@ -397,8 +397,6 @@ void DuelClient::HandleSTOCPacketLan2(char* data, uint32_t len) {
 					mainGame->ShowElement(mainGame->wLanWindow);
 			}
 			mainGame->PopupMessage(gDataManager->GetSysString(1400));
-			if(exit_on_return)
-				mainGame->device->closeDevice();
 		} else if(connect_state == 0x7) {
 			if(!mainGame->dInfo.isInDuel && !mainGame->is_building) {
 				std::lock_guard<std::mutex> lock(mainGame->gMutex);
@@ -1109,8 +1107,6 @@ void DuelClient::HandleSTOCPacketLan2(char* data, uint32_t len) {
 		}
 		connect_state |= 0x100;
 		event_base_loopbreak(client_base);
-		if(exit_on_return)
-			mainGame->device->closeDevice();
 		break;
 	}
 	case STOC_REPLAY: {
@@ -1269,6 +1265,12 @@ inline T2 CompatRead(char*& buf) {
 		return static_cast<T2>(BufferIO::Read<T1>(buf));
 	return BufferIO::Read<T2>(buf);
 }
+template<typename T1, typename T2>
+inline T2 CompatRead(const char*& buf) {
+	if(mainGame->dInfo.compat_mode)
+		return static_cast<T2>(BufferIO::Read<T1>(buf));
+	return BufferIO::Read<T2>(buf);
+}
 inline void Play(SoundManager::SFX sound) {
 	if(!mainGame->dInfo.isCatchingUp)
 		gSoundManager->PlaySoundEffect(sound);
@@ -1291,12 +1293,12 @@ inline std::unique_lock<std::mutex> LockIf() {
 		return std::unique_lock<std::mutex>(mainGame->gMutex);
 	return std::unique_lock<std::mutex>();
 }
-int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
-	char* pbuf = msg;
-	if(!mainGame->dInfo.isReplay) {
+int DuelClient::ClientAnalyze(const char* msg, uint32_t len) {
+	const char* pbuf = msg;
+	if(!mainGame->dInfo.isReplay && !mainGame->dInfo.isSingleMode) {
 		mainGame->dInfo.curMsg = BufferIO::Read<uint8_t>(pbuf);
 		len--;
-		if(mainGame->dInfo.curMsg != MSG_WAITING && !mainGame->dInfo.isSingleMode) {
+		if(mainGame->dInfo.curMsg != MSG_WAITING) {
 			replay_stream.emplace_back(mainGame->dInfo.curMsg, pbuf, len);
 		}
 	}
@@ -1365,8 +1367,6 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 			}
 			connect_state |= 0x100;
 			event_base_loopbreak(client_base);
-			if(exit_on_return)
-				mainGame->device->closeDevice();
 			return false;
 		}
 	}
@@ -2505,6 +2505,23 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 		return false;
 	}
 	case MSG_SELECT_SUM: {
+		auto GetCard = [&] {
+			CoreUtils::loc_info info{};
+			if(mainGame->dInfo.compat_mode) {
+				uint8_t c = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
+				uint8_t l = BufferIO::Read<uint8_t>(pbuf);
+				uint32_t s = CompatRead<uint8_t, uint32_t>(pbuf);
+				info.controler = c;
+				info.location = l;
+				info.sequence = s;
+			} else {
+				info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+				info.controler = mainGame->LocalPlayer(info.controler);
+			}
+			if((info.location & LOCATION_OVERLAY) > 0)
+				return mainGame->dField.GetCard(info.controler, info.location & (~LOCATION_OVERLAY) & 0xff, info.sequence)->overlayed[info.position];
+			return mainGame->dField.GetCard(info.controler, info.location, info.sequence);
+		};
 		/*uint8_t selecting_player*/
 		if(mainGame->dInfo.compat_mode) {
 			mainGame->dField.select_mode = BufferIO::Read<uint8_t>(pbuf);
@@ -2524,10 +2541,7 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 		mainGame->dField.selectsum_cards.clear();
 		for (uint32_t i = 0; i < mainGame->dField.must_select_count; ++i) {
 			uint32_t code = BufferIO::Read<uint32_t>(pbuf);
-			uint8_t c = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
-			uint8_t l = BufferIO::Read<uint8_t>(pbuf);
-			uint32_t s = CompatRead<uint8_t, uint32_t>(pbuf);
-			ClientCard* pcard = mainGame->dField.GetCard(c, l, s);
+			ClientCard* pcard = GetCard();
 			if (code != 0 && pcard->code != code)
 				pcard->SetCode(code);
 			pcard->opParam = BufferIO::Read<uint32_t>(pbuf);
@@ -2537,10 +2551,7 @@ int DuelClient::ClientAnalyze(char* msg, uint32_t len) {
 		uint32_t count = CompatRead<uint8_t, uint32_t>(pbuf);
 		for(uint32_t i = 0; i < count; ++i) {
 			uint32_t code = BufferIO::Read<uint32_t>(pbuf);
-			uint8_t c = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
-			uint8_t l = BufferIO::Read<uint8_t>(pbuf);
-			uint32_t s = CompatRead<uint8_t, uint32_t>(pbuf);
-			ClientCard* pcard = mainGame->dField.GetCard(c, l, s);
+			ClientCard* pcard = GetCard();
 			if (code != 0 && pcard->code != code)
 				pcard->SetCode(code);
 			pcard->opParam = BufferIO::Read<uint32_t>(pbuf);

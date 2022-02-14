@@ -60,11 +60,8 @@ static void LoadReplay() {
 	if(open_file) {
 		bool res = replay.OpenReplay(open_file_name);
 		open_file = false;
-		if(!res || (replay.pheader.id == REPLAY_YRP1 && !mainGame->coreloaded)) {
-			if(exit_on_return)
-				mainGame->device->closeDevice();
+		if(!res || (replay.pheader.id == REPLAY_YRP1 && !mainGame->coreloaded))
 			return;
-		}
 	} else {
 		if(mainGame->lstReplayList->getSelected() == -1)
 			return;
@@ -284,8 +281,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->ShowElement(mainGame->wQQ);
 				#endif
 				////kdiy////////
-				if(exit_on_return)
-					mainGame->device->closeDevice();
 				break;
 			}
 			case BUTTON_LAN_REFRESH: {
@@ -768,8 +763,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				else
 					mainGame->ShowElement(mainGame->wLanWindow);
 				mainGame->wChat->setVisible(false);
-				if(exit_on_return)
-					mainGame->device->closeDevice();
 				break;
 			}
 			case BUTTON_REPLAY_MODE: {

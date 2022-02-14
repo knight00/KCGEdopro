@@ -199,8 +199,6 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						mainGame->ShowElement(mainGame->wLanWindow);
 					}
 					mainGame->SetMessageWindow();
-					if(exit_on_return)
-						mainGame->device->closeDevice();
 				} else {
 					DuelClient::SendPacketToServer(CTOS_SURRENDER);
 				}

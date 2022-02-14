@@ -169,8 +169,6 @@ void ReplayMode::EndDuel() {
 		mainGame->stTip->setVisible(false);
 		gSoundManager->StopSounds();
 		mainGame->device->setEventReceiver(&mainGame->menuHandler);
-		if(exit_on_return)
-			mainGame->device->closeDevice();
 	}
 }
 void ReplayMode::Restart(bool refresh) {
@@ -204,13 +202,13 @@ void ReplayMode::Restart(bool refresh) {
 	is_restarting = true;
 }
 void ReplayMode::Undo() {
-	if(skip_step > 0 || current_step == 0)
+	if(mainGame->dInfo.isCatchingUp || current_step == 0)
 		return;
 	mainGame->dInfo.isCatchingUp = true;
 	Restart(false);
 	Pause(false, false);
 }
-bool ReplayMode::ReplayAnalyze(ReplayPacket p) {
+bool ReplayMode::ReplayAnalyze(const CoreUtils::Packet& p) {
 	is_restarting = false;
 	{
 		if(is_closing)
@@ -244,7 +242,7 @@ bool ReplayMode::ReplayAnalyze(ReplayPacket p) {
 					mainGame->dField.RefreshAllCards();
 					mainGame->gMutex.unlock();
 				}
-				DuelClient::ClientAnalyze((char*)p.data.data(), p.data.size());
+				DuelClient::ClientAnalyze(p);
 				return false;
 			}
 			return true;
@@ -287,9 +285,9 @@ bool ReplayMode::ReplayAnalyze(ReplayPacket p) {
 			break;
 		}
 		case MSG_AI_NAME: {
-			char* pbuf = (char*)p.data.data();
+			const char* pbuf = p.data();
 			int len = BufferIO::Read<uint16_t>(pbuf);
-			char* begin = pbuf;
+			const char* begin = pbuf;
 			pbuf += len + 1;
 			std::string namebuf;
 			namebuf.resize(len);
@@ -300,7 +298,7 @@ bool ReplayMode::ReplayAnalyze(ReplayPacket p) {
 		case OLD_REPLAY_MODE:
 			return true;
 		}
-		DuelClient::ClientAnalyze((char*)p.data.data(), p.data.size());
+		DuelClient::ClientAnalyze(p);
 		if(pauseable) {
 			current_step++;
 			if(skip_step) {

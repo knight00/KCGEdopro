@@ -215,10 +215,10 @@ bool DataManager::ParseLocaleDB(sqlite3* pDB) {
 		if(GetWstring(cs.text, pStmt, 2))
 			cs.uppercase_text = Utils::ToUpperNoAccents(cs.text);
 		else
-			(void)cs.uppercase_text.clear();
+			cs.uppercase_text.clear();
 
 		for(int i = 0; i < 16; ++i)
-			GetWstring(cs.desc[i], pStmt, i + 3);
+			(void)GetWstring(cs.desc[i], pStmt, i + 3);
 
 		CardDataM* card_data = nullptr;
 		if(indexesiterator != indexes.end()) {
@@ -433,12 +433,12 @@ epro::wstringview DataManager::GetDesc(uint64_t strCode, bool compat) const {
 }
 std::vector<uint16_t> DataManager::GetSetCode(std::vector<std::wstring>& setname) const {
 	std::vector<uint16_t> res;
-	for(auto& string : _setnameStrings.map) {
+	for(const auto& string : _setnameStrings.map) {
 		if(string.second.first.empty())
 			continue;
 		const auto str = Utils::ToUpperNoAccents(string.second.second.size() ? string.second.second : string.second.first);
-		if(str.find(L'|') != std::wstring::npos){
-			for(auto& name : Utils::TokenizeString<std::wstring>(str, L'|')) {
+		if(str.find(L'|') != std::wstring::npos) {
+			for(const auto& name : Utils::TokenizeString<std::wstring>(str, L'|')) {
 				if(Utils::ContainsSubstring(name, setname)) {
 					res.push_back(static_cast<uint16_t>(string.first));
 					break;
@@ -492,9 +492,32 @@ std::wstring DataManager::FormatAttribute(uint32_t attribute) const {
 		return std::wstring{ unknown_string };
 	return res;
 }
-std::wstring DataManager::FormatRace(uint32_t race, bool isSkill) const {
+static std::wstring FormatSkill(uint32_t skill_type) {
 	std::wstring res;
-	for(uint32_t i = isSkill ? 2100 : 1020; race; race >>= 1, ++i) {
+	for(uint32_t i = 2100; skill_type; skill_type >>= 1, ++i) {
+		if(skill_type & 0x1u) {
+			if(!res.empty())
+				res += L'|';
+			appendstring(res, gDataManager->GetSysString(i));
+		}
+	}
+	if(res.empty())
+		return std::wstring{ DataManager::unknown_string };
+	return res;
+}
+std::wstring DataManager::FormatRace(uint32_t race, bool isSkill) const {
+	if(isSkill) return FormatSkill(race);
+	std::wstring res;
+	uint32_t i = 1020;
+	for(; race && i <= 1049; race >>= 1, ++i) {
+		if(race & 0x1u) {
+			if(!res.empty())
+				res += L'|';
+			appendstring(res, GetSysString(i));
+		}
+	}
+	//strings 1050 above are already used, read the rest from this other range
+	for(i = 2500; race; race >>= 1, ++i) {
 		if(race & 0x1u) {
 			if(!res.empty())
 				res += L'|';

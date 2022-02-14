@@ -163,8 +163,6 @@ void DeckBuilder::Terminate(bool showmenu) {
 	    gGameConfig->lastdeckfolder = mainGame->cbDBDecks2->getItem(sel2);	
 	/////////kdiy/////	
 	gGameConfig->lastlflist = gdeckManager->_lfList[mainGame->cbDBLFList->getSelected()].hash;
-	if(exit_on_return)
-		mainGame->device->closeDevice();
 }
 static void ImportDeck() {
 	const wchar_t* deck_string = Utils::OSOperator->getTextFromClipboard();

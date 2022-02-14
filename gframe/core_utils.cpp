@@ -7,7 +7,7 @@ namespace CoreUtils {
 
 #define PARSE(value) do {value = BufferIO::Read<decltype(value)>(current);} while(0); break
 
-void Query::Parse(char*& current) {
+void Query::Parse(const char*& current) {
 	flag = 0;
 	for(;;) {
 		auto size = BufferIO::Read<uint16_t>(current);
@@ -83,7 +83,7 @@ void Query::Parse(char*& current) {
 value = BufferIO::Read<uint32_t>(current);\
 }} while(0)
 
-void Query::ParseCompat(char* current, uint32_t len) {
+void Query::ParseCompat(const char* current, uint32_t len) {
 	if(len <= 8) {
 		onfield_skipped = true;
 		return;
@@ -133,18 +133,10 @@ void Query::ParseCompat(char* current, uint32_t len) {
 }
 #undef PARSE_SINGLE
 
-template<typename T>
-void insert_value(std::vector<uint8_t>& vec, const T& _val) {
-	T val = _val;
-	const auto vec_size = vec.size();
-	const auto val_size = sizeof(T);
-	vec.resize(vec_size + val_size);
-	std::memcpy(&vec[vec_size], &val, val_size);
-}
-#define SET(val) do{insert_value<decltype(val)>(buffer, val);} while(0); break
+#define SET(val) do{BufferIO::insert_value<decltype(val)>(buffer, val);} while(0); break
 void Query::GenerateBuffer(std::vector<uint8_t>& buffer, bool is_for_public_buffer, bool check_hidden) const {
 	if(onfield_skipped) {
-		insert_value<uint16_t>(buffer, 0);
+		BufferIO::insert_value<uint16_t>(buffer, 0);
 		return;
 	}
 	const bool query_must_be_pubilc = is_for_public_buffer || (check_hidden && ((flag & QUERY_IS_HIDDEN) && is_hidden));
@@ -162,8 +154,8 @@ void Query::GenerateBuffer(std::vector<uint8_t>& buffer, bool is_for_public_buff
 		if((cur_flag == QUERY_REASON_CARD && reason_card.location == 0) ||
 			(cur_flag == QUERY_EQUIP_CARD && equip_card.location == 0))
 			continue;
-		insert_value<uint16_t>(buffer, GetFlagSize(cur_flag) + sizeof(uint32_t));
-		insert_value<uint32_t>(buffer, cur_flag);
+		BufferIO::insert_value<uint16_t>(buffer, GetFlagSize(cur_flag) + sizeof(uint32_t));
+		BufferIO::insert_value<uint32_t>(buffer, cur_flag);
 		switch(cur_flag) {
 			case QUERY_CODE: SET(code);
 			case QUERY_POSITION: SET(position);
@@ -188,33 +180,33 @@ void Query::GenerateBuffer(std::vector<uint8_t>& buffer, bool is_for_public_buff
 			case QUERY_REASON_CARD:
 			case QUERY_EQUIP_CARD: {
 				auto& info = (cur_flag == QUERY_REASON_CARD) ? reason_card : equip_card;
-				insert_value<uint8_t>(buffer, info.controler);
-				insert_value<uint8_t>(buffer, info.location);
-				insert_value<uint32_t>(buffer, info.sequence);
-				insert_value<uint32_t>(buffer, info.position);
+				BufferIO::insert_value<uint8_t>(buffer, info.controler);
+				BufferIO::insert_value<uint8_t>(buffer, info.location);
+				BufferIO::insert_value<uint32_t>(buffer, info.sequence);
+				BufferIO::insert_value<uint32_t>(buffer, info.position);
 				break;
 			}
 			case QUERY_TARGET_CARD: {
-				insert_value<uint32_t>(buffer, target_cards.size());
+				BufferIO::insert_value<uint32_t>(buffer, target_cards.size());
 				for(auto& info : target_cards) {
-					insert_value<uint8_t>(buffer, info.controler);
-					insert_value<uint8_t>(buffer, info.location);
-					insert_value<uint32_t>(buffer, info.sequence);
-					insert_value<uint32_t>(buffer, info.position);
+					BufferIO::insert_value<uint8_t>(buffer, info.controler);
+					BufferIO::insert_value<uint8_t>(buffer, info.location);
+					BufferIO::insert_value<uint32_t>(buffer, info.sequence);
+					BufferIO::insert_value<uint32_t>(buffer, info.position);
 				}
 				break;
 			}
 			case QUERY_OVERLAY_CARD:
 			case QUERY_COUNTERS: {
 				auto& vec = (cur_flag == QUERY_OVERLAY_CARD) ? overlay_cards : counters;
-				insert_value<uint32_t>(buffer, vec.size());
+				BufferIO::insert_value<uint32_t>(buffer, vec.size());
 				for(auto& val : vec)
-					insert_value<uint32_t>(buffer, val);
+					BufferIO::insert_value<uint32_t>(buffer, val);
 				break;
 			}
 			case QUERY_LINK: {
-				insert_value<uint32_t>(buffer, link);
-				insert_value<uint32_t>(buffer, link_marker);
+				BufferIO::insert_value<uint32_t>(buffer, link);
+				BufferIO::insert_value<uint32_t>(buffer, link_marker);
 				break;
 			}
 		}
@@ -275,6 +267,20 @@ uint32_t Query::GetSize() const {
 	return size;
 }
 
+loc_info ReadLocInfo(const char*& p, bool compat) {
+	loc_info info;
+	info.controler = BufferIO::Read<uint8_t>(p);
+	info.location = BufferIO::Read<uint8_t>(p);
+	if(compat) {
+		info.sequence = BufferIO::Read<uint8_t>(p);
+		info.position = BufferIO::Read<uint8_t>(p);
+	} else {
+		info.sequence = BufferIO::Read<uint32_t>(p);
+		info.position = BufferIO::Read<uint32_t>(p);
+	}
+	return info;
+}
+
 loc_info ReadLocInfo(char*& p, bool compat) {
 	loc_info info;
 	info.controler = BufferIO::Read<uint8_t>(p);
@@ -297,15 +303,15 @@ PacketStream ParseMessages(OCG_Duel duel) {
 	return PacketStream{};
 }
 
-void QueryStream::Parse(char* buff) {
+void QueryStream::Parse(const char* buff) {
 	auto size = BufferIO::Read<uint32_t>(buff);
-	char* current = buff;
+	const char* current = buff;
 	while(static_cast<uint32_t>(current - buff) < size)
 		queries.emplace_back(Query::Token{}, current);
 }
 
-void QueryStream::ParseCompat(char* buff, uint32_t len) {
-	char* start = buff;
+void QueryStream::ParseCompat(const char* buff, uint32_t len) {
+	const char* start = buff;
 	while(static_cast<uint32_t>(buff - start) < len) {
 		int size = BufferIO::Read<int32_t>(buff);
 		queries.emplace_back(buff, true, size);
