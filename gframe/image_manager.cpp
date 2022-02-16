@@ -497,9 +497,9 @@ void ImageManager::RefreshRandomImageList() {
 	RefreshImageDir(EPRO_TEXT("fieldSP4"), TEXTURE_fieldSP4);
 	RefreshImageDir(EPRO_TEXT("field-transparentSP4"), TEXTURE_field_transparentSP4);
 	RefreshImageDir(EPRO_TEXT("unknown"), TEXTURE_UNKNOWN);
-	RefreshImageDir(EPRO_TEXT("tLim"), TEXTURE_LIM);
-	RefreshImageDir(EPRO_TEXT("tOT"), TEXTURE_OT);
-	RefreshImageDir(EPRO_TEXT("tSettings"), TEXTURE_SETTING);
+	RefreshImageDir(EPRO_TEXT("lim"), TEXTURE_LIM);
+	RefreshImageDir(EPRO_TEXT("ot"), TEXTURE_OT);
+	RefreshImageDir(EPRO_TEXT("settings"), TEXTURE_SETTING);
 
     RefreshImageDir(EPRO_TEXT("character/player/icon"), TEXTURE_PLAYER);
 	RefreshImageDir(EPRO_TEXT("character/atem/icon"), TEXTURE_ATEM);

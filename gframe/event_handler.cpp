@@ -2045,6 +2045,9 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			case BUTTON_APPLY_RESTART: {
 				try {
 					gGameConfig->dpi_scale = static_cast<uint32_t>(std::stol(mainGame->gSettings.ebDpiScale->getText())) / 100.0;
+					//////kdiy///////
+					gGameConfig->textfontsize = static_cast<uint32_t>(std::stol(mainGame->gSettings.ebFontSize->getText()));
+					//////kdiy///////
 					mainGame->restart = true;
 					//mainGame->device->closeDevice();
 				} catch(...){}
@@ -2318,6 +2321,14 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				mainGame->ApplyLocale(mainGame->gSettings.cbCurrentLocale->getSelected());
 				return true;
 			}
+			///kdiy///////
+			case COMBOBOX_CURRENT_FONT: {
+				int selected = mainGame->gSettings.cbCurrentFont->getSelected();
+				if (selected < 0) return true;
+				gGameConfig->textfont = fmt::format(L"fonts/{}", mainGame->gSettings.cbCurrentFont->getItem(selected));
+				return true;
+			}
+			///kdiy///////
 			case COMBOBOX_CORE_LOG_OUTPUT: {
 				int selected = mainGame->gSettings.cbCoreLogOutput->getSelected();
 				if (selected < 0) return true;

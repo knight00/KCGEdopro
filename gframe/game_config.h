@@ -79,8 +79,8 @@ struct GameConfig
 	///kdiy//////////
 	int lastBot{ 0 };
 	std::wstring lastServer;
-	std::wstring textfont{ L"fonts/NotoSansJP-Regular.otf" };
-	std::wstring numfont{ L"fonts/NotoSansJP-Regular.otf" };
+	std::wstring textfont{ L"fonts/ygo.ttf" };
+	std::wstring numfont{ L"fonts/ygo.ttf" };
 	std::wstring roompass; // NOT SERIALIZED
 	//settings
 	bool chkMAutoPos{ false };

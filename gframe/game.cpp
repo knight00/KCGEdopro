@@ -223,18 +223,14 @@ bool Game::Initialize() {
 	stAbout = irr::gui::CGUICustomText::addCustomText(L"EDOPro-KCG\n"
 											L"by perfectdicky (QQ: 874342483)\n"
 											L"\n"
-											L"Copyright (C) Edoardo Lolletti (edo9300) and Project Ignis.\n"
-											L"https://github.com/knight00/KCGEdopro\n"
-											L"https://github.com/knight00/ocgcore-KCG\n"
-											L"Licensed under the GNU AGPLv3 or later.\n"
-											L"Software components licensed under the GNU AGPLv3 or later. See LICENSE for more details.\n"
-											L"Supporting resources and app icon are distributed under separate licenses in their subfolders.\n"
-											L"\n"
-											L"Project Ignis:\n"
+											L"Copyright (C) Edoardo Lolletti (edo9300) and Project Ignis ("
 											L"ahtelel, Cybercatman, Dragon3989, DyXel, edo9300, EerieCode, "
 											L"Gideon, Hatter, Hel, Icematoro, Larry126, LogicalNonsense, pyrQ, "
-											L"Sanct, senpaizuri, Steeldarkeagel, TheRazgriz, WolfOfWolves, Yamato\n"
+											L"Sanct, senpaizuri, Steeldarkeagel, TheRazgriz, WolfOfWolves, Yamato)\n"
 											L"\n"
+											L"https://github.com/knight00/KCGEdopro\n"
+											L"https://github.com/knight00/ocgcore-KCG\n"
+											L"Licensed under the GNU AGPLv3 or later. See LICENSE for more details.\n"
 											L"Forked from Fluorohydride's YGOPro, maintainers DailyShana, mercury233.\n"
 											L"Yu-Gi-Oh! is a trademark of Shueisha and Konami.\n"
 											L"This project is not affiliated with or endorsed by Shueisha or Konami.", false, env, wAbout, -1, Scale(10, 10, 440, 690));
@@ -1039,10 +1035,7 @@ bool Game::Initialize() {
 	defaultStrings.emplace_back(gSettings.stCurrentLocale, 2067);
 	PopulateLocales();
 	gSettings.cbCurrentLocale = AddComboBox(env, Scale(95, 335, 320, 360), sPanel, COMBOBOX_CURRENT_LOCALE);
-	/////kdiy////////////
-	//int selectedLocale = gSettings.cbCurrentLocale->addItem(L"English");
-	int selectedLocale = gSettings.cbCurrentLocale->addItem(L"Ch");
-	/////kdiy////////////
+	int selectedLocale = gSettings.cbCurrentLocale->addItem(L"English");
 	for(auto& _locale : locales) {
 		auto& locale = _locale.first;
 		auto itemIndex = gSettings.cbCurrentLocale->addItem(Utils::ToUnicodeIfNeeded(locale).data());
@@ -1051,6 +1044,19 @@ bool Game::Initialize() {
 		}
 	}
 	gSettings.cbCurrentLocale->setSelected(selectedLocale);
+    /////kdiy////////////
+    gSettings.stCurrentFont = env->addStaticText(gDataManager->GetSysString(8040).data(), Scale(340, 335, 400, 360), false, true, sPanel);
+	defaultStrings.emplace_back(gSettings.stCurrentFont, 8040);
+	gSettings.cbCurrentFont = AddComboBox(env, Scale(405, 335, 525, 360), sPanel, COMBOBOX_CURRENT_FONT);
+	for(auto& font : Utils::FindFiles(EPRO_TEXT("./fonts/"), { EPRO_TEXT("ttf"), EPRO_TEXT("otf") })) {
+		auto itemIndex = gSettings.cbCurrentFont->addItem(Utils::ToUnicodeIfNeeded(font).data());
+		if(Utils::ToPathString(gGameConfig->textfont.substr(6, gGameConfig->textfont.size() - 1)) == font)
+			gSettings.cbCurrentFont->setSelected(itemIndex);
+	}
+	gSettings.ebFontSize = env->addEditBox(WStr(gGameConfig->textfontsize), Scale(530, 335, 645, 360), true, sPanel, EDITBOX_NUMERIC);
+	gSettings.ebFontSize->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+	/////kdiy////////////
+
 	gSettings.stDpiScale = env->addStaticText(gDataManager->GetSysString(2070).data(), Scale(15, 365, 90, 390), false, false, sPanel);
 	defaultStrings.emplace_back(gSettings.stDpiScale, 2070);
 	gSettings.ebDpiScale = env->addEditBox(WStr(gGameConfig->dpi_scale * 100), Scale(95, 365, 150, 390), true, sPanel, EDITBOX_NUMERIC);

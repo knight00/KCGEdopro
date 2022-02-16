@@ -79,6 +79,9 @@ struct SettingsWindow {
 	irr::gui::IGUIScrollBar* scrSoundVolume;
 	irr::gui::IGUICheckBox* chkEnableMusic;
 	///////kdiy////////
+	irr::gui::IGUIStaticText* stCurrentFont;
+	irr::gui::IGUIComboBox* cbCurrentFont;
+	irr::gui::IGUIEditBox* ebFontSize;
 	irr::gui::IGUICheckBox* chkEnableAnime;
 	irr::gui::IGUICheckBox* chkEnableSummonSound;
 	irr::gui::IGUICheckBox* chkEnableActivateSound;
