@@ -2143,21 +2143,33 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				gGameConfig->enableanime = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
 				mainGame->tabSettings.chkEnableAnime->setChecked(gGameConfig->enableanime);
 				mainGame->gSettings.chkEnableAnime->setChecked(gGameConfig->enableanime);
+				#if !defined(_WIN32)
+				mgSettings.chkEnableAnime->setChecked(false);
+				#endif
 				return true;
 			}
 			case CHECKBOX_ENABLE_SANIME: {
 				gGameConfig->enablesanime = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
 				mainGame->mgSettings.chkEnableSummonAnime->setChecked(gGameConfig->enablesanime);
+				#if !defined(_WIN32)
+				mgSettings.chkEnableSummonAnime->setChecked(false);
+				#endif
 				return true;
 			}
 			case CHECKBOX_ENABLE_CANIME: {
 				gGameConfig->enablecanime = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
 				mainGame->mgSettings.chkEnableActivateAnime->setChecked(gGameConfig->enablecanime);
+				#if !defined(_WIN32)
+				mgSettings.chkEnableActivateAnime->setChecked(false);
+				#endif
 				return true;
 			}
 			case CHECKBOX_ENABLE_AANIME: {
 				gGameConfig->enableaanime = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
 				mainGame->mgSettings.chkEnableAttackAnime->setChecked(gGameConfig->enableaanime);
+				#if !defined(_WIN32)
+				mgSettings.chkEnableAttackAnime->setChecked(false);
+				#endif
 				return true;
 			}
 			case CHECKBOX_ENABLE_EXTRA_NOLIMIT: {
