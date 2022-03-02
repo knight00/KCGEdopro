@@ -2144,7 +2144,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				mainGame->tabSettings.chkEnableAnime->setChecked(gGameConfig->enableanime);
 				mainGame->gSettings.chkEnableAnime->setChecked(gGameConfig->enableanime);
 				#if !defined(_WIN32)
-				mgSettings.chkEnableAnime->setChecked(false);
+				mainGame->mgSettings.chkEnableAnime->setChecked(false);
 				#endif
 				return true;
 			}
@@ -2152,7 +2152,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				gGameConfig->enablesanime = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
 				mainGame->mgSettings.chkEnableSummonAnime->setChecked(gGameConfig->enablesanime);
 				#if !defined(_WIN32)
-				mgSettings.chkEnableSummonAnime->setChecked(false);
+				mainGame->mgSettings.chkEnableSummonAnime->setChecked(false);
 				#endif
 				return true;
 			}
@@ -2160,7 +2160,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				gGameConfig->enablecanime = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
 				mainGame->mgSettings.chkEnableActivateAnime->setChecked(gGameConfig->enablecanime);
 				#if !defined(_WIN32)
-				mgSettings.chkEnableActivateAnime->setChecked(false);
+				mainGame->mgSettings.chkEnableActivateAnime->setChecked(false);
 				#endif
 				return true;
 			}
@@ -2168,7 +2168,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				gGameConfig->enableaanime = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
 				mainGame->mgSettings.chkEnableAttackAnime->setChecked(gGameConfig->enableaanime);
 				#if !defined(_WIN32)
-				mgSettings.chkEnableAttackAnime->setChecked(false);
+				mainGame->mgSettings.chkEnableAttackAnime->setChecked(false);
 				#endif
 				return true;
 			}

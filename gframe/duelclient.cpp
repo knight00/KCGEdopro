@@ -1279,12 +1279,12 @@ inline void Play(SoundManager::SFX sound) {
 // inline bool PlayChant(SoundManager::CHANT sound, uint32_t code) {
 // 	if(!mainGame->dInfo.isCatchingUp)
 // 		return gSoundManager->PlayChant(sound, code);
-inline bool PlayChant(SoundManager::CHANT sound, uint32_t code, uint32_t code2, int player) {
+inline bool PlayChant(SoundManager::CHANT sound, uint32_t code, uint32_t code2, int player, uint8_t extra = 0) {
 	if(sound == SoundManager::CHANT::ACTIVATE && !gGameConfig->enablecsound) return false;
 	if(sound == SoundManager::CHANT::SUMMON && !gGameConfig->enablessound) return false;
 	if(sound == SoundManager::CHANT::ATTACK && !gGameConfig->enableasound) return false;
 	if(!mainGame->dInfo.isCatchingUp)
-		return gSoundManager->PlayChant(sound, code, code2, player);
+		return gSoundManager->PlayChant(sound, code, code2, player, extra);
 /////kdiy///////		
 	return true;
 }
@@ -3644,8 +3644,17 @@ int DuelClient::ClientAnalyze(const char* msg, uint32_t len) {
 		if(cd->alias) code2 = cd->alias;
 		int character = mainGame->dInfo.current_player[player];
 		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
-		if(!PlayAnime(code, code2, 0))
-		    PlayChant(SoundManager::CHANT::SUMMON, code, code2, character);
+		if(!PlayAnime(code, code2, 0)) {
+			uint8_t extra = 0;
+			ClientCard* pcard = mainGame->dField.GetCard(player, info.location, info.sequence);	
+			if(cd->type & TYPE_FUSION) extra += 0x1;
+			if(cd->type & TYPE_SYNCHRO) extra += 0x2;
+			if(cd->type & TYPE_XYZ) extra += 0x4;
+			if(cd->type & TYPE_LINK) extra += 0x8;
+			if(cd->type & TYPE_RITUAL) extra += 0x10;
+			if(cd->type & TYPE_PENDULUM) extra += 0x20;
+		    PlayChant(SoundManager::CHANT::SUMMON, code, code2, character, extra);
+		}
 		/////kdiy//////
 		return true;
 	}
@@ -3733,8 +3742,13 @@ int DuelClient::ClientAnalyze(const char* msg, uint32_t len) {
 		uint32_t code2 = 0;
 		if(cd->alias) code2 = cd->alias;
 		//if (!PlayChant(SoundManager::CHANT::ACTIVATE, code))
-		if(!PlayAnime(code, code2, 1))
-		    PlayChant(SoundManager::CHANT::ACTIVATE, code, code2, character);
+		if(!PlayAnime(code, code2, 1)) {
+			ClientCard* pcard = mainGame->dField.GetCard(mainGame->LocalPlayer(info.controler), info.location, info.sequence, info.position);
+			if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && (info.position == POS_FACEUP) && info.location == LOCATION_SZONE && (info.sequence == 0 || info.sequence == 4 || info.sequence == 6 || info.sequence == 7))
+			    PlayChant(SoundManager::CHANT::PENDULUM, code, code2, character);
+			else
+		        PlayChant(SoundManager::CHANT::ACTIVATE, code, code2, character);
+		}
 		/////kdiy//////			
 			Play(SoundManager::SFX::ACTIVATE);	
 		/////kdiy//////
