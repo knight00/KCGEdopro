@@ -123,8 +123,9 @@ bool ImageManager::Initial() {
 	/////kdiy//////
 	QQ = driver->getTexture(EPRO_TEXT("./textures/QQ.jpg"));
 	uint8_t playno = 1;
-	icon[0] = driver->getTexture(0);
-	character[0] = driver->getTexture(0);
+	icon[0] = driver->getTexture(EPRO_TEXT("./textures/character/player/mini_icon.png"));
+	character[0] = driver->getTexture(EPRO_TEXT("./textures/character/player/icon.png"));
+	CHECK_RETURN(character[0], "character/player/icon");	
 	scharacter[0] = driver->getTexture(0);
 	scharacter[1] = driver->getTexture(0);
 	scharacter[2] = driver->getTexture(0);
@@ -132,11 +133,11 @@ bool ImageManager::Initial() {
 	scharacter[4] = driver->getTexture(0);
 	scharacter[5] = driver->getTexture(0);
 #ifdef VIP
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/player/mini_icon.png"));
+	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/muto/mini_icon.png"));
 	character[playno] = GetRandomImage(TEXTURE_PLAYER);
 	if (!character[playno])
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/player/icon.png"));
-	CHECK_RETURN(character[playno], "character/player/icon");	
+		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/muto/icon.png"));
+	CHECK_RETURN(character[playno], "character/muto/icon");	
 	playno++;
 	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/atem/mini_icon.png"));
 	character[playno] = GetRandomImage(TEXTURE_ATEM);
@@ -501,7 +502,7 @@ void ImageManager::RefreshRandomImageList() {
 	RefreshImageDir(EPRO_TEXT("ot"), TEXTURE_OT);
 	RefreshImageDir(EPRO_TEXT("settings"), TEXTURE_SETTING);
 
-    RefreshImageDir(EPRO_TEXT("character/player/icon"), TEXTURE_PLAYER);
+    RefreshImageDir(EPRO_TEXT("character/muto/icon"), TEXTURE_PLAYER);
 	RefreshImageDir(EPRO_TEXT("character/atem/icon"), TEXTURE_ATEM);
 	RefreshImageDir(EPRO_TEXT("character/kaiba/icon"), TEXTURE_KAIBA);
 	RefreshImageDir(EPRO_TEXT("character/joey/icon"), TEXTURE_JOEY);
@@ -588,11 +589,11 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 	RefreshRandomImageList();
 	uint8_t playno = 1;
 #ifdef VIP
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/player/mini_icon.png"));
+	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/muto/mini_icon.png"));
 	character[playno] = GetRandomImage(TEXTURE_PLAYER);
 	if (!character[playno])
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/player/icon.png"));
-	CHECK_RETURN(character[playno], "character/player/icon");	
+		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/muto/icon.png"));
+	CHECK_RETURN(character[playno], "character/muto/icon");	
 	playno++;
 	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/atem/mini_icon.png"));
 	character[playno] = GetRandomImage(TEXTURE_ATEM);
