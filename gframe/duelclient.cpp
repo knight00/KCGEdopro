@@ -43,8 +43,6 @@ bool DuelClient::is_local_host = false;
 std::atomic<bool> DuelClient::answered{ false };
 event_base* DuelClient::client_base = nullptr;
 bufferevent* DuelClient::client_bev = nullptr;
-std::vector<uint8_t> DuelClient::duel_client_read;
-std::vector<uint8_t> DuelClient::duel_client_write;
 bool DuelClient::is_closing = false;
 uint64_t DuelClient::select_hint = 0;
 std::wstring DuelClient::event_string;
@@ -191,10 +189,11 @@ void DuelClient::ClientRead(bufferevent* bev, void* ctx) {
 		evbuffer_copyout(input, &packet_len, 2);
 		if(len < packet_len + 2u)
 			return;
-		duel_client_read.resize(packet_len + 2);
-		evbuffer_remove(input, duel_client_read.data(), packet_len + 2);
+		evbuffer_remove(input, &packet_len, 2);
+		std::vector<uint8_t> duel_client_read(packet_len);
+		evbuffer_remove(input, duel_client_read.data(), packet_len);
 		if(packet_len)
-			HandleSTOCPacketLan((char*)&duel_client_read[2], packet_len);
+			HandleSTOCPacketLanSync(std::move(duel_client_read));
 		len = evbuffer_get_length(input);
 	}
 }
@@ -299,28 +298,25 @@ void DuelClient::ParserThread() {
 		auto pkt = std::move(to_analyze.front());
 		to_analyze.pop_front();
 		lck.unlock();
-		HandleSTOCPacketLan2((char*)pkt.data(), pkt.size());
+		HandleSTOCPacketLanAsync(pkt);
 	}
 }
 
-void DuelClient::HandleSTOCPacketLan(char* data, uint32_t len) {
-	uint8_t pktType = static_cast<uint8_t>(data[0]);
+void DuelClient::HandleSTOCPacketLanSync(std::vector<uint8_t>&& data) {
+	uint8_t pktType = data[0];
 	if(pktType != STOC_CHAT && pktType != STOC_CHAT_2) {
-		std::vector<uint8_t> tmpvec{};
-		tmpvec.resize(len);
-		memcpy(tmpvec.data(), data, len);
 		to_analyze_mutex.lock();
-		to_analyze.emplace_back(std::move(tmpvec));
+		to_analyze.push_back(std::move(data));
 		to_analyze_mutex.unlock();
 		cv.notify_one();
 		return;
 	}
 	if(mainGame->dInfo.isCatchingUp)
 		return;
-	char* pdata = data + 1;
+	auto* pdata = data.data() + 1;
 	switch(pktType) {
 		case STOC_CHAT: {
-			auto pkt = BufferIO::getStruct<STOC_Chat>(pdata, len);
+			auto pkt = BufferIO::getStruct<STOC_Chat>(pdata, data.size());
 			int player = pkt.player;
 			int type = -1;
 			if(player < mainGame->dInfo.team1 + mainGame->dInfo.team2) {
@@ -359,7 +355,7 @@ void DuelClient::HandleSTOCPacketLan(char* data, uint32_t len) {
 			break;
 		}
 		case STOC_CHAT_2: {
-			auto pkt = BufferIO::getStruct<STOC_Chat2>(pdata, len);
+			auto pkt = BufferIO::getStruct<STOC_Chat2>(pdata, data.size());
 			if(pkt.type == STOC_Chat2::PTYPE_DUELIST && (mainGame->dInfo.player_type >= 7 || !pkt.is_team) && mainGame->tabSettings.chkIgnoreOpponents->isChecked())
 				return;
 			if(pkt.type == STOC_Chat2::PTYPE_OBS && mainGame->tabSettings.chkIgnoreSpectators->isChecked())
@@ -376,8 +372,9 @@ void DuelClient::HandleSTOCPacketLan(char* data, uint32_t len) {
 }
 
 
-void DuelClient::HandleSTOCPacketLan2(char* data, uint32_t len) {
-	char* pdata = data;
+void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
+	auto* pdata = data.data();
+	auto len = data.size();
 	uint8_t pktType = BufferIO::Read<uint8_t>(pdata);
 	switch(pktType) {
 	case INTERNAL_HANDLE_CONNECTION_END: {
@@ -1260,13 +1257,13 @@ std::pair<uint32_t, uint32_t> DuelClient::GetPlayersCount() {
 	return { count1, count2 };
 }
 template<typename T1, typename T2>
-inline T2 CompatRead(char*& buf) {
+inline T2 CompatRead(uint8_t*& buf) {
 	if(mainGame->dInfo.compat_mode)
 		return static_cast<T2>(BufferIO::Read<T1>(buf));
 	return BufferIO::Read<T2>(buf);
 }
 template<typename T1, typename T2>
-inline T2 CompatRead(const char*& buf) {
+inline T2 CompatRead(const uint8_t*& buf) {
 	if(mainGame->dInfo.compat_mode)
 		return static_cast<T2>(BufferIO::Read<T1>(buf));
 	return BufferIO::Read<T2>(buf);
@@ -1293,8 +1290,8 @@ inline std::unique_lock<std::mutex> LockIf() {
 		return std::unique_lock<std::mutex>(mainGame->gMutex);
 	return std::unique_lock<std::mutex>();
 }
-int DuelClient::ClientAnalyze(const char* msg, uint32_t len) {
-	const char* pbuf = msg;
+int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
+	const auto* pbuf = msg;
 	if(!mainGame->dInfo.isReplay && !mainGame->dInfo.isSingleMode) {
 		mainGame->dInfo.curMsg = BufferIO::Read<uint8_t>(pbuf);
 		len--;
@@ -2572,14 +2569,12 @@ int DuelClient::ClientAnalyze(const char* msg, uint32_t len) {
 		mainGame->dField.selectable_cards.clear();
 		mainGame->dField.selected_cards.clear();
 		mainGame->dField.sort_list.clear();
-		uint32_t code, l, s;
-		uint8_t c;
 		ClientCard* pcard;
 		for(uint32_t i = 0; i < count; ++i) {
-			code = BufferIO::Read<uint32_t>(pbuf);
-			c = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
-			l = CompatRead<uint8_t, uint32_t>(pbuf);
-			s = CompatRead<uint8_t, uint32_t>(pbuf);
+			const auto code = BufferIO::Read<uint32_t>(pbuf);
+			const auto c = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
+			const auto l = CompatRead<uint8_t, uint32_t>(pbuf);
+			const auto s = CompatRead<uint8_t, uint32_t>(pbuf);
 			pcard = mainGame->dField.GetCard(c, l, s);
 			if (code != 0 && pcard->code != code)
 				pcard->SetCode(code);
@@ -3059,8 +3054,6 @@ int DuelClient::ClientAnalyze(const char* msg, uint32_t len) {
 		else
 			lst = mainGame->dField.szone;
 		ClientCard* mc[7];
-		ClientCard* swp;
-		uint8_t ps;
 		auto lock = LockIf();
 		for (int i = 0; i < count; ++i) {
 			CoreUtils::loc_info previous = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
@@ -3078,15 +3071,15 @@ int DuelClient::ClientAnalyze(const char* msg, uint32_t len) {
 		if(!mainGame->dInfo.isCatchingUp)
 			mainGame->WaitFrameSignal(20, lock);
 		for (int i = 0; i < count; ++i) {
-			CoreUtils::loc_info previous = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
-			previous.controler = mainGame->LocalPlayer(previous.controler);
-			ps = mc[i]->sequence;
-			if (previous.location > 0) {
-				swp = lst[previous.controler][previous.sequence];
-				lst[previous.controler][ps] = swp;
-				lst[previous.controler][previous.sequence] = mc[i];
-				mc[i]->sequence = previous.sequence;
-				swp->sequence = ps;
+			CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+			current.controler = mainGame->LocalPlayer(current.controler);
+			if (current.location > 0) {
+				uint8_t prev_seq = mc[i]->sequence;
+				auto tmp = lst[current.controler][current.sequence];
+				lst[current.controler][prev_seq] = tmp;
+				lst[current.controler][current.sequence] = mc[i];
+				mc[i]->sequence = current.sequence;
+				tmp->sequence = prev_seq;
 			}
 		}
 		if(!mainGame->dInfo.isCatchingUp) {

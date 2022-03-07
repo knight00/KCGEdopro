@@ -2284,11 +2284,11 @@ bool Game::MainLoop() {
 			PopupElement(wACMessage, 30);
 		}
 		if(!wQuery->isVisible()) {
-			if(!update_prompted && !(dInfo.isInDuel || dInfo.isInLobby || is_siding
+			if(!update_prompted && gClientUpdater->HasUpdate() && !(dInfo.isInDuel || dInfo.isInLobby || is_siding
 				|| wRoomListPlaceholder->isVisible() || wLanWindow->isVisible()
 				/////kdiy/////
-				// || wCreateHost->isVisible() || wHostPrepare->isVisible()) && gClientUpdater->HasUpdate()) {
-				|| wCreateHost->isVisible() || wCreateHost2->isVisible() || wHostPrepare->isVisible()) && gClientUpdater->HasUpdate()) {	
+				// || wCreateHost->isVisible() || wHostPrepare->isVisible())) {
+				|| wCreateHost->isVisible() || wCreateHost2->isVisible() || wHostPrepare->isVisible())) {	
 				/////kdiy/////
 				std::lock_guard<std::mutex> lock(gMutex);
 				menuHandler.prev_operation = ACTION_UPDATE_PROMPT;
@@ -2362,16 +2362,19 @@ bool Game::MainLoop() {
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 	discord.UpdatePresence(DiscordWrapper::TERMINATE);
-	replaySignal.SetNoWait(true);
-	actionSignal.SetNoWait(true);
-	closeDoneSignal.SetNoWait(true);
+	{
+		std::lock_guard<std::mutex> lk(gMutex);
+		replaySignal.SetNoWait(true);
+		actionSignal.SetNoWait(true);
+		closeDoneSignal.SetNoWait(true);
+		frameSignal.SetNoWait(true);
+	}
 	DuelClient::StopClient(true);
+	//This is set again as waitable in the above call
+	frameSignal.SetNoWait(true);
+	SingleMode::StopPlay(true);
+	ReplayMode::StopReplay(true);
 	ClearTextures();
-	if(dInfo.isSingleMode)
-		SingleMode::StopPlay(true);
-	if(dInfo.isReplay)
-		ReplayMode::StopReplay(true);
-	std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	SaveConfig();
 #ifdef YGOPRO_BUILD_DLL
 	if(ocgcore)

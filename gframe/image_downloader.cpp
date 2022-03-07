@@ -191,9 +191,11 @@ void ImageDownloader::DownloadPic() {
 			    continue;
 			////kdiy////////	
 			auto fp = fileopen(name.data(), "wb");
-			if(fp == nullptr && gGameConfig->logDownloadErrors) {
-				ygo::ErrorLog("Failed opening {} for write.", Utils::ToUTF8IfNeeded(name));
-				ygo::ErrorLog("Error: {}.", strerror(errno));
+			if(fp == nullptr) {
+				if(gGameConfig->logDownloadErrors) {
+					ygo::ErrorLog("Failed opening {} for write.", Utils::ToUTF8IfNeeded(name));
+					ygo::ErrorLog("Error: {}.", strerror(errno));
+				}
 				continue;
 			}
 			SetPayloadAndUrl(fmt::format(src.url, code), fp);

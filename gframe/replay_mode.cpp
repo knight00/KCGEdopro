@@ -23,6 +23,7 @@ bool ReplayMode::exit_pending = false;
 int ReplayMode::skip_turn = 0;
 int ReplayMode::current_step = 0;
 int ReplayMode::skip_step = 0;
+std::thread ReplayMode::replay_thread;
 
 bool ReplayMode::StartReplay(int skipturn, bool is_yrp) {
 	if(mainGame->dInfo.isReplay)
@@ -35,6 +36,8 @@ bool ReplayMode::StartReplay(int skipturn, bool is_yrp) {
 	is_pausing = false;
 	is_paused = false;
 	is_restarting = false;
+	if(replay_thread.joinable())
+		replay_thread.join();
 	if(is_yrp) {
 		if(cur_replay.pheader.id == REPLAY_YRP1)
 			cur_yrp = &cur_replay;
@@ -42,9 +45,9 @@ bool ReplayMode::StartReplay(int skipturn, bool is_yrp) {
 			cur_yrp = cur_replay.yrp.get();
 		if(!cur_yrp)
 			return false;
-		std::thread(OldReplayThread).detach();
+		replay_thread = std::thread(OldReplayThread);
 	} else
-		std::thread(ReplayThread).detach();
+		replay_thread = std::thread(ReplayThread);
 	return true;
 }
 void ReplayMode::StopReplay(bool is_exiting) {
@@ -53,6 +56,8 @@ void ReplayMode::StopReplay(bool is_exiting) {
 	is_closing = is_exiting;
 	exit_pending = true;
 	mainGame->actionSignal.Set();
+	if(is_exiting && replay_thread.joinable())
+		replay_thread.join();
 }
 void ReplayMode::SwapField() {
 	if(is_paused)
@@ -285,14 +290,11 @@ bool ReplayMode::ReplayAnalyze(const CoreUtils::Packet& p) {
 			break;
 		}
 		case MSG_AI_NAME: {
-			const char* pbuf = p.data();
-			int len = BufferIO::Read<uint16_t>(pbuf);
-			const char* begin = pbuf;
-			pbuf += len + 1;
-			std::string namebuf;
-			namebuf.resize(len);
-			memcpy(&namebuf[0], begin, len + 1);
-			mainGame->dInfo.opponames[0] = BufferIO::DecodeUTF8(namebuf);
+			const auto* pbuf = p.data();
+			auto len = BufferIO::Read<uint16_t>(pbuf);
+			if((len + 1) != p.buff_size() - (sizeof(uint16_t)))
+				break;
+			mainGame->dInfo.opponames[0] = BufferIO::DecodeUTF8({ reinterpret_cast<const char*>(pbuf), len });
 			return true;
 		}
 		case OLD_REPLAY_MODE:
