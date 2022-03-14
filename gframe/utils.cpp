@@ -78,7 +78,6 @@ namespace ygo {
 	std::vector<SynchronizedIrrArchive> Utils::archives;
 	irr::io::IFileSystem* Utils::filesystem{ nullptr };
 	irr::IOSOperator* Utils::OSOperator{ nullptr };
-	epro::path_string Utils::working_dir;
 
 	RNG::SplitMix64 Utils::generator(std::chrono::high_resolution_clock::now().time_since_epoch().count());
 
@@ -166,12 +165,17 @@ namespace ygo {
 		return stat(path.data(), &sb) != -1 && S_ISREG(sb.st_mode) != 0;
 #endif
 	}
-	bool Utils::ChangeDirectory(epro::path_stringview newpath) {
+	static epro::path_string working_dir;
+	bool Utils::SetWorkingDirectory(epro::path_stringview newpath) {
+		working_dir = NormalizePathImpl(newpath);
 #ifdef _WIN32
 		return SetCurrentDirectory(newpath.data());
 #else
 		return chdir(newpath.data()) == 0;
 #endif
+	}
+	const epro::path_string& Utils::GetWorkingDirectory() {
+		return working_dir;
 	}
 	bool Utils::FileDelete(epro::path_stringview source) {
 #ifdef _WIN32
@@ -367,55 +371,56 @@ namespace ygo {
 		return true;
 	}
 
-	const epro::path_string& Utils::GetExePath() {
-		static const epro::path_string binarypath = []()->epro::path_string {
+	static const epro::path_string exe_path = []()->epro::path_string {
 #ifdef _WIN32
-			TCHAR exepath[MAX_PATH];
-			GetModuleFileName(nullptr, exepath, MAX_PATH);
-			return Utils::NormalizePath<TCHAR>(exepath, false);
+		TCHAR exepath[MAX_PATH];
+		GetModuleFileName(nullptr, exepath, MAX_PATH);
+		return Utils::NormalizePath<TCHAR>(exepath, false);
 #elif defined(__linux__) && !defined(__ANDROID__)
-			epro::path_char buff[PATH_MAX];
-			ssize_t len = ::readlink("/proc/self/exe", buff, sizeof(buff) - 1);
-			if(len != -1)
-				buff[len] = EPRO_TEXT('\0');
-			return buff;
+		epro::path_char buff[PATH_MAX];
+		ssize_t len = ::readlink("/proc/self/exe", buff, sizeof(buff) - 1);
+		if(len != -1)
+			buff[len] = EPRO_TEXT('\0');
+		return buff;
 #elif defined(EDOPRO_MACOS)
-			CFURLRef bundle_url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
-			CFStringRef bundle_path = CFURLCopyFileSystemPath(bundle_url, kCFURLPOSIXPathStyle);
-			CFURLRef bundle_base_url = CFURLCreateCopyDeletingLastPathComponent(nullptr, bundle_url);
-			CFRelease(bundle_url);
-			CFStringRef path = CFURLCopyFileSystemPath(bundle_base_url, kCFURLPOSIXPathStyle);
-			CFRelease(bundle_base_url);
-			/*
-			#ifdef MAC_OS_DISCORD_LAUNCHER
-				system(fmt::format("open {}/Contents/MacOS/discord-launcher.app --args random", CFStringGetCStringPtr(bundle_path, kCFStringEncodingUTF8)).data());
-			#endif
-			*/
-			epro::path_string res = epro::path_string(CFStringGetCStringPtr(path, kCFStringEncodingUTF8)) + "/";
-			CFRelease(path);
-			CFRelease(bundle_path);
-			return res;
+		CFURLRef bundle_url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+		CFStringRef bundle_path = CFURLCopyFileSystemPath(bundle_url, kCFURLPOSIXPathStyle);
+		CFURLRef bundle_base_url = CFURLCreateCopyDeletingLastPathComponent(nullptr, bundle_url);
+		CFRelease(bundle_url);
+		CFStringRef path = CFURLCopyFileSystemPath(bundle_base_url, kCFURLPOSIXPathStyle);
+		CFRelease(bundle_base_url);
+		/*
+		#ifdef MAC_OS_DISCORD_LAUNCHER
+			//launches discord launcher so that it's registered as bundle to launch by discord
+			system(fmt::format("open {}/Contents/MacOS/discord-launcher.app --args random", CFStringGetCStringPtr(bundle_path, kCFStringEncodingUTF8)).data());
+		#endif
+		*/
+		epro::path_string res = epro::path_string(CFStringGetCStringPtr(path, kCFStringEncodingUTF8)) + "/";
+		CFRelease(path);
+		CFRelease(bundle_path);
+		return res;
 #else
-			return EPRO_TEXT("");
+		return EPRO_TEXT("");
 #endif
-		}();
-		return binarypath;
+	}();
+	const epro::path_string& Utils::GetExePath() {
+		return exe_path;
 	}
 
+	static const epro::path_string exe_folder = Utils::GetFilePath(exe_path);
 	const epro::path_string& Utils::GetExeFolder() {
-		static const epro::path_string binarypath = GetFilePath(GetExePath());
-		return binarypath;
+		return exe_folder;
 	}
 
-	const epro::path_string& Utils::GetCorePath() {
-		static const epro::path_string binarypath = [] {
+	static const epro::path_string core_path = [] {
 #ifdef _WIN32
-			return fmt::format(EPRO_TEXT("{}/ocgcore.dll"), GetExeFolder());
+		return fmt::format(EPRO_TEXT("{}/ocgcore.dll"), Utils::GetExeFolder());
 #else
-			return EPRO_TEXT(""); // Unused on POSIX
+		return EPRO_TEXT(""); // Unused on POSIX
 #endif
-		}();
-		return binarypath;
+	}();
+	const epro::path_string& Utils::GetCorePath() {
+		return core_path;
 	}
 
 	bool Utils::UnzipArchive(epro::path_stringview input, unzip_callback callback, unzip_payload* payload, epro::path_stringview dest) {
@@ -505,15 +510,15 @@ namespace ygo {
 #ifdef _WIN32
 		if(type == SHARE_FILE)
 			return;
-		ShellExecute(nullptr, EPRO_TEXT("open"), (type == OPEN_FILE) ? fmt::format(EPRO_TEXT("{}/{}"), working_dir, arg).data() : arg.data(), nullptr, nullptr, SW_SHOWNORMAL);
+		ShellExecute(nullptr, EPRO_TEXT("open"), (type == OPEN_FILE) ? fmt::format(EPRO_TEXT("{}/{}"), GetWorkingDirectory(), arg).data() : arg.data(), nullptr, nullptr, SW_SHOWNORMAL);
 #elif defined(__ANDROID__)
 		switch(type) {
 		case OPEN_FILE:
-			return porting::openFile(fmt::format("{}/{}", working_dir, arg));
+			return porting::openFile(fmt::format("{}/{}", GetWorkingDirectory(), arg));
 		case OPEN_URL:
 			return porting::openUrl(arg);
 		case SHARE_FILE:
-			return porting::shareFile(fmt::format("{}/{}", working_dir, arg));
+			return porting::shareFile(fmt::format("{}/{}", GetWorkingDirectory(), arg));
 		}
 #elif defined(EDOPRO_MACOS) || defined(__linux__)
 		if(type == SHARE_FILE)
@@ -536,11 +541,11 @@ namespace ygo {
 
 	void Utils::Reboot() {
 #if !defined(__ANDROID__)
-		const auto& path = ygo::Utils::GetExePath();
+		const auto& path = GetExePath();
 #ifdef _WIN32
 		STARTUPINFO si{ sizeof(si) };
 		PROCESS_INFORMATION pi{};
-		auto command = fmt::format(EPRO_TEXT("{} -C {} -l"), ygo::Utils::GetFileName(path, true), ygo::Utils::working_dir);
+		auto command = fmt::format(EPRO_TEXT("{} -C \"{}\" -l"), GetFileName(path, true), GetWorkingDirectory());
 		if(!CreateProcess(path.data(), &command[0], nullptr, nullptr, false, 0, nullptr, nullptr, &si, &pi))
 			return;
 		CloseHandle(pi.hProcess);
@@ -554,9 +559,9 @@ namespace ygo {
 		auto pid = vfork();
 		if(pid == 0) {
 #ifdef __linux__
-			execl(path.data(), path.data(), "-C", ygo::Utils::working_dir.data(), "-l", nullptr);
+			execl(path.data(), path.data(), "-C", GetWorkingDirectory().data(), "-l", nullptr);
 #else
-			execlp("open", "open", "-b", "io.github.edo9300.ygoprodll", "--args", "-C", ygo::Utils::working_dir.data(), "-l", nullptr);
+			execlp("open", "open", "-b", "io.github.edo9300.ygoprodll", "--args", "-C", GetWorkingDirectory().data(), "-l", nullptr);
 #endif
 			_exit(EXIT_FAILURE);
 		}
