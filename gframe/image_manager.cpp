@@ -58,28 +58,28 @@ namespace ygo {
 #define TEXTURE_LIM                 37
 #define TEXTURE_OT                  38
 #define TEXTURE_SETTING             39
-#define TEXTURE_PLAYER              40
+#define TEXTURE_MUTO                40
 #define TEXTURE_ATEM                41
 #define TEXTURE_KAIBA               42
 #define TEXTURE_JOEY                43
 #define TEXTURE_MARIK               44
 #define TEXTURE_BAKURA              45
-#define TEXTURE_JUDAI               46
-#define TEXTURE_MANJOME             47
-#define TEXTURE_KAISA               48
-#define TEXTURE_PHORNIX             49
-#define TEXTURE_JOHN                50
-#define TEXTURE_YUSEI               51
-#define TEXTURE_JACK                52
-#define TEXTURE_ARKI                53
-#define TEXTURE_YUMA                54
-#define TEXTURE_SHARK               55
-#define TEXTURE_KAITO               56
-#define TEXTURE_DONTHOUSAND         57
-#define TEXTURE_YUYA                58
-#define TEXTURE_DECLAN              59
-#define TEXTURE_PLAYMAKER           60
-#define TEXTURE_REVOLVER            61
+#define TEXTURE_AIGAMI              46
+#define TEXTURE_JUDAI               47
+#define TEXTURE_MANJOME             48
+#define TEXTURE_KAISA               49
+#define TEXTURE_PHORNIX             50
+#define TEXTURE_JOHN                51
+#define TEXTURE_YUBEL               52
+#define TEXTURE_YUSEI               53
+#define TEXTURE_JACK                54
+#define TEXTURE_ARKI                55
+#define TEXTURE_YUMA                56
+#define TEXTURE_SHARK               57
+#define TEXTURE_KAITO               58
+#define TEXTURE_DONTHOUSAND         59
+#define TEXTURE_YUYA                60
+#define TEXTURE_DECLAN              61
 ////////kdiy/////
 
 #define X(x) (textures_path + EPRO_TEXT(x)).data()
@@ -134,7 +134,7 @@ bool ImageManager::Initial() {
 	scharacter[5] = driver->getTexture(0);
 #ifdef VIP
 	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/muto/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_PLAYER);
+	character[playno] = GetRandomImage(TEXTURE_MUTO);
 	if (!character[playno])
 		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/muto/icon.png"));
 	CHECK_RETURN(character[playno], "character/muto/icon");	
@@ -169,6 +169,12 @@ bool ImageManager::Initial() {
 		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/bakura/icon.png"));
 	CHECK_RETURN(character[playno], "character/bakura/icon");
 	playno++;
+	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/aigami/mini_icon.png"));
+	character[playno] = GetRandomImage(TEXTURE_AIGAMI);
+	if (!character[playno])
+		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/aigami/icon.png"));
+	CHECK_RETURN(character[playno], "character/aigami/icon");	
+	playno++;
 	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/judai/mini_icon.png"));
 	character[playno] = GetRandomImage(TEXTURE_JUDAI);
 	if (!character[playno]) 
@@ -198,6 +204,12 @@ bool ImageManager::Initial() {
 	if (!character[playno]) 
 		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/john/icon.png"));
 	CHECK_RETURN(character[playno], "character/john/icon");
+	playno++;	
+	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yubel/mini_icon.png"));
+	character[playno] = GetRandomImage(TEXTURE_YUBEL);
+	if (!character[playno]) 
+		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yubel/icon.png"));
+	CHECK_RETURN(character[playno], "character/yubel/icon");
 	playno++;
 	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yusei/mini_icon.png"));
 	character[playno] = GetRandomImage(TEXTURE_YUSEI);
@@ -251,19 +263,7 @@ bool ImageManager::Initial() {
 	character[playno] = GetRandomImage(TEXTURE_DECLAN);
 	if (!character[playno]) 
 		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/declan/icon.png"));
-	CHECK_RETURN(character[playno], "character/declan/icon");	
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/playmaker/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_PLAYMAKER);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/playmaker/icon.png"));
-	CHECK_RETURN(character[playno], "character/playmaker/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/revolver/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_REVOLVER);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/revolver/icon.png"));
-	CHECK_RETURN(character[playno], "character/revolver/icon");
+	CHECK_RETURN(character[playno], "character/declan/icon");
 #else
     for (uint8_t i = 1; i < 23; i++) {
 		icon[i] = driver->getTexture(0);
@@ -502,17 +502,19 @@ void ImageManager::RefreshRandomImageList() {
 	RefreshImageDir(EPRO_TEXT("ot"), TEXTURE_OT);
 	RefreshImageDir(EPRO_TEXT("settings"), TEXTURE_SETTING);
 
-    RefreshImageDir(EPRO_TEXT("character/muto/icon"), TEXTURE_PLAYER);
+    RefreshImageDir(EPRO_TEXT("character/muto/icon"), TEXTURE_MUTO);
 	RefreshImageDir(EPRO_TEXT("character/atem/icon"), TEXTURE_ATEM);
 	RefreshImageDir(EPRO_TEXT("character/kaiba/icon"), TEXTURE_KAIBA);
 	RefreshImageDir(EPRO_TEXT("character/joey/icon"), TEXTURE_JOEY);
 	RefreshImageDir(EPRO_TEXT("character/marik/icon"), TEXTURE_MARIK);
 	RefreshImageDir(EPRO_TEXT("character/bakura/icon"), TEXTURE_BAKURA);
+	RefreshImageDir(EPRO_TEXT("character/aigami/icon"), TEXTURE_AIGAMI);
 	RefreshImageDir(EPRO_TEXT("character/judai/icon"), TEXTURE_JUDAI);
 	RefreshImageDir(EPRO_TEXT("character/manjome/icon"), TEXTURE_MANJOME);
 	RefreshImageDir(EPRO_TEXT("character/kaisa/icon"), TEXTURE_KAISA);
 	RefreshImageDir(EPRO_TEXT("character/phoenix/icon"), TEXTURE_PHORNIX);
 	RefreshImageDir(EPRO_TEXT("character/john/icon"), TEXTURE_JOHN);
+	RefreshImageDir(EPRO_TEXT("character/yubel/icon"), TEXTURE_YUBEL);
 	RefreshImageDir(EPRO_TEXT("character/yusei/icon"), TEXTURE_YUSEI);
 	RefreshImageDir(EPRO_TEXT("character/jack/icon"), TEXTURE_JACK);
 	RefreshImageDir(EPRO_TEXT("character/arki/icon"), TEXTURE_ARKI);
@@ -522,10 +524,6 @@ void ImageManager::RefreshRandomImageList() {
 	RefreshImageDir(EPRO_TEXT("character/Donthousand/icon"), TEXTURE_DONTHOUSAND);
 	RefreshImageDir(EPRO_TEXT("character/yuya/icon"), TEXTURE_YUYA);
 	RefreshImageDir(EPRO_TEXT("character/declan/icon"), TEXTURE_DECLAN);
-	RefreshImageDir(EPRO_TEXT("character/shark/icon"), TEXTURE_SHARK);
-	RefreshImageDir(EPRO_TEXT("character/yuma/icon"), TEXTURE_YUMA);
-	RefreshImageDir(EPRO_TEXT("character/playmaker/icon"), TEXTURE_PLAYMAKER);
-	RefreshImageDir(EPRO_TEXT("character/revolver/icon"), TEXTURE_REVOLVER);
 
 	for (int i = 0; i < 39 + totcharacter; ++i) {
 		saved_image_id[i] = -1;
@@ -590,7 +588,7 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 	uint8_t playno = 1;
 #ifdef VIP
 	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/muto/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_PLAYER);
+	character[playno] = GetRandomImage(TEXTURE_MUTO);
 	if (!character[playno])
 		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/muto/icon.png"));
 	CHECK_RETURN(character[playno], "character/muto/icon");	
@@ -625,6 +623,12 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/bakura/icon.png"));
 	CHECK_RETURN(character[playno], "character/bakura/icon");
 	playno++;
+	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/aigami/mini_icon.png"));
+	character[playno] = GetRandomImage(TEXTURE_AIGAMI);
+	if (!character[playno]) 
+		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/aigami/icon.png"));
+	CHECK_RETURN(character[playno], "character/aigami/icon");
+	playno++;
 	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/judai/mini_icon.png"));
 	character[playno] = GetRandomImage(TEXTURE_JUDAI);
 	if (!character[playno]) 
@@ -654,6 +658,12 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 	if (!character[playno]) 
 		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/john/icon.png"));
 	CHECK_RETURN(character[playno], "character/john/icon");
+	playno++;
+	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yubel/mini_icon.png"));
+	character[playno] = GetRandomImage(TEXTURE_YUBEL);
+	if (!character[playno]) 
+		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yubel/icon.png"));
+	CHECK_RETURN(character[playno], "character/yubel/icon");
 	playno++;
 	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yusei/mini_icon.png"));
 	character[playno] = GetRandomImage(TEXTURE_YUSEI);
@@ -707,19 +717,7 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 	character[playno] = GetRandomImage(TEXTURE_DECLAN);
 	if (!character[playno]) 
 		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/declan/icon.png"));
-	CHECK_RETURN(character[playno], "character/declan/icon");	
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/playmaker/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_PLAYMAKER);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/playmaker/icon.png"));
-	CHECK_RETURN(character[playno], "character/playmaker/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/revolver/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_REVOLVER);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/revolver/icon.png"));
-	CHECK_RETURN(character[playno], "character/revolver/icon");
+	CHECK_RETURN(character[playno], "character/declan/icon");
 #else
     for (uint8_t i = 1; i < 23; i++) {
 		icon[i] = driver->getTexture(0);

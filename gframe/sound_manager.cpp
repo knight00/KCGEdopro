@@ -66,11 +66,13 @@ void SoundManager::RefreshBGMList() {
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/joey"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/marik"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/bakura"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/aigami"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/judai"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/manjome"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/kaisa"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/phoenix"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/john"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yubel"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yusei"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/jack"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/arki"));
@@ -80,8 +82,6 @@ void SoundManager::RefreshBGMList() {
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/donthousand"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yuya"));	
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/declan"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/playmaker"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/revolver"));
 	////////kdiy////
 	Utils::MakeDirectory(EPRO_TEXT("./sound/BGM/"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/BGM/duel"));
@@ -194,11 +194,13 @@ void SoundManager::RefreshChantsList() {
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/joey/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/marik/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/bakura/{}"), chantType.second));
+		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/aigami/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/judai/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/manjome/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/kaisa/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/phoenix/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/john/{}"), chantType.second));
+		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/yubel/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/yusei/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/jack/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/arki/{}"), chantType.second));
@@ -208,7 +210,6 @@ void SoundManager::RefreshChantsList() {
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/donthousand/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/yuya/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/declan/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/playmaker/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/revolver/{}"), chantType.second));
 
 		for (auto path : searchPath)
@@ -230,7 +231,7 @@ void SoundManager::RefreshChantsList() {
 				for (auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
 					auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
 					std::string files = Utils::ToUTF8IfNeeded(file);
-					if((i == 10 && (files.find("fusion") != std::string::npos || files.find("synchro.mp3") != std::string::npos || files.find("xyz.mp3") != std::string::npos || files.find("link") != std::string::npos || files.find("ritual") != std::string::npos || files.find("pendulum") != std::string::npos)) || i != 10)
+					if((i == 10 && (files.find("fusion") != std::string::npos || files.find("synchro") != std::string::npos || files.find("xyz") != std::string::npos || files.find("link") != std::string::npos || files.find("ritual") != std::string::npos || files.find("pendulum") != std::string::npos)) || i != 10)
 					    ChantSPList[i][x].push_back(conv);
 				}
 			}		
@@ -238,7 +239,7 @@ void SoundManager::RefreshChantsList() {
 		if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM) {
 		//for (auto& file : Utils::FindFiles(searchPath, mixer->GetSupportedSoundExtensions())) {
 			// auto scode = Utils::GetFileName(file);
-		for(int x=0; x< totcharacter; x++) {	
+		for(int x=0; x< totcharacter; x++) {
 			for (auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
 				auto scode = Utils::GetFileName(file);
 				try {
@@ -246,8 +247,12 @@ void SoundManager::RefreshChantsList() {
 					auto key = std::make_pair(chantType.first, code);
 					// if (code && !ChantsList.count(key))	
 					// 	ChantsList[key] = fmt::format("{}/{}", working_dir, Utils::ToUTF8IfNeeded(fmt::format(EPRO_TEXT("{}/{}"), searchPath, file)));
-					if (code && !ChantsList[x].count(key))
-						ChantsList[x][key] = fmt::format("{}/{}", working_dir, Utils::ToUTF8IfNeeded(fmt::format(EPRO_TEXT("{}/{}"), searchPath[x], file)));
+					if (code && !ChantsList[x].count(key)) {
+						auto extension = Utils::GetFileExtension(file);
+						auto chop = 4;
+						if (extension == EPRO_TEXT("flac")) chop = 5;
+						ChantsList[x][key] = fmt::format("{}/{}", working_dir, Utils::ToUTF8IfNeeded(fmt::format(EPRO_TEXT("{}/{}"), searchPath[x], file.substr(0, file.size() - chop))));
+					}
 				}
 				catch (...) {
 					continue;
@@ -297,22 +302,29 @@ void SoundManager::PlayBGM(BGM scene, bool loop) {
 void SoundManager::PlayCustomMusic(std::string num) {
 #ifdef BACKEND
 	if(soundsEnabled) {
-		const std::string BGMName = fmt::format("{}/./sound/custom/{}.mp3", working_dir, num);
-		if(Utils::FileExists(Utils::ToPathString(BGMName)))
-		    mixer->PlaySound(BGMName);
+		const auto extensions = mixer->GetSupportedSoundExtensions();
+		for(const auto& ext : extensions) {
+			const auto filename = fmt::format("./sound/custom/{}.{}", num, Utils::ToUTF8IfNeeded(ext));
+			if (mixer->PlaySound(filename))
+				break;
+		}
 	}
 #endif
 }
 void SoundManager::PlayCustomBGM(std::string num) {
 #ifdef BACKEND
 	if (musicEnabled) {
-		const std::string BGMName = fmt::format("{}/./sound/BGM/custom/{}.mp3", working_dir, num);
-		if (Utils::FileExists(Utils::ToPathString(BGMName))) {
-			if(mixer->MusicPlaying())
-			    mixer->StopMusic();
-			bgm_now = BGMName;
-			mixer->PlayMusic(BGMName, gGameConfig->loopMusic);
-		}
+		const auto extensions = mixer->GetSupportedSoundExtensions();
+		for (const auto& ext : extensions) {
+			const auto filename = fmt::format("./sound/BGM/custom/{}.{}", num, Utils::ToUTF8IfNeeded(ext));
+		 	if (Utils::FileExists(Utils::ToPathString(filename))) {
+		 		if(mixer->MusicPlaying())
+		 	       mixer->StopMusic();
+		 		bgm_now = filename;
+		 		if (mixer->PlayMusic(filename, gGameConfig->loopMusic))
+					break;
+		 	}
+		 }
 	}
 #endif
 }
@@ -402,10 +414,28 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 					return true;
 				}
 				return false;
-			} else
-			    mixer->PlaySound(chant_it->second);
+			} else {
+				std::vector<std::wstring> list;
+				const auto extensions = mixer->GetSupportedSoundExtensions();
+				for (const auto& ext : extensions) {
+					const auto filename = fmt::format(EPRO_TEXT("{}.{}"), Utils::ToPathString(chant_it->second), ext);
+					if (Utils::FileExists(filename))
+						list.push_back(filename);
+					for (int i = 0; i < 5; i++) {
+						const auto filename2 = fmt::format(EPRO_TEXT("{}_{}.{}"), Utils::ToPathString(chant_it->second), i, ext);
+						if (Utils::FileExists(filename2))
+							list.push_back(filename2);
+					}
+				}
+				int count = list.size();
+				if (count > 0) {
+					int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+					mixer->PlaySound(Utils::ToUTF8IfNeeded(list[soundno]));
+					return true;
+				}
+			}
 		}
-		mixer->PlaySound(chant_it2->second);
+		//mixer->PlaySound(chant_it2->second);
 		return true;
 	}
 	return false;
