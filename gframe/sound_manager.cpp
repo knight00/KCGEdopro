@@ -60,6 +60,7 @@ bool SoundManager::IsUsable() {
 void SoundManager::RefreshBGMList() {
 #ifdef BACKEND
     ////////kdiy////
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/muto"));
     Utils::MakeDirectory(EPRO_TEXT("./sound/character/atem"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/kaiba"));
@@ -80,7 +81,7 @@ void SoundManager::RefreshBGMList() {
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/shark"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/kaito"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/donthousand"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yuya"));	
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yuya"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/declan"));
 	////////kdiy////
 	Utils::MakeDirectory(EPRO_TEXT("./sound/BGM/"));
@@ -159,15 +160,15 @@ void SoundManager::RefreshChantsList() {
 		{CHANT::SET,       EPRO_TEXT("set"_sv)},
 		{CHANT::EQUIP,     EPRO_TEXT("equip"_sv)},
 		{CHANT::DESTROY,   EPRO_TEXT("destroyed"_sv)},
-		{CHANT::BANISH,    EPRO_TEXT("banished"_sv)},						
-		{CHANT::DRAW,      EPRO_TEXT("draw"_sv)},	
-		{CHANT::DAMAGE,    EPRO_TEXT("damage"_sv)},	
-		{CHANT::RECOVER,   EPRO_TEXT("gainlp"_sv)},	
+		{CHANT::BANISH,    EPRO_TEXT("banished"_sv)},
+		{CHANT::DRAW,      EPRO_TEXT("draw"_sv)},
+		{CHANT::DAMAGE,    EPRO_TEXT("damage"_sv)},
+		{CHANT::RECOVER,   EPRO_TEXT("gainlp"_sv)},
 		{CHANT::NEXTTURN,  EPRO_TEXT("nextturn"_sv)},
 		{CHANT::STARTUP,  EPRO_TEXT("startup"_sv)},
 		{CHANT::BORED,  EPRO_TEXT("bored"_sv)},
 		{CHANT::PENDULUM,  EPRO_TEXT("pendulum"_sv)},
-		/////kdiy///////				
+		/////kdiy///////
 		{CHANT::SUMMON,    EPRO_TEXT("summon"_sv)},
 		{CHANT::ATTACK,    EPRO_TEXT("attack"_sv)},
 		{CHANT::ACTIVATE,  EPRO_TEXT("activate"_sv)}
@@ -210,12 +211,11 @@ void SoundManager::RefreshChantsList() {
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/donthousand/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/yuya/{}"), chantType.second));
 		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/declan/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/revolver/{}"), chantType.second));
 
 		for (auto path : searchPath)
 			Utils::MakeDirectory(path);
 		if(chantType.first != CHANT::ATTACK && chantType.first != CHANT::ACTIVATE && chantType.first != CHANT::PENDULUM) {
-			if(chantType.first == CHANT::SET) i = 0;		
+			if(chantType.first == CHANT::SET) i = 0;
 			if(chantType.first == CHANT::EQUIP) i = 1;
 			if(chantType.first == CHANT::DESTROY) i = 2;
 			if(chantType.first == CHANT::BANISH) i = 3;
@@ -415,22 +415,22 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 				}
 				return false;
 			} else {
-				std::vector<std::wstring> list;
+				std::vector<std::string> list;
 				const auto extensions = mixer->GetSupportedSoundExtensions();
 				for (const auto& ext : extensions) {
-					const auto filename = fmt::format(EPRO_TEXT("{}.{}"), Utils::ToPathString(chant_it->second), ext);
-					if (Utils::FileExists(filename))
+					const auto filename = fmt::format("{}.{}", chant_it->second, Utils::ToUTF8IfNeeded(ext));
+					if (Utils::FileExists(Utils::ToPathString(filename)))
 						list.push_back(filename);
 					for (int i = 0; i < 5; i++) {
-						const auto filename2 = fmt::format(EPRO_TEXT("{}_{}.{}"), Utils::ToPathString(chant_it->second), i, ext);
-						if (Utils::FileExists(filename2))
+						const auto filename2 = fmt::format("{}_{}.{}", chant_it->second, i, Utils::ToUTF8IfNeeded(ext));
+						if (Utils::FileExists(Utils::ToPathString(filename2)))
 							list.push_back(filename2);
 					}
 				}
 				int count = list.size();
 				if (count > 0) {
 					int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-					mixer->PlaySound(Utils::ToUTF8IfNeeded(list[soundno]));
+					mixer->PlaySound(list[soundno]);
 					return true;
 				}
 			}

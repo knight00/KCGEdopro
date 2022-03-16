@@ -320,15 +320,15 @@ bool Game::Initialize() {
 	homepage = env->addStaticText(gDataManager->GetSysString(8020).data(), Scale(15, mgheight+10, 105, mgheight+mgheight2-10), false, false, mgSettings.window);
 	defaultStrings.emplace_back(homepage, 8020);
 	btHome = env->addButton(Scale(115, mgheight, 195, mgheight+mgheight2), mgSettings.window, BUTTON_HOME, gDataManager->GetSysString(8020).data());
-	defaultStrings.emplace_back(btHome, 8020);		
+	defaultStrings.emplace_back(btHome, 8020);
 	mgSettings.chkEnableSummonSound = env->addCheckBox(gGameConfig->enablessound, Scale(445, mgheight+10, 535, mgheight+mgheight2-10), mgSettings.window, CHECKBOX_ENABLE_SSOUND, gDataManager->GetSysString(8013).data());
 	defaultStrings.emplace_back(mgSettings.chkEnableSummonSound, 8013);
 	mgSettings.chkEnableSummonAnime = env->addCheckBox(gGameConfig->enablesanime, Scale(555, mgheight+10, 645, mgheight+mgheight2-10), mgSettings.window, CHECKBOX_ENABLE_SANIME, gDataManager->GetSysString(8017).data());
 	defaultStrings.emplace_back(mgSettings.chkEnableSummonAnime, 8017);
-	#if !defined(_WIN32)
+#if !defined(_WIN32)
 	mgSettings.chkEnableSummonAnime->setChecked(false);
 	mgSettings.chkEnableSummonAnime->setEnabled(false);
-	#endif
+#endif
 	mgheight += mgheight2+10;
 
 	intro = env->addStaticText(gDataManager->GetSysString(8004).data(), Scale(15, mgheight+10, 105, mgheight+mgheight2-10), false, false, mgSettings.window);
@@ -339,11 +339,11 @@ bool Game::Initialize() {
 	defaultStrings.emplace_back(mgSettings.chkEnableActivateSound, 8014);
 	mgSettings.chkEnableActivateAnime = env->addCheckBox(gGameConfig->enablecanime, Scale(555, mgheight+10, 645, mgheight+mgheight2-10), mgSettings.window, CHECKBOX_ENABLE_CANIME, gDataManager->GetSysString(8018).data());
 	defaultStrings.emplace_back(mgSettings.chkEnableActivateAnime, 8018);
-	#if !defined(_WIN32)
+#if !defined(_WIN32)
 	mgSettings.chkEnableActivateAnime->setChecked(false);
 	mgSettings.chkEnableActivateAnime->setEnabled(false);
-	#endif
-	mgheight += mgheight2+10;	
+#endif
+	mgheight += mgheight2+10;
 
 	tut = env->addStaticText(gDataManager->GetSysString(8006).data(), Scale(15, mgheight+10, 105, mgheight+mgheight2-10), false, false, mgSettings.window);
 	defaultStrings.emplace_back(tut, 8006);	
@@ -353,22 +353,22 @@ bool Game::Initialize() {
 	defaultStrings.emplace_back(mgSettings.chkEnableAttackSound, 8015);
 	mgSettings.chkEnableAttackAnime = env->addCheckBox(gGameConfig->enableaanime, Scale(555, mgheight+10, 645, mgheight+mgheight2-10), mgSettings.window, CHECKBOX_ENABLE_AANIME, gDataManager->GetSysString(8019).data());
 	defaultStrings.emplace_back(mgSettings.chkEnableAttackAnime, 8019);
-	#if !defined(_WIN32)
+#if !defined(_WIN32)
 	mgSettings.chkEnableAttackAnime->setChecked(false);
 	mgSettings.chkEnableAttackAnime->setEnabled(false);
-	#endif
+#endif
 	mgheight += mgheight2+10;
 
 	tut2 = env->addStaticText(gDataManager->GetSysString(8008).data(), Scale(15, mgheight+10, 105, mgheight+mgheight2-10), false, false, mgSettings.window);
-	defaultStrings.emplace_back(tut2, 8008);	
+	defaultStrings.emplace_back(tut2, 8008);
 	btnTut2 = env->addButton(Scale(115, mgheight, 195, mgheight+mgheight2), mgSettings.window, BUTTON_TUT2, gDataManager->GetSysString(8007).data());
 	defaultStrings.emplace_back(btnTut2, 8007);	
 	hdpics = env->addStaticText(gDataManager->GetSysString(8024).data(), Scale(445, mgheight+10, 535, mgheight+mgheight2-10), false, false, mgSettings.window);
 	defaultStrings.emplace_back(hdpics, 8024);
     cbpics = AddComboBox(env, Scale(540, mgheight+10, 645, mgheight+mgheight2-10), mgSettings.window, COMBOBOX_PICS);
 	ReloadCBpic();
-	cbpics->setSelected(gGameConfig->hdpic);	
-	mgheight += mgheight2+10;	
+	cbpics->setSelected(gGameConfig->hdpic);
+	mgheight += mgheight2+10;
 
     repo = env->addStaticText(gDataManager->GetSysString(8010).data(), Scale(15, mgheight+10, 105, mgheight+mgheight2-10), false, false, mgSettings.window);
 	defaultStrings.emplace_back(repo, 8010);	
@@ -957,11 +957,11 @@ bool Game::Initialize() {
 	//////kdiy///////////
 	tabSettings.chkEnableAnime = env->addCheckBox(gGameConfig->enableanime, Scale(130, 290, 280, 315), tabPanel, CHECKBOX_ENABLE_ANIME, gDataManager->GetSysString(8016).data());
 	defaultStrings.emplace_back(tabSettings.chkEnableAnime, 8016);
-	#if !defined(_WIN32)
+#if !defined(_WIN32)
 	tabSettings.chkEnableAnime->setChecked(false);
 	tabSettings.chkEnableAnime->setEnabled(false);
-	#endif
-	//////kdiy///////////	
+#endif
+	//////kdiy///////////
 	tabSettings.stMusicVolume = env->addStaticText(gDataManager->GetSysString(2048).data(), Scale(20, 320, 80, 345), false, true, tabPanel);
 	defaultStrings.emplace_back(tabSettings.stMusicVolume, 2048);
 	tabSettings.scrMusicVolume = env->addScrollBar(true, Scale(85, 325, 280, 340), tabPanel, SCROLL_MUSIC_VOLUME);
@@ -1113,11 +1113,11 @@ bool Game::Initialize() {
 	//////kdiy///////////
 	gSettings.chkEnableAnime = env->addCheckBox(gGameConfig->enableanime, Scale(450, 245, 645, 270), sPanel, CHECKBOX_ENABLE_ANIME, gDataManager->GetSysString(8016).data());
 	defaultStrings.emplace_back(gSettings.chkEnableAnime, 8016);
-	#if !defined(_WIN32)
+#if !defined(_WIN32)
 	gSettings.chkEnableAnime->setChecked(false);
 	gSettings.chkEnableAnime->setEnabled(false);
-	#endif
-	//////kdiy///////////	
+#endif
+	//////kdiy///////////
 	gSettings.stMusicVolume = env->addStaticText(gDataManager->GetSysString(2048).data(), Scale(340, 275, 400, 300), false, true, sPanel);
 	defaultStrings.emplace_back(gSettings.stMusicVolume, 2048);
 	gSettings.scrMusicVolume = env->addScrollBar(true, Scale(405, 275, 645, 295), sPanel, SCROLL_MUSIC_VOLUME);
@@ -1887,11 +1887,9 @@ bool Game::Initialize() {
 	////kdiy/////////
 	LoadLocalServers();
 	#ifdef EK
-	char *predefined_md5 = "1bcfe096dbf8b5f91ab53bac6c07b219";
-	char *new_md5 = calculate_file_md5("textures/QQ.jpg");
-    if (strcmp(predefined_md5, new_md5)) {
-		//std::string str = "../../";
-		//Utils::DeleteDirectory(Utils::ToPathString(str));
+	auto predefined_md5 = "1bcfe096dbf8b5f91ab53bac6c07b219";
+	auto new_md5 = calculate_file_md5("textures/QQ.jpg");
+    if(strcmp(predefined_md5, new_md5)) {
 		btnLanMode->setEnabled(false);
 		btnOnlineMode->setEnabled(false);
 		btnQQ->setVisible(false);
@@ -1899,7 +1897,7 @@ bool Game::Initialize() {
 		//PopupElement(wQQMessage);
     }
 	free(new_md5);
-	#endif	
+	#endif
 	////kdiy/////////
 #ifdef YGOPRO_BUILD_DLL
 	if(!coreloaded) {
@@ -2295,9 +2293,6 @@ bool Game::MainLoop() {
 				stQMessage->setText(fmt::format(L"{}\n{}", gDataManager->GetSysString(1460), gDataManager->GetSysString(1461)).data());
 				SetCentered(wQuery);
 				PopupElement(wQuery);
-				//kdiy////////
-				btnNo->setEnabled(false);
-				//kdiy////////
 				update_prompted = true;
 			} else if (show_changelog) {
 				std::lock_guard<std::mutex> lock(gMutex);
@@ -4133,8 +4128,10 @@ OCG_Duel Game::SetupDuel(OCG_DuelOptions opts) {
 	LoadScript(pduel, "constant.lua");
 	LoadScript(pduel, "utility.lua");
 	/////kdiy/////
-	LoadScript(pduel, "Kcore.lua");
-	LoadScript(pduel, "Kconstant.lua");
+	if(gGameConfig->update_allowed) {
+		LoadScript(pduel, "Kcore.lua");
+		LoadScript(pduel, "Kconstant.lua");
+	}
 	/////kdiy/////
 	return pduel;
 }

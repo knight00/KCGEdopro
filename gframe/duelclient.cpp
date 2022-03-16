@@ -5181,7 +5181,7 @@ void DuelClient::ReplayPrompt(bool local_stream) {
 		else last_replay.SaveReplay(EPRO_TEXT("_LastReplay"));
 	}
 }
-//////kdiy////////		
+//////kdiy////////
 bool PlayAnime(uint32_t code, uint32_t code2, uint8_t cat) {
 	if(!gGameConfig->enableanime) return false;
 	if(cat == 1 && !gGameConfig->enablecanime) return false;
@@ -5254,12 +5254,12 @@ bool PlayAnimeC(std::wstring text, bool custom) {
 	std::wstring s2 = L"plugin\\MPC-HCPortable\\MPC-HCPortable.exe";
 	GetFileAttributes(s2.c_str());
 	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s2.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
-		return false;	
+		return false;
 	std::wstring s1;
 	if(custom) s1 = L"movies\\custom\\";
 	else s1 = L"movies\\";
 	s1 += text;
-	s1 += L".mp4";				
+	s1 += L".mp4";
 	GetFileAttributes(s1.c_str());
 	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s1.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
 		return false;

@@ -116,8 +116,36 @@ ImageManager::~ImageManager() {
 }
 bool ImageManager::Initial() {
 	/////kdiy/////
+	Utils::MakeDirectory(EPRO_TEXT("./textures/character"));
+	std::vector<epro::path_string> searchPath;
+	searchPath.push_back(EPRO_TEXT("./textures/character/muto"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/atem"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/kaiba"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/joey"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/marik"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/bakura"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/aigami"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/judai"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/manjome"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/kaisa"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/phoenix"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/john"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/yubel"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/yusei"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/jack"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/arki"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/yuma"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/shark"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/kaito"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/donthousand"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/yuya"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/declan"));
+	for (auto path : searchPath) {
+		Utils::MakeDirectory(path);
+		Utils::MakeDirectory(fmt::format(EPRO_TEXT("{}/icon"), path));
+	}
 	RefreshRandomImageList();
-	/////kdiy/////	
+	/////kdiy/////
 	timestamp_id = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	textures_path = BASE_PATH;
 	/////kdiy//////
@@ -125,7 +153,7 @@ bool ImageManager::Initial() {
 	uint8_t playno = 1;
 	icon[0] = driver->getTexture(EPRO_TEXT("./textures/character/player/mini_icon.png"));
 	character[0] = driver->getTexture(EPRO_TEXT("./textures/character/player/icon.png"));
-	CHECK_RETURN(character[0], "character/player/icon");	
+	CHECK_RETURN(character[0], "character/player/icon");
 	scharacter[0] = driver->getTexture(0);
 	scharacter[1] = driver->getTexture(0);
 	scharacter[2] = driver->getTexture(0);

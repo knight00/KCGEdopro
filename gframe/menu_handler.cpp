@@ -628,7 +628,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			case BUTTON_CHARACTER_SELECT: {
 				#ifndef VIP
 				    break;
-				#endif	
+				#endif
 				if(gSoundManager->character[mainGame->choose_player] == 0) gSoundManager->character[mainGame->choose_player] = gSoundManager->totcharacter - 1;
 				else gSoundManager->character[mainGame->choose_player] --;
 				int player = gSoundManager->character[mainGame->choose_player];
@@ -658,7 +658,11 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					Utils::FileDelete(EPRO_TEXT("./config/configs.json"));
 					mainGame->HideElement(mainGame->pwupdateWindow);
 				}
-				#endif		
+				#endif
+				#ifdef VIP
+				    mainGame->btnNo->setVisible(false);
+                    mainGame->btnNo->setEnabled(false);
+				#endif
 				break;
 			}
 			/////kdiy/////
@@ -1032,7 +1036,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame);
 					mainGame->PopupElement(mainGame->updateWindow);
 					#endif
-					mainGame->btnNo->setVisible(false);
+					mainGame->btnNo->setEnabled(true);
 					///kdiy//////////
 				} else if (prev_operation == ACTION_SHOW_CHANGELOG) {
 					///kupdate//////////
@@ -1054,6 +1058,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					Utils::Reboot();
 #endif
 				case ACTION_UPDATE_PROMPT:
+				/////kdiy///////
+				    gGameConfig->update_allowed = false;
+				/////kdiy///////
 				case ACTION_SHOW_CHANGELOG:
 					mainGame->wQuery->setRelativePosition(mainGame->ResizeWin(490, 200, 840, 340)); // from Game::OnResize
 				default:
@@ -1420,7 +1427,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 						Utils::FileDelete(EPRO_TEXT("./config/configs.json"));
 						mainGame->HideElement(mainGame->pwupdateWindow);
 					}
-					#endif	
+					#endif
 					break;
 				}
 			}

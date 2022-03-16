@@ -76,6 +76,7 @@ struct GameConfig
 	bool enablecanime{ false };
 	bool enableaanime{ false };
 	bool enableextralimit{ false };
+	bool update_allowed{ true };
 	///kdiy//////////
 	int lastBot{ 0 };
 	std::wstring lastServer;

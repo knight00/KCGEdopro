@@ -2140,43 +2140,69 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				return true;
 			}
 			case CHECKBOX_ENABLE_ANIME: {
-				gGameConfig->enableanime = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
-				mainGame->tabSettings.chkEnableAnime->setChecked(gGameConfig->enableanime);
-				mainGame->gSettings.chkEnableAnime->setChecked(gGameConfig->enableanime);
-				#if !defined(_WIN32)
-				mainGame->mgSettings.chkEnableAnime->setChecked(false);
-				#endif
+				if(gGameConfig->update_allowed) {
+					gGameConfig->enableanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
+					mainGame->tabSettings.chkEnableAnime->setChecked(gGameConfig->enableanime);
+					mainGame->gSettings.chkEnableAnime->setChecked(gGameConfig->enableanime);
+#if !defined(_WIN32)
+					gGameConfig->enableanime = false;
+					mainGame->tabSettings.chkEnableAnime->setChecked(false);
+					mainGame->mgSettings.chkEnableAnime->setChecked(false);
+#endif
+				} else {
+					gGameConfig->enableanime = false;
+					mainGame->tabSettings.chkEnableAnime->setChecked(false);
+					mainGame->mgSettings.chkEnableAnime->setChecked(false);
+				}
 				return true;
 			}
 			case CHECKBOX_ENABLE_SANIME: {
-				gGameConfig->enablesanime = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
-				mainGame->mgSettings.chkEnableSummonAnime->setChecked(gGameConfig->enablesanime);
-				#if !defined(_WIN32)
-				mainGame->mgSettings.chkEnableSummonAnime->setChecked(false);
-				#endif
+				if(gGameConfig->update_allowed) {
+					gGameConfig->enablesanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
+					mainGame->mgSettings.chkEnableSummonAnime->setChecked(gGameConfig->enablesanime);
+#if !defined(_WIN32)
+					gGameConfig->enablesanime = false;
+					mainGame->mgSettings.chkEnableSummonAnime->setChecked(false);
+#endif
+				} else {
+					gGameConfig->enablesanime = false;
+					mainGame->mgSettings.chkEnableSummonAnime->setChecked(false);
+				}
 				return true;
-			}
+				}
 			case CHECKBOX_ENABLE_CANIME: {
-				gGameConfig->enablecanime = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
-				mainGame->mgSettings.chkEnableActivateAnime->setChecked(gGameConfig->enablecanime);
-				#if !defined(_WIN32)
-				mainGame->mgSettings.chkEnableActivateAnime->setChecked(false);
-				#endif
+				if(gGameConfig->update_allowed) {
+					gGameConfig->enablecanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
+					mainGame->mgSettings.chkEnableActivateAnime->setChecked(gGameConfig->enablecanime);
+#if !defined(_WIN32)
+					gGameConfig->enablecanime = false;
+					mainGame->mgSettings.chkEnableActivateAnime->setChecked(false);
+#endif
+				} else {
+					gGameConfig->enablecanime = false;
+					mainGame->mgSettings.chkEnableActivateAnime->setChecked(false);
+				}
 				return true;
-			}
+				}
 			case CHECKBOX_ENABLE_AANIME: {
-				gGameConfig->enableaanime = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
-				mainGame->mgSettings.chkEnableAttackAnime->setChecked(gGameConfig->enableaanime);
-				#if !defined(_WIN32)
-				mainGame->mgSettings.chkEnableAttackAnime->setChecked(false);
-				#endif
+				if(gGameConfig->update_allowed) {
+					gGameConfig->enableaanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
+					mainGame->mgSettings.chkEnableAttackAnime->setChecked(gGameConfig->enableaanime);
+#if !defined(_WIN32)
+					gGameConfig->enableaanime = false;
+					mainGame->mgSettings.chkEnableAttackAnime->setChecked(false);
+#endif
+				} else {
+					gGameConfig->enableaanime = false;
+					mainGame->mgSettings.chkEnableAttackAnime->setChecked(false);
+				}
 				return true;
-			}
+				}
 			case CHECKBOX_ENABLE_EXTRA_NOLIMIT: {
 				gGameConfig->enableextralimit = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
-				#ifndef VIP 
+#ifndef VIP
 				gGameConfig->enableextralimit = false;
-				#endif
+#endif
 				return true;
 			}
 			/////kdiy/////////
