@@ -1055,7 +1055,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				case ACTION_TRY_WAYLAND:
 					gGameConfig->useWayland = 0;
 					mainGame->SaveConfig();
-					Utils::Reboot();
+					break;
 #endif
 				case ACTION_UPDATE_PROMPT:
 				/////kdiy///////
