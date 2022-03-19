@@ -185,7 +185,7 @@ void ServerLobby::GetRoomsThread() {
 	//if(mainGame->chkShowActiveRooms->isChecked()) {
 		///////kdiy/////////
 		if(serverInfo.roomaddress == BufferIO::EncodeUTF8(L"default"))
-		curl_easy_setopt(curl_handle, CURLOPT_URL, fmt::format("http://{}:{}/api/getrooms", "123.57.231.225", 18001).data());
+		curl_easy_setopt(curl_handle, CURLOPT_URL, fmt::format("http://{}:{}/api/getrooms", "124.222.111.91", 18001).data());
 		else
 		///////kdiy/////////
 		curl_easy_setopt(curl_handle, CURLOPT_URL, fmt::format("{}://{}:{}/api/getrooms", ServerInfo::GetProtocolString(serverInfo.protocol), serverInfo.roomaddress, serverInfo.roomlistport).data());
@@ -287,7 +287,7 @@ void ServerLobby::JoinServer(bool host) {
 	try {
 		const ServerInfo& server = serversVector[selected];
 		///////kdiy/////////
-		if(server.address == BufferIO::EncodeUTF8(L"default")) serverinfo = DuelClient::ResolveServer(BufferIO::EncodeUTF8(L"123.57.231.225"), 18000);
+		if(server.address == BufferIO::EncodeUTF8(L"default")) serverinfo = DuelClient::ResolveServer(BufferIO::EncodeUTF8(L"124.222.111.91"), 18000);
 		else
 		///////kdiy/////////
 		serverinfo = DuelClient::ResolveServer(server.address, server.duelport);
