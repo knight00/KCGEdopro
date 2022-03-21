@@ -623,6 +623,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				int player = gSoundManager->character[mainGame->choose_player];
 				mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
 				mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
 				break;
 			}
 			case BUTTON_CHARACTER_SELECT: {
@@ -634,6 +635,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				int player = gSoundManager->character[mainGame->choose_player];
 				mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
 				mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
 				break;
 			}
 			case BUTTON_PW: {
@@ -807,6 +809,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			case BUTTON_LOAD_REPLAY: {
+                ////kdiy////////
+                mainGame->HideElement(mainGame->wCharacterReplay);
+                 ////kdiy////////
 				if(mainGame->lstReplayList->isDirectory(mainGame->lstReplayList->getSelected()))
 					mainGame->lstReplayList->enterDirectory(mainGame->lstReplayList->getSelected());
 				else
@@ -848,6 +853,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->HideElement(mainGame->wReplay);
 				mainGame->ShowElement(mainGame->wMainMenu);
 				////kdiy////////
+                mainGame->HideElement(mainGame->wCharacterReplay);
 				#ifdef EK
 				mainGame->ShowElement(mainGame->wQQ);
 				#endif
@@ -882,6 +888,18 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->PopupMessage(L"Failed to launch windbot");
 				break;
 			}
+            ////kdiy////////
+            case BUTTON_CHARACTER_REPLAY: {
+				mainGame->PopupElement(mainGame->wCharacterReplay);
+                for(int i = 0; i < 6; ++i)
+				    mainGame->icon2[i]->setImage(mainGame->imageManager.icon[gSoundManager->character[i]]);	
+                break;
+			}
+            case BUTTON_CHARACTEROK_REPLAY: {
+				mainGame->HideElement(mainGame->wCharacterReplay);
+				break;
+			}
+            ////kdiy////////
 			case BUTTON_EXPORT_DECK: {
 				auto sanitize = [](epro::path_string text) {
 					constexpr wchar_t chars[] = L"<>:\"/\\|?*";
@@ -974,7 +992,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				//mainGame->RefreshDeck(mainGame->cbDBDecks);
 				mainGame->RefreshDeck(mainGame->cbDBDecks2,mainGame->cbDBDecks, true);
 				auto folder = Utils::ToPathString(mainGame->cbDBDecks2->getItem(mainGame->cbDBDecks2->getSelected()));
-				//////kdiy/////
+                for(int i = 0; i < mainGame->cbDBDecks2->getItemCount() - 1; i++) {
+                    mainGame->cbDBDecks22->addItem(mainGame->cbDBDecks2->getItem(i));
+                }
+                //////kdiy/////
 				//if(open_file && gdeckManager->LoadDeck(open_file_name, nullptr, true)) {
 					//auto name = Utils::GetFileName(open_file_name);
 				if(open_file && gdeckManager->LoadDeck(folder + EPRO_TEXT("/") + open_file_name, nullptr, true)) {
@@ -983,6 +1004,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					mainGame->ebDeckname->setText(Utils::ToUnicodeIfNeeded(name).data());
 					//////kdiy/////
 					mainGame->cbDBDecks2->setSelected(-1);
+                    mainGame->cbDBDecks22->setSelected(-1);
 					//////kdiy/////
 					mainGame->cbDBDecks->setSelected(-1);
 					open_file = false;
@@ -990,7 +1012,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				} else if(mainGame->cbDBDecks->getSelected() >= 0 && mainGame->cbDBDecks2->getSelected() >= 0) {
 					// gdeckManager->LoadDeck(Utils::ToPathString(mainGame->cbDBDecks->getItem(mainGame->cbDBDecks->getSelected())), nullptr, true);
 					gdeckManager->LoadDeck(folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDBDecks->getItem(mainGame->cbDBDecks->getSelected())), nullptr, true);
-				//////kdiy/////	
+                    mainGame->cbDBDecks22->setSelected(mainGame->cbDBDecks2->getSelected());
+                    //////kdiy/////	
 					mainGame->ebDeckname->setText(L"");
 				}
 				mainGame->HideElement(mainGame->wMainMenu);
@@ -1216,6 +1239,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				}
 			}
 			case LISTBOX_REPLAY_LIST: {
+                ////kdiy////////
+                mainGame->HideElement(mainGame->wCharacterReplay);
+                 ////kdiy////////
 				if(mainGame->lstReplayList->isDirectory(mainGame->lstReplayList->getSelected()))
 					mainGame->lstReplayList->enterDirectory(mainGame->lstReplayList->getSelected());
 				else
@@ -1646,6 +1672,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 						mainGame->ebDeckname->setText(name.data());
 						//////kdiy/////
 						mainGame->cbDBDecks2->setSelected(-1);
+                        mainGame->cbDBDecks22->setSelected(-1);
 						//////kdiy/////
 						mainGame->cbDBDecks->setSelected(-1);
 						mainGame->HideElement(mainGame->wMainMenu);

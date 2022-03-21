@@ -512,6 +512,9 @@ public:
 	irr::gui::CGUIImageButton* btnCharacter;
 	irr::gui::CGUIImageButton* btnCharacterSelect;
 	irr::gui::CGUIImageButton* btnCharacterSelect2;
+    irr::gui::IGUIButton* btnCharacterSelect_replay;
+    irr::gui::IGUIWindow* wCharacterReplay;
+    irr::gui::IGUIButton* btnCharacterSelect_replayclose;
 	irr::gui::IGUIWindow* wAvatar[2];
 	irr::gui::CGUIImageButton* avatarbutton[2];
 	///////kdiy//////////	
@@ -536,7 +539,10 @@ public:
 	irr::gui::IGUIStaticText* stHostPrepOB;
 	irr::gui::IGUIStaticText* stDeckSelect;
 	//////////kdiy/////////
+    irr::gui::IGUIComboBox* cbDBDecks2;
+    irr::gui::IGUIComboBox* cbDBDecks22;
 	irr::gui::CGUIImageButton* icon[6];
+    irr::gui::CGUIImageButton* icon2[6];
 	irr::gui::IGUIComboBox* cbDeck2Select;
 	irr::gui::IGUIComboBox* cbDeck2Select2;	
 	irr::gui::IGUIStaticText* clearpics;
@@ -671,9 +677,6 @@ public:
 	irr::gui::IGUIStaticText* wDeckEdit;
 	irr::gui::IGUIComboBox* cbDBLFList;
 	irr::gui::IGUIComboBox* cbDBDecks;
-	//////////kdiy/////////
-	irr::gui::IGUIComboBox* cbDBDecks2;
-	//////////kdiy/////////
 	irr::gui::IGUIButton* btnHandTest;
 	irr::gui::IGUIButton* btnHandTestSettings;
 	irr::gui::IGUIStaticText* stHandTestSettings;

@@ -1368,6 +1368,8 @@ bool Game::Initialize() {
 	//cbDBDecks = AddComboBox(env, Scale(80, 35, 220, 60), wDeckEdit, COMBOBOX_DBDECKS);
 	cbDBDecks2 = AddComboBox(env, Scale(80, 35, 153, 60), wDeckEdit, COMBOBOX_DBDECKS2);
 	cbDBDecks2->setMaxSelectionRows(3);
+    cbDBDecks22 = AddComboBox(env, Scale(80, 65, 153, 90), wDeckEdit, -1);
+	cbDBDecks22->setMaxSelectionRows(2);
 	cbDBDecks = AddComboBox(env, Scale(154, 35, 324, 60), wDeckEdit, COMBOBOX_DBDECKS);
 	//////kdiy//////
 	cbDBDecks->setMaxSelectionRows(15);
@@ -1380,7 +1382,7 @@ bool Game::Initialize() {
 	defaultStrings.emplace_back(btnRenameDeck, 1362);
 	//////kdiy//////
 	//ebDeckname = env->addEditBox(L"", Scale(80, 65, 220, 90), true, wDeckEdit, EDITBOX_DECK_NAME);
-	ebDeckname = env->addEditBox(L"", Scale(80, 65, 324, 90), true, wDeckEdit, EDITBOX_DECK_NAME);
+	ebDeckname = env->addEditBox(L"", Scale(154, 65, 324, 90), true, wDeckEdit, EDITBOX_DECK_NAME);
 	//////kdiy//////
 	ebDeckname->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
 	//////kdiy//////
@@ -1606,6 +1608,33 @@ bool Game::Initialize() {
 #ifndef __ANDROID__
 	btnShareReplay->setVisible(false);
 #endif
+    ////kdiy////////
+    btnCharacterSelect_replay = env->addButton(Scale(360, 200, 560, 220), wReplay, BUTTON_CHARACTER_REPLAY, gDataManager->GetSysString(8011).data());
+	defaultStrings.emplace_back(btnCharacterSelect_replay, 8011);
+    wCharacterReplay = env->addWindow(Scale(220, 100, 360, 310), false, gDataManager->GetSysString(8011).data());
+	defaultStrings.emplace_back(wCharacterReplay, 8011);
+    wCharacterReplay->getCloseButton()->setVisible(false);
+	wCharacterReplay->setVisible(false);
+    btnCharacterSelect_replayclose = env->addButton(Scale(70, 45, 120, 70), wCharacterReplay, BUTTON_CHARACTEROK_REPLAY, gDataManager->GetSysString(1211).data());
+	defaultStrings.emplace_back(btnCharacterSelect_replayclose, 1211);
+    for(int i = 0; i < 6; ++i) {
+		if (i==0)
+		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON0);
+		else if (i==1)
+		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON1);
+		else if (i==2)
+		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON2);
+		else if (i==3)
+		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON3);
+		else if (i==4)
+		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON4);
+		else if (i==5)
+		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON5);
+		icon2[i]->setDrawBorder(false);
+		icon2[i]->setImageSize(Scale(0, 0, 20, 20).getSize());
+		icon2[i]->setImage(0);
+	}
+    ////kdiy////////
 	chkYrp = env->addCheckBox(false, Scale(360, 250, 560, 270), wReplay, -1, gDataManager->GetSysString(1356).data());
 	defaultStrings.emplace_back(chkYrp, 1356);
  	tmpptr = env->addStaticText(gDataManager->GetSysString(1353).data(), Scale(360, 275, 570, 295), false, true, wReplay);
@@ -3757,6 +3786,7 @@ void Game::OnResize() {
 	cbDBLFList->setRelativePosition(Resize(80, 5, 324, 30));
 	//cbDBDecks->setRelativePosition(Resize(80, 35, 220, 60));
 	cbDBDecks2->setRelativePosition(Resize(80, 35, 153, 60));
+    cbDBDecks22->setRelativePosition(Resize(80, 65, 153, 90));
 	cbDBDecks->setRelativePosition(Resize(154, 35, 324, 60));
 	//btnSaveDeck->setRelativePosition(Resize(225, 35, 290, 60));
 	btnSaveDeck->setRelativePosition(Resize(329, 35, 394, 60));
@@ -3764,7 +3794,7 @@ void Game::OnResize() {
 	btnRenameDeck->setRelativePosition(Resize(5, 65, 75, 90));	
 	//////kdiy//////
 	//ebDeckname->setRelativePosition(Resize(80, 65, 220, 90));
-	ebDeckname->setRelativePosition(Resize(80, 65, 324, 90));
+	ebDeckname->setRelativePosition(Resize(154, 65, 324, 90));
 	//btnSaveDeckAs->setRelativePosition(Resize(225, 65, 290, 90));
 	btnSaveDeckAs->setRelativePosition(Resize(329, 65, 394, 90));
 	//////kdiy//////
@@ -3844,6 +3874,9 @@ void Game::OnResize() {
 	wRules->setRelativePosition(ResizeWin(630, 100, 1000, 310));
 	SetCentered(wCustomRules);
 	wReplay->setRelativePosition(ResizeWin(220, 100, 800, 520));
+    ////kdiy////////////
+    wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 360, 310));
+    ////kdiy////////////
 	wSinglePlay->setRelativePosition(ResizeWin(220, 100, 800, 520));
 	gBot.window->setRelativePosition(irr::core::position2di(wHostPrepare->getAbsolutePosition().LowerRightCorner.X, wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
 	wHand->setRelativePosition(ResizeWin(500, 450, 825, 605));
