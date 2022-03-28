@@ -145,7 +145,7 @@ void ImageDownloader::DownloadPic() {
 				break;
 			}
 		}
-		auto dest_folder = fmt::format(to_string_view(dest), code);
+        auto dest_folder = fmt::format(epro::to_fmtstring_view(dest), code);
 		////kdiy////////
 		auto dest_folder2 = fmt::format(EPRO_TEXT("./hdpics/jp/{}"), code);
 		CURLcode res2{ static_cast<CURLcode>(1) };
