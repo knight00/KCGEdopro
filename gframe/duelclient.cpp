@@ -270,7 +270,7 @@ catch(...) { what = def; }
 	}
 }
 
-int DuelClient::ClientThread() {
+void DuelClient::ClientThread() {
 	Utils::SetThreadName("ClientThread");
 	event_base_dispatch(client_base);
 	to_analyze_mutex.lock();
@@ -283,7 +283,6 @@ int DuelClient::ClientThread() {
 	connect_state = 0;
 	client_bev = 0;
 	client_base = 0;
-	return 0;
 }
 
 void DuelClient::ParserThread() {
@@ -1496,7 +1495,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 							break;
 						++seq;
 					}
-					tmp.push_back(fmt::format(gDataManager->GetSysString(1510), fmt::format(L"{}{}({})", player_string, zone_string, seq)));
+					const auto tmp_string = fmt::format(L"{}{}({})", gDataManager->GetSysString(player_string), gDataManager->GetSysString(zone_string), seq);
+					tmp.push_back(fmt::format(gDataManager->GetSysString(1510), tmp_string));
 				}
 			}
 			std::unique_lock<std::mutex> lock(mainGame->gMutex);

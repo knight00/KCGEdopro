@@ -53,10 +53,8 @@ namespace ygo {
 		is_continuing = true;
 		skip_step = 0;
 		if (mainGame->dInfo.isSingleMode) {
-			auto msg = CoreUtils::ParseMessages(pduel);
-			for(auto& message : msg.packets) {
+			for(const auto& message : CoreUtils::ParseMessages(pduel))
 				is_continuing = OldReplayAnalyze(message) && is_continuing;
-			}
 		} else {
 			ReplayRefresh(0, LOCATION_DECK, 0x2181fff);
 			ReplayRefresh(1, LOCATION_DECK, 0x2181fff);
@@ -69,8 +67,7 @@ namespace ygo {
 			mainGame->gMutex.lock();
 		while(is_continuing && !exit_pending) {
 			/*int engFlag = */OCG_DuelProcess(pduel);
-			const auto msg = CoreUtils::ParseMessages(pduel);
-			for(const auto& message : msg.packets) {
+			for(const auto& message : CoreUtils::ParseMessages(pduel)) {
 				if(is_restarting || !is_continuing)
 					break;
 				is_continuing = OldReplayAnalyze(message) && is_continuing;
@@ -84,8 +81,7 @@ namespace ygo {
 				if(mainGame->dInfo.isSingleMode) {
 					is_continuing = true;
 					skip_step = 0;
-					const auto msg = CoreUtils::ParseMessages(pduel);
-					for(const auto& message : msg.packets) {
+					for(const auto& message : CoreUtils::ParseMessages(pduel)) {
 						if(is_restarting || !is_continuing)
 							break;
 						is_continuing = OldReplayAnalyze(message) && is_continuing;

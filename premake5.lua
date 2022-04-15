@@ -112,9 +112,9 @@ workspace "ygo"
 		architecture "x64"
 
 	if _OPTIONS["oldwindows"] then
-		filter { "architecture:not *64" , "action:vs2015" }
+		filter { "action:vs2015" }
 			toolset "v140_xp"
-		filter { "architecture:not *64" , "action:not vs2015" }
+		filter { "action:not vs2015" }
 			toolset "v141_xp"
 		filter {}
 	end
@@ -200,7 +200,6 @@ workspace "ygo"
 		include "ocgcore"
 	end
 	include "gframe"
-	include "freetype"
 	if os.istarget("windows") then
 		include "irrlicht"
 	end
