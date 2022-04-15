@@ -152,8 +152,7 @@ bool ImageManager::Initial() {
 	QQ = driver->getTexture(EPRO_TEXT("./textures/QQ.jpg"));
 	uint8_t playno = 1;
 	icon[0] = driver->getTexture(EPRO_TEXT("./textures/character/player/mini_icon.png"));
-	character[0] = driver->getTexture(EPRO_TEXT("./textures/character/player/icon.png"));
-	CHECK_RETURN(character[0], "character/player/icon");
+	character[0] = driver->getTexture(0);
 	scharacter[0] = driver->getTexture(0);
 	scharacter[1] = driver->getTexture(0);
 	scharacter[2] = driver->getTexture(0);
