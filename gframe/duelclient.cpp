@@ -3110,6 +3110,14 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->btnLeaveGame->setVisible(true);
 		}
 		if(!mainGame->dInfo.isReplay && mainGame->dInfo.player_type < 7) {
+            ////kdiy////////
+            if(!mainGame->dInfo.isSingleMode) {
+            #ifdef VIP
+                mainGame->wAvatar[0]->setVisible(true);
+                mainGame->wAvatar[1]->setVisible(true);
+            #endif
+            }
+            ////kdiy////////
 			if(!mainGame->tabSettings.chkHideChainButtons->isChecked()) {
 				mainGame->btnChainIgnore->setVisible(true);
 				mainGame->btnChainAlways->setVisible(true);
@@ -3126,12 +3134,14 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				////kdiy////////
 			}
 		}
-		////kdiy////////
-		#ifdef VIP
+        ////kdiy////////
+        if(mainGame->dInfo.isReplay) {
+            #ifdef VIP
 			mainGame->wAvatar[0]->setVisible(true);
 			mainGame->wAvatar[1]->setVisible(true);
-		#endif
-		////kdiy////////
+            #endif
+        }
+        ////kdiy////////
 		if(!mainGame->dInfo.isCatchingUp) {
 			mainGame->showcardcode = 10;
 			mainGame->showcarddif = 30;
