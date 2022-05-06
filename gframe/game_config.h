@@ -85,8 +85,8 @@ struct GameConfig
 	///kdiy//////////
 	int lastBot{ 0 };
 	std::wstring lastServer;
-	std::wstring textfont{ L"fonts/ygo.ttf" };
-	std::wstring numfont{ L"fonts/ygo.ttf" };
+	epro::path_string textfont{ EPRO_TEXT("fonts/ygo.ttf") };
+	epro::path_string numfont{ EPRO_TEXT("fonts/ygo.ttf") };
 	std::wstring roompass; // NOT SERIALIZED
 	//settings
 	bool chkMAutoPos{ false };
