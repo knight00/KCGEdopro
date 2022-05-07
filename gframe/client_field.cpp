@@ -1266,7 +1266,7 @@ static bool is_declarable(const CardDataC* cd, const std::vector<uint64_t>& opco
 	return cd->code == CARD_MARINE_DOLPHIN || cd->code == CARD_TWINKLE_MOSS
 		/////////kdiy///////////
 		//|| ((alias || !cd->alias) && (token || ((cd->type & (TYPE_MONSTER + TYPE_TOKEN)) != (TYPE_MONSTER + TYPE_TOKEN))));
-		|| ((alias || !cd->alias) && (token || ((cd->type & (TYPE_TOKEN)) != (TYPE_TOKEN))));
+		|| ((alias || !cd->alias) && (token || (((cd->type & (TYPE_MONSTER + TYPE_TOKEN)) != (TYPE_MONSTER + TYPE_TOKEN)) && ((cd->type & (TYPE_SPELL + TYPE_TOKEN)) != (TYPE_SPELL + TYPE_TOKEN)))));
 	    /////////kdiy///////////			
 }
 #undef BINARY_OP
