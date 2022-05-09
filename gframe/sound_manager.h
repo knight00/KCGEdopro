@@ -78,7 +78,7 @@ public:
 	//bool PlayChant(CHANT chant, uint32_t code);
 	bool PlayChant(CHANT chant, uint32_t code, uint32_t code2, int player, uint8_t extra = 0);
 	uint8_t character[6] = {0,0,0,0,0,0};
-	uint8_t totcharacter = 23;
+	uint8_t totcharacter = 24;
 	////////kdiy////////
 	void SetSoundVolume(double volume);
 	void SetMusicVolume(double volume);
@@ -98,8 +98,8 @@ private:
 	std::vector<std::string> BGMList[8];
 	std::string SFXList[SFX::SFX_TOTAL_SIZE];
 	////////kdiy////
-	std::map<std::pair<CHANT, uint32_t>, std::string> ChantsList[23];
-	std::vector<std::string> ChantSPList[11][23];
+	std::map<std::pair<CHANT, uint32_t>, std::string> ChantsList[24];
+	std::vector<std::string> ChantSPList[11][24];
 	std::string bgm_now = "";
 	////////kdiy////
 	int bgm_scene = -1;

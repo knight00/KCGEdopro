@@ -63,23 +63,24 @@ namespace ygo {
 #define TEXTURE_KAIBA               42
 #define TEXTURE_JOEY                43
 #define TEXTURE_MARIK               44
-#define TEXTURE_BAKURA              45
-#define TEXTURE_AIGAMI              46
-#define TEXTURE_JUDAI               47
-#define TEXTURE_MANJOME             48
-#define TEXTURE_KAISA               49
-#define TEXTURE_PHORNIX             50
-#define TEXTURE_JOHN                51
-#define TEXTURE_YUBEL               52
-#define TEXTURE_YUSEI               53
-#define TEXTURE_JACK                54
-#define TEXTURE_ARKI                55
-#define TEXTURE_YUMA                56
-#define TEXTURE_SHARK               57
-#define TEXTURE_KAITO               58
-#define TEXTURE_DONTHOUSAND         59
-#define TEXTURE_YUYA                60
-#define TEXTURE_DECLAN              61
+#define TEXTURE_DARTZ               45
+#define TEXTURE_BAKURA              46
+#define TEXTURE_AIGAMI              47
+#define TEXTURE_JUDAI               48
+#define TEXTURE_MANJOME             49
+#define TEXTURE_KAISA               50
+#define TEXTURE_PHORNIX             51
+#define TEXTURE_JOHN                52
+#define TEXTURE_YUBEL               53
+#define TEXTURE_YUSEI               54
+#define TEXTURE_JACK                55
+#define TEXTURE_ARKI                56
+#define TEXTURE_YUMA                57
+#define TEXTURE_SHARK               58
+#define TEXTURE_KAITO               59
+#define TEXTURE_DONTHOUSAND         60
+#define TEXTURE_YUYA                61
+#define TEXTURE_DECLAN              62
 ////////kdiy/////
 
 #define X(x) (textures_path + EPRO_TEXT(x)).data()
@@ -123,6 +124,7 @@ bool ImageManager::Initial() {
 	searchPath.push_back(EPRO_TEXT("./textures/character/kaiba"));
 	searchPath.push_back(EPRO_TEXT("./textures/character/joey"));
 	searchPath.push_back(EPRO_TEXT("./textures/character/marik"));
+    searchPath.push_back(EPRO_TEXT("./textures/character/dartz"));
 	searchPath.push_back(EPRO_TEXT("./textures/character/bakura"));
 	searchPath.push_back(EPRO_TEXT("./textures/character/aigami"));
 	searchPath.push_back(EPRO_TEXT("./textures/character/judai"));
@@ -190,6 +192,12 @@ bool ImageManager::Initial() {
 		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/marik/icon.png"));
 	CHECK_RETURN(character[playno], "character/marik/icon");
 	playno++;
+    icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/dartz/mini_icon.png"));
+	character[playno] = GetRandomImage(TEXTURE_DARTZ);
+	if (!character[playno]) 
+		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/dartz/icon.png"));
+	CHECK_RETURN(character[playno], "character/dartz/icon");
+    playno++;
 	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/bakura/mini_icon.png"));
 	character[playno] = GetRandomImage(TEXTURE_BAKURA);
 	if (!character[playno]) 
@@ -292,7 +300,7 @@ bool ImageManager::Initial() {
 		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/declan/icon.png"));
 	CHECK_RETURN(character[playno], "character/declan/icon");
 #else
-    for (uint8_t i = 1; i < 23; i++) {
+    for (uint8_t i = 1; i < totcharacter+1; i++) {
 		icon[i] = driver->getTexture(0);
 	    character[i] = driver->getTexture(0);
 	}
@@ -534,6 +542,7 @@ void ImageManager::RefreshRandomImageList() {
 	RefreshImageDir(EPRO_TEXT("character/kaiba/icon"), TEXTURE_KAIBA);
 	RefreshImageDir(EPRO_TEXT("character/joey/icon"), TEXTURE_JOEY);
 	RefreshImageDir(EPRO_TEXT("character/marik/icon"), TEXTURE_MARIK);
+    RefreshImageDir(EPRO_TEXT("character/dartz/icon"), TEXTURE_DARTZ);
 	RefreshImageDir(EPRO_TEXT("character/bakura/icon"), TEXTURE_BAKURA);
 	RefreshImageDir(EPRO_TEXT("character/aigami/icon"), TEXTURE_AIGAMI);
 	RefreshImageDir(EPRO_TEXT("character/judai/icon"), TEXTURE_JUDAI);
@@ -644,6 +653,12 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/marik/icon.png"));
 	CHECK_RETURN(character[playno], "character/marik/icon");
 	playno++;
+    icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/dartz/mini_icon.png"));
+	character[playno] = GetRandomImage(TEXTURE_DARTZ);
+	if (!character[playno]) 
+		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/dartz/icon.png"));
+	CHECK_RETURN(character[playno], "character/dartz/icon");
+    playno++;
 	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/bakura/mini_icon.png"));
 	character[playno] = GetRandomImage(TEXTURE_BAKURA);
 	if (!character[playno]) 
@@ -746,7 +761,7 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/declan/icon.png"));
 	CHECK_RETURN(character[playno], "character/declan/icon");
 #else
-    for (uint8_t i = 1; i < 23; i++) {
+    for (uint8_t i = 1; i < totcharacter+1; i++) {
 		icon[i] = driver->getTexture(0);
 	    character[i] = driver->getTexture(0);
 	}

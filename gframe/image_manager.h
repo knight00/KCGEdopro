@@ -82,10 +82,10 @@ public:
 	~ImageManager();
 	bool Initial();
 	/////kdiy/////
-	uint8_t totcharacter = 23;
+	uint8_t totcharacter = 24;
 	void SetAvatar(int seq, const wchar_t *avatar);
-	std::vector<epro::path_string> ImageList[39+23];
-	int saved_image_id[39+23];
+	std::vector<epro::path_string> ImageList[39+24];
+	int saved_image_id[39+24];
 	//random image
 	irr::video::ITexture* GetRandomImage(int image_type);
 	irr::video::ITexture* GetRandomImage(int image_type, int width, int height);
@@ -148,8 +148,8 @@ public:
 	/////////kdiy////
 	A(tRScale[14])	
 	A(tLScale[14])	
-	A(icon[23])	
-	A(character[23])
+	A(icon[24])	
+	A(character[24])
 	A(tcharacterselect)	
 	A(tcharacterselect2)
 	A(scharacter[6])

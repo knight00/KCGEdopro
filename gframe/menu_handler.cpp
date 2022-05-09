@@ -1084,6 +1084,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				/////kdiy///////
 				    gGameConfig->update_allowed = false;
 					Utils::DeleteDirectory(EPRO_TEXT("./config/languages/"));
+                    Utils::DeleteDirectory(EPRO_TEXT("./repositories/"));
 				/////kdiy///////
 				case ACTION_SHOW_CHANGELOG:
 					mainGame->wQuery->setRelativePosition(mainGame->ResizeWin(490, 200, 840, 340)); // from Game::OnResize

@@ -2363,7 +2363,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			case COMBOBOX_CURRENT_FONT: {
 				int selected = mainGame->gSettings.cbCurrentFont->getSelected();
 				if (selected < 0) return true;
-				gGameConfig->textfont = fmt::format(L"fonts/{}", mainGame->gSettings.cbCurrentFont->getItem(selected));
+				gGameConfig->textfont = Utils::ToPathString(fmt::format(L"fonts/{}", mainGame->gSettings.cbCurrentFont->getItem(selected)));
 				return true;
 			}
 			///kdiy///////
