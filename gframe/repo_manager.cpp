@@ -207,8 +207,9 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
  				if(tmp_repo.is_language)
  					JSON_SET_IF_VALID(language, string, std::string);
 #ifdef YGOPRO_BUILD_DLL
- 				JSON_SET_IF_VALID(core_path, string, std::string);
- 				JSON_SET_IF_VALID(has_core, boolean, bool);
+				JSON_SET_IF_VALID(has_core, boolean, bool);
+				if(tmp_repo.has_core)
+					JSON_SET_IF_VALID(core_path, string, std::string);
 #endif
                 auto it = obj.find("should_read");
 				if(it != obj.end() && it->is_boolean() && !it->get<bool>())
@@ -247,15 +248,16 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 // 				if(tmp_repo.is_language)
 // 					JSON_SET_IF_VALID(language, string, std::string);
 // #ifdef YGOPRO_BUILD_DLL
-// 				JSON_SET_IF_VALID(core_path, string, std::string);
 // 				JSON_SET_IF_VALID(has_core, boolean, bool);
+				// if(tmp_repo.has_core)
+				// 	JSON_SET_IF_VALID(core_path, string, std::string);
 // #endif
 // 			}
-			////kdiy//////////					
+			////kdiy//////////
 			if(tmp_repo.Sanitize())
 				AddRepo(std::move(tmp_repo));
 		}
-		////kdiy//////////	
+		////kdiy//////////
 		if(!repo3chk) {
 			GitRepo tmp_repo;
 			tmp_repo.repo_name = "Language";
@@ -270,7 +272,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 		return;
 		////kdiy//////////	
 	}
-////kdiy//////////	
+////kdiy//////////
 #endif
 #ifndef EK
     auto cit2 = configs.find("repos");
@@ -296,8 +298,9 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
  				if(tmp_repo.is_language)
  					JSON_SET_IF_VALID(language, string, std::string);
 #ifdef YGOPRO_BUILD_DLL
- 				JSON_SET_IF_VALID(core_path, string, std::string);
- 				JSON_SET_IF_VALID(has_core, boolean, bool);
+                JSON_SET_IF_VALID(has_core, boolean, bool);
+				if(tmp_repo.has_core)
+					JSON_SET_IF_VALID(core_path, string, std::string);
 #endif
                 auto it = obj.find("should_read");
 				if(it != obj.end() && it->is_boolean() && !it->get<bool>())
