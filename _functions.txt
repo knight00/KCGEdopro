@@ -1,4 +1,4 @@
-========== aux ============
+﻿========== aux ============
 ##只说明常用的函数
 ●int aux.Stringid(int code, int id)
 用于索引卡号为code的卡片第id个（从0开始）效果提示
@@ -38,6 +38,9 @@ CARDDATA_LINK_MARKER	      12
 
 ●void Card.GetRealCode()
 
+●void Card.GetOriginalAlias()
+返回c的原本alias
+没有则返回卡片记载的代号
 
 ●void Card.GetCode()
 int[,int] Card.GetCode(Card c)
