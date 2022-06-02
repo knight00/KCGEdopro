@@ -2322,7 +2322,7 @@ bool Game::MainLoop() {
 				|| wRoomListPlaceholder->isVisible() || wLanWindow->isVisible()
 				/////kdiy/////
 				// || wCreateHost->isVisible() || wHostPrepare->isVisible())) {
-				|| wCreateHost->isVisible() || wCreateHost2->isVisible() || wHostPrepare->isVisible())) {	
+				|| wCreateHost->isVisible() || wCreateHost2->isVisible() || wHostPrepare->isVisible())) {
 				/////kdiy/////
 				std::lock_guard<std::mutex> lock(gMutex);
 				menuHandler.prev_operation = ACTION_UPDATE_PROMPT;

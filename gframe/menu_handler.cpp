@@ -652,12 +652,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				} else update_trial = 3;
 				if(update_trial > 2) {
 					mainGame->btnLanMode->setEnabled(false);
-					Utils::DeleteDirectory(EPRO_TEXT("./lua/"));
 					if(!Utils::FileExists(EPRO_TEXT("./updates/configs.json")) && Utils::FileExists(EPRO_TEXT("./config/configs.json"))) {
 						Utils::MakeDirectory(EPRO_TEXT("updates"));
 					    Utils::FileCopy(EPRO_TEXT("./config/configs.json"), EPRO_TEXT("./updates/configs.json"));
 					}
-					Utils::FileDelete(EPRO_TEXT("./config/configs.json"));
 					mainGame->HideElement(mainGame->pwupdateWindow);
 				}
 				#endif
@@ -1447,12 +1445,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					    update_trial = 3;
 					if(update_trial > 2) {
 						mainGame->btnLanMode->setEnabled(false);
-						Utils::DeleteDirectory(EPRO_TEXT("./lua/"));
 						if(!Utils::FileExists(EPRO_TEXT("./updates/configs.json")) && Utils::FileExists(EPRO_TEXT("./config/configs.json"))) {
 							Utils::MakeDirectory(EPRO_TEXT("updates"));
 						    Utils::FileCopy(EPRO_TEXT("./config/configs.json"), EPRO_TEXT("./updates/configs.json"));
 						}
-						Utils::FileDelete(EPRO_TEXT("./config/configs.json"));
 						mainGame->HideElement(mainGame->pwupdateWindow);
 					}
 					#endif
