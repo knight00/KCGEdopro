@@ -121,6 +121,7 @@ restart:
 		last_replay.WriteHeader(rh);
 		//records the replay with the new system
 		new_replay.BeginRecord();
+		rh.seed = static_cast<uint32_t>(time(nullptr));
 		rh.id = REPLAY_YRPX;
 		new_replay.WriteHeader(rh);
 		replay_stream.clear();
@@ -128,7 +129,7 @@ restart:
 	if(hand_test) {
 		script_name = "hand-test-mode";
 		InitReplay();
-		Deck playerdeck(gdeckManager->current_deck);
+		Deck playerdeck(mainGame->deckBuilder.GetCurrentDeck());
 		if ((duelOptions.duelFlags & DUEL_PSEUDO_SHUFFLE) == 0)
 			std::shuffle(playerdeck.main.begin(), playerdeck.main.end(), rnd);
 		auto LoadDeck = [&](uint8_t team) {

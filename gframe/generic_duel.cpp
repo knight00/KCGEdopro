@@ -281,6 +281,10 @@ void GenericDuel::LeaveGame(DuelPlayer* dp) {
 	} else {
 		auto type = dp->type;
 		NetServer::DisconnectPlayer(dp);
+		IteratePlayers([dp](duelist& dueler) {
+			if(dueler == dp)
+				dueler.player = nullptr;
+		});
 		if(duel_stage == DUEL_STAGE_BEGIN && !seeking_rematch) {
 			if(HostLeft())
 				return;
@@ -594,6 +598,7 @@ void GenericDuel::TPResult(DuelPlayer* dp, uint8_t tp) {
 	last_replay.WriteHeader(rh);
 	//records the replay with the new system
 	new_replay.BeginRecord();
+	rh.seed = static_cast<uint32_t>(time(nullptr));
 	rh.id = REPLAY_YRPX;
 	new_replay.WriteHeader(rh);
 	last_replay.Write<uint32_t>(players.home.size(), false);
