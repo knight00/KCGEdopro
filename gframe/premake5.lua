@@ -199,13 +199,16 @@ include "lzma/."
 if _OPTIONS["sound"]=="sfml" then
 	include "../sfAudio"
 end
-project "ygopro"
-	targetname "ygopro-KCG"
-	if _OPTIONS["prebuilt-core"] then
-		libdirs { _OPTIONS["prebuilt-core"] }
-	end
-	links { "ocgcore" }
-	ygopro_config(true)
+
+if _OPTIONS["no-core"] then
+	project "ygopro"
+		targetname "ygopro-KCG"
+		if _OPTIONS["prebuilt-core"] then
+			libdirs { _OPTIONS["prebuilt-core"] }
+		end
+		links { "ocgcore" }
+		ygopro_config(true)
+end
 
 project "ygoprodll"
 	targetname "Edopro-KCG"
