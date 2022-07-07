@@ -59,14 +59,14 @@ void DataHandler::LoadPicUrls() {
 					const auto& url = obj.at("url").get_ref<const std::string&>();
 					//kdiy//////
 					if(url == "jp") {
-						if(type == "pic") {
 #ifdef DEFAULT_JHDPIC_URL
-                                imageDownloader->AddDownloadResource({ DEFAULT_JHDPIC_URL, imgType::ART, 1 });
+                        imageDownloader->AddDownloadResource({ DEFAULT_JHDPIC_URL, imgType::ART, 1 });
 #else
-							continue;
+					continue;
 #endif							
-						}							
-					} else					
+					} else if(type == "hdpic")
+                        imageDownloader->AddDownloadResource({ url, imgType::ART, 1 });
+                    else
 					//kdiy//////
 					if(url == "default") {
 						if(type == "pic") {

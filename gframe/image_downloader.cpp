@@ -146,50 +146,17 @@ void ImageDownloader::DownloadPic() {
 			}
 		}
         auto dest_folder = fmt::format(epro::to_fmtstring_view(dest), code);
-		////kdiy////////
-		auto dest_folder2 = fmt::format(EPRO_TEXT("./hdpics/jp/{}"), code);
-		CURLcode res2{ static_cast<CURLcode>(1) };
-		if(gGameConfig->hdpic == 1) {
-		for(auto& src : pic_urls) {
-			if(src.type != type)
-				continue;
-			if(src.hd == 0)
-			    continue;
-			auto fp = fileopen(name.data(), "wb");
-			if(fp == nullptr && gGameConfig->logDownloadErrors) {
-				ygo::ErrorLog(fmt::format("Failed opening {} for write.", Utils::ToUTF8IfNeeded(name)));
-				ygo::ErrorLog(fmt::format("Error: {}.", strerror(errno)));
-				continue;
-			}
-			SetPayloadAndUrl(fmt::format(src.url, code), fp);
-			res2 = curl_easy_perform(curl);
-			fclose(fp);
-			if(res2 == CURLE_OK) {
-				const auto ext = GetExtension(payload.header);
-				dest_folder2.append(ext.data(), ext.size());
-				if (!Utils::FileMove(name, dest_folder2))
-					Utils::FileDelete(name);
-				break;
-			}
-			if(gGameConfig->logDownloadErrors) {
-				ygo::ErrorLog(fmt::format("Failed downloading pic for {}", code));
-				ygo::ErrorLog(fmt::format("Curl error: ({}) {} ({})", res2, curl_easy_strerror(res2), curl_error_buffer));
-			}
-			Utils::FileDelete(name);
-		}
-		}
-		////kdiy////////
 		CURLcode res{ static_cast<CURLcode>(1) };
-		////kdiy////////
-		if(gGameConfig->hdpic == 0 || res2 != CURLE_OK) {
-		////kdiy////////	
 		for(auto& src : pic_urls) {
 			if(src.type != type)
 				continue;
-			////kdiy////////
-			if(src.hd != 0)
-			    continue;
-			////kdiy////////	
+            ////kdiy////////
+            auto dest_folder2 = dest_folder;
+            if(gGameConfig->hdpic == 0 && src.hd == 1)
+				continue;
+            if(gGameConfig->hdpic == 1 && src.hd == 1)
+                dest_folder = fmt::format(EPRO_TEXT("./hdpics/jp/{}"), code);
+            ////kdiy////////    
 			auto fp = fileopen(name.data(), "wb");
 			if(fp == nullptr) {
 				if(gGameConfig->logDownloadErrors) {
@@ -204,7 +171,7 @@ void ImageDownloader::DownloadPic() {
 			if(res == CURLE_OK) {
 				const auto ext = GetExtension(payload.header);
 				dest_folder.append(ext.data(), ext.size());
-				if(!Utils::FileMove(name, dest_folder))
+                if(!Utils::FileMove(name, dest_folder))
 					Utils::FileDelete(name);
 				break;
 			}
@@ -213,34 +180,16 @@ void ImageDownloader::DownloadPic() {
 				ygo::ErrorLog("Curl error: ({}) {} ({})", res, curl_easy_strerror(res), curl_error_buffer);
 			}
 			Utils::FileDelete(name);
+            ////kdiy////////
+            dest_folder = dest_folder2;
+            ////kdiy////////
 		}
-		////kdiy////////
-		}
-		////kdiy////////
 		lck.lock();
-		////kdiy////////
-		// if(res == CURLE_OK) {
-		// 	map_elem.status = downloadStatus::DOWNLOADED;
-		// 	map_elem.path = std::move(dest_folder);
-		// } else
-		// 	map_elem.status = downloadStatus::DOWNLOAD_ERROR;	
-		if(gGameConfig->hdpic == 1) {
-			if(res2 == CURLE_OK) {
-				map_elem.status = downloadStatus::DOWNLOADED;
-				map_elem.path = std::move(dest_folder2);
-			} else if(res == CURLE_OK) {
-				map_elem.status = downloadStatus::DOWNLOADED;
-				map_elem.path = std::move(dest_folder);
-			} else
-		        map_elem.status = downloadStatus::DOWNLOAD_ERROR;		
-		} else {
-			if(res == CURLE_OK) {
-				map_elem.status = downloadStatus::DOWNLOADED;
-				map_elem.path = std::move(dest_folder);
-			} else
-		        map_elem.status = downloadStatus::DOWNLOAD_ERROR;	
-		}
-		////kdiy////////		
+		if(res == CURLE_OK) {
+			map_elem.status = downloadStatus::DOWNLOADED;
+			map_elem.path = std::move(dest_folder);
+		} else
+			map_elem.status = downloadStatus::DOWNLOAD_ERROR;		
 	}
 }
 void ImageDownloader::AddToDownloadQueue(uint32_t code, imgType type) {

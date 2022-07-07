@@ -40,12 +40,6 @@ local ygopro_config=function(static_core)
 	if _OPTIONS["vip"] then
 		defines { "VIP=" .. _OPTIONS["vip"] }
 	end
-	if _OPTIONS["git_username"] then
-		defines { "Git_username=" .. _OPTIONS["git_username"] }
-	end
-	if _OPTIONS["git_pw"] then
-		defines { "Git_pw=" .. _OPTIONS["git_pw"] }
-	end
 	if _OPTIONS["ek"] then
 		defines { "EK=" .. _OPTIONS["ek"] }
 	end

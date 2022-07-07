@@ -83,14 +83,6 @@ newoption {
     description = "VIP functions support"
 }
 newoption {
-    trigger = "git_username",
-    description = "Git Username"
-}
-newoption {
-    trigger = "git_pw",
-    description = "Git Password"
-}
-newoption {
     trigger = "ek",
     description = "EK"
 }

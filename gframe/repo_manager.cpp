@@ -149,9 +149,6 @@ std::map<std::string, int> RepoManager::GetRepoStatus() {
 
 void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 	////kdiy//////////
-#if defined(Git_username) && defined(Git_pw)
-	std::string t = Git_username + std::string(":") + Git_pw;
-	t = std::regex_replace(t, std::regex("@"), "%40");
 	std::string tmp_repo3 = "./config/languages";
 	bool repo3chk = false;
 	////kdiy//////////
@@ -160,7 +157,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 	if(cit == configs.end()) {
 		GitRepo repo1;
 		repo1.repo_name = "Language";
-		repo1.url = "https://" + t + "@e.coding.net/edokcg/edokcg/Ch.git";
+		repo1.url = "http://edokcg.i234.me:3000/Edopro-KCG/Ch";
 		repo1.repo_path = tmp_repo3;
 		repo1.data_path = "";
 		repo1.is_language = true;
@@ -181,7 +178,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 					if(tmp_repo.repo_path == tmp_repo3) {
 						if(tmp_repo.repo_name.empty()) 
 						    tmp_repo.repo_name = "Language";
-						tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/Ch.git";
+						tmp_repo.url = "http://edokcg.i234.me:3000/Edopro-KCG/Ch";
 						tmp_repo.data_path = "";
 						tmp_repo.is_language = true;
 						repo3chk = true;
@@ -204,11 +201,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 			JSON_SET_IF_VALID(url, string, std::string);
 			////kdiy//////////
 			if(tmp_repo.url.substr(0,8) == "default/") {
-				#if defined(Git_username) && defined(Git_pw)
-				tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg" + tmp_repo.url.substr(7,tmp_repo.url.length());
-				#else
-			    tmp_repo.url = "https://e.coding.net/edokcg/edokcg" + tmp_repo.url.substr(7,tmp_repo.url.length());
-				#endif
+			    tmp_repo.url = "http://edokcg.i234.me:3000/Edopro-KCG" + tmp_repo.url.substr(7,tmp_repo.url.length());
 				JSON_SET_IF_VALID(should_update, boolean, bool);
  				JSON_SET_IF_VALID(repo_path, string, std::string);
  				JSON_SET_IF_VALID(repo_name, string, std::string);
@@ -274,7 +267,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 		if(!repo3chk) {
 			GitRepo tmp_repo;
 			tmp_repo.repo_name = "Language";
-			tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg/Ch.git";
+			tmp_repo.url = "http://edokcg.i234.me:3000/Edopro-KCG/Ch";
 			tmp_repo.repo_path = tmp_repo3;
 			tmp_repo.data_path = "";
 			tmp_repo.is_language = true;
@@ -284,54 +277,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 		}
 		return;
 		////kdiy//////////	
-	}
-////kdiy//////////
-#endif
-#ifndef EK
-    auto cit2 = configs.find("repos");
-	if(cit2 != configs.end() && cit2->is_array()) {
-		for(auto& obj : *cit2) {
-			{
-				GitRepo tmp_repo;
-				JSON_SET_IF_VALID(url, string, std::string);
-				if(tmp_repo.url.substr(0,8) == "default/") {
-				#if defined(Git_username) && defined(Git_pw)
-				tmp_repo.url = "https://" + t + "@e.coding.net/edokcg/edokcg" + tmp_repo.url.substr(7,tmp_repo.url.length());
-				#else
-			    tmp_repo.url = "https://e.coding.net/edokcg/edokcg" + tmp_repo.url.substr(7,tmp_repo.url.length());
-				#endif
-				JSON_SET_IF_VALID(should_update, boolean, bool);
- 				JSON_SET_IF_VALID(repo_path, string, std::string);
- 				JSON_SET_IF_VALID(repo_name, string, std::string);
-				JSON_SET_IF_VALID(data_path, string, std::string);
- 				JSON_SET_IF_VALID(lflist_path, string, std::string);
-				JSON_SET_IF_VALID(script_path, string, std::string);
-				JSON_SET_IF_VALID(pics_path, string, std::string);
-				JSON_SET_IF_VALID(is_language, boolean, bool);
- 				if(tmp_repo.is_language)
- 					JSON_SET_IF_VALID(language, string, std::string);
-#ifdef YGOPRO_BUILD_DLL
-                JSON_SET_IF_VALID(has_core, boolean, bool);
-				if(tmp_repo.has_core)
-					JSON_SET_IF_VALID(core_path, string, std::string);
-#endif
-                auto it = obj.find("should_read");
-				if(it != obj.end() && it->is_boolean() && !it->get<bool>())
-					continue;
-				auto it2 = obj.find("admin_update");
-				if(it2 != obj.end() && it2->is_boolean() && !it2->get<bool>())
-					tmp_repo.should_update = false;
-				else
-					tmp_repo.should_update = true;	
-				if(tmp_repo.Sanitize())
-				    AddRepo(std::move(tmp_repo));	
-				}
-				else continue;
-			}
-		}
-	}
-#endif
-////kdiy//////////	
+	}	
 }
 
 bool RepoManager::TerminateIfNothingLoaded() {
