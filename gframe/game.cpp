@@ -1069,10 +1069,10 @@ void Game::Initialize() {
 	gSettings.cbCurrentFont = AddComboBox(env, Scale(405, 335, 525, 360), sPanel, COMBOBOX_CURRENT_FONT);
 	for(auto& font : Utils::FindFiles(EPRO_TEXT("./fonts/"), { EPRO_TEXT("ttf"), EPRO_TEXT("otf") })) {
 		auto itemIndex = gSettings.cbCurrentFont->addItem(Utils::ToUnicodeIfNeeded(font).data());
-		if(Utils::ToPathString(gGameConfig->textfont.substr(6, gGameConfig->textfont.size() - 1)) == font)
+		if(Utils::ToPathString(gGameConfig->textfont.font.substr(6, gGameConfig->textfont.font.size() - 1)) == font)
 			gSettings.cbCurrentFont->setSelected(itemIndex);
 	}
-	gSettings.ebFontSize = env->addEditBox(WStr(gGameConfig->textfontsize), Scale(530, 335, 645, 360), true, sPanel, EDITBOX_NUMERIC);
+	gSettings.ebFontSize = env->addEditBox(WStr(gGameConfig->textfont.size), Scale(530, 335, 645, 360), true, sPanel, EDITBOX_NUMERIC);
 	gSettings.ebFontSize->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
 	/////kdiy////////////
 

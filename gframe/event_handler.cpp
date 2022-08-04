@@ -2046,7 +2046,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				try {
 					gGameConfig->dpi_scale = static_cast<uint32_t>(std::stol(mainGame->gSettings.ebDpiScale->getText())) / 100.0;
 					//////kdiy///////
-					gGameConfig->textfontsize = static_cast<uint32_t>(std::stol(mainGame->gSettings.ebFontSize->getText()));
+					gGameConfig->textfont.size = static_cast<uint32_t>(std::stol(mainGame->gSettings.ebFontSize->getText()));
 					//////kdiy///////
 					mainGame->restart = true;
 					//mainGame->device->closeDevice();
@@ -2363,7 +2363,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			case COMBOBOX_CURRENT_FONT: {
 				int selected = mainGame->gSettings.cbCurrentFont->getSelected();
 				if (selected < 0) return true;
-				gGameConfig->textfont = Utils::ToPathString(fmt::format(L"fonts/{}", mainGame->gSettings.cbCurrentFont->getItem(selected)));
+				gGameConfig->textfont.font = Utils::ToPathString(fmt::format(L"fonts/{}", mainGame->gSettings.cbCurrentFont->getItem(selected)));
 				return true;
 			}
 			///kdiy///////
