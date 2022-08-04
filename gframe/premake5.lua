@@ -194,7 +194,7 @@ if _OPTIONS["sound"]=="sfml" then
 	include "../sfAudio"
 end
 
-if _OPTIONS["no-core"] then
+if _OPTIONS["no-core"]~="true" then
 	project "ygopro"
 		targetname "ygopro-KCG"
 		if _OPTIONS["prebuilt-core"] then

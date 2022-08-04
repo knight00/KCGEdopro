@@ -926,10 +926,6 @@ void Game::DrawGUI() {
 							for(int i = 0; i < 5; ++i)
 								btnCardDisplay[i]->setDrawImage(true);
 						}
-						const auto prevfocused = env->getFocus();
-						env->setFocus(fu.guiFading);
-						if(prevfocused && (prevfocused->getType() == irr::gui::EGUIET_EDIT_BOX))
-							env->setFocus(prevfocused);
 					} else
 						fu.guiFading->setRelativePosition(irr::core::recti(fu.fadingUL, fu.fadingLR));
 				}
@@ -979,6 +975,12 @@ void Game::DrawGUI() {
 				HideElement(fu.guiFading);
 		} else {
 			fu.guiFading->setEnabled(fu.wasEnabled);
+			if(fu.wasEnabled){
+				const auto prevfocused = env->getFocus();
+				env->setFocus(fu.guiFading);
+				if(prevfocused && (prevfocused->getType() == irr::gui::EGUIET_EDIT_BOX))
+					env->setFocus(prevfocused);
+			}
 			fu.guiFading->setRelativePosition(fu.fadingSize);
 			fit = fadingList.erase(fthis);
 		}
@@ -1124,6 +1126,8 @@ void Game::DrawSpec() {
 		matk.setTranslation(atk_t);
 		matk.setRotationRadians(atk_r);
 		driver->setTransform(irr::video::ETS_WORLD, matk);
+		matManager.mATK.AmbientColor = skin::DUELFIELD_ATTACK_ARROW_VAL;
+		matManager.mATK.DiffuseColor = (skin::DUELFIELD_ATTACK_ARROW_VAL.getAlpha() << 24) | 0xffffff;
 		driver->setMaterial(matManager.mATK);
 		driver->drawVertexPrimitiveList(&matManager.vArrow[std::min(static_cast<int>(attack_sv) * 4, 28)], 12, matManager.iArrow, 10, irr::video::EVT_STANDARD, irr::scene::EPT_TRIANGLE_STRIP);
 		attack_sv += (60.0f / 1000.0f) * delta_time;

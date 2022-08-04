@@ -42,6 +42,7 @@
 #include <fcntl.h>
 #include <ext/stdio_filebuf.h>
 #endif
+#include "file_stream.h"
 //kiy///////
 #include <openssl/md5.h>
 //kiy///////
@@ -62,6 +63,14 @@ namespace porting {
 #else
 #define ClearZBuffer(driver) do {driver->clearZBuffer();} while(0)
 #endif
+
+constexpr int CARD_IMG_WRAPPER_H_PADDING = 10;
+constexpr int CARD_IMG_WRAPPER_V_PADDING = 9;
+constexpr int CARD_IMG_WRAPPER_WIDTH = CARD_IMG_WIDTH + CARD_IMG_WRAPPER_H_PADDING * 2;
+constexpr int CARD_IMG_WRAPPER_HEIGHT = CARD_IMG_HEIGHT + CARD_IMG_WRAPPER_V_PADDING * 2;
+constexpr float CARD_IMG_WRAPPER_ASPECT_RATIO = ((float)CARD_IMG_WRAPPER_WIDTH) / ((float)CARD_IMG_WRAPPER_HEIGHT);
+constexpr float CARD_IMG_WRAPPER_H_PADDING_RATIO = ((float)CARD_IMG_WRAPPER_H_PADDING) / ((float)CARD_IMG_WRAPPER_WIDTH);
+constexpr float CARD_IMG_WRAPPER_V_PADDING_RATIO = ((float)CARD_IMG_WRAPPER_V_PADDING) / ((float)CARD_IMG_WRAPPER_HEIGHT);
 
 uint16_t PRO_VERSION = 0x1353;
 
@@ -128,7 +137,7 @@ char * calculate_file_md5(const char *filename) {
 }
 //kdiy//////
 
-bool Game::Initialize() {
+void Game::Initialize() {
 	dpi_scale = gGameConfig->dpi_scale;
 	if(!device)
 		device = GUIUtils::CreateDevice(gGameConfig);
@@ -180,14 +189,13 @@ bool Game::Initialize() {
 	//RefreshAiDecks();
 	RefreshAiDecks(0);
 	/////kdiy///////
-	auto discordinitialized = discord.Initialize();
-	if(!discordinitialized)
+	if(!discord.Initialize())
 		gGameConfig->discordIntegration = false;
 	if(gGameConfig->discordIntegration)
 		discord.UpdatePresence(DiscordWrapper::INITIALIZE);
 	PopulateResourcesDirectories();
 	env = device->getGUIEnvironment();
-	guiFont = irr::gui::CGUITTFont::createTTFont(env, gGameConfig->textfont.data(), Scale(gGameConfig->textfontsize), {});
+	guiFont = irr::gui::CGUITTFont::createTTFont(env, gGameConfig->textfont.font.data(), Scale(gGameConfig->textfont.size), {});
 	if(!guiFont)
 		throw std::runtime_error("Failed to load text font");
 	textFont = guiFont;
@@ -197,8 +205,10 @@ bool Game::Initialize() {
 	lpcFont = irr::gui::CGUITTFont::createTTFont(env, gGameConfig->numfont.data(), Scale(48), {});
 	if(!numFont || !adFont || !lpcFont)
 		throw std::runtime_error("Failed to load numbers font");
-	if(!ApplySkin(gGameConfig->skin, false, true))
+	if(!ApplySkin(gGameConfig->skin, false, true)) {
 		gGameConfig->skin = NoSkinLabel();
+		ApplySkin(gGameConfig->skin, false, true);
+	}
 	smgr = device->getSceneManager();
 	wCommitsLog = env->addWindow(Scale(0, 0, 500 + 10, 400 + 35 + 35), false, gDataManager->GetSysString(1209).data());
 	defaultStrings.emplace_back(wCommitsLog, 1209);
@@ -836,10 +846,12 @@ bool Game::Initialize() {
 	btnHostPrepCancel = env->addButton(Scale(350, 280, 460, 305), wHostPrepare, BUTTON_HP_CANCEL, gDataManager->GetSysString(1210).data());
 	defaultStrings.emplace_back(btnHostPrepCancel, 1210);
 	//img
-	wCardImg = env->addStaticText(L"", Scale(1, 1, 1 + CARD_IMG_WIDTH + 20, 1 + CARD_IMG_HEIGHT + 18), true, false, 0, -1, true);
+	wCardImg = env->addStaticText(L"", Scale(1, 1, 1 + CARD_IMG_WRAPPER_WIDTH, 1 + CARD_IMG_WRAPPER_HEIGHT), true, false, 0, -1, true);
 	wCardImg->setBackgroundColor(skin::CARDINFO_IMAGE_BACKGROUND_VAL);
 	wCardImg->setVisible(false);
-	imgCard = env->addImage(Scale(10, 9, 10 + CARD_IMG_WIDTH, 9 + CARD_IMG_HEIGHT), wCardImg);
+	imgCard = env->addImage({}, wCardImg);
+	imgCard->setAlignment(irr::gui::EGUIA_SCALE, irr::gui::EGUIA_SCALE, irr::gui::EGUIA_SCALE, irr::gui::EGUIA_SCALE);
+	imgCard->setRelativePositionProportional({ CARD_IMG_WRAPPER_H_PADDING_RATIO, CARD_IMG_WRAPPER_V_PADDING_RATIO, 1.f - CARD_IMG_WRAPPER_H_PADDING_RATIO, 1.f - CARD_IMG_WRAPPER_V_PADDING_RATIO });
 	imgCard->setImage(imageManager.tCover[0]);
 	imgCard->setScaleImage(true);
 	imgCard->setUseAlphaChannel(true);
@@ -1141,7 +1153,7 @@ bool Game::Initialize() {
 #ifdef DISCORD_APP_ID
 	gSettings.chkDiscordIntegration = env->addCheckBox(gGameConfig->discordIntegration, Scale(340, 335, 645, 360), sPanel, CHECKBOX_DISCORD_INTEGRATION, gDataManager->GetSysString(2078).data());
 	defaultStrings.emplace_back(gSettings.chkDiscordIntegration, 2078);
-	gSettings.chkDiscordIntegration->setEnabled(discordinitialized);
+	gSettings.chkDiscordIntegration->setEnabled(discord.IsInitialized());
 #endif
 	gSettings.chkHideHandsInReplays = env->addCheckBox(gGameConfig->hideHandsInReplays, Scale(340, 365, 645, 390), sPanel, CHECKBOX_HIDE_HANDS_REPLAY, gDataManager->GetSysString(2080).data());
 	defaultStrings.emplace_back(gSettings.chkHideHandsInReplays, 2080);
@@ -1917,9 +1929,6 @@ bool Game::Initialize() {
 
 	//load server(s)
 	LoadServers();
-	env->getRootGUIElement()->bringToFront(wBtnSettings);
-	env->getRootGUIElement()->bringToFront(mTopMenu);
-	env->setFocus(wMainMenu);
 	////kdiy/////////
 	LoadLocalServers();
 	#ifdef EK
@@ -1985,34 +1994,60 @@ bool Game::Initialize() {
 	ApplySkin(EPRO_TEXT(""), true);
 	if(selectedLocale)
 		ApplyLocale(selectedLocale, true);
-	return true;
+
+	env->getRootGUIElement()->bringToFront(wBtnSettings);
+	env->getRootGUIElement()->bringToFront(mTopMenu);
+	env->setFocus(wMainMenu);
 }
 #undef WStr
-static inline void BuildProjectionMatrix(irr::core::matrix4& mProjection, irr::f32 left, irr::f32 right, irr::f32 bottom, irr::f32 top, irr::f32 znear, irr::f32 zfar) {
-	mProjection.buildProjectionMatrixPerspectiveLH(right - left, top - bottom, znear, zfar);
-	mProjection[8] = (left + right) / (left - right);
-	mProjection[9] = (top + bottom) / (bottom - top);
+static inline irr::core::matrix4 BuildProjectionMatrix(irr::f32 left, irr::f32 right, irr::f32 ratio = 1.f) {
+	irr::core::matrix4 mProjection;
+	mProjection.buildProjectionMatrixPerspectiveLH((right - left) * ratio, CAMERA_TOP - CAMERA_BOTTOM, 1.0f, 100.0f);
+	mProjection[8] = (CAMERA_LEFT + CAMERA_RIGHT) / (CAMERA_LEFT - CAMERA_RIGHT);
+	mProjection[9] = (CAMERA_TOP + CAMERA_BOTTOM) / (CAMERA_BOTTOM - CAMERA_TOP);
+	return mProjection;
 }
+irr::core::vector3df getTarget() {
+	return { FIELD_X, 0.f, 0.f };
+}
+irr::core::vector3df getPosition() {
+	if(gGameConfig->topdown_view)
+		return { FIELD_X, 0.f, FIELD_Z * 1.4f };
+	return { FIELD_X, FIELD_Y, FIELD_Z };
+}
+irr::core::vector3df getUpVector() {
+	if(gGameConfig->topdown_view)
+		return { 0.f, -1.f, 0.f };
+	return { 0.f, 0.f, 1.f };
+}
+
+static const auto defaultProjection = BuildProjectionMatrix(CAMERA_LEFT, CAMERA_RIGHT);
+
 bool Game::MainLoop() {
 	irr::core::matrix4 mProjection;
 	/////kfun////////////
 	camera = smgr->addCameraSceneNode(0);
-	BuildProjectionMatrix(mProjection, CAMERA_LEFT, CAMERA_RIGHT, CAMERA_BOTTOM, CAMERA_TOP, 1.0f, 100.0f);
-	camera->setProjectionMatrix(mProjection);
-	// irr::scene::ISceneNode *target = smgr->addEmptySceneNode(0, 200);
-    // target->setPosition(irr::core::vector3df(0, 0, 0));
-	// camera = smgr->addCameraSceneNode(target, irr::core::vector3df(5, 0, 0), irr::core::vector3df(0, 0, 0));
-	// irr::core::matrix4 projMat;
-    // irr::f32 orth_w = (float)(driver->getScreenSize().Width - 256) / (float)driver->getScreenSize().Height;
-    // orth_w = 18 * orth_w;
-    // projMat.buildProjectionMatrixOrthoLH(orth_w, 5, 0.2, 35);
-	// camera->setProjectionMatrix(projMat, true);
-	/////kfun////////////
-	camera->setPosition(irr::core::vector3df(FIELD_X, FIELD_Y, FIELD_Z));
-	/////kfun////////////
+	auto UpdateAspectRatio = [this]() {
+		if(!gGameConfig->keep_aspect_ratio) {
+			camera->setProjectionMatrix(defaultProjection);
+			return;
+		}
+		const float ratio = ((float)window_size.Width / (float)window_size.Height);
+		camera->setProjectionMatrix(BuildProjectionMatrix(CAMERA_BOTTOM, CAMERA_TOP, ratio));
+	};
+	auto UpdateCameraPosition = [this] {
+		camera->setPosition(getPosition());
+		camera->setUpVector(getUpVector());
+		if(dInfo.isInDuel)
+			dField.RefreshAllCards();
+	};
+	UpdateAspectRatio();
+
+	current_topdown = gGameConfig->topdown_view;
+	current_keep_aspect_ratio = gGameConfig->keep_aspect_ratio;
+
 	camera->setTarget(irr::core::vector3df(FIELD_X, 0, 0));
-	/////kfun////////////
-	camera->setUpVector(irr::core::vector3df(0, 0, 1));
+	UpdateCameraPosition();
 
 	smgr->setAmbientLight(irr::video::SColorf(1.0f, 1.0f, 1.0f));
 	float atkframe = 0.1f;
@@ -2172,6 +2207,7 @@ bool Game::MainLoop() {
 			window_scale.X = (window_size.Width / 1024.0) / gGameConfig->dpi_scale;
 			window_scale.Y = (window_size.Height / 640.0) / gGameConfig->dpi_scale;
 			cardimagetextureloading = false;
+			UpdateAspectRatio();
 			should_refresh_hands = true;
 			OnResize();
 		}
@@ -2248,7 +2284,14 @@ bool Game::MainLoop() {
 			gSoundManager->PlayBGM(SoundManager::BGM::MENU, gGameConfig->loopMusic);
 			DrawBackImage(imageManager.tBackGround_menu, resized);
 		}
-		if(should_refresh_hands && dInfo.isInDuel) {
+		if(current_topdown != gGameConfig->topdown_view || current_keep_aspect_ratio != gGameConfig->keep_aspect_ratio) {
+			if(std::exchange(gGameConfig->topdown_view, current_topdown) != gGameConfig->topdown_view)
+				UpdateCameraPosition();
+			if(std::exchange(gGameConfig->keep_aspect_ratio, current_keep_aspect_ratio) != gGameConfig->keep_aspect_ratio) {
+				UpdateAspectRatio();
+				ResizePhaseButtons();
+			}
+		} else if(should_refresh_hands && dInfo.isInDuel) {
 			should_refresh_hands = false;
 			dField.RefreshHandHitboxes();
 		}
@@ -2306,12 +2349,12 @@ bool Game::MainLoop() {
 		}
 		popupCheck.unlock();
 		discord.Check();
-		if(discord.connected && !was_connected) {
+		if(discord.IsConnected() && !was_connected) {
 			was_connected = true;
 			env->setFocus(stACMessage);
 			stACMessage->setText(gDataManager->GetSysString(1437).data());
 			PopupElement(wACMessage, 30);
-		} else if(!discord.connected && was_connected) {
+		} else if(!discord.IsConnected() && was_connected) {
 			was_connected = false;
 			env->setFocus(stACMessage);
 			stACMessage->setText(gDataManager->GetSysString(1438).data());
@@ -2497,6 +2540,8 @@ bool Game::ApplySkin(const epro::path_string& skinname, bool reload, bool firstr
 			imageManager.ChangeTextures(EPRO_TEXT("./textures/"));
 			//kdiy//////////
 		} else {
+			if(firstrun)
+				return false;
 			applied = false;
 			auto skin = env->createSkin(irr::gui::EGST_WINDOWS_METALLIC);
 			env->setSkin(skin);
@@ -3386,12 +3431,38 @@ int Game::GetMasterRule(uint64_t param, uint32_t forbiddentypes, int* truerule) 
 		return 2;
 }
 void Game::ResizePhaseButtons() {
-	if(gGameConfig->alternative_phase_layout)
+	if(gGameConfig->alternative_phase_layout) {
 		wPhase->setRelativePosition(Resize(940, 80, 990, 340));
-	else if((dInfo.duel_params & DUEL_3_COLUMNS_FIELD) && dInfo.duel_field >= 4)
-		wPhase->setRelativePosition(Resize(480, 290, 855, 350));
-	else
-		wPhase->setRelativePosition(Resize(480, 310, 855, 330));
+		return;
+	} else if(!gGameConfig->keep_aspect_ratio) {
+		if((dInfo.duel_params & DUEL_3_COLUMNS_FIELD) && dInfo.duel_field >= 4)
+			wPhase->setRelativePosition(Resize(480, 290, 855, 350));
+		else
+			wPhase->setRelativePosition(Resize(480, 310, 855, 330));
+		return;
+	}
+
+	// do some random magic computation to get the buttons to align properly
+	constexpr irr::s32 DEFAULT_X1 = 480;
+	constexpr irr::s32 DEFAULT_X2 = 855;
+	constexpr irr::s32 DEFAULT_WIDTH = DEFAULT_X2 - DEFAULT_X1;
+
+	const auto ratio = (window_size.Height * 1.6f) / static_cast<float>(window_size.Width);
+	const auto total = DEFAULT_WIDTH * (ratio - 1.f) * window_scale.X;
+	const auto offx1 = (1.f / 1.85f) * total;
+	const auto offx2 = total - offx1;
+
+	irr::s32 x1 = static_cast<irr::s32>(std::round(DEFAULT_X1 * window_scale.X - offx1));
+	irr::s32 x2 = static_cast<irr::s32>(std::round(DEFAULT_X2 * window_scale.X + offx2));
+	irr::s32 y1, y2;
+	if((dInfo.duel_params & DUEL_3_COLUMNS_FIELD) && dInfo.duel_field >= 4) {
+		y1 = static_cast<irr::s32>(std::round(290 * window_scale.Y));
+		y2 = static_cast<irr::s32>(std::round(350 * window_scale.Y));
+	} else {
+		y1 = static_cast<irr::s32>(std::round(310 * window_scale.Y));
+		y2 = static_cast<irr::s32>(std::round(330 * window_scale.Y));
+	}
+	wPhase->setRelativePosition(Scale(x1, y1, x2, y2));
 }
 void Game::SetPhaseButtons(bool visibility) {
 	if(visibility) {
@@ -3402,52 +3473,65 @@ void Game::SetPhaseButtons(bool visibility) {
 		btnBP->setVisible(gGameConfig->alternative_phase_layout || btnBP->isSubElement());
 		btnEP->setVisible(gGameConfig->alternative_phase_layout || btnEP->isSubElement());
 	}
-	ResizePhaseButtons();
-	if(gGameConfig->alternative_phase_layout) {
-		btnDP->setRelativePosition(Resize(0, 0, 50, 20));
-		btnSP->setRelativePosition(Resize(0, 40, 50, 60));
-		btnM1->setRelativePosition(Resize(0, 80, 50, 100));
-		btnBP->setRelativePosition(Resize(0, 120, 50, 140));
-		btnM2->setRelativePosition(Resize(0, 160, 50, 180));
-		btnEP->setRelativePosition(Resize(0, 200, 50, 220));
-		btnShuffle->setRelativePosition(Resize(0, 240, 50, 260));
-		return;
-	}
-	// reset master rule 4 phase button position
-	if(dInfo.duel_params & DUEL_3_COLUMNS_FIELD) {
-		if(dInfo.duel_field >= 4) {
-			btnShuffle->setRelativePosition(Resize(0, 40, 50, 60));
-			btnDP->setRelativePosition(Resize(0, 40, 50, 60));
-			btnSP->setRelativePosition(Resize(0, 40, 50, 60));
-			btnM1->setRelativePosition(Resize(160, 20, 210, 40));
-			btnBP->setRelativePosition(Resize(160, 20, 210, 40));
-			btnM2->setRelativePosition(Resize(160, 20, 210, 40));
-			btnEP->setRelativePosition(Resize(310, 0, 360, 20));
+
+	// set the phase window to the "default" size so that it's easier to
+	// work with the relative button positions by using non scaled values
+	if(gGameConfig->alternative_phase_layout)
+		wPhase->setRelativePosition({ 940, 80, 990, 340 });
+	else if((dInfo.duel_params & DUEL_3_COLUMNS_FIELD) && dInfo.duel_field >= 4)
+		wPhase->setRelativePosition({ 480, 290, 855, 350 });
+	else
+		wPhase->setRelativePosition({ 480, 310, 855, 330 });
+
+	auto UpdatePhaseButtons = [&] {
+		if(gGameConfig->alternative_phase_layout) {
+			btnDP->setRelativePosition({ 0, 0, 50, 20 });
+			btnSP->setRelativePosition({ 0, 40, 50, 60 });
+			btnM1->setRelativePosition({ 0, 80, 50, 100 });
+			btnBP->setRelativePosition({ 0, 120, 50, 140 });
+			btnM2->setRelativePosition({ 0, 160, 50, 180 });
+			btnEP->setRelativePosition({ 0, 200, 50, 220 });
+			btnShuffle->setRelativePosition({ 0, 240, 50, 260 });
 			return;
 		}
-		btnShuffle->setRelativePosition(Resize(65, 0, 115, 20));
-		btnDP->setRelativePosition(Resize(65, 0, 115, 20));
-		btnSP->setRelativePosition(Resize(65, 0, 115, 20));
-		btnM1->setRelativePosition(Resize(130, 0, 180, 20));
-		btnBP->setRelativePosition(Resize(195, 0, 245, 20));
-		btnM2->setRelativePosition(Resize(260, 0, 310, 20));
-		btnEP->setRelativePosition(Resize(260, 0, 310, 20));
-		return;
-	}
-	btnDP->setRelativePosition(Resize(0, 0, 50, 20));
-	btnEP->setRelativePosition(Resize(320, 0, 370, 20));
-	btnShuffle->setRelativePosition(Resize(0, 0, 50, 20));
-	if(dInfo.duel_field >= 4) {
-		btnSP->setRelativePosition(Resize(0, 0, 50, 20));
-		btnM1->setRelativePosition(Resize(160, 0, 210, 20));
-		btnBP->setRelativePosition(Resize(160, 0, 210, 20));
-		btnM2->setRelativePosition(Resize(160, 0, 210, 20));
-		return;
-	}
-	btnSP->setRelativePosition(Resize(65, 0, 115, 20));
-	btnM1->setRelativePosition(Resize(130, 0, 180, 20));
-	btnBP->setRelativePosition(Resize(195, 0, 245, 20));
-	btnM2->setRelativePosition(Resize(260, 0, 310, 20));
+		// reset master rule 4 phase button position
+		if(dInfo.duel_params & DUEL_3_COLUMNS_FIELD) {
+			if(dInfo.duel_field >= 4) {
+				btnShuffle->setRelativePosition({ 0, 40, 50, 60 });
+				btnDP->setRelativePosition({ 0, 40, 50, 60 });
+				btnSP->setRelativePosition({ 0, 40, 50, 60 });
+				btnM1->setRelativePosition({ 160, 20, 210, 40 });
+				btnBP->setRelativePosition({ 160, 20, 210, 40 });
+				btnM2->setRelativePosition({ 160, 20, 210, 40 });
+				btnEP->setRelativePosition({ 310, 0, 360, 20 });
+				return;
+			}
+			btnShuffle->setRelativePosition({ 65, 0, 115, 20 });
+			btnDP->setRelativePosition({ 65, 0, 115, 20 });
+			btnSP->setRelativePosition({ 65, 0, 115, 20 });
+			btnM1->setRelativePosition({ 130, 0, 180, 20 });
+			btnBP->setRelativePosition({ 195, 0, 245, 20 });
+			btnM2->setRelativePosition({ 260, 0, 310, 20 });
+			btnEP->setRelativePosition({ 260, 0, 310, 20 });
+			return;
+		}
+		btnDP->setRelativePosition({ 0, 0, 50, 20 });
+		btnEP->setRelativePosition({ 320, 0, 370, 20 });
+		btnShuffle->setRelativePosition({ 0, 0, 50, 20 });
+		if(dInfo.duel_field >= 4) {
+			btnSP->setRelativePosition({ 0, 0, 50, 20 });
+			btnM1->setRelativePosition({ 160, 0, 210, 20 });
+			btnBP->setRelativePosition({ 160, 0, 210, 20 });
+			btnM2->setRelativePosition({ 160, 0, 210, 20 });
+			return;
+		}
+		btnSP->setRelativePosition({ 65, 0, 115, 20 });
+		btnM1->setRelativePosition({ 130, 0, 180, 20 });
+		btnBP->setRelativePosition({ 195, 0, 245, 20 });
+		btnM2->setRelativePosition({ 260, 0, 310, 20 });
+	};
+	UpdatePhaseButtons();
+	ResizePhaseButtons();
 }
 void Game::SetMessageWindow() {
 	if(is_building || dInfo.isInDuel) {
@@ -3594,7 +3678,7 @@ void Game::ReloadCBRace() {
 	cbRace->clear();
 	cbRace->addItem(gDataManager->GetSysString(1310).data(), 0);
 	//currently corresponding to RACE_GALAXY
-	static constexpr auto RACE_MAX = 0x40000000; //
+	static constexpr auto RACE_MAX = 0x40000000;
 	uint32_t filter = 0x1;
 	for(uint32_t i = 1020; i <= 1049 && filter <= RACE_MAX; i++, filter <<= 1)
 		cbRace->addItem(gDataManager->GetSysString(i).data(), filter);
@@ -3784,11 +3868,15 @@ void Game::ReloadElementsStrings() {
 	ReloadCBCurrentSkin();
 }
 void Game::OnResize() {
-	const auto waboutpos = wAbout->getAbsolutePosition();
-	stAbout->setRelativePosition(irr::core::recti(10, 10, std::min<uint32_t>(window_size.Width - waboutpos.UpperLeftCorner.X,
-		std::min<uint32_t>(Scale(440), stAbout->getTextWidth() + Scale(10))),
-		std::min<uint32_t>(window_size.Height - waboutpos.UpperLeftCorner.Y,
-			std::min<uint32_t>(stAbout->getTextHeight() + Scale(10), Scale(690)))));
+	{
+		const auto waboutcorner = wAbout->getAbsolutePosition().UpperLeftCorner;
+		using std::min;
+		const auto minwidth = min<uint32_t>(window_size.Width - waboutcorner.X,
+											min<uint32_t>(Scale(440), stAbout->getTextWidth() + Scale(10)));
+		const auto minheight = min<uint32_t>(window_size.Height - waboutcorner.Y,
+											 min<uint32_t>(stAbout->getTextHeight() + Scale(10), Scale(690)));
+		stAbout->setRelativePosition(irr::core::recti(10, 10, minwidth, minheight));
+	}
 	wRoomListPlaceholder->setRelativePosition(irr::core::recti(0, 0, window_size.Width, window_size.Height));
 	////////kdiy///////	
 	// wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 450));
@@ -3917,8 +4005,12 @@ void Game::OnResize() {
 	wFileSave->setRelativePosition(ResizeWin(510, 200, 820, 320));
 	stHintMsg->setRelativePosition(ResizeWin(500, 60, 820, 90));
 
-	wCardImg->setRelativePosition(Resize(1, 1, 1 + CARD_IMG_WIDTH + 20, 1 + CARD_IMG_HEIGHT + 18));
-	imgCard->setRelativePosition(Resize(10, 9, 10 + CARD_IMG_WIDTH, 9 + CARD_IMG_HEIGHT));
+	{
+		const auto rect = gGameConfig->keep_cardinfo_aspect_ratio ?
+			ResizeWithCappedWidth(1, 1, 1 + CARD_IMG_WRAPPER_WIDTH, 1 + CARD_IMG_WRAPPER_HEIGHT, CARD_IMG_WRAPPER_ASPECT_RATIO) :
+			Resize(1, 1, 1 + CARD_IMG_WIDTH + 20, 1 + CARD_IMG_HEIGHT + 18);
+		wCardImg->setRelativePosition(rect);
+	}
 	wInfos->setRelativePosition(Resize(1, 275, (infosExpanded == 1) ? 1023 : 301, 639));
 	for(auto& window : repoInfoGui) {
 		window.second.progress2->setRelativePosition(Scale(5, 20 + 15, (300 - 8) * window_scale.X, 20 + 30));
@@ -4001,21 +4093,21 @@ void Game::OnResize() {
 	roomListTable->removeRow(roomListTable->getRowCount() - 1);
 	roomListTable->setSelected(prev);
 }
-irr::core::recti Game::Resize(irr::s32 x, irr::s32 y, irr::s32 x2, irr::s32 y2) {
+irr::core::recti Game::Resize(irr::s32 x, irr::s32 y, irr::s32 x2, irr::s32 y2) const {
 	x = x * window_scale.X;
 	y = y * window_scale.Y;
 	x2 = x2 * window_scale.X;
 	y2 = y2 * window_scale.Y;
 	return Scale(x, y, x2, y2);
 }
-irr::core::recti Game::Resize(irr::s32 x, irr::s32 y, irr::s32 x2, irr::s32 y2, irr::s32 dx, irr::s32 dy, irr::s32 dx2, irr::s32 dy2) {
+irr::core::recti Game::Resize(irr::s32 x, irr::s32 y, irr::s32 x2, irr::s32 y2, irr::s32 dx, irr::s32 dy, irr::s32 dx2, irr::s32 dy2) const {
 	x = x * window_scale.X + dx;
 	y = y * window_scale.Y + dy;
 	x2 = x2 * window_scale.X + dx2;
 	y2 = y2 * window_scale.Y + dy2;
 	return Scale(x, y, x2, y2);
 }
-irr::core::vector2di Game::Resize(irr::s32 x, irr::s32 y, bool reverse) {
+irr::core::vector2di Game::Resize(irr::s32 x, irr::s32 y, bool reverse) const {
 	if(reverse) {
 		x = (x / window_scale.X) / gGameConfig->dpi_scale;
 		y = (y / window_scale.Y) / gGameConfig->dpi_scale;
@@ -4025,7 +4117,28 @@ irr::core::vector2di Game::Resize(irr::s32 x, irr::s32 y, bool reverse) {
 	}
 	return { x, y };
 }
-irr::core::recti Game::ResizeWin(irr::s32 x, irr::s32 y, irr::s32 x2, irr::s32 y2, bool chat) {
+
+// Resizes the bounds and caps the width if necessary to maintain the provided targetAspectRatio.
+// This prevents the GUI element from appearing too wide if its width is overproportional.
+irr::core::recti Game::ResizeWithCappedWidth(irr::s32 x, irr::s32 y, irr::s32 x2, irr::s32 y2, float targetAspectRatio, bool scale) const {
+	x *= window_scale.X;
+	y *= window_scale.Y;
+	x2 *= window_scale.X;
+	y2 *= window_scale.Y;
+
+	const auto dx = x2 - x;
+	const auto dy = y2 - y;
+	const auto incx = static_cast<irr::s32>(dy * targetAspectRatio);
+	if(dx > incx) {
+		x2 = x + incx;
+	} /* else {
+		y2 = y + dx / targetAspectRatio;
+	} */ // This commented out part is left in case it is ever necessary to adjust the height too to maintain the aspect ratio.
+
+	return scale ? Scale(x, y, x2, y2) : irr::core::recti{ x, y, x2, y2 };
+}
+
+irr::core::recti Game::ResizeWin(irr::s32 x, irr::s32 y, irr::s32 x2, irr::s32 y2, bool chat) const {
 	irr::s32 sx = x2 - x;
 	irr::s32 sy = y2 - y;
 	if(chat) {
@@ -4040,13 +4153,13 @@ irr::core::recti Game::ResizeWin(irr::s32 x, irr::s32 y, irr::s32 x2, irr::s32 y
 	y2 = sy + y;
 	return Scale(x, y, x2, y2);
 }
-void Game::SetCentered(irr::gui::IGUIElement* elem, bool use_offset) {
+void Game::SetCentered(irr::gui::IGUIElement* elem, bool use_offset) const {
 	if(use_offset && (is_building || dInfo.isInDuel))
 		elem->setRelativePosition(ResizeWinFromCenter(0, 0, elem->getRelativePosition().getWidth(), elem->getRelativePosition().getHeight(), Scale(155)));
 	else
 		elem->setRelativePosition(ResizeWinFromCenter(0, 0, elem->getRelativePosition().getWidth(), elem->getRelativePosition().getHeight()));
 }
-irr::core::recti Game::ResizeElem(irr::s32 x, irr::s32 y, irr::s32 x2, irr::s32 y2, bool scale) {
+irr::core::recti Game::ResizeElem(irr::s32 x, irr::s32 y, irr::s32 x2, irr::s32 y2, bool scale) const {
 	irr::s32 sx = x2 - x;
 	irr::s32 sy = y2 - y;
 	x = (x + sx / 2 - 100) * window_scale.X - sx / 2 + 100;
@@ -4055,12 +4168,12 @@ irr::core::recti Game::ResizeElem(irr::s32 x, irr::s32 y, irr::s32 x2, irr::s32 
 	y2 = sy + y;
 	return scale ? Scale(x, y, x2, y2) : irr::core::recti{x, y, x2, y2};
 }
-irr::core::recti Game::ResizePhaseHint(irr::s32 x, irr::s32 y, irr::s32 x2, irr::s32 y2, irr::s32 width) {
+irr::core::recti Game::ResizePhaseHint(irr::s32 x, irr::s32 y, irr::s32 x2, irr::s32 y2, irr::s32 width) const {
 	auto res = Resize(x, y, x2, y2);
 	res.UpperLeftCorner.X -= width / 2;
 	return res;
 }
-irr::core::recti Game::ResizeWinFromCenter(irr::s32 x, irr::s32 y, irr::s32 x2, irr::s32 y2, irr::s32 xoff, irr::s32 yoff) {
+irr::core::recti Game::ResizeWinFromCenter(irr::s32 x, irr::s32 y, irr::s32 x2, irr::s32 y2, irr::s32 xoff, irr::s32 yoff) const {
 	auto size = driver->getScreenSize();
 	irr::core::recti rect(0, 0, size.Width, size.Height);
 	auto center = rect.getCenter();
@@ -4077,15 +4190,7 @@ void Game::ValidateName(irr::gui::IGUIElement* obj) {
 		obj->setText(text.data());
 }
 std::wstring Game::ReadPuzzleMessage(epro::wstringview script_name) {
-#if defined(__MINGW32__) && defined(UNICODE)
-	auto fd = _wopen(Utils::ToPathString(script_name).data(), _O_RDONLY);
-	if(fd == -1)
-		return {};
-	__gnu_cxx::stdio_filebuf<char> b(fd, std::ios::in);
-	std::istream infile(&b);
-#else
-	std::ifstream infile(Utils::ToPathString(script_name));
-#endif
+	FileStream infile{ Utils::ToPathString(script_name), FileStream::in };
 	if(infile.fail())
 		return {};
 	std::string str;
@@ -4151,15 +4256,7 @@ std::vector<char> Game::LoadScript(epro::stringview _name) {
 				tmp->drop();
 			}
 		} else {
-#if defined(__MINGW32__) && defined(UNICODE)
-			auto fd = _wopen(path.data(), _O_RDONLY | _O_BINARY);
-			if(fd == -1)
-				return {};
-			__gnu_cxx::stdio_filebuf<char> b(fd, std::ios::in);
-			std::istream script(&b);
-#else
-			std::ifstream script(path, std::ifstream::binary);
-#endif
+			FileStream script{ path, FileStream::in | FileStream::binary };
 			if(!script.fail()) {
 				buffer.insert(buffer.begin(), std::istreambuf_iterator<char>(script), std::istreambuf_iterator<char>());
 				return buffer;
