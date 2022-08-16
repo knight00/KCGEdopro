@@ -163,7 +163,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 	if(cit == configs.end()) {
 		GitRepo repo1;
 		repo1.repo_name = "Language";
-		repo1.url = "http://edokcg.i234.me:3000/Edopro-KCG/Ch";
+		repo1.url = "https://2902370563%40qq.com:Edokcg_pcg01%40@e.coding.net/edokcg/edokcg/Ch.git";
 		repo1.repo_path = tmp_repo3;
 		repo1.data_path = "";
 		repo1.is_language = true;
@@ -184,7 +184,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 					if(tmp_repo.repo_path == tmp_repo3) {
 						if(tmp_repo.repo_name.empty()) 
 						    tmp_repo.repo_name = "Language";
-						tmp_repo.url = "http://edokcg.i234.me:3000/Edopro-KCG/Ch";
+						tmp_repo.url = "https://2902370563%40qq.com:Edokcg_pcg01%40@e.coding.net/edokcg/edokcg/Ch.git";
 						tmp_repo.data_path = "";
 						tmp_repo.is_language = true;
 						repo3chk = true;
@@ -207,7 +207,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 			JSON_SET_IF_VALID(url, string, std::string);
 			////kdiy//////////
 			if(tmp_repo.url.substr(0,8) == "default/") {
-			    tmp_repo.url = "http://edokcg.i234.me:3000/Edopro-KCG" + tmp_repo.url.substr(7,tmp_repo.url.length());
+			    tmp_repo.url = "https://2902370563%40qq.com:Edokcg_pcg01%40@e.coding.net/edokcg/edokcg" + tmp_repo.url.substr(7,tmp_repo.url.length());
 				JSON_SET_IF_VALID(should_update, boolean, bool);
  				JSON_SET_IF_VALID(repo_path, string, std::string);
  				JSON_SET_IF_VALID(repo_name, string, std::string);
@@ -273,7 +273,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 		if(!repo3chk) {
 			GitRepo tmp_repo;
 			tmp_repo.repo_name = "Language";
-			tmp_repo.url = "http://edokcg.i234.me:3000/Edopro-KCG/Ch";
+			tmp_repo.url = "https://2902370563%40qq.com:Edokcg_pcg01%40@e.coding.net/edokcg/edokcg/Ch.git";
 			tmp_repo.repo_path = tmp_repo3;
 			tmp_repo.data_path = "";
 			tmp_repo.is_language = true;

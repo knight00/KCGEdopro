@@ -2025,7 +2025,6 @@ static const auto defaultProjection = BuildProjectionMatrix(CAMERA_LEFT, CAMERA_
 
 bool Game::MainLoop() {
 	irr::core::matrix4 mProjection;
-	/////kfun////////////
 	camera = smgr->addCameraSceneNode(0);
 	auto UpdateAspectRatio = [this]() {
 		if(!gGameConfig->keep_aspect_ratio) {
