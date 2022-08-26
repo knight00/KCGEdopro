@@ -190,6 +190,7 @@ public:
 	void ResizePhaseButtons();
 	void SetPhaseButtons(bool visibility = false);
 	void SetMessageWindow();
+	void ResizeCardinfoWindow(bool keep_ratio);
 
 	bool HasFocus(irr::gui::EGUI_ELEMENT_TYPE type) const;
 
@@ -378,6 +379,8 @@ public:
 	SettingsPane tabSettings;
 	irr::gui::IGUIButton* btnTabShowSettings;
 
+	void PopulateTabSettingsWindow();
+	void PopulateSettingsWindow();
 	SettingsWindow gSettings;
 	///////kdiy/////
 	SettingsWindow mgSettings;
