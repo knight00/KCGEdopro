@@ -1803,7 +1803,6 @@ void Game::PopulateTabSettingsWindow() {
 		/////kdiy////////
 		auto GetNextRect2 = [&cur_y, y_incr, this] {
 			auto cur = cur_y;
-			cur_y += y_incr;
 			return Scale<irr::s32>(20, cur, 120, cur + 25);
 		};
 		auto GetNextRect3 = [&cur_y, y_incr, this] {
@@ -1868,6 +1867,12 @@ void Game::PopulateTabSettingsWindow() {
 		//////kdiy///////////
 		//tabSettings.chkEnableMusic = env->addCheckBox(gGameConfig->enablemusic, GetNextRect(), tabPanel, CHECKBOX_ENABLE_MUSIC, gDataManager->GetSysString(2046).data());
 		tabSettings.chkEnableMusic = env->addCheckBox(gGameConfig->enablemusic, GetNextRect2(), tabPanel, CHECKBOX_ENABLE_MUSIC, gDataManager->GetSysString(2046).data());
+		tabSettings.chkEnableAnime = env->addCheckBox(gGameConfig->enableanime, GetNextRect3(), tabPanel, CHECKBOX_ENABLE_ANIME, gDataManager->GetSysString(8016).data());
+		defaultStrings.emplace_back(tabSettings.chkEnableAnime, 8016);
+#if !defined(_WIN32)
+        tabSettings.chkEnableAnime->setChecked(false);
+		tabSettings.chkEnableAnime->setEnabled(false);
+#endif
 		//////kdiy///////////
 		menuHandler.MakeElementSynchronized(tabSettings.chkEnableMusic);
 		defaultStrings.emplace_back(tabSettings.chkEnableMusic, 2046);
@@ -1883,14 +1888,6 @@ void Game::PopulateTabSettingsWindow() {
 			tabSettings.scrMusicVolume->setSmallStep(1);
 			cur_y += y_incr;
 		}
-		//////kdiy///////////
-		tabSettings.chkEnableAnime = env->addCheckBox(gGameConfig->enableanime, GetNextRect3(), tabPanel, CHECKBOX_ENABLE_ANIME, gDataManager->GetSysString(8016).data());
-		defaultStrings.emplace_back(tabSettings.chkEnableAnime, 8016);
-#if !defined(_WIN32)
-        tabSettings.chkEnableAnime->setChecked(false);
-		tabSettings.chkEnableAnime->setEnabled(false);
-#endif
-        //////kdiy///////////
 		// end audio
 		tabSettings.chkNoChainDelay = env->addCheckBox(gGameConfig->chkWaitChain, GetNextRect(), tabPanel, CHECKBOX_NO_CHAIN_DELAY, gDataManager->GetSysString(1277).data());
 		menuHandler.MakeElementSynchronized(tabSettings.chkNoChainDelay);
@@ -1942,19 +1939,6 @@ void Game::PopulateSettingsWindow() {
 		IncrementXorY();
 		return Scale<irr::s32>(curx, cury, curx + 305, cury + 25);
 	};
-	/////kdiy////////
-	auto GetNextRect2 = [&cur_y, &cur_x, &IncrementXorY, this] {
-		auto cury = cur_y;
-		auto curx = cur_x;
-		return Scale<irr::s32>(curx, cury, curx + 162, cury + 25);
-	};
-	auto GetNextRect3 = [&cur_y, &cur_x, &IncrementXorY, this] {
-		auto cury = cur_y;
-		auto curx = cur_x;
-		IncrementXorY();
-		return Scale<irr::s32>(curx + 163, cury, curx + 305, cury + 25);
-	};
-	/////kdiy////////
 	auto GetCurrentRectWithXOffset = [&cur_y, &cur_x, this](irr::s32 x1, irr::s32 x2, bool is_scrollbar_text = false) {
 		const auto x_incr = cur_x - 15;
 		return Scale<irr::s32>(x1 + x_incr, cur_y, x2 + x_incr, cur_y + 25 - (is_scrollbar_text * 5));
@@ -2018,6 +2002,18 @@ void Game::PopulateSettingsWindow() {
 #endif
 		gSettings.chkHideHandsInReplays = env->addCheckBox(gGameConfig->hideHandsInReplays, GetNextRect(), sPanel, CHECKBOX_HIDE_HANDS_REPLAY, gDataManager->GetSysString(2080).data());
 		defaultStrings.emplace_back(gSettings.chkHideHandsInReplays, 2080);
+		/////kdiy////////////
+		gSettings.stCurrentFont = env->addStaticText(gDataManager->GetSysString(8040).data(), GetCurrentRectWithXOffset(15, 90), false, true, sPanel);
+		defaultStrings.emplace_back(gSettings.stCurrentFont, 8040);
+		gSettings.cbCurrentFont = AddComboBox(env, GetCurrentRectWithXOffset(95, 250), sPanel, COMBOBOX_CURRENT_FONT);
+		for(auto& font : Utils::FindFiles(EPRO_TEXT("./fonts/"), { EPRO_TEXT("ttf"), EPRO_TEXT("otf") })) {
+			auto itemIndex = gSettings.cbCurrentFont->addItem(Utils::ToUnicodeIfNeeded(font).data());
+			if(Utils::ToPathString(gGameConfig->textfont.font.substr(6, gGameConfig->textfont.font.size() - 1)) == font)
+				gSettings.cbCurrentFont->setSelected(itemIndex);
+		}
+		gSettings.ebFontSize = env->addEditBox(WStr(gGameConfig->textfont.size), GetCurrentRectWithXOffset(265, 320), true, sPanel, EDITBOX_NUMERIC);
+		gSettings.ebFontSize->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+		/////kdiy////////////
 	}
 
 	{
@@ -2078,6 +2074,14 @@ void Game::PopulateSettingsWindow() {
 		gSettings.chkNoChainDelay = env->addCheckBox(gGameConfig->chkWaitChain, GetNextRect(), sPanel, CHECKBOX_NO_CHAIN_DELAY, gDataManager->GetSysString(1277).data());
 		menuHandler.MakeElementSynchronized(gSettings.chkNoChainDelay);
 		defaultStrings.emplace_back(gSettings.chkNoChainDelay, 1277);
+		//////kdiy///////////
+		gSettings.chkEnableAnime = env->addCheckBox(gGameConfig->enableanime, GetNextRect(), sPanel, CHECKBOX_ENABLE_ANIME, gDataManager->GetSysString(8016).data());
+		defaultStrings.emplace_back(gSettings.chkEnableAnime, 8016);
+#if !defined(_WIN32)
+        gSettings.chkEnableAnime->setChecked(false);
+    	gSettings.chkEnableAnime->setEnabled(false);
+#endif
+        //////kdiy///////////
 	}
 
 	{
@@ -2101,20 +2105,9 @@ void Game::PopulateSettingsWindow() {
 			gSettings.scrSoundVolume->setSmallStep(1);
 			IncrementXorY();
 		}
-		//////kdiy////////////
-		//gSettings.chkEnableMusic = env->addCheckBox(gGameConfig->enablemusic, GetNextRect(), sPanel, CHECKBOX_ENABLE_MUSIC, gDataManager->GetSysString(2046).data());
-		gSettings.chkEnableMusic = env->addCheckBox(gGameConfig->enablemusic, GetNextRect2(), sPanel, CHECKBOX_ENABLE_MUSIC, gDataManager->GetSysString(2046).data());
-		//////kdiy////////////
+		gSettings.chkEnableMusic = env->addCheckBox(gGameConfig->enablemusic, GetNextRect(), sPanel, CHECKBOX_ENABLE_MUSIC, gDataManager->GetSysString(2046).data());
 		menuHandler.MakeElementSynchronized(gSettings.chkEnableMusic);
 		defaultStrings.emplace_back(gSettings.chkEnableMusic, 2046);
-		//////kdiy///////////
-		gSettings.chkEnableAnime = env->addCheckBox(gGameConfig->enableanime, GetNextRect3(), sPanel, CHECKBOX_ENABLE_ANIME, gDataManager->GetSysString(8016).data());
-		defaultStrings.emplace_back(gSettings.chkEnableAnime, 8016);
-#if !defined(_WIN32)
-        gSettings.chkEnableAnime->setChecked(false);
-    	gSettings.chkEnableAnime->setEnabled(false);
-#endif
-        //////kdiy///////////
 		{
 			gSettings.stMusicVolume = env->addStaticText(gDataManager->GetSysString(2048).data(), GetCurrentRectWithXOffset(15, 75), false, true, sPanel);
 			defaultStrings.emplace_back(gSettings.stMusicVolume, 2048);
@@ -2132,18 +2125,6 @@ void Game::PopulateSettingsWindow() {
 		gSettings.stNoAudioBackend = env->addStaticText(gDataManager->GetSysString(2058).data(), GetCurrentRectWithXOffset(15, 320), false, true, sPanel);
 		defaultStrings.emplace_back(gSettings.stNoAudioBackend, 2058);
 		gSettings.stNoAudioBackend->setVisible(false);
-		/////kdiy////////////
-		gSettings.stCurrentFont = env->addStaticText(gDataManager->GetSysString(8040).data(), GetCurrentRectWithXOffset(15, 90), false, true, sPanel);
-		defaultStrings.emplace_back(gSettings.stCurrentFont, 8040);
-		gSettings.cbCurrentFont = AddComboBox(env, GetCurrentRectWithXOffset(15, 90), sPanel, COMBOBOX_CURRENT_FONT);
-		for(auto& font : Utils::FindFiles(EPRO_TEXT("./fonts/"), { EPRO_TEXT("ttf"), EPRO_TEXT("otf") })) {
-			auto itemIndex = gSettings.cbCurrentFont->addItem(Utils::ToUnicodeIfNeeded(font).data());
-			if(Utils::ToPathString(gGameConfig->textfont.font.substr(6, gGameConfig->textfont.font.size() - 1)) == font)
-				gSettings.cbCurrentFont->setSelected(itemIndex);
-		}
-		gSettings.ebFontSize = env->addEditBox(WStr(gGameConfig->textfont.size), Scale(530, 335, 645, 360), true, sPanel, EDITBOX_NUMERIC);
-		gSettings.ebFontSize->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-		/////kdiy////////////
 	}
 
 	{
