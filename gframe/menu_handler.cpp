@@ -162,12 +162,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				Utils::SystemOpen(EPRO_TEXT("https://qm.qq.com/cgi-bin/qm/qr?k=0BcdVu6E2gUjyc_WmL25uLNYib2mTPoV"));
 				break;
 			}
-			case BUTTON_PLUGIN: {
-				if (!mainGame->mgSettings.window->isVisible())
-					mainGame->PopupElement(mainGame->mgSettings.window);
-				mainGame->env->setFocus(mainGame->mgSettings.window);	
-				break;
-			}
 			////////kdiy///////		
 			case BUTTON_MODE_EXIT: {
 				mainGame->device->closeDevice();
@@ -1083,7 +1077,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				/////kdiy///////
 				    gGameConfig->update_allowed = false;
 					Utils::DeleteDirectory(EPRO_TEXT("./config/languages/"));
-                    Utils::DeleteDirectory(EPRO_TEXT("./repositories/"));
+                    Utils::DeleteDirectory(EPRO_TEXT("./repositories/kcg/"));
 				/////kdiy///////
 				case ACTION_SHOW_CHANGELOG:
 					mainGame->wQuery->setRelativePosition(mainGame->ResizeWin(490, 200, 840, 340)); // from Game::OnResize

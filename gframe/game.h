@@ -382,9 +382,6 @@ public:
 	void PopulateTabSettingsWindow();
 	void PopulateSettingsWindow();
 	SettingsWindow gSettings;
-	///////kdiy/////
-	SettingsWindow mgSettings;
-	///////kdiy/////
 	irr::gui::IGUIWindow* wBtnSettings;
 	irr::gui::CGUIImageButton* btnSettings;
 
@@ -405,9 +402,6 @@ public:
 	int mainMenuRightX;
 	irr::gui::IGUIWindow* wMainMenu;
 	/////kdiy/////////
-	irr::gui::IGUIWindow* wQQMessage;
-	irr::gui::IGUIStaticText* stQQMessage;
-	irr::gui::IGUIButton* btnQQMsgOK;
 	irr::gui::IGUIWindow* wQQ;
 	irr::gui::CGUIImageButton* btnQQ;
 	irr::gui::IGUIButton* btnQQ2;
@@ -431,10 +425,6 @@ public:
 	irr::gui::IGUIButton* btnReplayMode;
 	irr::gui::IGUIButton* btnTestMode;
 	irr::gui::IGUIButton* btnDeckEdit;
-	//////kdiy////////
-	irr::gui::IGUIButton* btnPlugin;
-	irr::gui::IGUIButton* btnPlugin2;
-	//////kdiy////////
 	irr::gui::IGUIButton* btnModeExit;
 	irr::gui::IGUIButton* btnCommitLogExit;
 	irr::gui::IGUIStaticText* stCommitLog;
@@ -552,21 +542,14 @@ public:
     irr::gui::CGUIImageButton* icon2[6];
 	irr::gui::IGUIComboBox* cbDeck2Select;
 	irr::gui::IGUIComboBox* cbDeck2Select2;	
-	irr::gui::IGUIStaticText* clearpics;
 	irr::gui::IGUIButton* btnClearpics;
-	irr::gui::IGUIStaticText* repo;
 	irr::gui::IGUIButton* btnClearrepo;
-	irr::gui::IGUIStaticText* intro;
 	irr::gui::IGUIButton* btnIntro;
-	irr::gui::IGUIStaticText* tut;
 	irr::gui::IGUIButton* btnTut;
-	irr::gui::IGUIStaticText* tut2;
 	irr::gui::IGUIButton* btnTut2;
-	irr::gui::IGUIStaticText* homepage;	
 	irr::gui::IGUIButton* btHome;
-	irr::gui::IGUIStaticText* folder;	
 	irr::gui::IGUIButton* btnFolder;
-	irr::gui::IGUIStaticText* hdpics;
+    irr::gui::IGUIStaticText* stpics;
 	irr::gui::IGUIComboBox* cbpics;
 	//////////kdiy/////////
 	irr::gui::IGUIButton* btnHostPrepReady;

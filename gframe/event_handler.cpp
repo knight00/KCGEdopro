@@ -1946,13 +1946,6 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				mainGame->HideElement(event.GUIEvent.Caller);
 				return true;
 			}
-			//////kdiy////////
-			if(event.GUIEvent.Caller == mainGame->mgSettings.window) {
-				stopPropagation = true;
-				mainGame->HideElement(mainGame->mgSettings.window);
-				return true;
-			}			
-			//////kdiy////////
 			break;
 		}
 		case irr::gui::EGET_BUTTON_CLICKED: {
@@ -2018,11 +2011,6 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				break;
 			}
 			//////kdiy///////
-			case BUTTON_PLUGIN: {
-				mainGame->PopupElement(mainGame->mgSettings.window);
-				mainGame->env->setFocus(mainGame->mgSettings.window);	
-				break;
-			}
 			case BUTTON_HOME: {
                 Utils::SystemOpen(EPRO_TEXT("https://edokcg.i234.me/wordpress/edopro-kcg/"));
 				break;
@@ -2139,17 +2127,26 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			/////kdiy/////////
 			case CHECKBOX_ENABLE_SSOUND: {
 				gGameConfig->enablessound = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
-				mainGame->mgSettings.chkEnableSummonSound->setChecked(gGameConfig->enablessound);
+#ifndef VIP
+				gGameConfig->enablessound = false;
+#endif
+				mainGame->gSettings.chkEnableSummonSound->setChecked(gGameConfig->enablessound);
 				return true;
 			}
 			case CHECKBOX_ENABLE_CSOUND: {
 				gGameConfig->enablecsound = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
-				mainGame->mgSettings.chkEnableActivateSound->setChecked(gGameConfig->enablecsound);
+#ifndef VIP
+				gGameConfig->enablecsound = false;
+#endif
+				mainGame->gSettings.chkEnableActivateSound->setChecked(gGameConfig->enablecsound);
 				return true;
 			}
 			case CHECKBOX_ENABLE_ASOUND: {
 				gGameConfig->enableasound = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
-				mainGame->mgSettings.chkEnableAttackSound->setChecked(gGameConfig->enableasound);
+#ifndef VIP
+				gGameConfig->enableasound = false;
+#endif
+				mainGame->gSettings.chkEnableAttackSound->setChecked(gGameConfig->enableasound);
 				return true;
 			}
 			case CHECKBOX_ENABLE_ANIME: {
@@ -2160,54 +2157,69 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 #if !defined(_WIN32)
 					gGameConfig->enableanime = false;
 					mainGame->tabSettings.chkEnableAnime->setChecked(false);
-					mainGame->mgSettings.chkEnableAnime->setChecked(false);
+					mainGame->gSettings.chkEnableAnime->setChecked(false);
 #endif
 				} else {
 					gGameConfig->enableanime = false;
 					mainGame->tabSettings.chkEnableAnime->setChecked(false);
-					mainGame->mgSettings.chkEnableAnime->setChecked(false);
+					mainGame->gSettings.chkEnableAnime->setChecked(false);
 				}
 				return true;
 			}
 			case CHECKBOX_ENABLE_SANIME: {
 				if(gGameConfig->update_allowed) {
 					gGameConfig->enablesanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
-					mainGame->mgSettings.chkEnableSummonAnime->setChecked(gGameConfig->enablesanime);
+					mainGame->gSettings.chkEnableSummonAnime->setChecked(gGameConfig->enablesanime);
 #if !defined(_WIN32)
 					gGameConfig->enablesanime = false;
-					mainGame->mgSettings.chkEnableSummonAnime->setChecked(false);
+					mainGame->gSettings.chkEnableSummonAnime->setChecked(false);
 #endif
+                    if(gGameConfig->enablesanime) {
+                        gGameConfig->enableanime = true;
+                        mainGame->tabSettings.chkEnableAnime->setChecked(true);
+					    mainGame->gSettings.chkEnableAnime->setChecked(true);
+                    }
 				} else {
 					gGameConfig->enablesanime = false;
-					mainGame->mgSettings.chkEnableSummonAnime->setChecked(false);
+					mainGame->gSettings.chkEnableSummonAnime->setChecked(false);
 				}
 				return true;
 				}
 			case CHECKBOX_ENABLE_CANIME: {
 				if(gGameConfig->update_allowed) {
 					gGameConfig->enablecanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
-					mainGame->mgSettings.chkEnableActivateAnime->setChecked(gGameConfig->enablecanime);
+					mainGame->gSettings.chkEnableActivateAnime->setChecked(gGameConfig->enablecanime);
 #if !defined(_WIN32)
 					gGameConfig->enablecanime = false;
-					mainGame->mgSettings.chkEnableActivateAnime->setChecked(false);
+					mainGame->gSettings.chkEnableActivateAnime->setChecked(false);
 #endif
+                    if(gGameConfig->enablecanime) {
+                        gGameConfig->enableanime = true;
+                        mainGame->tabSettings.chkEnableAnime->setChecked(true);
+					    mainGame->gSettings.chkEnableAnime->setChecked(true);
+                    }
 				} else {
 					gGameConfig->enablecanime = false;
-					mainGame->mgSettings.chkEnableActivateAnime->setChecked(false);
+					mainGame->gSettings.chkEnableActivateAnime->setChecked(false);
 				}
 				return true;
 				}
 			case CHECKBOX_ENABLE_AANIME: {
 				if(gGameConfig->update_allowed) {
 					gGameConfig->enableaanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
-					mainGame->mgSettings.chkEnableAttackAnime->setChecked(gGameConfig->enableaanime);
+					mainGame->gSettings.chkEnableAttackAnime->setChecked(gGameConfig->enableaanime);
 #if !defined(_WIN32)
 					gGameConfig->enableaanime = false;
-					mainGame->mgSettings.chkEnableAttackAnime->setChecked(false);
+					mainGame->gSettings.chkEnableAttackAnime->setChecked(false);
 #endif
+                    if(gGameConfig->enableaanime) {
+                        gGameConfig->enableanime = true;
+                        mainGame->tabSettings.chkEnableAnime->setChecked(true);
+					    mainGame->gSettings.chkEnableAnime->setChecked(true);
+                    }
 				} else {
 					gGameConfig->enableaanime = false;
-					mainGame->mgSettings.chkEnableAttackAnime->setChecked(false);
+					mainGame->gSettings.chkEnableAttackAnime->setChecked(false);
 				}
 				return true;
 				}

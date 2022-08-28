@@ -94,6 +94,7 @@ struct SettingsWindow {
 	irr::gui::IGUIStaticText* stCurrentFont;
 	irr::gui::IGUIComboBox* cbCurrentFont;
 	irr::gui::IGUIEditBox* ebFontSize;
+    irr::gui::IGUIStaticText* stSound;
 	irr::gui::IGUICheckBox* chkEnableAnime;
 	irr::gui::IGUICheckBox* chkEnableSummonSound;
 	irr::gui::IGUICheckBox* chkEnableActivateSound;
