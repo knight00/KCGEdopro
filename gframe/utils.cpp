@@ -1,6 +1,7 @@
 #include "utils.h"
 #include <cmath> // std::round
 #include <fstream>
+#include "config.h"
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -14,18 +15,19 @@
 #include <unistd.h>
 #include <pthread.h>
 using Stat = struct stat;
-#ifdef __ANDROID__
-#include "Android/porting_android.h"
-#else
+#include "porting.h"
+#ifndef __ANDROID__
 #include <sys/wait.h>
 #endif //__ANDROID__
 #if defined(__linux__)
 #include <sys/sendfile.h>
 #include <fcntl.h>
 #elif defined(__APPLE__)
+#ifdef EDOPRO_MACOS
 #import <CoreFoundation/CoreFoundation.h>
 #include <mach-o/dyld.h>
 #include <CoreServices/CoreServices.h>
+#endif //EDOPRO_MACOS
 #include <copyfile.h>
 #endif //__linux__
 #endif //_WIN32
@@ -33,7 +35,6 @@ using Stat = struct stat;
 #include <IFileSystem.h>
 #include <fmt/format.h>
 #include <IOSOperator.h>
-#include "config.h"
 #include "bufferio.h"
 #include "file_stream.h"
 #if defined(__MINGW32__) && defined(UNICODE)
@@ -214,6 +215,8 @@ namespace ygo {
 	bool Utils::SetWorkingDirectory(epro::path_stringview newpath) {
 #ifdef _WIN32
 		bool res = SetLastErrorStringIfFailed(SetCurrentDirectory(newpath.data()));
+#elif defined(EDOPRO_IOS)
+		bool res = porting::changeWorkDir(newpath.data()) == 1;
 #else
 		bool res = SetLastErrorStringIfFailed(chdir(newpath.data()) == 0);
 #endif

@@ -87,6 +87,59 @@ newoption {
     description = "EK"
 }
 -----kdiy-----
+newoption {
+	trigger = "architecture",
+	value = "arch",
+	description = "Architecture for the solution, allowed values are x86, x64, arm64, armv7, comma separated"
+}
+
+local function default_arch()
+	if os.istarget("linux") or os.istarget("macosx") then return "x64" end
+	if os.istarget("windows") then return "x86" end
+	if os.istarget("ios") then return "arm64" end
+end
+
+local function valid_arch(arch)
+	return arch == "x86" or arch == "x64" or arch == "arm64" or arch == "armv7"
+end
+
+local absolute_vcpkg_path =(function()
+	if _OPTIONS["vcpkg-root"] then
+		return path.getabsolute(_OPTIONS["vcpkg-root"])
+	end
+end)()
+
+function get_vcpkg_root_path(arch)
+	local function vcpkg_triplet_path()
+		if os.istarget("linux") then
+			return "-linux"
+		elseif os.istarget("macosx") then
+			return "-osx"
+		elseif os.istarget("windows") then
+			return "-mingw-static"
+		elseif os.istarget("ios") then
+			return "-ios"
+		end
+	end
+	return absolute_vcpkg_path .. "/installed/" .. arch .. vcpkg_triplet_path()
+end
+
+archs={}
+
+if _OPTIONS["architecture"] then
+	for arch in string.gmatch(_OPTIONS["architecture"], "([^,]+)") do
+		if valid_arch(arch) then
+			table.insert(archs,arch)
+		end
+	end
+end
+
+if #archs == 0 then archs = { default_arch() } end
+
+local _includedirs=includedirs
+if _ACTION=="xcode4" then
+	_includedirs=sysincludedirs
+end
 workspace "ygo"
 	location "build"
 	language "C++"
@@ -99,13 +152,38 @@ workspace "ygo"
 	filter "system:windows"
 		systemversion "latest"
 		defines { "WIN32", "_WIN32", "NOMINMAX" }
-		platforms {"Win32", "x64"}
+		for arch in ipairs(archs) do
+			if arch=="x86" then platforms "Win32" end
+			if arch=="x64" then platforms "x64" end
+		end
+
+	filter "system:not windows"
+		platforms(archs)
 
 	filter "platforms:Win32"
 		architecture "x86"
 
+	filter "platforms:x86"
+		architecture "x86"
+
 	filter "platforms:x64"
 		architecture "x64"
+
+	filter "platforms:arm64"
+		architecture "ARM64"
+
+	filter "platforms:armv7"
+		architecture "ARM"
+
+	if os.istarget("ios") and _ACTION~="xcode4" then
+		premake.tools.clang.ldflags.architecture.x86 = "-arch i386"
+		premake.tools.clang.ldflags.architecture.x86_64 = "-arch x86_64"
+		premake.tools.clang.ldflags.architecture.ARM = "-arch armv7"
+		premake.tools.clang.ldflags.architecture.ARM64 = "-arch arm64"
+		premake.tools.clang.shared.architecture = premake.tools.clang.ldflags.architecture
+		premake.tools.gcc.ldflags.architecture = premake.tools.clang.ldflags.architecture
+		premake.tools.gcc.shared.architecture = premake.tools.clang.ldflags.architecture
+	end
 
 	if _OPTIONS["oldwindows"] then
 		filter { "action:vs2015" }
@@ -120,38 +198,31 @@ workspace "ygo"
 
 
 	if _OPTIONS["vcpkg-root"] then
-		filter "system:linux"
-			includedirs { _OPTIONS["vcpkg-root"] .. "/installed/x64-linux/include" }
+		for _,arch in ipairs(archs) do
+			local full_vcpkg_root_path=get_vcpkg_root_path(arch)
+			print(full_vcpkg_root_path)
+			local platform="platforms:" .. (arch=="x86" and os.istarget("windows") and "Win32" or (arch == "armv7" and "arm") or arch)
+			filter { "action:not vs*", platform }
+				_includedirs { full_vcpkg_root_path .. "/include" }
 
-		filter { "system:linux", "configurations:Debug" }
-			libdirs { _OPTIONS["vcpkg-root"] .. "/installed/x64-linux/debug/lib" }
+			filter { "action:not vs*", "configurations:Debug", platform }
+				libdirs { full_vcpkg_root_path .. "/debug/lib" }
 
-		filter { "system:linux", "configurations:Release" }
-			libdirs { _OPTIONS["vcpkg-root"] .. "/installed/x64-linux/lib" }
-
-		filter "system:macosx"
-			includedirs { _OPTIONS["vcpkg-root"] .. "/installed/x64-osx/include" }
-
-		filter { "system:macosx", "configurations:Debug" }
-			libdirs { _OPTIONS["vcpkg-root"] .. "/installed/x64-osx/debug/lib" }
-
-		filter { "system:macosx", "configurations:Release" }
-			libdirs { _OPTIONS["vcpkg-root"] .. "/installed/x64-osx/lib" }
-			
-		filter { "action:not vs*", "system:windows" }
-			includedirs { _OPTIONS["vcpkg-root"] .. "/installed/x86-mingw-static/include" }
-
-		filter { "action:not vs*", "system:windows", "configurations:Debug" }
-			libdirs { _OPTIONS["vcpkg-root"] .. "/installed/x86-mingw-static/debug/lib" }
-
-		filter { "action:not vs*", "system:windows", "configurations:Release" }
-			libdirs { _OPTIONS["vcpkg-root"] .. "/installed/x86-mingw-static/lib" }
+			filter { "action:not vs*", "configurations:Release", platform }
+				libdirs { full_vcpkg_root_path .. "/lib" }
+		end
 	end
 
 	filter "system:macosx"
 		defines { "GL_SILENCE_DEPRECATION" }
-		includedirs { "/usr/local/include" }
+		_includedirs { "/usr/local/include" }
 		libdirs { "/usr/local/lib" }
+		--systemversion "10.10"
+
+	filter "system:ios"
+		systemversion "9.0"
+		buildoptions { "-mios-simulator-version-min=9.0" }
+		linkoptions { "-mios-simulator-version-min=9.0" }
 
 	filter "action:vs*"
 		vectorextensions "SSE2"
@@ -176,8 +247,14 @@ workspace "ygo"
 		targetdir "bin/debug"
 		runtime "Debug"
 		
-	filter { "action:vs*", "configurations:Debug", "architecture:*64" }
+	filter { "configurations:Debug", "architecture:x64" }
 		targetdir "bin/x64/debug"
+		
+	filter { "configurations:Debug", "architecture:ARM64" }
+		targetdir "bin/arm64/debug"
+		
+	filter { "configurations:Release", "architecture:ARM" }
+		targetdir "bin/armv7/debug"
 
 	filter { "configurations:Release*" , "action:not vs*" }
 		symbols "On"
@@ -188,8 +265,14 @@ workspace "ygo"
 		flags "LinkTimeOptimization"
 		targetdir "bin/release"
 		
-	filter { "action:vs*", "configurations:Release", "architecture:*64" }
+	filter { "configurations:Release", "architecture:x64" }
 		targetdir "bin/x64/release"
+		
+	filter { "configurations:Release", "architecture:ARM64" }
+		targetdir "bin/arm64/release"
+		
+	filter { "configurations:Release", "architecture:ARM" }
+		targetdir "bin/armv7/release"
 	
 	filter { "system:linux", "configurations:Release" }
 		linkoptions { "-static-libgcc", "-static-libstdc++" }
@@ -217,7 +300,7 @@ end
 
 local function vcpkgStaticTriplet202006(prj)
 	premake.w('<VcpkgEnabled>true</VcpkgEnabled>')
-    premake.w('<VcpkgUseStatic>true</VcpkgUseStatic>')
+	premake.w('<VcpkgUseStatic>true</VcpkgUseStatic>')
 	premake.w('<VcpkgAutoLink>true</VcpkgAutoLink>')
 end
 

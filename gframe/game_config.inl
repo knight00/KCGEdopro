@@ -96,10 +96,12 @@ OPTION_ALIASED(epro::path_string, locale, language, EPRO_TEXT("English"))
 OPTION(bool, scale_background, true)
 OPTION(bool, dotted_lines, false)
 OPTION(bool, controller_input, false)
-#ifdef __ANDROID__
+#if defined(__ANDROID__) || defined(EDOPRO_IOS)
 OPTION(bool, accurate_bg_resize, true)
+OPTION(bool, confirm_clear_deck, true)
 #else
 OPTION(bool, accurate_bg_resize, false)
+OPTION(bool, confirm_clear_deck, false)
 #endif
 OPTION_ALIASED(bool, enablemusic, enable_music, false)
 OPTION_ALIASED(bool, enablesound, enable_sound, true)

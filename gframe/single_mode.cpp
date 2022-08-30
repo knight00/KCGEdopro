@@ -90,6 +90,10 @@ restart:
 	if(hand_test)
 		opt |= DUEL_ATTACK_FIRST_TURN;
 	pduel = mainGame->SetupDuel({ seed, opt, team, team });
+	mainGame->dInfo.duel_params = opt;
+	mainGame->dInfo.duel_field = mainGame->GetMasterRule(mainGame->dInfo.duel_params);
+	matManager.SetActiveVertices((mainGame->dInfo.duel_params & DUEL_3_COLUMNS_FIELD) ? 1 : 0,
+								 (mainGame->dInfo.duel_field == 3 || mainGame->dInfo.duel_field == 5) ? 0 : 1);
 	mainGame->dInfo.compat_mode = false;
 	///////////kdiy///////////
 	mainGame->dInfo.startlp = mainGame->dInfo.lp[0] = mainGame->dInfo.lp[1] = duelOptions.startingLP;
@@ -387,7 +391,35 @@ bool SingleMode::SinglePlayAnalyze(CoreUtils::Packet& packet) {
 			int type = BufferIO::Read<uint8_t>(pbuf);
 			int player = BufferIO::Read<uint8_t>(pbuf);
 			/*uint64_t data = BufferIO::Read<uint64_t>(pbuf);*/
-			if(player == 0 || type >= HINT_SKILL)
+			bool analyze = false;
+			switch (type) {
+			case 1:
+			case 2:
+			case 3:
+			case 5: {
+				analyze = player == 0;
+				break;
+			}
+			case 4:
+			case 6:
+			case 7:
+			case 8:
+			case 9:
+			case 11: {
+				analyze = player != 0;
+				break;
+			}
+			case 10:
+			case 200:
+			case 201:
+			case 202:
+			case 203: {
+				analyze = true;
+				break;
+			
+			}
+			}
+			if(analyze)
 				Analyze();
 			if(type > 0 && type < 6 && type != 4)
 				record = false;

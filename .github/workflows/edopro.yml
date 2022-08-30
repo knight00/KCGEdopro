@@ -1,9 +1,8 @@
 name: Build EDOPro
 on: [push, pull_request]
 env:
-  BUILD_CONFIG: release
   COVERS_URL: ${{ secrets.COVERS_URL }}
-  DEPENDENCIES_BASE_URL: https://github.com/edo9300/edopro-vcpkg-cache/releases/download/20220812
+  DEPENDENCIES_BASE_URL: https://github.com/edo9300/edopro-vcpkg-cache/releases/download/20220825
   DEPLOY_DIR: deploy
   DEPLOY_REPO: ${{ secrets.DEPLOY_REPO }}
   DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
@@ -19,6 +18,8 @@ jobs:
       TRAVIS_OS_NAME: windows
       DXSDK_DIR: /c/d3d9sdk/
       VCPKG_ROOT: /c/vcpkg2
+      BUILD_CONFIG: release
+      ARCH: x86
     steps:
     - name: Set custom env vars
       shell: bash
@@ -67,6 +68,8 @@ jobs:
       DXSDK_DIR: /c/d3d9sdk/
       VCPKG_ROOT: /c/vcpkg2
       VS_GEN: vs2019
+      BUILD_CONFIG: release
+      ARCH: x86
     steps:
     - name: Set custom env vars
       shell: bash
@@ -115,6 +118,8 @@ jobs:
       DXSDK_DIR: /c/d3d9sdk/
       VCPKG_ROOT: /c/vcpkg2
       VS_GEN: vs2022
+      BUILD_CONFIG: release
+      ARCH: x86
     steps:
     - name: Set custom env vars
       shell: bash
@@ -141,25 +146,27 @@ jobs:
       if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
       shell: bash
       run: ./travis/deploy.sh
-    - name: Log Failure
-      uses: sarisia/actions-status-discord@v1
-      if: failure()
-      with:
-        nodetail: true
-        description: |
-            [[${{ github.event.repository.name }}] ${{ github.job }} failed on ${{ github.ref }}](https://github.com/${{github.repository}}/actions/runs/${{github.run_id}})
-        title: |
+    # - name: Log Failure
+      # uses: sarisia/actions-status-discord@v1
+      # if: failure()
+      # with:
+        # nodetail: true
+        # description: |
+            # [[${{ github.event.repository.name }}] ${{ github.job }} failed on ${{ github.ref }}](https://github.com/${{github.repository}}/actions/runs/${{github.run_id}})
+        # title: |
                 
-        color: 0xff0000
-        webhook: ${{ secrets.DISCORD_WEBHOOK }}
-        avatar_url: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
-        username: Github
+        # color: 0xff0000
+        # webhook: ${{ secrets.DISCORD_WEBHOOK }}
+        # avatar_url: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+        # username: Github
 
   Linux-gcc-7-5-0:
     runs-on: ubuntu-18.04
     env:
       DEPLOY_BRANCH: travis-linux
       TRAVIS_OS_NAME: linux
+      BUILD_CONFIG: release
+      ARCH: x64
     steps:
     - name: Set custom env vars
       shell: bash
@@ -208,6 +215,8 @@ jobs:
     env:
       DEPLOY_BRANCH: travis-linux-gcc-10
       TRAVIS_OS_NAME: linux
+      BUILD_CONFIG: release
+      ARCH: x64
     steps:
     - name: Set custom env vars
       shell: bash
@@ -259,6 +268,8 @@ jobs:
     env:
       DEPLOY_BRANCH: travis-linux-gcc-11
       TRAVIS_OS_NAME: linux
+      BUILD_CONFIG: release
+      ARCH: x64
     steps:
     - name: Set custom env vars
       shell: bash
@@ -314,6 +325,8 @@ jobs:
     env:
       DEPLOY_BRANCH: travis-linux-aarch64
       TRAVIS_OS_NAME: linux
+      BUILD_CONFIG: release
+      ARCH: arm64
     steps:
     - name: Set custom env vars
       shell: bash
@@ -335,9 +348,7 @@ jobs:
     - name: Install dependencies
       shell: bash
       run: |
-        ./travis/dependencies.sh && \
-        rm -rf $VCPKG_ROOT/installed/x64-linux && \
-        mv $VCPKG_ROOT/installed/arm64-linux $VCPKG_ROOT/installed/x64-linux
+        ./travis/dependencies.sh
     - name: Build
       env:
         CC: /usr/bin/aarch64-linux-gnu-gcc
@@ -374,6 +385,8 @@ jobs:
       DEVELOPER_DIR: /Applications/Xcode_11.7.app/Contents/Developer
       MACOSX_DEPLOYMENT_TARGET: 10.11
       SDKROOT: /Applications/Xcode_11.7.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk
+      BUILD_CONFIG: release
+      ARCH: x64
     steps:
     - name: Set custom env vars
       shell: bash
@@ -405,7 +418,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: osx
-        path: bin/release/ygoprodll.app
+        path: bin/x64/release/ygoprodll.app
     - name: Log Failure
       uses: sarisia/actions-status-discord@v1
       if: failure()
@@ -426,9 +439,10 @@ jobs:
       DEPLOY_BRANCH: travis-osx-aarch64
       TRAVIS_OS_NAME: osx
       VCPKG_ROOT: ./vcpkg2
-      ARM64: 1
       MACOSX_DEPLOYMENT_TARGET: 11.0
       SDKROOT: /Applications/Xcode_12.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk
+      BUILD_CONFIG: release
+      ARCH: arm64
     steps:
     - name: Set custom env vars
       shell: bash
@@ -447,9 +461,7 @@ jobs:
     - name: Install dependencies
       shell: bash
       run: |
-        ./travis/dependencies.sh && \
-        rm -rf $VCPKG_ROOT/installed/x64-osx && \
-        mv $VCPKG_ROOT/installed/arm64-osx $VCPKG_ROOT/installed/x64-osx
+        ./travis/dependencies.sh
     - name: Build
       env:
         CXXFLAGS: -target arm64-apple-macos11
@@ -467,7 +479,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: osx-aarch64
-        path: bin/release/ygoprodll.app
+        path: bin/arm64/release/ygoprodll.app
     - name: Log Failure
       uses: sarisia/actions-status-discord@v1
       if: failure()
