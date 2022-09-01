@@ -195,7 +195,7 @@ void Game::Initialize() {
 	imageManager.Initial();
 	/////kdiy///////
 	//RefreshAiDecks();
-	RefreshAiDecks(0);
+	RefreshAiDecks();
 	/////kdiy///////
 	if(!discord.Initialize())
 		gGameConfig->discordIntegration = false;
@@ -1891,16 +1891,16 @@ void Game::PopulateSettingsWindow() {
 			defaultStrings.emplace_back(gSettings.btnRestart, 2071);
 			IncrementXorY();
 		}
-#ifdef UPDATE_URL
-		gSettings.chkUpdates = env->addCheckBox(gGameConfig->noClientUpdates, GetNextRect(), sPanel, -1, gDataManager->GetSysString(1466).data());
-		defaultStrings.emplace_back(gSettings.chkUpdates, 1466);
-		////kdiy////////
-		gSettings.chkUpdates->setEnabled(false);
-		gSettings.chkUpdates->setVisible(false);
-		////kdiy////////
-#endif
+        ////kdiy////////
+// #ifdef UPDATE_URL
+// 		gSettings.chkUpdates = env->addCheckBox(gGameConfig->noClientUpdates, GetNextRect(), sPanel, -1, gDataManager->GetSysString(1466).data());
+// 		defaultStrings.emplace_back(gSettings.chkUpdates, 1466);
+// #endif
+        ////kdiy////////
 		gSettings.chkHideHandsInReplays = env->addCheckBox(gGameConfig->hideHandsInReplays, GetNextRect(), sPanel, CHECKBOX_HIDE_HANDS_REPLAY, gDataManager->GetSysString(2080).data());
 		defaultStrings.emplace_back(gSettings.chkHideHandsInReplays, 2080);
+		gSettings.chkConfirmDeckClear = env->addCheckBox(gGameConfig->confirm_clear_deck, GetNextRect(), sPanel, CHECKBOX_CONFIRM_DECK_CLEAR, gDataManager->GetSysString(12104).data());
+		defaultStrings.emplace_back(gSettings.chkConfirmDeckClear, 12104);
 		/////kdiy////////////
 		gSettings.stCurrentFont = env->addStaticText(gDataManager->GetSysString(8016).data(), GetCurrentRectWithXOffset(15, 90), false, true, sPanel);
 		defaultStrings.emplace_back(gSettings.stCurrentFont, 8016);
@@ -1912,10 +1912,7 @@ void Game::PopulateSettingsWindow() {
 		}
 		gSettings.ebFontSize = env->addEditBox(WStr(gGameConfig->textfont.size), GetCurrentRectWithXOffset(265, 320), true, sPanel, EDITBOX_NUMERIC);
 		gSettings.ebFontSize->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-        IncrementXorY();
 		/////kdiy////////////
-		gSettings.chkConfirmDeckClear = env->addCheckBox(gGameConfig->confirm_clear_deck, GetNextRect(), sPanel, CHECKBOX_CONFIRM_DECK_CLEAR, gDataManager->GetSysString(12104).data());
-		defaultStrings.emplace_back(gSettings.chkConfirmDeckClear, 12104);
 	}
 
 	{
@@ -2920,7 +2917,7 @@ void Game::RefreshLFLists() {
 }
 /////kdiy///////
 //void Game::RefreshAiDecks() {
-void Game::RefreshAiDecks(int a) {
+void Game::RefreshAiDecks(bool aichk) {
 /////kdiy///////	
 	gBot.bots.clear();
 	std::ifstream windbots("./WindBot/bots.json");
@@ -2954,8 +2951,8 @@ void Game::RefreshAiDecks(int a) {
 					bot.deck = BufferIO::DecodeUTF8(obj.at("deck").get_ref<std::string&>());
 					/////kdiy////////
 					bot.dialog = BufferIO::DecodeUTF8(obj.at("dialog").get_ref<std::string&>());
-					bot.deckfolder = a == 1 ? gBot.aiDeckSelect2->getItem(gBot.aiDeckSelect2->getSelected()) : L"";
-					bot.deckpath = a == 1 ? gBot.aiDeckSelect->getItem(gBot.aiDeckSelect->getSelected()) : L"";
+					bot.deckfolder = aichk ? gBot.aiDeckSelect2->getItem(gBot.aiDeckSelect2->getSelected()) : L"";
+					bot.deckpath = aichk ? gBot.aiDeckSelect->getItem(gBot.aiDeckSelect->getSelected()) : L"";
 					/////kdiy////////	
 					bot.deckfile = fmt::format(L"AI_{}", bot.deck);
 					bot.difficulty = obj.at("difficulty").get<int>();
@@ -4181,7 +4178,7 @@ void Game::OnResize() {
     wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 360, 310));
     ////kdiy////////////
 	wSinglePlay->setRelativePosition(ResizeWin(220, 100, 800, 520));
-	gBot.window->setRelativePosition(irr::core::position2di(wHostPrepare->getAbsolutePosition().LowerRightCorner.X, wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
+	gBot.window->setRelativePosition(irr::core::position2di(wHostPrepare->getAbsolutePosition().LowerRightCorner.X-290, wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
 	wHand->setRelativePosition(ResizeWin(500, 450, 825, 605));
 	wFTSelect->setRelativePosition(ResizeWin(550, 240, 780, 340));
 	SetMessageWindow();

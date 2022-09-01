@@ -131,7 +131,7 @@ public:
 	void RefreshLFLists();
 	////////kdiy////////
 	//void RefreshAiDecks();
-	void RefreshAiDecks(int a);
+	void RefreshAiDecks(bool aichk = false);
 	////////kdiy////////
 	void RefreshReplay();
 	void RefreshSingleplay();

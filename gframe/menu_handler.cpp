@@ -545,18 +545,18 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				for(int i = 0; i < 6; ++i) {
 					mainGame->icon[i]->setEnabled(true);
 				}
-				#ifdef VIP 
+#ifdef VIP 
 				    gSoundManager->PlayChant(SoundManager::CHANT::STARTUP, 0, 0, mainGame->choose_player);
-				#endif	
+#endif	
 				mainGame->choose_player = -1;
 				mainGame->wCharacter->setVisible(false);
 				mainGame->wCharacterSelect->setVisible(false);
 				break;
 			}
 			case BUTTON_CHARACTER_SELECT2: {
-				#ifndef VIP
+#ifndef VIP
 				    break;
-				#endif	
+#endif	
 				if(gSoundManager->character[mainGame->choose_player] == gSoundManager->totcharacter - 1) gSoundManager->character[mainGame->choose_player] = 0;
 				else gSoundManager->character[mainGame->choose_player] ++;
 				int player = gSoundManager->character[mainGame->choose_player];
@@ -566,9 +566,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			case BUTTON_CHARACTER_SELECT: {
-				#ifndef VIP
+#ifndef VIP
 				    break;
-				#endif
+#endif
 				if(gSoundManager->character[mainGame->choose_player] == 0) gSoundManager->character[mainGame->choose_player] = gSoundManager->totcharacter - 1;
 				else gSoundManager->character[mainGame->choose_player] --;
 				int player = gSoundManager->character[mainGame->choose_player];
@@ -598,10 +598,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					mainGame->HideElement(mainGame->pwupdateWindow);
 				}
 				#endif
-				#ifdef VIP
+#ifdef VIP
 				    mainGame->btnNo->setVisible(false);
                     mainGame->btnNo->setEnabled(false);
-				#endif
+#endif
 				break;
 			}
 			/////kdiy/////
@@ -815,7 +815,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					if (mainGame->gBot.aiDeckSelect->getSelected() != -1) {
 					   gGameConfig->lastAIdeckfolder = mainGame->gBot.aiDeckSelect2->getItem(mainGame->gBot.aiDeckSelect2->getSelected());
 					   gGameConfig->lastAIdeck = mainGame->gBot.aiDeckSelect->getItem(mainGame->gBot.aiDeckSelect->getSelected());
-					   mainGame->RefreshAiDecks(1);
+					   mainGame->RefreshAiDecks(true);
 					}
 					////////kdiy/////
 					int port = std::stoi(gGameConfig->serverport);

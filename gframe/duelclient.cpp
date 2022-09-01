@@ -837,7 +837,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(270, 120, 750, 440 + x));
 		mainGame->wHostPrepareR->setRelativePosition(mainGame->ResizeWin(750, 120, 950, 440 + x));
 		mainGame->wHostPrepareL->setRelativePosition(mainGame->ResizeWin(70, 120, 270, 440 + x));
-		mainGame->gBot.window->setRelativePosition(irr::core::position2di(mainGame->wHostPrepare->getAbsolutePosition().LowerRightCorner.X, mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
+		mainGame->gBot.window->setRelativePosition(irr::core::position2di(mainGame->wHostPrepare->getAbsolutePosition().LowerRightCorner.X-290, mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
 		for(int i = 0; i < 6; i++) {
 			mainGame->chkHostPrepReady[i]->setVisible(false);
 			mainGame->chkHostPrepReady[i]->setChecked(false);
@@ -3120,10 +3120,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		if(!mainGame->dInfo.isReplay && mainGame->dInfo.player_type < 7) {
             ////kdiy////////
             if(!mainGame->dInfo.isSingleMode) {
-            #ifdef VIP
+#ifdef VIP
                 mainGame->wAvatar[0]->setVisible(true);
                 mainGame->wAvatar[1]->setVisible(true);
-            #endif
+#endif
             }
             ////kdiy////////
 			if(!mainGame->tabSettings.chkHideChainButtons->isChecked()) {
@@ -3144,10 +3144,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		}
         ////kdiy////////
         if(mainGame->dInfo.isReplay) {
-            #ifdef VIP
+#ifdef VIP
 			mainGame->wAvatar[0]->setVisible(true);
 			mainGame->wAvatar[1]->setVisible(true);
-            #endif
+#endif
         }
         ////kdiy////////
 		if(!mainGame->dInfo.isCatchingUp) {
