@@ -370,6 +370,110 @@ void Game::Initialize() {
 	btnCreateHost = env->addButton(Scale(460, 25, 570, 50), wLanWindow, BUTTON_CREATE_HOST, gDataManager->GetSysString(1224).data());
 	defaultStrings.emplace_back(btnCreateHost, 1224);
 	btnCreateHost->setEnabled(coreloaded);
+    ///////kdiy///////
+	btnSimpleJoinHost = env->addButton(Scale(460, 325, 570, 350), wLanWindow, BUTTON_SIMPLE_CREATE_HOST, gDataManager->GetSysString(8030).data());
+	defaultStrings.emplace_back(btnSimpleJoinHost, 8030);
+	wCreateHost2 = env->addWindow(Scale(320, 100, 700, 520), false, gDataManager->GetSysString(1224).data());
+	defaultStrings.emplace_back(wCreateHost2, 1224);
+	wCreateHost2->getCloseButton()->setVisible(false);
+	wCreateHost2->setVisible(false);
+	chkdefaultlocal = env->addCheckBox(false, Scale(20, 25, 120, 50), wCreateHost2, CHECKBOX_DEFAULT_LOCAL, gDataManager->GetSysString(8035).data());
+	defaultStrings.emplace_back(chkdefaultlocal, 8035);
+	chkAI = env->addCheckBox(false, Scale(20, 55, 120, 80), wCreateHost2, -1, gDataManager->GetSysString(2054).data());
+	defaultStrings.emplace_back(chkAI, 2054);
+	chkTag = env->addCheckBox(false, Scale(140, 55, 240, 80), wCreateHost2, -1, gDataManager->GetSysString(1246).data());
+	defaultStrings.emplace_back(chkTag, 1246);
+	chkMatch = env->addCheckBox(false, Scale(260, 55, 360, 80), wCreateHost2, -1, gDataManager->GetSysString(1245).data());
+	defaultStrings.emplace_back(chkMatch, 1245);
+	tmpptr = env->addStaticText(gDataManager->GetSysString(1225).data(), Scale(20, 85, 220, 110), false, false, wCreateHost2);
+	defaultStrings.emplace_back(tmpptr, 1225);
+	cbRule2 = AddComboBox(env, Scale(140, 85, 300, 110), wCreateHost2);
+	ReloadLocalCBRule();
+	cbRule2->setSelected(gGameConfig->lastlocalallowedcards);
+	tmpptr = env->addStaticText(gDataManager->GetSysString(8032).data(), Scale(20, 120, 320, 140), false, false, wCreateHost2);
+	defaultStrings.emplace_back(tmpptr, 8032);
+#define WStr(i) fmt::to_wstring<int>(i).data()
+	ebTimeLimit2 = env->addEditBox(WStr(gGameConfig->localtimeLimit), Scale(140, 115, 220, 140), true, wCreateHost2, EDITBOX_NUMERIC);
+	ebTimeLimit2->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+	tmpptr = env->addStaticText(gDataManager->GetSysString(1236).data(), Scale(20, 150, 220, 170), false, false, wCreateHost2);
+	defaultStrings.emplace_back(tmpptr, 1236);
+	cbDuelRule2 = AddComboBox(env, Scale(140, 145, 300, 170), wCreateHost2, COMBOBOX_DUEL_RULE);
+	ReloadLocalCBDuelRule();
+	chkNoCheckDeck2 = env->addCheckBox(gGameConfig->noCheckDeck, Scale(20, 180, 120, 200), wCreateHost2, -1, gDataManager->GetSysString(1229).data());
+	defaultStrings.emplace_back(chkNoCheckDeck2, 1229);
+	chkNoShuffleDeck2 = env->addCheckBox(gGameConfig->noShuffleDeck, Scale(140, 180, 240, 200), wCreateHost2, -1, gDataManager->GetSysString(1230).data());
+	defaultStrings.emplace_back(chkNoShuffleDeck2, 1230);
+	chkNoLFlist2 = env->addCheckBox(false, Scale(260, 180, 360, 200), wCreateHost2, -1, gDataManager->GetSysString(8031).data());
+	defaultStrings.emplace_back(chkNoLFlist2, 8031);
+	tmpptr = env->addStaticText(gDataManager->GetSysString(1231).data(), Scale(20, 240, 320, 260), false, false, wCreateHost2);
+	defaultStrings.emplace_back(tmpptr, 1231);
+	ebStartLP2 = env->addEditBox(WStr(gGameConfig->startLP), Scale(140, 235, 220, 260), true, wCreateHost2, EDITBOX_NUMERIC);
+	ebStartLP2->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+	tmpptr = env->addStaticText(gDataManager->GetSysString(1232).data(), Scale(20, 270, 320, 290), false, false, wCreateHost2);
+	defaultStrings.emplace_back(tmpptr, 1232);
+	ebStartHand2 = env->addEditBox(WStr(gGameConfig->startHand), Scale(140, 265, 220, 290), true, wCreateHost2, EDITBOX_NUMERIC);
+	ebStartHand2->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+	tmpptr = env->addStaticText(gDataManager->GetSysString(1233).data(), Scale(20, 300, 320, 320), false, false, wCreateHost2);
+	defaultStrings.emplace_back(tmpptr, 1233);
+	ebDrawCount2 = env->addEditBox(WStr(gGameConfig->drawCount), Scale(140, 295, 220, 320), true, wCreateHost2, EDITBOX_NUMERIC);
+	ebDrawCount2->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+	tmpptr = env->addStaticText(gDataManager->GetSysString(2041).data(), Scale(10, 330, 220, 350), false, false, wCreateHost2);
+	defaultStrings.emplace_back(tmpptr, 2041);
+	serverChoice2 = AddComboBox(env, Scale(110, 325, 250, 350), wCreateHost2);
+ 	tmpptr = env->addStaticText(gDataManager->GetSysString(8034).data(), Scale(10, 360, 220, 380), false, false, wCreateHost2);
+	defaultStrings.emplace_back(tmpptr, 8034);
+	ebJoinPass2 = env->addEditBox(L"", Scale(110, 355, 250, 380), true, wCreateHost2);
+	ebJoinPass2->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+	btnHostConfirm2 = env->addButton(Scale(260, 355, 370, 380), wCreateHost2, BUTTON_LOCAL_HOST_CONFIRM, gDataManager->GetSysString(1211).data());
+	defaultStrings.emplace_back(btnHostConfirm2, 1211);
+	btnHostCancel2 = env->addButton(Scale(260, 385, 370, 410), wCreateHost2, BUTTON_LOCAL_HOST_CANCEL, gDataManager->GetSysString(1212).data());
+	defaultStrings.emplace_back(btnHostCancel2, 1212);
+
+	wCharacter = env->addWindow(Scale(0, 15, 200, 315));
+	wCharacter->getCloseButton()->setVisible(false);
+	wCharacter->setDraggable(false);
+	wCharacter->setDrawTitlebar(false);
+	wCharacter->setDrawBackground(false);
+	wCharacter->setVisible(false);
+	btnCharacter = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 200, 300), wCharacter, BUTTON_CHARACTER);
+	btnCharacter->setDrawBorder(true);
+	btnCharacter->setImageSize(Scale(0, 0, 200, 300).getSize());
+
+	wCharacterSelect = env->addWindow(Scale(0, 315, 200, 340));
+	wCharacterSelect->getCloseButton()->setVisible(false);
+	wCharacterSelect->setDraggable(false);
+	wCharacterSelect->setDrawTitlebar(false);
+	wCharacterSelect->setDrawBackground(false);
+	wCharacterSelect->setVisible(false);
+	btnCharacterSelect = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 25, 25), wCharacterSelect, BUTTON_CHARACTER_SELECT);
+	btnCharacterSelect->setDrawBorder(true);
+	btnCharacterSelect->setImageSize(Scale(0, 0, 25, 25).getSize());
+	btnCharacterSelect->setImage(imageManager.tcharacterselect);
+	btnCharacterSelect2 = irr::gui::CGUIImageButton::addImageButton(env, Scale(175, 0, 200, 30), wCharacterSelect, BUTTON_CHARACTER_SELECT2);
+	btnCharacterSelect2->setDrawBorder(true);
+	btnCharacterSelect2->setImageSize(Scale(0, 0, 25, 25).getSize());
+	btnCharacterSelect2->setImage(imageManager.tcharacterselect2);
+	irr::core::dimension2di avatarsize = { Scale<irr::s32>(CARD_IMG_WIDTH * 0.5f), Scale<irr::s32>(CARD_IMG_HEIGHT * 0.5f) };
+	
+	wAvatar[0] = env->addWindow(Scale(320, 10, 427, 212));
+	wAvatar[0]->getCloseButton()->setVisible(false);
+	wAvatar[0]->setDraggable(false);
+	wAvatar[0]->setDrawTitlebar(false);
+	wAvatar[0]->setDrawBackground(false);
+	wAvatar[0]->setVisible(false);
+	avatarbutton[0] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 105, 200), wAvatar[0], BUTTON_AVATAR_BORED0);
+	avatarbutton[0]->setImageSize(Scale(0, 0, 105, 200).getSize());
+	avatarbutton[0]->setDrawBorder(false);
+	wAvatar[1] = env->addWindow(Scale(896, 10, 1003, 212));
+	wAvatar[1]->getCloseButton()->setVisible(false);
+	wAvatar[1]->setDraggable(false);
+	wAvatar[1]->setDrawTitlebar(false);
+	wAvatar[1]->setDrawBackground(false);
+	wAvatar[1]->setVisible(false);
+	avatarbutton[1] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 105, 200), wAvatar[1], BUTTON_AVATAR_BORED1);
+	avatarbutton[1]->setImageSize(Scale(0, 0, 105, 200).getSize());
+	avatarbutton[1]->setDrawBorder(false);
+	///////kdiy///////
 
 	PopulateGameHostWindows();
 
@@ -870,8 +974,12 @@ void Game::Initialize() {
 	btnShareReplay->setVisible(false);
 #endif
     ////kdiy////////
-    btnCharacterSelect_replay = env->addButton(Scale(360, 200, 560, 220), wReplay, BUTTON_CHARACTER_REPLAY, gDataManager->GetSysString(8011).data());
-	defaultStrings.emplace_back(btnCharacterSelect_replay, 8011);
+    btnCharacterSelect_replay = env->addButton(Scale(360, 200, 560, 220), wReplay, BUTTON_CHARACTER_REPLAY, gDataManager->GetSysString(8015).data());
+	defaultStrings.emplace_back(btnCharacterSelect_replay, 8015);
+#ifndef VIP
+    btnCharacterSelect_replay->setEnabled(false);
+    defaultStrings.emplace_back(btnCharacterSelect_replay, 8025);
+#endif
     wCharacterReplay = env->addWindow(Scale(220, 100, 360, 310), false, gDataManager->GetSysString(8011).data());
 	defaultStrings.emplace_back(wCharacterReplay, 8011);
     wCharacterReplay->getCloseButton()->setVisible(false);
@@ -1264,241 +1372,145 @@ void Game::PopulateGameHostWindows() {
 	wCreateHost->getCloseButton()->setVisible(false);
 	wCreateHost->setVisible(false);
 
-	auto tCreateHost = wtcCreateHost->addTab(L"Duel");
+	{
+		auto tCreateHost = wtcCreateHost->addTab(gDataManager->GetSysString(2089).data());
+		defaultStrings.emplace_back(tCreateHost, 2089);
 
-	defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1226).data(), Scale(20, 10, 220, 30), false, false, tCreateHost), 1226);
-	cbHostLFList = AddComboBox(env, Scale(140, 5, 300, 30), tCreateHost, COMBOBOX_HOST_LFLIST);
-	defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1225).data(), Scale(20, 40, 220, 60), false, false, tCreateHost), 1225);
-	cbRule = AddComboBox(env, Scale(140, 35, 300, 60), tCreateHost);
-	ReloadCBRule();
-	cbRule->setSelected(gGameConfig->lastallowedcards);
-	defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1227).data(), Scale(20, 70, 220, 90), false, false, tCreateHost), 1227);
+		defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1226).data(), Scale(20, 10, 220, 30), false, false, tCreateHost), 1226);
+		cbHostLFList = AddComboBox(env, Scale(140, 5, 300, 30), tCreateHost, COMBOBOX_HOST_LFLIST);
+		defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1225).data(), Scale(20, 40, 220, 60), false, false, tCreateHost), 1225);
+		cbRule = AddComboBox(env, Scale(140, 35, 300, 60), tCreateHost);
+		ReloadCBRule();
+		cbRule->setSelected(gGameConfig->lastallowedcards);
+		defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1227).data(), Scale(20, 70, 220, 90), false, false, tCreateHost), 1227);
 #define WStr(i) fmt::to_wstring<int>(i).data()
-	ebTeam1 = env->addEditBox(WStr(gGameConfig->team1count), Scale(140, 65, 170, 90), true, tCreateHost, EDITBOX_TEAM_COUNT);
-	ebTeam1->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-	auto vsstring = env->addStaticText(gDataManager->GetSysString(1380).data(), Scale(175, 65, 195, 90), false, false, tCreateHost);
-	defaultStrings.emplace_back(vsstring, 1380);
-	vsstring->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-	ebTeam2 = env->addEditBox(WStr(gGameConfig->team2count), Scale(200, 65, 230, 90), true, tCreateHost, EDITBOX_TEAM_COUNT);
-	ebTeam2->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-	vsstring = env->addStaticText(gDataManager->GetSysString(1381).data(), Scale(235, 65, 280, 90), false, false, tCreateHost);
-	defaultStrings.emplace_back(vsstring, 1381);
-	vsstring->setTextAlignment(irr::gui::EGUIA_UPPERLEFT, irr::gui::EGUIA_CENTER);
-	ebBestOf = env->addEditBox(WStr(gGameConfig->bestOf), Scale(285, 65, 315, 90), true, tCreateHost, EDITBOX_NUMERIC);
-	ebBestOf->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-	btnRelayMode = env->addButton(Scale(325, 65, 370, 90), tCreateHost, -1, gDataManager->GetSysString(1247).data());
-	defaultStrings.emplace_back(btnRelayMode, 1247);
-	btnRelayMode->setIsPushButton(true);
-	btnRelayMode->setPressed(gGameConfig->relayDuel);
-	defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1237).data(), Scale(20, 100, 320, 120), false, false, tCreateHost), 1237);
-	ebTimeLimit = env->addEditBox(WStr(gGameConfig->timeLimit), Scale(140, 95, 220, 120), true, tCreateHost, EDITBOX_NUMERIC);
-	ebTimeLimit->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-	btnRuleCards = env->addButton(Scale(260, 305, 370, 330), tCreateHost, BUTTON_RULE_CARDS, gDataManager->GetSysString(1625).data());
-	defaultStrings.emplace_back(btnRuleCards, 1625);
-	wRules = env->addWindow(Scale(630, 100, 1000, 310), false, L"");
-	wRules->getCloseButton()->setVisible(false);
-	wRules->setDrawTitlebar(false);
-	wRules->setDraggable(true);
-	wRules->setVisible(false);
-	btnRulesOK = env->addButton(Scale(135, 175, 235, 200), wRules, BUTTON_RULE_OK, gDataManager->GetSysString(1211).data());
-	defaultStrings.emplace_back(btnRulesOK, 1211);
-	for(int i = 0; i < sizeofarr(chkRules); ++i) {
-		chkRules[i] = env->addCheckBox(false, Scale(10 + (i % 2) * 150, 10 + (i / 2) * 20, 200 + (i % 2) * 120, 30 + (i / 2) * 20), wRules, CHECKBOX_EXTRA_RULE, gDataManager->GetSysString(1132 + i).data());
-		defaultStrings.emplace_back(chkRules[i], 1132 + i);
+		ebTeam1 = env->addEditBox(WStr(gGameConfig->team1count), Scale(140, 65, 170, 90), true, tCreateHost, EDITBOX_TEAM_COUNT);
+		ebTeam1->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+		auto vsstring = env->addStaticText(gDataManager->GetSysString(1380).data(), Scale(175, 65, 195, 90), false, false, tCreateHost);
+		defaultStrings.emplace_back(vsstring, 1380);
+		vsstring->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+		ebTeam2 = env->addEditBox(WStr(gGameConfig->team2count), Scale(200, 65, 230, 90), true, tCreateHost, EDITBOX_TEAM_COUNT);
+		ebTeam2->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+		vsstring = env->addStaticText(gDataManager->GetSysString(1381).data(), Scale(235, 65, 280, 90), false, false, tCreateHost);
+		defaultStrings.emplace_back(vsstring, 1381);
+		vsstring->setTextAlignment(irr::gui::EGUIA_UPPERLEFT, irr::gui::EGUIA_CENTER);
+		ebBestOf = env->addEditBox(WStr(gGameConfig->bestOf), Scale(285, 65, 315, 90), true, tCreateHost, EDITBOX_NUMERIC);
+		ebBestOf->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+		btnRelayMode = env->addButton(Scale(325, 65, 370, 90), tCreateHost, -1, gDataManager->GetSysString(1247).data());
+		defaultStrings.emplace_back(btnRelayMode, 1247);
+		btnRelayMode->setIsPushButton(true);
+		btnRelayMode->setPressed(gGameConfig->relayDuel);
+		defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1237).data(), Scale(20, 100, 320, 120), false, false, tCreateHost), 1237);
+		ebTimeLimit = env->addEditBox(WStr(gGameConfig->timeLimit), Scale(140, 95, 220, 120), true, tCreateHost, EDITBOX_NUMERIC);
+		ebTimeLimit->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+		btnRuleCards = env->addButton(Scale(260, 305, 370, 330), tCreateHost, BUTTON_RULE_CARDS, gDataManager->GetSysString(1625).data());
+		defaultStrings.emplace_back(btnRuleCards, 1625);
+		wRules = env->addWindow(Scale(630, 100, 1000, 310), false, L"");
+		wRules->getCloseButton()->setVisible(false);
+		wRules->setDrawTitlebar(false);
+		wRules->setDraggable(true);
+		wRules->setVisible(false);
+		btnRulesOK = env->addButton(Scale(135, 175, 235, 200), wRules, BUTTON_RULE_OK, gDataManager->GetSysString(1211).data());
+		defaultStrings.emplace_back(btnRulesOK, 1211);
+		for(int i = 0; i < sizeofarr(chkRules); ++i) {
+			chkRules[i] = env->addCheckBox(false, Scale(10 + (i % 2) * 150, 10 + (i / 2) * 20, 200 + (i % 2) * 120, 30 + (i / 2) * 20), wRules, CHECKBOX_EXTRA_RULE, gDataManager->GetSysString(1132 + i).data());
+			defaultStrings.emplace_back(chkRules[i], 1132 + i);
+		}
+		extra_rules = gGameConfig->lastExtraRules;
+		UpdateExtraRules(true);
+		defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1236).data(), Scale(20, 130, 220, 150), false, false, tCreateHost), 1236);
+		cbDuelRule = AddComboBox(env, Scale(140, 125, 300, 150), tCreateHost, COMBOBOX_DUEL_RULE);
+
+
+		chkNoCheckDeck = env->addCheckBox(gGameConfig->noCheckDeck, Scale(20, 160, 170, 180), tCreateHost, -1, gDataManager->GetSysString(1229).data());
+		defaultStrings.emplace_back(chkNoCheckDeck, 1229);
+
+		chkNoShuffleDeck = env->addCheckBox(gGameConfig->noShuffleDeck, Scale(180, 160, 360, 180), tCreateHost, -1, gDataManager->GetSysString(1230).data());
+		defaultStrings.emplace_back(chkNoShuffleDeck, 1230);
+
+		chkTcgRulings = env->addCheckBox(duel_param & DUEL_TCG_SEGOC_NONPUBLIC, Scale(20, 190, 170, 210), tCreateHost, TCG_SEGOC_NONPUBLIC, gDataManager->GetSysString(1239).data());
+		defaultStrings.emplace_back(chkTcgRulings, 1239);
+
+		defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1231).data(), Scale(20, 220, 320, 240), false, false, tCreateHost), 1231);
+		ebStartLP = env->addEditBox(WStr(gGameConfig->startLP), Scale(140, 215, 220, 240), true, tCreateHost, EDITBOX_NUMERIC);
+		ebStartLP->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+		defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1232).data(), Scale(20, 250, 320, 270), false, false, tCreateHost), 1232);
+		ebStartHand = env->addEditBox(WStr(gGameConfig->startHand), Scale(140, 245, 220, 270), true, tCreateHost, EDITBOX_NUMERIC);
+		ebStartHand->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+		defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1233).data(), Scale(20, 280, 320, 300), false, false, tCreateHost), 1233);
+		ebDrawCount = env->addEditBox(WStr(gGameConfig->drawCount), Scale(140, 275, 220, 300), true, tCreateHost, EDITBOX_NUMERIC);
+		ebDrawCount->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+		defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1234).data(), Scale(10, 310, 220, 330), false, false, tCreateHost), 1234);
+		ebServerName = env->addEditBox(gGameConfig->gamename.data(), Scale(110, 305, 250, 330), true, tCreateHost);
+		ebServerName->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+		defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1235).data(), Scale(10, 340, 220, 360), false, false, tCreateHost), 1235);
+		ebServerPass = env->addEditBox(L"", Scale(110, 335, 250, 360), true, tCreateHost);
+		ebServerPass->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+		btnHostConfirm = env->addButton(Scale(260, 335, 370, 360), tCreateHost, BUTTON_HOST_CONFIRM, gDataManager->GetSysString(1211).data());
+		defaultStrings.emplace_back(btnHostConfirm, 1211);
+		btnHostCancel = env->addButton(Scale(260, 365, 370, 390), tCreateHost, BUTTON_HOST_CANCEL, gDataManager->GetSysString(1212).data());
+		defaultStrings.emplace_back(btnHostCancel, 1212);
+		stHostPort = env->addStaticText(gDataManager->GetSysString(1238).data(), Scale(10, 370, 220, 390), false, false, tCreateHost);
+		defaultStrings.emplace_back(stHostPort, 1238);
+		ebHostPort = env->addEditBox(gGameConfig->serverport.data(), Scale(110, 365, 250, 390), true, tCreateHost, EDITBOX_PORT_BOX);
+		ebHostPort->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+		stHostNotes = env->addStaticText(gDataManager->GetSysString(2024).data(), Scale(10, 370, 220, 390), false, false, tCreateHost);
+		defaultStrings.emplace_back(stHostNotes, 2024);
+		stHostNotes->setVisible(false);
+		ebHostNotes = env->addEditBox(L"", Scale(110, 365, 250, 390), true, tCreateHost);
+		ebHostNotes->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+		ebHostNotes->setVisible(false);
 	}
-	extra_rules = gGameConfig->lastExtraRules;
-	UpdateExtraRules(true);
-	defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1236).data(), Scale(20, 130, 220, 150), false, false, tCreateHost), 1236);
-	cbDuelRule = AddComboBox(env, Scale(140, 125, 300, 150), tCreateHost, COMBOBOX_DUEL_RULE);
-	duel_param = gGameConfig->lastDuelParam;
-	forbiddentypes = gGameConfig->lastDuelForbidden;
 
-	auto tCustomRules = wtcCreateHost->addTab(gDataManager->GetSysString(1630).data());
-	defaultStrings.emplace_back(tCustomRules, 1630);
+	{
 
-	//crRect.LowerRightCorner.Y -= 45; //ok button
-	auto tmpPanel = irr::gui::Panel::addPanel(env, tCustomRules, -1, { {}, tCustomRules->getAbsolutePosition().getSize() }, true, false);
-	auto crPanel = tmpPanel->getSubpanel();
+		duel_param = gGameConfig->lastDuelParam;
+		forbiddentypes = gGameConfig->lastDuelForbidden;
+		auto tCustomRules = wtcCreateHost->addTab(gDataManager->GetSysString(1630).data());
+		defaultStrings.emplace_back(tCustomRules, 1630);
 
-	int spacingL = 0;
-	auto rectsize = [&spacingL, this]() {
-		auto ret = Scale(10, spacingL * 20, 680, 20 + spacingL * 20);
-		spacingL++;
-		return ret;
-	};
+		//crRect.LowerRightCorner.Y -= 45; //ok button
+		auto tmpPanel = irr::gui::Panel::addPanel(env, tCustomRules, -1, { {}, tCustomRules->getAbsolutePosition().getSize() }, true, false);
+		auto crPanel = tmpPanel->getSubpanel();
 
-	defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1629).data(), rectsize(), false, false, crPanel), 1629);
+		int spacingL = 0;
+		auto rectsize = [&spacingL, this]() {
+			auto ret = Scale(10, spacingL * 20, 680, 20 + spacingL * 20);
+			spacingL++;
+			return ret;
+		};
 
-	for(int i = 0; i < sizeofarr(chkCustomRules); ++i) {
-		bool set = false;
-		if(i == 19)
-			set = duel_param & DUEL_USE_TRAPS_IN_NEW_CHAIN;
-		else if(i == 20)
-			set = duel_param & DUEL_6_STEP_BATLLE_STEP;
-		else if(i == 21)
-			set = duel_param & DUEL_TRIGGER_WHEN_PRIVATE_KNOWLEDGE;
-		else if(i > 21)
-			set = duel_param & 0x100ULL << (i - 3);
-		else
-			set = duel_param & 0x100ULL << i;
-		chkCustomRules[i] = env->addCheckBox(set, rectsize(), crPanel, CHECKBOX_OBSOLETE + i, gDataManager->GetSysString(1631 + i).data());
-		defaultStrings.emplace_back(chkCustomRules[i], 1631 + i);
-	}
-	defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1628).data(), rectsize(), false, false, crPanel), 1628);
-	static constexpr uint32_t limits[]{ TYPE_FUSION, TYPE_SYNCHRO, TYPE_XYZ, TYPE_PENDULUM, TYPE_LINK };
+		defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1629).data(), rectsize(), false, false, crPanel), 1629);
+
+		for(int i = 0; i < sizeofarr(chkCustomRules); ++i) {
+			bool set = false;
+			if(i == 19)
+				set = duel_param & DUEL_USE_TRAPS_IN_NEW_CHAIN;
+			else if(i == 20)
+				set = duel_param & DUEL_6_STEP_BATLLE_STEP;
+			else if(i == 21)
+				set = duel_param & DUEL_TRIGGER_WHEN_PRIVATE_KNOWLEDGE;
+			else if(i > 21)
+				set = duel_param & 0x100ULL << (i - 3);
+			else
+				set = duel_param & 0x100ULL << i;
+			chkCustomRules[i] = env->addCheckBox(set, rectsize(), crPanel, CHECKBOX_OBSOLETE + i, gDataManager->GetSysString(1631 + i).data());
+			defaultStrings.emplace_back(chkCustomRules[i], 1631 + i);
+		}
+		defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1628).data(), rectsize(), false, false, crPanel), 1628);
+		static constexpr uint32_t limits[]{ TYPE_FUSION, TYPE_SYNCHRO, TYPE_XYZ, TYPE_PENDULUM, TYPE_LINK };
 #define TYPECHK(id,stringid)\
 	chkTypeLimit[id] = env->addCheckBox(forbiddentypes & limits[id], rectsize(), crPanel, -1, fmt::sprintf(gDataManager->GetSysString(1627), gDataManager->GetSysString(stringid)).data());
-	TYPECHK(0, 1056);
-	TYPECHK(1, 1063);
-	TYPECHK(2, 1073);
-	TYPECHK(3, 1074);
-	TYPECHK(4, 1076);
+		TYPECHK(0, 1056);
+		TYPECHK(1, 1063);
+		TYPECHK(2, 1073);
+		TYPECHK(3, 1074);
+		TYPECHK(4, 1076);
 #undef TYPECHK
 
+		UpdateDuelParam();
+	}
 
-	chkNoCheckDeck = env->addCheckBox(gGameConfig->noCheckDeck, Scale(20, 160, 170, 180), tCreateHost, -1, gDataManager->GetSysString(1229).data());
-	defaultStrings.emplace_back(chkNoCheckDeck, 1229);
-
-	chkNoShuffleDeck = env->addCheckBox(gGameConfig->noShuffleDeck, Scale(180, 160, 360, 180), tCreateHost, -1, gDataManager->GetSysString(1230).data());
-	defaultStrings.emplace_back(chkNoShuffleDeck, 1230);
-
-	chkTcgRulings = env->addCheckBox(duel_param & DUEL_TCG_SEGOC_NONPUBLIC, Scale(20, 190, 170, 210), tCreateHost, TCG_SEGOC_NONPUBLIC, gDataManager->GetSysString(1239).data());
-	defaultStrings.emplace_back(chkTcgRulings, 1239);
-
-	UpdateDuelParam();
-
-	defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1231).data(), Scale(20, 220, 320, 240), false, false, tCreateHost), 1231);
-	ebStartLP = env->addEditBox(WStr(gGameConfig->startLP), Scale(140, 215, 220, 240), true, tCreateHost, EDITBOX_NUMERIC);
-	ebStartLP->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-	defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1232).data(), Scale(20, 250, 320, 270), false, false, tCreateHost), 1232);
-	ebStartHand = env->addEditBox(WStr(gGameConfig->startHand), Scale(140, 245, 220, 270), true, tCreateHost, EDITBOX_NUMERIC);
-	ebStartHand->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-	defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1233).data(), Scale(20, 280, 320, 300), false, false, tCreateHost), 1233);
-	ebDrawCount = env->addEditBox(WStr(gGameConfig->drawCount), Scale(140, 275, 220, 300), true, tCreateHost, EDITBOX_NUMERIC);
-	ebDrawCount->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-	defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1234).data(), Scale(10, 310, 220, 330), false, false, tCreateHost), 1234);
-	ebServerName = env->addEditBox(gGameConfig->gamename.data(), Scale(110, 305, 250, 330), true, tCreateHost);
-	ebServerName->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-	defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1235).data(), Scale(10, 340, 220, 360), false, false, tCreateHost), 1235);
-	ebServerPass = env->addEditBox(L"", Scale(110, 335, 250, 360), true, tCreateHost);
-	ebServerPass->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-	btnHostConfirm = env->addButton(Scale(260, 335, 370, 360), tCreateHost, BUTTON_HOST_CONFIRM, gDataManager->GetSysString(1211).data());
-	defaultStrings.emplace_back(btnHostConfirm, 1211);
-	btnHostCancel = env->addButton(Scale(260, 365, 370, 390), tCreateHost, BUTTON_HOST_CANCEL, gDataManager->GetSysString(1212).data());
-	defaultStrings.emplace_back(btnHostCancel, 1212);
-	stHostPort = env->addStaticText(gDataManager->GetSysString(1238).data(), Scale(10, 370, 220, 390), false, false, tCreateHost);
-	defaultStrings.emplace_back(stHostPort, 1238);
-	ebHostPort = env->addEditBox(gGameConfig->serverport.data(), Scale(110, 365, 250, 390), true, tCreateHost, EDITBOX_PORT_BOX);
-	ebHostPort->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-	stHostNotes = env->addStaticText(gDataManager->GetSysString(2024).data(), Scale(10, 370, 220, 390), false, false, tCreateHost);
-	defaultStrings.emplace_back(stHostNotes, 2024);
-	stHostNotes->setVisible(false);
-	ebHostNotes = env->addEditBox(L"", Scale(110, 365, 250, 390), true, tCreateHost);
-	ebHostNotes->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-	ebHostNotes->setVisible(false);
-	///////kdiy///////
-	btnSimpleJoinHost = env->addButton(Scale(460, 325, 570, 350), wLanWindow, BUTTON_SIMPLE_CREATE_HOST, gDataManager->GetSysString(8030).data());
-	defaultStrings.emplace_back(btnSimpleJoinHost, 8030);
-	wCreateHost2 = env->addWindow(Scale(320, 100, 700, 520), false, gDataManager->GetSysString(1224).data());
-	defaultStrings.emplace_back(wCreateHost2, 1224);
-	wCreateHost2->getCloseButton()->setVisible(false);
-	wCreateHost2->setVisible(false);
-	chkdefaultlocal = env->addCheckBox(false, Scale(20, 25, 120, 50), wCreateHost2, CHECKBOX_DEFAULT_LOCAL, gDataManager->GetSysString(8035).data());
-	defaultStrings.emplace_back(chkdefaultlocal, 8035);
-	chkAI = env->addCheckBox(false, Scale(20, 55, 120, 80), wCreateHost2, -1, gDataManager->GetSysString(2054).data());
-	defaultStrings.emplace_back(chkAI, 2054);
-	chkTag = env->addCheckBox(false, Scale(140, 55, 240, 80), wCreateHost2, -1, gDataManager->GetSysString(1246).data());
-	defaultStrings.emplace_back(chkTag, 1246);
-	chkMatch = env->addCheckBox(false, Scale(260, 55, 360, 80), wCreateHost2, -1, gDataManager->GetSysString(1245).data());
-	defaultStrings.emplace_back(chkMatch, 1245);
-	irr::gui::IGUIElement* tmpptr = env->addStaticText(gDataManager->GetSysString(1225).data(), Scale(20, 85, 220, 110), false, false, wCreateHost2);
-	defaultStrings.emplace_back(tmpptr, 1225);
-	cbRule2 = AddComboBox(env, Scale(140, 85, 300, 110), wCreateHost2);
-	ReloadLocalCBRule();
-	cbRule2->setSelected(gGameConfig->lastlocalallowedcards);
-	tmpptr = env->addStaticText(gDataManager->GetSysString(8032).data(), Scale(20, 120, 320, 140), false, false, wCreateHost2);
-	defaultStrings.emplace_back(tmpptr, 8032);
-	ebTimeLimit2 = env->addEditBox(WStr(gGameConfig->localtimeLimit), Scale(140, 115, 220, 140), true, wCreateHost2, EDITBOX_NUMERIC);
-	ebTimeLimit2->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-	tmpptr = env->addStaticText(gDataManager->GetSysString(1236).data(), Scale(20, 150, 220, 170), false, false, wCreateHost2);
-	defaultStrings.emplace_back(tmpptr, 1236);
-	cbDuelRule2 = AddComboBox(env, Scale(140, 145, 300, 170), wCreateHost2, COMBOBOX_DUEL_RULE);
-	ReloadLocalCBDuelRule();
-	chkNoCheckDeck2 = env->addCheckBox(gGameConfig->noCheckDeck, Scale(20, 180, 120, 200), wCreateHost2, -1, gDataManager->GetSysString(1229).data());
-	defaultStrings.emplace_back(chkNoCheckDeck2, 1229);
-	chkNoShuffleDeck2 = env->addCheckBox(gGameConfig->noShuffleDeck, Scale(140, 180, 240, 200), wCreateHost2, -1, gDataManager->GetSysString(1230).data());
-	defaultStrings.emplace_back(chkNoShuffleDeck2, 1230);
-	chkNoLFlist2 = env->addCheckBox(false, Scale(260, 180, 360, 200), wCreateHost2, -1, gDataManager->GetSysString(8031).data());
-	defaultStrings.emplace_back(chkNoLFlist2, 8031);
-	tmpptr = env->addStaticText(gDataManager->GetSysString(1231).data(), Scale(20, 240, 320, 260), false, false, wCreateHost2);
-	defaultStrings.emplace_back(tmpptr, 1231);
-	ebStartLP2 = env->addEditBox(WStr(gGameConfig->startLP), Scale(140, 235, 220, 260), true, wCreateHost2, EDITBOX_NUMERIC);
-	ebStartLP2->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-	tmpptr = env->addStaticText(gDataManager->GetSysString(1232).data(), Scale(20, 270, 320, 290), false, false, wCreateHost2);
-	defaultStrings.emplace_back(tmpptr, 1232);
-	ebStartHand2 = env->addEditBox(WStr(gGameConfig->startHand), Scale(140, 265, 220, 290), true, wCreateHost2, EDITBOX_NUMERIC);
-	ebStartHand2->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-	tmpptr = env->addStaticText(gDataManager->GetSysString(1233).data(), Scale(20, 300, 320, 320), false, false, wCreateHost2);
-	defaultStrings.emplace_back(tmpptr, 1233);
-	ebDrawCount2 = env->addEditBox(WStr(gGameConfig->drawCount), Scale(140, 295, 220, 320), true, wCreateHost2, EDITBOX_NUMERIC);
-	ebDrawCount2->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-	tmpptr = env->addStaticText(gDataManager->GetSysString(2041).data(), Scale(10, 330, 220, 350), false, false, wCreateHost2);
-	defaultStrings.emplace_back(tmpptr, 2041);
-	serverChoice2 = AddComboBox(env, Scale(110, 325, 250, 350), wCreateHost2);
- 	tmpptr = env->addStaticText(gDataManager->GetSysString(8034).data(), Scale(10, 360, 220, 380), false, false, wCreateHost2);
-	defaultStrings.emplace_back(tmpptr, 8034);
-	ebJoinPass2 = env->addEditBox(L"", Scale(110, 355, 250, 380), true, wCreateHost2);
-	ebJoinPass2->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-	btnHostConfirm2 = env->addButton(Scale(260, 355, 370, 380), wCreateHost2, BUTTON_LOCAL_HOST_CONFIRM, gDataManager->GetSysString(1211).data());
-	defaultStrings.emplace_back(btnHostConfirm2, 1211);
-	btnHostCancel2 = env->addButton(Scale(260, 385, 370, 410), wCreateHost2, BUTTON_LOCAL_HOST_CANCEL, gDataManager->GetSysString(1212).data());
-	defaultStrings.emplace_back(btnHostCancel2, 1212);
-
-	wCharacter = env->addWindow(Scale(0, 15, 200, 315));
-	wCharacter->getCloseButton()->setVisible(false);
-	wCharacter->setDraggable(false);
-	wCharacter->setDrawTitlebar(false);
-	wCharacter->setDrawBackground(false);
-	wCharacter->setVisible(false);
-	btnCharacter = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 200, 300), wCharacter, BUTTON_CHARACTER);
-	btnCharacter->setDrawBorder(true);
-	btnCharacter->setImageSize(Scale(0, 0, 200, 300).getSize());
-
-	wCharacterSelect = env->addWindow(Scale(0, 315, 200, 340));
-	wCharacterSelect->getCloseButton()->setVisible(false);
-	wCharacterSelect->setDraggable(false);
-	wCharacterSelect->setDrawTitlebar(false);
-	wCharacterSelect->setDrawBackground(false);
-	wCharacterSelect->setVisible(false);
-	btnCharacterSelect = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 25, 25), wCharacterSelect, BUTTON_CHARACTER_SELECT);
-	btnCharacterSelect->setDrawBorder(true);
-	btnCharacterSelect->setImageSize(Scale(0, 0, 25, 25).getSize());
-	btnCharacterSelect->setImage(imageManager.tcharacterselect);
-	btnCharacterSelect2 = irr::gui::CGUIImageButton::addImageButton(env, Scale(175, 0, 200, 30), wCharacterSelect, BUTTON_CHARACTER_SELECT2);
-	btnCharacterSelect2->setDrawBorder(true);
-	btnCharacterSelect2->setImageSize(Scale(0, 0, 25, 25).getSize());
-	btnCharacterSelect2->setImage(imageManager.tcharacterselect2);
-	irr::core::dimension2di avatarsize = { Scale<irr::s32>(CARD_IMG_WIDTH * 0.5f), Scale<irr::s32>(CARD_IMG_HEIGHT * 0.5f) };
-	
-	wAvatar[0] = env->addWindow(Scale(320, 10, 427, 212));
-	wAvatar[0]->getCloseButton()->setVisible(false);
-	wAvatar[0]->setDraggable(false);
-	wAvatar[0]->setDrawTitlebar(false);
-	wAvatar[0]->setDrawBackground(false);
-	wAvatar[0]->setVisible(false);
-	avatarbutton[0] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 105, 200), wAvatar[0], BUTTON_AVATAR_BORED0);
-	avatarbutton[0]->setImageSize(Scale(0, 0, 105, 200).getSize());
-	avatarbutton[0]->setDrawBorder(false);
-	wAvatar[1] = env->addWindow(Scale(896, 10, 1003, 212));
-	wAvatar[1]->getCloseButton()->setVisible(false);
-	wAvatar[1]->setDraggable(false);
-	wAvatar[1]->setDrawTitlebar(false);
-	wAvatar[1]->setDrawBackground(false);
-	wAvatar[1]->setVisible(false);
-	avatarbutton[1] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 105, 200), wAvatar[1], BUTTON_AVATAR_BORED1);
-	avatarbutton[1]->setImageSize(Scale(0, 0, 105, 200).getSize());
-	avatarbutton[1]->setDrawBorder(false);
-	///////kdiy///////
 	//host(single)
 	wHostPrepare = env->addWindow(Scale(270, 120, 750, 440), false, gDataManager->GetSysString(1250).data());
 	defaultStrings.emplace_back(wHostPrepare, 1250);
@@ -1900,6 +1912,7 @@ void Game::PopulateSettingsWindow() {
 		}
 		gSettings.ebFontSize = env->addEditBox(WStr(gGameConfig->textfont.size), GetCurrentRectWithXOffset(265, 320), true, sPanel, EDITBOX_NUMERIC);
 		gSettings.ebFontSize->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+        IncrementXorY();
 		/////kdiy////////////
 		gSettings.chkConfirmDeckClear = env->addCheckBox(gGameConfig->confirm_clear_deck, GetNextRect(), sPanel, CHECKBOX_CONFIRM_DECK_CLEAR, gDataManager->GetSysString(12104).data());
 		defaultStrings.emplace_back(gSettings.chkConfirmDeckClear, 12104);
@@ -2096,7 +2109,7 @@ void Game::PopulateSettingsWindow() {
 		}
 		{
 			gSettings.stVideoDriver = env->addStaticText(gDataManager->GetSysString(2096).data(), GetCurrentRectWithXOffset(15, 105), false, true, sPanel);
-			defaultStrings.emplace_back(gSettings.chkVSync, 2096);
+			defaultStrings.emplace_back(gSettings.stVideoDriver, 2096);
 			gSettings.cbVideoDriver = AddComboBox(env, GetCurrentRectWithXOffset(110, 320), sPanel, -1);
 			int selected_driver = 0;
 			for(const auto& cur_driver : supported_graphic_drivers) {
@@ -4163,7 +4176,6 @@ void Game::OnResize() {
 		wHostPrepareL->setRelativePosition(ResizeWin(70, 120, 270, 440));
 	}
 	wRules->setRelativePosition(ResizeWin(630, 100, 1000, 310));
-	SetCentered(wCustomRules);
 	wReplay->setRelativePosition(ResizeWin(220, 100, 800, 520));
     ////kdiy////////////
     wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 360, 310));
