@@ -156,6 +156,8 @@ std::map<std::string, int> RepoManager::GetRepoStatus() {
 void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 	////kdiy//////////
 	std::string tmp_repo3 = "./config/languages";
+    std::string tmp_repo_hdpics = "./hdpics/jp";
+    std::string tmp_repo_pics = "./pics";
 	bool repo3chk = false;
 	////kdiy//////////
 	auto cit = configs.find("repos");
@@ -168,7 +170,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 		repo1.data_path = "";
 		repo1.is_language = true;
 		repo1.should_update = true;
-		if(repo1.Sanitize())
+		if(repo1.Sanitize() && gGameConfig->system_engine)
 			AddRepo(std::move(repo1));	
 		return;
 	}
@@ -181,20 +183,18 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 				JSON_SET_IF_VALID(repo_path, string, std::string);
 				JSON_SET_IF_VALID(repo_name, string, std::string);
 				if(tmp_repo.repo_path == tmp_repo3) {
-					if(tmp_repo.repo_path == tmp_repo3) {
-						if(tmp_repo.repo_name.empty()) 
-						    tmp_repo.repo_name = "Language";
-						tmp_repo.url = "https://2902370563%40qq.com:Edokcg_pcg01%40@e.coding.net/edokcg/edokcg/Ch.git";
-						tmp_repo.data_path = "";
-						tmp_repo.is_language = true;
-						repo3chk = true;
-					}
+					if(tmp_repo.repo_name.empty()) 
+						tmp_repo.repo_name = "Language";
+					tmp_repo.url = "https://2902370563%40qq.com:Edokcg_pcg01%40@e.coding.net/edokcg/edokcg/Ch.git";
+					tmp_repo.data_path = "";
+					tmp_repo.is_language = true;
+					repo3chk = true;
 					auto it = obj.find("admin_update");
 				    if(it != obj.end() && it->is_boolean() && !it->get<bool>())
 					    tmp_repo.should_update = false;
 					else
 						tmp_repo.should_update = true;
-					if(tmp_repo.Sanitize())
+					if(tmp_repo.Sanitize() && gGameConfig->system_engine)
 						AddRepo(std::move(tmp_repo));
 					continue;
 				}
@@ -215,7 +215,13 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
  				JSON_SET_IF_VALID(lflist_path, string, std::string);
 				JSON_SET_IF_VALID(script_path, string, std::string);
 				JSON_SET_IF_VALID(pics_path, string, std::string);
-				JSON_SET_IF_VALID(is_language, boolean, bool);
+				JSON_SET_IF_VALID(is_language, boolean, bool);	
+                
+                if(tmp_repo.repo_path == tmp_repo_hdpics && gGameConfig->hdpic != 1)
+                    continue;
+                if(tmp_repo.repo_path == tmp_repo_pics && gGameConfig->hdpic != 0)
+                    continue;
+
  				if(tmp_repo.is_language)
  					JSON_SET_IF_VALID(language, string, std::string);
 #ifdef YGOPRO_BUILD_DLL
@@ -230,9 +236,11 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 				if(it2 != obj.end() && it2->is_boolean() && !it2->get<bool>())
 					tmp_repo.should_update = false;
 				else
-					tmp_repo.should_update = true;	
+					tmp_repo.should_update = true;
 			}
 			else continue;
+            if(tmp_repo.Sanitize() && gGameConfig->system_engine)
+				AddRepo(std::move(tmp_repo));
 			//JSON_SET_IF_VALID(should_update, boolean, bool);
 // 			if(tmp_repo.url == "default") {
 // #ifdef DEFAULT_LIVE_URL
@@ -265,9 +273,9 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 				// 	JSON_SET_IF_VALID(core_path, string, std::string);
 // #endif
 // 			}
-			////kdiy//////////
-			if(tmp_repo.Sanitize())
-				AddRepo(std::move(tmp_repo));
+			// if(tmp_repo.Sanitize())
+			// 	AddRepo(std::move(tmp_repo));
+            ////kdiy//////////
 		}
 		////kdiy//////////
 		if(!repo3chk) {
@@ -278,7 +286,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 			tmp_repo.data_path = "";
 			tmp_repo.is_language = true;
 			tmp_repo.should_update = true;
-			if(tmp_repo.Sanitize())
+			if(tmp_repo.Sanitize() && gGameConfig->system_engine)
 			    AddRepo(std::move(tmp_repo));
 		}
 		return;

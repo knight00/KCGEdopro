@@ -1857,11 +1857,25 @@ void Game::PopulateSettingsWindow() {
 		defaultStrings.emplace_back(gSettings.chkHidePasscodeScope, 2063);
 		gSettings.chkFilterBot = env->addCheckBox(gGameConfig->filterBot, GetNextRect(), sPanel, CHECKBOX_FILTER_BOT, gDataManager->GetSysString(2069).data());
 		defaultStrings.emplace_back(gSettings.chkFilterBot, 2069);
+		/////kdiy////////////
+		gSettings.stCurrentFont = env->addStaticText(gDataManager->GetSysString(8016).data(), GetCurrentRectWithXOffset(15, 90), false, true, sPanel);
+		defaultStrings.emplace_back(gSettings.stCurrentFont, 8016);
+		gSettings.cbCurrentFont = AddComboBox(env, GetCurrentRectWithXOffset(95, 250), sPanel, COMBOBOX_CURRENT_FONT);
+		for(auto& font : Utils::FindFiles(EPRO_TEXT("./fonts/"), { EPRO_TEXT("ttf"), EPRO_TEXT("otf") })) {
+			auto itemIndex = gSettings.cbCurrentFont->addItem(Utils::ToUnicodeIfNeeded(font).data());
+			if(Utils::ToPathString(gGameConfig->textfont.font.substr(6, gGameConfig->textfont.font.size() - 1)) == font)
+				gSettings.cbCurrentFont->setSelected(itemIndex);
+		}
+		gSettings.ebFontSize = env->addEditBox(WStr(gGameConfig->textfont.size), GetCurrentRectWithXOffset(265, 320), true, sPanel, EDITBOX_NUMERIC);
+		gSettings.ebFontSize->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+        IncrementXorY();
+		/////kdiy////////////
 		{
 			gSettings.stCurrentSkin = env->addStaticText(gDataManager->GetSysString(2064).data(), GetCurrentRectWithXOffset(15, 90), false, true, sPanel);
 			defaultStrings.emplace_back(gSettings.stCurrentSkin, 2064);
 			gSettings.cbCurrentSkin = AddComboBox(env, GetCurrentRectWithXOffset(95, 320), sPanel, COMBOBOX_CURRENT_SKIN);
 			ReloadCBCurrentSkin();
+            IncrementXorY();
 		}
 		gSettings.btnReloadSkin = env->addButton(GetNextRect(), sPanel, BUTTON_RELOAD_SKIN, gDataManager->GetSysString(2066).data());
 		defaultStrings.emplace_back(gSettings.btnReloadSkin, 2066);
@@ -1901,18 +1915,6 @@ void Game::PopulateSettingsWindow() {
 		defaultStrings.emplace_back(gSettings.chkHideHandsInReplays, 2080);
 		gSettings.chkConfirmDeckClear = env->addCheckBox(gGameConfig->confirm_clear_deck, GetNextRect(), sPanel, CHECKBOX_CONFIRM_DECK_CLEAR, gDataManager->GetSysString(12104).data());
 		defaultStrings.emplace_back(gSettings.chkConfirmDeckClear, 12104);
-		/////kdiy////////////
-		gSettings.stCurrentFont = env->addStaticText(gDataManager->GetSysString(8016).data(), GetCurrentRectWithXOffset(15, 90), false, true, sPanel);
-		defaultStrings.emplace_back(gSettings.stCurrentFont, 8016);
-		gSettings.cbCurrentFont = AddComboBox(env, GetCurrentRectWithXOffset(95, 250), sPanel, COMBOBOX_CURRENT_FONT);
-		for(auto& font : Utils::FindFiles(EPRO_TEXT("./fonts/"), { EPRO_TEXT("ttf"), EPRO_TEXT("otf") })) {
-			auto itemIndex = gSettings.cbCurrentFont->addItem(Utils::ToUnicodeIfNeeded(font).data());
-			if(Utils::ToPathString(gGameConfig->textfont.font.substr(6, gGameConfig->textfont.font.size() - 1)) == font)
-				gSettings.cbCurrentFont->setSelected(itemIndex);
-		}
-		gSettings.ebFontSize = env->addEditBox(WStr(gGameConfig->textfont.size), GetCurrentRectWithXOffset(265, 320), true, sPanel, EDITBOX_NUMERIC);
-		gSettings.ebFontSize->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-		/////kdiy////////////
 	}
 
 	{
@@ -1981,7 +1983,7 @@ void Game::PopulateSettingsWindow() {
     	gSettings.chkEnableAnime->setEnabled(false);
 #endif
         gSettings.stSound = env->addStaticText(gDataManager->GetSysString(8015).data(), GetCurrentRectWithXOffset(15, 90), false, false, sPanel);
-		defaultStrings.emplace_back(gSettings.stDpiScale, 8015);
+		defaultStrings.emplace_back(gSettings.stSound, 8015);
         IncrementXorY();
         {
 	        gSettings.chkEnableSummonAnime = env->addCheckBox(gGameConfig->enablesanime, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_ENABLE_SANIME, gDataManager->GetSysString(8009).data());
@@ -4440,7 +4442,7 @@ OCG_Duel Game::SetupDuel(OCG_DuelOptions opts) {
 	LoadScript(pduel, "constant.lua");
 	LoadScript(pduel, "utility.lua");
 	/////kdiy/////
-	if(gGameConfig->update_allowed) {
+	if(gGameConfig->system_engine) {
 		LoadScript(pduel, "Kcore.lua");
 		LoadScript(pduel, "Kconstant.lua");
 	}

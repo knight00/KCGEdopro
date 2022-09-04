@@ -57,7 +57,7 @@ OPTION(bool, enablesanime, false)
 OPTION(bool, enablecanime, false)
 OPTION(bool, enableaanime, false)
 OPTION(bool, enableextralimit, false)
-OPTION(bool, update_allowed, true)
+OPTION(bool, system_engine, true)
 ///kdiy//////////
 OPTION(std::wstring, lastServer, L"")
 OPTION_ALIASED(bool, chkMAutoPos, automonsterpos, false)

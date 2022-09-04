@@ -1019,7 +1019,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 #endif
 				case ACTION_UPDATE_PROMPT:
 				/////kdiy///////
-				    gGameConfig->update_allowed = false;
+				    gGameConfig->system_engine = false;
 					Utils::DeleteDirectory(EPRO_TEXT("./config/languages/"));
                     Utils::DeleteDirectory(EPRO_TEXT("./repositories/kcg/"));
 				/////kdiy///////
