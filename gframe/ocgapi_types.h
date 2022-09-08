@@ -2,8 +2,8 @@
 #define OCGAPI_TYPES_H
 #include <stdint.h>
 
-#define OCG_VERSION_MAJOR 9
-#define OCG_VERSION_MINOR 1
+#define OCG_VERSION_MAJOR 10
+#define OCG_VERSION_MINOR 0
 
 typedef enum OCG_LogTypes {
 	OCG_LOG_TYPE_ERROR,
@@ -61,7 +61,7 @@ typedef int (*OCG_ScriptReader)(void* payload, OCG_Duel duel, const char* name);
 typedef void (*OCG_LogHandler)(void* payload, const char* string, int type);
 
 typedef struct OCG_DuelOptions {
-	uint32_t seed;
+	uint64_t seed[4];
 	uint64_t flags;
 	OCG_Player team1;
 	OCG_Player team2;
@@ -73,6 +73,7 @@ typedef struct OCG_DuelOptions {
 	void* payload3; /* relayed to errorHandler */
 	OCG_DataReaderDone cardReaderDone;
 	void* payload4; /* relayed to cardReader */
+	uint8_t enableUnsafeLibraries;
 }OCG_DuelOptions;
 
 typedef struct OCG_NewCardInfo {

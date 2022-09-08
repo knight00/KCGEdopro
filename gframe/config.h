@@ -37,6 +37,10 @@ extern bool show_changelog;
 /////kupdate///////
 #define CLIENT_VERSION (EDOPRO_VERSION_MAJOR & 0xff | ((EDOPRO_VERSION_MINOR & 0xff) << 8) | ((OCG_VERSION_MAJOR & 0xff) << 16) | ((OCG_VERSION_MINOR & 0xff) << 24))
 #define EXPAND_VERSION(ver) (ver) & 0xff, (((ver) >> 8) & 0xff), (((ver) >> 16) & 0xff), (((ver) >> 24) & 0xff)
+#define GET_CLIENT_VERSION_MAJOR(ver) (ver & 0xff)
+#define GET_CLIENT_VERSION_MINOR(ver) ((ver >> 8) & 0xff)
+#define GET_CORE_VERSION_MAJOR(ver) ((ver >> 16) & 0xff)
+#define GET_CORE_VERSION_MINOR(ver) ((ver >> 24) & 0xff)
 
 #if defined(__APPLE__)
 #include <TargetConditionals.h>

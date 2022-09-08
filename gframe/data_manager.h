@@ -49,7 +49,7 @@ struct CardData {
 	int32_t level;
 	//////kdiy///////	
 	uint32_t attribute;
-	uint32_t race;
+	uint64_t race;
 	int32_t attack;
 	int32_t defense;
 	uint32_t lscale;
@@ -69,7 +69,7 @@ struct CardDataC {
 	int32_t level;
 	//////kdiy///////	
 	uint32_t attribute;
-	uint32_t race;
+	uint64_t race;
 	int32_t attack;
 	int32_t defense;
 	uint32_t lscale;
@@ -151,7 +151,7 @@ public:
 	std::wstring GetNumString(int num, bool bracket = false) const;
 	epro::wstringview FormatLocation(uint32_t location, int sequence) const;
 	std::wstring FormatAttribute(uint32_t attribute) const;
-	std::wstring FormatRace(uint32_t race, bool isSkill = false) const;
+	std::wstring FormatRace(uint64_t race, bool isSkill = false) const;
 	std::wstring FormatType(uint32_t type) const;
 	std::wstring FormatScope(uint32_t scope, bool hideOCGTCG = false) const;
 	std::wstring FormatSetName(const std::vector<uint16_t>& setcodes) const;

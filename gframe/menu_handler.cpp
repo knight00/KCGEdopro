@@ -58,20 +58,20 @@ static void UpdateDeck() {
 }
 static void LoadReplay() {
 	auto& replay = ReplayMode::cur_replay;
-	if(open_file) {
+	if(std::exchange(open_file, false)) {
 		bool res = replay.OpenReplay(open_file_name);
-		open_file = false;
-		if(!res || (replay.pheader.id == REPLAY_YRP1 && !mainGame->coreloaded))
+		if(!res || (replay.IsOldReplayMode() && (!mainGame->coreloaded || !replay.CanBePlayedInOldMode())))
 			return;
 	} else {
-		if(mainGame->lstReplayList->getSelected() == -1)
+		const auto& list = mainGame->lstReplayList;
+		const auto selected = list->getSelected();
+		if(selected == -1)
 			return;
-		if(!replay.OpenReplay(Utils::ToPathString(mainGame->lstReplayList->getListItem(mainGame->lstReplayList->getSelected(), true))) || (replay.pheader.id == REPLAY_YRP1 && !mainGame->coreloaded))
+		const auto path = Utils::ToPathString(list->getListItem(selected, true));
+		if(!replay.OpenReplay(path) || (replay.IsOldReplayMode() && (!mainGame->coreloaded || !replay.CanBePlayedInOldMode())))
 			return;
 	}
 	if(mainGame->chkYrp->isChecked() && !replay.yrp)
-		return;
-	if(replay.pheader.id == REPLAY_YRP1 && (!mainGame->coreloaded || !(replay.pheader.flag & REPLAY_NEWREPLAY)))
 		return;
 	replay.Rewind();
 	mainGame->ClearCardInfo();
@@ -93,7 +93,7 @@ static void LoadReplay() {
 	catch(...) { start_turn = 0; }
 	if(start_turn == 1)
 		start_turn = 0;
-	ReplayMode::StartReplay(start_turn, (mainGame->chkYrp->isChecked() || replay.pheader.id == REPLAY_YRP1));
+	ReplayMode::StartReplay(start_turn, (mainGame->chkYrp->isChecked() || replay.IsOldReplayMode()));
 }
 static inline void TriggerEvent(irr::gui::IGUIElement* target, irr::gui::EGUI_EVENT_TYPE type) {
 	irr::SEvent event;
@@ -187,7 +187,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					for(size_t i = 0; i < mainGame->cbDeck2Select->getItemCount(); ++i) {
 						if(gGameConfig->lastdeckfolder == mainGame->cbDeck2Select->getItem(i)) {
 							mainGame->cbDeck2Select->setSelected(i);
-							mainGame->cbDeck2Select2->setSelected(i);
 						}
 					}
 					///////kdiy/////////////
@@ -200,7 +199,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					for(size_t i = 0; i < mainGame->cbDeck2Select->getItemCount(); ++i) {
 						if(gGameConfig->lastdeckfolder == mainGame->cbDeck2Select->getItem(i)) {
 							mainGame->cbDeck2Select->setSelected(i);
-							mainGame->cbDeck2Select2->setSelected(i);
 						}
 					}
 					///////kdiy/////////////
@@ -254,10 +252,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 						for(size_t i = 0; i < mainGame->cbDeck2Select->getItemCount(); ++i) {
 							if(gGameConfig->lastdeckfolder == mainGame->cbDeck2Select->getItem(i)) {
 								mainGame->cbDeck2Select->setSelected(i);
-								mainGame->cbDeck2Select2->setSelected(i);
 							}
 						}
-						///////kdiy/////////////	
+						///////kdiy/////////////
 					}
 					break;
 				}
@@ -295,7 +292,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					for(size_t i = 0; i < mainGame->cbDeck2Select->getItemCount(); ++i) {
 						if(gGameConfig->lastdeckfolder == mainGame->cbDeck2Select->getItem(i)) {
 							mainGame->cbDeck2Select->setSelected(i);
-							mainGame->cbDeck2Select2->setSelected(i);
 						}
 					}
 					///////kdiy/////////////
@@ -316,7 +312,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				for(size_t i = 0; i < mainGame->cbDeck2Select->getItemCount(); ++i) {
 					if(gGameConfig->lastdeckfolder == mainGame->cbDeck2Select->getItem(i)) {
 						mainGame->cbDeck2Select->setSelected(i);
-						mainGame->cbDeck2Select2->setSelected(i);
 					}
 				}
 				///////kdiy/////////////
@@ -449,7 +444,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 						for(size_t i = 0; i < mainGame->cbDeck2Select->getItemCount(); ++i) {
 							if(gGameConfig->lastdeckfolder == mainGame->cbDeck2Select->getItem(i)) {
 								mainGame->cbDeck2Select->setSelected(i);
-								mainGame->cbDeck2Select2->setSelected(i);
 							}
 						}
 					}
@@ -630,36 +624,21 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			case BUTTON_HP_READY: {
-				//////kdiy/////	
+				const auto selected = mainGame->cbDeckSelect->getSelected();
+				//////kdiy/////
+				//if(selected == -1)
+					//break;
+				//if(!gdeckManager->LoadDeck(Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected))))
 				mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 45));
-				//////kdiy/////	
-				bool check = false;
-				if(!mainGame->cbDeckSelect2->isVisible())
-				    /////kdiy/////
-					{
-					auto folder = Utils::ToPathString(mainGame->cbDeck2Select->getItem(mainGame->cbDeck2Select->getSelected()));
-					//check = (mainGame->cbDeckSelect->getSelected() == -1 || !gdeckManager->LoadDeck(Utils::ToPathString(mainGame->cbDeckSelect->getItem(mainGame->cbDeckSelect->getSelected()))));
-					check = (mainGame->cbDeck2Select->getSelected() == -1 || mainGame->cbDeckSelect->getSelected() == -1 || !gdeckManager->LoadDeck(folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDeckSelect->getItem(mainGame->cbDeckSelect->getSelected()))));
-					}
-					/////kdiy/////
-				else
-				    /////kdiy/////
-					// check = (mainGame->cbDeckSelect->getSelected() == -1 || mainGame->cbDeckSelect2->getSelected() == -1 || !gdeckManager->LoadDeckDouble(Utils::ToPathString(mainGame->cbDeckSelect->getItem(mainGame->cbDeckSelect->getSelected())), Utils::ToPathString(mainGame->cbDeckSelect2->getItem(mainGame->cbDeckSelect2->getSelected()))));
-					{
-					auto folder = Utils::ToPathString(mainGame->cbDeck2Select->getItem(mainGame->cbDeck2Select->getSelected()));
-					auto folder2 = Utils::ToPathString(mainGame->cbDeck2Select2->getItem(mainGame->cbDeck2Select2->getSelected()));
-					check = (mainGame->cbDeck2Select->getSelected() == -1 || mainGame->cbDeck2Select2->getSelected() == -1 || mainGame->cbDeckSelect->getSelected() == -1 || mainGame->cbDeckSelect2->getSelected() == -1 || !gdeckManager->LoadDeckDouble(folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDeckSelect->getItem(mainGame->cbDeckSelect->getSelected())), folder2 + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDeckSelect2->getItem(mainGame->cbDeckSelect2->getSelected()))));
-					}
-					/////kdiy/////
-				if(check)
+				auto folder = Utils::ToPathString(mainGame->cbDeck2Select->getItem(mainGame->cbDeck2Select->getSelected()));
+				if(mainGame->cbDeck2Select->getSelected() == -1 || selected == -1 || !gdeckManager->LoadDeck(folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected))))
+				//////kdiy/////
 					break;
 				UpdateDeck();
 				DuelClient::SendPacketToServer(CTOS_HS_READY);
 				mainGame->cbDeckSelect->setEnabled(false);
-				mainGame->cbDeckSelect2->setEnabled(false);
 				/////kdiy/////
 				mainGame->cbDeck2Select->setEnabled(false);
-				mainGame->cbDeck2Select2->setEnabled(false);
 				/////kdiy/////
 				if(mainGame->dInfo.team1 + mainGame->dInfo.team2 > 2)
 					mainGame->btnHostPrepDuelist->setEnabled(false);
@@ -668,10 +647,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			case BUTTON_HP_NOTREADY: {
 				DuelClient::SendPacketToServer(CTOS_HS_NOTREADY);
 				mainGame->cbDeckSelect->setEnabled(true);
-				mainGame->cbDeckSelect2->setEnabled(true);
 				/////kdiy/////
 				mainGame->cbDeck2Select->setEnabled(true);
-				mainGame->cbDeck2Select2->setEnabled(true);
 				/////kdiy/////
 				if(mainGame->dInfo.team1 + mainGame->dInfo.team2 > 2)
 					mainGame->btnHostPrepDuelist->setEnabled(true);
@@ -1098,17 +1075,18 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					break;
 				}
 				auto& replay = ReplayMode::cur_replay;
-				if(!replay.OpenReplay(Utils::ToPathString(mainGame->lstReplayList->getListItem(sel, true))))
-					break;
-				bool has_yrp = replay.IsStreamedReplay() && (replay.yrp != nullptr);
-				if(!(replay.pheader.id == REPLAY_YRP1 && (!mainGame->coreloaded || !(replay.pheader.flag & REPLAY_NEWREPLAY))))
-					mainGame->btnLoadReplay->setEnabled(true);
+				const auto path = Utils::ToPathString(mainGame->lstReplayList->getListItem(sel, true));
+				replay.OpenReplay(path);
+
+				bool can_be_played = replay.CanBePlayedInStreamedMode() || (replay.CanBePlayedInOldMode() && mainGame->coreloaded);
+				mainGame->btnLoadReplay->setEnabled(can_be_played);
+
 				mainGame->btnDeleteReplay->setEnabled(true);
 				mainGame->btnRenameReplay->setEnabled(true);
 				mainGame->btnExportDeck->setEnabled(replay.IsExportable());
 				mainGame->btnShareReplay->setEnabled(true);
 				std::wstring repinfo;
-				time_t curtime = replay.pheader.seed;
+				time_t curtime = replay.pheader.base.timestamp;
 				repinfo.append(fmt::format(L"{:%Y/%m/%d %H:%M:%S}\n", *std::localtime(&curtime)));
 				auto names = replay.GetPlayerNames();
 				for(int i = 0; i < replay.GetPlayersCount(0); i++) {
@@ -1123,7 +1101,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->ebRepStartTurn->setText(L"1");
 				mainGame->stReplayInfo->setText(repinfo.data());
 				mainGame->chkYrp->setChecked(false);
-				mainGame->chkYrp->setEnabled(has_yrp && mainGame->coreloaded);
+				mainGame->chkYrp->setEnabled(replay.HasPlayableYrp() && mainGame->coreloaded);
 				break;
 			}
 			case LISTBOX_SINGLEPLAY_LIST: {
@@ -1245,47 +1223,30 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					break;
 				mainGame->env->setFocus(mainGame->wHostPrepare);
 				if(static_cast<irr::gui::IGUICheckBox*>(caller)->isChecked()) {
-					bool check = false;
-					if (!mainGame->cbDeckSelect2->isVisible())
-					    ///////kdiy////	
-						{
-						auto folder = Utils::ToPathString(mainGame->cbDeck2Select->getItem(mainGame->cbDeck2Select->getSelected()));
-						// check = (mainGame->cbDeckSelect->getSelected() == -1 || !gdeckManager->LoadDeck(Utils::ToPathString(mainGame->cbDeckSelect->getItem(mainGame->cbDeckSelect->getSelected()))));
-						check = (mainGame->cbDeck2Select->getSelected() == -1 || mainGame->cbDeckSelect->getSelected() == -1 || !gdeckManager->LoadDeck(folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDeckSelect->getItem(mainGame->cbDeckSelect->getSelected()))));
-						}
-						///////kdiy////	
-					else
-						///////kdiy////	
-						// check = (mainGame->cbDeckSelect->getSelected() == -1 || mainGame->cbDeckSelect2->getSelected() == -1 || !gdeckManager->LoadDeckDouble(Utils::ToPathString(mainGame->cbDeckSelect->getItem(mainGame->cbDeckSelect->getSelected())), Utils::ToPathString(mainGame->cbDeckSelect2->getItem(mainGame->cbDeckSelect2->getSelected()))));
-						{
-						auto folder = Utils::ToPathString(mainGame->cbDeck2Select->getItem(mainGame->cbDeck2Select->getSelected()));
-						auto folder2 = Utils::ToPathString(mainGame->cbDeck2Select2->getItem(mainGame->cbDeck2Select2->getSelected()));
-						check = (mainGame->cbDeck2Select->getSelected() == -1 || mainGame->cbDeckSelect->getSelected() == -1 || mainGame->cbDeckSelect2->getSelected() == -1 || !gdeckManager->LoadDeckDouble(folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDeckSelect->getItem(mainGame->cbDeckSelect->getSelected())), folder2 + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDeckSelect2->getItem(mainGame->cbDeckSelect2->getSelected()))));
-						}
-						///////kdiy////	
-					if(check) {
+					const auto selected = mainGame->cbDeckSelect->getSelected();
+					///////kdiy////
+					//if(selected == -1 || !gdeckManager->LoadDeck(Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected)))) {
+					auto folder = Utils::ToPathString(mainGame->cbDeck2Select->getItem(mainGame->cbDeck2Select->getSelected()));
+					if(mainGame->cbDeck2Select->getSelected() == -1 || selected == -1 || !gdeckManager->LoadDeck(folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected)))) {
+					///////kdiy////
 						static_cast<irr::gui::IGUICheckBox*>(caller)->setChecked(false);
 						break;
 					}
 					UpdateDeck();
 					DuelClient::SendPacketToServer(CTOS_HS_READY);
 					mainGame->cbDeckSelect->setEnabled(false);
-					mainGame->cbDeckSelect2->setEnabled(false);
-					///////kdiy////	
+					///////kdiy////
 					mainGame->cbDeck2Select->setEnabled(false);
-					mainGame->cbDeck2Select2->setEnabled(false);
 					mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 45));
-					///////kdiy////	
+					///////kdiy////
 					if(mainGame->dInfo.team1 + mainGame->dInfo.team2 > 2)
 						mainGame->btnHostPrepDuelist->setEnabled(false);
 				} else {
 					DuelClient::SendPacketToServer(CTOS_HS_NOTREADY);
 					mainGame->cbDeckSelect->setEnabled(true);
-					mainGame->cbDeckSelect2->setEnabled(true);
-					///////kdiy////	
+					///////kdiy////
 					mainGame->cbDeck2Select->setEnabled(true);
-					mainGame->cbDeck2Select2->setEnabled(true);
-					///////kdiy////						
+					///////kdiy////
 					if(mainGame->dInfo.team1 + mainGame->dInfo.team2 > 2)
 						mainGame->btnHostPrepDuelist->setEnabled(true);
 				}
@@ -1458,10 +1419,22 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 		case irr::gui::EGET_COMBO_BOX_CHANGED: {
 			switch (id) {
 			case COMBOBOX_DUEL_RULE: {
+				auto setDeckSizes = [&](const DeckSizes& size) {
+					mainGame->ebMainMin->setText(fmt::to_wstring<int>(size.main.min).data());
+					mainGame->ebMainMax->setText(fmt::to_wstring<int>(size.main.max).data());
+					mainGame->ebExtraMin->setText(fmt::to_wstring<int>(size.extra.min).data());
+					mainGame->ebExtraMax->setText(fmt::to_wstring<int>(size.extra.max).data());
+					mainGame->ebSideMin->setText(fmt::to_wstring<int>(size.side.min).data());
+					mainGame->ebSideMax->setText(fmt::to_wstring<int>(size.side.max).data());
+				};
+				static constexpr DeckSizes ocg_deck_sizes{ {40,60}, {0,15}, {0,15} };
+				static constexpr DeckSizes rush_deck_sizes{ {40,60}, {0,15}, {0,15} };
+				static constexpr DeckSizes speed_deck_sizes{ {20,30}, {0,6}, {0,6} };
+				static constexpr DeckSizes goat_deck_sizes{ {40,60}, {0,999}, {0,15} };
 				mainGame->chkTcgRulings->setChecked(false);
 				auto combobox = static_cast<irr::gui::IGUIComboBox*>(event.GUIEvent.Caller);
 #define CHECK(MR) case (MR - 1): { mainGame->duel_param = DUEL_MODE_MR##MR; mainGame->forbiddentypes = DUEL_MODE_MR##MR##_FORB;\
-									mainGame->chkRules[13]->setChecked(false); mainGame->ebStartHand->setText(L"5"); goto remove; }
+									setDeckSizes(ocg_deck_sizes); mainGame->ebStartHand->setText(L"5"); goto remove; }
 				switch (combobox->getSelected()) {
 				CHECK(1)
 				CHECK(2)
@@ -1470,22 +1443,22 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				CHECK(5)
 				case 5:	{
 					mainGame->duel_param = DUEL_MODE_SPEED;
+					setDeckSizes(speed_deck_sizes);
 					mainGame->forbiddentypes = 0;
-					mainGame->chkRules[13]->setChecked(true);
 					mainGame->ebStartHand->setText(L"4");
 					goto remove;
 				}
 				case 6:	{
 					mainGame->duel_param = DUEL_MODE_RUSH;
+					setDeckSizes(rush_deck_sizes);
 					mainGame->forbiddentypes = 0;
-					mainGame->chkRules[13]->setChecked(false);
 					mainGame->ebStartHand->setText(L"4");
 					goto remove;
 				}
 				case 7:	{
 					mainGame->duel_param = DUEL_MODE_GOAT;
+					setDeckSizes(goat_deck_sizes);
 					mainGame->forbiddentypes = DUEL_MODE_MR1_FORB;
-					mainGame->chkRules[13]->setChecked(false);
 					mainGame->chkTcgRulings->setChecked(true);
 					mainGame->ebStartHand->setText(L"5");
 					goto remove;
@@ -1578,13 +1551,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				    mainGame->RefreshDeck(mainGame->cbDeck2Select, mainGame->cbDeckSelect);
 				break;
 			}
-			case COMBOBOX_cbDeckSelect2: {
-				int sel = mainGame->cbDeckSelect2->getSelected();
-				int sel2 = mainGame->cbDeck2Select2->getSelected();
-				if(sel2 >= 0)
-				    mainGame->RefreshDeck(mainGame->cbDeck2Select2, mainGame->cbDeckSelect2);
-				break;
-			}			
             ///////kdiy//////////
 			case SERVER_CHOICE: {
 				ServerLobby::RefreshRooms();
