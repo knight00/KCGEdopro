@@ -171,7 +171,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 		repo1.is_language = true;
 		repo1.should_update = true;
 		if(repo1.Sanitize() && gGameConfig->system_engine)
-			AddRepo(std::move(repo1));	
+			AddRepo(std::move(repo1));
 		return;
 	}
 	////kdiy//////////
@@ -183,7 +183,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 				JSON_SET_IF_VALID(repo_path, string, std::string);
 				JSON_SET_IF_VALID(repo_name, string, std::string);
 				if(tmp_repo.repo_path == tmp_repo3) {
-					if(tmp_repo.repo_name.empty()) 
+					if(tmp_repo.repo_name.empty())
 						tmp_repo.repo_name = "Language";
 					tmp_repo.url = "https://2902370563%40qq.com:Edokcg_pcg01%40@e.coding.net/edokcg/edokcg/Ch.git";
 					tmp_repo.data_path = "";
