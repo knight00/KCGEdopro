@@ -399,8 +399,8 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(tmpptr, 1236);
 	cbDuelRule2 = AddComboBox(env, Scale(140, 145, 300, 170), wCreateHost2, COMBOBOX_DUEL_RULE);
 	ReloadLocalCBDuelRule();
-	chkNoCheckDeck2 = env->addCheckBox(gGameConfig->noCheckDeck, Scale(20, 180, 120, 200), wCreateHost2, -1, gDataManager->GetSysString(1229).data());
-	defaultStrings.emplace_back(chkNoCheckDeck2, 1229);
+	chkNoCheckDeckContent2 = env->addCheckBox(gGameConfig->noCheckDeckContent, Scale(20, 180, 120, 200), wCreateHost2, -1, gDataManager->GetSysString(1229).data());
+	defaultStrings.emplace_back(chkNoCheckDeckContent2, 1229);
 	chkNoShuffleDeck2 = env->addCheckBox(gGameConfig->noShuffleDeck, Scale(140, 180, 240, 200), wCreateHost2, -1, gDataManager->GetSysString(1230).data());
 	defaultStrings.emplace_back(chkNoShuffleDeck2, 1230);
 	chkNoLFlist2 = env->addCheckBox(false, Scale(260, 180, 360, 200), wCreateHost2, -1, gDataManager->GetSysString(8031).data());

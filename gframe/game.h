@@ -497,7 +497,7 @@ public:
 	irr::gui::IGUIEditBox* ebDrawCount2;
 	irr::gui::IGUIEditBox* ebJoinPass2;
 	irr::gui::IGUIComboBox* cbDuelRule2;
-	irr::gui::IGUICheckBox* chkNoCheckDeck2;
+	irr::gui::IGUICheckBox* chkNoCheckDeckContent2;
 	irr::gui::IGUICheckBox* chkNoShuffleDeck2;
 	irr::gui::IGUICheckBox* chkNoLFlist2;
 	irr::gui::IGUICheckBox* chkTag;
@@ -517,7 +517,7 @@ public:
     irr::gui::IGUIButton* btnCharacterSelect_replayclose;
 	irr::gui::IGUIWindow* wAvatar[2];
 	irr::gui::CGUIImageButton* avatarbutton[2];
-	///////kdiy//////////	
+	///////kdiy//////////
 
 	//deck options
 	irr::gui::IGUICheckBox* chkNoCheckDeckContentSecondary;
