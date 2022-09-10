@@ -415,7 +415,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 						pass += fmt::format(pass == L"" ? L"TM{}" : L",TM{}",mainGame->ebTimeLimit2->getText());
 					if (mainGame->cbDuelRule2->getSelected() != 4)
 						pass += fmt::format(pass == L"" ? L"MR{}" : L",MR{}", mainGame->cbDuelRule2->getSelected() + 1);
-					if(mainGame->chkNoCheckDeck2->isChecked()) 
+					if(mainGame->chkNoCheckDeckContent2->isChecked()) 
 						pass += pass == L"" ? L"NC" : L",NC";
 					if(mainGame->chkNoShuffleDeck2->isChecked()) 
 						pass += pass == L"" ? L"NS" : L",NS";
@@ -628,10 +628,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				//////kdiy/////
 				//if(selected == -1)
 					//break;
-				//if(!gdeckManager->LoadDeck(Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected))))
+				//if(!mainGame->deckBuilder.SetCurrentDeckFromFile(Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected))))
 				mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 45));
 				auto folder = Utils::ToPathString(mainGame->cbDeck2Select->getItem(mainGame->cbDeck2Select->getSelected()));
-				if(mainGame->cbDeck2Select->getSelected() == -1 || selected == -1 || !gdeckManager->LoadDeck(folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected))))
+				if(mainGame->cbDeck2Select->getSelected() == -1 || selected == -1 || !mainGame->deckBuilder.SetCurrentDeckFromFile(folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected))))
 				//////kdiy/////
 					break;
 				UpdateDeck();
@@ -831,7 +831,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					break;
 				const auto replay_name = Utils::GetFileName(ReplayMode::cur_replay.GetReplayName());
 				for(size_t i = 0; i < decks.size(); i++) {
-					gdeckManager->SaveDeck(fmt::format(EPRO_TEXT("{} player{:02} {}"), replay_name, i, sanitize(Utils::ToPathString(players[i]))), decks[i].main_deck, decks[i].extra_deck, cardlist_type());
+					DeckManager::SaveDeck(fmt::format(EPRO_TEXT("{} player{:02} {}"), replay_name, i, sanitize(Utils::ToPathString(players[i]))), decks[i].main_deck, decks[i].extra_deck, cardlist_type());
 				}
 				mainGame->stACMessage->setText(gDataManager->GetSysString(1367).data());
 				mainGame->PopupElement(mainGame->wACMessage, 20);
@@ -902,19 +902,18 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_DECK_EDIT: {
 				//////kdiy/////
-				mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 137, 295, 187));
 				//mainGame->RefreshDeck(mainGame->cbDBDecks);
+				// if(open_file && mainGame->deckBuilder.SetCurrentDeckFromFile(open_file_name, true)) {
+				// 	auto name = Utils::GetFileName(open_file_name);
+				mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 137, 295, 187));
 				mainGame->RefreshDeck(mainGame->cbDBDecks2,mainGame->cbDBDecks, true);
 				auto folder = Utils::ToPathString(mainGame->cbDBDecks2->getItem(mainGame->cbDBDecks2->getSelected()));
                 for(int i = 0; i < mainGame->cbDBDecks2->getItemCount() - 1; i++) {
                     mainGame->cbDBDecks22->addItem(mainGame->cbDBDecks2->getItem(i));
                 }
-                //////kdiy/////
-				//if(open_file && gdeckManager->LoadDeck(open_file_name, nullptr, true)) {
-					//auto name = Utils::GetFileName(open_file_name);
-				if(open_file && gdeckManager->LoadDeck(folder + EPRO_TEXT("/") + open_file_name, nullptr, true)) {
+				if(open_file && mainGame->deckBuilder.SetCurrentDeckFromFile(folder + EPRO_TEXT("/") + open_file_name, true)) {
 					auto name = Utils::GetFileName(folder + EPRO_TEXT("/") + open_file_name);
-				//////kdiy/////	
+				//////kdiy/////
 					mainGame->ebDeckname->setText(Utils::ToUnicodeIfNeeded(name).data());
 					//////kdiy/////
 					mainGame->cbDBDecks2->setSelected(-1);
@@ -922,19 +921,20 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					//////kdiy/////
 					mainGame->cbDBDecks->setSelected(-1);
 					open_file = false;
+				//////kdiy/////
 				// } else if(mainGame->cbDBDecks->getSelected() != -1) {
 				} else if(mainGame->cbDBDecks->getSelected() >= 0 && mainGame->cbDBDecks2->getSelected() >= 0) {
-					// gdeckManager->LoadDeck(Utils::ToPathString(mainGame->cbDBDecks->getItem(mainGame->cbDBDecks->getSelected())), nullptr, true);
-					gdeckManager->LoadDeck(folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDBDecks->getItem(mainGame->cbDBDecks->getSelected())), nullptr, true);
+					// mainGame->deckBuilder.SetCurrentDeckFromFile(Utils::ToPathString(mainGame->cbDBDecks->getItem(mainGame->cbDBDecks->getSelected())), true);
+					mainGame->deckBuilder.SetCurrentDeckFromFile(folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDBDecks->getItem(mainGame->cbDBDecks->getSelected())), true);
                     mainGame->cbDBDecks22->setSelected(mainGame->cbDBDecks2->getSelected());
-                    //////kdiy/////	
+                //////kdiy/////
 					mainGame->ebDeckname->setText(L"");
 				}
 				mainGame->HideElement(mainGame->wMainMenu);
 				////kdiy////////
-				#ifdef EK
+#ifdef EK
 				mainGame->HideElement(mainGame->wQQ);
-				#endif
+#endif
 				////kdiy////////
 				mainGame->deckBuilder.Initialize();
 				break;
@@ -1196,7 +1196,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->chkAI->setEnabled(chk);
 				mainGame->ebTimeLimit2->setEnabled(chk);
 				mainGame->cbDuelRule2->setEnabled(chk);
-				mainGame->chkNoCheckDeck2->setEnabled(chk);
+				mainGame->chkNoCheckDeckContent2->setEnabled(chk);
 				mainGame->chkNoShuffleDeck2->setEnabled(chk);
 				mainGame->chkNoLFlist2->setEnabled(chk);
 				mainGame->chkTag->setEnabled(chk);
@@ -1225,9 +1225,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				if(static_cast<irr::gui::IGUICheckBox*>(caller)->isChecked()) {
 					const auto selected = mainGame->cbDeckSelect->getSelected();
 					///////kdiy////
-					//if(selected == -1 || !gdeckManager->LoadDeck(Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected)))) {
+					//if(selected == -1 || !mainGame->deckBuilder.SetCurrentDeckFromFile(Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected)))) {
 					auto folder = Utils::ToPathString(mainGame->cbDeck2Select->getItem(mainGame->cbDeck2Select->getSelected()));
-					if(mainGame->cbDeck2Select->getSelected() == -1 || selected == -1 || !gdeckManager->LoadDeck(folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected)))) {
+					if(mainGame->cbDeck2Select->getSelected() == -1 || selected == -1 || !mainGame->deckBuilder.SetCurrentDeckFromFile(folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected)))) {
 					///////kdiy////
 						static_cast<irr::gui::IGUICheckBox*>(caller)->setChecked(false);
 						break;
@@ -1619,7 +1619,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				if(to_open_file.size()) {
 					auto extension = Utils::GetFileExtension(to_open_file);
 					bool isMenu = !mainGame->wSinglePlay->isVisible() && !mainGame->wReplay->isVisible();
-					if(extension == L"ydk" && isMenu && gdeckManager->LoadDeck(Utils::ToPathString(to_open_file))) {
+					if(extension == L"ydk" && isMenu && mainGame->deckBuilder.SetCurrentDeckFromFile(Utils::ToPathString(to_open_file))) {
 						//////kdiy/////
 						//mainGame->RefreshDeck(mainGame->cbDBDecks);
 						mainGame->RefreshDeck(mainGame->cbDBDecks2, mainGame->cbDBDecks, true);
