@@ -3243,9 +3243,6 @@ void Game::LoadServers() {
 					ServerInfo tmp_server;
 					tmp_server.name = BufferIO::DecodeUTF8(obj.at("name").get_ref<std::string&>());
 					tmp_server.address = obj.at("address").get<std::string>();
-					///kdiy/////////
-					if(obj.find("oldserver") != obj.end() && obj.at("oldserver").get<bool>() == true) continue;
-					///kdiy/////////
 					tmp_server.roomaddress = obj.at("roomaddress").get<std::string>();
 					tmp_server.roomlistport = obj.at("roomlistport").get<uint16_t>();
 					tmp_server.duelport = obj.at("duelport").get<uint16_t>();
@@ -3271,15 +3268,14 @@ void Game::LoadServers() {
 void Game::LoadLocalServers() {
 	for(auto& _config : { &gGameConfig->user_configs, &gGameConfig->configs }) {
 		auto& config = *_config;
-		auto it = config.find("servers");
+		auto it = config.find("oldservers");
 		if(it != config.end() && it->is_array()) {
 			for(auto& obj : *it) {
 				try {
 					ServerInfo tmp_server;
 					tmp_server.name = BufferIO::DecodeUTF8(obj.at("name").get_ref<std::string&>());
 					tmp_server.address = obj.at("address").get<std::string>();
-					tmp_server.duelport = obj.at("duelport").get<int>();
-					if(obj.find("oldserver") == obj.end() || obj.at("oldserver").get<bool>() == false) continue;
+					tmp_server.duelport = obj.at("duelport").get<uint16_t>();
 					int i = serverChoice2->addItem(tmp_server.name.data());
 					if(gGameConfig->lastLocalServer == tmp_server.name)
 						serverChoice2->setSelected(i);
