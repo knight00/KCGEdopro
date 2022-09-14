@@ -279,9 +279,7 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 					prev_operation = id;
 					break;
 				}
-				current_deck.main.clear();
-				current_deck.extra.clear();
-				current_deck.side.clear();
+				ClearDeck();
 				break;
 			}
 			case BUTTON_SORT_DECK: {
@@ -494,11 +492,11 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 					prev_deckfolder = sel2;
 					/////////kdiy///////
 					prev_deck = sel;
+					break;
 				}
 				case BUTTON_CLEAR_DECK: {
-					current_deck.main.clear();
-					current_deck.extra.clear();
-					current_deck.side.clear();
+					ClearDeck();
+					break;
 				}
 				}
 				prev_operation = 0;
@@ -1410,6 +1408,26 @@ void DeckBuilder::SortList() {
 		std::sort(left, results.end(), DataManager::deck_sort_name);
 		break;
 	}
+}
+void DeckBuilder::ClearDeck() {
+	current_deck.main.clear();
+	current_deck.extra.clear();
+	current_deck.side.clear();
+
+	main_and_extra_legend_count = 0;
+	main_skill_count = 0;
+	main_monster_count = 0;
+	main_spell_count = 0;
+	main_trap_count = 0;
+
+	extra_fusion_count = 0;
+	extra_xyz_count = 0;
+	extra_synchro_count = 0;
+	extra_link_count = 0;
+
+	side_monster_count = 0;
+	side_spell_count = 0;
+	side_trap_count = 0;
 }
 void DeckBuilder::RefreshLimitationStatus() {
 	main_and_extra_legend_count = DeckManager::OTCount(current_deck.main, SCOPE_LEGEND) + DeckManager::OTCount(current_deck.extra, SCOPE_LEGEND);
