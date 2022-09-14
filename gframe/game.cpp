@@ -250,7 +250,7 @@ void Game::Initialize() {
 											L"https://github.com/knight00/KCGEdopro\n"
 											L"https://github.com/knight00/ocgcore-KCG\n"
 											L"Licensed under the GNU AGPLv3 or later. See LICENSE for more details.\n"
-											L"Forked from Fluorohydride's YGOPro, maintainers DailyShana, mercury233.\n"
+											L"Forked from Fluorohydride's YGOPro, mercury233.\n"
 											L"Yu-Gi-Oh! is a trademark of Shueisha and Konami.\n"
 											L"This project is not affiliated with or endorsed by Shueisha or Konami.", false, env, wAbout, -1, Scale(10, 10, 440, 690));
 	((irr::gui::CGUICustomText*)stAbout)->enableScrollBar();
@@ -1461,8 +1461,6 @@ void Game::PopulateGameHostWindows() {
 		btnRulesOK = env->addButton(Scale(135, 175, 235, 200), wRules, BUTTON_RULE_OK, gDataManager->GetSysString(1211).data());
 		defaultStrings.emplace_back(btnRulesOK, 1211);
 		for(int i = 0, str = 1132; i < sizeofarr(chkRules); ++str) {
-			if(str == 1141)
-				continue;
 			chkRules[i] = env->addCheckBox(false, Scale(10 + (i % 2) * 150, 10 + (i / 2) * 20, 200 + (i % 2) * 120, 30 + (i / 2) * 20), wRules, CHECKBOX_EXTRA_RULE, gDataManager->GetSysString(str).data());
 			defaultStrings.emplace_back(chkRules[i], str);
 			++i;
@@ -1925,10 +1923,8 @@ void Game::PopulateSettingsWindow() {
 			defaultStrings.emplace_back(gSettings.stCurrentSkin, 2064);
 			gSettings.cbCurrentSkin = AddComboBox(env, GetCurrentRectWithXOffset(95, 320), sPanel, COMBOBOX_CURRENT_SKIN);
 			ReloadCBCurrentSkin();
-            IncrementXorY();
+			IncrementXorY();
 		}
-		gSettings.btnReloadSkin = env->addButton(GetNextRect(), sPanel, BUTTON_RELOAD_SKIN, gDataManager->GetSysString(2066).data());
-		defaultStrings.emplace_back(gSettings.btnReloadSkin, 2066);
 		{
 			gSettings.stCurrentLocale = env->addStaticText(gDataManager->GetSysString(2067).data(), GetCurrentRectWithXOffset(15, 90), false, true, sPanel);
 			defaultStrings.emplace_back(gSettings.stCurrentLocale, 2067);
@@ -1945,6 +1941,8 @@ void Game::PopulateSettingsWindow() {
 			gSettings.cbCurrentLocale->setSelected(selectedLocale);
 			IncrementXorY();
 		}
+		gSettings.btnReloadSkin = env->addButton(GetNextRect(), sPanel, BUTTON_RELOAD_SKIN, gDataManager->GetSysString(2066).data());
+		defaultStrings.emplace_back(gSettings.btnReloadSkin, 2066);
 		{
 			gSettings.stDpiScale = env->addStaticText(gDataManager->GetSysString(2070).data(), GetCurrentRectWithXOffset(15, 90), false, false, sPanel);
 			defaultStrings.emplace_back(gSettings.stDpiScale, 2070);
@@ -2630,13 +2628,24 @@ bool Game::MainLoop() {
 			DuelClient::try_needed = false;
 			DuelClient::StartClient(DuelClient::temp_ip, DuelClient::temp_port, dInfo.secret.game_id, false);
 		}
-		popupCheck.lock();
-		if(queued_msg.size()) {
-			env->addMessageBox(queued_caption.data(), queued_msg.data());
-			queued_msg.clear();
-			queued_caption.clear();
+		{
+			std::lock_guard<std::mutex> lk(popupCheck);
+			if(queued_msg.size()) {
+				env->addMessageBox(queued_caption.data(), queued_msg.data());
+				queued_msg.clear();
+				queued_caption.clear();
+			}
 		}
-		popupCheck.unlock();
+		{
+			std::lock_guard<std::mutex> lk(progressStatusLock);
+			if(progressStatus.newFile) {
+				updateProgressText->setText(progressStatus.progressText.data());
+				updateProgressTop->setVisible(!progressStatus.subProgressText.empty());
+				updateSubprogressText->setText(progressStatus.subProgressText.data());
+			}
+			updateProgressTop->setProgress(progressStatus.progressTop);
+			updateProgressBottom->setProgress(progressStatus.progressBottom);
+		}
 		discord.Check();
 		if(discord.IsConnected() && !was_connected) {
 			was_connected = true;
@@ -3669,8 +3678,6 @@ void Game::UpdateExtraRules(bool set) {
 		chkRules[i]->setEnabled(true);
 	if(set) {
 		for(int flag = 1, i = 0; i < sizeofarr(chkRules); i++, flag = flag << 1) {
-			if(i == 9)
-				flag <<= 1;
 			chkRules[i]->setChecked(extra_rules & flag);
 		}
 		return;
@@ -3711,9 +3718,6 @@ void Game::UpdateExtraRules(bool set) {
 	/////kdiy///////////
 	extra_rules = 0;
 	for(int flag = 1, i = 0; i < sizeofarr(chkRules); i++, flag <<= 1) {
-		// skip old flag for double deck duel
-		if(i == 9)
-			flag <<= 1;
 		if(chkRules[i]->isChecked())
 			extra_rules |= flag;
 	}
@@ -3969,6 +3973,7 @@ void Game::ReloadCBLimit() {
 		cbLimit->addItem(gDataManager->GetSysString(1903).data(), DeckBuilder::LIMITATION_FILTER_PRERELEASE);
 		cbLimit->addItem(gDataManager->GetSysString(1910).data(), DeckBuilder::LIMITATION_FILTER_SPEED);
 		cbLimit->addItem(gDataManager->GetSysString(1911).data(), DeckBuilder::LIMITATION_FILTER_RUSH);
+		cbLimit->addItem(gDataManager->GetSysString(1912).data(), DeckBuilder::LIMITATION_FILTER_LEGEND);
 		//kdiy//////
 		cbLimit->addItem(gDataManager->GetSysString(1265).data(), DeckBuilder::LIMITATION_FILTER_ANIME);
 		//kdiy//////
@@ -4207,7 +4212,7 @@ void Game::OnResize() {
 	////////kdiy///////	
 	wBtnSettings->setRelativePosition(ResizeWin(0, 610, 30, 640));
 	SetCentered(wCommitsLog);
-	SetCentered(updateWindow);
+	SetCentered(updateWindow, false);
 
 	SetCentered(wYdkeManage, false);
 	SetCentered(wHandTest, false);
@@ -4227,9 +4232,9 @@ void Game::OnResize() {
 	stScale->setRelativePosition(ResizeWin(110, 74, 150, 94));
 
 	wLanWindow->setRelativePosition(ResizeWin(220, 100, 800, 520));
-	SetCentered(wCreateHost);
+	SetCentered(wCreateHost, false);
 	/////kdiy/////
-	SetCentered(wCreateHost2);
+	SetCentered(wCreateHost2, false);
 	/////kdiy/////
 	if (dInfo.opponames.size() + dInfo.selfnames.size()>=5) {
 		wHostPrepare->setRelativePosition(ResizeWin(270, 120, 750, 500));
@@ -4534,32 +4539,30 @@ void Game::MessageHandler(void* payload, const char* string, int type) {
 }
 void Game::UpdateDownloadBar(int percentage, int cur, int tot, const char* filename, bool is_new, void* payload) {
 	Game* game = static_cast<Game*>(payload);
-	std::lock_guard<std::mutex> lk(game->gMutex);
+	std::lock_guard<std::mutex> lk(game->progressStatusLock);
+	auto& status = game->progressStatus;
+	status.progressBottom = percentage;
 	game->updateProgressBottom->setProgress(percentage);
-	if(is_new)
-		game->updateProgressText->setText(
-			fmt::format(L"{}\n{}",
-				fmt::format(gDataManager->GetSysString(1462), BufferIO::DecodeUTF8(filename)),
-				fmt::format(gDataManager->GetSysString(1464), cur, tot)
-			).data());
+	if((status.newFile |= is_new) == true)
+		status.progressText = fmt::format(L"{}\n{}",
+										  fmt::format(gDataManager->GetSysString(1462), BufferIO::DecodeUTF8(filename)),
+										  fmt::format(gDataManager->GetSysString(1464), cur, tot));
 }
 void Game::UpdateUnzipBar(unzip_payload* payload) {
 	UnzipperPayload* unzipper = static_cast<UnzipperPayload*>(payload->payload);
 	Game* game = static_cast<Game*>(unzipper->payload);
-	std::lock_guard<std::mutex> lk(game->gMutex);
+	std::lock_guard<std::mutex> lk(game->progressStatusLock);
+	auto& status = game->progressStatus;
 	// current archive
-	if(payload->is_new) {
-		game->updateProgressText->setText(
-			fmt::format(L"{}\n{}",
-				fmt::format(gDataManager->GetSysString(1463), Utils::ToUnicodeIfNeeded(unzipper->filename)),
-				fmt::format(gDataManager->GetSysString(1464), unzipper->cur, unzipper->tot)
-			).data());
-		game->updateProgressTop->setVisible(true);
-		game->updateSubprogressText->setText(fmt::format(gDataManager->GetSysString(1465), Utils::ToUnicodeIfNeeded(payload->filename)).data());
+	if((status.newFile |= payload->is_new) == true) {
+		status.progressText = fmt::format(L"{}\n{}",
+										  fmt::format(gDataManager->GetSysString(1463), Utils::ToUnicodeIfNeeded(unzipper->filename)),
+										  fmt::format(gDataManager->GetSysString(1464), unzipper->cur, unzipper->tot));
+		status.subProgressText = fmt::format(gDataManager->GetSysString(1465), Utils::ToUnicodeIfNeeded(payload->filename));
 	}
-	game->updateProgressTop->setProgress(std::round((double)payload->cur / (double)payload->tot * 100));
+	status.progressTop = static_cast<irr::s32>(((double)payload->cur / (double)payload->tot) * 100);
 	// current file in archive
-	game->updateProgressBottom->setProgress(payload->percentage);
+	status.progressBottom = payload->percentage;
 }
 void Game::PopulateResourcesDirectories() {
 	script_dirs.push_back(EPRO_TEXT("./expansions/script/"));

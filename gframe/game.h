@@ -400,6 +400,16 @@ public:
 	irr::gui::IGUIEditBox* ebPw;
 	irr::gui::IGUIButton* btnPw;
 	/////kdiy/////////
+	struct ProgressBarStatus {
+		bool newFile;
+		std::wstring progressText;
+		std::wstring subProgressText;
+		irr::s32 progressTop;
+		irr::s32 progressBottom;
+	};
+
+	std::mutex progressStatusLock;
+	ProgressBarStatus progressStatus;
 
 	//main menu
 	int mainMenuLeftX;
@@ -466,7 +476,7 @@ public:
 	irr::gui::IGUIButton* btnRuleCards;
 	irr::gui::IGUIWindow* wRules;
 	/////kdiy///////
-	//irr::gui::IGUICheckBox* chkRules[12];
+	//irr::gui::IGUICheckBox* chkRules[13];
 	irr::gui::IGUICheckBox* chkRules[14];
 	/////kdiy///////
 	irr::gui::IGUIButton* btnRulesOK;

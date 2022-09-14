@@ -971,6 +971,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					mainGame->PopupElement(mainGame->pwupdateWindow);
 					#else
 					gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame);
+					mainGame->HideElement(mainGame->wMainMenu);
 					mainGame->PopupElement(mainGame->updateWindow);
 					#endif
 					mainGame->btnNo->setEnabled(true);
