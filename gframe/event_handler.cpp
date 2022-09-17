@@ -2005,13 +2005,13 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				break;
 			}		
 			case BUTTON_CLEAR: {
-				if(Utils::ClearDirectory(EPRO_TEXT("./pics/"))) {
+				if(Utils::DeleteDirectory(EPRO_TEXT("./pics/"))) {
 					try {
 						gGameConfig->dpi_scale = static_cast<uint32_t>(std::stol(mainGame->gSettings.ebDpiScale->getText())) / 100.0;
 						mainGame->restart = true;
 					} catch(...){}
 				}
-				if(Utils::ClearDirectory(EPRO_TEXT("./hdpics/"))) {
+				if(Utils::DeleteDirectory(EPRO_TEXT("./hdpics/"))) {
 					try {
 						gGameConfig->dpi_scale = static_cast<uint32_t>(std::stol(mainGame->gSettings.ebDpiScale->getText())) / 100.0;
 						mainGame->restart = true;
@@ -2021,8 +2021,14 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			}	
 			case BUTTON_CLEAR2: {
                 Utils::SystemOpen(EPRO_TEXT("https://edokcg.i234.me/wordpress/%e8%87%aa%e6%9b%b4%e6%96%b0%e5%87%ba%e9%8c%af%e8%a7%a3%e6%b1%ba%e6%96%b9%e6%a1%88/"));
+                Utils::DeleteDirectory(EPRO_TEXT("./config/languages/"));
+                Utils::DeleteDirectory(EPRO_TEXT("./cdb/"));
+                Utils::DeleteDirectory(EPRO_TEXT("./lua/"));
+                Utils::DeleteDirectory(EPRO_TEXT("./repositories/kcg/"));
+                Utils::DeleteDirectory(EPRO_TEXT("./puzzles/"));
+                Utils::DeleteDirectory(EPRO_TEXT("./lflists/"));
 				break;
-			}	
+			}
 			case BUTTON_INTRO: {
                 Utils::SystemOpen(EPRO_TEXT("https://www.bilibili.com/read/cv8171279/"));
 				break;

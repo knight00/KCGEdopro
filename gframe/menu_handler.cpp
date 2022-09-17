@@ -1002,6 +1002,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
                     Utils::DeleteDirectory(EPRO_TEXT("./repositories/kcg/"));
 				/////kdiy///////
 				case ACTION_SHOW_CHANGELOG:
+                    /////kdiy///////
+				    gGameConfig->system_engine = true;
+                    /////kdiy///////
 					mainGame->wQuery->setRelativePosition(mainGame->ResizeWin(490, 200, 840, 340)); // from Game::OnResize
 				default:
 					break;
@@ -1192,7 +1195,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				bool chk = true;
 				if(mainGame->chkdefaultlocal->isChecked()) {
 					chk = false;
-				}
+                    mainGame->chkAI->setChecked(false);
+                }
 				mainGame->cbRule2->setEnabled(chk);
 				mainGame->chkAI->setEnabled(chk);
 				mainGame->ebTimeLimit2->setEnabled(chk);
