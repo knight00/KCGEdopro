@@ -1996,6 +1996,16 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				break;
 			}
 			//////kdiy///////
+            case BUTTON_REPO_DELETE:	{
+				irr::gui::IGUIButton* button = (irr::gui::IGUIButton*)event.GUIEvent.Caller;
+				for(auto& repo : mainGame->repoInfoGui) {
+					if(repo.second.del_button == button) {
+						if(Utils::DeleteDirectory(Utils::ToPathString(repo.second.path + "/")))
+                            exit(0);
+                    }
+                }
+				break;
+			}
 			case BUTTON_HOME: {
                 Utils::SystemOpen(EPRO_TEXT("https://edokcg.i234.me/wordpress/edopro-kcg/"));
 				break;

@@ -3133,9 +3133,18 @@ Game::RepoGui* Game::AddGithubRepositoryStatusWindow(const GitRepo* repo) {
 	grepo.progress1->setColors(skin::PROGRESSBAR_FILL_COLOR_VAL, skin::PROGRESSBAR_EMPTY_COLOR_VAL);
 	grepo.progress1->drop();
 	((irr::gui::CGUICustomContextMenu*)mRepositoriesInfo)->addItem(a, -1);
-	grepo.history_button1 = env->addButton(Scale(90 + 295, 0, 170 + 295, 20 + 5), a, BUTTON_REPO_CHANGELOG, gDataManager->GetSysString(1443).data());
+    //kidy///////
+	//grepo.history_button1 = env->addButton(Scale(90 + 295, 0, 170 + 295, 20 + 5), a, BUTTON_REPO_CHANGELOG, gDataManager->GetSysString(1443).data());
+    grepo.history_button1 = env->addButton(Scale(5 + 295, 0, 85 + 295, 20 + 5), a, BUTTON_REPO_CHANGELOG, gDataManager->GetSysString(1443).data());
+    //kidy///////
 	defaultStrings.emplace_back(grepo.history_button1, 1443);
 	grepo.history_button1->setEnabled(repo->ready);
+    //kidy///////
+    grepo.path = repo->repo_path;
+    grepo.del_button = env->addButton(Scale(90 + 295, 0, 170 + 295, 20 + 5), a, BUTTON_REPO_DELETE, gDataManager->GetSysString(8040).data());
+	defaultStrings.emplace_back(grepo.del_button, 8040);
+	grepo.del_button->setEnabled(repo->ready);
+    //kidy///////
 
 	auto b = env->addWindow(Scale(0, 0, 10000, 55), false, L"", tabRepositories);
 	b->getCloseButton()->setVisible(false);
@@ -3225,6 +3234,9 @@ void Game::UpdateRepoInfo(const GitRepo* repo, RepoGui* grepo) {
 		}
 	}
 	grepo->history_button1->setEnabled(true);
+    ///kdiy////////
+    grepo->del_button->setEnabled(true);
+    ///kdiy////////
 	grepo->history_button2->setEnabled(true);
 	if(!repo->is_language) {
 		script_dirs.insert(script_dirs.begin(), Utils::ToPathString(repo->script_path));

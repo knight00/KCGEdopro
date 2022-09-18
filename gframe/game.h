@@ -160,6 +160,9 @@ public:
 		IProgressBar* progress1;
 		IProgressBar* progress2;
 		irr::gui::IGUIButton* history_button1;
+        //kidy///////
+        irr::gui::IGUIButton* del_button;
+        //kidy///////
 		irr::gui::IGUIButton* history_button2;
 		std::wstring commit_history_full;
 		std::wstring commit_history_partial;
