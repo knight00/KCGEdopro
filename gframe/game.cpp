@@ -144,6 +144,7 @@ char * calculate_file_md5(const char *filename) {
 
 void Game::Initialize() {
 	dpi_scale = gGameConfig->dpi_scale;
+	duel_param = gGameConfig->lastDuelParam;
 	if(!device)
 		device = GUIUtils::CreateDevice(gGameConfig);
 #if !defined(__ANDROID__) && !defined(EDOPRO_IOS)
@@ -1518,7 +1519,6 @@ void Game::PopulateGameHostWindows() {
 	}
 
 	{
-		duel_param = gGameConfig->lastDuelParam;
 		forbiddentypes = gGameConfig->lastDuelForbidden;
 		auto tCustomRules = wtcCreateHost->addTab(gDataManager->GetSysString(1630).data());
 		defaultStrings.emplace_back(tCustomRules, 1630);
