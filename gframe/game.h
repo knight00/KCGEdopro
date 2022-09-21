@@ -480,7 +480,7 @@ public:
 	irr::gui::IGUIWindow* wRules;
 	/////kdiy///////
 	//irr::gui::IGUICheckBox* chkRules[13];
-	irr::gui::IGUICheckBox* chkRules[14];
+	irr::gui::IGUICheckBox* chkRules[15];
 	/////kdiy///////
 	irr::gui::IGUIButton* btnRulesOK;
 	irr::gui::IGUIComboBox* cbDuelRule;
