@@ -4586,7 +4586,11 @@ void Game::PopulateResourcesDirectories() {
 	pic_dirs.push_back(EPRO_TEXT("./expansions/pics/"));
 	pic_dirs.push_back(EPRO_TEXT("archives"));
 	//////kdiy//////////
-	if(gGameConfig->hdpic == 1) pic_dirs.push_back(EPRO_TEXT("./hdpics/jp/"));
+	if(gGameConfig->hdpic == 1) {
+        pic_dirs.push_back(EPRO_TEXT("./hdpics/newrelease/"));
+        pic_dirs.push_back(EPRO_TEXT("./hdpics/jp/"));
+    }
+    pic_dirs.push_back(EPRO_TEXT("./pics/prerelease/"));
 	//////kdiy//////////	
 	pic_dirs.push_back(EPRO_TEXT("./pics/"));
 	cover_dirs.push_back(EPRO_TEXT("./expansions/pics/cover/"));

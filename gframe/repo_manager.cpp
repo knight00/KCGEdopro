@@ -156,8 +156,8 @@ std::map<std::string, int> RepoManager::GetRepoStatus() {
 void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 	////kdiy//////////
 	std::string tmp_repo3 = "./config/languages";
-    std::string tmp_repo_hdpics = "./hdpics/jp";
-    std::string tmp_repo_pics = "./pics";
+    std::string tmp_repo_hdpics = "./hdpics/newrelease";
+    std::string tmp_repo_pics = "./pics/prerelease";
 	bool repo3chk = false;
 	////kdiy//////////
 	auto cit = configs.find("repos");
