@@ -1643,12 +1643,6 @@ Card Group.SearchCard(Group g, function f, ...)
 
 
 ========== duel ==========
-●void Duel.GetRandomGroup()
-Group Duel.GetRandomGroup(int player,int count, int type,[int setCode])
-返回player玩家从cdb数据库(包括diy库)随机创建的count张(最大20张)
-种类为type的卡片所组成的卡片组，如果包含额外参数setCode则只会筛
-选为指定字段的卡片组。
-
 ●void Duel.GetMasterRule()
 int Duel.GetMasterRule()
 返回当前决斗规则（大师规则X）。
