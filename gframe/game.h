@@ -154,6 +154,9 @@ public:
 	void DrawThumb(const CardDataC* cp, irr::core::position2di pos, LFList* lflist, bool drag = false, const irr::core::recti* cliprect = nullptr, bool loadimage = true);
 	void DrawDeckBd();
 	void SaveConfig();
+	/////zdiy/////
+	void* ReadCardDataToCore();
+	/////zdiy/////
 	struct RepoGui {
 		std::string path;
 		IProgressBar* progress1;

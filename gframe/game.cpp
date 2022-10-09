@@ -4512,6 +4512,28 @@ bool Game::LoadScript(OCG_Duel pduel, epro::stringview script_name) {
 	auto buf = LoadScript(script_name);
 	return buf.size() && OCG_LoadScript(pduel, buf.data(), buf.size(), script_name.data());
 }
+/////zdiy/////
+void* Game::ReadCardDataToCore() {
+	std::unordered_map<uint32_t, std::vector<void*>*>* cards_data = new std::unordered_map<uint32_t, std::vector<void*>*>();
+	uint32_t index = 0;
+	for (auto& _card : gDataManager->cards) {
+		CardDataC* card = &(_card.second._data);
+		if (!card->code || card->code == 0 || (card->type & TYPE_TOKEN)) {
+			continue;
+		}
+		std::vector<uint32_t>* CardDataKey_1 = new std::vector<uint32_t>(2);
+		CardDataKey_1->at(0) = card->code;
+		CardDataKey_1->at(1) = card->type;
+		std::vector<uint16_t>* CardDataKey_2 = &card->setcodes;
+		std::vector<void*>* CardDataKey = new std::vector<void*>(2);
+		CardDataKey->at(0) = CardDataKey_1;
+		CardDataKey->at(1) = CardDataKey_2;
+		cards_data->emplace(index, CardDataKey);
+		++index;
+	}
+	return cards_data;
+}
+/////zdiy/////
 OCG_Duel Game::SetupDuel(OCG_DuelOptions opts) {
 	opts.cardReader = DataManager::CardReader;
 	opts.payload1 = gDataManager;
@@ -4520,6 +4542,9 @@ OCG_Duel Game::SetupDuel(OCG_DuelOptions opts) {
 	opts.logHandler = MessageHandler;
 	opts.payload3 = this;
 	opts.enableUnsafeLibraries = 1;
+	/////zdiy/////
+	opts.payload5 = ReadCardDataToCore();
+	/////zdiy/////
 	OCG_Duel pduel = nullptr;
 	OCG_CreateDuel(&pduel, opts);
 	LoadScript(pduel, "constant.lua");
