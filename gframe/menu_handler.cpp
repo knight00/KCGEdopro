@@ -736,8 +736,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				int sel = mainGame->lstReplayList->getSelected();
 				if(sel == -1)
 					break;
-				std::lock_guard<std::mutex> lock(mainGame->gMutex);
-				mainGame->stQMessage->setText(fmt::format(L"{}\n{}", mainGame->lstReplayList->getListItem(sel), gDataManager->GetSysString(1363)).data());
+				std::lock_guard<epro::mutex> lock(mainGame->gMutex);
+				mainGame->stQMessage->setText(epro::format(L"{}\n{}", mainGame->lstReplayList->getListItem(sel), gDataManager->GetSysString(1363)).data());
 				mainGame->PopupElement(mainGame->wQuery);
 				prev_operation = id;
 				prev_sel = sel;
@@ -747,7 +747,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				int sel = mainGame->lstReplayList->getSelected();
 				if(sel == -1)
 					break;
-				std::lock_guard<std::mutex> lock(mainGame->gMutex);
+				std::lock_guard<epro::mutex> lock(mainGame->gMutex);
 				mainGame->PopupSaveWindow(gDataManager->GetSysString(1362), mainGame->lstReplayList->getListItem(sel), gDataManager->GetSysString(1342));
 				prev_operation = id;
 				prev_sel = sel;
@@ -757,7 +757,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				int sel = mainGame->lstSinglePlayList->getSelected();
 				if(sel == -1)
 					break;
-				std::lock_guard<std::mutex> lock(mainGame->gMutex);
+				std::lock_guard<epro::mutex> lock(mainGame->gMutex);
 				mainGame->PopupSaveWindow(gDataManager->GetSysString(1362), mainGame->lstSinglePlayList->getListItem(sel), gDataManager->GetSysString(1201));
 				prev_operation = id;
 				prev_sel = sel;
@@ -831,7 +831,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					break;
 				const auto replay_name = Utils::GetFileName(ReplayMode::cur_replay.GetReplayName());
 				for(size_t i = 0; i < decks.size(); i++) {
-					DeckManager::SaveDeck(fmt::format(EPRO_TEXT("{} player{:02} {}"), replay_name, i, sanitize(Utils::ToPathString(players[i]))), decks[i].main_deck, decks[i].extra_deck, cardlist_type());
+					DeckManager::SaveDeck(epro::format(EPRO_TEXT("{} player{:02} {}"), replay_name, i, sanitize(Utils::ToPathString(players[i]))), decks[i].main_deck, decks[i].extra_deck, cardlist_type());
 				}
 				mainGame->stACMessage->setText(gDataManager->GetSysString(1367).data());
 				mainGame->PopupElement(mainGame->wACMessage, 20);
@@ -849,8 +849,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				int sel = mainGame->lstSinglePlayList->getSelected();
 				if(sel == -1)
 					break;
-				std::lock_guard<std::mutex> lock(mainGame->gMutex);
-				mainGame->stQMessage->setText(fmt::format(L"{}\n{}", mainGame->lstSinglePlayList->getListItem(sel), gDataManager->GetSysString(1363)).data());
+				std::lock_guard<epro::mutex> lock(mainGame->gMutex);
+				mainGame->stQMessage->setText(epro::format(L"{}\n{}", mainGame->lstSinglePlayList->getListItem(sel), gDataManager->GetSysString(1363)).data());
 				mainGame->PopupElement(mainGame->wQuery);
 				prev_operation = id;
 				prev_sel = sel;
@@ -1058,7 +1058,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					break;
 				int addr = DuelClient::hosts[sel].ipaddr;
 				int port = DuelClient::hosts[sel].port;
-				mainGame->ebJoinHost->setText(fmt::format(L"{}.{}.{}.{}", addr & 0xff, (addr >> 8) & 0xff, (addr >> 16) & 0xff, (addr >> 24) & 0xff).data());
+				mainGame->ebJoinHost->setText(epro::format(L"{}.{}.{}.{}", addr & 0xff, (addr >> 8) & 0xff, (addr >> 16) & 0xff, (addr >> 24) & 0xff).data());
 				mainGame->ebJoinPort->setText(fmt::to_wstring(port).data());
 				break;
 			}
@@ -1091,7 +1091,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->btnShareReplay->setEnabled(true);
 				std::wstring repinfo;
 				time_t curtime = replay.pheader.base.timestamp;
-				repinfo.append(fmt::format(L"{:%Y/%m/%d %H:%M:%S}\n", *std::localtime(&curtime)));
+				repinfo.append(epro::format(L"{:%Y/%m/%d %H:%M:%S}\n", *std::localtime(&curtime)));
 				const auto& names = replay.GetPlayerNames();
 				for(int i = 0; i < replay.GetPlayersCount(0); i++) {
 					repinfo.append(names[i] + L"\n");
@@ -1101,7 +1101,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					repinfo.append(names[i + replay.GetPlayersCount(0)] + L"\n");
 				}
 				if(replay.GetTurnsCount())
-					repinfo.append(fmt::format(L"\n{}: {}", gDataManager->GetSysString(2009), replay.GetTurnsCount()));
+					repinfo.append(epro::format(L"\n{}: {}", gDataManager->GetSysString(2009), replay.GetTurnsCount()));
 				mainGame->ebRepStartTurn->setText(L"1");
 				mainGame->stReplayInfo->setText(repinfo.data());
 				mainGame->chkYrp->setChecked(false);
@@ -1130,7 +1130,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->btnOpenSinglePlay->setEnabled(true);
 				mainGame->btnShareSinglePlay->setEnabled(true);
 				const wchar_t* name = mainGame->lstSinglePlayList->getListItem(mainGame->lstSinglePlayList->getSelected(), true);
-				mainGame->stSinglePlayInfo->setText(mainGame->ReadPuzzleMessage(name).data());
+				mainGame->stSinglePlayInfo->setText(Utils::ReadPuzzleMessage(name).data());
 				break;
 			}
 			}

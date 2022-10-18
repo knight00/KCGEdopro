@@ -136,7 +136,7 @@ void SoundManager::RefreshSoundsList() {
 	const auto extensions = mixer->GetSupportedSoundExtensions();
 	for(const auto& sound : fx) {
 		for(const auto& ext : extensions) {
-			const auto filename = fmt::format(epro::to_fmtstring_view(sound.second), ext);
+			const auto filename = epro::format(sound.second, ext);
 			if(Utils::FileExists(filename)) {
 				SFXList[sound.first] = Utils::ToUTF8IfNeeded(filename);
 				break;
@@ -147,8 +147,8 @@ void SoundManager::RefreshSoundsList() {
 }
 void SoundManager::RefreshBGMDir(epro::path_stringview path, BGM scene) {
 #ifdef BACKEND
-	for(auto& file : Utils::FindFiles(fmt::format(EPRO_TEXT("./sound/BGM/{}"), path), mixer->GetSupportedMusicExtensions())) {
-		auto conv = Utils::ToUTF8IfNeeded(fmt::format(EPRO_TEXT("{}/{}"), path, file));
+	for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./sound/BGM/{}"), path), mixer->GetSupportedMusicExtensions())) {
+		auto conv = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/{}"), path, file));
 		BGMList[BGM::ALL].push_back(conv);
 		BGMList[scene].push_back(std::move(conv));
 	}
@@ -186,33 +186,33 @@ void SoundManager::RefreshChantsList() {
 	/////kdiy///////
 	for (const auto& chantType : types) {
 		/////kdiy///////
-		// const epro::path_string searchPath = fmt::format(EPRO_TEXT("./sound/{}"), chantType.second);
+		// const epro::path_string searchPath = epro::format(EPRO_TEXT("./sound/{}"), chantType.second);
 		// Utils::MakeDirectory(searchPath);
 		std::vector<epro::path_string> searchPath;
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/muto/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/atem/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/kaiba/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/joey/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/marik/{}"), chantType.second));
-        searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/dartz/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/bakura/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/aigami/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/judai/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/manjome/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/kaisa/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/phoenix/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/john/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/yubel/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/yusei/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/jack/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/arki/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/yuma/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/shark/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/kaito/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/donthousand/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/yuya/{}"), chantType.second));
-		searchPath.push_back(fmt::format(EPRO_TEXT("./sound/character/declan/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/muto/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/atem/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/kaiba/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/joey/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/marik/{}"), chantType.second));
+        searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/dartz/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/bakura/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/aigami/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/judai/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/manjome/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/kaisa/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/phoenix/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/john/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/yubel/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/yusei/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/jack/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/arki/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/yuma/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/shark/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/kaito/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/donthousand/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/yuya/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/declan/{}"), chantType.second));
 
 		for (auto path : searchPath)
 			Utils::MakeDirectory(path);
@@ -229,14 +229,14 @@ void SoundManager::RefreshChantsList() {
 			if(chantType.first == CHANT::BORED) i = 9;
 			if(chantType.first == CHANT::SUMMON) i = 10;
 			if(i == -1) continue;
-			for(int x=0; x< totcharacter; x++) {	
+			for(int x=0; x< totcharacter; x++) {
 				for (auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
 					auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
 					std::string files = Utils::ToUTF8IfNeeded(file);
 					if((i == 10 && (files.find("fusion") != std::string::npos || files.find("synchro") != std::string::npos || files.find("xyz") != std::string::npos || files.find("link") != std::string::npos || files.find("ritual") != std::string::npos || files.find("pendulum") != std::string::npos)) || i != 10)
 					    ChantSPList[i][x].push_back(conv);
 				}
-			}		
+			}
 		}
 		if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM) {
 		//for (auto& file : Utils::FindFiles(searchPath, mixer->GetSupportedSoundExtensions())) {
@@ -248,12 +248,12 @@ void SoundManager::RefreshChantsList() {
 					uint32_t code = static_cast<uint32_t>(std::stoul(scode));
 					auto key = std::make_pair(chantType.first, code);
 					// if (code && !ChantsList.count(key))	
-					// 	ChantsList[key] = fmt::format("{}/{}", working_dir, Utils::ToUTF8IfNeeded(fmt::format(EPRO_TEXT("{}/{}"), searchPath, file)));
+					// 	ChantsList[key] = epro::format("{}/{}", working_dir, Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/{}"), searchPath, file)));
 					if (code && !ChantsList[x].count(key)) {
 						auto extension = Utils::GetFileExtension(file);
 						auto chop = 4;
 						if (extension == EPRO_TEXT("flac")) chop = 5;
-						ChantsList[x][key] = fmt::format("{}/{}", working_dir, Utils::ToUTF8IfNeeded(fmt::format(EPRO_TEXT("{}/{}"), searchPath[x], file.substr(0, file.size() - chop))));
+						ChantsList[x][key] = epro::format("{}/{}", working_dir, Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/{}"), searchPath[x], file.substr(0, file.size() - chop))));
 					}
 				}
 				catch (...) {
@@ -286,7 +286,7 @@ void SoundManager::PlayBGM(BGM scene, bool loop) {
 	if(scene != bgm_scene || !mixer->MusicPlaying()) {
 		bgm_scene = scene;
 		auto bgm = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-		const std::string BGMName = fmt::format("{}/./sound/BGM/{}", working_dir, list[bgm]);
+		const std::string BGMName = epro::format("{}/./sound/BGM/{}", working_dir, list[bgm]);
 		/////kdiy/////
 		std::string bgm_custom = "BGM/custom/";
 		std::string bgm_menu = "BGM/menu/";
@@ -306,7 +306,7 @@ void SoundManager::PlayCustomMusic(std::string num) {
 	if(soundsEnabled) {
 		const auto extensions = mixer->GetSupportedSoundExtensions();
 		for(const auto& ext : extensions) {
-			const auto filename = fmt::format("./sound/custom/{}.{}", num, Utils::ToUTF8IfNeeded(ext));
+			const auto filename = epro::format("./sound/custom/{}.{}", num, Utils::ToUTF8IfNeeded(ext));
 			if (mixer->PlaySound(filename))
 				break;
 		}
@@ -318,7 +318,7 @@ void SoundManager::PlayCustomBGM(std::string num) {
 	if (musicEnabled) {
 		const auto extensions = mixer->GetSupportedSoundExtensions();
 		for (const auto& ext : extensions) {
-			const auto filename = fmt::format("./sound/BGM/custom/{}.{}", num, Utils::ToUTF8IfNeeded(ext));
+			const auto filename = epro::format("./sound/BGM/custom/{}.{}", num, Utils::ToUTF8IfNeeded(ext));
 		 	if (Utils::FileExists(Utils::ToPathString(filename))) {
 		 		if(mixer->MusicPlaying())
 		 	       mixer->StopMusic();
@@ -420,11 +420,11 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 				std::vector<std::string> list;
 				const auto extensions = mixer->GetSupportedSoundExtensions();
 				for (const auto& ext : extensions) {
-					const auto filename = fmt::format("{}.{}", chant_it->second, Utils::ToUTF8IfNeeded(ext));
+					const auto filename = epro::format("{}.{}", chant_it->second, Utils::ToUTF8IfNeeded(ext));
 					if (Utils::FileExists(Utils::ToPathString(filename)))
 						list.push_back(filename);
 					for (int i = 0; i < 5; i++) {
-						const auto filename2 = fmt::format("{}_{}.{}", chant_it->second, i, Utils::ToUTF8IfNeeded(ext));
+						const auto filename2 = epro::format("{}_{}.{}", chant_it->second, i, Utils::ToUTF8IfNeeded(ext));
 						if (Utils::FileExists(Utils::ToPathString(filename2)))
 							list.push_back(filename2);
 					}

@@ -2,7 +2,7 @@
 #include <AvailabilityMacros.h>
 #import <AppKit/AppKit.h>
 
-#if !defined(MAC_OS_X_VERSION_10_12) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
+#if !defined(MAC_OS_X_VERSION_10_12) || MAC_OS_X_VERSION_MIN_ALLOWED < MAC_OS_X_VERSION_10_12
 #define NSEventModifierFlagControl NSControlKeyMask
 #define NSEventModifierFlagCommand NSCommandKeyMask
 #endif
@@ -24,7 +24,9 @@ void (*toggleFullScreenCallback)(void) = NULL;
 
 -(void)toggle {
 	[NSApp activateIgnoringOtherApps:YES];
+#if defined(__MAC_10_7) && defined(MAC_OS_X_VERSION_10_7) && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_7
 	[[NSApp mainWindow] toggleFullScreen:nil];
+#endif
 	toggleFullScreenCallback();
 }
 @end
@@ -54,6 +56,12 @@ void EDOPRO_SetupMenuBar(void (*callback)(void)) {
 		[fullScreenItem setTarget:handler];
 		[fullScreenItem setKeyEquivalentModifierMask:NSEventModifierFlagControl+NSEventModifierFlagCommand];
 		[dockMenu addItem:[fullScreenItem copyWithZone:nil]];
+
+#if defined(__MAC_10_7) && defined(MAC_OS_X_VERSION_10_7) && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_7
+		NSWindowCollectionBehavior newBehavior = [[NSApp mainWindow] collectionBehavior];
+		newBehavior |= NSWindowCollectionBehaviorFullScreenPrimary;
+		[[NSApp mainWindow] setCollectionBehavior:newBehavior];
+#endif
 
 		NSMenuItem* quitItem = [appMainMenu addItemWithTitle:@"Quit" action:@selector(terminate:) keyEquivalent:@"q"];
 		[quitItem setKeyEquivalentModifierMask:NSEventModifierFlagCommand];

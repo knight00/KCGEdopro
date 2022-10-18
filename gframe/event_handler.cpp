@@ -21,7 +21,6 @@
 #include "CGUITTFont/CGUITTFont.h"
 #include "custom_skin_enum.h"
 #include "Base64.h"
-#include <SViewFrustum.h>
 #include <IrrlichtDevice.h>
 #include <ISceneManager.h>
 #include <ICameraSceneNode.h>
@@ -600,39 +599,39 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				case LOCATION_DECK: {
 					for(int32_t i = (int32_t)deck[command_controler].size() - 1; i >= 0 ; --i)
 						selectable_cards.push_back(deck[command_controler][i]);
-					mainGame->wCardSelect->setText(fmt::format(L"{}({})", gDataManager->GetSysString(1000), deck[command_controler].size()).data());
+					mainGame->wCardSelect->setText(epro::format(L"{}({})", gDataManager->GetSysString(1000), deck[command_controler].size()).data());
 					break;
 				}
 				case LOCATION_MZONE: {
 					ClientCard* pcard = mzone[command_controler][command_sequence];
 					for(auto& _pcard : pcard->overlayed)
 						selectable_cards.push_back(_pcard);
-					mainGame->wCardSelect->setText(fmt::format(L"{}({})", gDataManager->GetSysString(1007), pcard->overlayed.size()).data());
+					mainGame->wCardSelect->setText(epro::format(L"{}({})", gDataManager->GetSysString(1007), pcard->overlayed.size()).data());
 					break;
 				}
 				case LOCATION_SZONE: {
 					ClientCard* pcard = szone[command_controler][command_sequence];
 					for (auto& _pcard : pcard->overlayed)
 						selectable_cards.push_back(_pcard);
-					mainGame->wCardSelect->setText(fmt::format(L"{}({})", gDataManager->GetSysString(1007), pcard->overlayed.size()).data());
+					mainGame->wCardSelect->setText(epro::format(L"{}({})", gDataManager->GetSysString(1007), pcard->overlayed.size()).data());
 					break;
 				}
 				case LOCATION_GRAVE: {
 					for(int32_t i = (int32_t)grave[command_controler].size() - 1; i >= 0 ; --i)
 						selectable_cards.push_back(grave[command_controler][i]);
-					mainGame->wCardSelect->setText(fmt::format(L"{}({})", gDataManager->GetSysString(1004), grave[command_controler].size()).data());
+					mainGame->wCardSelect->setText(epro::format(L"{}({})", gDataManager->GetSysString(1004), grave[command_controler].size()).data());
 					break;
 				}
 				case LOCATION_REMOVED: {
 					for(int32_t i = (int32_t)remove[command_controler].size() - 1; i >= 0 ; --i)
 						selectable_cards.push_back(remove[command_controler][i]);
-					mainGame->wCardSelect->setText(fmt::format(L"{}({})", gDataManager->GetSysString(1005), remove[command_controler].size()).data());
+					mainGame->wCardSelect->setText(epro::format(L"{}({})", gDataManager->GetSysString(1005), remove[command_controler].size()).data());
 					break;
 				}
 				case LOCATION_EXTRA: {
 					for(int32_t i = (int32_t)extra[command_controler].size() - 1; i >= 0 ; --i)
 						selectable_cards.push_back(extra[command_controler][i]);
-					mainGame->wCardSelect->setText(fmt::format(L"{}({})", gDataManager->GetSysString(1006), extra[command_controler].size()).data());
+					mainGame->wCardSelect->setText(epro::format(L"{}({})", gDataManager->GetSysString(1006), extra[command_controler].size()).data());
 					break;
 				}
 				}
@@ -960,10 +959,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						if(conti_selecting)
 							text = std::wstring{ DataManager::unknown_string };
 						else if(curcard->location == LOCATION_OVERLAY) {
-							text = fmt::format(L"{}[{}]({})", gDataManager->FormatLocation(curcard->overlayTarget->location, curcard->overlayTarget->sequence),
+							text = epro::format(L"{}[{}]({})", gDataManager->FormatLocation(curcard->overlayTarget->location, curcard->overlayTarget->sequence),
 								curcard->overlayTarget->sequence + 1, curcard->sequence + 1);
 						} else if(curcard->location != 0) {
-							text = fmt::format(L"{}[{}]", gDataManager->FormatLocation(curcard->location, curcard->sequence),
+							text = epro::format(L"{}[{}]", gDataManager->FormatLocation(curcard->location, curcard->sequence),
 								curcard->sequence + 1);
 						}
 					}
@@ -1014,10 +1013,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					mainGame->btnCardDisplay[i]->setRelativePosition(mainGame->Scale(30 + i * 125, 55, 30 + 120 + i * 125, 225));
 					std::wstring text;
 					if(curcard->location == LOCATION_OVERLAY) {
-						text = fmt::format(L"{}[{}]({})", gDataManager->FormatLocation(curcard->overlayTarget->location, curcard->overlayTarget->sequence),
+						text = epro::format(L"{}[{}]({})", gDataManager->FormatLocation(curcard->overlayTarget->location, curcard->overlayTarget->sequence),
 							curcard->overlayTarget->sequence + 1, curcard->sequence + 1);
 					} else {
-						text = fmt::format(L"{}[{}]", gDataManager->FormatLocation(curcard->location, curcard->sequence),
+						text = epro::format(L"{}[{}]", gDataManager->FormatLocation(curcard->location, curcard->sequence),
 							curcard->sequence + 1);
 					}
 					curstring->setText(text.data());
@@ -1199,7 +1198,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						break;
 					for(int32_t i = (int32_t)deck[hovered_controler].size() - 1; i >= 0 ; --i)
 						selectable_cards.push_back(deck[hovered_controler][i]);
-					mainGame->wCardSelect->setText(fmt::format(L"{}({})", gDataManager->GetSysString(1000), deck[hovered_controler].size()).data());
+					mainGame->wCardSelect->setText(epro::format(L"{}({})", gDataManager->GetSysString(1000), deck[hovered_controler].size()).data());
 					break;
 				}
 				case LOCATION_MZONE: {
@@ -1207,25 +1206,25 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						break;
 					for(auto& pcard : clicked_card->overlayed)
 						selectable_cards.push_back(pcard);
-					mainGame->wCardSelect->setText(fmt::format(L"{}({})", gDataManager->GetSysString(1007), clicked_card->overlayed.size()).data());
+					mainGame->wCardSelect->setText(epro::format(L"{}({})", gDataManager->GetSysString(1007), clicked_card->overlayed.size()).data());
 					break;
 				}
-				//////kdiy///////////	
+				//////kdiy///////////
 				case LOCATION_SZONE: {
 					if(!clicked_card || clicked_card->overlayed.size() == 0)
 						break;
 					for(auto& pcard : clicked_card->overlayed)
 						selectable_cards.push_back(pcard);
-					mainGame->wCardSelect->setText(fmt::format(L"{}({})", gDataManager->GetSysString(1008), clicked_card->overlayed.size()).c_str());
+					mainGame->wCardSelect->setText(epro::format(L"{}({})", gDataManager->GetSysString(1008), clicked_card->overlayed.size()).c_str());
 					break;
 				}
-				//////kdiy///////////				
+				//////kdiy///////////
 				case LOCATION_GRAVE: {
 					if(grave[hovered_controler].size() == 0)
 						break;
 					for(int32_t i = (int32_t)grave[hovered_controler].size() - 1; i >= 0 ; --i)
 						selectable_cards.push_back(grave[hovered_controler][i]);
-					mainGame->wCardSelect->setText(fmt::format(L"{}({})", gDataManager->GetSysString(1004), grave[hovered_controler].size()).data());
+					mainGame->wCardSelect->setText(epro::format(L"{}({})", gDataManager->GetSysString(1004), grave[hovered_controler].size()).data());
 					break;
 				}
 				case LOCATION_REMOVED: {
@@ -1233,7 +1232,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						break;
 					for(int32_t i = (int32_t)remove[hovered_controler].size() - 1; i >= 0 ; --i)
 						selectable_cards.push_back(remove[hovered_controler][i]);
-					mainGame->wCardSelect->setText(fmt::format(L"{}({})", gDataManager->GetSysString(1005), remove[hovered_controler].size()).data());
+					mainGame->wCardSelect->setText(epro::format(L"{}({})", gDataManager->GetSysString(1005), remove[hovered_controler].size()).data());
 					break;
 				}
 				case LOCATION_EXTRA: {
@@ -1241,7 +1240,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						break;
 					for(int32_t i = (int32_t)extra[hovered_controler].size() - 1; i >= 0 ; --i)
 						selectable_cards.push_back(extra[hovered_controler][i]);
-					mainGame->wCardSelect->setText(fmt::format(L"{}({})", gDataManager->GetSysString(1006), extra[hovered_controler].size()).data());
+					mainGame->wCardSelect->setText(epro::format(L"{}({})", gDataManager->GetSysString(1006), extra[hovered_controler].size()).data());
 					break;
 				}
 				}
@@ -1259,7 +1258,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						break;
 					for(int32_t i = 0; i < (int32_t)clicked_card->overlayed.size(); ++i)
 						selectable_cards.push_back(clicked_card->overlayed[i]);
-					mainGame->wCardSelect->setText(fmt::format(L"{}({})", gDataManager->GetSysString(1007), clicked_card->overlayed.size()).data());
+					mainGame->wCardSelect->setText(epro::format(L"{}({})", gDataManager->GetSysString(1007), clicked_card->overlayed.size()).data());
 					break;
 				}
 				////////kdiy/////////////
@@ -1268,7 +1267,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						break;
 					for(int32_t i = 0; i < (int32_t)clicked_card->overlayed.size(); ++i)
 						selectable_cards.push_back(clicked_card->overlayed[i]);
-					mainGame->wCardSelect->setText(fmt::format(L"{}({})", gDataManager->GetSysString(1008), clicked_card->overlayed.size()).c_str());
+					mainGame->wCardSelect->setText(epro::format(L"{}({})", gDataManager->GetSysString(1008), clicked_card->overlayed.size()).c_str());
 					break;
 				}
 				////////kdiy/////////////
@@ -1277,7 +1276,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						break;
 					for(int32_t i = (int32_t)grave[hovered_controler].size() - 1; i >= 0 ; --i)
 						selectable_cards.push_back(grave[hovered_controler][i]);
-					mainGame->wCardSelect->setText(fmt::format(L"{}({})", gDataManager->GetSysString(1004), grave[hovered_controler].size()).data());
+					mainGame->wCardSelect->setText(epro::format(L"{}({})", gDataManager->GetSysString(1004), grave[hovered_controler].size()).data());
 					break;
 				}
 				case LOCATION_REMOVED: {
@@ -1285,7 +1284,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						break;
 					for (int32_t i = (int32_t)remove[hovered_controler].size() - 1; i >= 0; --i)
 						selectable_cards.push_back(remove[hovered_controler][i]);
-					mainGame->wCardSelect->setText(fmt::format(L"{}({})", gDataManager->GetSysString(1005), remove[hovered_controler].size()).data());
+					mainGame->wCardSelect->setText(epro::format(L"{}({})", gDataManager->GetSysString(1005), remove[hovered_controler].size()).data());
 					break;
 				}
 				case LOCATION_EXTRA: {
@@ -1293,7 +1292,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						break;
 					for (int32_t i = (int32_t)extra[hovered_controler].size() - 1; i >= 0; --i)
 						selectable_cards.push_back(extra[hovered_controler][i]);
-					mainGame->wCardSelect->setText(fmt::format(L"{}({})", gDataManager->GetSysString(1006), extra[hovered_controler].size()).data());
+					mainGame->wCardSelect->setText(epro::format(L"{}({})", gDataManager->GetSysString(1006), extra[hovered_controler].size()).data());
 					break;
 				}
 				}
@@ -1545,7 +1544,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					DuelClient::SetResponseB(respbuf, selectable_cards.size() * 2);
 					DuelClient::SendResponse();
 				} else {
-					mainGame->stHintMsg->setText(fmt::sprintf(gDataManager->GetSysString(204), select_counter_count, gDataManager->GetCounterName(select_counter_type)).data());
+					mainGame->stHintMsg->setText(epro::sprintf(gDataManager->GetSysString(204), select_counter_count, gDataManager->GetCounterName(select_counter_type)).data());
 				}
 				break;
 			}
@@ -1664,28 +1663,28 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 							std::wstring str(gDataManager->GetName(mcard->code));
 							///////kdiy/////////
 							if(mcard->alias && mcard->alias == 27 && wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
-								std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x1073)));
+								std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x1073)));
 								str.insert(0, str2);
 							} else if(mcard->alias && mcard->alias == 28 && wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
 								std::wstring str2(gDataManager->GetSetName(0xcf));
 								str.insert(0, str2);
 							} else if(mcard->alias && mcard->alias == 29 && wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
-								std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x4073)));
+								std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x4073)));
 								str.insert(0, str2);
 							} else if(mcard->alias && mcard->alias == 36 && wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
 								std::wstring str2(gDataManager->GetSetName(0x2048));
 								str.insert(0, str2, str2.size()-3);
 							} else if(mcard->alias && (mcard->alias == 42 || mcard->alias == 43 || mcard->alias == 44) && wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
-								std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0xa1)));
+								std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0xa1)));
 								str.insert(0, str2);
 							} else if(mcard->alias && mcard->alias == 102 && wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
-								std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x23)));
+								std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x23)));
 								str.insert(0, str2);
 							} else if(mcard->alias && mcard->alias == 347 && wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
-							    std::wstring str2(fmt::format(L"{} ", gDataManager->GetName(mcard->alias)));
+							    std::wstring str2(epro::format(L"{} ", gDataManager->GetName(mcard->alias)));
 								str.insert(0, str2);
 							} else if(mcard->alias && mcard->alias == 213 && wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
-								str.append(fmt::format(L"{}", gDataManager->GetSetName(0x104f)));
+								str.append(epro::format(L"{}", gDataManager->GetSetName(0x104f)));
 							}
 							//if(mcard->type & TYPE_MONSTER) {
 							if((!(mcard->type & (TYPE_SPELL | TYPE_TRAP)) || (mcard->type & TYPE_TRAPMONSTER)) && !mcard->equipTarget) {
@@ -1693,64 +1692,64 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 								if(mcard->alias && (mcard->alias < mcard->code - 10 || mcard->alias > mcard->code + 10)
 										&& wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
 									///////kdiy/////////		
-									//str.append(fmt::format(L"\n({})",gDataManager->GetName(mcard->alias)));
+									//str.append(epro::format(L"\n({})",gDataManager->GetName(mcard->alias)));
 									if(mcard->alias != 27 && mcard->alias != 28 && mcard->alias != 29 && mcard->alias != 36 && mcard->alias != 42 && mcard->alias != 43 && mcard->alias != 44 && mcard->alias != 102 && mcard->alias != 347 && mcard->alias != 213)
-									    str.append(fmt::format(L"\n({})",gDataManager->GetName(mcard->alias)));
+									    str.append(epro::format(L"\n({})",gDataManager->GetName(mcard->alias)));
 									///////kdiy/////////
 								}
 								//////kdiy/////
 								//if (mcard->type & TYPE_LINK) {
 								if ((mcard->type & TYPE_LINK) && mcard->level==0 && mcard->rank==0) {	
 								//////kdiy/////
-									str.append(fmt::format(L"\n{}/Link {}\n{}/{}", mcard->atkstring, mcard->link, gDataManager->FormatRace(mcard->race),
+									str.append(epro::format(L"\n{}/Link {}\n{}/{}", mcard->atkstring, mcard->link, gDataManager->FormatRace(mcard->race),
 										gDataManager->FormatAttribute(mcard->attribute)));
 								} else {
 									//////kdiy/////
 									if (mcard->type & TYPE_LINK)
-										str.append(fmt::format(L"\n{}/Link {}", mcard->atkstring, mcard->link));
+										str.append(epro::format(L"\n{}/Link {}", mcard->atkstring, mcard->link));
 									else
 									//////kdiy/////
-									str.append(fmt::format(L"\n{}/{}", mcard->atkstring, mcard->defstring));
+									str.append(epro::format(L"\n{}/{}", mcard->atkstring, mcard->defstring));
 									if(mcard->rank && mcard->level)
 									//////kdiy/////
-										str.append(fmt::format(L"\n\u2605{}/\u2606{} {}/{}", mcard->level, mcard->rank, gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));	
-										//str.append(fmt::format(L"\n\u2606{}/\u2605{} {}/{}", mcard->level, mcard->rank, gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
+										str.append(epro::format(L"\n\u2605{}/\u2606{} {}/{}", mcard->level, mcard->rank, gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
+										//str.append(epro::format(L"\n\u2606{}/\u2605{} {}/{}", mcard->level, mcard->rank, gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
 									//////kdiy/////
 									else {
-										str.append(fmt::format(L"\n{}{} {}/{}", (mcard->level ? L"\u2605" : L"\u2606"), (mcard->level ? mcard->level : mcard->rank), gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
+										str.append(epro::format(L"\n{}{} {}/{}", (mcard->level ? L"\u2605" : L"\u2606"), (mcard->level ? mcard->level : mcard->rank), gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
 									}
 								}
 								if(mcard->location == LOCATION_HAND && (mcard->type & TYPE_PENDULUM)) {
-									str.append(fmt::format(L"\n{}/{}", mcard->lscale, mcard->rscale));
+									str.append(epro::format(L"\n{}/{}", mcard->lscale, mcard->rscale));
 								}
 							} else {
 								if(mcard->alias && (mcard->alias < mcard->code - 10 || mcard->alias > mcard->code + 10)) {
 									///////kdiy/////////
 									if(mcard->alias != 27 && mcard->alias != 28 && mcard->alias != 29 && mcard->alias != 36 && mcard->alias != 42 && mcard->alias != 43 && mcard->alias != 44 && mcard->alias != 102 && mcard->alias != 347 && mcard->alias != 213)
 									///////kdiy/////////
-									str.append(fmt::format(L"\n({})", gDataManager->GetName(mcard->alias)));
+									str.append(epro::format(L"\n({})", gDataManager->GetName(mcard->alias)));
 								}
 								if(mcard->location == LOCATION_SZONE && (mcard->type & TYPE_PENDULUM)) {
-									str.append(fmt::format(L"\n{}/{}", mcard->lscale, mcard->rscale));
+									str.append(epro::format(L"\n{}/{}", mcard->lscale, mcard->rscale));
 								}
 							}
 							for(auto ctit = mcard->counters.begin(); ctit != mcard->counters.end(); ++ctit) {
-								str.append(fmt::format(L"\n[{}]: {}", gDataManager->GetCounterName(ctit->first), ctit->second));
+								str.append(epro::format(L"\n[{}]: {}", gDataManager->GetCounterName(ctit->first), ctit->second));
 							}
 							if(mcard->cHint && mcard->chValue && (mcard->location & LOCATION_ONFIELD)) {
 								if(mcard->cHint == CHINT_TURN)
-									str.append(fmt::format(L"\n{}{}", gDataManager->GetSysString(211), mcard->chValue));
+									str.append(epro::format(L"\n{}{}", gDataManager->GetSysString(211), mcard->chValue));
 								else if(mcard->cHint == CHINT_CARD)
-									str.append(fmt::format(L"\n{}{}", gDataManager->GetSysString(212), gDataManager->GetName(mcard->chValue)));
+									str.append(epro::format(L"\n{}{}", gDataManager->GetSysString(212), gDataManager->GetName(mcard->chValue)));
 								else if(mcard->cHint == CHINT_RACE)
-									str.append(fmt::format(L"\n{}{}", gDataManager->GetSysString(213), gDataManager->FormatRace(mcard->chValue)));
+									str.append(epro::format(L"\n{}{}", gDataManager->GetSysString(213), gDataManager->FormatRace(mcard->chValue)));
 								else if(mcard->cHint == CHINT_ATTRIBUTE)
-									str.append(fmt::format(L"\n{}{}", gDataManager->GetSysString(214), gDataManager->FormatAttribute(mcard->chValue)));
+									str.append(epro::format(L"\n{}{}", gDataManager->GetSysString(214), gDataManager->FormatAttribute(mcard->chValue)));
 								else if(mcard->cHint == CHINT_NUMBER)
-									str.append(fmt::format(L"\n{}{}", gDataManager->GetSysString(215), mcard->chValue));
+									str.append(epro::format(L"\n{}{}", gDataManager->GetSysString(215), mcard->chValue));
 							}
 							for(auto iter = mcard->desc_hints.begin(); iter != mcard->desc_hints.end(); ++iter) {
-								str.append(fmt::format(L"\n*{}", gDataManager->GetDesc(iter->first, mainGame->dInfo.compat_mode)));
+								str.append(epro::format(L"\n*{}", gDataManager->GetDesc(iter->first, mainGame->dInfo.compat_mode)));
 							}
 							should_show_tip = true;
 							auto dtip = mainGame->textFont->getDimensionustring(str) + mainGame->Scale(irr::core::dimension2d<uint32_t>(10, 10));
@@ -1778,7 +1777,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						player_name = oppo[mainGame->dInfo.current_player[mplayer]];
 					const auto& player_desc_hints = mainGame->dField.player_desc_hints[mplayer];
 					for(const auto& hint : player_desc_hints) {
-						player_name.append(fmt::format(L"\n*{}", gDataManager->GetDesc(hint.first, mainGame->dInfo.compat_mode)));
+						player_name.append(epro::format(L"\n*{}", gDataManager->GetDesc(hint.first, mainGame->dInfo.compat_mode)));
 					}
 					should_show_tip = true;
 					auto dtip = mainGame->textFont->getDimensionustring(player_name) + mainGame->Scale(irr::core::dimension2d<uint32_t>(10, 10));
@@ -2428,7 +2427,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			case COMBOBOX_CURRENT_FONT: {
 				int selected = mainGame->gSettings.cbCurrentFont->getSelected();
 				if (selected < 0) return true;
-				gGameConfig->textfont.font = Utils::ToPathString(fmt::format(L"fonts/{}", mainGame->gSettings.cbCurrentFont->getItem(selected)));
+				gGameConfig->textfont.font = Utils::ToPathString(epro::format(L"fonts/{}", mainGame->gSettings.cbCurrentFont->getItem(selected)));
 				return true;
 			}
 			///kdiy///////
@@ -2595,16 +2594,16 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			irr::gui::IGUIElement* root = mainGame->env->getRootGUIElement();
 			irr::gui::IGUIElement* elem = root->getElementFromPoint({ event.MouseInput.X, event.MouseInput.Y });
 			if(elem == mainGame->stName) {
-				auto path = mainGame->FindScript(fmt::format(EPRO_TEXT("c{}.lua"), mainGame->showingcard));
+				auto path = mainGame->FindScript(epro::format(EPRO_TEXT("c{}.lua"), mainGame->showingcard));
 				if(path.empty()) {
 					auto cd = gDataManager->GetCardData(mainGame->showingcard);
 					if(cd && cd->IsInArtworkOffsetRange())
-						path = mainGame->FindScript(fmt::format(EPRO_TEXT("c{}.lua"), cd->alias));
+						path = mainGame->FindScript(epro::format(EPRO_TEXT("c{}.lua"), cd->alias));
 				}
 				if(path.size() && path != EPRO_TEXT("archives"))
 					Utils::SystemOpen(path, Utils::OPEN_FILE);
 			} else if(elem == mainGame->stPasscodeScope) {
-				Utils::OSOperator->copyToClipboard(fmt::format(L"{}", mainGame->showingcard).data());
+				Utils::OSOperator->copyToClipboard(epro::format(L"{}", mainGame->showingcard).data());
 			}
 		}
 		break;
@@ -3057,28 +3056,28 @@ void ClientField::ShowCardInfoInList(ClientCard* pcard, irr::gui::IGUIElement* e
 		str.append(gDataManager->GetName(pcard->code).data());
 		////kdiy///////////
 		if(pcard->alias && pcard->alias == 27 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
-			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x1073)));
+			std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x1073)));
 			str.insert(0, str2);
 		} else if(pcard->alias && pcard->alias == 28 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
 			std::wstring str2(gDataManager->GetSetName(0xcf));
 			str.insert(0, str2);
 		} else if(pcard->alias && pcard->alias == 29 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
-			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x4073)));
+			std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x4073)));
 			str.insert(0, str2);
 		} else if(pcard->alias && pcard->alias == 36 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
 			std::wstring str2(gDataManager->GetSetName(0x2048));
 			str.insert(0, str2, str2.size()-3);
 		} else if(pcard->alias && (pcard->alias == 42 || pcard->alias == 43 || pcard->alias == 44) && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
-			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0xa1)));
+			std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0xa1)));
 			str.insert(0, str2);
 		} else if(pcard->alias && pcard->alias == 102 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
-			std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x23)));
+			std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x23)));
 			str.insert(0, str2);
 		} else if(pcard->alias && pcard->alias == 347 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
-			std::wstring str2(fmt::format(L"{} ", gDataManager->GetName(pcard->alias)));
+			std::wstring str2(epro::format(L"{} ", gDataManager->GetName(pcard->alias)));
 			str.insert(0, str2);
 		} else if(pcard->alias && pcard->alias == 213 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
-			str.append(fmt::format(L"{}", gDataManager->GetSetName(0x104f)));
+			str.append(epro::format(L"{}", gDataManager->GetSetName(0x104f)));
 		}
 		////kdiy///////////
 	}
@@ -3088,34 +3087,34 @@ void ClientField::ShowCardInfoInList(ClientCard* pcard, irr::gui::IGUIElement* e
 	for(size_t i = 0; i < chains.size(); ++i) {
 		auto chit = chains[i];
 		if(pcard == chit.chain_card) {
-			str.append(L"\n").append(fmt::sprintf(gDataManager->GetSysString(216), i + 1));
+			str.append(L"\n").append(epro::sprintf(gDataManager->GetSysString(216), i + 1));
 		}
 		if(chit.target.find(pcard) != chit.target.end()) {
-			str.append(L"\n").append(fmt::sprintf(gDataManager->GetSysString(217), i + 1, gDataManager->GetName(chit.chain_card->code)));
+			str.append(L"\n").append(epro::sprintf(gDataManager->GetSysString(217), i + 1, gDataManager->GetName(chit.chain_card->code)));
 			////kdiy///////////
 			if(chit.chain_card->alias && chit.chain_card->alias == 27 && wcscmp(gDataManager->GetName(chit.chain_card->code).data(), gDataManager->GetName(chit.chain_card->alias).data())) {
-				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x1073)));
+				std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x1073)));
 				str.insert(0, str2);
 			} else if(chit.chain_card->alias && chit.chain_card->alias == 28 && wcscmp(gDataManager->GetName(chit.chain_card->code).data(), gDataManager->GetName(chit.chain_card->alias).data())) {
 				std::wstring str2(gDataManager->GetSetName(0xcf));
 				str.insert(0, str2);
 			} else if(chit.chain_card->alias && chit.chain_card->alias == 29 && wcscmp(gDataManager->GetName(chit.chain_card->code).data(), gDataManager->GetName(chit.chain_card->alias).data())) {
-				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x4073)));
+				std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x4073)));
 				str.insert(0, str2);
 			} else if(chit.chain_card->alias && chit.chain_card->alias == 36 && wcscmp(gDataManager->GetName(chit.chain_card->code).data(), gDataManager->GetName(chit.chain_card->alias).data())) {
 				std::wstring str2(gDataManager->GetSetName(0x2048));
 				str.insert(0, str2, str2.size()-3);
 			} else if(chit.chain_card->alias && (chit.chain_card->alias == 42 || chit.chain_card->alias == 43 || chit.chain_card->alias == 44) && wcscmp(gDataManager->GetName(chit.chain_card->code).data(), gDataManager->GetName(chit.chain_card->alias).data())) {
-				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0xa1)));
+				std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0xa1)));
 				str.insert(0, str2);
 			} else if(chit.chain_card->alias && chit.chain_card->alias == 102 && wcscmp(gDataManager->GetName(chit.chain_card->code).data(), gDataManager->GetName(chit.chain_card->alias).data())) {
-				std::wstring str2(fmt::format(L"{} ", gDataManager->GetSetName(0x23)));
+				std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x23)));
 				str.insert(0, str2);
 			} else if(chit.chain_card->alias && chit.chain_card->alias == 347 && wcscmp(gDataManager->GetName(chit.chain_card->code).data(), gDataManager->GetName(chit.chain_card->alias).data())) {
-				std::wstring str2(fmt::format(L"{} ", gDataManager->GetName(chit.chain_card->alias)));
+				std::wstring str2(epro::format(L"{} ", gDataManager->GetName(chit.chain_card->alias)));
 				str.insert(0, str2);
 			} else if(chit.chain_card->alias && chit.chain_card->alias == 213 && wcscmp(gDataManager->GetName(chit.chain_card->code).data(), gDataManager->GetName(chit.chain_card->alias).data())) {
-				str.append(fmt::format(L"{}", gDataManager->GetSetName(0x104f)));
+				str.append(epro::format(L"{}", gDataManager->GetSetName(0x104f)));
 			}
 			////kdiy///////////
 		}
@@ -3396,7 +3395,7 @@ void ClientField::ShowPileDisplayCards(int location, int player) {
 		break;
 	}
 	if(display_cards.size()) {
-		mainGame->wCardDisplay->setText(fmt::format(L"{}({})", gDataManager->GetSysString(loc_id), display_cards.size()).data());
+		mainGame->wCardDisplay->setText(epro::format(L"{}({})", gDataManager->GetSysString(loc_id), display_cards.size()).data());
 		ShowLocationCard();
 	}
 }

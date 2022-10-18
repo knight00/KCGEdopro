@@ -110,8 +110,8 @@ void ServerLobby::FillOnlineRooms() {
 		roomListTable->setCellData(index, 0, room.locked ? (void*)1 : nullptr);
 		roomListTable->setCellData(index, 1, &room);
 		roomListTable->setCellText(index, 1, gDataManager->GetSysString(room.info.rule + 1900).data());
-		roomListTable->setCellText(index, 2, fmt::format(L"[{}vs{}]{}{}", room.info.team1, room.info.team2,
-			(room.info.best_of > 1) ? fmt::format(L" (best of {})", room.info.best_of) : L"",
+		roomListTable->setCellText(index, 2, epro::format(L"[{}vs{}]{}{}", room.info.team1, room.info.team2,
+			(room.info.best_of > 1) ? epro::format(L" (best of {})", room.info.best_of) : L"",
 			(room.info.duel_flag_low & DUEL_RELAY) ? L" (Relay)" : L"").data());
 		int rule;
 		auto duel_flag = (((uint64_t)room.info.duel_flag_low) | ((uint64_t)room.info.duel_flag_high) << 32);
@@ -126,7 +126,7 @@ void ServerLobby::FillOnlineRooms() {
 			} else
 				roomListTable->setCellText(index, 3, L"Custom");
 		} else
-			roomListTable->setCellText(index, 3, fmt::format(L"{}MR {}", 
+			roomListTable->setCellText(index, 3, epro::format(L"{}MR {}", 
 															 (duel_flag & DUEL_TCG_SEGOC_NONPUBLIC) ? L"TCG " : L"",
 															 (rule == 0) ? 3 : rule).data());
 		roomListTable->setCellText(index, 4, banlist.data());
@@ -187,12 +187,12 @@ void ServerLobby::GetRoomsThread() {
 	//if(mainGame->chkShowActiveRooms->isChecked()) {
 		///////kdiy/////////
 		if(serverInfo.roomaddress == BufferIO::EncodeUTF8(L"default"))
-		curl_easy_setopt(curl_handle, CURLOPT_URL, fmt::format("http://{}:{}/api/getrooms", "124.222.111.91", 18001).data());
+		curl_easy_setopt(curl_handle, CURLOPT_URL, epro::format("http://{}:{}/api/getrooms", "124.222.111.91", 18001).data());
 		else
 		///////kdiy/////////
-		curl_easy_setopt(curl_handle, CURLOPT_URL, fmt::format("{}://{}:{}/api/getrooms", ServerInfo::GetProtocolString(serverInfo.protocol), serverInfo.roomaddress, serverInfo.roomlistport).data());
+		curl_easy_setopt(curl_handle, CURLOPT_URL, epro::format("{}://{}:{}/api/getrooms", ServerInfo::GetProtocolString(serverInfo.protocol), serverInfo.roomaddress, serverInfo.roomlistport).data());
 	/*} else {
-		curl_easy_setopt(curl_handle, CURLOPT_URL, fmt::format("http://{}:{}/api/getrooms", serverInfo.roomaddress, serverInfo.roomlistport).data());
+		curl_easy_setopt(curl_handle, CURLOPT_URL, epro::format("http://{}:{}/api/getrooms", serverInfo.roomaddress, serverInfo.roomlistport).data());
 	}*/
 	curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
 	curl_easy_setopt(curl_handle, CURLOPT_CONNECTTIMEOUT, 60L);
@@ -215,9 +215,9 @@ void ServerLobby::GetRoomsThread() {
 		if(gGameConfig->logDownloadErrors) {
 			ErrorLog("Error updating the room list:");
 			////kdiy/////////
-			//ErrorLog("Curl error: ({}) {} ({})", res, curl_easy_strerror(res), curl_error_buffer);
+			//ErrorLog("Curl error: ({}) {} ({})", static_cast<std::underlying_type_t<CURLcode>>(res), curl_easy_strerror(res), curl_error_buffer);
 			////kdiy/////////
-			}
+		}
 		//error
 		mainGame->PopupMessage(gDataManager->GetSysString(2037));
 		mainGame->btnLanRefresh2->setEnabled(true);
@@ -282,7 +282,7 @@ void ServerLobby::RefreshRooms() {
 	is_refreshing = true;
 	mainGame->roomListTable->clearRows();
 	GUIUtils::ChangeCursor(mainGame->device, irr::gui::ECI_WAIT);
-	std::thread(GetRoomsThread).detach();
+	epro::thread(GetRoomsThread).detach();
 }
 bool ServerLobby::HasRefreshedRooms() {
 	return has_refreshed;

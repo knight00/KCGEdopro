@@ -23,7 +23,7 @@ local ygopro_config=function(static_core)
 			}
 		filter {}
 	end
-	
+
 	filter {'files:**.rc', 'action:not vs*'}
 		buildmessage '%{file.relpath}'
 		buildoutputs { '%{cfg.objdir}/%{file.basename}_rc.o' }
@@ -112,7 +112,7 @@ local ygopro_config=function(static_core)
 					links { "mpg123" }
 				end
 			filter "system:macosx or ios"
-				links { "CoreAudio.framework", "AudioToolbox.framework" }
+				links { "CoreAudio.framework", "AudioToolbox.framework", "AudioUnit.framework" }
 			filter { "system:windows", "action:not vs*" }
 				links { "FLAC", "vorbisfile", "vorbis", "ogg", "OpenAL32" }
 				if _OPTIONS["use-mpg123"] then
@@ -141,13 +141,13 @@ local ygopro_config=function(static_core)
 		if _OPTIONS["discord"] then
 			links "discord-rpc"
 		end
-		links { "sqlite3", "event", "event_pthreads", "dl", "git2" }
+		links { "sqlite3", "event", "event_pthreads", "dl", "git2", "ssh2" }
 
 	filter { "system:windows", "action:not vs*" }
 		if _OPTIONS["discord"] then
 			links "discord-rpc"
 		end
-		links { "sqlite3", "event", "git2" }
+		links { "sqlite3", "event", "git2", "ssh2" }
 
 	filter "system:macosx or ios"
 		defines "LUA_USE_MACOSX"
@@ -173,7 +173,7 @@ local ygopro_config=function(static_core)
 		if _OPTIONS["vcpkg-root"] then
 			links { "png16d", "bz2d", "fmtd", "curl-d", "freetyped" }
 		else
-			links { "fmt", "curl" }
+			links { "fmt", "curl", "freetype" }
 		end
 
 	filter { "system:ios" }
@@ -184,9 +184,9 @@ local ygopro_config=function(static_core)
 
 	filter { "system:linux or windows", "action:not vs*", "configurations:Release" }
 		if _OPTIONS["vcpkg-root"] then
-			links { "png", "bz2", "freetype" }
+			links { "png", "bz2" }
 		end
-		links { "fmt", "curl" }
+		links { "fmt", "curl", "freetype" }
 
 	filter "system:linux"
 		defines "LUA_USE_LINUX"
@@ -210,8 +210,8 @@ local ygopro_config=function(static_core)
 				_includedirs "/usr/include/irrlicht"
 		end
 	end
-		
-		
+
+
 	filter { "system:windows", "action:not vs*" }
 		if static_core then
 			links "lua-c++"
@@ -222,9 +222,9 @@ local ygopro_config=function(static_core)
 
 	filter "system:not windows"
 		links { "pthread" }
-	
+
 	filter "system:windows"
-		links { "opengl32", "ws2_32", "winmm", "gdi32", "kernel32", "user32", "imm32", "wldap32", "crypt32", "advapi32", "rpcrt4", "ole32", "uuid", "winhttp" }
+		links { "wbemuuid", "opengl32", "ws2_32", "winmm", "gdi32", "kernel32", "user32", "imm32", "wldap32", "crypt32", "advapi32", "rpcrt4", "ole32", "uuid", "winhttp" }
 		if not _OPTIONS["oldwindows"] then
 			links "Iphlpapi"
 		end

@@ -400,15 +400,16 @@ void ClientField::ShowSelectCard(bool buttonok, bool chain) {
 		mainGame->btnCardSelect[i]->setPressed(false);	
 		mainGame->btnCardSelect[i]->setVisible(true);
 		if(mainGame->dInfo.curMsg != MSG_SORT_CHAIN && mainGame->dInfo.curMsg != MSG_SORT_CARD) {
+			sort_list.clear();
 			// text
 			std::wstring text = L"";
 			if(conti_selecting)
 				text = std::wstring{ DataManager::unknown_string };
 			else if(curcard->location == LOCATION_OVERLAY) {
-				text = fmt::format(L"{}[{}]({})", gDataManager->FormatLocation(curcard->overlayTarget->location, curcard->overlayTarget->sequence),
+				text = epro::format(L"{}[{}]({})", gDataManager->FormatLocation(curcard->overlayTarget->location, curcard->overlayTarget->sequence),
 					curcard->overlayTarget->sequence + 1, curcard->sequence + 1);
 			} else if(curcard->location) {
-				text = fmt::format(L"{}[{}]", gDataManager->FormatLocation(curcard->location, curcard->sequence),
+				text = epro::format(L"{}[{}]", gDataManager->FormatLocation(curcard->location, curcard->sequence),
 					curcard->sequence + 1);
 			}
 			curstring->setText(text.data());
@@ -466,6 +467,7 @@ void ClientField::ShowSelectCard(bool buttonok, bool chain) {
 	mainGame->PopupElement(mainGame->wCardSelect);
 }
 void ClientField::ShowChainCard() {
+	sort_list.clear();
 	int startpos;
 	size_t ct;
 	if(selectable_cards.size() <= 5) {
@@ -485,7 +487,7 @@ void ClientField::ShowChainCard() {
 		mainGame->btnCardSelect[i]->setRelativePosition(mainGame->Scale<irr::s32>(startpos + i * 125, 55, startpos + 120 + i * 125, 225));
 		mainGame->btnCardSelect[i]->setPressed(false);
 		mainGame->btnCardSelect[i]->setVisible(true);
-		curstring->setText(fmt::format(L"{}[{}]", gDataManager->FormatLocation(curcard->location, curcard->sequence),
+		curstring->setText(epro::format(L"{}[{}]", gDataManager->FormatLocation(curcard->location, curcard->sequence),
 			curcard->sequence + 1).data());
 		if(curcard->location == LOCATION_OVERLAY) {
 			if(curcard->owner != curcard->overlayTarget->controler)
@@ -544,10 +546,10 @@ void ClientField::ShowLocationCard() {
 		mainGame->btnCardDisplay[i]->setVisible(true);
 		std::wstring text;
 		if(curcard->location == LOCATION_OVERLAY) {
-			text = fmt::format(L"{}[{}]({})", gDataManager->FormatLocation(curcard->overlayTarget->location, curcard->overlayTarget->sequence),
+			text = epro::format(L"{}[{}]({})", gDataManager->FormatLocation(curcard->overlayTarget->location, curcard->overlayTarget->sequence),
 				curcard->overlayTarget->sequence + 1, curcard->sequence + 1);
 		} else if(curcard->location) {
-			text = fmt::format(L"{}[{}]", gDataManager->FormatLocation(curcard->location, curcard->sequence),
+			text = epro::format(L"{}[{}]", gDataManager->FormatLocation(curcard->location, curcard->sequence),
 				curcard->sequence + 1);
 		}
 		curstring->setText(text.data());
@@ -591,7 +593,7 @@ void ClientField::ShowLocationCard() {
 	mainGame->PopupElement(mainGame->wCardDisplay);
 }
 void ClientField::ShowSelectOption(uint64_t select_hint, bool should_lock) {
-	std::unique_lock<std::mutex> lock = (should_lock ? std::unique_lock<std::mutex>(mainGame->gMutex) : std::unique_lock<std::mutex>());
+	std::unique_lock<epro::mutex> lock = (should_lock ? std::unique_lock<epro::mutex>(mainGame->gMutex) : std::unique_lock<epro::mutex>());
 	selected_option = 0;
 	int count = select_options.size();
 	bool quickmode = true;// (count <= 5);

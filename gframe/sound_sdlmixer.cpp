@@ -5,13 +5,13 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 #include <fmt/printf.h>
-#include <thread>
+#include "epro_thread.h"
 #include <atomic>
 
 SoundMixerBase::SoundMixerBase() : music(nullptr), sound_volume(0), music_volume(0) {
 	SDL_SetMainReady();
 	if(SDL_InitSubSystem(SDL_INIT_AUDIO) < 0)
-		throw std::runtime_error(fmt::format("Failed to init sdl audio device!\nSDL_InitSubSystem: {}\n", SDL_GetError()));
+		throw std::runtime_error(epro::format("Failed to init sdl audio device!\nSDL_InitSubSystem: {}\n", SDL_GetError()));
 	int flags = MIX_INIT_OGG | MIX_INIT_MP3 | MIX_INIT_FLAC;
 	int initted = Mix_Init(flags);
 	fmt::print("MIX_INIT_OGG: {}\n", !!(initted & MIX_INIT_OGG));
@@ -25,7 +25,7 @@ SoundMixerBase::SoundMixerBase() : music(nullptr), sound_volume(0), music_volume
 	if(Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4096) == -1) {
 		Mix_Quit();
 		SDL_QuitSubSystem(SDL_INIT_AUDIO);
-		throw std::runtime_error(fmt::format("Cannot open channels\nMix_OpenAudio: {}\n", SDL_GetError()));
+		throw std::runtime_error(epro::format("Cannot open channels\nMix_OpenAudio: {}\n", SDL_GetError()));
 	}
 }
 void SoundMixerBase::SetSoundVolume(double volume) {
@@ -114,7 +114,7 @@ static void KillSwitch(std::atomic_bool& die) {
 }
 SoundMixerBase::~SoundMixerBase() {
 	std::atomic_bool die{true};
-	std::thread(KillSwitch, std::ref(die)).detach();
+	epro::thread(KillSwitch, std::ref(die)).detach();
 	Mix_HaltMusic();
 	Mix_HaltChannel(-1);
 	StopSounds();

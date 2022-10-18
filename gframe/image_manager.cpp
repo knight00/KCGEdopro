@@ -89,7 +89,7 @@ namespace ygo {
 #define CHECK_RETURN(what, name) do { if(!what) { throw std::runtime_error("Couldn't load texture: " name); }} while(0)
 ImageManager::ImageManager() {
 	stop_threads = false;
-	obj_clear_thread = std::thread(&ImageManager::ClearFutureObjects, this);
+	obj_clear_thread = epro::thread(&ImageManager::ClearFutureObjects, this);
 	load_threads.reserve(gGameConfig->imageLoadThreads);
 	for(int i = 0; i < gGameConfig->imageLoadThreads; ++i)
 		load_threads.emplace_back(&ImageManager::LoadPic, this);
@@ -934,7 +934,7 @@ void ImageManager::RefreshCachedTextures() {
 		auto& src = loaded_pics[index];
 		std::vector<uint32_t> readd;
 		for(int i = 0; i < gGameConfig->maxImagesPerFrame; i++) {
-			std::unique_lock<std::mutex> lck(pic_load);
+			std::unique_lock<epro::mutex> lck(pic_load);
 			if(src.empty())
 				break;
 			auto loaded = std::move(src.front());
@@ -961,7 +961,7 @@ void ImageManager::RefreshCachedTextures() {
 			texture->drop();
 		}
 		if(readd.size()) {
-			std::lock_guard<std::mutex> lck(pic_load);
+			std::lock_guard<epro::mutex> lck(pic_load);
 			for(auto& code : readd)
 				to_load.emplace_front(code, type, index, std::ref(size.first), std::ref(size.second), timestamp_id, std::ref(timestamp_id));
 			cv_load.notify_all();
@@ -975,7 +975,7 @@ void ImageManager::RefreshCachedTextures() {
 void ImageManager::ClearFutureObjects() {
 	Utils::SetThreadName("ImgObjsClear");
 	while(!stop_threads) {
-		std::unique_lock<std::mutex> lck(obj_clear_lock);
+		std::unique_lock<epro::mutex> lck(obj_clear_lock);
 		while(to_clear.empty()) {
 			cv_clear.wait(lck);
 			if(stop_threads)
@@ -1040,7 +1040,7 @@ void ImageManager::RefreshCovers() {
 void ImageManager::LoadPic() {
 	Utils::SetThreadName("PicLoader");
 	while(!stop_threads) {
-		std::unique_lock<std::mutex> lck(pic_load);
+		std::unique_lock<epro::mutex> lck(pic_load);
 		while(to_load.empty()) {
 			cv_load.wait(lck);
 			if(stop_threads) {
@@ -1057,9 +1057,9 @@ void ImageManager::LoadPic() {
 }
 void ImageManager::ClearCachedTextures() {
 	timestamp_id = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-	std::lock_guard<std::mutex> lck(obj_clear_lock);
+	std::lock_guard<epro::mutex> lck(obj_clear_lock);
 	{
-		std::lock_guard<std::mutex> lck2(pic_load);
+		std::lock_guard<epro::mutex> lck2(pic_load);
 		for(auto& map : loaded_pics) {
 			to_clear.insert(to_clear.end(), std::make_move_iterator(map.begin()), std::make_move_iterator(map.end()));
 			map.clear();
@@ -1220,7 +1220,7 @@ ImageManager::load_return ImageManager::LoadCardTexture(uint32_t code, imgType t
 				if(path == EPRO_TEXT("archives")) {
 					auto archiveFile = Utils::FindFileInArchives(
 						(type == imgType::ART) ? EPRO_TEXT("pics/") : EPRO_TEXT("pics/cover/"),
-						fmt::format(EPRO_TEXT("{}{}"), code, extension));
+						epro::format(EPRO_TEXT("{}{}"), code, extension));
 					if(!archiveFile)
 						continue;
 					const auto& name = archiveFile->getFileName();
@@ -1228,7 +1228,7 @@ ImageManager::load_return ImageManager::LoadCardTexture(uint32_t code, imgType t
 					base_img = driver->createImageFromFile(archiveFile);
 					archiveFile->drop();
 				} else {
-					file = fmt::format(EPRO_TEXT("{}{}{}"), path, code, extension);
+					file = epro::format(EPRO_TEXT("{}{}{}"), path, code, extension);
 					base_img = driver->createImageFromFile({ file.data(), static_cast<irr::u32>(file.size()) });
 				}
 				if((img = LoadImg(base_img)) != nullptr) {
@@ -1311,7 +1311,7 @@ irr::video::ITexture* ImageManager::GetTextureCard(uint32_t code, imgType type, 
 				}
 				return (rmap) ? rmap : ret_unk;
 			} else {
-				std::lock_guard<std::mutex> lck(pic_load);
+				std::lock_guard<epro::mutex> lck(pic_load);
 				to_load.emplace_front(code, type, index, std::ref(sizes[size_index].first), std::ref(sizes[size_index].second), timestamp_id.load(), std::ref(timestamp_id));
 				cv_load.notify_one();
 			}
@@ -1345,13 +1345,13 @@ irr::video::ITexture* ImageManager::GetTextureField(uint32_t code) {
 		for(auto extension : { EPRO_TEXT(".png"), EPRO_TEXT(".jpg") }) {
 			irr::video::ITexture* img;
 			if(path == EPRO_TEXT("archives")) {
-				auto archiveFile = Utils::FindFileInArchives(EPRO_TEXT("pics/field/"), fmt::format(EPRO_TEXT("{}{}"), code, extension));
+				auto archiveFile = Utils::FindFileInArchives(EPRO_TEXT("pics/field/"), epro::format(EPRO_TEXT("{}{}"), code, extension));
 				if(!archiveFile)
 					continue;
 				img = driver->getTexture(archiveFile);
 				archiveFile->drop();
 			} else
-				img = driver->getTexture(fmt::format(EPRO_TEXT("{}{}{}"), path, code, extension).data());
+				img = driver->getTexture(epro::format(EPRO_TEXT("{}{}{}"), path, code, extension).data());
 			if(img) {
 				tFields.emplace(code, img);
 				return img;
@@ -1551,7 +1551,7 @@ irr::video::ITexture* ImageManager::guiScalingResizeCached(irr::video::ITexture*
 
 	const auto& origname = src->getName().getPath();
 	// Calculate scaled texture name.
-	const auto scale_name = fmt::format(EPRO_TEXT("{}@guiScalingFilter:{}:{}:{}:{}:{}:{}"),
+	const auto scale_name = epro::format(EPRO_TEXT("{}@guiScalingFilter:{}:{}:{}:{}:{}:{}"),
 						 origname,
 						 srcrect.UpperLeftCorner.X,
 						 srcrect.UpperLeftCorner.Y,

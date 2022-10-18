@@ -38,7 +38,7 @@ void DataHandler::LoadDatabases() {
 }
 void DataHandler::LoadArchivesDB() {
 	for(auto& archive : Utils::archives) {
-		std::lock_guard<std::mutex> guard(*archive.mutex);
+		std::lock_guard<epro::mutex> guard(*archive.mutex);
 		auto files = Utils::FindFiles(archive.archive, EPRO_TEXT(""), { EPRO_TEXT("cdb") }, 3);
 		for(auto& index : files) {
 			auto reader = archive.archive->createAndOpenFile(index);
@@ -107,11 +107,11 @@ void DataHandler::LoadZipArchives() {
 	irr::io::IFileArchive* tmp_archive = nullptr;
 	for(auto& file : Utils::FindFiles(EPRO_TEXT("./expansions/"), { EPRO_TEXT("zip") })) {
 		////////kdiy////////
-		//filesystem->addFileArchive(fmt::format(EPRO_TEXT("./expansions/{}"), file).data(), true, false, irr::io::EFAT_ZIP, "", &tmp_archive);
+		//filesystem->addFileArchive(epro::format(EPRO_TEXT("./expansions/{}"), file).data(), true, false, irr::io::EFAT_ZIP, "", &tmp_archive);
 		#if defined(Zip)
-		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./expansions/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
+		filesystem->addFileArchive(epro::format(EPRO_TEXT("./expansions/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
 		#else
-		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./expansions/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive);
+		filesystem->addFileArchive(epro::format(EPRO_TEXT("./expansions/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive);
 		#endif
 		////////kdiy////////
 		if(tmp_archive) {
@@ -124,9 +124,9 @@ void DataHandler::LoadKZipArchives() {
 	irr::io::IFileArchive* tmp_archive2 = nullptr;
 	for(auto& file : Utils::FindFiles(EPRO_TEXT("./repositories/"), { EPRO_TEXT("zip") })) {
 		#if defined(Zip)
-		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./repositories/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive2);
+		filesystem->addFileArchive(epro::format(EPRO_TEXT("./repositories/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive2);
 		#else
-		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./repositories/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive2);
+		filesystem->addFileArchive(epro::format(EPRO_TEXT("./repositories/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive2);
 		#endif
 		if(tmp_archive2) {
 			Utils::archives.emplace_back(tmp_archive2);
@@ -134,9 +134,9 @@ void DataHandler::LoadKZipArchives() {
 	}
 	for(auto& file : Utils::FindFiles(EPRO_TEXT("./repositories/kcg/"), { EPRO_TEXT("zip") })) {
 		#if defined(Zip)
-		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./repositories/kcg/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive2);
+		filesystem->addFileArchive(epro::format(EPRO_TEXT("./repositories/kcg/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive2);
 		#else
-		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./repositories/kcg/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive2);
+		filesystem->addFileArchive(epro::format(EPRO_TEXT("./repositories/kcg/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive2);
 		#endif
 		if(tmp_archive2) {
 			Utils::archives.emplace_back(tmp_archive2);
@@ -144,9 +144,9 @@ void DataHandler::LoadKZipArchives() {
 	}
 	for(auto& file : Utils::FindFiles(EPRO_TEXT("./repositories/kcg/script/"), { EPRO_TEXT("zip") })) {
 		#if defined(Zip)
-		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./repositories/kcg/script/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive2);
+		filesystem->addFileArchive(epro::format(EPRO_TEXT("./repositories/kcg/script/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive2);
 		#else
-		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./repositories/kcg/script/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive2);
+		filesystem->addFileArchive(epro::format(EPRO_TEXT("./repositories/kcg/script/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive2);
 		#endif
 		if(tmp_archive2) {
 			Utils::archives.emplace_back(tmp_archive2);
@@ -154,9 +154,9 @@ void DataHandler::LoadKZipArchives() {
 	}
 	for(auto& file : Utils::FindFiles(EPRO_TEXT("./repositories/kcg/script/kcg/"), { EPRO_TEXT("zip") })) {
 		#if defined(Zip)
-		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./repositories/kcg/script/kcg/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive2);
+		filesystem->addFileArchive(epro::format(EPRO_TEXT("./repositories/kcg/script/kcg/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive2);
 		#else
-		filesystem->addFileArchive(fmt::format(EPRO_TEXT("./repositories/kcg/script/kcg/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive2);
+		filesystem->addFileArchive(epro::format(EPRO_TEXT("./repositories/kcg/script/kcg/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive2);
 		#endif
 		if(tmp_archive2) {
 			Utils::archives.emplace_back(tmp_archive2);
@@ -173,10 +173,10 @@ DataHandler::DataHandler() {
 	if(tmp_device->getVideoDriver())
 		porting::exposed_data = &tmp_device->getVideoDriver()->getExposedVideoData();
 	Utils::OSOperator = new irr::COSiOSOperator();
-	configs->ssl_certificate_path = fmt::format("{}/cacert.pem", Utils::GetExeFolder());
+	configs->ssl_certificate_path = epro::format("{}/cacert.pem", Utils::GetExeFolder());
 #elif defined(__ANDROID__)
 	Utils::OSOperator = new irr::COSAndroidOperator();
-	configs->ssl_certificate_path = fmt::format("{}/cacert.pem", porting::internal_storage);
+	configs->ssl_certificate_path = epro::format("{}/cacert.pem", porting::internal_storage);
 #else
 	tmp_device = GUIUtils::CreateDevice(configs.get());
 	Utils::OSOperator = tmp_device->getGUIEnvironment()->getOSOperator();
@@ -185,7 +185,7 @@ DataHandler::DataHandler() {
 		if(configs->override_ssl_certificate_path != "none" && Utils::FileExists(Utils::ToPathString(configs->override_ssl_certificate_path)))
 			configs->ssl_certificate_path = configs->override_ssl_certificate_path;
 	} else
-		configs->ssl_certificate_path = fmt::format("{}/cacert.pem", Utils::ToUTF8IfNeeded(Utils::GetWorkingDirectory()));
+		configs->ssl_certificate_path = epro::format("{}/cacert.pem", Utils::ToUTF8IfNeeded(Utils::GetWorkingDirectory()));
 #endif
 	filesystem = new irr::io::CFileSystem();
 	dataManager = std::unique_ptr<DataManager>(new DataManager());

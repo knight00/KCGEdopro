@@ -43,13 +43,13 @@ void ClientCard::UpdateInfo(const CoreUtils::Query& query) {
 	if(query.flag & QUERY_LEVEL) {
 		if(IsDifferent(level, query.level) || lvstring.empty())
 			//////////kdiy////////////////////
-		    //lvstring = fmt::format(L"L{}",level);
-            lvstring = fmt::format(L"Lv{}",level);
+		    //lvstring = epro::format(L"L{}",level);
+            lvstring = epro::format(L"Lv{}",level);
 		    //////////kdiy////////////////////
 	}
 	if(query.flag & QUERY_RANK) {
 		if(IsDifferent(rank, query.rank) || rkstring.empty())
-			rkstring = fmt::format(L"R{}", rank);
+			rkstring = epro::format(L"R{}", rank);
 	}
 	if(query.flag & QUERY_ATTACK) {
 		if(IsDifferent(attack, query.attack) || atkstring.empty()) {
@@ -117,16 +117,16 @@ void ClientCard::UpdateInfo(const CoreUtils::Query& query) {
 			mainGame->dField.MoveCard(this, 5);
 	}
 	if(query.flag & QUERY_LSCALE) {
-		if(IsDifferent(lscale, query.lscale))
+		if(IsDifferent(lscale, query.lscale) || lscstring.empty())
 			lscstring = fmt::to_wstring(lscale);
 	}
 	if(query.flag & QUERY_RSCALE) {
-		if(IsDifferent(rscale, query.rscale))
+		if(IsDifferent(rscale, query.rscale) || rscstring.empty())
 			rscstring = fmt::to_wstring(rscale);
 	}
 	if(query.flag & QUERY_LINK) {
 		if(IsDifferent(link, query.link) || linkstring.empty())
-			linkstring = fmt::format(L"L{}", link);
+			linkstring = epro::format(L"L{}", link);
 		link_marker = query.link_marker;
 	}
 }
@@ -149,21 +149,17 @@ bool ClientCard::client_card_sort(ClientCard* c1, ClientCard* c2) {
 		return cp1 < cp2;
 	if(c1->location != c2->location)
 		return c1->location < c2->location;
-	if(c1->location & LOCATION_OVERLAY)
+	if(c1->location & LOCATION_OVERLAY) {
 		if(c1->overlayTarget != c2->overlayTarget)
 			return c1->overlayTarget->sequence < c2->overlayTarget->sequence;
-		else return c1->sequence < c2->sequence;
-	else {
-		if(c1->location & (LOCATION_DECK | LOCATION_GRAVE | LOCATION_REMOVED | LOCATION_EXTRA)) {
-			for(size_t i = 0; i < mainGame->dField.chains.size(); ++i) {
-				auto chit = mainGame->dField.chains[i];
-				if(c1 == chit.chain_card || chit.target.find(c1) != chit.target.end())
-					return true;
-			}
-			return c1->sequence > c2->sequence;
-		}
-		else
-			return c1->sequence < c2->sequence;
+		return c1->sequence < c2->sequence;
 	}
+	if((c1->location & (LOCATION_DECK | LOCATION_GRAVE | LOCATION_REMOVED | LOCATION_EXTRA)) == 0)
+		return c1->sequence < c2->sequence;
+	for(const auto& chain : mainGame->dField.chains) {
+		if(c1 == chain.chain_card || chain.target.find(c1) != chain.target.end())
+			return true;
+	}
+	return c1->sequence > c2->sequence;
 }
 }
