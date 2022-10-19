@@ -3142,7 +3142,7 @@ Game::RepoGui* Game::AddGithubRepositoryStatusWindow(const GitRepo* repo) {
     grepo.path = repo->repo_path;
     grepo.del_button = env->addButton(Scale(90 + 295, 0, 170 + 295, 20 + 5), a, BUTTON_REPO_DELETE, gDataManager->GetSysString(8040).data());
 	defaultStrings.emplace_back(grepo.del_button, 8040);
-	grepo.del_button->setEnabled(repo->ready);
+	grepo.del_button->setEnabled(true);
     //kidy///////
 
 	auto b = env->addWindow(Scale(0, 0, 10000, 55), false, L"", tabRepositories);
@@ -3233,9 +3233,6 @@ void Game::UpdateRepoInfo(const GitRepo* repo, RepoGui* grepo) {
 		}
 	}
 	grepo->history_button1->setEnabled(true);
-    ///kdiy////////
-    grepo->del_button->setEnabled(true);
-    ///kdiy////////
 	grepo->history_button2->setEnabled(true);
 	if(!repo->is_language) {
 		script_dirs.insert(script_dirs.begin(), Utils::ToPathString(repo->script_path));
