@@ -143,7 +143,7 @@ bool ImageManager::Initial() {
 	searchPath.push_back(EPRO_TEXT("./textures/character/declan"));
 	for (auto path : searchPath) {
 		Utils::MakeDirectory(path);
-		Utils::MakeDirectory(fmt::format(EPRO_TEXT("{}/icon"), path));
+		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/icon"), path));
 	}
 	RefreshRandomImageList();
 	/////kdiy/////
