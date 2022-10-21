@@ -2737,8 +2737,8 @@ bool Game::MainLoop() {
 				if(dInfo.time_left[dInfo.time_player])
 					dInfo.time_left[dInfo.time_player]--;
 		}
-		if(gGameConfig->maxFPS != -1 || gGameConfig->vsync)
-			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		if(gGameConfig->maxFPS != -1)
+			epro::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 	discord.UpdatePresence(DiscordWrapper::TERMINATE);
 	{
@@ -3757,7 +3757,7 @@ void Game::ResizePhaseButtons() {
 		wPhase->setRelativePosition(Resize(940, 80, 990, 340));
 		return;
 	} else if(!gGameConfig->keep_aspect_ratio) {
-		if((dInfo.duel_params & DUEL_3_COLUMNS_FIELD) && dInfo.duel_field >= 4)
+		if(dInfo.HasFieldFlag(DUEL_3_COLUMNS_FIELD | DUEL_EMZONE))
 			wPhase->setRelativePosition(Resize(480, 290, 855, 350));
 		else
 			wPhase->setRelativePosition(Resize(480, 310, 855, 330));
@@ -3777,7 +3777,7 @@ void Game::ResizePhaseButtons() {
 	irr::s32 x1 = static_cast<irr::s32>(std::round(DEFAULT_X1 * window_scale.X - offx1));
 	irr::s32 x2 = static_cast<irr::s32>(std::round(DEFAULT_X2 * window_scale.X + offx2));
 	irr::s32 y1, y2;
-	if((dInfo.duel_params & DUEL_3_COLUMNS_FIELD) && dInfo.duel_field >= 4) {
+	if(dInfo.HasFieldFlag(DUEL_3_COLUMNS_FIELD | DUEL_EMZONE)) {
 		y1 = static_cast<irr::s32>(std::round(290 * window_scale.Y));
 		y2 = static_cast<irr::s32>(std::round(350 * window_scale.Y));
 	} else {
@@ -3800,7 +3800,7 @@ void Game::SetPhaseButtons(bool visibility) {
 	// work with the relative button positions by using non scaled values
 	if(gGameConfig->alternative_phase_layout)
 		wPhase->setRelativePosition({ 940, 80, 990, 340 });
-	else if((dInfo.duel_params & DUEL_3_COLUMNS_FIELD) && dInfo.duel_field >= 4)
+	else if(dInfo.HasFieldFlag(DUEL_3_COLUMNS_FIELD | DUEL_EMZONE))
 		wPhase->setRelativePosition({ 480, 290, 855, 350 });
 	else
 		wPhase->setRelativePosition({ 480, 310, 855, 330 });
@@ -3817,8 +3817,8 @@ void Game::SetPhaseButtons(bool visibility) {
 			return;
 		}
 		// reset master rule 4 phase button position
-		if(dInfo.duel_params & DUEL_3_COLUMNS_FIELD) {
-			if(dInfo.duel_field >= 4) {
+		if(dInfo.HasFieldFlag(DUEL_3_COLUMNS_FIELD)) {
+			if(dInfo.HasFieldFlag(DUEL_EMZONE)) {
 				btnShuffle->setRelativePosition({ 0, 40, 50, 60 });
 				btnDP->setRelativePosition({ 0, 40, 50, 60 });
 				btnSP->setRelativePosition({ 0, 40, 50, 60 });
@@ -3833,14 +3833,14 @@ void Game::SetPhaseButtons(bool visibility) {
 			btnSP->setRelativePosition({ 65, 0, 115, 20 });
 			btnM1->setRelativePosition({ 130, 0, 180, 20 });
 			btnBP->setRelativePosition({ 195, 0, 245, 20 });
-			btnM2->setRelativePosition({ 260, 0, 310, 20 });
+			btnM2->setRelativePosition({ 195, 0, 245, 20 });
 			btnEP->setRelativePosition({ 260, 0, 310, 20 });
 			return;
 		}
 		btnDP->setRelativePosition({ 0, 0, 50, 20 });
 		btnEP->setRelativePosition({ 320, 0, 370, 20 });
 		btnShuffle->setRelativePosition({ 0, 0, 50, 20 });
-		if(dInfo.duel_field >= 4) {
+		if(dInfo.HasFieldFlag(DUEL_EMZONE)) {
 			btnSP->setRelativePosition({ 0, 0, 50, 20 });
 			btnM1->setRelativePosition({ 160, 0, 210, 20 });
 			btnBP->setRelativePosition({ 160, 0, 210, 20 });
@@ -4243,7 +4243,7 @@ void Game::OnResize() {
 	/////kdiy/////
 	SetCentered(wCreateHost2, false);
 	/////kdiy/////
-	if (dInfo.opponames.size() + dInfo.selfnames.size()>=5) {
+	if(dInfo.opponames.size() + dInfo.selfnames.size() >= 5) {
 		wHostPrepare->setRelativePosition(ResizeWin(270, 120, 750, 500));
 		wHostPrepareR->setRelativePosition(ResizeWin(750, 120, 950, 500));
 		wHostPrepareL->setRelativePosition(ResizeWin(70, 120, 270, 500));

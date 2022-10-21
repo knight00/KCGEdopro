@@ -847,8 +847,8 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			}
 		}
 		std::lock_guard<epro::mutex> lock(mainGame->gMutex);
-		matManager.SetActiveVertices((mainGame->dInfo.duel_params & DUEL_3_COLUMNS_FIELD) ? 1 : 0,
-									 (mainGame->dInfo.duel_field == 3 || mainGame->dInfo.duel_field == 5) ? 0 : 1);
+		matManager.SetActiveVertices(mainGame->dInfo.HasFieldFlag(DUEL_3_COLUMNS_FIELD),
+									 !mainGame->dInfo.HasFieldFlag(DUEL_SEPARATE_PZONE));
 		int x = (pkt.info.team1 + pkt.info.team2 >= 5) ? 60 : 0;
 		mainGame->btnHostPrepOB->setRelativePosition(mainGame->Scale<irr::s32>(10, 180 + x, 110, 205 + x));
 		mainGame->stHostPrepOB->setRelativePosition(mainGame->Scale<irr::s32>(10, 210 + x, 270, 230 + x));
@@ -1889,8 +1889,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				mainGame->dField.extra_act[pcard->controler] = true;
 				break;
 			case LOCATION_SZONE: {
-				int seq = mainGame->dInfo.duel_field == 4 ? (mainGame->dInfo.duel_params & DUEL_3_COLUMNS_FIELD) ? 1 : 0 : 6;
-				if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && pcard->sequence == seq)
+				if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && pcard->sequence == mainGame->dInfo.GetPzoneIndex(0))
 					mainGame->dField.pzone_act[pcard->controler] = true;
 				break;
 			}
@@ -4798,16 +4797,23 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		auto lock = LockIf();
 		mainGame->dField.Clear();
 		if(mainGame->dInfo.compat_mode) {
-			uint8_t field = BufferIO::Read<uint8_t>(pbuf);
-			mainGame->dInfo.duel_field = field & 0xf;
-			mainGame->dInfo.duel_params = 0;
+			uint8_t field = BufferIO::Read<uint8_t>(pbuf) & 0xf;
+			mainGame->dInfo.duel_field = field;
+			switch(field) {
+				case 1: mainGame->dInfo.duel_params = DUEL_MODE_MR1; break;
+				case 2: mainGame->dInfo.duel_params = DUEL_MODE_MR2; break;
+				case 3: mainGame->dInfo.duel_params = DUEL_MODE_MR3; break;
+				case 4: mainGame->dInfo.duel_params = DUEL_MODE_MR4; break;
+				default:
+				case 5: mainGame->dInfo.duel_params = DUEL_MODE_MR5; break;
+			}
 		} else {
 			uint32_t opts = BufferIO::Read<uint32_t>(pbuf);
 			mainGame->dInfo.duel_field = mainGame->GetMasterRule(opts);
 			mainGame->dInfo.duel_params = opts;
 		}
-		matManager.SetActiveVertices((mainGame->dInfo.duel_params& DUEL_3_COLUMNS_FIELD) ? 1 : 0,
-									 (mainGame->dInfo.duel_field == 3 || mainGame->dInfo.duel_field == 5) ? 0 : 1);
+		matManager.SetActiveVertices(mainGame->dInfo.HasFieldFlag(DUEL_3_COLUMNS_FIELD),
+									 !mainGame->dInfo.HasFieldFlag(DUEL_SEPARATE_PZONE));
 		mainGame->SetPhaseButtons();
 		uint32_t val = 0;
 		for(int i = 0; i < 2; ++i) {

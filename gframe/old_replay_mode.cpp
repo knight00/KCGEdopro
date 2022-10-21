@@ -112,11 +112,10 @@ namespace ygo {
 	bool ReplayMode::StartDuel() {
 		const auto& replay_header = cur_yrp->pheader;
 		const auto& seed = replay_header.seed;
-		const auto& names = ReplayMode::cur_yrp->GetPlayerNames();
-		mainGame->dInfo.selfnames.clear();
-		mainGame->dInfo.opponames.clear();
-		mainGame->dInfo.selfnames.insert(mainGame->dInfo.selfnames.end(), names.begin(), names.begin() + ReplayMode::cur_yrp->GetPlayersCount(0));
-		mainGame->dInfo.opponames.insert(mainGame->dInfo.opponames.end(), names.begin() + ReplayMode::cur_yrp->GetPlayersCount(0), names.end());
+		const auto& names = cur_yrp->GetPlayerNames();
+		const auto first_oppo_player = names.begin() + cur_yrp->GetPlayersCount(0);
+		mainGame->dInfo.selfnames.assign(names.begin(), first_oppo_player);
+		mainGame->dInfo.opponames.assign(first_oppo_player, names.end());
 		uint32_t start_lp = cur_yrp->params.start_lp;
 		uint32_t start_hand = cur_yrp->params.start_hand;
 		uint32_t draw_count = cur_yrp->params.draw_count;
@@ -124,8 +123,8 @@ namespace ygo {
 		pduel = mainGame->SetupDuel({ { seed[0], seed[1], seed[2], seed[3] }, cur_yrp->params.duel_flags, team, team });
 		mainGame->dInfo.duel_params = cur_yrp->params.duel_flags;
 		mainGame->dInfo.duel_field = mainGame->GetMasterRule(mainGame->dInfo.duel_params);
-		matManager.SetActiveVertices((mainGame->dInfo.duel_params & DUEL_3_COLUMNS_FIELD) ? 1 : 0,
-									 (mainGame->dInfo.duel_field == 3 || mainGame->dInfo.duel_field == 5) ? 0 : 1);
+		matManager.SetActiveVertices(mainGame->dInfo.HasFieldFlag(DUEL_3_COLUMNS_FIELD),
+									 !mainGame->dInfo.HasFieldFlag(DUEL_SEPARATE_PZONE));
 		mainGame->SetPhaseButtons();
 		mainGame->dInfo.lp[0] = start_lp;
 		mainGame->dInfo.lp[1] = start_lp;
