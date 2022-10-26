@@ -28,6 +28,9 @@ class IReadFile;
 #define SCOPE_RUSH       0x200
 #define SCOPE_LEGEND     0x400
 #define SCOPE_HIDDEN     0x1000
+/////zdiy/////
+#define SCOPE_ZCG     0x2000
+/////zdiy/////
 
 #define SCOPE_OCG_TCG    (SCOPE_OCG | SCOPE_TCG)
 #define SCOPE_OFFICIAL   (SCOPE_OCG | SCOPE_TCG | SCOPE_PRERELEASE)
@@ -124,6 +127,9 @@ public:
 	inline bool LoadDB(irr::io::IReadFile* reader) {
 		return ParseDB(OpenDb(reader));
 	}
+	/////zdiy/////
+	uint64_t LoadZRace(uint32_t code);
+	/////zdiy/////
 	bool LoadStrings(const epro::path_string& file);
 	bool LoadLocaleStrings(const epro::path_string& file);
 	bool LoadIdsMapping(const epro::path_string& file);
@@ -151,12 +157,17 @@ public:
 	std::wstring GetNumString(int num, bool bracket = false) const;
 	epro::wstringview FormatLocation(uint32_t location, int sequence) const;
 	std::wstring FormatAttribute(uint32_t attribute) const;
-	std::wstring FormatRace(uint64_t race, bool isSkill = false) const;
+	/////zdiy/////
+	//std::wstring FormatRace(uint64_t race, bool isSkill = false) const;
+	std::wstring FormatRace(uint64_t race, bool isSkill = false,bool isZCG = false) const;
+	/////zdiy/////
 	std::wstring FormatType(uint32_t type) const;
 	std::wstring FormatScope(uint32_t scope, bool hideOCGTCG = false) const;
 	std::wstring FormatSetName(const std::vector<uint16_t>& setcodes) const;
 	std::wstring FormatLinkMarker(uint32_t link_marker) const;
-
+	/////zdiy/////
+	inline bool IsZRace(uint64_t race) { return race >= 0x100000000 ? true: false;}
+	/////zdiy/////
 	std::unordered_map<uint32_t, CardDataM> cards;
 
 	static constexpr auto unknown_string = L"???"_sv;

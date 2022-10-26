@@ -665,21 +665,36 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(wANAttribute, 562);
 	wANAttribute->getCloseButton()->setVisible(false);
 	wANAttribute->setVisible(false);
-	for(int i = 0; i < 7; ++i) {
+	/////zdiy/////
+	//for(int i = 0; i < 7; ++i) {
+	for(int i = 0; i < 8; ++i) {
 		chkAttribute[i] = env->addCheckBox(false, Scale(10 + (i % 4) * 80, 25 + (i / 4) * 25, 90 + (i % 4) * 80, 50 + (i / 4) * 25),
 										   wANAttribute, CHECK_ATTRIBUTE, gDataManager->GetSysString(1010 + i).data());
 		defaultStrings.emplace_back(chkAttribute[i], 1010 + i);
 	}
 	//announce race
-	wANRace = env->addWindow(Scale(480, 200, 850, 410), false, gDataManager->GetSysString(563).data());
+	//wANRace = env->addWindow(Scale(480, 200, 850, 410), false, gDataManager->GetSysString(563).data());
+	/////zdiy/////
+	wANRace = env->addWindow(Scale(480, 200, 850, 470), false, gDataManager->GetSysString(563).data());
+	/////zdiy/////
 	defaultStrings.emplace_back(wANRace, 563);
 	wANRace->getCloseButton()->setVisible(false);
 	wANRace->setVisible(false);
+	/////zdiy/////
 	for(int i = 0; i < 25; ++i) {
 		chkRace[i] = env->addCheckBox(false, Scale(10 + (i % 4) * 90, 25 + (i / 4) * 25, 100 + (i % 4) * 90, 50 + (i / 4) * 25),
 									  wANRace, CHECK_RACE, gDataManager->GetSysString(1020 + i).data());
 		defaultStrings.emplace_back(chkRace[i], 1020 + i);
 	}
+	/////zdiy/////
+	int j = 0;
+	for(int i = 25; i < 36; ++i) {
+		chkRace[i] = env->addCheckBox(false, Scale(10 + (i % 4) * 90, 25 + (i / 4) * 25, 100 + (i % 4) * 90, 50 + (i / 4) * 25),
+			wANRace, CHECK_RACE, gDataManager->GetSysString(1082 + j).data());
+		defaultStrings.emplace_back(chkRace[i], 1082 + j);
+		++j;
+	}
+	/////zdiy/////
 	//selection hint
 	stHintMsg = env->addStaticText(L"", Scale(500, 60, 820, 90), true, false, 0, -1, false);
 	stHintMsg->setBackgroundColor(skin::DUELFIELD_TOOLTIP_TEXT_BACKGROUND_COLOR_VAL);
@@ -3348,7 +3363,10 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type) {
 		stSetName->setText(epro::format(L"{}{}", gDataManager->GetSysString(1329), gDataManager->FormatSetName(setcodes)).data());
 	}
 	if(cd->type & TYPE_MONSTER) {
-		stInfo->setText(epro::format(L"[{}] {} {}", gDataManager->FormatType(cd->type), gDataManager->FormatAttribute(cd->attribute), gDataManager->FormatRace(cd->race)).data());
+		/////zdiy/////
+		//stInfo->setText(epro::format(L"[{}] {} {}", gDataManager->FormatType(cd->type), gDataManager->FormatAttribute(cd->attribute), gDataManager->FormatRace(cd->race)).data());
+		stInfo->setText(epro::format(L"[{}] {} {}", gDataManager->FormatType(cd->type), gDataManager->FormatAttribute(cd->attribute), gDataManager->FormatRace(cd->race, false, gDataManager->IsZRace(cd->race))).data());
+		/////zdiy/////
 		std::wstring text;
 		if(cd->type & TYPE_LINK){
 			if(cd->attack < 0)
@@ -3400,7 +3418,10 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type) {
 	} else {
 		if(cd->type & TYPE_SKILL) { // TYPE_SKILL created by hints
 			// Hack: Race encodes the character for now
-			stInfo->setText(epro::format(L"[{}|{}]", gDataManager->FormatRace(cd->race, true), gDataManager->FormatType(cd->type)).data());
+			//stInfo->setText(epro::format(L"[{}|{}]", gDataManager->FormatRace(cd->race, true), gDataManager->FormatType(cd->type)).data());
+			/////zdiy/////
+			stInfo->setText(epro::format(L"[{}|{}]", gDataManager->FormatRace(cd->race, true ,gDataManager->IsZRace(cd->race)), gDataManager->FormatType(cd->type)).data());
+			/////zdiy/////
 		} else {
 			stInfo->setText(epro::format(L"[{}]", gDataManager->FormatType(cd->type)).data());
 		}
@@ -3988,6 +4009,9 @@ void Game::ReloadCBLimit() {
 			//kdiy//////
 			// cbLimit->addItem(gDataManager->GetSysString(1265).data(), DeckBuilder::LIMITATION_FILTER_ANIME);
 			//kdiy//////
+			/////zdiy/////
+			cbLimit->addItem(gDataManager->GetSysString(1906).data(), DeckBuilder::LIMITATION_FILTER_ZCG);
+			/////zdiy/////
 			cbLimit->addItem(gDataManager->GetSysString(1266).data(), DeckBuilder::LIMITATION_FILTER_ILLEGAL);
 			cbLimit->addItem(gDataManager->GetSysString(1267).data(), DeckBuilder::LIMITATION_FILTER_VIDEOGAME);
 			cbLimit->addItem(gDataManager->GetSysString(1268).data(), DeckBuilder::LIMITATION_FILTER_CUSTOM);
@@ -4000,8 +4024,11 @@ void Game::ReloadCBLimit() {
 void Game::ReloadCBAttribute() {
 	cbAttribute->clear();
 	cbAttribute->addItem(gDataManager->GetSysString(1310).data(), 0);
-	for (uint32_t filter = 0x1, i = 1010; filter <= ATTRIBUTE_DIVINE; filter <<= 1, i++)
+	//for (uint32_t filter = 0x1, i = 1010; filter <= ATTRIBUTE_DIVINE; filter <<= 1, i++)
+	/////zdiy/////
+	for (uint32_t filter = 0x1, i = 1010; filter <= ATTRIBUTE_HADES; filter <<= 1, i++)
 		cbAttribute->addItem(gDataManager->GetSysString(i).data(), filter);
+	/////zdiy/////
 }
 void Game::ReloadCBRace() {
 	cbRace->clear();
@@ -4013,6 +4040,13 @@ void Game::ReloadCBRace() {
 		cbRace->addItem(gDataManager->GetSysString(i).data(), filter);
 	for(uint32_t i = 2500; filter <= RACE_MAX; i++, filter <<= 1)
 		cbRace->addItem(gDataManager->GetSysString(i).data(), filter);
+
+	///////zdiy/////
+	static constexpr auto ZCG_RACE_MAX = 0x40000000000;
+	uint64_t z_filter = 0x100000000; 
+	for(uint32_t i = 1082; z_filter <= ZCG_RACE_MAX; i++, z_filter <<= 1)
+		cbRace->addItem(gDataManager->GetSysString(i).data(),0x3);
+	///////zdiy/////
 }
 void Game::ReloadCBFilterRule() {
 	cbFilterRule->clear();
@@ -4270,7 +4304,10 @@ void Game::OnResize() {
 	wANNumber->setRelativePosition(ResizeWin(550, 200, 780, 295));
 	wANCard->setRelativePosition(ResizeWin(430, 170, 840, 370));
 	wANAttribute->setRelativePosition(ResizeWin(500, 200, 830, 285));
-	wANRace->setRelativePosition(ResizeWin(480, 200, 850, 410));
+	//wANRace->setRelativePosition(ResizeWin(480, 200, 850, 410));
+	/////zdiy/////
+	wANRace->setRelativePosition(ResizeWin(480, 200, 850, 470));
+	/////zdiy/////
 	wFileSave->setRelativePosition(ResizeWin(510, 200, 820, 320));
 	stHintMsg->setRelativePosition(ResizeWin(500, 60, 820, 90));
 

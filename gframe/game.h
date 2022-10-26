@@ -673,10 +673,16 @@ public:
 	irr::gui::IGUIButton* btnANCardOK;
 	//announce attribute
 	irr::gui::IGUIWindow* wANAttribute;
-	irr::gui::IGUICheckBox* chkAttribute[7];
+	/////zdiy/////
+	//irr::gui::IGUICheckBox* chkAttribute[7];
+	irr::gui::IGUICheckBox* chkAttribute[8];
+	/////zdiy/////
 	//announce race
 	irr::gui::IGUIWindow* wANRace;
-	irr::gui::IGUICheckBox* chkRace[25];
+	/////zdiy/////
+	//irr::gui::IGUICheckBox* chkRace[25];
+	irr::gui::IGUICheckBox* chkRace[36];
+	/////zdiy/////
 	//cmd menu
 	irr::gui::IGUIWindow* wCmdMenu;
 	irr::gui::IGUIButton* btnActivate;

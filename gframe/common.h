@@ -88,6 +88,9 @@
 #define ATTRIBUTE_LIGHT  0x10
 #define ATTRIBUTE_DARK   0x20
 #define ATTRIBUTE_DIVINE 0x40
+/////zdiy/////
+#define ATTRIBUTE_HADES 0x80
+/////zdiy/////
 
 //Races
 #define RACE_WARRIOR      0x1
@@ -116,6 +119,22 @@
 #define RACE_WYRM         0x800000
 #define RACE_CYBERSE      0x1000000
 #define RACE_CYBORG       0x2000000
+
+////zdiy////
+/*------------ZCG----------------*/
+#define RACE_DEVIL       0x100000000
+#define RACE_EVIL		 0x200000000
+#define RACE_CHAOSGOD   0x400000000
+#define RACE_CREATORGOD_II   0x800000000
+#define RACE_LEGENDATYDIVINE    0x1000000000
+#define RACE_LEGENDATYGOD    0x2000000000
+#define RACE_LEGENDATYCHAOSGOD    0x4000000000
+#define RACE_SEASERPENTDIVINE 0x8000000000
+#define RACE_GOD 0x10000000000
+#define RACE_DUELIST 0x20000000000
+#define RACE_LEAD 0x40000000000
+/*------------ZCG----------------*/
+////zdiy//// 
 
 //Reasons
 #define REASON_DESTROY     0x1

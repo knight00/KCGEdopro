@@ -31,6 +31,9 @@ public:
 		LIMITATION_FILTER_RUSH,
 		LIMITATION_FILTER_LEGEND,
 		LIMITATION_FILTER_ANIME,
+		/////zdiy/////
+		LIMITATION_FILTER_ZCG,
+		/////zdiy/////
 		LIMITATION_FILTER_ILLEGAL,
 		LIMITATION_FILTER_VIDEOGAME,
 		LIMITATION_FILTER_CUSTOM,
@@ -55,6 +58,9 @@ public:
 	void StartFilter(bool force_refresh = false);
 	void RefreshCurrentDeck();
 private:
+	/////zdiy/////
+	uint64_t GetItemZRace(uint32_t index);
+	/////zdiy/////
 	void GetHoveredCard();
 	bool FiltersChanged();
 	void FilterCards(bool force_refresh = false);

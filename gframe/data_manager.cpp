@@ -135,7 +135,7 @@ bool DataManager::ParseDB(sqlite3* pDB) {
 			cd.attack = 8888888;
 		else
 		/////////////kdiy///////
-		cd.attack = sqlite3_column_int(pStmt, 5);
+			cd.attack = sqlite3_column_int(pStmt, 5);
 		/////////////kdiy///////
 		int defense = sqlite3_column_int(pStmt, 6);
 		if (defense >= 999999)
@@ -158,13 +158,15 @@ bool DataManager::ParseDB(sqlite3* pDB) {
 		/////////////kdiy///////	
 		else
 			cd.level = level & 0xff;
-
 		cd.lscale = (level >> 24) & 0xff;
 		cd.rscale = (level >> 16) & 0xff;
 		cd.race = static_cast<uint64_t>(sqlite3_column_int64(pStmt, 8));
 		cd.attribute = static_cast<uint32_t>(sqlite3_column_int64(pStmt, 9));
 		cd.category = static_cast<uint32_t>(sqlite3_column_int64(pStmt, 10));
-
+		/////zdiy/////
+		if((cd.type & TYPE_MONSTER) && !cd.race)
+		cd.race = LoadZRace(cd.code);
+		/////zdiy/////
 		if(GetWstring(cs.name, pStmt, 11))
 			cs.uppercase_name = Utils::ToUpperNoAccents(cs.name);
 		else
@@ -187,6 +189,103 @@ bool DataManager::ParseDB(sqlite3* pDB) {
 	sqlite3_close(pDB);
 	return true;
 }
+/////zdiy//////
+uint64_t DataManager::LoadZRace(uint32_t code) {
+	switch (code)
+	{
+	case 77240064:
+	case 77240065:
+	case 77240066:
+		return RACE_DEVIL;
+	case 77240315:
+	case 77239931:
+	case 77239932:
+	case 77239933:
+	case 77240201:
+		return RACE_EVIL;
+	case 77240200:
+		return RACE_CHAOSGOD;
+	case 77239905:
+		return RACE_CREATORGOD_II;
+	case 77238480:
+	case 77239205:
+	case 77239211:
+	case 77239212:
+	case 77239213:
+	case 77239214:
+	case 77239215:
+	case 77239216:
+	case 77239218:
+	case 77239219:
+	case 77239220:
+	case 77239221:
+	case 77239222:
+	case 77239223:
+	case 77239225:
+	case 77239229:
+	case 77239231:
+	case 77239232:
+	case 77239233:
+	case 77239238:
+	case 77240221:
+	case 77240259:
+	case 77240260:
+	case 77240261:
+	case 77240458:
+	case 77240461:
+	case 77240462:
+	case 77240463:
+	case 77240464:
+	case 77240465:
+	case 77240466:
+	case 77240467:
+	case 77240468:
+	case 77240469:
+	case 77240481:
+	case 77240482:
+		return RACE_LEGENDATYDIVINE;
+	case 77239200:
+	case 77239201:
+	case 77239202:
+	case 77239203:
+	case 77239204:
+	case 77239206:
+	case 77239207:
+	case 77239208:
+	case 77239217:
+	case 77239224:
+	case 77239227:
+	case 77239228:
+	case 77239235:
+	case 77239236:
+	case 77239295:
+	case 77240024:
+	case 77240076:
+	case 77240262:
+	case 77240265:
+		return RACE_LEGENDATYGOD;
+	case 77239934:
+	case 77240136:
+		return RACE_LEGENDATYCHAOSGOD;
+	case 77239230:
+	case 77239292:
+	case 77240472:
+		return RACE_SEASERPENTDIVINE;
+	case 77239679:
+		return RACE_GOD;
+	case 77239870:
+	case 77239871:
+	case 77239872:
+		return RACE_DUELIST;
+	case 77239135:
+	case 77239239:
+	case 77239920:
+		return RACE_LEAD;
+	default:
+		return 0;
+	}
+}
+/////zdiy//////
 bool DataManager::ParseLocaleDB(sqlite3* pDB) {
 	if(pDB == nullptr)
 		return false;
@@ -458,7 +557,9 @@ epro::wstringview DataManager::FormatLocation(uint32_t location, int sequence) c
 }
 std::wstring DataManager::FormatAttribute(uint32_t attribute) const {
 	std::wstring res;
-	for(uint32_t i = 1010, filter = 1; filter <= ATTRIBUTE_DIVINE; filter <<= 1, ++i) {
+	/////zdiy/////
+	//for(uint32_t i = 1010, filter = 1; filter <= ATTRIBUTE_DIVINE; filter <<= 1, ++i) {
+	for(uint32_t i = 1010, filter = 1; filter <= ATTRIBUTE_HADES; filter <<= 1, ++i) {
 		if(attribute & filter) {
 			if(!res.empty())
 				res += L'|';
@@ -482,7 +583,9 @@ static std::wstring FormatSkill(uint64_t skill_type) {
 		return std::wstring{ DataManager::unknown_string };
 	return res;
 }
-std::wstring DataManager::FormatRace(uint64_t race, bool isSkill) const {
+//std::wstring DataManager::FormatRace(uint64_t race, bool isSkill) const {
+/////zdiy/////
+std::wstring DataManager::FormatRace(uint64_t race, bool isSkill,bool isZCG) const {
 	if(isSkill) return FormatSkill(race);
 	std::wstring res;
 	uint32_t i = 1020;
@@ -493,14 +596,39 @@ std::wstring DataManager::FormatRace(uint64_t race, bool isSkill) const {
 			appendstring(res, GetSysString(i));
 		}
 	}
+	/*
 	//strings 1050 above are already used, read the rest from this other range
 	for(i = 2500; race; race >>= 1, ++i) {
+		if(race & 0x1u) {
+		if(!res.empty())
+		res += L'|';
+		appendstring(res, GetSysString(i));
+		}
+	}
+	*/
+	/////zdiy////
+	if(isZCG) race >>= 2;
+	else {
+		//strings 1050 above are already used, read the rest from this other range
+		for(i = 2500; race; race >>= 1, ++i) {
+			if(race & 0x1u) {
+				if(!res.empty())
+					res += L'|';
+				appendstring(res, GetSysString(i));
+			}
+		}
+	}
+	/////zdiy////
+
+	/////zdiy/////
+	for(i = 1082; race && i <= 1092; race >>= 1, ++i) {
 		if(race & 0x1u) {
 			if(!res.empty())
 				res += L'|';
 			appendstring(res, GetSysString(i));
 		}
 	}
+	/////zdiy/////
 	if(res.empty())
 		return std::wstring{ unknown_string };
 	return res;
@@ -535,7 +663,12 @@ std::wstring DataManager::FormatScope(uint32_t scope, bool hideOCGTCG) const {
 		{SCOPE_CUSTOM, 1268},
 		{SCOPE_SPEED, 1910},
 		{SCOPE_PRERELEASE, 1903},
-		{SCOPE_RUSH, 1911}
+		{SCOPE_RUSH, 1911},
+		/////zdiy/////
+		{SCOPE_ZCG, 1906}
+		/////zdiy/////
+
+
 	};
 	if (hideOCGTCG && scope == SCOPE_OCG_TCG) return L"";
 	std::wstring buffer;

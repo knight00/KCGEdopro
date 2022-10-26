@@ -1433,7 +1433,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			break;
 		}
 		case HINT_RACE: {
-			std::wstring text(epro::format(gDataManager->GetSysString(1511), gDataManager->FormatRace(data)));
+			//std::wstring text(epro::format(gDataManager->GetSysString(1511), gDataManager->FormatRace(data)));
+			///zdiy////
+			std::wstring text(epro::format(gDataManager->GetSysString(1511), gDataManager->FormatRace(data, false,gDataManager->IsZRace(data))));
+			///zdiy////
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 			mainGame->AddLog(text);
 			mainGame->stACMessage->setText(text.data());
@@ -4566,6 +4569,15 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				mainGame->chkRace[i]->setVisible(true);
 			else mainGame->chkRace[i]->setVisible(false);
 		}
+		/////zdiy/////
+		uint64_t z_filter = 0x100000000;
+		for(int i = 25; i < 36;  ++i, z_filter <<= 1) {
+			mainGame->chkRace[i]->setChecked(false);
+			if(z_filter & available)
+				mainGame->chkRace[i]->setVisible(true);
+			else mainGame->chkRace[i]->setVisible(false);
+		}
+		/////zdiy/////
 		std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 		mainGame->wANRace->setText(gDataManager->GetDesc(select_hint ? select_hint : 563, mainGame->dInfo.compat_mode).data());
 		mainGame->PopupElement(mainGame->wANRace);
@@ -4576,7 +4588,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		/*const auto player = */mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		mainGame->dField.announce_count = BufferIO::Read<uint8_t>(pbuf);
 		const auto available = BufferIO::Read<uint32_t>(pbuf);
-		for(int i = 0, filter = 0x1; i < 7; ++i, filter <<= 1) {
+		/////zdiy/////
+		//for(int i = 0, filter = 0x1; i < 7; ++i, filter <<= 1) {
+		for(int i = 0, filter = 0x1; i < 8; ++i, filter <<= 1) {
 			mainGame->chkAttribute[i]->setChecked(false);
 			if(filter & available)
 				mainGame->chkAttribute[i]->setVisible(true);
