@@ -65,6 +65,11 @@ local ygopro_config=function(static_core)
 		defines { "EK=" .. _OPTIONS["ek"] }
 	end
 	--------kdiy-----
+	if _OPTIONS["bundled-font"] then
+		defines "YGOPRO_USE_BUNDLED_FONT"
+	else
+		excludes { "CGUITTFont/bundled_font.cpp" }
+	end
 	includedirs "../ocgcore"
 	links { "clzma", "Irrlicht" }
 	filter "system:macosx or ios"
