@@ -668,19 +668,19 @@ void Game::Initialize() {
 	/////zdiy/////
 	//for(int i = 0; i < 7; ++i) {
 	for(int i = 0; i < 8; ++i) {
+	/////zdiy/////
 		chkAttribute[i] = env->addCheckBox(false, Scale(10 + (i % 4) * 80, 25 + (i / 4) * 25, 90 + (i % 4) * 80, 50 + (i / 4) * 25),
 										   wANAttribute, CHECK_ATTRIBUTE, gDataManager->GetSysString(1010 + i).data());
 		defaultStrings.emplace_back(chkAttribute[i], 1010 + i);
 	}
 	//announce race
-	//wANRace = env->addWindow(Scale(480, 200, 850, 410), false, gDataManager->GetSysString(563).data());
 	/////zdiy/////
+	//wANRace = env->addWindow(Scale(480, 200, 850, 410), false, gDataManager->GetSysString(563).data());
 	wANRace = env->addWindow(Scale(480, 200, 850, 470), false, gDataManager->GetSysString(563).data());
 	/////zdiy/////
 	defaultStrings.emplace_back(wANRace, 563);
 	wANRace->getCloseButton()->setVisible(false);
 	wANRace->setVisible(false);
-	/////zdiy/////
 	for(int i = 0; i < 25; ++i) {
 		chkRace[i] = env->addCheckBox(false, Scale(10 + (i % 4) * 90, 25 + (i / 4) * 25, 100 + (i % 4) * 90, 50 + (i / 4) * 25),
 									  wANRace, CHECK_RACE, gDataManager->GetSysString(1020 + i).data());
@@ -3418,8 +3418,8 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type) {
 	} else {
 		if(cd->type & TYPE_SKILL) { // TYPE_SKILL created by hints
 			// Hack: Race encodes the character for now
-			//stInfo->setText(epro::format(L"[{}|{}]", gDataManager->FormatRace(cd->race, true), gDataManager->FormatType(cd->type)).data());
 			/////zdiy/////
+			//stInfo->setText(epro::format(L"[{}|{}]", gDataManager->FormatRace(cd->race, true), gDataManager->FormatType(cd->type)).data());
 			stInfo->setText(epro::format(L"[{}|{}]", gDataManager->FormatRace(cd->race, true ,gDataManager->IsZRace(cd->race)), gDataManager->FormatType(cd->type)).data());
 			/////zdiy/////
 		} else {
@@ -4024,11 +4024,11 @@ void Game::ReloadCBLimit() {
 void Game::ReloadCBAttribute() {
 	cbAttribute->clear();
 	cbAttribute->addItem(gDataManager->GetSysString(1310).data(), 0);
+	/////zdiy/////
 	//for (uint32_t filter = 0x1, i = 1010; filter <= ATTRIBUTE_DIVINE; filter <<= 1, i++)
-	/////zdiy/////
 	for (uint32_t filter = 0x1, i = 1010; filter <= ATTRIBUTE_HADES; filter <<= 1, i++)
-		cbAttribute->addItem(gDataManager->GetSysString(i).data(), filter);
 	/////zdiy/////
+		cbAttribute->addItem(gDataManager->GetSysString(i).data(), filter);
 }
 void Game::ReloadCBRace() {
 	cbRace->clear();
@@ -4040,7 +4040,6 @@ void Game::ReloadCBRace() {
 		cbRace->addItem(gDataManager->GetSysString(i).data(), filter);
 	for(uint32_t i = 2500; filter <= RACE_MAX; i++, filter <<= 1)
 		cbRace->addItem(gDataManager->GetSysString(i).data(), filter);
-
 	///////zdiy/////
 	static constexpr auto ZCG_RACE_MAX = 0x40000000000;
 	uint64_t z_filter = 0x100000000; 
@@ -4304,8 +4303,8 @@ void Game::OnResize() {
 	wANNumber->setRelativePosition(ResizeWin(550, 200, 780, 295));
 	wANCard->setRelativePosition(ResizeWin(430, 170, 840, 370));
 	wANAttribute->setRelativePosition(ResizeWin(500, 200, 830, 285));
-	//wANRace->setRelativePosition(ResizeWin(480, 200, 850, 410));
 	/////zdiy/////
+	//wANRace->setRelativePosition(ResizeWin(480, 200, 850, 410));
 	wANRace->setRelativePosition(ResizeWin(480, 200, 850, 470));
 	/////zdiy/////
 	wFileSave->setRelativePosition(ResizeWin(510, 200, 820, 320));

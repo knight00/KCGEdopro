@@ -1433,8 +1433,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			break;
 		}
 		case HINT_RACE: {
-			//std::wstring text(epro::format(gDataManager->GetSysString(1511), gDataManager->FormatRace(data)));
 			///zdiy////
+			//std::wstring text(epro::format(gDataManager->GetSysString(1511), gDataManager->FormatRace(data)));
 			std::wstring text(epro::format(gDataManager->GetSysString(1511), gDataManager->FormatRace(data, false,gDataManager->IsZRace(data))));
 			///zdiy////
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
@@ -4591,6 +4591,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		/////zdiy/////
 		//for(int i = 0, filter = 0x1; i < 7; ++i, filter <<= 1) {
 		for(int i = 0, filter = 0x1; i < 8; ++i, filter <<= 1) {
+		/////zdiy/////
 			mainGame->chkAttribute[i]->setChecked(false);
 			if(filter & available)
 				mainGame->chkAttribute[i]->setVisible(true);

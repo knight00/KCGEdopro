@@ -155,7 +155,7 @@ bool DataManager::ParseDB(sqlite3* pDB) {
 		/////////////kdiy///////
 		else if ((level & 0xff) > 0xf)
 			cd.level = -((level & 0xff) - 0xf);
-		/////////////kdiy///////	
+		/////////////kdiy///////
 		else
 			cd.level = level & 0xff;
 		cd.lscale = (level >> 24) & 0xff;
@@ -165,7 +165,7 @@ bool DataManager::ParseDB(sqlite3* pDB) {
 		cd.category = static_cast<uint32_t>(sqlite3_column_int64(pStmt, 10));
 		/////zdiy/////
 		if((cd.type & TYPE_MONSTER) && !cd.race)
-		cd.race = LoadZRace(cd.code);
+		    cd.race = LoadZRace(cd.code);
 		/////zdiy/////
 		if(GetWstring(cs.name, pStmt, 11))
 			cs.uppercase_name = Utils::ToUpperNoAccents(cs.name);
@@ -560,6 +560,7 @@ std::wstring DataManager::FormatAttribute(uint32_t attribute) const {
 	/////zdiy/////
 	//for(uint32_t i = 1010, filter = 1; filter <= ATTRIBUTE_DIVINE; filter <<= 1, ++i) {
 	for(uint32_t i = 1010, filter = 1; filter <= ATTRIBUTE_HADES; filter <<= 1, ++i) {
+	/////zdiy/////
 		if(attribute & filter) {
 			if(!res.empty())
 				res += L'|';
@@ -583,9 +584,10 @@ static std::wstring FormatSkill(uint64_t skill_type) {
 		return std::wstring{ DataManager::unknown_string };
 	return res;
 }
-//std::wstring DataManager::FormatRace(uint64_t race, bool isSkill) const {
 /////zdiy/////
+//std::wstring DataManager::FormatRace(uint64_t race, bool isSkill) const {
 std::wstring DataManager::FormatRace(uint64_t race, bool isSkill,bool isZCG) const {
+/////zdiy/////
 	if(isSkill) return FormatSkill(race);
 	std::wstring res;
 	uint32_t i = 1020;
@@ -596,20 +598,11 @@ std::wstring DataManager::FormatRace(uint64_t race, bool isSkill,bool isZCG) con
 			appendstring(res, GetSysString(i));
 		}
 	}
-	/*
 	//strings 1050 above are already used, read the rest from this other range
-	for(i = 2500; race; race >>= 1, ++i) {
-		if(race & 0x1u) {
-		if(!res.empty())
-		res += L'|';
-		appendstring(res, GetSysString(i));
-		}
-	}
-	*/
-	/////zdiy////
-	if(isZCG) race >>= 2;
+    /////zdiy/////
+	if(isZCG)
+	    race >>= 2;
 	else {
-		//strings 1050 above are already used, read the rest from this other range
 		for(i = 2500; race; race >>= 1, ++i) {
 			if(race & 0x1u) {
 				if(!res.empty())
@@ -618,17 +611,15 @@ std::wstring DataManager::FormatRace(uint64_t race, bool isSkill,bool isZCG) con
 			}
 		}
 	}
-	/////zdiy////
-
-	/////zdiy/////
+	// for(i = 2500; race; race >>= 1, ++i) {
 	for(i = 1082; race && i <= 1092; race >>= 1, ++i) {
+	/////zdiy/////
 		if(race & 0x1u) {
-			if(!res.empty())
-				res += L'|';
-			appendstring(res, GetSysString(i));
+		if(!res.empty())
+		res += L'|';
+		appendstring(res, GetSysString(i));
 		}
 	}
-	/////zdiy/////
 	if(res.empty())
 		return std::wstring{ unknown_string };
 	return res;
