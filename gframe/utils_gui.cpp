@@ -110,13 +110,13 @@ irr::IrrlichtDevice* GUIUtils::CreateDevice(GameConfig* configs) {
 #endif
 #endif
 #ifndef __ANDROID__
-	params.WindowSize = irr::core::dimension2d<irr::u32>((irr::u32)(1024 * configs->dpi_scale), (irr::u32)(640 * configs->dpi_scale));
+	params.WindowSize = { (irr::u32)(1024 * configs->dpi_scale), (irr::u32)(640 * configs->dpi_scale) };
 #else
 	params.PrivateData = porting::app_global;
 	params.Bits = 24;
 	params.ZBufferBits = 16;
 	params.AntiAlias = 0;
-	params.WindowSize = irr::core::dimension2du(0, 0);
+	params.WindowSize = {};
 #endif
 	irr::IrrlichtDevice* device = irr::createDeviceEx(params);
 	if(!device)
@@ -150,8 +150,8 @@ irr::IrrlichtDevice* GUIUtils::CreateDevice(GameConfig* configs) {
 #endif
 #ifdef _WIN32
 	auto hInstance = static_cast<HINSTANCE>(GetModuleHandle(nullptr));
-	auto hSmallIcon = static_cast<HICON>(LoadImage(hInstance, MAKEINTRESOURCE(1), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR));
-	auto hBigIcon = static_cast<HICON>(LoadImage(hInstance, MAKEINTRESOURCE(1), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR));
+	auto hSmallIcon = static_cast<HICON>(LoadImage(hInstance, MAKEINTRESOURCE(1), IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CXSMICON), LR_DEFAULTCOLOR));
+	auto hBigIcon = static_cast<HICON>(LoadImage(hInstance, MAKEINTRESOURCE(1), IMAGE_ICON, GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON), LR_DEFAULTCOLOR));
 	auto hWnd = GetWindowHandle(driver);
 	SendMessage(hWnd, WM_SETICON, ICON_SMALL, reinterpret_cast<LPARAM>(hSmallIcon));
 	SendMessage(hWnd, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(hBigIcon));
@@ -195,7 +195,17 @@ bool GUIUtils::TakeScreenshot(irr::IrrlichtDevice* device) {
 	image->drop();
 	return written;
 }
+#if (IRRLICHT_VERSION_MAJOR==1 && IRRLICHT_VERSION_MINOR==9)
+void GUIUtils::ToggleFullscreen(irr::IrrlichtDevice* device, bool& fullscreen) {
+	(void)fullscreen;
+#ifdef EDOPRO_MACOS
+	EDOPRO_ToggleFullScreen();
+#elif defined(_WIN32) || (defined(__linux__) && !defined(__ANDROID__))
+	device->toggleFullscreen(!std::exchange(fullscreen, !fullscreen));
+#endif
+}
 
+#else
 #ifdef _WIN32
 //gcc on mingw can't convert lambda to __stdcall function
 static BOOL CALLBACK callback(HMONITOR hMon, HDC hdc, LPRECT lprcMonitor, LPARAM pData) {
@@ -204,15 +214,11 @@ static BOOL CALLBACK callback(HMONITOR hMon, HDC hdc, LPRECT lprcMonitor, LPARAM
 	return TRUE;
 }
 #endif
-
 void GUIUtils::ToggleFullscreen(irr::IrrlichtDevice* device, bool& fullscreen) {
 	(void)fullscreen;
 #ifdef EDOPRO_MACOS
 	EDOPRO_ToggleFullScreen();
 #elif defined(_WIN32) || (defined(__linux__) && !defined(__ANDROID__))
-#if IRRLICHT_VERSION_MAJOR==1 && IRRLICHT_VERSION_MINOR==9
-	device->toggleFullscreen(!std::exchange(fullscreen, !fullscreen));
-#else
 #ifdef _WIN32
 	static WINDOWPLACEMENT nonFullscreenSize;
 	static LONG_PTR nonFullscreenStyle;
@@ -319,9 +325,9 @@ void GUIUtils::ToggleFullscreen(irr::IrrlichtDevice* device, bool& fullscreen) {
 	XMapWindow(display, window);
 	XFlush(display);
 #endif
-#endif
 #endif //EDOPRO_MACOS
 }
+#endif
 
 void GUIUtils::ShowErrorWindow(epro::stringview context, epro::stringview message) {
 #ifdef _WIN32
@@ -361,6 +367,17 @@ void GUIUtils::ShowErrorWindow(epro::stringview context, epro::stringview messag
 	} else if(pid > 0)
 		(void)waitpid(pid, nullptr, 0);
 #endif
+}
+template<typename T>
+inline auto SetSwapInterval(T* driver, int interval) -> decltype(driver->setSwapInterval(interval)) {
+	driver->setSwapInterval(interval);
+}
+template<typename T>
+inline auto SetSwapInterval(T* driver, int interval) -> decltype(driver->setVsync(!!interval)) {
+	driver->setVsync(!!interval);
+}
+void GUIUtils::ToggleSwapInterval(irr::video::IVideoDriver* driver, int interval) {
+	SetSwapInterval(driver, interval);
 }
 
 std::string GUIUtils::SerializeWindowPosition(irr::IrrlichtDevice* device) {

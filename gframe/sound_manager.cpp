@@ -340,14 +340,11 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 // 	auto chant_it = ChantsList.find(key);
 // 	if(chant_it == ChantsList.end())
 // 		return false;
-// 	mixer->PlaySound(chant_it->second);
-// 	return true;
-// #else
-// 	return false;	
+// 	return mixer->PlaySound(chant_it->second);
 	if(player < 0) return false;
 	if(code == 0) {
 		int i = -1;
-		if(chant == CHANT::SET) i = 0;		
+		if(chant == CHANT::SET) i = 0;
 		if(chant == CHANT::EQUIP) i = 1;
 		if(chant == CHANT::DESTROY) i = 2;
 		if(chant == CHANT::BANISH) i = 3;
@@ -364,8 +361,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 		if(count > 0) {
 			int bgm = (std::uniform_int_distribution<>(0, count - 1))(rnd);
 			std::string BGMName = list[bgm];
-			mixer->PlaySound(BGMName);
-			return true;
+			return mixer->PlaySound(BGMName);
 		}
 	} else {
 		auto key = std::make_pair(chant, code);
@@ -412,8 +408,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 						}
 					}
 					if(esound == "" || extrasound == 0) return false;
-					mixer->PlaySound(esound);
-					return true;
+					return mixer->PlaySound(esound);
 				}
 				return false;
 			} else {
@@ -432,12 +427,10 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 				int count = list.size();
 				if (count > 0) {
 					int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-					mixer->PlaySound(list[soundno]);
-					return true;
+					return mixer->PlaySound(list[soundno]);
 				}
 			}
 		}
-		//mixer->PlaySound(chant_it2->second);
 		return true;
 	}
 	return false;
