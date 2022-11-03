@@ -895,7 +895,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				uint64_t z_filter = 0x100000000;
 				for(int i = 25; i < 36;  ++i, z_filter <<= 1) {
 					if(mainGame->chkRace[i]->isChecked()) {
-						rac |= filter;
+						rac |= z_filter;
 						count++;
 					}
 				}

@@ -129,6 +129,7 @@ public:
 	}
 	/////zdiy/////
 	uint64_t LoadZRace(uint32_t code);
+	uint32_t LoadZAttribute(uint32_t code); 
 	/////zdiy/////
 	bool LoadStrings(const epro::path_string& file);
 	bool LoadLocaleStrings(const epro::path_string& file);

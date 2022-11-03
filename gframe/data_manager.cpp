@@ -166,6 +166,8 @@ bool DataManager::ParseDB(sqlite3* pDB) {
 		/////zdiy/////
 		if((cd.type & TYPE_MONSTER) && !cd.race)
 		    cd.race = LoadZRace(cd.code);
+		if((cd.type & TYPE_MONSTER) && !cd.attribute)
+			cd.attribute = LoadZAttribute(cd.code);
 		/////zdiy/////
 		if(GetWstring(cs.name, pStmt, 11))
 			cs.uppercase_name = Utils::ToUpperNoAccents(cs.name);
@@ -190,6 +192,32 @@ bool DataManager::ParseDB(sqlite3* pDB) {
 	return true;
 }
 /////zdiy//////
+uint32_t DataManager::LoadZAttribute(uint32_t code) {
+	switch (code)
+	{
+	case 77239038:
+	case 77239039:
+	case 77239040:
+	case 77239041:
+	case 77239042:
+	case 77239043:
+	case 77239044:
+	case 77239045:
+	case 77239046:
+	case 77239047:
+	case 77239048:
+	case 77239049:
+	case 77239050:
+	case 77239051:
+	case 77239052:
+	case 77239053:
+	case 77239054:
+	case 77240303:
+		return ATTRIBUTE_HADES;
+	default:
+		return 0;
+	}
+}
 uint64_t DataManager::LoadZRace(uint32_t code) {
 	switch (code)
 	{
@@ -243,6 +271,7 @@ uint64_t DataManager::LoadZRace(uint32_t code) {
 	case 77240469:
 	case 77240481:
 	case 77240482:
+	case 77239302:
 		return RACE_LEGENDATYDIVINE;
 	case 77239200:
 	case 77239201:
