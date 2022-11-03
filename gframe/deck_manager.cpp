@@ -181,7 +181,7 @@ static DeckError CheckCards(const Deck::Vector& cards, LFList const* curlist,
 			return ret.type = DeckError::UNOFFICIALCARD, ret;
 		///////kdiy///////////////
 		case DuelAllowedCards::ALLOWED_CARDS_WITH_ANIME:
-			if (cit->ot & 0x1 || cit->ot & 0x2 || cit->ot & 0x100 || cit->ot & 0x4 || cit->ot & 0x10 || cit->ot & 0x200 || cit->ot & 0x400)
+			if (cit->ot & 0x1 || cit->ot & 0x2 || cit->ot & 0x4 || cit->ot & 0x10 || cit->ot & 0x100 || cit->ot & 0x200 || cit->ot & 0x400)
 				break;
 			return ret.type = DeckError::UNOFFICIALCARD, ret;
 		///////kdiy///////////////

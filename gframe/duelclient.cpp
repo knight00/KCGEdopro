@@ -1540,17 +1540,17 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			auto text = gDataManager->GetDesc(data, mainGame->dInfo.compat_mode).data();
 			gSoundManager->PlayCustomMusic(Utils::ToUTF8IfNeeded(Utils::ToPathString(text)));
 			break;
-		}	
+		}
 		case HINT_ANIME: {
 			auto text = gDataManager->GetDesc(data, mainGame->dInfo.compat_mode).data();
 			PlayAnimeC(text, true);
 			break;
-		}	
+		}
 		case HINT_BGM: {
 			auto text = gDataManager->GetDesc(data, mainGame->dInfo.compat_mode).data();
 			gSoundManager->PlayCustomBGM(Utils::ToUTF8IfNeeded(Utils::ToPathString(text)));
 			break;
-		}	
+		}
 		case HINT_AVATAR: {
 			auto text = gDataManager->GetDesc(data, mainGame->dInfo.compat_mode).data();
 			if(mainGame->dInfo.isTeam1) {

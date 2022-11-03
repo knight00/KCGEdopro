@@ -23,8 +23,8 @@
 
 //Locations
 //////kdiy//////
-#define LOCATION_RMZONE  0x400
-#define LOCATION_RSZONE  0x800
+#define LOCATION_RMZONE  0x2000
+#define LOCATION_RSZONE  0x4000
 //////kdiy//////
 #define LOCATION_DECK    0x01
 #define LOCATION_HAND    0x02
@@ -134,7 +134,7 @@
 #define RACE_DUELIST 0x20000000000
 #define RACE_LEAD 0x40000000000
 /*------------ZCG----------------*/
-////zdiy//// 
+////zdiy////
 
 //Reasons
 #define REASON_DESTROY     0x1
