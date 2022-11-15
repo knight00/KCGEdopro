@@ -70,6 +70,9 @@ enum GUI {
 	EDITBOX_PASSWORD,
     BUTTON_REPO_DELETE,
 	//////kdiy//////
+	/////zdiy/////
+	CHECKBOX_HIDE_NAME_TAG,
+	/////zdiy/////
 	BUTTON_LAN_REFRESH,
 	BUTTON_RULE_CARDS,
 	BUTTON_RULE_OK,

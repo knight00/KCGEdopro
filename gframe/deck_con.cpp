@@ -1137,41 +1137,18 @@ uint64_t DeckBuilder::GetItemZRace(uint32_t index) {
 	}
 	switch (key)
 	{
-	case 1082:
-		race = RACE_DEVIL;
-		break;
-	case 1083:
-		race = RACE_EVIL;
-		break;
-	case 1084:
-		race = RACE_CHAOSGOD;
-		break;
-	case 1085:
-		race = RACE_CREATORGOD_II;
-		break;
-	case 1086:
-		race = RACE_LEGENDATYDIVINE;
-		break;
-	case 1087:
-		race = RACE_LEGENDATYGOD;
-		break;
-	case 1088:
-		race = RACE_LEGENDATYCHAOSGOD;
-		break;
-	case 1089:
-		race = RACE_SEASERPENTDIVINE;
-		break;
-	case 1090:
-		race = RACE_GOD;
-		break;
-	case 1091:
-		race = RACE_DUELIST;
-		break;
-	case 1092:
-		race = RACE_LEAD;
-		break;
-	default:
-		break;
+		case 1082:race = RACE_DEVIL;break;
+		case 1083:race = RACE_EVIL;break;
+		case 1084:race = RACE_CHAOSGOD;break;
+		case 1085:race = RACE_CREATORGOD_II;break;
+		case 1086:race = RACE_LEGENDATYDIVINE;break;
+		case 1087:race = RACE_LEGENDATYGOD;break;
+		case 1088:race = RACE_LEGENDATYCHAOSGOD;break;
+		case 1089:race = RACE_SEASERPENTDIVINE;break;
+		case 1090:race = RACE_GOD;break;
+		case 1091:race = RACE_DUELIST;break;
+		case 1092:race = RACE_LEAD;break;
+		default:break;
 	}
 	return race;
 }

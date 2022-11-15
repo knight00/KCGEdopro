@@ -1922,6 +1922,10 @@ void Game::PopulateSettingsWindow() {
 		defaultStrings.emplace_back(gSettings.chkHideSetname, 1354);
 		gSettings.chkHidePasscodeScope = env->addCheckBox(gGameConfig->hidePasscodeScope, GetNextRect(), sPanel, CHECKBOX_HIDE_PASSCODE_SCOPE, gDataManager->GetSysString(2063).data());
 		defaultStrings.emplace_back(gSettings.chkHidePasscodeScope, 2063);
+		/////zdiy/////
+		gSettings.chkHideNameTag = env->addCheckBox(gGameConfig->chkHideNameTag, GetNextRect(), sPanel, CHECKBOX_HIDE_NAME_TAG, gDataManager->GetSysString(1971).data());
+		defaultStrings.emplace_back(gSettings.chkHideNameTag, 1971);
+		/////zdiy/////
 		gSettings.chkFilterBot = env->addCheckBox(gGameConfig->filterBot, GetNextRect(), sPanel, CHECKBOX_FILTER_BOT, gDataManager->GetSysString(2069).data());
 		defaultStrings.emplace_back(gSettings.chkFilterBot, 2069);
 		/////kdiy////////////
@@ -3352,7 +3356,20 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type) {
 	auto tmp_code = code;
 	if(cd->IsInArtworkOffsetRange())
 		tmp_code = cd->alias;
-	stName->setText(gDataManager->GetName(tmp_code).data());
+	/////zdiy/////
+	if(!gSettings.chkHideNameTag->isChecked())
+	/////zdiy/////
+		stName->setText(gDataManager->GetName(tmp_code).data());
+	else {
+		/////zdiy/////
+		epro::wstringview name = gDataManager->GetName(tmp_code);
+			std::wstring key(name.size(),'\0');
+			for (uint32_t i = 0; i < name.size(); ++i)
+				key[i] = name[i];
+			name = key;
+		stName->setText(name.data());
+		/////zdiy/////
+	}
 	stPasscodeScope->setText(epro::format(L"[{:08}] {}", tmp_code, gDataManager->FormatScope(cd->ot)).data());
 	stSetName->setText(L"");
 	auto setcodes = cd->setcodes;

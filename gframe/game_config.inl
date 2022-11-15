@@ -71,6 +71,9 @@ OPTION_ALIASED(bool, chkWaitChain, waitchain, false)
 OPTION_ALIASED(bool, chkIgnore1, mute_opponent, false)
 OPTION_ALIASED(bool, chkIgnore2, mute_spectators, false)
 OPTION_ALIASED(bool, chkHideSetname, hide_setname, false)
+/////zdiy/////
+OPTION_ALIASED(bool, chkHideNameTag, hide_nameTag, false)
+/////zdiy/////
 OPTION_ALIASED(bool, chkHideHintButton, hide_hint_button, true)
 OPTION(bool, draw_field_spell, true)
 OPTION(bool, quick_animation, false)
