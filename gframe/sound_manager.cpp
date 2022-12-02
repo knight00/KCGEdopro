@@ -84,6 +84,9 @@ void SoundManager::RefreshBGMList() {
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/donthousand"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yuya"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/declan"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/playmaker"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/soulburner"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/blueangel"));
 	////////kdiy////
 	Utils::MakeDirectory(EPRO_TEXT("./sound/BGM/"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/BGM/duel"));
@@ -213,6 +216,9 @@ void SoundManager::RefreshChantsList() {
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/donthousand/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/yuya/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/declan/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/playmaker/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/soulburner/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/blueangel/{}"), chantType.second));
 
 		for (auto path : searchPath)
 			Utils::MakeDirectory(path);

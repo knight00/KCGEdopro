@@ -82,16 +82,16 @@ public:
 	~ImageManager();
 	bool Initial();
 	/////kdiy/////
-	uint8_t totcharacter = 24;
+	uint8_t totcharacter = 27;
 	void SetAvatar(int seq, const wchar_t *avatar);
-	std::vector<epro::path_string> ImageList[39+24];
-	int saved_image_id[39+24];
+	std::vector<epro::path_string> ImageList[39+27];
+	int saved_image_id[39+27];
 	//random image
 	irr::video::ITexture* GetRandomImage(int image_type);
 	irr::video::ITexture* GetRandomImage(int image_type, int width, int height);
 	void RefreshRandomImageList();	
 	void RefreshImageDir(epro::path_string path, int image_type);
-	/////kdiy/////	
+	/////kdiy/////
 	void ChangeTextures(epro::path_stringview path);
 	void ResetTextures();
 	void SetDevice(irr::IrrlichtDevice* dev);
@@ -146,15 +146,15 @@ public:
 	A(tField[2][4])
 	A(tFieldTransparent[2][4])
 	/////////kdiy////
-	A(tRScale[14])	
-	A(tLScale[14])	
-	A(icon[24])	
-	A(character[24])
-	A(tcharacterselect)	
+	A(tRScale[14])
+	A(tLScale[14])
+	A(icon[27])
+	A(character[27])
+	A(tcharacterselect)
 	A(tcharacterselect2)
 	A(scharacter[6])
 	A(QQ)
-	/////////kdiy////	
+	/////////kdiy////
 	A(tSettings)
 	A(tCheckBox[3])
 #undef A

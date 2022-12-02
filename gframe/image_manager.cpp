@@ -79,6 +79,9 @@ namespace ygo {
 #define TEXTURE_DONTHOUSAND         60
 #define TEXTURE_YUYA                61
 #define TEXTURE_DECLAN              62
+#define TEXTURE_PLAYMAKER           63
+#define TEXTURE_SOULBURNER          64
+#define TEXTURE_BLUEANGEL           65
 ////////kdiy/////
 
 #define X(x) (textures_path + EPRO_TEXT(x)).data()
@@ -141,6 +144,9 @@ bool ImageManager::Initial() {
 	searchPath.push_back(EPRO_TEXT("./textures/character/donthousand"));
 	searchPath.push_back(EPRO_TEXT("./textures/character/yuya"));
 	searchPath.push_back(EPRO_TEXT("./textures/character/declan"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/playmaker"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/soulburner"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/blueangel"));
 	for (auto path : searchPath) {
 		Utils::MakeDirectory(path);
 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/icon"), path));
@@ -298,6 +304,21 @@ bool ImageManager::Initial() {
 	if (!character[playno]) 
 		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/declan/icon.png"));
 	CHECK_RETURN(character[playno], "character/declan/icon");
+	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/playmaker/mini_icon.png"));
+	character[playno] = GetRandomImage(TEXTURE_PLAYMAKER);
+	if (!character[playno]) 
+		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/playmaker/icon.png"));
+	CHECK_RETURN(character[playno], "character/playmaker/icon");
+	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/soulburner/mini_icon.png"));
+	character[playno] = GetRandomImage(TEXTURE_SOULBURNER);
+	if (!character[playno]) 
+		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/soulburner/icon.png"));
+	CHECK_RETURN(character[playno], "character/soulburner/icon");
+	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/blueangel/mini_icon.png"));
+	character[playno] = GetRandomImage(TEXTURE_BLUEANGEL);
+	if (!character[playno]) 
+		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/blueangel/icon.png"));
+	CHECK_RETURN(character[playno], "character/blueangel/icon");
 #else
     for (uint8_t i = 1; i < totcharacter+1; i++) {
 		icon[i] = driver->getTexture(0);
@@ -553,12 +574,15 @@ void ImageManager::RefreshRandomImageList() {
 	RefreshImageDir(EPRO_TEXT("character/yusei/icon"), TEXTURE_YUSEI);
 	RefreshImageDir(EPRO_TEXT("character/jack/icon"), TEXTURE_JACK);
 	RefreshImageDir(EPRO_TEXT("character/arki/icon"), TEXTURE_ARKI);
-	RefreshImageDir(EPRO_TEXT("character/yuma/icon"), TEXTURE_YUMA);	
+	RefreshImageDir(EPRO_TEXT("character/yuma/icon"), TEXTURE_YUMA);
 	RefreshImageDir(EPRO_TEXT("character/shark/icon"), TEXTURE_SHARK);
-	RefreshImageDir(EPRO_TEXT("character/kaito/icon"), TEXTURE_KAITO);	
+	RefreshImageDir(EPRO_TEXT("character/kaito/icon"), TEXTURE_KAITO);
 	RefreshImageDir(EPRO_TEXT("character/Donthousand/icon"), TEXTURE_DONTHOUSAND);
 	RefreshImageDir(EPRO_TEXT("character/yuya/icon"), TEXTURE_YUYA);
 	RefreshImageDir(EPRO_TEXT("character/declan/icon"), TEXTURE_DECLAN);
+	RefreshImageDir(EPRO_TEXT("character/playmaker/icon"), TEXTURE_PLAYMAKER);
+	RefreshImageDir(EPRO_TEXT("character/soulburner/icon"), TEXTURE_SOULBURNER);
+	RefreshImageDir(EPRO_TEXT("character/blueangel/icon"), TEXTURE_BLUEANGEL);
 
 	for (int i = 0; i < 39 + totcharacter; ++i) {
 		saved_image_id[i] = -1;
@@ -615,7 +639,7 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 	/////kdiy//////
 	// if(_path == textures_path)
 	// 	return;
-	/////kdiy//////	
+	/////kdiy//////
 	textures_path.assign(_path.data(), _path.size());
 	const bool is_base = textures_path == BASE_PATH;
 	/////kdiy//////
@@ -759,6 +783,21 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 	if (!character[playno]) 
 		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/declan/icon.png"));
 	CHECK_RETURN(character[playno], "character/declan/icon");
+	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/playmaker/mini_icon.png"));
+	character[playno] = GetRandomImage(TEXTURE_PLAYMAKER);
+	if (!character[playno]) 
+		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/playmaker/icon.png"));
+	CHECK_RETURN(character[playno], "character/playmaker/icon");
+	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/soulburner/mini_icon.png"));
+	character[playno] = GetRandomImage(TEXTURE_SOULBURNER);
+	if (!character[playno]) 
+		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/soulburner/icon.png"));
+	CHECK_RETURN(character[playno], "character/soulburner/icon");
+	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/blueangel/mini_icon.png"));
+	character[playno] = GetRandomImage(TEXTURE_BLUEANGEL);
+	if (!character[playno]) 
+		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/blueangel/icon.png"));
+	CHECK_RETURN(character[playno], "character/blueangel/icon");
 #else
     for (uint8_t i = 1; i < totcharacter+1; i++) {
 		icon[i] = driver->getTexture(0);
