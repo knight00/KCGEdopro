@@ -424,7 +424,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 					const auto filename = epro::format("{}.{}", chant_it->second, Utils::ToUTF8IfNeeded(ext));
 					if (Utils::FileExists(Utils::ToPathString(filename)))
 						list.push_back(filename);
-					for (int i = 0; i < 5; i++) {
+					for (int i = 1; i < 6; i++) {
 						const auto filename2 = epro::format("{}_{}.{}", chant_it->second, i, Utils::ToUTF8IfNeeded(ext));
 						if (Utils::FileExists(Utils::ToPathString(filename2)))
 							list.push_back(filename2);

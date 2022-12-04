@@ -304,16 +304,19 @@ bool ImageManager::Initial() {
 	if (!character[playno]) 
 		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/declan/icon.png"));
 	CHECK_RETURN(character[playno], "character/declan/icon");
+    playno++;
 	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/playmaker/mini_icon.png"));
 	character[playno] = GetRandomImage(TEXTURE_PLAYMAKER);
 	if (!character[playno]) 
 		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/playmaker/icon.png"));
 	CHECK_RETURN(character[playno], "character/playmaker/icon");
+    playno++;
 	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/soulburner/mini_icon.png"));
 	character[playno] = GetRandomImage(TEXTURE_SOULBURNER);
 	if (!character[playno]) 
 		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/soulburner/icon.png"));
 	CHECK_RETURN(character[playno], "character/soulburner/icon");
+    playno++;
 	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/blueangel/mini_icon.png"));
 	character[playno] = GetRandomImage(TEXTURE_BLUEANGEL);
 	if (!character[playno]) 
@@ -783,16 +786,19 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 	if (!character[playno]) 
 		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/declan/icon.png"));
 	CHECK_RETURN(character[playno], "character/declan/icon");
+    playno++;
 	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/playmaker/mini_icon.png"));
 	character[playno] = GetRandomImage(TEXTURE_PLAYMAKER);
 	if (!character[playno]) 
 		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/playmaker/icon.png"));
 	CHECK_RETURN(character[playno], "character/playmaker/icon");
+    playno++;
 	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/soulburner/mini_icon.png"));
 	character[playno] = GetRandomImage(TEXTURE_SOULBURNER);
 	if (!character[playno]) 
 		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/soulburner/icon.png"));
 	CHECK_RETURN(character[playno], "character/soulburner/icon");
+    playno++;
 	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/blueangel/mini_icon.png"));
 	character[playno] = GetRandomImage(TEXTURE_BLUEANGEL);
 	if (!character[playno]) 

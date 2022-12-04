@@ -3357,19 +3357,18 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type) {
 	if(cd->IsInArtworkOffsetRange())
 		tmp_code = cd->alias;
 	/////zdiy/////
+    //stName->setText(gDataManager->GetName(tmp_code).data());
 	if(!gSettings.chkHideNameTag->isChecked())
-	/////zdiy/////
 		stName->setText(gDataManager->GetName(tmp_code).data());
 	else {
-		/////zdiy/////
 		epro::wstringview name = gDataManager->GetName(tmp_code);
 			std::wstring key(name.size(),'\0');
 			for (uint32_t i = 0; i < name.size(); ++i)
 				key[i] = name[i];
 			name = key;
 		stName->setText(name.data());
-		/////zdiy/////
 	}
+    /////zdiy/////
 	stPasscodeScope->setText(epro::format(L"[{:08}] {}", tmp_code, gDataManager->FormatScope(cd->ot)).data());
 	stSetName->setText(L"");
 	auto setcodes = cd->setcodes;
