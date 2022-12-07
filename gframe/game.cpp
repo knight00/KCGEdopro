@@ -68,7 +68,7 @@ constexpr int CARD_IMG_WRAPPER_WIDTH = CARD_IMG_WIDTH + CARD_IMG_WRAPPER_H_PADDI
 constexpr int CARD_IMG_WRAPPER_HEIGHT = CARD_IMG_HEIGHT + CARD_IMG_WRAPPER_V_PADDING * 2;
 constexpr float CARD_IMG_WRAPPER_ASPECT_RATIO = ((float)CARD_IMG_WRAPPER_WIDTH) / ((float)CARD_IMG_WRAPPER_HEIGHT);
 
-uint16_t PRO_VERSION = 0x1353;
+uint16_t PRO_VERSION = 0x1354;
 
 namespace {
 template<typename T>
@@ -2167,8 +2167,14 @@ void Game::PopulateSettingsWindow() {
 			gSettings.ebAntiAlias = env->addEditBox(WStr(gGameConfig->antialias), GetCurrentRectWithXOffset(225, 320), true, sPanel, EDITBOX_NUMERIC);
 			IncrementXorY();
 		}
-		gSettings.chkVSync = env->addCheckBox(gGameConfig->vsync, GetNextRect(), sPanel, CHECKBOX_VSYNC, gDataManager->GetSysString(2073).data());
-		defaultStrings.emplace_back(gSettings.chkVSync, 2073);
+		{
+			gSettings.stVSync = env->addStaticText(gDataManager->GetSysString(2073).data(), GetCurrentRectWithXOffset(15, 105), false, true, sPanel);
+			defaultStrings.emplace_back(gSettings.stVSync, 2073);
+			gSettings.cbVSync = AddComboBox(env, GetCurrentRectWithXOffset(110, 320), sPanel, COMBOBOX_VSYNC);
+			ReloadCBVsync();
+			gSettings.cbVSync->setSelected(gGameConfig->vsync);
+			IncrementXorY();
+		}
 		{
 			gSettings.stFPSCap = env->addStaticText(gDataManager->GetSysString(2074).data(), GetCurrentRectWithXOffset(15, 220), false, true, sPanel);
 			defaultStrings.emplace_back(gSettings.stFPSCap, 2074);
@@ -2501,8 +2507,7 @@ bool Game::MainLoop() {
 		bool resized = false;
 		auto size = driver->getScreenSize();
 #if defined (__linux__) && !defined(__ANDROID__)
-		prev_window_size = window_size;
-		window_size = size;
+		prev_window_size = std::exchange(window_size, size);
 		if(prev_window_size != window_size && !last_resize && prev_window_size.Width != 0 && prev_window_size.Height != 0) {
 			last_resize = true;
 		} else if((prev_window_size == window_size && last_resize) || (prev_window_size.Width == 0 && prev_window_size.Height == 0)) {
@@ -4132,6 +4137,17 @@ void Game::ReloadCBCoreLogOutput() {
 			gSettings.cbCoreLogOutput->setSelected(itemIndex);
 		}
 	}
+}
+void Game::ReloadCBVsync() {
+	gSettings.cbVSync->clear();
+	auto max = 12118;
+#if (IRRLICHT_VERSION_MAJOR==1 && IRRLICHT_VERSION_MINOR==9)
+	const auto type = driver->getDriverType();
+	if(type == irr::video::EDT_DIRECT3D9)
+#endif
+		max = 12115;
+	for(int i = 12114; i <= max; ++i)
+		gSettings.cbVSync->addItem(gDataManager->GetSysString(i).data());
 }
 void Game::ReloadElementsStrings() {
 	ShowCardInfo(showingcard, true);

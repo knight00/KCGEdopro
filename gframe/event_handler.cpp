@@ -60,9 +60,7 @@ inline bool TransformEvent(const irr::SEvent& event, bool& stopPropagation) {
 	return porting::transformEvent(event, stopPropagation);
 }
 #else
-inline constexpr bool TransformEvent(const irr::SEvent& event, bool& stopPropagation) {
-	(void)event;
-	(void)stopPropagation;
+inline constexpr bool TransformEvent(const irr::SEvent&, bool&) {
 	return false;
 }
 #endif
@@ -2286,11 +2284,6 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				gGameConfig->showScopeLabel = mainGame->gSettings.chkShowScopeLabel->isChecked();
 				return true;
 			}
-			case CHECKBOX_VSYNC: {
-				gGameConfig->vsync = mainGame->gSettings.chkVSync->isChecked();
-				GUIUtils::ToggleSwapInterval(mainGame->driver, gGameConfig->vsync);
-				return true;
-			}
 			case CHECKBOX_SHOW_FPS: {
 				gGameConfig->showFPS = mainGame->gSettings.chkShowFPS->isChecked();
 				mainGame->fpsCounter->setVisible(gGameConfig->showFPS);
@@ -2441,6 +2434,11 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 		}
 		case irr::gui::EGET_COMBO_BOX_CHANGED: {
 			switch(id) {
+			case COMBOBOX_VSYNC: {
+				gGameConfig->vsync = mainGame->gSettings.cbVSync->getSelected();
+				GUIUtils::ToggleSwapInterval(mainGame->driver, gGameConfig->vsync);
+				return true;
+			}
 			case COMBOBOX_CURRENT_SKIN: {
 				auto newskin = Utils::ToPathString(mainGame->gSettings.cbCurrentSkin->getItem(mainGame->gSettings.cbCurrentSkin->getSelected()));
 				mainGame->should_reload_skin = newskin != gGameConfig->skin;
