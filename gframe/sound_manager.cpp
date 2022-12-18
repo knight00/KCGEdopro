@@ -384,36 +384,86 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 					list = ChantSPList[i][character[player]];
 					int count = list.size();
 					if(count < 1) return false;
+                    std::vector<std::string> list_fusion, list_synchro, list_xyz, list_link, list_ritual, list_pendulum;
 					uint8_t extrasound = 0;
 					std::string esound = "";
 					for(int i = 0; i < count; i++) {
 						std::string sound = list[i];
 						if ((extra & 0x1) && sound.find("fusion") != std::string::npos) {
 							extrasound = 1;
-							esound = sound;
+							list_fusion.push_back(sound);
 						}
 						if ((extra & 0x2) && sound.find("synchro") != std::string::npos) {
 							extrasound = 2;
-							esound = sound;
+							list_synchro.push_back(sound);
 						}
 						if ((extra & 0x4) && sound.find("xyz") != std::string::npos) {
 							extrasound = 3;
-							esound = sound;
+							list_xyz.push_back(sound);
 						}
 						if ((extra & 0x8) && sound.find("link") != std::string::npos) {
 							extrasound = 4;
-							esound = sound;
+							list_link.push_back(sound);
 						}
 						if ((extra & 0x10) && sound.find("ritual") != std::string::npos) {
 							extrasound = 5;
-							esound = sound;
+							list_ritual.push_back(sound);
 						}
 						if ((extra & 0x20) && sound.find("pendulum") != std::string::npos) {
 							extrasound = 6;
-							esound = sound;
+							list_pendulum.push_back(sound);
 						}
 					}
-					if(esound == "" || extrasound == 0) return false;
+					if (extrasound == 1) {
+						for (int i = 1; i < 6; i++) {
+							int count = list_fusion.size();
+							if (count > 0) {
+								int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+								esound = list_fusion[soundno];
+							}
+						}
+					} else if(extrasound == 2) {
+						for (int i = 1; i < 6; i++) {
+							int count = list_synchro.size();
+							if (count > 0) {
+								int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+								esound = list_synchro[soundno];
+							}
+						}
+					} else if (extrasound == 3) {
+						for (int i = 1; i < 6; i++) {
+							int count = list_xyz.size();
+							if (count > 0) {
+								int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+								esound = list_xyz[soundno];
+							}
+						}
+					} else if (extrasound == 4) {
+						for (int i = 1; i < 6; i++) {
+							int count = list_link.size();
+							if (count > 0) {
+								int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+								esound = list_link[soundno];
+							}
+						}
+					} else if (extrasound == 5) {
+						for (int i = 1; i < 6; i++) {
+							int count = list_ritual.size();
+							if (count > 0) {
+								int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+								esound = list_ritual[soundno];
+							}
+						}
+					} else if (extrasound == 6) {
+						for (int i = 1; i < 6; i++) {
+							int count = list_pendulum.size();
+							if (count > 0) {
+								int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+								esound = list_pendulum[soundno];
+							}
+						}
+					} else
+						return false;
 					return mixer->PlaySound(esound);
 				}
 				return false;
