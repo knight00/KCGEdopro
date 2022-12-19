@@ -27,7 +27,7 @@ void ClientCard::UpdateInfo(const CoreUtils::Query& query) {
 	CHECK_AND_SET(QUERY_ALIAS, alias);
 	CHECK_AND_SET(QUERY_TYPE, type);
 	CHECK_AND_SET(QUERY_ATTRIBUTE, attribute);
-	CHECK_AND_SET(QUERY_RACE, race);
+    CHECK_AND_SET(QUERY_RACE, race);
 	CHECK_AND_SET(QUERY_BASE_ATTACK, base_attack);
 	CHECK_AND_SET(QUERY_BASE_DEFENSE, base_defense);
 	CHECK_AND_SET(QUERY_REASON, reason);

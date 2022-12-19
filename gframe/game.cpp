@@ -695,7 +695,7 @@ void Game::Initialize() {
 	int j = 0;
 	for(int i = 25; i < 36; ++i) {
 		chkRace[i] = env->addCheckBox(false, Scale(10 + (i % 4) * 90, 25 + (i / 4) * 25, 100 + (i % 4) * 90, 50 + (i / 4) * 25),
-			wANRace, CHECK_RACE, gDataManager->GetSysString(1082 + j).data());
+									  wANRace, CHECK_RACE, gDataManager->GetSysString(1082 + j).data());
 		defaultStrings.emplace_back(chkRace[i], 1082 + j);
 		++j;
 	}
@@ -3361,19 +3361,7 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type) {
 	auto tmp_code = code;
 	if(cd->IsInArtworkOffsetRange())
 		tmp_code = cd->alias;
-	/////zdiy/////
-    //stName->setText(gDataManager->GetName(tmp_code).data());
-	if(!gSettings.chkHideNameTag->isChecked())
-		stName->setText(gDataManager->GetName(tmp_code).data());
-	else {
-		epro::wstringview name = gDataManager->GetName(tmp_code);
-			std::wstring key(name.size(),'\0');
-			for (uint32_t i = 0; i < name.size(); ++i)
-				key[i] = name[i];
-			name = key;
-		stName->setText(name.data());
-	}
-    /////zdiy/////
+	stName->setText(gDataManager->GetName(tmp_code).data());
 	stPasscodeScope->setText(epro::format(L"[{:08}] {}", tmp_code, gDataManager->FormatScope(cd->ot)).data());
 	stSetName->setText(L"");
 	auto setcodes = cd->setcodes;
@@ -3389,10 +3377,7 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type) {
 		stSetName->setText(epro::format(L"{}{}", gDataManager->GetSysString(1329), gDataManager->FormatSetName(setcodes)).data());
 	}
 	if(cd->type & TYPE_MONSTER) {
-		/////zdiy/////
-		//stInfo->setText(epro::format(L"[{}] {} {}", gDataManager->FormatType(cd->type), gDataManager->FormatAttribute(cd->attribute), gDataManager->FormatRace(cd->race)).data());
-		stInfo->setText(epro::format(L"[{}] {} {}", gDataManager->FormatType(cd->type), gDataManager->FormatAttribute(cd->attribute), gDataManager->FormatRace(cd->race, false, gDataManager->IsZRace(cd->race))).data());
-		/////zdiy/////
+		stInfo->setText(epro::format(L"[{}] {} {}", gDataManager->FormatType(cd->type), gDataManager->FormatAttribute(cd->attribute), gDataManager->FormatRace(cd->race)).data());
 		std::wstring text;
 		if(cd->type & TYPE_LINK){
 			if(cd->attack < 0)
@@ -3444,10 +3429,7 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type) {
 	} else {
 		if(cd->type & TYPE_SKILL) { // TYPE_SKILL created by hints
 			// Hack: Race encodes the character for now
-			/////zdiy/////
-			//stInfo->setText(epro::format(L"[{}|{}]", gDataManager->FormatRace(cd->race, true), gDataManager->FormatType(cd->type)).data());
-			stInfo->setText(epro::format(L"[{}|{}]", gDataManager->FormatRace(cd->race, true ,gDataManager->IsZRace(cd->race)), gDataManager->FormatType(cd->type)).data());
-			/////zdiy/////
+			stInfo->setText(epro::format(L"[{}|{}]", gDataManager->FormatRace(cd->race, true), gDataManager->FormatType(cd->type)).data());
 		} else {
 			stInfo->setText(epro::format(L"[{}]", gDataManager->FormatType(cd->type)).data());
 		}
@@ -4067,10 +4049,10 @@ void Game::ReloadCBRace() {
 	for(uint32_t i = 2500; filter <= RACE_MAX; i++, filter <<= 1)
 		cbRace->addItem(gDataManager->GetSysString(i).data(), filter);
 	///////zdiy/////
-	static constexpr auto ZCG_RACE_MAX = 0x40000000000;
-	uint64_t z_filter = 0x100000000; 
-	for(uint32_t i = 1082; z_filter <= ZCG_RACE_MAX; i++, z_filter <<= 1)
-		cbRace->addItem(gDataManager->GetSysString(i).data(),0x3);
+	static constexpr auto ZCG_RACE_MAX = 0x400;
+	uint32_t z_filter = 0x1;
+	for(uint32_t i = 2600; z_filter <= ZCG_RACE_MAX; i++, z_filter <<= 1)
+		cbRace->addItem(gDataManager->GetSysString(i).data(), 0x5 + z_filter);
 	///////zdiy/////
 }
 void Game::ReloadCBFilterRule() {

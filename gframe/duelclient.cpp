@@ -1433,10 +1433,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			break;
 		}
 		case HINT_RACE: {
-			///zdiy////
-			//std::wstring text(epro::format(gDataManager->GetSysString(1511), gDataManager->FormatRace(data)));
-			std::wstring text(epro::format(gDataManager->GetSysString(1511), gDataManager->FormatRace(data, false,gDataManager->IsZRace(data))));
-			///zdiy////
+			std::wstring text(epro::format(gDataManager->GetSysString(1511), gDataManager->FormatRace(data)));
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 			mainGame->AddLog(text);
 			mainGame->stACMessage->setText(text.data());

@@ -58,9 +58,6 @@ public:
 	void StartFilter(bool force_refresh = false);
 	void RefreshCurrentDeck();
 private:
-	/////zdiy/////
-	uint64_t GetItemZRace(uint32_t index);
-	/////zdiy/////
 	void GetHoveredCard();
 	bool FiltersChanged();
 	void FilterCards(bool force_refresh = false);
@@ -101,7 +98,10 @@ private:
 	DECLARE_WITH_CACHE(uint32_t, filter_deftype)
 	DECLARE_WITH_CACHE(int32_t, filter_def)
 	DECLARE_WITH_CACHE(uint32_t, filter_lvtype)
-	DECLARE_WITH_CACHE(uint32_t, filter_lv)
+    ////kdiy/////////
+	//DECLARE_WITH_CACHE(uint32_t, filter_lv)
+    DECLARE_WITH_CACHE(int32_t, filter_lv)
+    ////kdiy/////////
 	DECLARE_WITH_CACHE(uint32_t, filter_scltype)
 	DECLARE_WITH_CACHE(uint32_t, filter_scl)
 	DECLARE_WITH_CACHE(uint32_t, filter_marks)

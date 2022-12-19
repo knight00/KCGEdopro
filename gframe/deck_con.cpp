@@ -1113,46 +1113,6 @@ bool DeckBuilder::FiltersChanged() {
 	return res;
 }
 #undef CHECK_AND_SET
-/////zdiy////
-uint64_t DeckBuilder::GetItemZRace(uint32_t index) {
-	uint32_t key = 0;
-	uint64_t race = 0;
-	uint32_t size = wcslen(mainGame->cbRace->getText());
-	if(size <= 0) return race;
-	uint32_t size_2 = 0;
-	const wchar_t* buffer = nullptr;
-	const wchar_t* buffer_2 = nullptr;
-	for(uint32_t i = 1082 ; i<=1092; ++i) {
-		if(key > 0) break;
-		size_2 = wcslen(gDataManager->GetSysString(i).data());
-		if(size != size_2 || size_2 <= 0) continue;
-		buffer = mainGame->cbRace->getText();
-		buffer_2 = gDataManager->GetSysString(i).data();
-		for (uint32_t j = 0; j < size; ++j){
-			if(*buffer != *buffer_2)break;
-			++buffer;
-			++buffer_2;
-			if(j == size - 1) key = i;
-		}
-	}
-	switch (key)
-	{
-		case 1082:race = RACE_DEVIL;break;
-		case 1083:race = RACE_EVIL;break;
-		case 1084:race = RACE_CHAOSGOD;break;
-		case 1085:race = RACE_CREATORGOD_II;break;
-		case 1086:race = RACE_LEGENDATYDIVINE;break;
-		case 1087:race = RACE_LEGENDATYGOD;break;
-		case 1088:race = RACE_LEGENDATYCHAOSGOD;break;
-		case 1089:race = RACE_SEASERPENTDIVINE;break;
-		case 1090:race = RACE_GOD;break;
-		case 1091:race = RACE_DUELIST;break;
-		case 1092:race = RACE_LEAD;break;
-		default:break;
-	}
-	return race;
-}
-/////zdiy////
 void DeckBuilder::StartFilter(bool force_refresh) {
 	filter_type = mainGame->cbCardType->getSelected();
 	filter_type2 = mainGame->cbCardType2->getItemData(mainGame->cbCardType2->getSelected());
@@ -1160,8 +1120,11 @@ void DeckBuilder::StartFilter(bool force_refresh) {
 	if(filter_type == 1) {
 		filter_attrib = mainGame->cbAttribute->getItemData(mainGame->cbAttribute->getSelected());
 		filter_race = mainGame->cbRace->getItemData(mainGame->cbRace->getSelected());
-		/////zdiy/////
-		if(filter_race == 3) filter_race = GetItemZRace(mainGame->cbRace->getSelected());
+        /////zdiy/////
+		if(filter_race > 0x5 && ((filter_race - 0x5 == 0x1) || ((filter_race - 0x5) % 2 == 0))) {
+            filter_race -= 0x5;
+            filter_race <<= 32;
+        }
 		/////zdiy/////
 		filter_atk = parse_filter(mainGame->ebAttack->getText(), filter_atktype);
 		filter_def = parse_filter(mainGame->ebDefense->getText(), filter_deftype);

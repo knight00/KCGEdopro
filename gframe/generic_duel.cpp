@@ -384,10 +384,10 @@ void GenericDuel::PlayerReady(DuelPlayer* dp, bool is_ready, bool ai) {
 	auto& dueler = GetAtPos(dp->type);
 	if(dueler.ready == is_ready)
 		return;
-	/////zdiy/////
+	/////kdiy/////
 	//if(is_ready) {
 	if(is_ready && !ai) {
-	/////zdiy/////
+	/////kdiy/////
 		DeckError deck_error = DeckManager::CheckDeckSize(dueler.pdeck, host_info.sizes);
 		if(deck_error.type == DeckError::NONE && !host_info.no_check_deck_content) {
 			if(dueler.deck_error) {

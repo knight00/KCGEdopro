@@ -1711,10 +1711,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 								//if (mcard->type & TYPE_LINK) {
 								if ((mcard->type & TYPE_LINK) && mcard->level==0 && mcard->rank==0) {
 								//////kdiy/////
-									/////zdiy//////
-									//str.append(epro::format(L"\n{}/Link {}\n{}/{}", mcard->atkstring, mcard->link, gDataManager->FormatRace(mcard->race),
-									str.append(epro::format(L"\n{}/Link {}\n{}/{}", mcard->atkstring, mcard->link, gDataManager->FormatRace(mcard->race,false,gDataManager->IsZRace(mcard->race)),
-									/////zdiy//////
+									str.append(epro::format(L"\n{}/Link {}\n{}/{}", mcard->atkstring, mcard->link, gDataManager->FormatRace(mcard->race),
 										gDataManager->FormatAttribute(mcard->attribute)));
 								} else {
 									//////kdiy/////
@@ -1724,14 +1721,14 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 									//////kdiy/////
 									str.append(epro::format(L"\n{}/{}", mcard->atkstring, mcard->defstring));
 									if(mcard->rank && mcard->level)
-									    /////zdiy//////
+									    /////kdiy//////
 										//str.append(epro::format(L"\n\u2606{}/\u2605{} {}/{}", mcard->level, mcard->rank, gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
-										str.append(epro::format(L"\n\u2605{}/\u2606{} {}/{}", mcard->level, mcard->rank, gDataManager->FormatRace(mcard->race,false,gDataManager->IsZRace(mcard->race)), gDataManager->FormatAttribute(mcard->attribute)));
-										/////zdiy//////
+										str.append(epro::format(L"\n\u2605{}/\u2606{} {}/{}", mcard->level, mcard->rank, gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
+										/////kdiy//////
 									else {
 										/////zdiy//////
 										//str.append(epro::format(L"\n{}{} {}/{}", (mcard->level ? L"\u2605" : L"\u2606"), (mcard->level ? mcard->level : mcard->rank), gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
-										str.append(epro::format(L"\n{}{} {}/{}", (mcard->level ? L"\u2605" : L"\u2606"), (mcard->level ? mcard->level : mcard->rank), gDataManager->FormatRace(mcard->race,false,gDataManager->IsZRace(mcard->race)), gDataManager->FormatAttribute(mcard->attribute)));
+										str.append(epro::format(L"\n{}{} {}/{}", (mcard->level ? L"\u2606" : L"\u2605"), (mcard->level ? mcard->level : mcard->rank), gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
 										/////zdiy//////
 									}
 								}
@@ -1758,10 +1755,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 								else if(mcard->cHint == CHINT_CARD)
 									str.append(epro::format(L"\n{}{}", gDataManager->GetSysString(212), gDataManager->GetName(mcard->chValue)));
 								else if(mcard->cHint == CHINT_RACE)
-								    /////zdiy//////
-									//str.append(epro::format(L"\n{}{}", gDataManager->GetSysString(213), gDataManager->FormatRace(mcard->chValue)));
-									str.append(epro::format(L"\n{}{}", gDataManager->GetSysString(213), gDataManager->FormatRace(mcard->chValue,false ,gDataManager->IsZRace(mcard->chValue))));
-									/////zdiy//////
+								    str.append(epro::format(L"\n{}{}", gDataManager->GetSysString(213), gDataManager->FormatRace(mcard->chValue)));
 								else if(mcard->cHint == CHINT_ATTRIBUTE)
 									str.append(epro::format(L"\n{}{}", gDataManager->GetSysString(214), gDataManager->FormatAttribute(mcard->chValue)));
 								else if(mcard->cHint == CHINT_NUMBER)

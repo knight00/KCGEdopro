@@ -89,7 +89,7 @@
 #define ATTRIBUTE_DARK   0x20
 #define ATTRIBUTE_DIVINE 0x40
 /////zdiy/////
-#define ATTRIBUTE_HADES 0x80
+#define ATTRIBUTE_HADES  0x80
 /////zdiy/////
 
 //Races
