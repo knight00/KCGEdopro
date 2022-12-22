@@ -91,6 +91,7 @@ public:
 	irr::video::ITexture* GetRandomImage(int image_type, int width, int height);
 	void RefreshRandomImageList();	
 	void RefreshImageDir(epro::path_string path, int image_type);
+    void RefreshKCGImage();
 	/////kdiy/////
 	void ChangeTextures(epro::path_stringview path);
 	void ResetTextures();

@@ -156,179 +156,108 @@ bool ImageManager::Initial() {
 	timestamp_id = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	textures_path = BASE_PATH;
 	/////kdiy//////
+    // GET_TEXTURE_SIZED(tCover[0], "cover", CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+	// CHECK_RETURN(tCover[0], "cover");
+	// GET_TEXTURE_SIZED(tCover[1], "cover2", CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+	// if(!tCover[1]){
+	// 	tCover[1] = tCover[0];
+	// 	def_tCover[1] = tCover[1];
+	// }
+	// GET_TEXTURE_SIZED(tUnknown, "unknown", CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+	// CHECK_RETURN(tUnknown, "unknown");
+    // GET_TEXTURE(tAct, "act");
+	// CHECK_RETURN(tAct, "act");
+	// GET_TEXTURE(tAttack, "attack");
+	// CHECK_RETURN(tAttack, "attack");
+	// GET_TEXTURE(tChain, "chain");
+	// CHECK_RETURN(tChain, "chain");
+	// GET_TEXTURE_SIZED(tNegated, "negated", 128, 128);
+	// CHECK_RETURN(tNegated, "negated");
+	// GET_TEXTURE_SIZED(tNumber, "number", 320, 256);
+	// CHECK_RETURN(tNumber, "number");
+	// GET_TEXTURE(tLPBar, "lp");
+	// CHECK_RETURN(tLPBar, "lp");
+	// GET_TEXTURE(tLPFrame, "lpf");
+	// CHECK_RETURN(tLPFrame, "lpf");
+	// GET_TEXTURE_SIZED(tMask, "mask", 254, 254);
+	// CHECK_RETURN(tMask, "mask");
+	// GET_TEXTURE(tEquip, "equip");
+	// CHECK_RETURN(tEquip, "equip");
+	// GET_TEXTURE(tTarget, "target");
+	// CHECK_RETURN(tTarget, "target");
+	// GET_TEXTURE(tChainTarget, "chaintarget");
+	// CHECK_RETURN(tChainTarget, "chaintarget");
+	// GET_TEXTURE(tLim, "lim");
+	// CHECK_RETURN(tLim, "lim");
+	// GET_TEXTURE(tOT, "ot");
+	// CHECK_RETURN(tOT, "ot");
+	// GET_TEXTURE_SIZED(tHand[0], "f1", 89, 128);
+	// CHECK_RETURN(tHand[0], "f1");
+	// GET_TEXTURE_SIZED(tHand[1], "f2", 89, 128);
+	// CHECK_RETURN(tHand[1], "f2");
+	// GET_TEXTURE_SIZED(tHand[2], "f3", 89, 128);
+	// CHECK_RETURN(tHand[2], "f3");
+	// GET_TEXTURE(tBackGround, "bg");
+	// CHECK_RETURN(tBackGround, "bg");
+	// GET_TEXTURE(tBackGround_menu, "bg_menu");
+	// if(!tBackGround_menu){
+	// 	tBackGround_menu = tBackGround;
+	// 	def_tBackGround_menu = tBackGround;
+	// }
+	// GET_TEXTURE(tBackGround_deck, "bg_deck");
+	// if(!tBackGround_deck){
+	// 	tBackGround_deck = tBackGround;
+	// 	def_tBackGround_deck = tBackGround;
+	// }
+	// GET_TEXTURE(tField[0][0], "field2");
+	// CHECK_RETURN(tField[0][0], "field2");
+	// GET_TEXTURE(tFieldTransparent[0][0], "field-transparent2");
+	// CHECK_RETURN(tFieldTransparent[0][0], "field-transparent2");
+	// GET_TEXTURE(tField[0][1], "field3");
+	// CHECK_RETURN(tField[0][1], "field3");
+	// GET_TEXTURE(tFieldTransparent[0][1], "field-transparent3");
+	// CHECK_RETURN(tFieldTransparent[0][1], "field-transparent3");
+	// GET_TEXTURE(tField[0][2], "field");
+	// CHECK_RETURN(tField[0][2], "field");
+	// GET_TEXTURE(tFieldTransparent[0][2], "field-transparent");
+	// CHECK_RETURN(tFieldTransparent[0][2], "field-transparent");
+	// GET_TEXTURE(tField[0][3], "field4");
+	// CHECK_RETURN(tField[0][3], "field4");
+	// GET_TEXTURE(tFieldTransparent[0][3], "field-transparent4");
+	// CHECK_RETURN(tFieldTransparent[0][3], "field-transparent4");
+	// GET_TEXTURE(tField[1][0], "fieldSP2");
+	// CHECK_RETURN(tField[1][0], "fieldSP2");
+	// GET_TEXTURE(tFieldTransparent[1][0], "field-transparentSP2");
+	// CHECK_RETURN(tFieldTransparent[1][0], "field-transparentSP2");
+	// GET_TEXTURE(tField[1][1], "fieldSP3");
+	// CHECK_RETURN(tField[1][1], "fieldSP3");
+	// GET_TEXTURE(tFieldTransparent[1][1], "field-transparentSP3");
+	// CHECK_RETURN(tFieldTransparent[1][1], "field-transparentSP3");
+	// GET_TEXTURE(tField[1][2], "fieldSP");
+	// CHECK_RETURN(tField[1][2], "fieldSP");
+	// GET_TEXTURE(tFieldTransparent[1][2], "field-transparentSP");
+	// CHECK_RETURN(tFieldTransparent[1][2], "field-transparentSP");
+	// GET_TEXTURE(tField[1][3], "fieldSP4");
+	// CHECK_RETURN(tField[1][3], "fieldSP4");
+	// GET_TEXTURE(tFieldTransparent[1][3], "field-transparentSP4");
+	// CHECK_RETURN(tFieldTransparent[1][3], "field-transparentSP4");
+	// GET_TEXTURE(tSettings, "settings");
+	// CHECK_RETURN(tSettings, "settings");
 	QQ = driver->getTexture(EPRO_TEXT("./textures/QQ.jpg"));
-	uint8_t playno = 1;
-	icon[0] = driver->getTexture(EPRO_TEXT("./textures/character/player/mini_icon.png"));
+    icon[0] = driver->getTexture(EPRO_TEXT("./textures/character/player/mini_icon.png"));
 	character[0] = driver->getTexture(0);
-	scharacter[0] = driver->getTexture(0);
-	scharacter[1] = driver->getTexture(0);
-	scharacter[2] = driver->getTexture(0);
-	scharacter[3] = driver->getTexture(0);
-	scharacter[4] = driver->getTexture(0);
-	scharacter[5] = driver->getTexture(0);
+	for(uint8_t i = 0; i < 6; i++) {
+        scharacter[i] = driver->getTexture(0);
+    }
 #ifdef VIP
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/muto/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_MUTO);
-	if (!character[playno])
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/muto/icon.png"));
-	CHECK_RETURN(character[playno], "character/muto/icon");	
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/atem/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_ATEM);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/atem/icon.png"));
-	CHECK_RETURN(character[playno], "character/atem/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/kaiba/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_KAIBA);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/kaiba/icon.png"));
-	CHECK_RETURN(character[playno], "character/kaiba/icon");	
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/joey/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_JOEY);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/joey/icon.png"));
-	CHECK_RETURN(character[playno], "character/joey/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/marik/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_MARIK);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/marik/icon.png"));
-	CHECK_RETURN(character[playno], "character/marik/icon");
-	playno++;
-    icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/dartz/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_DARTZ);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/dartz/icon.png"));
-	CHECK_RETURN(character[playno], "character/dartz/icon");
-    playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/bakura/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_BAKURA);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/bakura/icon.png"));
-	CHECK_RETURN(character[playno], "character/bakura/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/aigami/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_AIGAMI);
-	if (!character[playno])
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/aigami/icon.png"));
-	CHECK_RETURN(character[playno], "character/aigami/icon");	
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/judai/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_JUDAI);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/judai/icon.png"));
-	CHECK_RETURN(character[playno], "character/judai/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/manjome/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_MANJOME);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/manjome/icon.png"));
-	CHECK_RETURN(character[playno], "character/manjome/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/kaisa/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_KAISA);
-	if (!character[8]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/kaisa/icon.png"));
-	CHECK_RETURN(character[playno], "character/kaisa/icon");	
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/phoenix/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_PHORNIX);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/phoenix/icon.png"));
-	CHECK_RETURN(character[playno], "character/phoenix/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/john/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_JOHN);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/john/icon.png"));
-	CHECK_RETURN(character[playno], "character/john/icon");
-	playno++;	
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yubel/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_YUBEL);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yubel/icon.png"));
-	CHECK_RETURN(character[playno], "character/yubel/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yusei/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_YUSEI);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yusei/icon.png"));
-	CHECK_RETURN(character[playno], "character/yusei/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/jack/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_JACK);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/jack/icon.png"));
-	CHECK_RETURN(character[playno], "character/jack/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/arki/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_ARKI);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/arki/icon.png"));
-	CHECK_RETURN(character[playno], "character/arki/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yuma/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_YUMA);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yuma/icon.png"));
-	CHECK_RETURN(character[playno], "character/yuma/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/shark/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_SHARK);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/shark/icon.png"));
-	CHECK_RETURN(character[playno], "character/shark/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/kaito/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_KAITO);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/kaito/icon.png"));
-	CHECK_RETURN(character[playno], "character/kaito/icon");	
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/DonThousand/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_DONTHOUSAND);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/DonThousand/icon.png"));
-	CHECK_RETURN(character[playno], "character/DonThousand/icon");	
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yuya/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_YUYA);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yuya/icon.png"));
-	CHECK_RETURN(character[playno], "character/yuya/icon");	
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/declan/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_DECLAN);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/declan/icon.png"));
-	CHECK_RETURN(character[playno], "character/declan/icon");
-    playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/playmaker/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_PLAYMAKER);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/playmaker/icon.png"));
-	CHECK_RETURN(character[playno], "character/playmaker/icon");
-    playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/soulburner/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_SOULBURNER);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/soulburner/icon.png"));
-	CHECK_RETURN(character[playno], "character/soulburner/icon");
-    playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/blueangel/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_BLUEANGEL);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/blueangel/icon.png"));
-	CHECK_RETURN(character[playno], "character/blueangel/icon");
+    RefreshKCGImage();
 #else
-    for (uint8_t i = 1; i < totcharacter+1; i++) {
-		icon[i] = driver->getTexture(0);
-	    character[i] = driver->getTexture(0);
+    for (uint8_t playno = 1; playno < totcharacter; playno++) {
+		icon[playno] = driver->getTexture(0);
+	    character[playno] = driver->getTexture(0);
 	}
 #endif
-	tcharacterselect = driver->getTexture(EPRO_TEXT("./textures/character/left.png"));
+    tcharacterselect = driver->getTexture(EPRO_TEXT("./textures/character/left.png"));
 	tcharacterselect2 = driver->getTexture(EPRO_TEXT("./textures/character/right.png"));
 	tCover[0] = GetRandomImage(TEXTURE_COVERS, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	tCover[1] = GetRandomImage(TEXTURE_COVERO, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
@@ -344,7 +273,7 @@ bool ImageManager::Initial() {
 	tUnknown = GetRandomImage(TEXTURE_UNKNOWN, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	if (!tUnknown)
 		GET_TEXTURE_SIZED(tUnknown, "unknown", CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
-	CHECK_RETURN(tUnknown, "unknown");	
+	CHECK_RETURN(tUnknown, "unknown");
 	tAct = GetRandomImage(TEXTURE_ACTIVATE);
 	tAttack = GetRandomImage(TEXTURE_ATTACK);
 	if (!tAct)
@@ -414,14 +343,14 @@ bool ImageManager::Initial() {
 	tBackGround_menu = GetRandomImage(TEXTURE_BACKGROUND_MENU);
 	if (!tBackGround_menu)
 		GET_TEXTURE(tBackGround_menu, "bg_menu");
-	if(!tBackGround_menu){
+    if (!tBackGround_menu){
 		tBackGround_menu = tBackGround;
 		def_tBackGround_menu = tBackGround;
 	}
 	tBackGround_deck = GetRandomImage(TEXTURE_BACKGROUND_DECK);
 	if (!tBackGround_deck)
 		GET_TEXTURE(tBackGround_deck, "bg_deck");
-	if(!tBackGround_deck){
+    if (!tBackGround_deck){
 		tBackGround_deck = tBackGround;
 		def_tBackGround_deck = tBackGround;
 	}
@@ -621,6 +550,14 @@ irr::video::ITexture* ImageManager::GetRandomImage(int image_type, int width, in
 	auto name = ImageList[image_type][image_id].c_str();
 	return GetTextureFromFile(name, width, height);
 }
+void ImageManager::RefreshKCGImage() {
+    char* textcharacter[] = {"muto","atem","kaiba","joey","marik","dartz","bakura","aigami","judai","manjome","kaisa","phoenix","john","yubel","yusei","jack","arki","yuma","shark","kaito","DonThousand","yuya","declan","playmaker","soulburner","blueangel"};
+	int imgcharacter[] = {TEXTURE_MUTO,TEXTURE_ATEM,TEXTURE_KAIBA,TEXTURE_JOEY,TEXTURE_MARIK,TEXTURE_DARTZ,TEXTURE_BAKURA,TEXTURE_AIGAMI,TEXTURE_JUDAI,TEXTURE_MANJOME,TEXTURE_KAISA,TEXTURE_PHORNIX,TEXTURE_JOHN,TEXTURE_YUBEL,TEXTURE_YUSEI,TEXTURE_JACK,TEXTURE_ARKI,TEXTURE_YUMA,TEXTURE_SHARK,TEXTURE_KAITO,TEXTURE_DONTHOUSAND,TEXTURE_YUYA,TEXTURE_DECLAN,TEXTURE_PLAYMAKER,TEXTURE_SOULBURNER,TEXTURE_BLUEANGEL};
+    for(uint8_t playno = 1; playno < totcharacter; playno++) {
+        icon[playno] = driver->getTexture((EPRO_TEXT("./textures/character/") + Utils::ToPathString(textcharacter[playno-1]) + EPRO_TEXT("/mini_icon.png")).c_str());
+        character[playno] = GetRandomImage(imgcharacter[playno-1]);
+    }
+}
 //////kdiy//////
 
 #undef GET
@@ -646,169 +583,49 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 	textures_path.assign(_path.data(), _path.size());
 	const bool is_base = textures_path == BASE_PATH;
 	/////kdiy//////
+    // GET_TEXTURE(tAct, "act");
+	// GET_TEXTURE(tAttack, "attack");
+	// GET_TEXTURE(tChain, "chain");
+	// GET_TEXTURE_SIZED(tNegated, "negated", 128, 128);
+	// GET_TEXTURE_SIZED(tNumber, "number", 320, 256);
+	// GET_TEXTURE(tLPBar, "lp");
+	// GET_TEXTURE(tLPFrame, "lpf");
+	// GET_TEXTURE_SIZED(tMask, "mask", 254, 254);
+	// GET_TEXTURE(tEquip, "equip");
+	// GET_TEXTURE(tTarget, "target");
+	// GET_TEXTURE(tChainTarget, "chaintarget");
+	// GET_TEXTURE(tLim, "lim");
+	// GET_TEXTURE(tOT, "ot");
+	// GET_TEXTURE_SIZED(tHand[0], "f1", 89, 128);
+	// GET_TEXTURE_SIZED(tHand[1], "f2", 89, 128);
+	// GET_TEXTURE_SIZED(tHand[2], "f3", 89, 128);
+	// GET_TEXTURE(tBackGround, "bg");
+	// GET_TEXTURE(tBackGround_menu, "bg_menu");
+	// if(!is_base && tBackGround != def_tBackGround && tBackGround_menu == def_tBackGround_menu)
+	// 	tBackGround_menu = tBackGround;
+	// GET_TEXTURE(tBackGround_deck, "bg_deck");
+	// if(!is_base && tBackGround != def_tBackGround && tBackGround_deck == def_tBackGround_deck)
+	// 	tBackGround_deck = tBackGround;
+	// GET_TEXTURE(tField[0][0], "field2");
+	// GET_TEXTURE(tFieldTransparent[0][0], "field-transparent2");
+	// GET_TEXTURE(tField[0][1], "field3");
+	// GET_TEXTURE(tFieldTransparent[0][1], "field-transparent3");
+	// GET_TEXTURE(tField[0][2], "field");
+	// GET_TEXTURE(tFieldTransparent[0][2], "field-transparent");
+	// GET_TEXTURE(tField[0][3], "field4");
+	// GET_TEXTURE(tFieldTransparent[0][3], "field-transparent4");
+	// GET_TEXTURE(tField[1][0], "fieldSP2");
+	// GET_TEXTURE(tFieldTransparent[1][0], "field-transparentSP2");
+	// GET_TEXTURE(tField[1][1], "fieldSP3");
+	// GET_TEXTURE(tFieldTransparent[1][1], "field-transparentSP3");
+	// GET_TEXTURE(tField[1][2], "fieldSP");
+	// GET_TEXTURE(tFieldTransparent[1][2], "field-transparentSP");
+	// GET_TEXTURE(tField[1][3], "fieldSP4");
+	// GET_TEXTURE(tFieldTransparent[1][3], "field-transparentSP4");
+	// GET_TEXTURE(tSettings, "settings");
 	RefreshRandomImageList();
-	uint8_t playno = 1;
 #ifdef VIP
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/muto/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_MUTO);
-	if (!character[playno])
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/muto/icon.png"));
-	CHECK_RETURN(character[playno], "character/muto/icon");	
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/atem/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_ATEM);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/atem/icon.png"));
-	CHECK_RETURN(character[playno], "character/atem/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/kaiba/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_KAIBA);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/kaiba/icon.png"));
-	CHECK_RETURN(character[playno], "character/kaiba/icon");	
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/joey/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_JOEY);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/joey/icon.png"));
-	CHECK_RETURN(character[playno], "character/joey/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/marik/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_MARIK);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/marik/icon.png"));
-	CHECK_RETURN(character[playno], "character/marik/icon");
-	playno++;
-    icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/dartz/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_DARTZ);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/dartz/icon.png"));
-	CHECK_RETURN(character[playno], "character/dartz/icon");
-    playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/bakura/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_BAKURA);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/bakura/icon.png"));
-	CHECK_RETURN(character[playno], "character/bakura/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/aigami/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_AIGAMI);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/aigami/icon.png"));
-	CHECK_RETURN(character[playno], "character/aigami/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/judai/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_JUDAI);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/judai/icon.png"));
-	CHECK_RETURN(character[playno], "character/judai/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/manjome/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_MANJOME);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/manjome/icon.png"));
-	CHECK_RETURN(character[playno], "character/manjome/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/kaisa/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_KAISA);
-	if (!character[8]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/kaisa/icon.png"));
-	CHECK_RETURN(character[playno], "character/kaisa/icon");	
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/phoenix/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_PHORNIX);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/phoenix/icon.png"));
-	CHECK_RETURN(character[playno], "character/phoenix/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/john/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_JOHN);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/john/icon.png"));
-	CHECK_RETURN(character[playno], "character/john/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yubel/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_YUBEL);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yubel/icon.png"));
-	CHECK_RETURN(character[playno], "character/yubel/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yusei/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_YUSEI);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yusei/icon.png"));
-	CHECK_RETURN(character[playno], "character/yusei/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/jack/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_JACK);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/jack/icon.png"));
-	CHECK_RETURN(character[playno], "character/jack/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/arki/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_ARKI);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/arki/icon.png"));
-	CHECK_RETURN(character[playno], "character/arki/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yuma/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_YUMA);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yuma/icon.png"));
-	CHECK_RETURN(character[playno], "character/yuma/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/shark/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_SHARK);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/shark/icon.png"));
-	CHECK_RETURN(character[playno], "character/shark/icon");
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/kaito/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_KAITO);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/kaito/icon.png"));
-	CHECK_RETURN(character[playno], "character/kaito/icon");	
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/DonThousand/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_DONTHOUSAND);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/DonThousand/icon.png"));
-	CHECK_RETURN(character[playno], "character/DonThousand/icon");	
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yuya/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_YUYA);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/yuya/icon.png"));
-	CHECK_RETURN(character[playno], "character/yuya/icon");	
-	playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/declan/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_DECLAN);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/declan/icon.png"));
-	CHECK_RETURN(character[playno], "character/declan/icon");
-    playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/playmaker/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_PLAYMAKER);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/playmaker/icon.png"));
-	CHECK_RETURN(character[playno], "character/playmaker/icon");
-    playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/soulburner/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_SOULBURNER);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/soulburner/icon.png"));
-	CHECK_RETURN(character[playno], "character/soulburner/icon");
-    playno++;
-	icon[playno] = driver->getTexture(EPRO_TEXT("./textures/character/blueangel/mini_icon.png"));
-	character[playno] = GetRandomImage(TEXTURE_BLUEANGEL);
-	if (!character[playno]) 
-		character[playno] = driver->getTexture(EPRO_TEXT("./textures/character/blueangel/icon.png"));
-	CHECK_RETURN(character[playno], "character/blueangel/icon");
-#else
-    for (uint8_t i = 1; i < totcharacter+1; i++) {
-		icon[i] = driver->getTexture(0);
-	    character[i] = driver->getTexture(0);
-	}
+    RefreshKCGImage();
 #endif
 	tAct = GetRandomImage(TEXTURE_ACTIVATE);
 	tAttack = GetRandomImage(TEXTURE_ATTACK);
@@ -862,13 +679,17 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 	tBackGround_menu = GetRandomImage(TEXTURE_BACKGROUND_MENU);
 	if (!tBackGround_menu)
 		GET_TEXTURE(tBackGround_menu, "bg_menu");
-	if(!is_base && tBackGround != def_tBackGround && tBackGround_menu == def_tBackGround_menu)
+    if (!tBackGround_menu){
 		tBackGround_menu = tBackGround;
+		def_tBackGround_menu = tBackGround;
+	}
 	tBackGround_deck = GetRandomImage(TEXTURE_BACKGROUND_DECK);
 	if (!tBackGround_deck)
 		GET_TEXTURE(tBackGround_deck, "bg_deck");
-	if(!is_base && tBackGround != def_tBackGround && tBackGround_deck == def_tBackGround_deck)
+    if (!tBackGround_deck){
 		tBackGround_deck = tBackGround;
+		def_tBackGround_deck = tBackGround;
+	}
 	tField[0][0] = GetRandomImage(TEXTURE_field2);
 	if (!tField[0][0])
 		GET_TEXTURE(tField[0][0], "field2");
