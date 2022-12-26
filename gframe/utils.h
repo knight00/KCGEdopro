@@ -9,9 +9,9 @@
 #include <memory> // unique_ptr
 #include <string>
 #include <vector>
-#include "epro_mutex.h"
 #include "RNG/Xoshiro256.hpp"
 #include "RNG/SplitMix64.hpp"
+#include "epro_mutex.h"
 #include "bufferio.h"
 #include "text_types.h"
 
@@ -55,6 +55,7 @@ namespace ygo {
 		static std::vector<SynchronizedIrrArchive> archives;
 		static irr::io::IFileSystem* filesystem;
 		static irr::IOSOperator* OSOperator;
+		static void SetupCrashDumpLogging();
 		static epro::stringview GetLastErrorString();
 		static bool MakeDirectory(epro::path_stringview path);
 		static bool FileCopyFD(int source, int destination);
@@ -75,7 +76,7 @@ namespace ygo {
 		static std::vector<epro::path_string> FindFiles(epro::path_stringview path, const std::vector<epro::path_stringview>& extensions, int subdirectorylayers = 0);
 		/** Returned subfolder names are prefixed by the provided path */
 		static std::vector<epro::path_string> FindSubfolders(epro::path_stringview path, int subdirectorylayers = 1, bool addparentpath = true);
-		static std::vector<int> FindFiles(irr::io::IFileArchive* archive, epro::path_stringview path, const std::vector<epro::path_stringview>& extensions, int subdirectorylayers = 0);
+		static std::vector<uint32_t> FindFiles(irr::io::IFileArchive* archive, epro::path_stringview path, const std::vector<epro::path_stringview>& extensions, int subdirectorylayers = 0);
 		static irr::io::IReadFile* FindFileInArchives(epro::path_stringview path, epro::path_stringview name);
 
 #define DECLARE_STRING_VIEWED(funcname) \
@@ -184,6 +185,7 @@ template<>
 constexpr epro::wstringview CHAR_T_STRING(epro::stringview, epro::wstringview string) { return string; }
 
 #define CHAR_STRING(Char, text) CHAR_T_STRING<Char>(text ""_sv, L"" text ""_sv)
+
 #define CAST(c) static_cast<T>(c)
 template<typename T>
 auto Utils::NormalizePathImpl(const epro::basic_string_view<T>& _path, bool trailing_slash) {
