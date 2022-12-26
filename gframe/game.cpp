@@ -510,12 +510,18 @@ void Game::Initialize() {
 
 	PopulateTabSettingsWindow();
 	PopulateSettingsWindow();
-
-	wBtnSettings = env->addWindow(Scale(0, 610, 30, 640));
+    
+    //////kdiy//////
+	// wBtnSettings = env->addWindow(Scale(0, 610, 30, 640));
+    wBtnSettings = env->addWindow(Scale(mainMenuLeftX-30, 420, mainMenuLeftX, 450));
+    //////kdiy//////
 	wBtnSettings->getCloseButton()->setVisible(false);
 	wBtnSettings->setDraggable(false);
 	wBtnSettings->setDrawTitlebar(false);
-	wBtnSettings->setDrawBackground(false);
+    //////kdiy//////
+	//wBtnSettings->setDrawBackground(false);
+    wBtnSettings->setDrawBackground(true);
+    //////kdiy//////
 	auto dimBtnSettings = Scale(0, 0, 30, 30);
 	btnSettings = irr::gui::CGUIImageButton::addImageButton(env, dimBtnSettings, wBtnSettings, BUTTON_SHOW_SETTINGS);
 	btnSettings->setDrawBorder(false);
@@ -691,8 +697,8 @@ void Game::Initialize() {
 	int j = 0;
 	for(int i = 25; i < 36; ++i) {
 		chkRace[i] = env->addCheckBox(false, Scale(10 + (i % 4) * 90, 25 + (i / 4) * 25, 100 + (i % 4) * 90, 50 + (i / 4) * 25),
-									  wANRace, CHECK_RACE, gDataManager->GetSysString(1082 + j).data());
-		defaultStrings.emplace_back(chkRace[i], 1082 + j);
+									  wANRace, CHECK_RACE, gDataManager->GetSysString(2600 + j).data());
+		defaultStrings.emplace_back(chkRace[i], 2600 + j);
 		++j;
 	}
 	/////zdiy/////
@@ -2615,7 +2621,10 @@ bool Game::MainLoop() {
 		int fpsCounterWidth = fpsCounter->getTextWidth() / (dpi_scale * window_scale.X) + 20; // corner may be curved
 #endif
 		if (is_building || is_siding) {
-			fpsCounter->setRelativePosition(Resize(205, CARD_IMG_HEIGHT + 1, 300, CARD_IMG_HEIGHT + 21));
+            /////kdiy//////////
+			//fpsCounter->setRelativePosition(Resize(205, CARD_IMG_HEIGHT + 1, 300, CARD_IMG_HEIGHT + 21));
+            fpsCounter->setRelativePosition(Resize(1024 - fpsCounterWidth, 620, 1024, 640));
+            /////kdiy//////////
 		} else if (wChat->isVisible()) { // Move it above the chat box
 			fpsCounter->setRelativePosition(Resize(1020 - fpsCounterWidth, 595, 1020, 615));
 		} else { // bottom right of window with a little padding
@@ -4333,14 +4342,15 @@ void Game::OnResize() {
 	wRoomListPlaceholder->setRelativePosition(irr::core::recti(0, 0, window_size.Width, window_size.Height));
 	////////kdiy///////	
 	// wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 450));
+    // wBtnSettings->setRelativePosition(ResizeWin(0, 610, 30, 640));
 	#ifdef EK
 	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 450));
 	#else
 	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 485));
 	#endif
 	wQQ->setRelativePosition(ResizeWin(mainMenuRightX+10, 200, mainMenuRightX+150, 450));
-	////////kdiy///////	
-	wBtnSettings->setRelativePosition(ResizeWin(0, 610, 30, 640));
+    wBtnSettings->setRelativePosition(ResizeWin(mainMenuLeftX-30, 420, mainMenuLeftX, 450));
+	////////kdiy///////
 	SetCentered(wCommitsLog);
 	SetCentered(updateWindow, false);
 
