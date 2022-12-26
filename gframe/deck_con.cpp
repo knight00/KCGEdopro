@@ -597,10 +597,10 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 				int sel = mainGame->cbDBDecks->getSelected();
 				int sel2 = mainGame->cbDBDecks2->getSelected();
                 mainGame->cbDBDecks22->setSelected(sel2);
-				if(sel2 >= 0) {
-				    mainGame->RefreshDeck(mainGame->cbDBDecks2, mainGame->cbDBDecks);
-                }
-				else break;
+				if(sel2 >= 0)
+				    mainGame->RefreshDeck(mainGame->cbDBDecks);
+				else 
+                    break;
 			}
 			///////kdiy/////
 			case COMBOBOX_DBDECKS: {
@@ -613,7 +613,8 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 					auto folder = Utils::ToPathString(mainGame->cbDBDecks2->getItem(sel2));
 					mainGame->deckBuilder.SetCurrentDeckFromFile(folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDBDecks->getItem(sel)), true);
 				}
-				else break;
+				else 
+                    break;
 				prev_deckfolder = sel2;
 				/////kdiy/////
 				prev_deck = sel;

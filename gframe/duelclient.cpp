@@ -926,10 +926,9 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		////////kdiy////////
 		// mainGame->RefreshDeck(mainGame->cbDeckSelect);
 		//mainGame->cbDeckSelect->setEnabled(true);
-		mainGame->RefreshDeck(mainGame->cbDeck2Select, mainGame->cbDeckSelect, true);
+		mainGame->RefreshDeck();
 		mainGame->cbDeckSelect->setEnabled(true);
 		mainGame->cbDeck2Select->setEnabled(true);
-		mainGame->RefreshDeck(mainGame->gBot.aiDeckSelect2, mainGame->gBot.aiDeckSelect, true);
 		const auto& bot = mainGame->gBot.bots[mainGame->gBot.CurrentIndex()];
 		if (bot.deck == L"AI_perfectdicky") {
 			mainGame->gBot.aiDeckSelect->setVisible(true);

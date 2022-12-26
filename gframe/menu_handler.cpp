@@ -779,9 +779,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					mainGame->HideElement(mainGame->gBot.window);
 				}
 				else {
-					////kdiy///////////
-					mainGame->RefreshDeck(mainGame->gBot.aiDeckSelect2,mainGame->gBot.aiDeckSelect, true);
-					////kdiy///////////
 					mainGame->ShowElement(mainGame->gBot.window);
 				}
 				break;
@@ -906,7 +903,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				// if(open_file && mainGame->deckBuilder.SetCurrentDeckFromFile(open_file_name, true)) {
 				// 	auto name = Utils::GetFileName(open_file_name);
 				mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 137, 295, 187));
-				mainGame->RefreshDeck(mainGame->cbDBDecks2,mainGame->cbDBDecks, true);
+				mainGame->RefreshDeck(mainGame->cbDBDecks, true);
 				auto folder = Utils::ToPathString(mainGame->cbDBDecks2->getItem(mainGame->cbDBDecks2->getSelected()));
                 for(int i = 0; i < mainGame->cbDBDecks2->getItemCount() - 1; i++) {
                     mainGame->cbDBDecks22->addItem(mainGame->cbDBDecks2->getItem(i));
@@ -979,7 +976,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				} else if (prev_operation == ACTION_SHOW_CHANGELOG) {
 					///kupdate//////////
 					// Utils::SystemOpen(EPRO_TEXT("https://github.com/edo9300/edopro/releases?referrer=") EDOPRO_USERAGENT);
-					Utils::SystemOpen(EPRO_TEXT("https://edokcg.i234.me/wordpress/kcg-v6-5/"));
+					Utils::SystemOpen(EPRO_TEXT("https://edokcg.i234.me/wordpress/kcg-update/"));
 					mainGame->btnNo->setEnabled(true);
 					///kupdate//////////
 				}
@@ -1546,14 +1543,14 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				int sel = mainGame->gBot.aiDeckSelect->getSelected();
 				int sel2 = mainGame->gBot.aiDeckSelect2->getSelected();
 				if(sel2 >= 0)
-				    mainGame->RefreshDeck(mainGame->gBot.aiDeckSelect2, mainGame->gBot.aiDeckSelect);
+				    mainGame->RefreshDeck(mainGame->gBot.aiDeckSelect);
 				break;
 			}
 			case COMBOBOX_cbDeckSelect: {
 				int sel = mainGame->cbDeckSelect->getSelected();
 				int sel2 = mainGame->cbDeck2Select->getSelected();
 				if(sel2 >= 0)
-				    mainGame->RefreshDeck(mainGame->cbDeck2Select, mainGame->cbDeckSelect);
+				    mainGame->RefreshDeck(mainGame->cbDeckSelect);
 				break;
 			}
             ///////kdiy//////////
@@ -1627,7 +1624,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					if(extension == L"ydk" && isMenu && mainGame->deckBuilder.SetCurrentDeckFromFile(Utils::ToPathString(to_open_file))) {
 						//////kdiy/////
 						//mainGame->RefreshDeck(mainGame->cbDBDecks);
-						mainGame->RefreshDeck(mainGame->cbDBDecks2, mainGame->cbDBDecks, true);
+						mainGame->RefreshDeck(mainGame->cbDBDecks, true);
 						//////kdiy/////
 						auto name = Utils::GetFileName(to_open_file);
 						mainGame->ebDeckname->setText(name.data());

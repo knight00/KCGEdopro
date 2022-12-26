@@ -244,6 +244,7 @@ bool ImageManager::Initial() {
 	// GET_TEXTURE(tSettings, "settings");
 	// CHECK_RETURN(tSettings, "settings");
 	QQ = driver->getTexture(EPRO_TEXT("./textures/QQ.jpg"));
+    CHECK_RETURN(QQ, "QQ");
     icon[0] = driver->getTexture(EPRO_TEXT("./textures/character/player/mini_icon.png"));
 	character[0] = driver->getTexture(0);
 	for(uint8_t i = 0; i < 6; i++) {
@@ -551,7 +552,7 @@ irr::video::ITexture* ImageManager::GetRandomImage(int image_type, int width, in
 	return GetTextureFromFile(name, width, height);
 }
 void ImageManager::RefreshKCGImage() {
-    char* textcharacter[] = {"muto","atem","kaiba","joey","marik","dartz","bakura","aigami","judai","manjome","kaisa","phoenix","john","yubel","yusei","jack","arki","yuma","shark","kaito","DonThousand","yuya","declan","playmaker","soulburner","blueangel"};
+	const wchar_t* textcharacter[] = {L"muto",L"atem",L"kaiba",L"joey",L"marik",L"dartz",L"bakura",L"aigami",L"judai",L"manjome",L"kaisa",L"phoenix",L"john",L"yubel",L"yusei",L"jack",L"arki",L"yuma",L"shark",L"kaito",L"DonThousand",L"yuya",L"declan",L"playmaker",L"soulburner",L"blueangel"};
 	int imgcharacter[] = {TEXTURE_MUTO,TEXTURE_ATEM,TEXTURE_KAIBA,TEXTURE_JOEY,TEXTURE_MARIK,TEXTURE_DARTZ,TEXTURE_BAKURA,TEXTURE_AIGAMI,TEXTURE_JUDAI,TEXTURE_MANJOME,TEXTURE_KAISA,TEXTURE_PHORNIX,TEXTURE_JOHN,TEXTURE_YUBEL,TEXTURE_YUSEI,TEXTURE_JACK,TEXTURE_ARKI,TEXTURE_YUMA,TEXTURE_SHARK,TEXTURE_KAITO,TEXTURE_DONTHOUSAND,TEXTURE_YUYA,TEXTURE_DECLAN,TEXTURE_PLAYMAKER,TEXTURE_SOULBURNER,TEXTURE_BLUEANGEL};
     for(uint8_t playno = 1; playno < totcharacter; playno++) {
         icon[playno] = driver->getTexture((EPRO_TEXT("./textures/character/") + Utils::ToPathString(textcharacter[playno-1]) + EPRO_TEXT("/mini_icon.png")).c_str());

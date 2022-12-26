@@ -24,9 +24,9 @@ extern bool show_changelog;
 /////kupdate///////
 //#define EDOPRO_VERSION_STRING L"Project Ignis: EDOPro | " STR(EDOPRO_VERSION_MAJOR) "." STR(EDOPRO_VERSION_MINOR) "." STR(EDOPRO_VERSION_PATCH) " \"" EDOPRO_VERSION_CODENAME "\""
 #ifdef VIP
-#define KCG_VERSION L"V14.3-VIP"
+#define KCG_VERSION L"V15-VIP"
 #else
-#define KCG_VERSION L"V14.3"
+#define KCG_VERSION L"V15"
 #endif
 #ifdef EK
 #define IS_KCG L"EDOPro-KCG"

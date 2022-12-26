@@ -2028,7 +2028,11 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			case BUTTON_FOLDER: {
                 Utils::SystemOpen(EPRO_TEXT("https://edokcg.i234.me/wordpress/%E6%96%87%E4%BB%B6%E5%A4%BE%E7%B0%A1%E4%BB%8B/"));
 				break;
-			}		
+			}
+            case BUTTON_SOUND: {
+                Utils::SystemOpen(EPRO_TEXT("https://www.bilibili.com/video/BV1Gu411z7C1/"));
+				break;
+			}	
 			case BUTTON_CLEAR: {
 				if(Utils::DeleteDirectory(EPRO_TEXT("./pics/"))) {
 					try {

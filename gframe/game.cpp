@@ -321,6 +321,7 @@ void Game::Initialize() {
 	cbpics->setSelected(0);
 	btnClearpics->setVisible(false);
 	btnFolder->setVisible(false);
+    btnSound->setVisible(false);
 
     height += 35;
 	offset += 35;
@@ -2277,6 +2278,8 @@ void Game::PopulateSettingsWindow() {
         defaultStrings.emplace_back(btnClearpics, 8001);
         btnFolder = env->addButton(GetNextRect(), sPanel, BUTTON_FOLDER, gDataManager->GetSysString(8007).data());
         defaultStrings.emplace_back(btnFolder, 8007);
+        btnSound = env->addButton(GetNextRect(), sPanel, BUTTON_SOUND, gDataManager->GetSysString(8041).data());
+        defaultStrings.emplace_back(btnSound, 8041);
     }
     {
         gSettings.system.construct(env, gSettings.tabcontrolwindow, gDataManager->GetSysString(8017).data());
@@ -2911,71 +2914,144 @@ bool Game::ApplySkin(const epro::path_string& skinname, bool reload, bool firstr
 	return applied;
 }
 /////////kdiy///////
+void Game::RefreshDeck() {	
+	cbDeck2Select->clear();
+    cbDeckSelect->clear();
+    gBot.aiDeckSelect2->clear();
+    gBot.aiDeckSelect->clear();
+    int count = 0;
+    for(auto& file : Utils::FindFiles(EPRO_TEXT("./deck/"), { EPRO_TEXT("ydk") })) {
+        count++;
+        file.erase(file.size() - 4);
+		cbDeckSelect->addItem(Utils::ToUnicodeIfNeeded(file).data());
+        gBot.aiDeckSelect->addItem(Utils::ToUnicodeIfNeeded(file).data());
+	}
+    if(count > 0) {
+        cbDeck2Select->addItem(L"");
+        gBot.aiDeckSelect2->addItem(L"");
+    }
+	auto deckdirs = Utils::FindSubfolders(EPRO_TEXT("./deck/"), 1, false);
+	for(auto& _folder : deckdirs) {
+		int count = 0;
+		for(auto& file : Utils::FindFiles(EPRO_TEXT("./deck/") + _folder + EPRO_TEXT("/"), { EPRO_TEXT("ydk") })) {	
+			count++;
+            file.erase(file.size() - 4);
+			cbDeckSelect->addItem(Utils::ToUnicodeIfNeeded(file).data());
+            gBot.aiDeckSelect->addItem(Utils::ToUnicodeIfNeeded(file).data());
+		}
+		if(count == 0) continue;
+		cbDeck2Select->addItem(Utils::ToUnicodeIfNeeded(_folder).data());
+        gBot.aiDeckSelect2->addItem(Utils::ToUnicodeIfNeeded(_folder).data());
+	}
+    for(size_t i = 0; i < cbDeck2Select->getItemCount(); ++i) {
+        if(gGameConfig->lastdeckfolder == cbDeck2Select->getItem(i)) {
+            cbDeck2Select->setSelected(i);
+            break;
+        }
+	}
+    for(size_t i = 0; i < gBot.aiDeckSelect2->getItemCount(); ++i) {
+        if(gGameConfig->lastAIdeckfolder == gBot.aiDeckSelect2->getItem(i)) {
+            gBot.aiDeckSelect2->setSelected(i);
+            break;
+        }
+	}
+    for(size_t i = 0; i < cbDeckSelect->getItemCount(); ++i) {
+        if(gGameConfig->lastdeck == cbDeckSelect->getItem(i)) {
+            cbDeckSelect->setSelected(i);
+            break;
+        }
+	}
+    for(size_t i = 0; i < gBot.aiDeckSelect->getItemCount(); ++i) {
+        if(gGameConfig->lastAIdeck == gBot.aiDeckSelect->getItem(i)) {
+            gBot.aiDeckSelect->setSelected(i);
+            break;
+        }
+	}
+}
 //void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck) {
-void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck2, irr::gui::IGUIComboBox* cbDeck, bool refresh_folder) {	
+void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder) {	
 /////////kdiy///////	
 	cbDeck->clear();	
 	/////////kdiy///////
 	// for(auto& file : Utils::FindFiles(EPRO_TEXT("./deck/"), { EPRO_TEXT("ydk") })) {
 	// 	file.erase(file.size() - 4);
 	// 	cbDeck->addItem(Utils::ToUnicodeIfNeeded(file).data());
-	if(refresh_folder) {
-		cbDeck2->clear();
-		int dcount = 0;
-		int selecteddeckfolder = -1;
-		for(auto& file : Utils::FindFiles(EPRO_TEXT("./deck/"), { EPRO_TEXT("ydk") })) {	
-			dcount++;
-			if(dcount > 0) break;
-		}
-		if(dcount > 0) selecteddeckfolder = cbDeck2->addItem(L"");
-		auto deckdirs = Utils::FindSubfolders(EPRO_TEXT("./deck/"), 1, false);
-		for(auto& _folder : deckdirs) {
-			int count = 0;
-			for(auto& file : Utils::FindFiles(EPRO_TEXT("./deck/") + _folder + EPRO_TEXT("/"), { EPRO_TEXT("ydk") })) {	
-				count++;
-			}
-			if(count == 0) continue;
-			auto itemIndex = cbDeck2->addItem(Utils::ToUnicodeIfNeeded(_folder).data());
-			if(!(cbDeck2 == gBot.aiDeckSelect2 && cbDeck == gBot.aiDeckSelect)
-			  && Utils::ToPathString(gGameConfig->lastdeckfolder) == _folder) {
-				selecteddeckfolder = itemIndex;
-			}
-			else if ((cbDeck2 == gBot.aiDeckSelect2 && cbDeck == gBot.aiDeckSelect)
-			  && Utils::ToPathString(gGameConfig->lastAIdeckfolder) == _folder) {
-				selecteddeckfolder = itemIndex;
-			}
-	    }
-		if(selecteddeckfolder < 0) selecteddeckfolder = 0;
-		cbDeck2->setSelected(selecteddeckfolder);		
-	}
-	int selecteddeck = -1;
-	auto folder = Utils::ToPathString(cbDeck2->getItem(cbDeck2->getSelected()));
-	//for(auto& file : Utils::FindFiles(EPRO_TEXT("./deck/"), { EPRO_TEXT("ydk") })) {
-	for(auto& file : Utils::FindFiles(EPRO_TEXT("./deck/") + folder + EPRO_TEXT("/"), { EPRO_TEXT("ydk") })) {
-	/////////kdiy///////	
-		cbDeck->addItem(Utils::ToUnicodeIfNeeded(file.substr(0, file.size() - 4)).data());
-	}
-	/////////kdiy///////
+	//}
 	// for(size_t i = 0; i < cbDeck->getItemCount(); ++i) {
 	// 	if(gGameConfig->lastdeck == cbDeck->getItem(i)) {
 	// 		cbDeck->setSelected(i);
 	// 		break;
 	// 	}
 	// }
-	for(size_t i = 0; i < cbDeck->getItemCount(); ++i) {
-		if(!(cbDeck2 == gBot.aiDeckSelect2 && cbDeck == gBot.aiDeckSelect)
-			&& gGameConfig->lastdeckfolder == cbDeck2->getItem(cbDeck2->getSelected()) && gGameConfig->lastdeck == cbDeck->getItem(i)) {
-			selecteddeck = i;	
-			break;
+    irr::gui::IGUIComboBox* cbDeck2 = cbDeck2Select;
+    if(cbDeck == gBot.aiDeckSelect)
+        cbDeck2 = gBot.aiDeckSelect2;
+    else if(cbDeck == cbDBDecks)
+        cbDeck2 = cbDBDecks2;
+	if(refresh_folder) {
+		cbDeck2->clear();
+        int count = 0;
+		for(auto& file : Utils::FindFiles(EPRO_TEXT("./deck/"), { EPRO_TEXT("ydk") })) {
+            count++;
+            file.erase(file.size() - 4);
+			cbDeck->addItem(Utils::ToUnicodeIfNeeded(file).data());
 		}
-		else if((cbDeck2 == gBot.aiDeckSelect2 && cbDeck == gBot.aiDeckSelect)
-			  && gGameConfig->lastAIdeckfolder == cbDeck2->getItem(cbDeck2->getSelected()) && gGameConfig->lastAIdeck == cbDeck->getItem(i)) {
-			selecteddeck = i;
-			break;
+        if(count > 0)
+            cbDeck2->addItem(L"");
+		auto deckdirs = Utils::FindSubfolders(EPRO_TEXT("./deck/"), 1, false);
+		for(auto& _folder : deckdirs) {
+			int count = 0;
+			for(auto& file : Utils::FindFiles(EPRO_TEXT("./deck/") + _folder + EPRO_TEXT("/"), { EPRO_TEXT("ydk") })) {
+				count++;
+                file.erase(file.size() - 4);
+				cbDeck->addItem(Utils::ToUnicodeIfNeeded(file).data());
+			}
+			if(count == 0) continue;
+			cbDeck2->addItem(Utils::ToUnicodeIfNeeded(_folder).data());
+	    }
+		for(size_t i = 0; i < cbDeck2->getItemCount(); ++i) {
+            if(cbDeck != gBot.aiDeckSelect
+			  && gGameConfig->lastdeckfolder == cbDeck2->getItem(i)) {
+                cbDeck2->setSelected(i);
+                break;
+            }
+            if(cbDeck == gBot.aiDeckSelect
+			   && gGameConfig->lastAIdeckfolder == gBot.aiDeckSelect2->getItem(i)) {
+                cbDeck2->setSelected(i);
+                break;
+            }
+        }
+        for(size_t i = 0; i < cbDeck->getItemCount(); ++i) {
+            if(cbDeck != gBot.aiDeckSelect
+			  && gGameConfig->lastdeck == cbDeck->getItem(i)) {
+                cbDeck->setSelected(i);
+                break;
+            }
+            if(cbDeck == gBot.aiDeckSelect
+			   && gGameConfig->lastAIdeck == cbDeck->getItem(i)) {
+                cbDeck->setSelected(i);
+                break;
+            }
+        }
+	} else {
+        auto _folder = Utils::ToPathString(cbDeck2->getItem(cbDeck2->getSelected()));
+        for(auto& file : Utils::FindFiles(EPRO_TEXT("./deck/") + _folder + EPRO_TEXT("/"), { EPRO_TEXT("ydk") })) {
+            file.erase(file.size() - 4);
+			cbDeck->addItem(Utils::ToUnicodeIfNeeded(file).data());
 		}
+	    for(size_t i = 0; i < cbDeck->getItemCount(); ++i) {
+            if(cbDeck == cbDeckSelect
+			  && gGameConfig->lastdeck == cbDeck->getItem(i)) {
+                cbDeck->setSelected(i);
+                break;
+            }
+            if(cbDeck == gBot.aiDeckSelect
+			  && gGameConfig->lastAIdeck == cbDeck->getItem(i)) {
+                cbDeck->setSelected(i);
+                break;
+            }
+        }
 	}
-	if(selecteddeck < 0) selecteddeck = 0;
-	cbDeck->setSelected(selecteddeck);
 	/////////kdiy///////
 }
 void Game::RefreshLFLists() {

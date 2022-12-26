@@ -138,7 +138,8 @@ public:
 	bool ApplySkin(const epro::path_string& skin, bool reload = false, bool firstrun = false);
 	////////kdiy////////
 	//void RefreshDeck(irr::gui::IGUIComboBox* cbDeck);
-	void RefreshDeck(irr::gui::IGUIComboBox* cbDeck2, irr::gui::IGUIComboBox* cbDeck, bool refresh_folder=false);
+    void RefreshDeck();
+	void RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder=false);
 	////////kdiy////////	
 	void RefreshLFLists();
 	////////kdiy////////
@@ -589,6 +590,7 @@ public:
 	irr::gui::IGUIButton* btnTut2;
 	irr::gui::IGUIButton* btHome;
 	irr::gui::IGUIButton* btnFolder;
+    irr::gui::IGUIButton* btnSound;
     irr::gui::IGUIStaticText* stpics;
 	irr::gui::IGUIComboBox* cbpics;
 	//////////kdiy/////////
