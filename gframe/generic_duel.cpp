@@ -675,8 +675,13 @@ void GenericDuel::TPResult(DuelPlayer* dp, uint8_t tp) {
 	if(host_info.extra_rules & KCG_System)
 		extracards.push_back(85);
 	if(host_info.extra_rules & Field_System)
-		extracards.push_back(86);		
-	////kdiy///////			
+		extracards.push_back(86);
+	////kdiy///////
+	/////zdiy/////
+	if(mainGame->mode->isMode && mainGame->mode->rule == MODE_RULE_ZCG){
+		extracards.push_back(99710410);
+	};
+	/////zdiy/////
 	OCG_NewCardInfo card_info = { 0, 0, 0, 0, 0, 0, POS_FACEDOWN_DEFENSE };
 	for(int32_t i = (int32_t)extracards.size() - 1; i >= 0; --i) {
 		card_info.code = extracards[i];
@@ -787,7 +792,7 @@ void GenericDuel::DuelEndProc() {
 		winc[match_result[i]]++;
 	int minvictories = (int)std::ceil(best_of / 2.0);
 	if(match_kill || (winc[0] >= minvictories || winc[1] >= minvictories) || (int)match_result.size() >= best_of) {
-		seeking_rematch = true;
+ 		seeking_rematch = true;
 		NetServer::SendPacketToPlayer(nullptr, STOC_WAITING_REMATCH);
 		ResendToAll();
 		NetServer::SendPacketToPlayer(nullptr, STOC_REMATCH);

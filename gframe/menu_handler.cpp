@@ -327,6 +327,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_HOST_CONFIRM: {
 				DuelClient::is_local_host = false;
+				/////zdiy/////
+				mainGame->mode->isMode = false;
+				/////zdiy/////
 				///////kdiy///////
 				for(int i = 0; i < 6; ++i)
 				    mainGame->icon[i]->setImage(mainGame->imageManager.icon[gSoundManager->character[i]]);
@@ -705,6 +708,42 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->RefreshReplay();
 				break;
 			}
+			 /////zdiy//////
+			case BUTTON_ENTERTAUNMENT_MODE: {
+ 				mainGame->HideElement(mainGame->wMainMenu);
+#ifdef EK
+				mainGame->HideElement(mainGame->wQQ);
+#endif
+				mainGame->stEntertainmentPlayInfo->setText(L"");
+				mainGame->ShowElement(mainGame->wEntertainmentPlay);
+				mainGame->mode->RefreshEntertainmentPlay(mainGame->mode->modeTexts);
+				mainGame->btnEntertainmentStartGame->setEnabled(false);
+				mainGame->btnEntertainmentExitGame->setEnabled(true);
+				mainGame->chkEntertainmentPrepReady->setEnabled(false);
+				mainGame->chkEntertainmentPrepReady->setChecked(false);
+				mainGame->lstEntertainmentPlayList->setEnabled(true);
+				mainGame->mode->InitializeMode();
+				break;
+			}
+			case BUTTON_ENTERTAUNMENT_START_GAME: {
+				int sel = mainGame->lstEntertainmentPlayList->getSelected();
+				if (sel == 0 && mainGame->lstEntertainmentPlayList->isDirectory(sel)) {
+					DuelClient::SendPacketToServer(CTOS_HS_START);
+				}
+				break;
+			}
+			case BUTTON_ENTERTAUNMENT_EXIT_GAME: {
+				mainGame->dInfo.isInLobby = false;
+				DuelClient::StopClient();
+				mainGame->mode->DestoryMode();
+				mainGame->HideElement(mainGame->wEntertainmentPlay);
+				mainGame->ShowElement(mainGame->wMainMenu);
+#ifdef EK
+				mainGame->ShowElement(mainGame->wQQ);
+#endif
+				mainGame->wChat->setVisible(false);
+				break;
+			}
 			case BUTTON_SINGLE_MODE: {
 				mainGame->HideElement(mainGame->wMainMenu);
 				////kdiy////////
@@ -1049,6 +1088,28 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 		}
 		case irr::gui::EGET_LISTBOX_CHANGED: {
 			switch(id) {
+			/////zdiy/////
+			case LISTBOX_ENTERTAINMENTPLAY_LIST: {
+				int sel = mainGame->lstEntertainmentPlayList->getSelected();
+				mainGame->mode->modeIndex = sel;
+				if (sel != -1 && mainGame->lstEntertainmentPlayList->isDirectory(sel)) {
+					std::wstring str(mainGame->mode->modeTexts->at(mainGame->mode->modeIndex).des);
+					str.append(L"====================\n");
+					str.append(epro::format(L"{}{}{}\n",gDataManager->GetSysString(2126),gGameConfig->winTimes,gDataManager->GetSysString(2128)));
+					str.append(epro::format(L"{}{}{}\n",gDataManager->GetSysString(2127),gGameConfig->failTimes,gDataManager->GetSysString(2128)));
+					float temp,res = 0,sum = (float)gGameConfig->failTimes + (float)gGameConfig->winTimes;
+					if(sum > 0.0f) {
+					    temp =  (float)gGameConfig->winTimes / sum;
+						res = (int)(( temp * 100 + 0.5 ) / 1);
+					}
+					str.append(epro::format(L"{}{}{}\n",gDataManager->GetSysString(2129),res,L"%"));
+					mainGame->stEntertainmentPlayInfo->setText(str.data());
+					mainGame->btnEntertainmentStartGame->setEnabled(false);
+					mainGame->chkEntertainmentPrepReady->setEnabled(true);
+				}
+				break;
+			}
+		    /////zdiy/////
 			case LISTBOX_LAN_HOST: {
 				int sel = mainGame->lstHostList->getSelected();
 				if(sel == -1)
@@ -1187,6 +1248,42 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 		}
 		case irr::gui::EGET_CHECKBOX_CHANGED: {
 			switch(id) {
+			/////zdiy/////
+			case CHECKBOX_ENTERTAUNMENT_READY:{
+				if(mainGame->chkEntertainmentPrepReady->isChecked()) {
+					mainGame->lstEntertainmentPlayList->setEnabled(false);
+					DuelClient::is_local_host = false;
+					if(mainGame->isHostingOnline) {
+						mainGame->mode->isMode = false;
+						break;
+					} else {
+					uint16_t host_port = mainGame->mode->port;
+					if(!NetServer::StartServer(host_port)) {
+						mainGame->mode->isMode = false;
+						break;
+					}
+					if(!DuelClient::StartClient(0x100007F, host_port)) {
+					NetServer::StopServer();
+						mainGame->mode->isMode = false;
+						break;
+					}
+						DuelClient::is_local_host = true;
+					}
+					try {
+						mainGame->mode->RefreshAiDecks();
+						if(mainGame->mode->LoadWindBot(mainGame->mode->port,mainGame->mode->pass))
+							break;
+					} catch(...) {}
+					mainGame->PopupMessage(L"Failed to launch windbot");
+					break;
+				} else {
+					mainGame->lstEntertainmentPlayList->setEnabled(true);
+					mainGame->btnEntertainmentStartGame->setEnabled(false);
+					DuelClient::StopClient();
+				}
+				break;
+			}
+			 /////zdiy/////
 			////kdiy///////
 			case CHECKBOX_DEFAULT_LOCAL: {
 				bool chk = true;

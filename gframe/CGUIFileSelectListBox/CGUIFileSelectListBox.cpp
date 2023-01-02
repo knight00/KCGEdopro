@@ -759,7 +759,21 @@ void CGUIFileSelectListBox::recalculateItemWidth(s32 icon) {
 		}
 	}
 }
-
+//////zdiy/////
+void CGUIFileSelectListBox::LoadContents(std::vector<std::wstring>* names) {
+	this->clear();
+	ListItem item;
+	for (auto it = names->begin(); it != names->end(); ++it)
+	{
+		item.text = *it;
+		item.icon = -1;
+		Items.push_back(item);
+	}
+	std::sort(Items.begin(), Items.end());
+	recalculateItemHeight();
+	delete names;
+}
+//////zdiy/////
 
 void CGUIFileSelectListBox::setItem(u32 index, const wchar_t* text, s32 icon) {
 	return;

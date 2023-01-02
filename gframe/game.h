@@ -20,7 +20,9 @@
 #include "discord_wrapper.h"
 #include "windbot_panel.h"
 #include "ocgapi_types.h"
-
+/////zdiy/////
+#include "network.h"
+/////zdiy/////
 struct unzip_payload;
 class CGUISkinSystem;
 class IProgressBar;
@@ -128,6 +130,58 @@ struct FadingUnit {
 	irr::core::vector2di fadingDest;
 	bool wasEnabled;
 };
+/////zdiy/////
+class Mode {
+public:
+	struct ModeText {
+		std::wstring name;
+		std::wstring des;
+	};
+	std::vector<ModeText>* modeTexts;
+	std::vector<WindBot> bots;
+	std::vector<std::wstring> masterNames,aiNames;
+	//struct DuelPlayer* masterPlayer, * aiPlayer;
+	int port;
+	int modeIndex;
+	const wchar_t * nickName;
+	const wchar_t * gameName;
+	const wchar_t * pass; 
+	bool isMode;
+	bool isAi;
+	Deck deck;
+	int16_t rule;
+	uint32_t winTimes;
+	uint32_t failTimes;
+	void InitializeMode();
+	void DestoryMode();
+	void RefreshEntertainmentPlay(std::vector<ModeText>* modeTexts);
+
+	void ModeCreateGame(CTOS_CreateGame& cscg);
+	void ModePlayerEnter(const void* data,size_t len);
+	void ModePlayerChange(const void* data,size_t len ,uint32_t& watching);
+	void ModeJoinGame(const void* data,size_t len);
+	void ModeTypeChange();
+	void ModeDuelStart(uint8_t selftype);
+
+	void RefreshAiDecks();
+	void UpdateDeck();
+	void SetTimes(uint8_t player);
+	bool LoadWindBot(int port, epro::wstringview pass);
+	bool IsModeBot(std::wstring name);
+	Mode();
+	~Mode();
+private:
+	void CreateGame(CTOS_CreateGame& cscg,DeckSizes sizes,uint8_t rule,uint8_t mode,uint8_t start_hand,
+		uint32_t start_lp,uint8_t draw_count,uint16_t time_limit,uint32_t lflist,
+		uint8_t duel_rule,uint32_t duel_flag_low,uint32_t duel_flag_high,uint8_t no_check_deck_content,
+		uint8_t no_shuffle_deck,uint32_t handshake,ClientVersion version,int32_t team1,
+		int32_t team2,int32_t best_of,uint32_t forbiddentypes,uint16_t extra_rules);
+	void SetCurrentDeck();
+	void LoadJsonInfo();
+};
+#define MODE_RULE_DEFAULT 0x1
+#define MODE_RULE_ZCG 0x2
+/////zdiy/////
 
 class Game {
 
@@ -620,6 +674,18 @@ public:
 	irr::gui::IGUIButton* btnOpenSinglePlay;
 	irr::gui::IGUIButton* btnShareSinglePlay;
 	irr::gui::IGUIButton* btnSinglePlayCancel;
+	//////////zdiy/////////
+	Mode* mode = new Mode();
+	irr::gui::IGUICheckBox* chkEntertainmentPrepReady;
+	irr::gui::IGUIWindow* wEntertainmentPlay;
+	irr::gui::CGUIFileSelectListBox* lstEntertainmentPlayList;
+	irr::gui::IGUIStaticText* stEntertainmentPlayInfo;
+	//irr::gui::IGUIStaticText* stLevelInfo;
+	//irr::gui::IGUIStaticText* stCoinInfo;
+	irr::gui::IGUIButton* btnEntertainmentMode;
+	irr::gui::IGUIButton* btnEntertainmentStartGame;
+	irr::gui::IGUIButton* btnEntertainmentExitGame;
+    //////////zdiy/////////
 	//hand
 	irr::gui::IGUIWindow* wHand;
 	irr::gui::CGUIImageButton* btnHand[3];

@@ -147,7 +147,9 @@ public:
 #if IRRLICHT_VERSION_MAJOR==1 && IRRLICHT_VERSION_MINOR==9
 	virtual IGUIScrollBar* getVerticalScrollBar() const _IRR_OVERRIDE_;
 #endif
-
+	/////zdiy/////
+	void LoadContents(std::vector<std::wstring>* names);
+	/////zdiy/////
 	void refreshList();
 
 	void resetPath();

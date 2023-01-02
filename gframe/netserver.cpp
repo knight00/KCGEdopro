@@ -5,7 +5,9 @@
 #include "netserver.h"
 #include "generic_duel.h"
 #include "common.h"
-
+/////zdiy/////
+#include "game.h"
+/////zdiy/////
 namespace ygo {
 bool operator==(const ClientVersion& ver1, const ClientVersion& ver2) {
 	return ver1.client.major == ver2.client.major && ver1.client.minor == ver2.client.minor && ver1.core.major == ver2.core.major && ver1.core.minor == ver2.core.minor;
@@ -316,6 +318,11 @@ void NetServer::HandleCTOSPacket(DuelPlayer* dp, uint8_t* data, uint32_t len) {
 	case CTOS_AI_READY: {
 		if(!duel_mode || duel_mode->pduel)
 			break;
+		/////zdiy/////
+		if(mainGame->mode->isMode) {
+			mainGame->mode->isAi = true;
+		}
+		/////zdiy/////
 		duel_mode->PlayerReady(dp, (CTOS_HS_NOTREADY - pktType) != 0, true);
 		break;
 	}

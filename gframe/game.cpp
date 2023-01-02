@@ -89,7 +89,463 @@ namespace ygo {
 static inline epro::path_string NoSkinLabel() {
 	return Utils::ToPathString(gDataManager->GetSysString(2065));
 }
+/////zdiy//////
+Mode::Mode()
+{
+	modeTexts = nullptr;
+	isMode = false;
+	isAi = false;
+	//aiPlayer = nullptr;
+	//masterPlayer = nullptr;
+	nickName = nullptr;
+	gameName = nullptr;
+	pass = nullptr;
+	modeIndex = -1;
+	rule = MODE_RULE_DEFAULT;
+	port = 7911;
+	winTimes = 0;
+	failTimes = 0;
+	LoadJsonInfo();
+};
+bool Mode::IsModeBot(std::wstring name) {
+	return name == L"ZCG";
+}
+ void Mode::RefreshAiDecks() {
+ 	bots.clear();
+	FileStream windbots("./WindBot/bots.json", FileStream::in);
+	if (windbots.good()) {
+		nlohmann::json j;
+		try {
+			windbots >> j;
+		}
+		catch(const std::exception& e) {
+			ErrorLog("Failed to load WindBot Ignite config json: {}", e.what());
+		}
+		if(j.is_array()) {
+#if !defined(__ANDROID__) && !defined(_WIN32)
+			{
+				auto it = gGameConfig->user_configs.find("posixPathExtension");
+				if(it != gGameConfig->user_configs.end() && it->is_string()) {
+					WindBot::executablePath = it->get<epro::path_string>();
+				} else if((it = gGameConfig->configs.find("posixPathExtension")) != gGameConfig->configs.end()
+					&& it->is_string()) {
+					WindBot::executablePath = it->get<epro::path_string>();
+				}
+			}
+#endif
+			WindBot generic_engine_bot;
+			for(auto& obj : j) {
+				try {
+					std::wstring name = BufferIO::DecodeUTF8(obj.at("name").get_ref<std::string&>());
+					if(!IsModeBot(name)) continue;
+					WindBot bot;
+					bot.deck = BufferIO::DecodeUTF8(obj.at("deck").get_ref<std::string&>());
+					bot.dialog = BufferIO::DecodeUTF8(obj.at("dialog").get_ref<std::string&>());
+					bot.deckfolder =  L"";
+					bot.deckpath = L"";
+					bot.deckfile = epro::format(L"AI_{}", bot.deck);
+					bot.difficulty = obj.at("difficulty").get<int>();
+					for(auto& masterRule : obj.at("masterRules")) {
+						if(masterRule.is_number()) {
+							bot.masterRules.insert(masterRule.get<int>());
+						}
+					}
+					bots.push_back(std::move(bot));
+				}
+				catch(const std::exception& e) {
+					ErrorLog("Failed to parse WindBot Ignite config json entry: {}", e.what());
+				}
+			}
+		}
+	} else {
+		ErrorLog("Failed to open WindBot Ignite config json!");
+	}
+}
+bool Mode::LoadWindBot(int port, epro::wstringview pass) {
+	bool res = false;
+	const wchar_t* overridedeck = nullptr;
+	switch(modeIndex)
+	{
+		case 0:
+			overridedeck = bots[0].deckfile.data();
+			res = bots[0].Launch(port, pass, true, 0, overridedeck,-1);
+			break;
+		default:
+			break;
+	}
+	if(!res) return false;
+	mainGame->btnEntertainmentStartGame->setEnabled(true);
+	return true;
+}
+void Mode::SetTimes(uint8_t player) {
+	player == 0 ? ++gGameConfig->winTimes : ++gGameConfig->failTimes;
+}
+void Mode::InitializeMode() {
+	port = std::stoi(gGameConfig->serverport);
+	nickName = gGameConfig->nickname.data();
+	gameName = gGameConfig->gamename.data();
+	winTimes = gGameConfig->winTimes;
+	failTimes= gGameConfig->failTimes;
+	pass = L"";
+	isMode = true;
+	isAi = false;
+	modeIndex = -1;
+	rule = MODE_RULE_DEFAULT;
+}
+Mode::~Mode(){};
+void Mode::RefreshEntertainmentPlay(std::vector<ModeText>*modeTexts) {
+	std::vector<std::wstring>* names = new std::vector<std::wstring>(modeTexts->size());
+	for (size_t i = 0; i < modeTexts->size(); ++i)
+	{
+		names->at(i) = (modeTexts->at(i)).name;
+	}
+	mainGame->lstEntertainmentPlayList->LoadContents(names);
+}
+void Mode::DestoryMode()
+{
+	isMode = false;
+	isAi = false;
+	rule = MODE_RULE_DEFAULT;
+	this->~Mode();
+}
+void Mode::UpdateDeck() {
+	SetCurrentDeck();
+	const auto& deck = mainGame->deckBuilder.GetCurrentDeck();
+	uint8_t deckbuf[0xf000];
+	auto* pdeck = deckbuf;
+	static constexpr auto max_deck_size = sizeof(deckbuf) / sizeof(uint32_t) - 2;
+	const auto totsize = deck.main.size() + deck.extra.size() + deck.side.size();
+	if(totsize > max_deck_size)
+		return;
+	BufferIO::Write<uint32_t>(pdeck, deck.main.size() + deck.extra.size());
+	BufferIO::Write<uint32_t>(pdeck, deck.side.size());
+	for(const auto& pcard : deck.main)
+		BufferIO::Write<uint32_t>(pdeck, pcard->code);
+	for(const auto& pcard : deck.extra)
+		BufferIO::Write<uint32_t>(pdeck, pcard->code);
+	for(const auto& pcard : deck.side)
+		BufferIO::Write<uint32_t>(pdeck, pcard->code);
+	DuelClient::SendBufferToServer(CTOS_UPDATE_DECK, deckbuf, pdeck - deckbuf);
+	gdeckManager->sent_deck = mainGame->deckBuilder.GetCurrentDeck();
+}
+void Mode::SetCurrentDeck() {
+	Deck deck;
+	deck.clear();
+	this->deck = deck;
+	mainGame->deckBuilder.SetCurrentDeck(deck);
+}
+void Mode::CreateGame(CTOS_CreateGame& cscg,DeckSizes sizes, uint8_t rule,uint8_t mode,uint8_t start_hand,
+	uint32_t start_lp,uint8_t draw_count,uint16_t time_limit,uint32_t lflist,
+	uint8_t duel_rule,uint32_t duel_flag_low,uint32_t duel_flag_high,uint8_t no_check_deck_content,
+	uint8_t no_shuffle_deck,uint32_t handshake,ClientVersion version,int32_t team1,
+	int32_t team2,int32_t best_of,uint32_t forbiddentypes,uint16_t extra_rules) {
+	cscg.info.sizes = sizes;
+	cscg.info.rule = rule;
+	cscg.info.mode = mode;
+	cscg.info.start_hand = start_hand;
+	cscg.info.start_lp = start_lp;
+	cscg.info.draw_count = draw_count;
+	cscg.info.time_limit = time_limit;
+	cscg.info.lflist = lflist;
+	cscg.info.duel_rule = duel_rule;
+	cscg.info.duel_flag_low = duel_flag_low;
+	cscg.info.duel_flag_high = duel_flag_high;
+	cscg.info.no_check_deck_content = no_check_deck_content;
+	cscg.info.no_shuffle_deck = no_shuffle_deck;
+	cscg.info.handshake = handshake;
+	cscg.info.version = version;
+	cscg.info.team1 = team1;
+	cscg.info.team2 = team2;
+	cscg.info.best_of = best_of;
+	cscg.info.forbiddentypes = forbiddentypes;
+	cscg.info.extra_rules = extra_rules;
 
+}
+void Mode::ModeCreateGame(CTOS_CreateGame& cscg) {
+	masterNames.clear();
+	aiNames.clear();
+	switch (modeIndex)
+	{
+		case 0:
+			rule = MODE_RULE_ZCG;
+			masterNames.push_back(nickName);
+			aiNames.push_back(L"ZCG");
+			mainGame->dInfo.secret.game_id = 0;
+			mainGame->dInfo.secret.pass = pass;
+			mainGame->duel_param = 858112;
+			mainGame->forbiddentypes = 67108864;
+			mainGame->extra_rules = 0;
+			BufferIO::EncodeUTF16(gameName, cscg.name, 20);
+			BufferIO::EncodeUTF16(pass, cscg.pass, 20);
+			CreateGame(cscg,{ {0,999},{0,999},{0,999} },5,0,5,32000,1,223,0,0,mainGame->duel_param & 0xffffffff,(mainGame->duel_param >> 32) & 0xffffffff,
+				false,false,SERVER_HANDSHAKE,{ EXPAND_VERSION(CLIENT_VERSION) },1,1,1,mainGame->forbiddentypes,mainGame->extra_rules);
+			break;
+		default:
+			break;
+	}
+}
+void Mode::ModePlayerEnter(const void* data,size_t len) {
+	auto pkt = BufferIO::getStruct<STOC_HS_PlayerEnter>(data, len);
+	if(pkt.pos > 5) return;
+	wchar_t name[20];
+	BufferIO::DecodeUTF16(pkt.name, name, 20);
+	std::lock_guard<epro::mutex> lock(mainGame->gMutex);
+	if(pkt.pos < mainGame->dInfo.team1)
+		mainGame->dInfo.selfnames[pkt.pos] = name;
+	else
+		mainGame->dInfo.opponames[pkt.pos - mainGame->dInfo.team1] = name;
+	if(!isAi) {
+		UpdateDeck();
+		DuelClient::SendPacketToServer(CTOS_HS_READY);
+	} else {isAi = false;}
+	return;
+}
+void Mode::ModePlayerChange(const void* data,size_t len,uint32_t& watching) {
+	auto pkt = BufferIO::getStruct<STOC_HS_PlayerChange>(data, len);
+	uint8_t pos = (pkt.status >> 4) & 0xf;
+	uint8_t state = pkt.status & 0xf;
+	if(pos > 5)return;
+	std::lock_guard<epro::mutex> lock(mainGame->gMutex);
+	if(state < 8) {
+		std::wstring prename = mainGame->stHostPrepDuelist[pos]->getText();
+		if(pos < mainGame->dInfo.team1)
+			mainGame->dInfo.selfnames[pos] = L"";
+		else
+			mainGame->dInfo.opponames[pos - mainGame->dInfo.team1] = L"";
+		if(state < mainGame->dInfo.team1)
+			mainGame->dInfo.selfnames[state] = prename;
+		else
+			mainGame->dInfo.opponames[state - mainGame->dInfo.team1] = prename;
+	} else if(state == PLAYERCHANGE_OBSERVE) {
+		watching++;
+	};
+	return;
+}
+void Mode::ModeTypeChange() {
+	mainGame->dInfo.isFirst = (mainGame->dInfo.player_type < mainGame->dInfo.team1) || (mainGame->dInfo.player_type >= 7);
+	mainGame->dInfo.isTeam1 = mainGame->dInfo.isFirst;
+	return;
+}
+void Mode::ModeDuelStart(uint8_t selftype) {
+	std::unique_lock<epro::mutex> lock(mainGame->gMutex);
+	mainGame->HideElement(mainGame->wEntertainmentPlay);
+	mainGame->WaitFrameSignal(11, lock);
+	mainGame->dField.Clear();
+	mainGame->dInfo.isInLobby = false;
+	mainGame->is_siding = false;
+	mainGame->dInfo.checkRematch = false;
+	mainGame->dInfo.isInDuel = true;
+	mainGame->dInfo.isStarted = false;
+	mainGame->dInfo.lp[0] = 0;
+	mainGame->dInfo.lp[1] = 0;
+	mainGame->dInfo.turn = 0;
+	mainGame->dInfo.time_left[0] = 0;
+	mainGame->dInfo.time_left[1] = 0;
+	mainGame->dInfo.time_player = 2;
+	mainGame->dInfo.current_player[0] = 0;
+	mainGame->dInfo.current_player[1] = 0;
+	mainGame->dInfo.isReplaySwapped = false;
+	mainGame->is_building = false;
+	mainGame->mTopMenu->setVisible(false);
+	mainGame->wCardImg->setVisible(true);
+	mainGame->wInfos->setVisible(true);
+	mainGame->wPhase->setVisible(true);
+	mainGame->btnSideOK->setVisible(false);
+	mainGame->btnDP->setVisible(false);
+	mainGame->btnDP->setSubElement(false);
+	mainGame->btnSP->setVisible(false);
+	mainGame->btnSP->setSubElement(false);
+	mainGame->btnM1->setVisible(false);
+	mainGame->btnM1->setSubElement(false);
+	mainGame->btnBP->setVisible(false);
+	mainGame->btnBP->setSubElement(false);
+	mainGame->btnM2->setVisible(false);
+	mainGame->btnM2->setSubElement(false);
+	mainGame->btnEP->setVisible(false);
+	mainGame->btnEP->setSubElement(false);
+	mainGame->btnShuffle->setVisible(false);
+	mainGame->btnSideShuffle->setVisible(false);
+	mainGame->btnSideSort->setVisible(false);
+	mainGame->btnSideReload->setVisible(false);
+	mainGame->wChat->setVisible(true);
+	mainGame->device->setEventReceiver(&mainGame->dField);
+	mainGame->SetPhaseButtons();
+	mainGame->SetMessageWindow();
+	mainGame->dInfo.selfnames.clear();
+	mainGame->dInfo.opponames.clear();
+	int i;
+	for(i = 0; i < mainGame->dInfo.team1; i++) {
+		try {
+			mainGame->dInfo.selfnames.push_back(masterNames.at(i));
+		} catch(...) {
+			mainGame->dInfo.selfnames.push_back(L"");
+		};
+	}
+	int i2 = 0;
+	for(; i < mainGame->dInfo.team1 + mainGame->dInfo.team2; i++) {
+		try {
+			mainGame->dInfo.opponames.push_back(aiNames.at(i2));
+			++i2;
+		} catch(...) {
+			mainGame->dInfo.opponames.push_back(L"");
+		}
+	}
+	if(selftype >= mainGame->dInfo.team1 + mainGame->dInfo.team2) {
+		mainGame->dInfo.player_type = 7;
+		mainGame->btnLeaveGame->setText(gDataManager->GetSysString(1350).data());
+		mainGame->btnLeaveGame->setVisible(true);
+		mainGame->btnSpectatorSwap->setVisible(true);
+		mainGame->dInfo.isFirst = true;
+		mainGame->dInfo.isTeam1 = true;
+	} else {
+		mainGame->dInfo.isFirst = selftype < mainGame->dInfo.team1;
+		mainGame->dInfo.isTeam1 = mainGame->dInfo.isFirst;
+	}
+	mainGame->dInfo.current_player[0] = 0;
+	mainGame->dInfo.current_player[1] = 0;
+	return;
+}
+void Mode::ModeJoinGame(const void* data,size_t len) {
+	auto pkt = BufferIO::getStruct<STOC_JoinGame>(data, len);
+	mainGame->dInfo.isInLobby = true;
+	mainGame->dInfo.compat_mode = pkt.info.handshake != SERVER_HANDSHAKE;
+	mainGame->dInfo.legacy_race_size = mainGame->dInfo.compat_mode || (pkt.info.version.core.major < 10);
+	if(mainGame->dInfo.compat_mode) {
+		pkt.info.duel_flag_low = 0;
+		pkt.info.duel_flag_high = 0;
+		pkt.info.forbiddentypes = 0;
+		pkt.info.extra_rules = 0;
+		pkt.info.best_of = 1;
+		pkt.info.team1 = 1;
+		pkt.info.team2 = 1;
+		if(pkt.info.mode == MODE_MATCH) {
+			pkt.info.best_of = 3;
+		}
+		if(pkt.info.mode == MODE_TAG) {
+			pkt.info.team1 = 2;
+			pkt.info.team2 = 2;
+		}
+#define CHK(rule) case rule : pkt.info.duel_flag_low = DUEL_MODE_MR##rule;break;
+		switch(pkt.info.duel_rule) {
+			CHK(1)
+				CHK(2)
+				CHK(3)
+				CHK(4)
+				CHK(5)
+		}
+#undef CHK
+	}
+	uint64_t params = (pkt.info.duel_flag_low | ((uint64_t)pkt.info.duel_flag_high) << 32);
+	mainGame->dInfo.duel_params = params;
+	mainGame->dInfo.isRelay = params & DUEL_RELAY;
+	params &= ~DUEL_RELAY;
+	pkt.info.no_shuffle_deck = pkt.info.no_shuffle_deck || ((params & DUEL_PSEUDO_SHUFFLE) != 0);
+	params &= ~DUEL_PSEUDO_SHUFFLE;
+	mainGame->dInfo.team1 = pkt.info.team1;
+	mainGame->dInfo.team2 = pkt.info.team2;
+	mainGame->dInfo.best_of = pkt.info.best_of;
+	std::wstring str, strR, strL;
+	int rule;
+	mainGame->dInfo.duel_field = mainGame->GetMasterRule(params & ~DUEL_TCG_SEGOC_NONPUBLIC, pkt.info.forbiddentypes, &rule);
+	if(mainGame->dInfo.compat_mode)
+		rule = pkt.info.duel_rule;
+	if (rule >= 6) {
+		if(params == DUEL_MODE_SPEED) {
+		} else if(params == DUEL_MODE_RUSH) {
+		} else if(params  == DUEL_MODE_GOAT) {
+		} else {
+			uint64_t filter = 0x100;
+			for(int i = 0; filter && i < sizeofarr(mainGame->chkCustomRules); ++i, filter <<= 1)
+				if(params & filter) {
+				}
+		}
+	} 
+	if(params & DUEL_TCG_SEGOC_NONPUBLIC && params != DUEL_MODE_GOAT) {};
+	static constexpr DeckSizes ocg_deck_sizes{ {40,60}, {0,15}, {0,15} };
+	static constexpr DeckSizes rush_deck_sizes{ {40,60}, {0,15}, {0,15} };
+	static constexpr DeckSizes speed_deck_sizes{ {20,30}, {0,6}, {0,6} };
+	static constexpr DeckSizes goat_deck_sizes{ {40,60}, {0,999}, {0,15} };
+	static constexpr DeckSizes empty_deck_sizes{ {0,0}, {0,0}, {0,0} }; 
+	if(pkt.info.sizes != empty_deck_sizes) {
+		do {
+			if(rule < 6) {
+				if(pkt.info.sizes == ocg_deck_sizes)
+					break;
+			} else {
+				if(params == DUEL_MODE_RUSH && pkt.info.sizes == rush_deck_sizes)
+					break;
+				if(params == DUEL_MODE_GOAT && pkt.info.sizes == goat_deck_sizes)
+					break;
+				if(params == DUEL_MODE_SPEED && pkt.info.sizes == speed_deck_sizes)
+					break;
+			}
+		} while(0);
+	}
+	static constexpr std::pair<uint32_t, uint32_t> MONSTER_TYPES[]{
+		{ TYPE_FUSION, 1056 },
+		{ TYPE_SYNCHRO, 1063 },
+		{ TYPE_XYZ, 1073 },
+		{ TYPE_PENDULUM, 1074 },
+		{ TYPE_LINK, 1076 }
+	};
+	for (const auto& pair : MONSTER_TYPES) {
+		if (pkt.info.forbiddentypes & pair.first) {
+		}
+	}
+	std::lock_guard<epro::mutex> lock(mainGame->gMutex);
+	matManager.SetActiveVertices(mainGame->dInfo.HasFieldFlag(DUEL_3_COLUMNS_FIELD),
+		!mainGame->dInfo.HasFieldFlag(DUEL_SEPARATE_PZONE));
+	int x = (pkt.info.team1 + pkt.info.team2 >= 5) ? 60 : 0;
+	mainGame->dInfo.selfnames.resize(pkt.info.team1);
+	mainGame->dInfo.opponames.resize(pkt.info.team2);
+	mainGame->dInfo.time_limit = pkt.info.time_limit;
+	mainGame->dInfo.time_left[0] = 0;
+	mainGame->dInfo.time_left[1] = 0;
+	mainGame->deckBuilder.filterList = 0;
+	for(auto lit = gdeckManager->_lfList.begin(); lit != gdeckManager->_lfList.end(); ++lit)
+		if(lit->hash == pkt.info.lflist)
+			mainGame->deckBuilder.filterList = &(*lit);
+	if(mainGame->deckBuilder.filterList == 0)
+		mainGame->deckBuilder.filterList = &gdeckManager->_lfList[0];
+	mainGame->RefreshDeck();
+	mainGame->wChat->setVisible(true);
+	mainGame->dInfo.isFirst = (mainGame->dInfo.player_type < mainGame->dInfo.team1) || (mainGame->dInfo.player_type >= 7);
+	mainGame->dInfo.isTeam1 = mainGame->dInfo.isFirst;
+	return;
+}
+void Mode::LoadJsonInfo() {
+	std::ifstream jsonInfo(EPRO_TEXT("./mode/mode.json"));
+	if (jsonInfo.good()) {
+		nlohmann::json j;
+		try {
+			jsonInfo >> j;
+		}
+		catch (const std::exception& e) {
+			ErrorLog("无法加载模式的Json文本配置: {}", e.what());
+		}
+		if (j.is_array()) {
+			modeTexts = new std::vector<ModeText>(j.size());
+			modeTexts->clear();
+			for (auto& obj : j) {
+				try {
+					ModeText modeText;
+					modeText.name = BufferIO::DecodeUTF8(obj.at("name").get_ref<std::string&>());
+					modeText.des = BufferIO::DecodeUTF8(obj.at("des").get_ref<std::string&>());
+					modeTexts->push_back(std::move(modeText));
+				}
+				catch (const std::exception& e) {
+					ErrorLog("无法解析模式的Json目录: {}", e.what());
+				}
+			}
+
+		}
+	}
+	else {
+		ErrorLog("无法打开模式的Json文本配置!");
+	}
+
+}
+/////zdiy//////
 Game::~Game() {
 	if(guiFont)
 		guiFont->drop();
@@ -304,14 +760,29 @@ void Game::Initialize() {
 	btnLanMode = env->addButton(OFFSET(10, 30, 270, 60), wMainMenu, BUTTON_LAN_MODE, gDataManager->GetSysString(1200).data());
 	defaultStrings.emplace_back(btnLanMode, 1200);
 	offset += 35;
-	btnSingleMode = env->addButton(OFFSET(10, 65, 270, 95), wMainMenu, BUTTON_SINGLE_MODE, gDataManager->GetSysString(1201).data());
-	defaultStrings.emplace_back(btnSingleMode, 1201);
+	////////zdiy////////
+	//btnSingleMode = env->addButton(OFFSET(10, 65, 270, 95), wMainMenu, BUTTON_SINGLE_MODE, gDataManager->GetSysString(1201).data());
+	//defaultStrings.emplace_back(btnSingleMode, 1201);
+	btnEntertainmentMode = env->addButton(OFFSET(10, 65, 270, 95), wMainMenu, BUTTON_ENTERTAUNMENT_MODE, gDataManager->GetSysString(1205).data());
+	defaultStrings.emplace_back(btnEntertainmentMode, 1205);
+	////////zdiy////////
 	offset += 35;
-	btnReplayMode = env->addButton(OFFSET(10, 100, 270, 130), wMainMenu, BUTTON_REPLAY_MODE, gDataManager->GetSysString(1202).data());
+	////////zdiy////////
+	//btnReplayMode = env->addButton(OFFSET(10, 100, 270, 130), wMainMenu, BUTTON_REPLAY_MODE, gDataManager->GetSysString(1202).data());
+	//defaultStrings.emplace_back(btnReplayMode, 1202);
+	btnSingleMode = env->addButton(OFFSET(10, 100, 270, 130), wMainMenu, BUTTON_SINGLE_MODE, gDataManager->GetSysString(1201).data());
+	defaultStrings.emplace_back(btnSingleMode, 1201);
+	////////zdiy////////
+	offset += 35;
+	////////zdiy////////
+	//btnDeckEdit = env->addButton(OFFSET(10, 135, 270, 165), wMainMenu, BUTTON_DECK_EDIT, gDataManager->GetSysString(1204).data());
+	//defaultStrings.emplace_back(btnDeckEdit, 1204);
+	btnReplayMode = env->addButton(OFFSET(10, 135, 270, 165), wMainMenu, BUTTON_REPLAY_MODE, gDataManager->GetSysString(1202).data());
 	defaultStrings.emplace_back(btnReplayMode, 1202);
 	offset += 35;
-	btnDeckEdit = env->addButton(OFFSET(10, 135, 270, 165), wMainMenu, BUTTON_DECK_EDIT, gDataManager->GetSysString(1204).data());
+	btnDeckEdit = env->addButton(OFFSET(10, 170, 270, 200), wMainMenu, BUTTON_DECK_EDIT, gDataManager->GetSysString(1204).data());
 	defaultStrings.emplace_back(btnDeckEdit, 1204);
+	////////zdiy////////
 	offset += 35;
 	////////kdiy///////
 	int height = 170;
@@ -1025,6 +1496,41 @@ void Game::Initialize() {
 		icon2[i]->setImageSize(Scale(0, 0, 20, 20).getSize());
 		icon2[i]->setImage(0);
 	}
+	/////zdiy/////
+	wEntertainmentPlay = env->addWindow(Scale(220, 100, 800, 520), false, gDataManager->GetSysString(1205).data());
+	defaultStrings.emplace_back(wEntertainmentPlay, 1205);
+	wEntertainmentPlay->getCloseButton()->setVisible(false);
+	wEntertainmentPlay->setVisible(false);
+
+	tmpptr = env->addStaticText(gDataManager->GetSysString(2125).data(), Scale(360, 30, 570, 50), false, true, wEntertainmentPlay);
+	defaultStrings.emplace_back(tmpptr, 2125);
+
+	lstEntertainmentPlayList = irr::gui::CGUIFileSelectListBox::addFileSelectListBox(env, wEntertainmentPlay, LISTBOX_ENTERTAINMENTPLAY_LIST, Scale(10, 30, 350, 400), filesystem, true, true, false);
+	lstEntertainmentPlayList->setItemHeight(Scale(18));
+
+	stEntertainmentPlayInfo = irr::gui::CGUICustomText::addCustomText(L"", false, env, wEntertainmentPlay, -1, Scale(360, 60, 570, 350));
+	stEntertainmentPlayInfo->setWordWrap(true);
+	((irr::gui::CGUICustomText*)stEntertainmentPlayInfo)->enableScrollBar();
+
+	btnEntertainmentStartGame = env->addButton(Scale(420, 355, 520, 380), wEntertainmentPlay, BUTTON_ENTERTAUNMENT_START_GAME, gDataManager->GetSysString(1215).data());
+	defaultStrings.emplace_back(btnEntertainmentStartGame, 1215);
+	btnEntertainmentStartGame->setEnabled(false);
+
+	btnEntertainmentExitGame = env->addButton(Scale(420, 385, 520, 410), wEntertainmentPlay, BUTTON_ENTERTAUNMENT_EXIT_GAME, gDataManager->GetSysString(1210).data());
+	defaultStrings.emplace_back(btnEntertainmentExitGame, 1210);
+	btnEntertainmentExitGame->setEnabled(false);
+
+	chkEntertainmentPrepReady = env->addCheckBox(false, Scale(450 ,330, 550 ,350), wEntertainmentPlay, CHECKBOX_ENTERTAUNMENT_READY,gDataManager->GetSysString(1218).data());
+	chkEntertainmentPrepReady->setEnabled(false);
+
+	//stLevelInfo = env->addStaticText(gDataManager->GetSysString(2126).data(), Scale(310, 250, 370, 265));
+	//stLevelInfo->setOverrideColor({ 255,255,215,0 });
+	//stLevelInfo->setVisible(false);
+
+	//stCoinInfo = env->addStaticText(gDataManager->GetSysString(2127).data(), Scale(310, 280, 410, 295));
+	//stCoinInfo->setOverrideColor({ 255,255,215,0 });
+	//stCoinInfo->setVisible(false);
+	/////zdiy/////
     ////kdiy////////
 	chkYrp = env->addCheckBox(false, Scale(360, 250, 560, 270), wReplay, -1, gDataManager->GetSysString(1356).data());
 	defaultStrings.emplace_back(chkYrp, 1356);
@@ -3141,6 +3647,9 @@ void Game::RefreshAiDecks(bool aichk) {
 					bot.deckfolder = aichk ? gBot.aiDeckSelect2->getItem(gBot.aiDeckSelect2->getSelected()) : L"";
 					bot.deckpath = aichk ? gBot.aiDeckSelect->getItem(gBot.aiDeckSelect->getSelected()) : L"";
 					/////kdiy////////
+					/////zdiy//////
+					if(mainGame->mode->IsModeBot(bot.name)) continue;
+					/////zdiy//////
 					bot.deckfile = epro::format(L"AI_{}", bot.deck);
 					bot.difficulty = obj.at("difficulty").get<int>();
 					for(auto& masterRule : obj.at("masterRules")) {
@@ -4363,9 +4872,15 @@ void Game::OnResize() {
 	// wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 450));
     // wBtnSettings->setRelativePosition(ResizeWin(0, 610, 30, 640));
 	#ifdef EK
-	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 450));
-	#else
+	/////zdiy/////
+	//wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 450));
 	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 485));
+	/////zdiy/////
+	#else
+	/////zdiy/////
+	//wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 485));
+	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 515));
+	/////zdiy/////
 	#endif
 	wQQ->setRelativePosition(ResizeWin(mainMenuRightX+10, 200, mainMenuRightX+150, 450));
     wBtnSettings->setRelativePosition(ResizeWin(mainMenuLeftX-30, 420, mainMenuLeftX, 450));
@@ -4640,9 +5155,10 @@ void* Game::ReadCardDataToCore() {
 		if (!card->code || card->code == 0 || (card->type & TYPE_TOKEN)) {
 			continue;
 		}
-		std::vector<uint32_t>* CardDataKey_1 = new std::vector<uint32_t>(2);
+		std::vector<uint32_t>* CardDataKey_1 = new std::vector<uint32_t>(3);
 		CardDataKey_1->at(0) = card->code;
 		CardDataKey_1->at(1) = card->type;
+		CardDataKey_1->at(2) = card->ot;
 		std::vector<uint16_t>* CardDataKey_2 = &card->setcodes;
 		std::vector<void*>* CardDataKey = new std::vector<void*>(2);
 		CardDataKey->at(0) = CardDataKey_1;
