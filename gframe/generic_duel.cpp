@@ -409,6 +409,11 @@ void GenericDuel::PlayerReady(DuelPlayer* dp, bool is_ready, bool ai) {
 	scpc.status = (dp->type << 4) | (is_ready ? PLAYERCHANGE_READY : PLAYERCHANGE_NOTREADY);
 	NetServer::SendPacketToPlayer(nullptr, STOC_HS_PLAYER_CHANGE, scpc);
 	ResendToAll();
+	/////zdiy/////
+	if(mainGame->mode->isMode) {
+		mainGame->mode->ModePlayerReady(ai);
+	}
+	/////zdiy/////
 }
 void GenericDuel::PlayerKick(DuelPlayer* dp, uint8_t pos) {
 	if(pos >= (players.home_size + players.opposing_size))
@@ -678,7 +683,8 @@ void GenericDuel::TPResult(DuelPlayer* dp, uint8_t tp) {
 		extracards.push_back(86);
 	////kdiy///////
 	/////zdiy/////
-	if(mainGame->mode->isMode && mainGame->mode->rule == MODE_RULE_ZCG){
+	if(mainGame->mode->isMode &&
+		(mainGame->mode->rule == MODE_RULE_ZCG || mainGame->mode->rule == MODE_RULE_ZCG_NO_RANDOM)){
 		extracards.push_back(99710410);
 	};
 	/////zdiy/////

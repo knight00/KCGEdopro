@@ -155,19 +155,21 @@ public:
 	void InitializeMode();
 	void DestoryMode();
 	void RefreshEntertainmentPlay(std::vector<ModeText>* modeTexts);
-
+	void RefreshControlState(uint32_t state ,bool visible);
+	void SetControlState(uint32_t index);
 	void ModeCreateGame(CTOS_CreateGame& cscg);
 	void ModePlayerEnter(const void* data,size_t len);
 	void ModePlayerChange(const void* data,size_t len ,uint32_t& watching);
 	void ModeJoinGame(const void* data,size_t len);
 	void ModeTypeChange();
 	void ModeDuelStart(uint8_t selftype);
-
+	void ModePlayerReady(bool isAi);
 	void RefreshAiDecks();
 	void UpdateDeck();
 	void SetTimes(uint8_t player);
+	void SetRule(int32_t index);
 	bool LoadWindBot(int port, epro::wstringview pass);
-	bool IsModeBot(std::wstring name);
+	bool IsModeBot(std::wstring deck);
 	Mode();
 	~Mode();
 private:
@@ -181,6 +183,7 @@ private:
 };
 #define MODE_RULE_DEFAULT 0x1
 #define MODE_RULE_ZCG 0x2
+#define MODE_RULE_ZCG_NO_RANDOM 0x3
 /////zdiy/////
 
 class Game {
@@ -677,6 +680,8 @@ public:
 	//////////zdiy/////////
 	Mode* mode = new Mode();
 	irr::gui::IGUICheckBox* chkEntertainmentPrepReady;
+	irr::gui::IGUICheckBox* chkEntertainmentMode_1Check;
+	irr::gui::IGUIComboBox* cbEntertainmentMode_1Bot;
 	irr::gui::IGUIWindow* wEntertainmentPlay;
 	irr::gui::CGUIFileSelectListBox* lstEntertainmentPlayList;
 	irr::gui::IGUIStaticText* stEntertainmentPlayInfo;

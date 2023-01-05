@@ -107,8 +107,9 @@ Mode::Mode()
 	failTimes = 0;
 	LoadJsonInfo();
 };
-bool Mode::IsModeBot(std::wstring name) {
-	return name == L"ZCG";
+bool Mode::IsModeBot(std::wstring deck) {
+	return deck == L"Martyr" || deck == L"PointStar" || deck == L"Ra"
+		|| deck == L"Armor"|| deck == L"Hades"|| deck == L"Mode";
 }
  void Mode::RefreshAiDecks() {
  	bots.clear();
@@ -136,10 +137,11 @@ bool Mode::IsModeBot(std::wstring name) {
 			WindBot generic_engine_bot;
 			for(auto& obj : j) {
 				try {
-					std::wstring name = BufferIO::DecodeUTF8(obj.at("name").get_ref<std::string&>());
-					if(!IsModeBot(name)) continue;
+					std::wstring deck = BufferIO::DecodeUTF8(obj.at("deck").get_ref<std::string&>());
+					if(!IsModeBot(deck)) continue;
 					WindBot bot;
-					bot.deck = BufferIO::DecodeUTF8(obj.at("deck").get_ref<std::string&>());
+					bot.name = BufferIO::DecodeUTF8(obj.at("name").get_ref<std::string&>());
+					bot.deck = deck;
 					bot.dialog = BufferIO::DecodeUTF8(obj.at("dialog").get_ref<std::string&>());
 					bot.deckfolder =  L"";
 					bot.deckpath = L"";
@@ -164,17 +166,46 @@ bool Mode::IsModeBot(std::wstring name) {
 bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 	bool res = false;
 	const wchar_t* overridedeck = nullptr;
-	switch(modeIndex)
+	aiNames.clear();
+	if(modeIndex == 0)
 	{
-		case 0:
-			overridedeck = bots[0].deckfile.data();
-			res = bots[0].Launch(port, pass, true, 0, overridedeck,-1);
-			break;
-		default:
-			break;
+		int32_t index = -1;
+		if(rule == MODE_RULE_ZCG) {
+
+			for (int32_t i = 0; i < bots.size(); ++i)
+			{
+				auto bot = bots[i];
+				if(bot.deck == L"Mode") {
+					index = i;
+					std::wstring name = L"[AI] ";
+					name.append(bot.name);
+					aiNames.push_back(name);
+					break;
+				}
+			}
+		}
+		if(rule == MODE_RULE_ZCG_NO_RANDOM) {
+			index = mainGame->cbEntertainmentMode_1Bot->getSelected();
+			if(index < 0) return false;
+			auto name =  mainGame->cbEntertainmentMode_1Bot->getItem(index);
+			index = -1;
+			for (int32_t i = 0; i < bots.size(); ++i)
+			{
+				auto bot = bots[i];
+				if(bot.name == name) {
+					index = i;
+					std::wstring name = L"[AI] ";
+					name.append(bot.name);
+					aiNames.push_back(name);
+					break;
+				}
+			}
+		}
+		if(index < 0 || index >= bots.size()) return false;
+		overridedeck = bots[index].deckfile.data();
+		res = bots[index].Launch(port, pass, true, 0, overridedeck,-1);
 	}
 	if(!res) return false;
-	mainGame->btnEntertainmentStartGame->setEnabled(true);
 	return true;
 }
 void Mode::SetTimes(uint8_t player) {
@@ -191,8 +222,56 @@ void Mode::InitializeMode() {
 	isAi = false;
 	modeIndex = -1;
 	rule = MODE_RULE_DEFAULT;
+	RefreshAiDecks();
 }
 Mode::~Mode(){};
+void Mode::RefreshControlState(uint32_t state ,bool visible)
+{
+	mainGame->btnEntertainmentExitGame->setVisible(true);
+	mainGame->btnEntertainmentExitGame->setEnabled(true);
+	mainGame->lstEntertainmentPlayList->setVisible(true);
+	mainGame->lstEntertainmentPlayList->setEnabled(true);
+	if(state & 0x1) {
+		mainGame->btnEntertainmentStartGame->setVisible(visible);
+		mainGame->chkEntertainmentPrepReady->setVisible(visible);
+		mainGame->chkEntertainmentMode_1Check->setVisible(visible);
+		mainGame->cbEntertainmentMode_1Bot->setVisible(visible);
+	}
+}
+void Mode::SetControlState(uint32_t index)
+{
+	std::wstring str(mainGame->mode->modeTexts->at(index).des);
+	mainGame->btnEntertainmentStartGame->setEnabled(false);
+	mainGame->lstEntertainmentPlayList->setEnabled(true);
+	mainGame->btnEntertainmentExitGame->setEnabled(true);
+	if(index == 0) {
+		str.append(L"====================\n");
+		str.append(epro::format(L"{}{}{}\n",gDataManager->GetSysString(2126),gGameConfig->winTimes,gDataManager->GetSysString(2128)));
+		str.append(epro::format(L"{}{}{}\n",gDataManager->GetSysString(2127),gGameConfig->failTimes,gDataManager->GetSysString(2128)));
+		float temp,res = 0,sum = (float)failTimes + (float)winTimes;
+		if(sum > 0.0f) {
+			temp =  (float)winTimes / sum;
+			res = (int)(( temp * 100 + 0.5 ) / 1);
+		}
+		str.append(epro::format(L"{}{}{}\n",gDataManager->GetSysString(2129),res,L"%"));
+		mainGame->chkEntertainmentPrepReady->setEnabled(true);
+		mainGame->chkEntertainmentPrepReady->setChecked(false);
+		mainGame->chkEntertainmentMode_1Check->setEnabled(true);
+		mainGame->chkEntertainmentMode_1Check->setChecked(false);
+		mainGame->cbEntertainmentMode_1Bot->clear();
+		for (int32_t i = 0; i < bots.size(); ++i)
+		{
+			auto deck = bots[i].deck;
+			if(deck == L"Martyr" || deck == L"PointStar" || deck == L"Ra"
+				|| deck == L"Armor"|| deck == L"Hades")
+			{
+				mainGame->cbEntertainmentMode_1Bot->addItem(bots[i].name.data());
+			}
+		}
+		mainGame->cbEntertainmentMode_1Bot->setEnabled(false);
+	}
+	mainGame->stEntertainmentPlayInfo->setText(str.data());
+}
 void Mode::RefreshEntertainmentPlay(std::vector<ModeText>*modeTexts) {
 	std::vector<std::wstring>* names = new std::vector<std::wstring>(modeTexts->size());
 	for (size_t i = 0; i < modeTexts->size(); ++i)
@@ -206,7 +285,7 @@ void Mode::DestoryMode()
 	isMode = false;
 	isAi = false;
 	rule = MODE_RULE_DEFAULT;
-	this->~Mode();
+	//this->~Mode();
 }
 void Mode::UpdateDeck() {
 	SetCurrentDeck();
@@ -233,6 +312,22 @@ void Mode::SetCurrentDeck() {
 	deck.clear();
 	this->deck = deck;
 	mainGame->deckBuilder.SetCurrentDeck(deck);
+}
+void Mode::SetRule(int32_t index) {
+	switch (index)
+	{
+		case 0:
+			if(mainGame->chkEntertainmentMode_1Check->isChecked()
+				&& mainGame->cbEntertainmentMode_1Bot->getSelected() != -1) {
+				rule = MODE_RULE_ZCG_NO_RANDOM;
+			} else {
+				rule = MODE_RULE_ZCG;
+			}		
+			break;
+		default:
+			rule = MODE_RULE_DEFAULT;
+			break;
+	}
 }
 void Mode::CreateGame(CTOS_CreateGame& cscg,DeckSizes sizes, uint8_t rule,uint8_t mode,uint8_t start_hand,
 	uint32_t start_lp,uint8_t draw_count,uint16_t time_limit,uint32_t lflist,
@@ -263,13 +358,11 @@ void Mode::CreateGame(CTOS_CreateGame& cscg,DeckSizes sizes, uint8_t rule,uint8_
 }
 void Mode::ModeCreateGame(CTOS_CreateGame& cscg) {
 	masterNames.clear();
-	aiNames.clear();
-	switch (modeIndex)
+	masterNames.push_back(nickName);
+	switch (rule)
 	{
-		case 0:
-			rule = MODE_RULE_ZCG;
-			masterNames.push_back(nickName);
-			aiNames.push_back(L"ZCG");
+		case MODE_RULE_ZCG:
+		case MODE_RULE_ZCG_NO_RANDOM:
 			mainGame->dInfo.secret.game_id = 0;
 			mainGame->dInfo.secret.pass = pass;
 			mainGame->duel_param = 858112;
@@ -294,11 +387,15 @@ void Mode::ModePlayerEnter(const void* data,size_t len) {
 		mainGame->dInfo.selfnames[pkt.pos] = name;
 	else
 		mainGame->dInfo.opponames[pkt.pos - mainGame->dInfo.team1] = name;
-	if(!isAi) {
-		UpdateDeck();
-		DuelClient::SendPacketToServer(CTOS_HS_READY);
-	} else {isAi = false;}
+	UpdateDeck();
+	DuelClient::SendPacketToServer(CTOS_HS_READY);
 	return;
+}
+void Mode::ModePlayerReady(bool isAi) {
+	this->isAi = isAi;
+	if(isAi) {
+		mainGame->btnEntertainmentStartGame->setEnabled(true);
+	}
 }
 void Mode::ModePlayerChange(const void* data,size_t len,uint32_t& watching) {
 	auto pkt = BufferIO::getStruct<STOC_HS_PlayerChange>(data, len);
@@ -1520,8 +1617,15 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(btnEntertainmentExitGame, 1210);
 	btnEntertainmentExitGame->setEnabled(false);
 
-	chkEntertainmentPrepReady = env->addCheckBox(false, Scale(450 ,330, 550 ,350), wEntertainmentPlay, CHECKBOX_ENTERTAUNMENT_READY,gDataManager->GetSysString(1218).data());
+	chkEntertainmentPrepReady = env->addCheckBox(false, Scale(420 ,330, 520 ,350), wEntertainmentPlay, CHECKBOX_ENTERTAUNMENT_READY,gDataManager->GetSysString(1147).data());
 	chkEntertainmentPrepReady->setEnabled(false);
+
+	chkEntertainmentMode_1Check = env->addCheckBox(false, Scale(420 ,280, 520 ,300), wEntertainmentPlay, CHECKBOX_ENTERTAUNMENT_MODE_1_CHECK,gDataManager->GetSysString(1148).data());
+	chkEntertainmentMode_1Check->setEnabled(false);
+
+	cbEntertainmentMode_1Bot = AlignElementWithParent(AddComboBox(env, Scale(420, 305, 520, 325), wEntertainmentPlay, COMBOBOX_ENTERTAUNMENT_MODE_1_BOT));
+	cbEntertainmentMode_1Bot->setMaxSelectionRows(5);
+	cbEntertainmentMode_1Bot->setEnabled(false);
 
 	//stLevelInfo = env->addStaticText(gDataManager->GetSysString(2126).data(), Scale(310, 250, 370, 265));
 	//stLevelInfo->setOverrideColor({ 255,255,215,0 });
@@ -3648,7 +3752,7 @@ void Game::RefreshAiDecks(bool aichk) {
 					bot.deckpath = aichk ? gBot.aiDeckSelect->getItem(gBot.aiDeckSelect->getSelected()) : L"";
 					/////kdiy////////
 					/////zdiy//////
-					if(mainGame->mode->IsModeBot(bot.name)) continue;
+					if(mainGame->mode->IsModeBot(bot.deck)) continue;
 					/////zdiy//////
 					bot.deckfile = epro::format(L"AI_{}", bot.deck);
 					bot.difficulty = obj.at("difficulty").get<int>();

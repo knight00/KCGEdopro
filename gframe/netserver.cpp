@@ -318,11 +318,6 @@ void NetServer::HandleCTOSPacket(DuelPlayer* dp, uint8_t* data, uint32_t len) {
 	case CTOS_AI_READY: {
 		if(!duel_mode || duel_mode->pduel)
 			break;
-		/////zdiy/////
-		if(mainGame->mode->isMode) {
-			mainGame->mode->isAi = true;
-		}
-		/////zdiy/////
 		duel_mode->PlayerReady(dp, (CTOS_HS_NOTREADY - pktType) != 0, true);
 		break;
 	}

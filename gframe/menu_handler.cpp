@@ -717,11 +717,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->stEntertainmentPlayInfo->setText(L"");
 				mainGame->ShowElement(mainGame->wEntertainmentPlay);
 				mainGame->mode->RefreshEntertainmentPlay(mainGame->mode->modeTexts);
-				mainGame->btnEntertainmentStartGame->setEnabled(false);
-				mainGame->btnEntertainmentExitGame->setEnabled(true);
-				mainGame->chkEntertainmentPrepReady->setEnabled(false);
-				mainGame->chkEntertainmentPrepReady->setChecked(false);
-				mainGame->lstEntertainmentPlayList->setEnabled(true);
+				mainGame->mode->RefreshControlState(0xffffff,false);
 				mainGame->mode->InitializeMode();
 				break;
 			}
@@ -1093,19 +1089,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				int sel = mainGame->lstEntertainmentPlayList->getSelected();
 				mainGame->mode->modeIndex = sel;
 				if (sel != -1 && mainGame->lstEntertainmentPlayList->isDirectory(sel)) {
-					std::wstring str(mainGame->mode->modeTexts->at(mainGame->mode->modeIndex).des);
-					str.append(L"====================\n");
-					str.append(epro::format(L"{}{}{}\n",gDataManager->GetSysString(2126),gGameConfig->winTimes,gDataManager->GetSysString(2128)));
-					str.append(epro::format(L"{}{}{}\n",gDataManager->GetSysString(2127),gGameConfig->failTimes,gDataManager->GetSysString(2128)));
-					float temp,res = 0,sum = (float)gGameConfig->failTimes + (float)gGameConfig->winTimes;
-					if(sum > 0.0f) {
-					    temp =  (float)gGameConfig->winTimes / sum;
-						res = (int)(( temp * 100 + 0.5 ) / 1);
-					}
-					str.append(epro::format(L"{}{}{}\n",gDataManager->GetSysString(2129),res,L"%"));
-					mainGame->stEntertainmentPlayInfo->setText(str.data());
-					mainGame->btnEntertainmentStartGame->setEnabled(false);
-					mainGame->chkEntertainmentPrepReady->setEnabled(true);
+					mainGame->mode->RefreshControlState(1 << mainGame->mode->modeIndex,true);
+					mainGame->mode->SetControlState(mainGame->mode->modeIndex);
 				}
 				break;
 			}
@@ -1249,9 +1234,22 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 		case irr::gui::EGET_CHECKBOX_CHANGED: {
 			switch(id) {
 			/////zdiy/////
+			case CHECKBOX_ENTERTAUNMENT_MODE_1_CHECK: {
+
+				if(mainGame->chkEntertainmentMode_1Check->isChecked()) {
+					mainGame->cbEntertainmentMode_1Bot->setEnabled(true);
+				}
+				else {
+					mainGame->cbEntertainmentMode_1Bot->setEnabled(false);
+				}
+				break;
+			}
 			case CHECKBOX_ENTERTAUNMENT_READY:{
 				if(mainGame->chkEntertainmentPrepReady->isChecked()) {
 					mainGame->lstEntertainmentPlayList->setEnabled(false);
+					mainGame->chkEntertainmentMode_1Check->setEnabled(false);
+					mainGame->cbEntertainmentMode_1Bot->setEnabled(false);
+					mainGame->mode->SetRule(mainGame->mode->modeIndex);
 					DuelClient::is_local_host = false;
 					if(mainGame->isHostingOnline) {
 						mainGame->mode->isMode = false;
@@ -1270,7 +1268,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 						DuelClient::is_local_host = true;
 					}
 					try {
-						mainGame->mode->RefreshAiDecks();
 						if(mainGame->mode->LoadWindBot(mainGame->mode->port,mainGame->mode->pass))
 							break;
 					} catch(...) {}
@@ -1279,6 +1276,12 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				} else {
 					mainGame->lstEntertainmentPlayList->setEnabled(true);
 					mainGame->btnEntertainmentStartGame->setEnabled(false);
+					mainGame->chkEntertainmentMode_1Check->setEnabled(true);
+					if(mainGame->chkEntertainmentMode_1Check->isChecked()) {
+						mainGame->cbEntertainmentMode_1Bot->setEnabled(true);
+					} else {
+						mainGame->cbEntertainmentMode_1Bot->setEnabled(false);
+					}
 					DuelClient::StopClient();
 				}
 				break;
