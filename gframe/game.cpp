@@ -363,15 +363,15 @@ void Mode::ModeCreateGame(CTOS_CreateGame& cscg) {
 	{
 		case MODE_RULE_ZCG:
 		case MODE_RULE_ZCG_NO_RANDOM:
-			mainGame->dInfo.secret.game_id = 0;
-			mainGame->dInfo.secret.pass = pass;
-			mainGame->duel_param = 858112;
-			mainGame->forbiddentypes = 67108864;
-			mainGame->extra_rules = 0;
+			//mainGame->dInfo.secret.game_id = 0;
+			//mainGame->dInfo.secret.pass = pass;
+			//mainGame->duel_param = 858112;
+			//mainGame->forbiddentypes = 67108864;
+			//mainGame->extra_rules = 0;
 			BufferIO::EncodeUTF16(gameName, cscg.name, 20);
 			BufferIO::EncodeUTF16(pass, cscg.pass, 20);
-			CreateGame(cscg,{ {0,999},{0,999},{0,999} },5,0,5,32000,1,223,0,0,mainGame->duel_param & 0xffffffff,(mainGame->duel_param >> 32) & 0xffffffff,
-				false,false,SERVER_HANDSHAKE,{ EXPAND_VERSION(CLIENT_VERSION) },1,1,1,mainGame->forbiddentypes,mainGame->extra_rules);
+			CreateGame(cscg,{ {0,999},{0,999},{0,999} },5,0,5,32000,1,223,0,0,858112 & 0xffffffff,(858112 >> 32) & 0xffffffff,
+				false,false,SERVER_HANDSHAKE,{ EXPAND_VERSION(CLIENT_VERSION) },1,1,1,67108864,0);
 			break;
 		default:
 			break;

@@ -1155,7 +1155,17 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->device->setEventReceiver(&mainGame->menuHandler);
 			if(mainGame->isHostingOnline) {
 				mainGame->ShowElement(mainGame->wRoomListPlaceholder);
-			} else {
+			}
+			/////zdiy/////
+			else if(mainGame->mode->isMode) {
+				mainGame->stEntertainmentPlayInfo->setText(L"");
+				mainGame->ShowElement(mainGame->wEntertainmentPlay);
+				mainGame->mode->RefreshEntertainmentPlay(mainGame->mode->modeTexts);
+				mainGame->mode->RefreshControlState(0xffffff,false);
+				mainGame->mode->InitializeMode();
+			}
+			/////zdiy/////
+			else {
 				mainGame->ShowElement(mainGame->wLanWindow);
 			}
 			mainGame->SetMessageWindow();

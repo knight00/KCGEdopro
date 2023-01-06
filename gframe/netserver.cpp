@@ -5,9 +5,6 @@
 #include "netserver.h"
 #include "generic_duel.h"
 #include "common.h"
-/////zdiy/////
-#include "game.h"
-/////zdiy/////
 namespace ygo {
 bool operator==(const ClientVersion& ver1, const ClientVersion& ver2) {
 	return ver1.client.major == ver2.client.major && ver1.client.minor == ver2.client.minor && ver1.core.major == ver2.core.major && ver1.core.minor == ver2.core.minor;
