@@ -107,9 +107,9 @@ Mode::Mode()
 	failTimes = 0;
 	LoadJsonInfo();
 };
-bool Mode::IsModeBot(std::wstring deck) {
-	return deck == L"Martyr" || deck == L"PointStar" || deck == L"Ra"
-		|| deck == L"Armor"|| deck == L"Hades"|| deck == L"Mode";
+bool Mode::IsModeBot(std::set<int>& rule) {
+	if(rule.size() <= 0) return false;
+	return rule.find(-1) != rule.end();
 }
  void Mode::RefreshAiDecks() {
  	bots.clear();
@@ -137,21 +137,20 @@ bool Mode::IsModeBot(std::wstring deck) {
 			WindBot generic_engine_bot;
 			for(auto& obj : j) {
 				try {
-					std::wstring deck = BufferIO::DecodeUTF8(obj.at("deck").get_ref<std::string&>());
-					if(!IsModeBot(deck)) continue;
 					WindBot bot;
-					bot.name = BufferIO::DecodeUTF8(obj.at("name").get_ref<std::string&>());
-					bot.deck = deck;
-					bot.dialog = BufferIO::DecodeUTF8(obj.at("dialog").get_ref<std::string&>());
-					bot.deckfolder =  L"";
-					bot.deckpath = L"";
-					bot.deckfile = epro::format(L"AI_{}", bot.deck);
-					bot.difficulty = obj.at("difficulty").get<int>();
 					for(auto& masterRule : obj.at("masterRules")) {
 						if(masterRule.is_number()) {
 							bot.masterRules.insert(masterRule.get<int>());
 						}
 					}
+					if(!IsModeBot(bot.masterRules)) continue;
+					bot.name = BufferIO::DecodeUTF8(obj.at("name").get_ref<std::string&>());
+					bot.deck = BufferIO::DecodeUTF8(obj.at("deck").get_ref<std::string&>());
+					bot.dialog = BufferIO::DecodeUTF8(obj.at("dialog").get_ref<std::string&>());
+					bot.deckfolder =  L"";
+					bot.deckpath = L"";
+					bot.deckfile = epro::format(L"AI_{}", bot.deck);
+					bot.difficulty = obj.at("difficulty").get<int>();
 					bots.push_back(std::move(bot));
 				}
 				catch(const std::exception& e) {
@@ -3751,9 +3750,6 @@ void Game::RefreshAiDecks(bool aichk) {
 					bot.deckfolder = aichk ? gBot.aiDeckSelect2->getItem(gBot.aiDeckSelect2->getSelected()) : L"";
 					bot.deckpath = aichk ? gBot.aiDeckSelect->getItem(gBot.aiDeckSelect->getSelected()) : L"";
 					/////kdiy////////
-					/////zdiy//////
-					if(mainGame->mode->IsModeBot(bot.deck)) continue;
-					/////zdiy//////
 					bot.deckfile = epro::format(L"AI_{}", bot.deck);
 					bot.difficulty = obj.at("difficulty").get<int>();
 					for(auto& masterRule : obj.at("masterRules")) {
@@ -3761,6 +3757,9 @@ void Game::RefreshAiDecks(bool aichk) {
 							bot.masterRules.insert(masterRule.get<int>());
 						}
 					}
+					/////zdiy//////
+					if(mainGame->mode->IsModeBot(bot.masterRules)) continue;
+					/////zdiy//////
 					bool is_generic_engine = bot.deck == L"Lucky";
 					if(is_generic_engine)
 						generic_engine_bot = bot;

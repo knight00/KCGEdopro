@@ -169,7 +169,7 @@ public:
 	void SetTimes(uint8_t player);
 	void SetRule(int32_t index);
 	bool LoadWindBot(int port, epro::wstringview pass);
-	bool IsModeBot(std::wstring deck);
+	bool IsModeBot(std::set<int>& rule);
 	Mode();
 	~Mode();
 private:
