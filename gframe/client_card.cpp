@@ -67,9 +67,7 @@ void ClientCard::UpdateInfo(const CoreUtils::Query& query) {
 	}
 	if(query.flag & QUERY_DEFENSE) {
 		if(IsDifferent(defense, query.defense) || defstring.empty()) {
-			if(type & TYPE_LINK) {
-				defstring = L"-";
-			} else if(defense < 0) {
+			if(defense < 0) {
 				defstring = L"?";
             //////////kdiy////////////////////
             } else if (defense >= 9999999) {

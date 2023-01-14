@@ -1313,17 +1313,22 @@ void Game::DrawThumb(const CardDataC* cp, irr::core::position2di pos, LFList* lf
 	driver->draw2DImage(img, dragloc, irr::core::recti(0, 0, size.Width, size.Height), cliprect);
 	if(!is_siding) {
 		switch(count) {
-		case -1:
-				case 0:
-					imageManager.draw2DImageFilterScaled(imageManager.tLim, limitloc, irr::core::recti(0, 0, 64, 64), cliprect, 0, true);
-					break;
-				case 1:
-					imageManager.draw2DImageFilterScaled(imageManager.tLim, limitloc, irr::core::recti(64, 0, 128, 64), cliprect, 0, true);
-					break;
-				case 2:
-					imageManager.draw2DImageFilterScaled(imageManager.tLim, limitloc, irr::core::recti(0, 64, 64, 128), cliprect, 0, true);
-					break;
-			}
+			case -1:
+			case 0:
+				imageManager.draw2DImageFilterScaled(imageManager.tLim, limitloc, irr::core::recti(0, 0, 64, 64), cliprect, 0, true);
+				break;
+			case 1:
+				imageManager.draw2DImageFilterScaled(imageManager.tLim, limitloc, irr::core::recti(64, 0, 128, 64), cliprect, 0, true);
+				break;
+			case 2:
+				imageManager.draw2DImageFilterScaled(imageManager.tLim, limitloc, irr::core::recti(0, 64, 64, 128), cliprect, 0, true);
+				break;
+			default:
+				if(cp->ot & SCOPE_LEGEND) {
+					imageManager.draw2DImageFilterScaled(imageManager.tLim, limitloc, irr::core::recti(64, 64, 128, 128), cliprect, 0, true);
+				}
+				break;
+		}
 #define IDX(scope,idx) case SCOPE_##scope:\
 							index = idx;\
 							goto draw;

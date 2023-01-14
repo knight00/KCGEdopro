@@ -41,7 +41,7 @@ OPTION(bool, hideHandsInReplays, false)
 OPTION(ygo::GameConfig::TextFont, textfont, EPRO_TEXT("fonts/ygo.ttf"), 12)
 OPTION(epro::path_string, numfont, EPRO_TEXT("fonts/ygo.ttf"))
 #ifdef YGOPRO_USE_BUNDLED_FONT
-OPTION(ygo::GameConfig::FallbackFonts, fallbackFonts, irr::io::path{ EPRO_TEXT("bundled") })
+OPTION(ygo::GameConfig::FallbackFonts, fallbackFonts, ygo::GameConfig::TextFont{ epro::path_string{EPRO_TEXT("bundled")}, 12 })
 #else
 OPTION(ygo::GameConfig::FallbackFonts, fallbackFonts)
 #endif //YGOPRO_USE_BUNDLED_FONT
@@ -93,6 +93,7 @@ OPTION(bool, keep_cardinfo_aspect_ratio, false)
 OPTION(bool, showFPS, true)
 OPTION(bool, hidePasscodeScope, false)
 OPTION(bool, showScopeLabel, true)
+OPTION(bool, ignoreDeckContents, false)
 OPTION(bool, filterBot, true)
 OPTION_ALIASED(bool, chkAnime, show_unofficial, false)
 #ifdef EDOPRO_MACOS

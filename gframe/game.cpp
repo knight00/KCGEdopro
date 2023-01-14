@@ -756,14 +756,22 @@ void Game::Initialize() {
 	PopulateResourcesDirectories();
 	env = device->getGUIEnvironment();
 	env->getRootGUIElement()->setRelativePosition({ {}, {(irr::s32)(1024 * dpi_scale), (irr::s32)(640 * dpi_scale) } });
-	guiFont = irr::gui::CGUITTFont::createTTFont(env, gGameConfig->textfont.font.data(), Scale(gGameConfig->textfont.size), gGameConfig->fallbackFonts);
+	auto textfont = gGameConfig->textfont;
+	textfont.size = Scale(textfont.size);
+	auto fallbackFonts = gGameConfig->fallbackFonts;
+	for(auto& font : fallbackFonts)
+		font.size = Scale(font.size);
+	guiFont = irr::gui::CGUITTFont::createTTFont(env, textfont, fallbackFonts);
 	if(!guiFont)
 		throw std::runtime_error("Failed to load text font");
 	textFont = guiFont;
 	textFont->grab();
-	numFont = irr::gui::CGUITTFont::createTTFont(env, gGameConfig->numfont.data(), Scale(16), gGameConfig->fallbackFonts);
-	adFont = irr::gui::CGUITTFont::createTTFont(env, gGameConfig->numfont.data(), Scale(12), gGameConfig->fallbackFonts);
-	lpcFont = irr::gui::CGUITTFont::createTTFont(env, gGameConfig->numfont.data(), Scale(48), gGameConfig->fallbackFonts);
+	GameConfig::TextFont numfont{ gGameConfig->numfont, (uint8_t)Scale(16) };
+	numFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
+	numfont.size = Scale(12);
+	adFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
+	numfont.size = Scale(48);
+	lpcFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
 	if(!numFont || !adFont || !lpcFont)
 		throw std::runtime_error("Failed to load numbers font");
 	if(!ApplySkin(gGameConfig->skin, false, true)) {
@@ -794,10 +802,7 @@ void Game::Initialize() {
 	stAbout = irr::gui::CGUICustomText::addCustomText(L"EDOPro-KCG\n"
 											L"by perfectdicky (QQ: 874342483)\n"
 											L"\n"
-											L"Copyright (C) Edoardo Lolletti (edo9300) and Project Ignis ("
-											L"ahtelel, Cybercatman, Dragon3989, DyXel, edo9300, EerieCode, "
-											L"Gideon, Hatter, Hel, Icematoro, Larry126, LogicalNonsense, pyrQ, "
-											L"Sanct, senpaizuri, Steeldarkeagel, TheRazgriz, WolfOfWolves, Yamato)\n"
+											L"Copyright (C) Edoardo Lolletti (edo9300)and others, licensed under the GNU AGPLv3 or later.\n"
 											L"\n"
 											L"https://github.com/knight00/KCGEdopro\n"
 											L"https://github.com/knight00/ocgcore-KCG\n"
@@ -1350,21 +1355,21 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(btnClearDeck, 1304);
 	btnDeleteDeck = AlignElementWithParent(env->addButton(Scale(225, 95, 290, 120), wDeckEdit, BUTTON_DELETE_DECK, gDataManager->GetSysString(1308).data()));
 	defaultStrings.emplace_back(btnDeleteDeck, 1308);
-	btnSideOK = AlignElementWithParent(env->addButton(Scale(510, 40, 820, 80), 0, BUTTON_SIDE_OK, gDataManager->GetSysString(1334).data()));
+	btnSideOK = AlignElementWithParent(env->addButton(Scale(510, 40, 820, 80), nullptr, BUTTON_SIDE_OK, gDataManager->GetSysString(1334).data()));
 	defaultStrings.emplace_back(btnSideOK, 1334);
 	btnSideOK->setVisible(false);
-	btnSideShuffle = AlignElementWithParent(env->addButton(Scale(310, 100, 370, 130), 0, BUTTON_SHUFFLE_DECK, gDataManager->GetSysString(1307).data()));
+	btnSideShuffle = AlignElementWithParent(env->addButton(Scale(310, 100, 370, 130), nullptr, BUTTON_SHUFFLE_DECK, gDataManager->GetSysString(1307).data()));
 	defaultStrings.emplace_back(btnSideShuffle, 1307);
 	btnSideShuffle->setVisible(false);
-	btnSideSort = AlignElementWithParent(env->addButton(Scale(375, 100, 435, 130), 0, BUTTON_SORT_DECK, gDataManager->GetSysString(1305).data()));
+	btnSideSort = AlignElementWithParent(env->addButton(Scale(375, 100, 435, 130), nullptr, BUTTON_SORT_DECK, gDataManager->GetSysString(1305).data()));
 	defaultStrings.emplace_back(btnSideSort, 1305);
 	btnSideSort->setVisible(false);
-	btnSideReload = AlignElementWithParent(env->addButton(Scale(440, 100, 500, 130), 0, BUTTON_SIDE_RELOAD, gDataManager->GetSysString(1309).data()));
+	btnSideReload = AlignElementWithParent(env->addButton(Scale(440, 100, 500, 130), nullptr, BUTTON_SIDE_RELOAD, gDataManager->GetSysString(1309).data()));
 	defaultStrings.emplace_back(btnSideReload, 1309);
 	btnSideReload->setVisible(false);
 	//////kdiy//////
-	//btnHandTest = AlignElementWithParent(env->addButton(Scale(205, 90, 295, 130), 0, BUTTON_HAND_TEST, gDataManager->GetSysString(1297).data()));
-	btnHandTest = AlignElementWithParent(env->addButton(Scale(205, 190, 295, 230), 0, BUTTON_HAND_TEST, gDataManager->GetSysString(1297).data()));
+	//btnHandTest = AlignElementWithParent(env->addButton(Scale(205, 90, 295, 130), nullptr, BUTTON_HAND_TEST, gDataManager->GetSysString(1297).data()));
+	btnHandTest = AlignElementWithParent(env->addButton(Scale(205, 190, 295, 230), nullptr, BUTTON_HAND_TEST, gDataManager->GetSysString(1297).data()));
 	//////kdiy//////
 	defaultStrings.emplace_back(btnHandTest, 1297);
 	btnHandTest->setVisible(false);
@@ -1391,7 +1396,7 @@ void Game::Initialize() {
 		if(increment) offset += 35;
 		return Scale(leftRail, offset, rightRail, offset + 25);
 	};
-	chkHandTestNoOpponent = env->addCheckBox(true, nextHandTestRow(10, mainMenuWidth - 10), wHandTest, -1, gDataManager->GetSysString(2081).data());
+	chkHandTestNoOpponent = env->addCheckBox(false, nextHandTestRow(10, mainMenuWidth - 10), wHandTest, -1, gDataManager->GetSysString(2081).data());
 	defaultStrings.emplace_back(chkHandTestNoOpponent, 2081);
 	chkHandTestNoShuffle = env->addCheckBox(false, nextHandTestRow(10, mainMenuWidth - 10), wHandTest, -1, gDataManager->GetSysString(1230).data());
 	defaultStrings.emplace_back(chkHandTestNoShuffle, 1230);
@@ -2466,10 +2471,12 @@ void Game::PopulateTabSettingsWindow() {
 			tabSettings.scrMusicVolume->setSmallStep(1);
 			cur_y += y_incr;
 		}
-		// end audio
 		tabSettings.chkNoChainDelay = env->addCheckBox(gGameConfig->chkWaitChain, GetNextRect(), tabPanel, CHECKBOX_NO_CHAIN_DELAY, gDataManager->GetSysString(1277).data());
 		menuHandler.MakeElementSynchronized(tabSettings.chkNoChainDelay);
 		defaultStrings.emplace_back(tabSettings.chkNoChainDelay, 1277);
+		tabSettings.chkIgnoreDeckContents = env->addCheckBox(gGameConfig->ignoreDeckContents, GetNextRect(), tabPanel, CHECKBOX_IGNORE_DECK_CONTENTS, gDataManager->GetSysString(1277).data());
+		menuHandler.MakeElementSynchronized(tabSettings.chkIgnoreDeckContents);
+		defaultStrings.emplace_back(tabSettings.chkIgnoreDeckContents, 12119);
 		// Check OnResize for button placement information
 		cur_y += 5;
 		btnTabShowSettings = env->addButton(GetNextRect(), tabPanel, BUTTON_SHOW_SETTINGS, gDataManager->GetSysString(2059).data());
@@ -2594,6 +2601,9 @@ void Game::PopulateSettingsWindow() {
 		defaultStrings.emplace_back(gSettings.chkHideHandsInReplays, 2080);
 		gSettings.chkConfirmDeckClear = env->addCheckBox(gGameConfig->confirm_clear_deck, GetNextRect(), sPanel, CHECKBOX_CONFIRM_DECK_CLEAR, gDataManager->GetSysString(12104).data());
 		defaultStrings.emplace_back(gSettings.chkConfirmDeckClear, 12104);
+		gSettings.chkIgnoreDeckContents = env->addCheckBox(gGameConfig->ignoreDeckContents, GetNextRect(), sPanel, CHECKBOX_IGNORE_DECK_CONTENTS, gDataManager->GetSysString(12119).data());
+		menuHandler.MakeElementSynchronized(gSettings.chkIgnoreDeckContents);
+		defaultStrings.emplace_back(gSettings.chkIgnoreDeckContents, 12119);
 	}
 
 	{
@@ -3181,7 +3191,10 @@ bool Game::MainLoop() {
 			else
 				gSoundManager->PlayBGM(SoundManager::BGM::DUEL, gGameConfig->loopMusic);
 			EnableMaterial2D(true);
-			DrawBackImage(imageManager.tBackGround, resized);
+			if(current_topdown)
+				DrawBackImage(imageManager.tBackGround_duel_topdown, resized);
+			else
+				DrawBackImage(imageManager.tBackGround, resized);
 			DrawBackGround();
 			DrawCards();
 			DrawMisc();

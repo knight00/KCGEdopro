@@ -719,6 +719,7 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 	}
 	case irr::EET_MOUSE_INPUT_EVENT: {
 		bool isroot = mainGame->env->getRootGUIElement()->getElementFromPoint(mouse_pos) == mainGame->env->getRootGUIElement();
+		const bool forceInput = gGameConfig->ignoreDeckContents || event.MouseInput.Shift;
 		switch(event.MouseInput.Event) {
 		case irr::EMIE_LMOUSE_PRESSED_DOWN: {
 			if(is_draging)
@@ -735,7 +736,7 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 			if(!hovered_code || !(dragging_pointer = gDataManager->GetCardData(hovered_code)))
 				break;
 			if(hovered_pos == 4) {
-				if(!event.MouseInput.Shift && !check_limit(dragging_pointer))
+				if(!forceInput && !check_limit(dragging_pointer))
 					break;
 			}
 			is_draging = true;
@@ -759,11 +760,11 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 			}
 			bool pushed = false;
 			if(hovered_pos == 1)
-				pushed = push_main(dragging_pointer, hovered_seq, event.MouseInput.Shift);
+				pushed = push_main(dragging_pointer, hovered_seq, forceInput);
 			else if(hovered_pos == 2)
-				pushed = push_extra(dragging_pointer, hovered_seq + is_lastcard, event.MouseInput.Shift);
+				pushed = push_extra(dragging_pointer, hovered_seq + is_lastcard, forceInput);
 			else if(hovered_pos == 3)
-				pushed = push_side(dragging_pointer, hovered_seq + is_lastcard, event.MouseInput.Shift);
+				pushed = push_side(dragging_pointer, hovered_seq + is_lastcard, forceInput);
 			else if(hovered_pos == 4 && !mainGame->is_siding)
 				pushed = true;
 			if(!pushed) {
@@ -813,13 +814,13 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 					pop_side(hovered_seq);
 				} else {
 					auto pointer = gDataManager->GetCardData(hovered_code);
-					if(!pointer || !check_limit(pointer))
+					if(!pointer || (!gGameConfig->ignoreDeckContents && !check_limit(pointer)))
 						break;
 					if (event.MouseInput.Shift) {
-						push_side(pointer);
+						push_side(pointer, -1, gGameConfig->ignoreDeckContents);
 					}
 					else {
-						if (!push_extra(pointer) && !push_main(pointer))
+						if (!push_extra(pointer, -1, gGameConfig->ignoreDeckContents) && !push_main(pointer, -1, gGameConfig->ignoreDeckContents))
 							push_side(pointer);
 					}
 				}
@@ -850,7 +851,7 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 			if (is_draging)
 				break;
 			auto pointer = gDataManager->GetCardData(hovered_code);
-			if(!pointer || (!event.MouseInput.Shift && !check_limit(pointer)))
+			if(!pointer || (!forceInput && !check_limit(pointer)))
 				break;
 			if (hovered_pos == 1) {
 				if(!push_main(pointer))
