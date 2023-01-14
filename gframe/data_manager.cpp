@@ -141,7 +141,7 @@ bool DataManager::ParseDB(sqlite3* pDB) {
 			cd.attack = sqlite3_column_int(pStmt, 5);
 		/////////////kdiy///////
 		int defense = sqlite3_column_int(pStmt, 6);
-		if (defense >= 999999)
+		if(defense >= 999999)
 			cd.defense = 8888888;
 		else
 		/////////////kdiy///////

@@ -1080,7 +1080,7 @@ void Game::Initialize() {
     
     //////kdiy//////
 	// wBtnSettings = env->addWindow(Scale(0, 610, 30, 640));
-    wBtnSettings = env->addWindow(Scale(mainMenuLeftX-30, 420, mainMenuLeftX, 450));
+    wBtnSettings = env->addWindow(Scale(mainMenuLeftX-30, 350, mainMenuLeftX, 450));
     //////kdiy//////
 	wBtnSettings->getCloseButton()->setVisible(false);
 	wBtnSettings->setDraggable(false);
@@ -4986,7 +4986,7 @@ void Game::OnResize() {
 	/////zdiy/////
 	#endif
 	wQQ->setRelativePosition(ResizeWin(mainMenuRightX+10, 200, mainMenuRightX+150, 450));
-    wBtnSettings->setRelativePosition(ResizeWin(mainMenuLeftX-30, 420, mainMenuLeftX, 450));
+    wBtnSettings->setRelativePosition(ResizeWin(mainMenuLeftX-30, 350, mainMenuLeftX, 450));
 	////////kdiy///////
 	SetCentered(wCommitsLog);
 	SetCentered(updateWindow, false);

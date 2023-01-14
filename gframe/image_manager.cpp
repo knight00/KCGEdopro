@@ -141,7 +141,7 @@ bool ImageManager::Initial() {
 	searchPath.push_back(EPRO_TEXT("./textures/character/yuma"));
 	searchPath.push_back(EPRO_TEXT("./textures/character/shark"));
 	searchPath.push_back(EPRO_TEXT("./textures/character/kaito"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/donthousand"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/DonThousand"));
 	searchPath.push_back(EPRO_TEXT("./textures/character/yuya"));
 	searchPath.push_back(EPRO_TEXT("./textures/character/declan"));
 	searchPath.push_back(EPRO_TEXT("./textures/character/playmaker"));
