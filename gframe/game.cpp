@@ -1080,16 +1080,13 @@ void Game::Initialize() {
     
     //////kdiy//////
 	// wBtnSettings = env->addWindow(Scale(0, 610, 30, 640));
-    wBtnSettings = env->addWindow(Scale(mainMenuLeftX-30, 350, mainMenuLeftX, 450));
+    wBtnSettings = env->addWindow(Scale(mainMenuLeftX-50, 350, mainMenuLeftX, 450));
     //////kdiy//////
 	wBtnSettings->getCloseButton()->setVisible(false);
 	wBtnSettings->setDraggable(false);
 	wBtnSettings->setDrawTitlebar(false);
-    //////kdiy//////
-	//wBtnSettings->setDrawBackground(false);
-    wBtnSettings->setDrawBackground(true);
-    //////kdiy//////
-	auto dimBtnSettings = Scale(0, 0, 30, 30);
+    wBtnSettings->setDrawBackground(false);
+	auto dimBtnSettings = Scale(0, 0, 50, 50);
 	btnSettings = irr::gui::CGUIImageButton::addImageButton(env, dimBtnSettings, wBtnSettings, BUTTON_SHOW_SETTINGS);
 	btnSettings->setDrawBorder(false);
 	btnSettings->setImageSize(dimBtnSettings.getSize());
@@ -4986,7 +4983,7 @@ void Game::OnResize() {
 	/////zdiy/////
 	#endif
 	wQQ->setRelativePosition(ResizeWin(mainMenuRightX+10, 200, mainMenuRightX+150, 450));
-    wBtnSettings->setRelativePosition(ResizeWin(mainMenuLeftX-30, 350, mainMenuLeftX, 450));
+    wBtnSettings->setRelativePosition(ResizeWin(mainMenuLeftX-50, 350, mainMenuLeftX, 450));
 	////////kdiy///////
 	SetCentered(wCommitsLog);
 	SetCentered(updateWindow, false);
