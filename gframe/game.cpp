@@ -2915,13 +2915,6 @@ void Game::PopulateSettingsWindow() {
         ReloadCBpic();
         cbpics->setSelected(gGameConfig->hdpic);
         IncrementXorY();
-        gSettings.chkNoExtraLimit = env->addCheckBox(gGameConfig->enableextralimit, GetNextRect(), sPanel, CHECKBOX_ENABLE_EXTRA_NOLIMIT, gDataManager->GetSysString(8027).data());
-        defaultStrings.emplace_back(gSettings.chkNoExtraLimit, 8027);
-#ifndef VIP 
-	    gSettings.chkNoExtraLimit->setChecked(false);
-	    gSettings.chkNoExtraLimit->setEnabled(false);
-        defaultStrings.emplace_back(gSettings.chkNoExtraLimit, 8024);
-#endif
     }
     /////kdiy////////////
 }
@@ -4464,7 +4457,7 @@ void Game::UpdateExtraRules(bool set) {
 		chkRules[6]->setEnabled(false);
 	}
 	/////kdiy///////////
-	if(chkRules[14]->isChecked()) {
+	if(chkRules[13]->isChecked()) {
 		chkRules[0]->setEnabled(false);
 		chkRules[1]->setEnabled(false);
 		chkRules[2]->setEnabled(false);
