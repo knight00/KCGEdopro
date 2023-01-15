@@ -1605,10 +1605,7 @@ bool DeckBuilder::push_extra(const CardDataC* pointer, int seq, bool forced) {
 	if(!forced && !mainGame->is_siding) {
 		if(main_and_extra_legend_count_monster >= 1 && (pointer->ot & SCOPE_LEGEND))
 			return false;
-		//kdiy///////
-		//if(container.size() >= 15)
-		if((!gGameConfig->enableextralimit && container.size() >= 15) || container.size() >= 100)
-		//kdiy///////
+		if(container.size() >= 15)
 		return false;
 	}
 	if(seq >= 0 && seq < (int)container.size())

@@ -68,7 +68,6 @@ OPTION(bool, enableanime, false)
 OPTION(bool, enablesanime, false)
 OPTION(bool, enablecanime, false)
 OPTION(bool, enableaanime, false)
-OPTION(bool, enableextralimit, false)
 OPTION(bool, system_engine, true)
 ///kdiy//////////
 OPTION(std::wstring, lastServer, L"")
