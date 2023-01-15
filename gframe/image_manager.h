@@ -166,8 +166,12 @@ private:
 	void LoadPic();
 	irr::video::ITexture* loadTextureFixedSize(epro::path_stringview texture_name, int width, int height);
 	irr::video::ITexture* loadTextureAnySize(epro::path_stringview texture_name);
-	void replaceTextureLoadingFixedSize(irr::video::ITexture*& texture, irr::video::ITexture* fallback, epro::path_stringview texture_name, int width, int height);
-	void replaceTextureLoadingAnySize(irr::video::ITexture*& texture, irr::video::ITexture* fallback, epro::path_stringview texture_name);
+    //////kdiy//////
+	// void replaceTextureLoadingFixedSize(irr::video::ITexture*& texture, irr::video::ITexture* fallback, epro::path_stringview texture_name, int width, int height);
+	// void replaceTextureLoadingAnySize(irr::video::ITexture*& texture, irr::video::ITexture* fallback, epro::path_stringview texture_name);
+    void replaceTextureLoadingFixedSize(irr::video::ITexture*& texture, irr::video::ITexture* fallback, epro::path_stringview texture_name, int width, int height, int image_type);
+	void replaceTextureLoadingAnySize(irr::video::ITexture*& texture, irr::video::ITexture* fallback, epro::path_stringview texture_name, int image_type);
+    //////kdiy//////
 	load_return LoadCardTexture(uint32_t code, imgType type, const std::atomic<irr::s32>& width, const std::atomic<irr::s32>& height, chrono_time timestamp_id, const std::atomic<chrono_time>& source_timestamp_id);
 	epro::path_string textures_path;
 	std::pair<std::atomic<irr::s32>, std::atomic<irr::s32>> sizes[3];
