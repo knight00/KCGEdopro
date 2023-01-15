@@ -264,11 +264,13 @@ catch(...) { what = def; }
 					BufferIO::EncodeUTF8(mainGame->ebHostNotes->getText(), cscg.notes, 200);
 				}
 				SendPacketToServer(CTOS_CREATE_GAME, cscg);
+            /////zdiy//////
 			} else {
 				CTOS_CreateGame cscg;
 				mainGame->mode->ModeCreateGame(cscg);
 				SendPacketToServer(CTOS_CREATE_GAME, cscg);
 			}
+		    /////zdiy//////
 		} else {
 			CTOS_JoinGame csjg;
 			if (temp_ver)

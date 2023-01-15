@@ -1250,10 +1250,7 @@ void Game::Initialize() {
 		defaultStrings.emplace_back(chkAttribute[i], 1010 + i);
 	}
 	//announce race
-	/////zdiy/////
-	//wANRace = env->addWindow(Scale(480, 200, 850, 410), false, gDataManager->GetSysString(563).data());
-	wANRace = env->addWindow(Scale(480, 200, 850, 470), false, gDataManager->GetSysString(563).data());
-	/////zdiy/////
+	wANRace = env->addWindow(Scale(480, 200, 850, 410), false, gDataManager->GetSysString(563).data());
 	defaultStrings.emplace_back(wANRace, 563);
 	wANRace->getCloseButton()->setVisible(false);
 	wANRace->setVisible(false);
@@ -5043,10 +5040,7 @@ void Game::OnResize() {
 	wANNumber->setRelativePosition(ResizeWin(550, 200, 780, 295));
 	wANCard->setRelativePosition(ResizeWin(430, 170, 840, 370));
 	wANAttribute->setRelativePosition(ResizeWin(500, 200, 830, 285));
-	/////zdiy/////
-	//wANRace->setRelativePosition(ResizeWin(480, 200, 850, 410));
-	wANRace->setRelativePosition(ResizeWin(480, 200, 850, 470));
-	/////zdiy/////
+	wANRace->setRelativePosition(ResizeWin(480, 200, 850, 410));
 	wFileSave->setRelativePosition(ResizeWin(510, 200, 820, 320));
 	stHintMsg->setRelativePosition(ResizeWin(500, 60, 820, 90));
 

@@ -724,39 +724,25 @@ void ImageManager::RefreshKCGImage() {
         character[playno] = GetRandomImage(imgcharacter[playno-1]);
     }
 }
-//void ImageManager::replaceTextureLoadingFixedSize(irr::video::ITexture*& texture, irr::video::ITexture* fallback, epro::path_stringview texture_name, int width, int height) {
-    //auto* tmp = loadTextureFixedSize(texture_name, width, height);
-void ImageManager::replaceTextureLoadingFixedSize(irr::video::ITexture*& texture, irr::video::ITexture* fallback, epro::path_stringview texture_name, int width, int height, int image_type) {
-    auto* tmp = image_type > 0 ? GetRandomImage(image_type) : loadTextureFixedSize(texture_name, width, height);
-	if(!tmp)
-		tmp = loadTextureFixedSize(texture_name, width, height);
 //////kdiy//////
+void ImageManager::replaceTextureLoadingFixedSize(irr::video::ITexture*& texture, irr::video::ITexture* fallback, epro::path_stringview texture_name, int width, int height) {
+	auto* tmp = loadTextureFixedSize(texture_name, width, height);
 	if(!tmp)
 		tmp = fallback;
 	if(texture != fallback)
 		driver->removeTexture(texture);
 	texture = tmp;
 }
-/////kdiy//////
-//void ImageManager::replaceTextureLoadingAnySize(irr::video::ITexture*& texture, irr::video::ITexture* fallback, epro::path_stringview texture_name) {
-	//auto* tmp = loadTextureAnySize(texture_name);
-void ImageManager::replaceTextureLoadingAnySize(irr::video::ITexture*& texture, irr::video::ITexture* fallback, epro::path_stringview texture_name, int image_type) {
-    auto* tmp = image_type > 0 ? GetRandomImage(image_type) : loadTextureAnySize(texture_name);
-	if(!tmp)
-		tmp = loadTextureAnySize(texture_name);
-/////kdiy//////
+void ImageManager::replaceTextureLoadingAnySize(irr::video::ITexture*& texture, irr::video::ITexture* fallback, epro::path_stringview texture_name) {
+	auto* tmp = loadTextureAnySize(texture_name);
 	if(!tmp)
 		tmp = fallback;
 	if(texture != fallback)
 		driver->removeTexture(texture);
 	texture = tmp;
 }
-/////kdiy//////
-// #define REPLACE_TEXTURE_WITH_FIXED_SIZE(obj,name,w,h) replaceTextureLoadingFixedSize(obj, def_##obj, EPRO_TEXT(name) ""_sv, w, h)
-// #define REPLACE_TEXTURE_ANY_SIZE(obj,name) replaceTextureLoadingAnySize(obj, def_##obj, EPRO_TEXT(name) ""_sv)
-#define REPLACE_TEXTURE_WITH_FIXED_SIZE(obj,name,w,h,TEXTURE) replaceTextureLoadingFixedSize(obj, def_##obj, EPRO_TEXT(name) ""_sv, w, h, TEXTURE)
-#define REPLACE_TEXTURE_ANY_SIZE(obj,name,TEXTURE) replaceTextureLoadingAnySize(obj, def_##obj, EPRO_TEXT(name) ""_sv, TEXTURE)
-/////kdiy//////
+#define REPLACE_TEXTURE_WITH_FIXED_SIZE(obj,name,w,h) replaceTextureLoadingFixedSize(obj, def_##obj, EPRO_TEXT(name) ""_sv, w, h)
+#define REPLACE_TEXTURE_ANY_SIZE(obj,name) replaceTextureLoadingAnySize(obj, def_##obj, EPRO_TEXT(name) ""_sv)
 
 void ImageManager::ChangeTextures(epro::path_stringview _path) {
 	/////kdiy//////
@@ -813,56 +799,49 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 #ifdef VIP
     RefreshKCGImage();
 #endif
-    REPLACE_TEXTURE_ANY_SIZE(tAct, "act", TEXTURE_ACTIVATE);
-	REPLACE_TEXTURE_ANY_SIZE(tAttack, "attack", TEXTURE_ATTACK);
-	REPLACE_TEXTURE_ANY_SIZE(tChain, "chain", TEXTURE_CHAIN);
-	REPLACE_TEXTURE_WITH_FIXED_SIZE(tNegated, "negated", 128, 128, TEXTURE_NEGATED);
-	REPLACE_TEXTURE_WITH_FIXED_SIZE(tNumber, "number", 320, 256, -1);
-	REPLACE_TEXTURE_ANY_SIZE(tLPBar, "lp", TEXTURE_LP);
-	REPLACE_TEXTURE_ANY_SIZE(tLPFrame, "lpf", TEXTURE_LPf);
-	REPLACE_TEXTURE_WITH_FIXED_SIZE(tMask, "mask", 254, 254, TEXTURE_MASK);
-	REPLACE_TEXTURE_ANY_SIZE(tEquip, "equip", TEXTURE_EQUIP);
-	REPLACE_TEXTURE_ANY_SIZE(tTarget, "target", TEXTURE_TARGET);
-	REPLACE_TEXTURE_ANY_SIZE(tChainTarget, "chaintarget", TEXTURE_CHAINTARGET);
-	REPLACE_TEXTURE_ANY_SIZE(tLim, "lim", TEXTURE_LIM);
-	REPLACE_TEXTURE_ANY_SIZE(tOT, "ot", TEXTURE_OT);
-	REPLACE_TEXTURE_WITH_FIXED_SIZE(tHand[0], "f1", 89, 128, TEXTURE_F1);
-	REPLACE_TEXTURE_WITH_FIXED_SIZE(tHand[1], "f2", 89, 128, TEXTURE_F2);
-	REPLACE_TEXTURE_WITH_FIXED_SIZE(tHand[2], "f3", 89, 128, TEXTURE_F3);
-	REPLACE_TEXTURE_ANY_SIZE(tBackGround, "bg", TEXTURE_BACKGROUND);
-	REPLACE_TEXTURE_ANY_SIZE(tBackGround_menu, "bg_menu", TEXTURE_BACKGROUND_MENU);
-	if(!is_base && tBackGround != def_tBackGround && tBackGround_menu == def_tBackGround_menu)
-		tBackGround_menu = tBackGround;
-	REPLACE_TEXTURE_ANY_SIZE(tBackGround_deck, "bg_deck", TEXTURE_BACKGROUND_DECK);
-	if(!is_base && tBackGround != def_tBackGround && tBackGround_deck == def_tBackGround_deck)
-		tBackGround_deck = tBackGround;
-	REPLACE_TEXTURE_ANY_SIZE(tBackGround_duel_topdown, "bg_duel_topdown", -1);
+    tAct = GetRandomImage(TEXTURE_ACTIVATE);
+	tAttack = GetRandomImage(TEXTURE_ATTACK);
+	tChain = GetRandomImage(TEXTURE_CHAIN);
+	tNegated = GetRandomImage(TEXTURE_NEGATED, 128, 128);
+	tLPBar = GetRandomImage(TEXTURE_LP);
+	tLPFrame = GetRandomImage(TEXTURE_LPf);
+	tMask = GetRandomImage(TEXTURE_MASK, 254, 254);
+	tEquip = GetRandomImage(TEXTURE_EQUIP);
+	tTarget = GetRandomImage(TEXTURE_TARGET);
+	tChainTarget = GetRandomImage(TEXTURE_CHAINTARGET);
+	tLim = GetRandomImage(TEXTURE_LIM);
+	tOT = GetRandomImage(TEXTURE_OT);
+	tHand[0] = GetRandomImage(TEXTURE_F1, 89, 128);
+	tHand[1] = GetRandomImage(TEXTURE_F2, 89, 128);
+	tHand[2] = GetRandomImage(TEXTURE_F3, 89, 128);
+	tBackGround = GetRandomImage(TEXTURE_BACKGROUND);
+	tBackGround_menu = GetRandomImage(TEXTURE_BACKGROUND_MENU);
+	tBackGround_deck = GetRandomImage(TEXTURE_BACKGROUND_DECK);
+	tField[0][0] = GetRandomImage(TEXTURE_field2);
+	tFieldTransparent[0][0] = GetRandomImage(TEXTURE_field_transparent2);
+	tField[0][1] = GetRandomImage(TEXTURE_field3);
+	tFieldTransparent[0][1] = GetRandomImage(TEXTURE_field_transparent3);
+	tField[0][2] = GetRandomImage(TEXTURE_field);
+	tFieldTransparent[0][2] = GetRandomImage(TEXTURE_field_transparent);
+	tField[0][3] = GetRandomImage(TEXTURE_field4);
+	tFieldTransparent[0][3] = GetRandomImage(TEXTURE_field_transparent4);
+	tField[1][0] = GetRandomImage(TEXTURE_field_fieldSP2);
+	tFieldTransparent[1][0] = GetRandomImage(TEXTURE_field_transparentSP2);
+	tField[1][1] = GetRandomImage(TEXTURE_fieldSP3);
+	tFieldTransparent[1][1] = GetRandomImage(TEXTURE_field_transparentSP3);
+	tField[1][2] = GetRandomImage(TEXTURE_fieldSP);
+	tFieldTransparent[1][2] = GetRandomImage(TEXTURE_field_transparentSP);
+	tField[1][3] = GetRandomImage(TEXTURE_fieldSP4);
+	tFieldTransparent[1][3] = GetRandomImage(TEXTURE_field_transparentSP4);
+	tSettings = GetRandomImage(TEXTURE_SETTING);
+	REPLACE_TEXTURE_WITH_FIXED_SIZE(tNumber, "number", 320, 256);
+	REPLACE_TEXTURE_ANY_SIZE(tBackGround_duel_topdown, "bg_duel_topdown");
 	if(!is_base && tBackGround != def_tBackGround && tBackGround_duel_topdown == def_tBackGround_duel_topdown)
 		tBackGround_duel_topdown = tBackGround;
-	REPLACE_TEXTURE_ANY_SIZE(tField[0][0], "field2", TEXTURE_field2);
-	REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[0][0], "field-transparent2", TEXTURE_field_transparent2);
-	REPLACE_TEXTURE_ANY_SIZE(tField[0][1], "field3", TEXTURE_field3);
-	REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[0][1], "field-transparent3", TEXTURE_field_transparent3);
-	REPLACE_TEXTURE_ANY_SIZE(tField[0][2], "field", TEXTURE_field);
-	REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[0][2], "field-transparent", TEXTURE_field_transparent);
-	REPLACE_TEXTURE_ANY_SIZE(tField[0][3], "field4", TEXTURE_field4);
-	REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[0][3], "field-transparent4", TEXTURE_field_transparent4);
-	REPLACE_TEXTURE_ANY_SIZE(tField[1][0], "fieldSP2", TEXTURE_field_fieldSP2);
-	REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][0], "field-transparentSP2", TEXTURE_field_transparentSP2);
-	REPLACE_TEXTURE_ANY_SIZE(tField[1][1], "fieldSP3", TEXTURE_fieldSP3);
-	REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][1], "field-transparentSP3", TEXTURE_field_transparentSP3);
-	REPLACE_TEXTURE_ANY_SIZE(tField[1][2], "fieldSP", TEXTURE_fieldSP);
-	REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][2], "field-transparentSP", TEXTURE_field_transparentSP);
-	REPLACE_TEXTURE_ANY_SIZE(tField[1][3], "fieldSP4", TEXTURE_fieldSP4);
-	REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][3], "field-transparentSP4",TEXTURE_field_transparentSP4);
-	REPLACE_TEXTURE_ANY_SIZE(tSettings, "settings", TEXTURE_SETTING);
-	// REPLACE_TEXTURE_ANY_SIZE(tCheckBox[0], "checkbox_16");
-	// REPLACE_TEXTURE_ANY_SIZE(tCheckBox[1], "checkbox_32");
-	// REPLACE_TEXTURE_ANY_SIZE(tCheckBox[2], "checkbox_64");
-    REPLACE_TEXTURE_ANY_SIZE(tCheckBox[0], "checkbox_16", -1);
-	REPLACE_TEXTURE_ANY_SIZE(tCheckBox[1], "checkbox_32", -1);
-	REPLACE_TEXTURE_ANY_SIZE(tCheckBox[2], "checkbox_64", -1);
     /////kdiy//////
+	REPLACE_TEXTURE_ANY_SIZE(tCheckBox[0], "checkbox_16");
+	REPLACE_TEXTURE_ANY_SIZE(tCheckBox[1], "checkbox_32");
+	REPLACE_TEXTURE_ANY_SIZE(tCheckBox[2], "checkbox_64");
 	RefreshCovers();
 }
 #undef REPLACE_TEXTURE_ANY_SIZE

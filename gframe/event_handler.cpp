@@ -1726,10 +1726,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 										str.append(epro::format(L"\n\u2605{}/\u2606{} {}/{}", mcard->level, mcard->rank, gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
 										/////kdiy//////
 									else {
-										/////zdiy//////
+										/////kdiy//////
 										//str.append(epro::format(L"\n{}{} {}/{}", (mcard->level ? L"\u2605" : L"\u2606"), (mcard->level ? mcard->level : mcard->rank), gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
 										str.append(epro::format(L"\n{}{} {}/{}", (mcard->level ? L"\u2606" : L"\u2605"), (mcard->level ? mcard->level : mcard->rank), gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
-										/////zdiy//////
+										/////kdiy//////
 									}
 								}
 								if(mcard->location == LOCATION_HAND && (mcard->type & TYPE_PENDULUM)) {

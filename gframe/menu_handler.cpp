@@ -740,6 +740,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->wChat->setVisible(false);
 				break;
 			}
+             /////zdiy//////
 			case BUTTON_SINGLE_MODE: {
 				mainGame->HideElement(mainGame->wMainMenu);
 				////kdiy////////
