@@ -474,7 +474,7 @@ epro::wstringview DataManager::GetName(uint32_t code) const {
 	if(gGameConfig->chkHideNameTag) {
 		uint32_t index = name.find(L"(");
 		uint32_t index_2 = name.find(65288);
-		if(index != std::wstring::npos) name = name.substr(0,index); 
+		if(index != std::wstring::npos) name = name.substr(0,index);
 		else if(index_2 != std::wstring::npos) name = name.substr(0,index_2);
 	}
 	return name;

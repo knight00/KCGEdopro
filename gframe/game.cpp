@@ -1615,7 +1615,7 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(btnEntertainmentExitGame, 1210);
 	btnEntertainmentExitGame->setEnabled(false);
 
-	chkEntertainmentPrepReady = env->addCheckBox(false, Scale(420 ,330, 520 ,350), wEntertainmentPlay, CHECKBOX_ENTERTAUNMENT_READY,gDataManager->GetSysString(1147).data());
+	chkEntertainmentPrepReady = env->addCheckBox(false, Scale(420 ,330, 520 ,350), wEntertainmentPlay, CHECKBOX_ENTERTAUNMENT_READY,gDataManager->GetSysString(1149).data());
 	chkEntertainmentPrepReady->setEnabled(false);
 
 	chkEntertainmentMode_1Check = env->addCheckBox(false, Scale(420 ,280, 520 ,300), wEntertainmentPlay, CHECKBOX_ENTERTAUNMENT_MODE_1_CHECK,gDataManager->GetSysString(1148).data());
