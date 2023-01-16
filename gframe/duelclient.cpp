@@ -2714,11 +2714,19 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		if(mainGame->dInfo.isCatchingUp)
 			return true;
 		mainGame->AddLog(epro::sprintf(gDataManager->GetSysString(207), count));
-		for(uint32_t i = 0; i < count; ++i) {
+		constexpr float milliseconds = 5.0f * 1000.0f / 60.0f;
+		float shift = -0.75f / milliseconds;
+		if(!!player ^ mainGame->current_topdown) shift *= -1.0f;
+		for(auto it = mainGame->dField.deck[player].crbegin(), end = it + count; it != end; ++it) {
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
-			pcard = *(mainGame->dField.deck[player].rbegin() + i);
+			pcard = *it;
+			mainGame->AddLog(epro::format(L"*[{}]", gDataManager->GetName(pcard->code)), pcard->code);
 			////kdiy///////////
 			std::wstring str(gDataManager->GetName(pcard->code));
+			uint32_t index = str.find(L"(");
+			uint32_t index_2 = str.find(65288);
+			if(index != std::wstring::npos) str = str.substr(0,index);
+			else if(index_2 != std::wstring::npos) str = str.substr(0,index_2);
 			if(pcard->alias && pcard->alias == 27 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
 				std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x1073)));
 				str.insert(0, str2);
@@ -2743,10 +2751,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			} else if(pcard->alias && pcard->alias == 213 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
 				str.append(epro::format(L"{}", gDataManager->GetSetName(0x104f)));
 			}
-			//mainGame->AddLog(epro::format(L"*[{}]", gDataManager->GetName(pcard->code)), pcard->code);
-			constexpr float milliseconds = 5.0f * 1000.0f / 60.0f;
-			float shift = -0.75f / milliseconds;
-			if (player == 1) shift *= -1.0f;
 			pcard->dPos.set(shift, 0, 0);
 			if(!mainGame->dField.deck_reversed && !pcard->is_reversed)
 				pcard->dRot.set(0, irr::core::PI / milliseconds, 0);
@@ -2765,19 +2769,18 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		uint32_t code;
 		ClientCard* pcard;
 		mainGame->dField.selectable_cards.clear();
-		const auto backit = mainGame->dField.extra[player].rbegin() + mainGame->dField.extra_p_count[player];
-		for(uint32_t i = 0; i < count; ++i) {
+		for(auto it = mainGame->dField.extra[player].crbegin(), end = it + count; it != end; ++it) {
 			code = BufferIO::Read<uint32_t>(pbuf);
 			pbuf += (mainGame->dInfo.compat_mode) ? 3 : 6;
-			pcard = *(backit + i);
+			pcard = *it;
 			if (code != 0)
 				pcard->SetCode(code);
 		}
 		if(mainGame->dInfo.isCatchingUp)
 			return true;
 		mainGame->AddLog(epro::sprintf(gDataManager->GetSysString(207), count));
-		for(uint32_t i = 0; i < count; ++i) {
-			pcard = *(backit + i);
+		for(auto it = mainGame->dField.extra[player].crbegin(), end = it + count; it != end; ++it) {
+			pcard = *it;
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 			////kdiy///////////
 			std::wstring str(gDataManager->GetName(pcard->code));
