@@ -1787,12 +1787,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					mainGame->dInfo.current_player[0] = mainGame->dInfo.team2 - 1;
 			}
 		}
-		///////////ktest///////////
+		///////////kdiy///////////
 		//mainGame->dInfo.isFirstplayer = mainGame->dInfo.isFirst;
 		for(int i = 0; i < 6; ++i) {
 			mainGame->imageManager.scharacter[i] = mainGame->imageManager.character[gSoundManager->character[i]];
 		}
-		///////////ktest///////////
+		///////////kdiy///////////
 		mainGame->dInfo.lp[mainGame->LocalPlayer(0)] = BufferIO::Read<uint32_t>(pbuf);
 		mainGame->dInfo.lp[mainGame->LocalPlayer(1)] = BufferIO::Read<uint32_t>(pbuf);
 		if(mainGame->dInfo.lp[mainGame->LocalPlayer(0)] > 0)
@@ -2723,8 +2723,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->AddLog(epro::format(L"*[{}]", gDataManager->GetName(pcard->code)), pcard->code);
 			////kdiy///////////
 			std::wstring str(gDataManager->GetName(pcard->code));
-			uint32_t index = str.find(L"(");
-			uint32_t index_2 = str.find(65288);
+			auto index = str.find(L"(");
+			auto index_2 = str.find(65288);
 			if(index != std::wstring::npos) str = str.substr(0,index);
 			else if(index_2 != std::wstring::npos) str = str.substr(0,index_2);
 			if(pcard->alias && pcard->alias == 27 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
@@ -4638,7 +4638,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			else mainGame->chkRace[i]->setVisible(false);
 		}
 		/////zdiy/////
-		uint64_t z_filter = 0x100000000;
+		uint64_t z_filter = 0x10000000000000;
 		for(int i = 25; i < 36;  ++i, z_filter <<= 1) {
 			mainGame->chkRace[i]->setChecked(false);
 			if(z_filter & available)

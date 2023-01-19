@@ -1125,7 +1125,7 @@ void DeckBuilder::StartFilter(bool force_refresh) {
         /////zdiy/////
 		if(filter_race > 0x5 && ((filter_race - 0x5 == 0x1) || ((filter_race - 0x5) % 2 == 0))) {
             filter_race -= 0x5;
-            filter_race <<= 32;
+            filter_race <<= 52;
         }
 		/////zdiy/////
 		filter_atk = parse_filter(mainGame->ebAttack->getText(), filter_atktype);

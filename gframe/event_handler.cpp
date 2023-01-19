@@ -890,7 +890,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					}
 				}
 				/////zdiy/////
-				uint64_t z_filter = 0x100000000;
+				uint64_t z_filter = 0x10000000000000;
 				for(int i = 25; i < 36;  ++i, z_filter <<= 1) {
 					if(mainGame->chkRace[i]->isChecked()) {
 						rac |= z_filter;

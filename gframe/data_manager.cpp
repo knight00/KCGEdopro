@@ -472,8 +472,8 @@ epro::wstringview DataManager::GetName(uint32_t code) const {
 	//return csit->second.GetStrings().name;
 	epro::wstringview name = csit->second.GetStrings().name;
 	if(gGameConfig->chkHideNameTag) {
-		uint32_t index = name.find(L"(");
-		uint32_t index_2 = name.find(65288);
+		auto index = name.find(L"(");
+		auto index_2 = name.find(65288);
 		if(index != std::wstring::npos) name = name.substr(0,index);
 		else if(index_2 != std::wstring::npos) name = name.substr(0,index_2);
 	}
@@ -602,7 +602,7 @@ std::wstring DataManager::FormatRace(uint64_t race, bool isSkill) const {
 	std::wstring res;
 	uint32_t i = 1020;
     ///zdiy///////
-    uint64_t zcgrace = race >> 32;
+    uint64_t zcgrace = race >> 52;
     race &= 0xffffffff;
     ///zdiy///////
 	for(; race && i <= 1049; race >>= 1, ++i) {
