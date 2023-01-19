@@ -133,25 +133,55 @@ struct FadingUnit {
 /////zdiy/////
 class Mode {
 public:
-	struct ModeText {
+	struct ModeText {//the text of mode meun
 		std::wstring name;
 		std::wstring des;
 	};
-	std::vector<ModeText>* modeTexts;
-	std::vector<WindBot> bots;
-	std::vector<std::wstring> masterNames,aiNames;
-	//struct DuelPlayer* masterPlayer, * aiPlayer;
-	int port;
-	int modeIndex;
-	const wchar_t * nickName;
-	const wchar_t * gameName;
-	const wchar_t * pass; 
-	bool isMode;
-	bool isAi;
-	Deck deck;
-	int16_t rule;
-	uint32_t winTimes;
-	uint32_t failTimes;
+	struct ModePloat {//the ploat text of mode-mode2
+		int32_t index;
+		int32_t control;
+		std::wstring title;
+		std::wstring ploat;
+	};
+	enum SOUND{//the ploat|duel sound of mode-mode2
+		Ploat,
+		Duel
+	};
+	enum SOUNDTYPE {//the sound type of mode-mode2 duel sound
+		ACTIVATE,
+		ATTACK,
+		DRAW,
+		END,
+		SET,
+		SPSUMMON,
+		SUMMON
+	};
+	std::vector<ModeText>* modeTexts;//vector modetext
+	std::vector<ModePloat>* modePloats;//vector modeploat
+	std::vector<uint32_t> ploatCodes;//these codes can be changed to name in mode-mode2,then show names to player
+	std::vector<WindBot> bots;//all mode will load windbots from this
+	std::vector<std::wstring> masterNames,aiNames;//player+bot names when duel start
+	epro::condition_variable* cv;//should lock thread when play mode-mode2 sound,this cv is in duelclient.cpp
+	epro::mutex * lck;//should lock thread when play mode-mode2 sound,this lck is in duelclient.cpp
+	int port;//duel port from  gGameConfig
+	int modeIndex;//decide to play what kind of mode rule,from meun-list getSelected
+	const wchar_t * nickName;//nickName from  gGameConfig
+	const wchar_t * gameName;//gameName from  gGameConfig
+	const wchar_t * pass; //L""
+	bool isMode;//the duel is mode?
+	bool isAi;//should distinguish ai and player before duel
+	bool isPlot;//the ploat of mode-mode2,if isPlot==true will break all no about ploat events
+	bool isEvent;//if isEvent==true,all events is notify_one() lck
+	//bool draw;//mode-mode2 check is should play sound in draw phase
+	bool flag_100000155;//card 100000155 play sound 
+	Deck deck;//player deck
+	uint8_t player;//new turn player,should distinguish ai and player when play mode-mode2 duel sound
+	int16_t rule;//the rule of duel,zcg|5ds......
+	int32_t plotStep;//the step of fun NextPlot()
+	int32_t duelSoundIndex;//the index of mode-mode2 sound,the sound is in  sound_manager.cpp
+ 	int32_t plotIndex;//the index of plot,decide to set text plot
+	uint32_t winTimes;//record mode-mode1 win times
+	uint32_t failTimes;//record mode-mode1 fail times
 	void InitializeMode();
 	void DestoryMode();
 	void RefreshEntertainmentPlay(std::vector<ModeText>* modeTexts);
@@ -168,8 +198,16 @@ public:
 	void UpdateDeck();
 	void SetTimes(uint8_t player);
 	void SetRule(int32_t index);
+	void ModeStartDuel();
 	bool LoadWindBot(int port, epro::wstringview pass);
 	bool IsModeBot(std::set<int>& rule);
+	void SetBodyImage(uint32_t index);
+	void SetHeadImage(uint32_t index);
+	void NextPlot(int32_t step = 0,int32_t index = 0,uint32_t code = 0);
+	void ModeClientAnalyze(const uint8_t* pbuf,uint8_t msg);
+	void ModePlaySound(uint32_t type,int32_t index,int32_t type2 = 0);
+	std::wstring GetPloat(int32_t index,uint32_t code = 0);
+	long long GetSoundSeconds(int32_t index);
 	Mode();
 	~Mode();
 private:
@@ -179,11 +217,13 @@ private:
 		uint8_t no_shuffle_deck,uint32_t handshake,ClientVersion version,int32_t team1,
 		int32_t team2,int32_t best_of,uint32_t forbiddentypes,uint16_t extra_rules);
 	void SetCurrentDeck();
+	void LoadJson(epro::path_string path,uint32_t index);
 	void LoadJsonInfo();
 };
 #define MODE_RULE_DEFAULT 0x1
 #define MODE_RULE_ZCG 0x2
 #define MODE_RULE_ZCG_NO_RANDOM 0x3
+#define MODE_RULE_5DS_DARK_TUNER 0x4
 /////zdiy/////
 
 class Game {
@@ -685,11 +725,23 @@ public:
 	irr::gui::IGUIWindow* wEntertainmentPlay;
 	irr::gui::CGUIFileSelectListBox* lstEntertainmentPlayList;
 	irr::gui::IGUIStaticText* stEntertainmentPlayInfo;
-	//irr::gui::IGUIStaticText* stLevelInfo;
-	//irr::gui::IGUIStaticText* stCoinInfo;
 	irr::gui::IGUIButton* btnEntertainmentMode;
 	irr::gui::IGUIButton* btnEntertainmentStartGame;
 	irr::gui::IGUIButton* btnEntertainmentExitGame;
+
+	irr::gui::IGUIWindow* wBody;
+	irr::gui::CGUIImageButton* btnBody;
+
+	irr::gui::IGUIWindow* wPloat;
+	irr::gui::IGUIStaticText* stPloatInfo;
+	irr::gui::IGUIButton* btnPloat;
+
+	irr::gui::IGUIWindow* wChPloatBody[2];
+	irr::gui::IGUIStaticText* stChPloatInfo[2];
+	irr::gui::IGUIWindow* wChBody[2];
+	irr::gui::CGUIImageButton* btnChBody[2];
+	irr::gui::IGUIWindow* wHead[2];
+	irr::gui::CGUIImageButton* btnHead[2];
     //////////zdiy/////////
 	//hand
 	irr::gui::IGUIWindow* wHand;

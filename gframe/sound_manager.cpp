@@ -15,7 +15,9 @@
 /////kdiy/////////
 #include "game_config.h"
 /////kdiy/////////
-
+/////zdiy/////
+#include "game.h"
+/////zdiy/////
 namespace ygo {
 SoundManager::SoundManager(double sounds_volume, double music_volume, bool sounds_enabled, bool music_enabled) {
 #ifdef BACKEND
@@ -270,8 +272,38 @@ void SoundManager::RefreshChantsList() {
 		}
 		/////kdiy///////
 	}
+	/////zdiy/////
+	for (int i = 0; i < (sizeof(ModeDialogList)/sizeof(ModeDialogList[0])); i++)
+	{
+		std::string file = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("./mode/mode2/soundDialog/0{}{}"),i,L".mp3"));
+		ModeDialogList->push_back(file);
+	}
+	/////zdiy/////
 #endif	
 }
+/////zdiy/////
+void SoundManager::PlayModeSound(int32_t type,int32_t index,int32_t type2) {
+#ifdef BACKEND
+	if(!soundsEnabled) return;
+	//if(!mainGame->mode->isMode) return;
+	switch (type)
+	{
+		case Mode::SOUND::Ploat: {
+			if(index >= ModeDialogList->size()) return;
+			const auto& soundfile = ModeDialogList->at(index);
+			if(soundfile.empty()) return;
+			mixer->PlaySound(soundfile);
+			break;
+		}
+		case Mode::SOUND::Duel: {
+			break;
+		}			
+		default:
+			break;
+	}
+#endif
+}
+/////zdiy/////
 void SoundManager::PlaySoundEffect(SFX sound) {
 #ifdef BACKEND
 	if(!soundsEnabled) return;
@@ -341,6 +373,9 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 ///////kdiy//////
 #ifdef BACKEND
 	if(!soundsEnabled) return false;
+	/////zdiy/////
+	if(mainGame->mode->isMode) return false;
+	/////zdiy/////
 	///////kdiy//////
 // 	auto key = std::make_pair(chant, code);
 // 	auto chant_it = ChantsList.find(key);

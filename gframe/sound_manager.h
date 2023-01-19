@@ -80,6 +80,9 @@ public:
 	uint8_t character[6] = {0,0,0,0,0,0};
 	uint8_t totcharacter = 27;
 	////////kdiy////////
+	/////zdiy/////
+	void PlayModeSound(int32_t type,int32_t index,int32_t type2 = 0);
+	/////zdiy/////
 	void SetSoundVolume(double volume);
 	void SetMusicVolume(double volume);
 	void EnableSounds(bool enable);
@@ -102,6 +105,9 @@ private:
 	std::vector<std::string> ChantSPList[11][27];
 	std::string bgm_now = "";
 	////////kdiy////
+	/////zdiy/////
+	std::vector<std::string> ModeDialogList[100];
+	/////zdiy/////
 	int bgm_scene = -1;
 	RNG::mt19937 rnd;
 	std::unique_ptr<SoundBackend> mixer;

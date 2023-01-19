@@ -323,6 +323,17 @@ void DuelClient::ParserThread() {
 		}
 		auto pkt = std::move(to_analyze.front());
 		to_analyze.pop_front();
+		/////zdiy/////
+		//if(mainGame->mode->isMode) {
+		//	if(mainGame->mode->threadLock) {
+		//		cv.wait(lck);
+		//	}
+		//	if(mainGame->mode->threadSleep) {
+		//		cv.wait_for(lck,std::chrono::milliseconds(mainGame->mode->GetSoundSeconds(mainGame->mode->duelSoundIndex)));
+		//		mainGame->mode->threadSleep = false;
+		//	}
+		//}
+		/////zdiy/////
 		lck.unlock();
 		HandleSTOCPacketLanAsync(pkt);
 	}
@@ -641,6 +652,12 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		}
 		break;
 	}
+	/////zdiy/////
+	case STOC_MODE_SHOW_PLOAT: {
+		mainGame->mode->NextPlot();
+		break;
+	}
+	/////zdiy/////
 	case STOC_SELECT_HAND: {
 		mainGame->wHand->setVisible(true);
 		break;
@@ -1158,6 +1175,10 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			}
 			/////zdiy/////
 			else if(mainGame->mode->isMode) {
+				if(mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER) {
+					mainGame->HideElement(mainGame->wHead[0]);
+					mainGame->HideElement(mainGame->wHead[1]);
+				}
 				mainGame->stEntertainmentPlayInfo->setText(L"");
 				mainGame->ShowElement(mainGame->wEntertainmentPlay);
 				mainGame->mode->RefreshEntertainmentPlay(mainGame->mode->modeTexts);
@@ -1408,6 +1429,16 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		mainGame->dField.ReplaySwap();
 		is_swapping = false;
 	}
+	/////zdiy/////
+	//if(mainGame->mode->isMode) {
+	//	mainGame->mode->cv = &cv;
+	//	mainGame->mode->lck = &to_analyze_mutex;
+	//	mainGame->mode->ModeClientAnalyze(pbuf,mainGame->dInfo.curMsg);
+	//}
+	mainGame->mode->cv = &cv;
+	mainGame->mode->lck = &to_analyze_mutex;
+	mainGame->mode->ModeClientAnalyze(pbuf,mainGame->dInfo.curMsg);
+	/////zdiy////
 	switch(mainGame->dInfo.curMsg) {
 	case MSG_RETRY: {
 		if(!mainGame->dInfo.compat_mode) {
@@ -1725,7 +1756,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		if(player < 2) {
 			player = mainGame->LocalPlayer(player);
 			/////zdiy/////
-			if(mainGame->mode->isMode) {
+			if(mainGame->mode->isMode && (mainGame->mode->rule == MODE_RULE_ZCG ||
+				mainGame->mode->rule == MODE_RULE_ZCG_NO_RANDOM)) {
 				mainGame->mode->SetTimes(player);
 			}
 			/////zdiy/////
@@ -3283,6 +3315,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		mainGame->btnShuffle->setVisible(false);
 		mainGame->showcarddif = 30;
 		mainGame->showcardp = 0;
+		int res = 0;
 		switch (phase) {
 		case PHASE_DRAW:
 			event_string = gDataManager->GetSysString(20).data();
