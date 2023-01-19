@@ -33,10 +33,10 @@ enum imgType {
 	ART,
 	FIELD,
 	COVER,
-	///ktest///////////
-	CLOSEUP,
-	////ktest///////////
 	THUMB
+	///ktest///////////
+	,CLOSEUP
+	////ktest///////////
 };
 #endif
 

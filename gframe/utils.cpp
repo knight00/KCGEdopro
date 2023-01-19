@@ -408,6 +408,7 @@ namespace ygo {
 		MakeDirectory(EPRO_TEXT("pics/temp/"));
 		ClearDirectory(EPRO_TEXT("pics/temp/"));
 		//kdiy////
+        MakeDirectory(EPRO_TEXT("pics/closeup"));
 		MakeDirectory(EPRO_TEXT("hdpics"));
 		MakeDirectory(EPRO_TEXT("hdpics/jp"));
 		//kdiy////

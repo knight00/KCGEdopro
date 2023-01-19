@@ -145,7 +145,7 @@ void ImageDownloader::DownloadPic() {
 			//ktest//////
 			case imgType::CLOSEUP: {
 				dest = EPRO_TEXT("./pics/closeup/{}"_sv);
-				name.append(EPRO_TEXT("_f"));
+				name.append(EPRO_TEXT("_u"));
 				break;
 			}
 			//ktest//////

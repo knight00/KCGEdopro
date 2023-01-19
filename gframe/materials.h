@@ -21,6 +21,7 @@ public:
 	QuadVertex vCardBack;
 	////kdiy////////
 	QuadVertex vPScale;
+    QuadVertex vCloseup;
 	////kdiy////////
 	QuadVertex vSymbol;
 	QuadVertex vNegate;
