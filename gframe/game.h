@@ -404,6 +404,9 @@ public:
 	std::vector<epro::path_string> field_dirs;
 	std::vector<epro::path_string> pic_dirs;
 	std::vector<epro::path_string> cover_dirs;
+	///ktest////////
+	std::vector<epro::path_string> closeup_dirs;
+	///ktest////////
 	std::vector<epro::path_string> script_dirs;
 	std::vector<epro::path_string> cores_to_load;
 	void PopulateLocales();

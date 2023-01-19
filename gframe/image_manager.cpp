@@ -881,6 +881,14 @@ void ImageManager::ClearTexture(bool resize) {
 		}
 	}
 	tFields.clear();
+	/////////ktest////
+	for(const auto& tit : tCloseup) {
+		if(tit.second) {
+			driver->removeTexture(tit.second);
+		}
+	}
+	tCloseup.clear();
+	/////////ktest////
 }
 void ImageManager::RefreshCachedTextures() {
 	auto LoadTexture = [this](int index, texture_map& dest, auto& size, imgType type) {
@@ -1286,6 +1294,44 @@ irr::video::ITexture* ImageManager::GetTextureField(uint32_t code) {
 	gImageDownloader->AddToDownloadQueue(code, imgType::FIELD);
 	return nullptr;
 }
+/////////ktest////
+irr::video::ITexture* ImageManager::GetTextureCloseup(uint32_t code) {
+	if(code == 0)
+		return nullptr;
+	auto tit = tCloseup.find(code);
+	if(tit != tCloseup.end())
+		return tit->second;
+	auto status = gImageDownloader->GetDownloadStatus(code, imgType::CLOSEUP);
+	if(status != ImageDownloader::downloadStatus::NONE) {
+		if(status == ImageDownloader::downloadStatus::DOWNLOADED) {
+			const auto path = gImageDownloader->GetDownloadPath(code, imgType::CLOSEUP);
+			auto downloaded = driver->getTexture({ path.data(), static_cast<irr::u32>(path.size()) });
+			tCloseup.emplace(code, downloaded);
+			return downloaded;
+		}
+		return nullptr;
+	}
+	for(auto& path : mainGame->closeup_dirs) {
+		for(auto extension : { EPRO_TEXT(".png"), EPRO_TEXT(".jpg") }) {
+			irr::video::ITexture* img;
+			if(path == EPRO_TEXT("archives")) {
+				auto archiveFile = Utils::FindFileInArchives(EPRO_TEXT("pics/closeup/"), epro::format(EPRO_TEXT("{}{}"), code, extension));
+				if(!archiveFile)
+					continue;
+				img = driver->getTexture(archiveFile);
+				archiveFile->drop();
+			} else
+				img = driver->getTexture(epro::format(EPRO_TEXT("{}{}{}"), path, code, extension).data());
+			if(img) {
+				tCloseup.emplace(code, img);
+				return img;
+			}
+		}
+	}
+	gImageDownloader->AddToDownloadQueue(code, imgType::CLOSEUP);
+	return nullptr;
+}
+/////////ktest////
 
 irr::video::ITexture* ImageManager::GetCheckboxScaledTexture(float scale) {
 	if(scale > 3.5f && tCheckBox[2])

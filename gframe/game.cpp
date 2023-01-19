@@ -866,6 +866,7 @@ void Game::Initialize() {
 	//defaultStrings.emplace_back(btnSingleMode, 1201);
 	btnEntertainmentMode = env->addButton(OFFSET(10, 65, 270, 95), wMainMenu, BUTTON_ENTERTAUNMENT_MODE, gDataManager->GetSysString(1205).data());
 	defaultStrings.emplace_back(btnEntertainmentMode, 1205);
+	btnEntertainmentMode->setEnabled(false);
 	////////zdiy////////
 	offset += 35;
 	////////zdiy////////
@@ -5359,6 +5360,11 @@ void Game::PopulateResourcesDirectories() {
 	field_dirs.push_back(EPRO_TEXT("./expansions/pics/field/"));
 	field_dirs.push_back(EPRO_TEXT("archives"));
 	field_dirs.push_back(EPRO_TEXT("./pics/field/"));
+	//ktest//////
+	closeup_dirs.push_back(EPRO_TEXT("./expansions/pics/closeup/"));
+	closeup_dirs.push_back(EPRO_TEXT("archives"));
+	closeup_dirs.push_back(EPRO_TEXT("./pics/closeup/"));
+	//ktest//////
 }
 
 void Game::PopulateLocales() {

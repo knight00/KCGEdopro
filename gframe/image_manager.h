@@ -33,6 +33,9 @@ enum imgType {
 	ART,
 	FIELD,
 	COVER,
+	///ktest///////////
+	CLOSEUP,
+	////ktest///////////
 	THUMB
 };
 #endif
@@ -105,6 +108,9 @@ public:
 	irr::video::ITexture* GetTextureFromFile(const irr::io::path& file, int width, int height);
 	irr::video::ITexture* GetTextureCard(uint32_t code, imgType type, bool wait = false, bool fit = false, int* chk = nullptr);
 	irr::video::ITexture* GetTextureField(uint32_t code);
+	////////ktest////
+	irr::video::ITexture* GetTextureCloseup(uint32_t code);
+	////////ktest////
 	irr::video::ITexture* GetCheckboxScaledTexture(float scale);
 	irr::video::ITexture* guiScalingResizeCached(irr::video::ITexture* src, const irr::core::rect<irr::s32>& srcrect,
 												 const irr::core::rect<irr::s32> &destrect);
@@ -117,6 +123,9 @@ private:
 	texture_map tThumb;
 	std::unordered_map<uint32_t, irr::video::ITexture*> tFields;
 	texture_map tCovers;
+	/////////ktest////
+	std::unordered_map<uint32_t, irr::video::ITexture*> tCloseup;
+	/////////ktest////
 	irr::IrrlichtDevice* device;
 	irr::video::IVideoDriver* driver;
 public:

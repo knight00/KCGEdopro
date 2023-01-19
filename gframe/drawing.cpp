@@ -1066,12 +1066,14 @@ void Game::DrawSpec() {
 			corner[3] = b.LowerRightCorner;
 			irr::gui::Draw2DImageQuad(driver, cardtxt, cardrect, corner);
             //////ktest//////////
-            // driver->draw2DImage(cardtxt, drawrect2, cardrect);
+			// auto* cardcloseup = imageManager.GetTextureCloseup(showcardcode);
+			// auto cardcloseuprect = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cardcloseup->getOriginalSize()));
+            // driver->draw2DImage(cardcloseup, ResizeWin(800, 150, 800 + CARD_IMG_WIDTH, 150 + CARD_IMG_HEIGHT), cardcloseuprect);
 			// driver->draw2DImage(imageManager.tMask, ResizeWin(800, 150, 800 + (showcarddif > CARD_IMG_WIDTH ? CARD_IMG_WIDTH : showcarddif), 404),
 			// 					Scale<irr::s32>(CARD_IMG_HEIGHT - showcarddif, 0, CARD_IMG_HEIGHT - (showcarddif > CARD_IMG_WIDTH ? showcarddif - CARD_IMG_WIDTH : 0), CARD_IMG_HEIGHT), 0, 0, true);
 			// showcarddif += (900.0f / 1000.0f) * (float)delta_time;
 			// if(std::round(showcarddif) >= CARD_IMG_HEIGHT) {
-			// 	driver->draw2DImage(cardtxt, drawrect2, cardrect);
+			// 	driver->draw2DImage(cardcloseup, ResizeWin(800, 150, 800 + CARD_IMG_WIDTH, 150 + CARD_IMG_HEIGHT), cardcloseuprect);
             //     driver->draw2DImage(imageManager.tMask, ResizeWin(800 + showcarddif, 150, 977, 404), Scale(0, 0, CARD_IMG_WIDTH - showcarddif, 254), 0, 0, true);
             //     showcarddif += (900.0f / 1000.0f) * (float)delta_time;
             //     if(showcarddif >= CARD_IMG_WIDTH) {

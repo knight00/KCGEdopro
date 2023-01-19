@@ -49,6 +49,9 @@ local ygopro_config=function(static_core)
 		defines { "UPDATE_URL=" .. _OPTIONS["update-url"] }
 	end
 	--------kdiy-----
+	if _OPTIONS["closeup"] then
+		defines { "DEFAULT_CLOSEUP_URL=" .. _OPTIONS["closeup"] }
+	end
     if _OPTIONS["zip"] then
 		defines { "Zip=" .. _OPTIONS["zip"] }
 	end

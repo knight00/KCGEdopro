@@ -66,6 +66,11 @@ newoption {
 }
 -----kdiy-----
 newoption {
+	trigger = "closeup",
+	value = "url_template",
+	description = "Default URL for Closeup"
+}
+newoption {
 	trigger = "zip",
 	description = "zip password"
 }
