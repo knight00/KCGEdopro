@@ -33,10 +33,10 @@ enum imgType {
 	ART,
 	FIELD,
 	COVER,
-	THUMB
 	///ktest///////////
-	,CLOSEUP
+	CLOSEUP,
 	////ktest///////////
+	THUMB
 };
 #endif
 
@@ -92,7 +92,7 @@ public:
 	//random image
 	irr::video::ITexture* GetRandomImage(int image_type);
 	irr::video::ITexture* GetRandomImage(int image_type, int width, int height);
-	void RefreshRandomImageList();	
+	void RefreshRandomImageList();
 	void RefreshImageDir(epro::path_string path, int image_type);
     void RefreshKCGImage();
 	/////kdiy/////

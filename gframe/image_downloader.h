@@ -17,10 +17,10 @@ enum imgType {
 	ART,
 	FIELD,
 	COVER,
-	THUMB
     ///ktest///////////
-	,CLOSEUP
+	CLOSEUP,
 	////ktest///////////
+	THUMB
 };
 #endif
 

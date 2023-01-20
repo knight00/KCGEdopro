@@ -981,7 +981,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		///////ktest//////////
 		mainGame->btnHostPrepWindBot->setVisible(is_host && !mainGame->isHostingOnline);
 		//mainGame->btnHostPrepWindBot->setVisible(is_host);		
-		///////ktest//////////		
+		///////ktest//////////
 		mainGame->btnHostPrepStart->setVisible(is_host);
 		mainGame->btnHostPrepStart->setEnabled(is_host && CheckReady());
 		mainGame->dInfo.player_type = selftype;

@@ -367,6 +367,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 		if(count > 0) {
 			int bgm = (std::uniform_int_distribution<>(0, count - 1))(rnd);
 			std::string BGMName = list[bgm];
+			StopSounds();
 			return mixer->PlaySound(BGMName);
 		}
 	} else {
@@ -464,6 +465,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 						}
 					} else
 						return false;
+					StopSounds();
 					return mixer->PlaySound(esound);
 				}
 				return false;
@@ -483,6 +485,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 				int count = list.size();
 				if (count > 0) {
 					int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+					StopSounds();
 					return mixer->PlaySound(list[soundno]);
 				}
 			}

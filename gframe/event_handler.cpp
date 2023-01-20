@@ -82,24 +82,24 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			switch(id) {
 			///////kdiy///////
 			case BUTTON_AVATAR_BORED0: {
-#ifndef VIP 
+#ifndef VIP
 				    break;
-#endif	
+#endif
 				int character = mainGame->dInfo.current_player[0];
 				if(!mainGame->dInfo.isTeam1) character = mainGame->dInfo.current_player[0] + mainGame->dInfo.team1;
 				gSoundManager->PlayChant(SoundManager::CHANT::BORED, 0, 0, character);
 				break;
 			}
 			case BUTTON_AVATAR_BORED1: {
-#ifndef VIP 
+#ifndef VIP
 				    break;
-#endif	
+#endif
 				int character = mainGame->dInfo.current_player[1];
 				if(!mainGame->dInfo.isTeam1) character = mainGame->dInfo.current_player[1] + mainGame->dInfo.team1;
 				gSoundManager->PlayChant(SoundManager::CHANT::BORED, 0, 0, character);
 				break;
 			}
-			///////kdiy///////	
+			///////kdiy///////
 			case BUTTON_HAND1:
 			case BUTTON_HAND2:
 			case BUTTON_HAND3: {
