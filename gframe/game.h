@@ -360,6 +360,9 @@ public:
 	bool saveReplay;
 	int showcard;
 	uint32_t showcardcode;
+    ////kdiy//////
+    uint32_t showcardalias;
+    ////kdiy//////
 	float showcarddif;
 	float showcardp;
 	bool is_attacking;

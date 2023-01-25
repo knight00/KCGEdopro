@@ -1,4 +1,4 @@
-#include <fmt/format.h>
+﻿#include <fmt/format.h>
 #include "game_config.h"
 #include <irrlicht.h>
 #include "game.h"
@@ -10,10 +10,6 @@
 #include "CGUIImageButton/CGUIImageButton.h"
 #include "custom_skin_enum.h"
 #include "image_manager.h"
-
-//////kdiy///////
-#include "sound_manager.h"
-//////kdiy///////
 
 namespace ygo {
 void Game::DrawSelectionLine(const Materials::QuadVertex vec, bool strip, int width, irr::video::SColor color) {
@@ -980,6 +976,13 @@ void Game::DrawGUI() {
 }
 void Game::DrawSpec() {
 	const auto drawrect2 = ResizeWin(574, 150, 574 + CARD_IMG_WIDTH, 150 + CARD_IMG_HEIGHT);
+     //////ktest//////////
+	auto DrawTextureRect = [this](Materials::QuadVertex vertices, irr::video::ITexture* texture) {
+		matManager.mTexture.setTexture(0, texture);
+		driver->setMaterial(matManager.mTexture);
+		driver->drawVertexPrimitiveList(vertices, 4, matManager.iRectangle, 2);
+	};
+    //////ktest//////////
 	if(showcard) {
 		switch(showcard) {
 		case 1: {
@@ -988,6 +991,14 @@ void Game::DrawSpec() {
 			driver->draw2DImage(cardtxt, drawrect2, cardrect);
 			driver->draw2DImage(imageManager.tMask, ResizeWin(574, 150, 574 + (showcarddif > CARD_IMG_WIDTH ? CARD_IMG_WIDTH : showcarddif), 404),
 								Scale<irr::s32>(CARD_IMG_HEIGHT - showcarddif, 0, CARD_IMG_HEIGHT - (showcarddif > CARD_IMG_WIDTH ? showcarddif - CARD_IMG_WIDTH : 0), CARD_IMG_HEIGHT), 0, 0, true);
+            //////ktest//////////
+			auto cardcloseup = imageManager.GetTextureCloseup(showcardcode);
+            auto cardcloseup2 = imageManager.GetTextureCloseup(showcardalias);
+            if(cardcloseup)
+                DrawTextureRect(matManager.vCloseup, cardcloseup);
+            else if(cardcloseup2)
+                DrawTextureRect(matManager.vCloseup, cardcloseup2);
+            //////ktest//////////
 			showcarddif += (900.0f / 1000.0f) * (float)delta_time;
 			if(std::round(showcarddif) >= CARD_IMG_HEIGHT) {
 				showcard = 2;
@@ -1066,15 +1077,12 @@ void Game::DrawSpec() {
 			corner[3] = b.LowerRightCorner;
 			irr::gui::Draw2DImageQuad(driver, cardtxt, cardrect, corner);
             //////ktest//////////
-			auto DrawTextureRect = [this](Materials::QuadVertex vertices, irr::video::ITexture* texture) {
-				matManager.mTexture.setTexture(0, texture);
-				driver->setMaterial(matManager.mTexture);
-				driver->drawVertexPrimitiveList(vertices, 4, matManager.iRectangle, 2);
-			};
 			auto cardcloseup = imageManager.GetTextureCloseup(showcardcode);
-            if(cardcloseup) {
+            auto cardcloseup2 = imageManager.GetTextureCloseup(showcardalias);
+            if(cardcloseup)
                 DrawTextureRect(matManager.vCloseup, cardcloseup);
-            }
+            else if(cardcloseup2)
+                DrawTextureRect(matManager.vCloseup, cardcloseup2);
             //////ktest//////////
 			showcardp += (float)delta_time * 60.0f / 1000.0f;
 			showcarddif += (540.0f / 1000.0f) * (float)delta_time;
