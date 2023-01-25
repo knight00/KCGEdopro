@@ -121,11 +121,11 @@ void DataHandler::LoadZipArchives() {
 	for(auto& file : Utils::FindFiles(EPRO_TEXT("./expansions/"), { EPRO_TEXT("zip") })) {
 		////////kdiy////////
 		//filesystem->addFileArchive(epro::format(EPRO_TEXT("./expansions/{}"), file).data(), true, false, irr::io::EFAT_ZIP, "", &tmp_archive);
-		#if defined(Zip)
+#if defined(Zip)
 		filesystem->addFileArchive(epro::format(EPRO_TEXT("./expansions/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
-		#else
+#else
 		filesystem->addFileArchive(epro::format(EPRO_TEXT("./expansions/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive);
-		#endif
+#endif
 		////////kdiy////////
 		if(tmp_archive) {
 			Utils::archives.emplace_back(tmp_archive);
@@ -134,45 +134,15 @@ void DataHandler::LoadZipArchives() {
 }
 ////////kdiy////////
 void DataHandler::LoadKZipArchives() {
-	irr::io::IFileArchive* tmp_archive2 = nullptr;
+	irr::io::IFileArchive* tmp_archive = nullptr;
 	for(auto& file : Utils::FindFiles(EPRO_TEXT("./repositories/"), { EPRO_TEXT("zip") })) {
-		#if defined(Zip)
-		filesystem->addFileArchive(epro::format(EPRO_TEXT("./repositories/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive2);
-		#else
-		filesystem->addFileArchive(epro::format(EPRO_TEXT("./repositories/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive2);
-		#endif
-		if(tmp_archive2) {
-			Utils::archives.emplace_back(tmp_archive2);
-		}
-	}
-	for(auto& file : Utils::FindFiles(EPRO_TEXT("./repositories/kcg/"), { EPRO_TEXT("zip") })) {
-		#if defined(Zip)
-		filesystem->addFileArchive(epro::format(EPRO_TEXT("./repositories/kcg/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive2);
-		#else
-		filesystem->addFileArchive(epro::format(EPRO_TEXT("./repositories/kcg/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive2);
-		#endif
-		if(tmp_archive2) {
-			Utils::archives.emplace_back(tmp_archive2);
-		}
-	}
-	for(auto& file : Utils::FindFiles(EPRO_TEXT("./repositories/kcg/script/"), { EPRO_TEXT("zip") })) {
-		#if defined(Zip)
-		filesystem->addFileArchive(epro::format(EPRO_TEXT("./repositories/kcg/script/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive2);
-		#else
-		filesystem->addFileArchive(epro::format(EPRO_TEXT("./repositories/kcg/script/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive2);
-		#endif
-		if(tmp_archive2) {
-			Utils::archives.emplace_back(tmp_archive2);
-		}
-	}
-	for(auto& file : Utils::FindFiles(EPRO_TEXT("./repositories/kcg/script/kcg/"), { EPRO_TEXT("zip") })) {
-		#if defined(Zip)
-		filesystem->addFileArchive(epro::format(EPRO_TEXT("./repositories/kcg/script/kcg/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive2);
-		#else
-		filesystem->addFileArchive(epro::format(EPRO_TEXT("./repositories/kcg/script/kcg/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive2);
-		#endif
-		if(tmp_archive2) {
-			Utils::archives.emplace_back(tmp_archive2);
+#if defined(Zip)
+		filesystem->addFileArchive(epro::format(EPRO_TEXT("./repositories/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
+#else
+		filesystem->addFileArchive(epro::format(EPRO_TEXT("./repositories/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive);
+#endif
+		if(tmp_archive) {
+			Utils::archives.emplace_back(tmp_archive);
 		}
 	}
 }

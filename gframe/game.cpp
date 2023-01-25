@@ -1029,23 +1029,23 @@ void Game::Initialize() {
 	btnCharacterSelect2->setImage(imageManager.tcharacterselect2);
 	irr::core::dimension2di avatarsize = { Scale<irr::s32>(CARD_IMG_WIDTH * 0.5f), Scale<irr::s32>(CARD_IMG_HEIGHT * 0.5f) };
 	
-	wAvatar[0] = env->addWindow(Scale(320, 10, 427, 212));
+	wAvatar[0] = env->addWindow(Scale(310, 10, 427, 212));
 	wAvatar[0]->getCloseButton()->setVisible(false);
 	wAvatar[0]->setDraggable(false);
 	wAvatar[0]->setDrawTitlebar(false);
-	wAvatar[0]->setDrawBackground(false);
+	wAvatar[0]->setDrawBackground(true);
 	wAvatar[0]->setVisible(false);
-	avatarbutton[0] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 105, 200), wAvatar[0], BUTTON_AVATAR_BORED0);
-	avatarbutton[0]->setImageSize(Scale(0, 0, 105, 200).getSize());
+	avatarbutton[0] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 115, 200), wAvatar[0], BUTTON_AVATAR_BORED0);
+	avatarbutton[0]->setImageSize(Scale(0, 0, 115, 200).getSize());
 	avatarbutton[0]->setDrawBorder(false);
-	wAvatar[1] = env->addWindow(Scale(896, 10, 1003, 212));
+	wAvatar[1] = env->addWindow(Scale(896, 10, 1013, 212));
 	wAvatar[1]->getCloseButton()->setVisible(false);
 	wAvatar[1]->setDraggable(false);
 	wAvatar[1]->setDrawTitlebar(false);
-	wAvatar[1]->setDrawBackground(false);
+	wAvatar[1]->setDrawBackground(true);
 	wAvatar[1]->setVisible(false);
-	avatarbutton[1] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 105, 200), wAvatar[1], BUTTON_AVATAR_BORED1);
-	avatarbutton[1]->setImageSize(Scale(0, 0, 105, 200).getSize());
+	avatarbutton[1] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 115, 200), wAvatar[1], BUTTON_AVATAR_BORED1);
+	avatarbutton[1]->setImageSize(Scale(0, 0, 115, 200).getSize());
 	avatarbutton[1]->setDrawBorder(false);
 	///////kdiy///////
 
@@ -1912,7 +1912,7 @@ void Game::Initialize() {
 	LoadServers();
 	////kdiy/////////
 	LoadLocalServers();
-	#ifdef EK
+#ifdef EK
 	auto predefined_md5 = "1bcfe096dbf8b5f91ab53bac6c07b219";
 	auto new_md5 = calculate_file_md5("textures/QQ.jpg");
     if(strcmp(predefined_md5, new_md5)) {
@@ -1921,7 +1921,7 @@ void Game::Initialize() {
 		btnQQ->setVisible(false);
     }
 	free(new_md5);
-	#endif
+#endif
 	////kdiy/////////
 #ifdef YGOPRO_BUILD_DLL
 	if(!coreloaded) {
@@ -5026,6 +5026,8 @@ void Game::OnResize() {
 	wRules->setRelativePosition(ResizeWin(630, 100, 1000, 310));
 	wReplay->setRelativePosition(ResizeWin(220, 100, 800, 520));
     ////kdiy////////////
+    wAvatar[0]->setRelativePosition(ResizeWin(310, 10, 427, 212));
+    wAvatar[1]->setRelativePosition(ResizeWin(896, 10, 1013, 212));
     wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 360, 310));
     ////kdiy////////////
 	wSinglePlay->setRelativePosition(ResizeWin(220, 100, 800, 520));

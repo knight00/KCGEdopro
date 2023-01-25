@@ -183,7 +183,9 @@ int _tmain(int argc, epro::path_char* argv[]) {
 			return EXIT_FAILURE;
 		}
 	}
-	ygo::Utils::SetupCrashDumpLogging();
+    /////kdiy/////////
+	//ygo::Utils::SetupCrashDumpLogging();
+    /////kdiy/////////
 	try {
 		ThreadsStartup();
 	} catch(const std::exception& e) {

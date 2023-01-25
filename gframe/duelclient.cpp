@@ -29,6 +29,13 @@
 #include "progressivebuffer.h"
 #include "utils.h"
 #include "porting.h"
+//////ktest///////
+// #include <opencv2/core.hpp>
+// #include <opencv2/videoio.hpp>
+// #include <opencv2/highgui.hpp>
+// #include <stdio.h>
+// #include <iostream>
+//////kdiy///////
 
 #define DEFAULT_DUEL_RULE 5
 namespace ygo {
@@ -1539,6 +1546,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			auto cd = gDataManager->GetCardData(data);
 			uint32_t code2 = 0;
 			if(cd->alias) code2 = cd->alias;
+            mainGame->showcardalias = code2;
 			int character = mainGame->dInfo.current_player[player];
 			if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
 			if(!PlayAnime(data, code2, 1))
@@ -2088,6 +2096,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->dField.highlighting_card = pcard;
 		}
 		std::wstring str(gDataManager->GetName(code));
+        auto index = str.find(L"(");
+		auto index_2 = str.find(65288);
+		if(index != std::wstring::npos) str = str.substr(0,index);
+		else if(index_2 != std::wstring::npos) str = str.substr(0,index_2);
 		if(pcard->alias && pcard->alias == 27 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
 			std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x1073)));
 			str.insert(0, str2);
@@ -2751,6 +2763,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			} else if(pcard->alias && pcard->alias == 213 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
 				str.append(epro::format(L"{}", gDataManager->GetSetName(0x104f)));
 			}
+            ////kdiy///////////
 			pcard->dPos.set(shift, 0, 0);
 			if(!mainGame->dField.deck_reversed && !pcard->is_reversed)
 				pcard->dRot.set(0, irr::core::PI / milliseconds, 0);
@@ -2784,6 +2797,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 			////kdiy///////////
 			std::wstring str(gDataManager->GetName(pcard->code));
+            auto index = str.find(L"(");
+			auto index_2 = str.find(65288);
+			if(index != std::wstring::npos) str = str.substr(0,index);
+			else if(index_2 != std::wstring::npos) str = str.substr(0,index_2);
 			if(pcard->alias && pcard->alias == 27 && wcscmp(gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->alias).data())) {
 				std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x1073)));
 				str.insert(0, str2);
@@ -2852,6 +2869,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				pcard->SetCode(code);
 			////kdiy///////////
 			std::wstring str(gDataManager->GetName(code));
+            auto index = str.find(L"(");
+			auto index_2 = str.find(65288);
+			if(index != std::wstring::npos) str = str.substr(0,index);
+			else if(index_2 != std::wstring::npos) str = str.substr(0,index_2);
 			if(pcard->alias && pcard->alias == 27 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
 				std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x1073)));
 				str.insert(0, str2);
@@ -3640,6 +3661,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			////kdiy///////////
 			ClientCard* pcard = mainGame->dField.GetCard(player, info.location, info.sequence);	
 			std::wstring str(gDataManager->GetName(code));
+            auto index = str.find(L"(");
+			auto index_2 = str.find(65288);
+			if(index != std::wstring::npos) str = str.substr(0,index);
+			else if(index_2 != std::wstring::npos) str = str.substr(0,index_2);
 			if(pcard->alias && pcard->alias == 27 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
 				std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x1073)));
 				str.insert(0, str2);
@@ -3666,6 +3691,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			}
 			//event_string = epro::sprintf(gDataManager->GetSysString(1603), gDataManager->GetName(code));
 			event_string = epro::sprintf(gDataManager->GetSysString(1603), str);
+            auto cd = gDataManager->GetCardData(code);
+            uint32_t code2 = cd->alias;
+            mainGame->showcardalias = code2;
 			////kdiy///////////
 			mainGame->showcardcode = code;
 			mainGame->showcarddif = 0;
@@ -3709,6 +3737,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			////kdiy///////////
 			ClientCard* pcard = mainGame->dField.GetCard(player, info.location, info.sequence);	
 			std::wstring str(gDataManager->GetName(code));
+            auto index = str.find(L"(");
+			auto index_2 = str.find(65288);
+			if(index != std::wstring::npos) str = str.substr(0,index);
+			else if(index_2 != std::wstring::npos) str = str.substr(0,index_2);
 			if(pcard->alias && pcard->alias == 27 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
 				std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x1073)));
 				str.insert(0, str2);
@@ -3735,6 +3767,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			}
 			//event_string = epro::sprintf(gDataManager->GetSysString(1605), gDataManager->GetName(code));
 			event_string = epro::sprintf(gDataManager->GetSysString(1605), str);
+            auto cd = gDataManager->GetCardData(code);
+            uint32_t code2 = cd->alias;
+            mainGame->showcardalias = code2;
 			////kdiy///////////
 			mainGame->showcardcode = code;
 			mainGame->showcarddif = 1;
@@ -3785,6 +3820,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			////kdiy///////////
 			ClientCard* pcard = mainGame->dField.GetCard(info.controler, info.location, info.sequence);	
 			std::wstring str(gDataManager->GetName(code));
+            auto index = str.find(L"(");
+			auto index_2 = str.find(65288);
+			if(index != std::wstring::npos) str = str.substr(0,index);
+			else if(index_2 != std::wstring::npos) str = str.substr(0,index_2);
 			if(pcard->alias && pcard->alias == 27 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
 				std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x1073)));
 				str.insert(0, str2);
@@ -3811,6 +3850,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			}
 			//event_string = epro::sprintf(gDataManager->GetSysString(1607), gDataManager->GetName(code));
 			event_string = epro::sprintf(gDataManager->GetSysString(1607), str);
+            auto cd = gDataManager->GetCardData(code);
+            uint32_t code2 = cd->alias;
+            mainGame->showcardalias = code2;
 			////kdiy///////////
 			mainGame->dField.MoveCard(pcard, 10);
 			mainGame->WaitFrameSignal(11, lock);
@@ -3848,6 +3890,30 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		uint32_t code2 = 0;
 		if(cd->alias) code2 = cd->alias;
 		//if (!PlayChant(SoundManager::CHANT::ACTIVATE, code))
+        //////ktest///////
+        //默认摄像头
+			// cv::VideoCapture cap("./movies/c28649820.mp4");
+			// if (cap.isOpened()) {
+			// 	std::string window_name = "Anime";
+			// 	cv::namedWindow(window_name, cv::WINDOW_NORMAL);
+			// 	cv::setWindowProperty(window_name, cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
+			// 	//获取帧的宽和高，以及每秒帧数
+			// 	auto fps = cap.get(cv::CAP_PROP_FPS);
+			// 	auto width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
+			// 	auto height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+			// 	while(1) {
+			// 		cv::Mat frame;
+			// 		if (!cap.read(frame))
+			// 			break;
+			// 		imshow(window_name, frame);
+			// 		auto key = cv::waitKey(10);
+			// 		//监听键盘任意键，退出
+			// 		if (key == 13)
+			// 			break;
+			// 	}
+			// 	cv::destroyWindow(window_name);
+			// }
+        //////ktest///////
 		if(!PlayAnime(code, code2, 1)) {
 			ClientCard* pcard = mainGame->dField.GetCard(mainGame->LocalPlayer(info.controler), info.location, info.sequence, info.position);
 			if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && (info.position == POS_FACEUP) && info.location == LOCATION_SZONE && (info.sequence == 0 || info.sequence == 4 || info.sequence == 6 || info.sequence == 7))
@@ -3874,6 +3940,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				mainGame->dField.MoveCard(pcard, 10);
 		}
 		if(!mainGame->dInfo.isCatchingUp) {
+            /////kdiy//////
+            mainGame->showcardalias = code2;
+            /////kdiy//////
 			mainGame->showcardcode = code;
 			mainGame->showcarddif = 0;
 			mainGame->showcard = 1;
@@ -4535,6 +4604,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 		////kdiy///////////
 		std::wstring str(gDataManager->GetName(code));
+        auto index = str.find(L"(");
+		auto index_2 = str.find(65288);
+		if(index != std::wstring::npos) str = str.substr(0,index);
+		else if(index_2 != std::wstring::npos) str = str.substr(0,index_2);
 		if(pcard->alias && pcard->alias == 27 && wcscmp(gDataManager->GetName(code).data(), gDataManager->GetName(pcard->alias).data())) {
 			std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x1073)));
 			str.insert(0, str2);
@@ -5310,6 +5383,27 @@ void DuelClient::ReplayPrompt(bool local_stream) {
 	}
 }
 //////kdiy////////
+// #ifdef _WIN32
+// static HWND GetWindowHandle(irr::video::IVideoDriver* driver) {
+// 	switch(driver->getDriverType()) {
+// #if !(IRRLICHT_VERSION_MAJOR==1 && IRRLICHT_VERSION_MINOR==9)
+// 	case irr::video::EDT_DIRECT3D8:
+// 		return static_cast<HWND>(driver->getExposedVideoData().D3D8.HWnd);
+// #endif
+// 	case irr::video::EDT_DIRECT3D9:
+// 		return static_cast<HWND>(driver->getExposedVideoData().D3D9.HWnd);
+// 	case irr::video::EDT_OPENGL:
+// #if (IRRLICHT_VERSION_MAJOR==1 && IRRLICHT_VERSION_MINOR==9)
+// 	case irr::video::EDT_OGLES1:
+// 	case irr::video::EDT_OGLES2:
+// #endif
+// 		return static_cast<HWND>(driver->getExposedVideoData().OpenGLWin32.HWnd);
+// 	default:
+// 		break;
+// 	}
+// 	return nullptr;
+// }
+// #endif
 bool PlayAnime(uint32_t code, uint32_t code2, uint8_t cat) {
 	if(!gGameConfig->enableanime) return false;
 	if(cat == 1 && !gGameConfig->enablecanime) return false;
@@ -5320,7 +5414,7 @@ bool PlayAnime(uint32_t code, uint32_t code2, uint8_t cat) {
 	GetFileAttributes(s2.c_str());
 	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s2.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
 		return false;
-	std::wstring s1 = L"movies\\";
+	std::wstring s1 = L"./movies/";
 	if(cat == 0)
 		s1 += L"s" + std::to_wstring(code) + L".mp4";
 	if(cat == 1)
@@ -5329,7 +5423,7 @@ bool PlayAnime(uint32_t code, uint32_t code2, uint8_t cat) {
 		s1 += L"a" + std::to_wstring(code) + L".mp4";
 	GetFileAttributes(s1.c_str());
 	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s1.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND)) {
-		s1 = L"movies\\";
+		s1 = L"./movies/";
 		if(cat == 0)
 		    s1 += L"s" + std::to_wstring(code2) + L".mp4";
 		if(cat == 1)
@@ -5340,20 +5434,34 @@ bool PlayAnime(uint32_t code, uint32_t code2, uint8_t cat) {
 		if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s1.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
 		    return false;
 	}
+	STARTUPINFO si{ sizeof(si) };
+	PROCESS_INFORMATION pi{};
+	si.cb = sizeof(STARTUPINFO);
+	wchar_t exepath[100];
+	wcscat(exepath, (s2 + L" " + s1).c_str());
+    if(!CreateProcess(s2.c_str(), exepath, nullptr, nullptr, false, 0, nullptr, nullptr, &si, &pi))
+         return false;
 	gSoundManager->PauseMusic(true);
-	SHELLEXECUTEINFO ShExecInfo = {0};
+	//auto hWnd = GetWindowHandle(mainGame->device->getVideoDriver());
+	/*SHELLEXECUTEINFO ShExecInfo = {0};
 	ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
 	ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-	ShExecInfo.hwnd = NULL;
+	ShExecInfo.hwnd = hWnd;
 	ShExecInfo.lpVerb = L"open";
 	ShExecInfo.lpFile =  s2.c_str();
 	ShExecInfo.lpParameters = s1.c_str();
 	ShExecInfo.lpDirectory = NULL;
 	ShExecInfo.nShow = SW_SHOWNORMAL;
-	ShExecInfo.hInstApp = NULL;
-	ShellExecuteEx(&ShExecInfo);
-	WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
-	CloseHandle(ShExecInfo.hProcess);
+	ShExecInfo.hInstApp = NULL;*/
+    //::SetParent(hWnd, GetDlgItem(IDC_STATIC)->m_hWnd);
+	/*ShellExecuteEx(&ShExecInfo);*/
+	//WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
+	//::ShowWindow(hWnd, SW_HIDE);
+	//CloseHandle(ShExecInfo.hProcess);
+	WaitForSingleObject(pi.hProcess, INFINITE);
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
+	//::ShowWindow(hWnd, SW_SHOW);
 	gSoundManager->PauseMusic(false);
 	return true;
 #elif __ANDROID__
@@ -5378,7 +5486,7 @@ bool PlayAnime(uint32_t code, uint32_t code2, uint8_t cat) {
 }
 bool PlayAnimeC(std::wstring text, bool custom) {
 	if(!gGameConfig->enableanime) return false;
-#ifdef _WIN32 
+#ifdef _WIN32
 	std::wstring s2 = L"plugin\\MPC-HCPortable\\MPC-HCPortable.exe";
 	GetFileAttributes(s2.c_str());
 	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s2.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
@@ -5391,20 +5499,30 @@ bool PlayAnimeC(std::wstring text, bool custom) {
 	GetFileAttributes(s1.c_str());
 	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s1.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
 		return false;
+    STARTUPINFO si{ sizeof(si) };
+	PROCESS_INFORMATION pi{};
+	si.cb = sizeof(STARTUPINFO);
+	wchar_t exepath[100];
+	wcscat(exepath, (s2 + L" " + s1).c_str());
+    if(!CreateProcess(s2.c_str(), exepath, nullptr, nullptr, false, 0, nullptr, nullptr, &si, &pi))
+         return false;
 	gSoundManager->PauseMusic(true);
-	SHELLEXECUTEINFO ShExecInfo = {0};
-	ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
-	ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-	ShExecInfo.hwnd = NULL;
-	ShExecInfo.lpVerb = L"open";
-	ShExecInfo.lpFile =  s2.c_str();
-	ShExecInfo.lpParameters = s1.c_str();
-	ShExecInfo.lpDirectory = NULL;
-	ShExecInfo.nShow = SW_SHOWNORMAL;
-	ShExecInfo.hInstApp = NULL;
-	ShellExecuteEx(&ShExecInfo);
-	WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
-	CloseHandle(ShExecInfo.hProcess);
+	// SHELLEXECUTEINFO ShExecInfo = {0};
+	// ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+	// ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+	// ShExecInfo.hwnd = NULL;
+	// ShExecInfo.lpVerb = L"open";
+	// ShExecInfo.lpFile =  s2.c_str();
+	// ShExecInfo.lpParameters = s1.c_str();
+	// ShExecInfo.lpDirectory = NULL;
+	// ShExecInfo.nShow = SW_SHOWNORMAL;
+	// ShExecInfo.hInstApp = NULL;
+	// ShellExecuteEx(&ShExecInfo);
+	// WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
+	// CloseHandle(ShExecInfo.hProcess);
+    WaitForSingleObject(pi.hProcess, INFINITE);
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
 	gSoundManager->PauseMusic(false);
 	return true;
 #elif __ANDROID__

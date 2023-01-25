@@ -362,224 +362,260 @@ bool ImageManager::Initial() {
 
 	tAct = GetRandomImage(TEXTURE_ACTIVATE);
 	tAttack = GetRandomImage(TEXTURE_ATTACK);
-	if (!tAct)
+	if (!tAct) {
 		tAct = loadTextureAnySize(EPRO_TEXT("act"_sv));
+        ASSIGN_DEFAULT(tAct);
+    }
 	ASSERT_TEXTURE_LOADED(tAct, "act");
-	ASSIGN_DEFAULT(tAct);
 
-	if (!tAttack)
+	if (!tAttack) {
 		tAttack = loadTextureAnySize(EPRO_TEXT("attack"_sv));
+        ASSIGN_DEFAULT(tAttack);
+    }
 	ASSERT_TEXTURE_LOADED(tAttack, "attack");
-	ASSIGN_DEFAULT(tAttack);
 
 	tChain = GetRandomImage(TEXTURE_CHAIN);
-	if (!tChain)
+	if (!tChain) {
 		tChain = loadTextureAnySize(EPRO_TEXT("chain"_sv));
+        ASSIGN_DEFAULT(tChain);
+    }
 	ASSERT_TEXTURE_LOADED(tChain, "chain");
-	ASSIGN_DEFAULT(tChain);
 
 	tNegated = GetRandomImage(TEXTURE_NEGATED, 128, 128);
-	if (!tNegated)
+	if (!tNegated) {
 		tNegated = loadTextureFixedSize(EPRO_TEXT("negated"_sv), 128, 128);
+        ASSIGN_DEFAULT(tNegated);
+    }
 	ASSERT_TEXTURE_LOADED(tNegated, "negated");
-	ASSIGN_DEFAULT(tNegated);
 
 	tNumber = loadTextureFixedSize(EPRO_TEXT("number"_sv), 320, 256);
 	ASSERT_TEXTURE_LOADED(tNumber, "number");
 	ASSIGN_DEFAULT(tNumber);
 
 	tLPBar = GetRandomImage(TEXTURE_LP);
-	if (!tLPBar)
+	if (!tLPBar) {
 		tLPBar = loadTextureAnySize(EPRO_TEXT("lp"_sv));
+        ASSIGN_DEFAULT(tLPBar);
+    }
 	ASSERT_TEXTURE_LOADED(tLPBar, "lp");
-	ASSIGN_DEFAULT(tLPBar);
 
 	tLPFrame = GetRandomImage(TEXTURE_LPf);
-	if (!tLPFrame)
+	if (!tLPFrame) {
 		tLPFrame = loadTextureAnySize(EPRO_TEXT("lpf"_sv));
+        ASSIGN_DEFAULT(tLPFrame);
+    }
 	ASSERT_TEXTURE_LOADED(tLPFrame, "lpf");
-	ASSIGN_DEFAULT(tLPFrame);
 
 	tMask = GetRandomImage(TEXTURE_MASK, 254, 254);
-	if (!tMask)
+	if (!tMask) {
 		tMask = loadTextureFixedSize(EPRO_TEXT("mask"_sv), 254, 254);
+        ASSIGN_DEFAULT(tMask);
+    }
 	ASSERT_TEXTURE_LOADED(tMask, "mask");
-	ASSIGN_DEFAULT(tMask);
 
 	tEquip = GetRandomImage(TEXTURE_EQUIP);
-	if (!tEquip)
+	if (!tEquip) {
 		tEquip = loadTextureAnySize(EPRO_TEXT("equip"_sv));
+        ASSIGN_DEFAULT(tEquip);
+    }
 	ASSERT_TEXTURE_LOADED(tEquip, "equip");
-	ASSIGN_DEFAULT(tEquip);
 
 	tTarget = GetRandomImage(TEXTURE_TARGET);
-	if (!tTarget)
+	if (!tTarget) {
 		tTarget = loadTextureAnySize(EPRO_TEXT("target"_sv));
+        ASSIGN_DEFAULT(tTarget);
+    }
 	ASSERT_TEXTURE_LOADED(tTarget, "target");
-	ASSIGN_DEFAULT(tTarget);
 
 	tChainTarget = GetRandomImage(TEXTURE_CHAINTARGET);
-	if (!tChainTarget)
+	if (!tChainTarget) {
 		tChainTarget = loadTextureAnySize(EPRO_TEXT("chaintarget"_sv));
+        ASSIGN_DEFAULT(tChainTarget);
+    }
 	ASSERT_TEXTURE_LOADED(tChainTarget, "chaintarget");
-	ASSIGN_DEFAULT(tChainTarget);
 
 	tLim = GetRandomImage(TEXTURE_LIM);
-	if (!tLim)
+	if (!tLim) {
 		tLim = loadTextureAnySize(EPRO_TEXT("lim"_sv));
+        ASSIGN_DEFAULT(tLim);
+    }
 	ASSERT_TEXTURE_LOADED(tLim, "lim");
-	ASSIGN_DEFAULT(tLim);
 
 	tOT = GetRandomImage(TEXTURE_OT);
-	if (!tOT)
+	if (!tOT) {
 	    tOT = loadTextureAnySize(EPRO_TEXT("ot"_sv));
+        ASSIGN_DEFAULT(tOT);
+    }
 	ASSERT_TEXTURE_LOADED(tOT, "ot");
-	ASSIGN_DEFAULT(tOT);
 
 	tHand[0] = GetRandomImage(TEXTURE_F1, 89, 128);
-	if (!tHand[0])
+	if (!tHand[0]) {
 		tHand[0] = loadTextureFixedSize(EPRO_TEXT("f1"_sv), 89, 128);
+        ASSIGN_DEFAULT(tHand[0]);
+    }
 	ASSERT_TEXTURE_LOADED(tHand[0], "f1");
-	ASSIGN_DEFAULT(tHand[0]);
 
 	tHand[1] = GetRandomImage(TEXTURE_F2, 89, 128);
-	if (!tHand[1])
+	if (!tHand[1]) {
 		tHand[1] = loadTextureFixedSize(EPRO_TEXT("f2"_sv), 89, 128);
+        ASSIGN_DEFAULT(tHand[1]);
+    }
 	ASSERT_TEXTURE_LOADED(tHand[1], "f2");
-	ASSIGN_DEFAULT(tHand[1]);
 
 	tHand[2] = GetRandomImage(TEXTURE_F3, 89, 128);
-	if (!tHand[2])
+	if (!tHand[2]) {
 		tHand[2] = loadTextureFixedSize(EPRO_TEXT("f3"_sv), 89, 128);
+        ASSIGN_DEFAULT(tHand[2]);
+    }
 	ASSERT_TEXTURE_LOADED(tHand[2], "f3");
-	ASSIGN_DEFAULT(tHand[2]);
 
 	tBackGround = GetRandomImage(TEXTURE_BACKGROUND);
-	if (!tBackGround)
+	if (!tBackGround) {
 		tBackGround = loadTextureAnySize(EPRO_TEXT("bg"_sv));
+        ASSIGN_DEFAULT(tBackGround);
+    }
 	ASSERT_TEXTURE_LOADED(tBackGround, "bg");
-	ASSIGN_DEFAULT(tBackGround);
 
 	tBackGround_menu = GetRandomImage(TEXTURE_BACKGROUND_MENU);
 	if (!tBackGround_menu)
 		tBackGround_menu = loadTextureAnySize(EPRO_TEXT("bg_menu"_sv));
-	if(!tBackGround_menu)
+	if(!tBackGround_menu) {
 		tBackGround_menu = tBackGround;
-	ASSIGN_DEFAULT(tBackGround_menu);
+        ASSIGN_DEFAULT(tBackGround_menu);
+    }
 
 	tBackGround_deck = GetRandomImage(TEXTURE_BACKGROUND_DECK);
 	if (!tBackGround_deck)
 		tBackGround_deck = loadTextureAnySize(EPRO_TEXT("bg_deck"_sv));
-	if(!tBackGround_deck)
+	if(!tBackGround_deck) {
 		tBackGround_deck = tBackGround;
-	ASSIGN_DEFAULT(tBackGround_deck);
+        ASSIGN_DEFAULT(tBackGround_deck);
+    }
 
 	tBackGround_duel_topdown = loadTextureAnySize(EPRO_TEXT("bg_duel_topdown"_sv));
-	if(!tBackGround_duel_topdown)
+	if(!tBackGround_duel_topdown) {
 		tBackGround_duel_topdown = tBackGround;
-	ASSIGN_DEFAULT(tBackGround_duel_topdown);
+        ASSIGN_DEFAULT(tBackGround_duel_topdown);
+    }
 
 	tField[0][0] = GetRandomImage(TEXTURE_field2);
-	if (!tField[0][0])
+	if (!tField[0][0]) {
 		tField[0][0] = loadTextureAnySize(EPRO_TEXT("field2"_sv));
+        ASSIGN_DEFAULT(tField[0][0]);
+    }
 	ASSERT_TEXTURE_LOADED(tField[0][0], "field2");
-	ASSIGN_DEFAULT(tField[0][0]);
 
 	tFieldTransparent[0][0] = GetRandomImage(TEXTURE_field_transparent2);
-	if (!tFieldTransparent[0][0])
+	if (!tFieldTransparent[0][0]) {
 		tFieldTransparent[0][0] = loadTextureAnySize(EPRO_TEXT("field-transparent2"_sv));
+        ASSIGN_DEFAULT(tFieldTransparent[0][0]);
+    }
 	ASSERT_TEXTURE_LOADED(tFieldTransparent[0][0], "field-transparent2");
-	ASSIGN_DEFAULT(tFieldTransparent[0][0]);
 
 	tField[0][1] = GetRandomImage(TEXTURE_field3);
-	if (!tField[0][1])
+	if (!tField[0][1]) {
 		tField[0][1] = loadTextureAnySize(EPRO_TEXT("field3"_sv));
+        ASSIGN_DEFAULT(tField[0][1]);
+    }
 	ASSERT_TEXTURE_LOADED(tField[0][1], "field3");
-	ASSIGN_DEFAULT(tField[0][1]);
 
 	tFieldTransparent[0][1] = GetRandomImage(TEXTURE_field_transparent3);
-	if (!tFieldTransparent[0][1])
+	if (!tFieldTransparent[0][1]) {
 		tFieldTransparent[0][1] = loadTextureAnySize(EPRO_TEXT("field-transparent3"_sv));
+        ASSIGN_DEFAULT(tFieldTransparent[0][1]);
+    }
 	ASSERT_TEXTURE_LOADED(tFieldTransparent[0][1], "field-transparent3");
-	ASSIGN_DEFAULT(tFieldTransparent[0][1]);
 
 	tField[0][2] = GetRandomImage(TEXTURE_field);
-	if (!tField[0][2])
+	if (!tField[0][2]) {
 		tField[0][2] = loadTextureAnySize(EPRO_TEXT("field"_sv));
+        ASSIGN_DEFAULT(tField[0][2]);
+    }
 	ASSERT_TEXTURE_LOADED(tField[0][2], "field");
-	ASSIGN_DEFAULT(tField[0][2]);
 
 	tFieldTransparent[0][2] = GetRandomImage(TEXTURE_field_transparent);
-	if (!tFieldTransparent[0][2])
+	if (!tFieldTransparent[0][2]) {
 		tFieldTransparent[0][2] = loadTextureAnySize(EPRO_TEXT("field-transparent"_sv));
+        ASSIGN_DEFAULT(tFieldTransparent[0][2]);
+    }
 	ASSERT_TEXTURE_LOADED(tFieldTransparent[0][2], "field-transparent");
-	ASSIGN_DEFAULT(tFieldTransparent[0][2]);
 
 	tField[0][3] = GetRandomImage(TEXTURE_field4);
-	if (!tField[0][3])
+	if (!tField[0][3]) {
 		tField[0][3] = loadTextureAnySize(EPRO_TEXT("field4"_sv));
-	ASSERT_TEXTURE_LOADED(tField[0][3], "field4");
-	ASSIGN_DEFAULT(tField[0][3]);
+        ASSIGN_DEFAULT(tField[0][3]);
+    }
+    ASSERT_TEXTURE_LOADED(tField[0][3], "field4");
 
 	tFieldTransparent[0][3] = GetRandomImage(TEXTURE_field_transparent4);
-	if (!tFieldTransparent[0][3])
+	if (!tFieldTransparent[0][3]) {
 		tFieldTransparent[0][3] = loadTextureAnySize(EPRO_TEXT("field-transparent4"_sv));
+        ASSIGN_DEFAULT(tFieldTransparent[0][3]);
+    }
 	ASSERT_TEXTURE_LOADED(tFieldTransparent[0][3], "field-transparent4");
-	ASSIGN_DEFAULT(tFieldTransparent[0][3]);
 
 	tField[1][0] = GetRandomImage(TEXTURE_field_fieldSP2);
-	if (!tField[1][0])
+	if (!tField[1][0]) {
 		tField[1][0] = loadTextureAnySize(EPRO_TEXT("fieldSP2"_sv));
+        ASSIGN_DEFAULT(tField[1][0]);
+    }
 	ASSERT_TEXTURE_LOADED(tField[1][0], "fieldSP2");
-	ASSIGN_DEFAULT(tField[1][0]);
 
 	tFieldTransparent[1][0] = GetRandomImage(TEXTURE_field_transparentSP2);
-	if (!tFieldTransparent[1][0])
+	if (!tFieldTransparent[1][0]) {
 		tFieldTransparent[1][0] = loadTextureAnySize(EPRO_TEXT("field-transparentSP2"_sv));
+        ASSIGN_DEFAULT(tFieldTransparent[1][0]);
+    }
 	ASSERT_TEXTURE_LOADED(tFieldTransparent[1][0], "field-transparentSP2");
-	ASSIGN_DEFAULT(tFieldTransparent[1][0]);
 
 	tField[1][1] = GetRandomImage(TEXTURE_fieldSP3);
-	if (!tField[1][1])
+	if (!tField[1][1]) {
 		tField[1][1] = loadTextureAnySize(EPRO_TEXT("fieldSP3"_sv));
+        ASSIGN_DEFAULT(tField[1][1]);
+    }
 	ASSERT_TEXTURE_LOADED(tField[1][1], "fieldSP3");
-	ASSIGN_DEFAULT(tField[1][1]);
 
 	tFieldTransparent[1][1] = GetRandomImage(TEXTURE_field_transparentSP3);
-	if (!tFieldTransparent[1][1])
+	if (!tFieldTransparent[1][1]) {
 		tFieldTransparent[1][1] = loadTextureAnySize(EPRO_TEXT("field-transparentSP3"_sv));
+        ASSIGN_DEFAULT(tFieldTransparent[1][1]);
+    }
 	ASSERT_TEXTURE_LOADED(tFieldTransparent[1][1], "field-transparentSP3");
-	ASSIGN_DEFAULT(tFieldTransparent[1][1]);
 
 	tField[1][2] = GetRandomImage(TEXTURE_fieldSP);
-	if (!tField[1][2])
+	if (!tField[1][2]) {
 		tField[1][2] = loadTextureAnySize(EPRO_TEXT("fieldSP"_sv));
+        ASSIGN_DEFAULT(tField[1][2]);
+    }
 	ASSERT_TEXTURE_LOADED(tField[1][2], "fieldSP");
-	ASSIGN_DEFAULT(tField[1][2]);
 
 	tFieldTransparent[1][2] = GetRandomImage(TEXTURE_field_transparentSP);
-	if (!tFieldTransparent[1][2])
+	if (!tFieldTransparent[1][2]) {
 		tFieldTransparent[1][2] = loadTextureAnySize(EPRO_TEXT("field-transparentSP"_sv));
+        ASSIGN_DEFAULT(tFieldTransparent[1][2]);
+    }
 	ASSERT_TEXTURE_LOADED(tFieldTransparent[1][2], "field-transparentSP");
-	ASSIGN_DEFAULT(tFieldTransparent[1][2]);
 
 	tField[1][3] = GetRandomImage(TEXTURE_fieldSP4);
-	if (!tField[1][3])
+	if (!tField[1][3]) {
 		tField[1][3] = loadTextureAnySize(EPRO_TEXT("fieldSP4"_sv));
+        ASSIGN_DEFAULT(tField[1][3]);
+    }
 	ASSERT_TEXTURE_LOADED(tField[1][3], "fieldSP4");
-	ASSIGN_DEFAULT(tField[1][3]);
 
 	tFieldTransparent[1][3] = GetRandomImage(TEXTURE_field_transparentSP4);
-	if (!tFieldTransparent[1][3])
+	if (!tFieldTransparent[1][3]) {
 		tFieldTransparent[1][3] = loadTextureAnySize(EPRO_TEXT("field-transparentSP4"_sv));
+        ASSIGN_DEFAULT(tFieldTransparent[1][3]);
+    }
 	ASSERT_TEXTURE_LOADED(tFieldTransparent[1][3], "field-transparentSP4");
-	ASSIGN_DEFAULT(tFieldTransparent[1][3]);
 
 	tSettings = GetRandomImage(TEXTURE_SETTING);
-	if (!tSettings)
+	if (!tSettings) {
 	    tSettings = loadTextureAnySize(EPRO_TEXT("settings"_sv));
+        ASSIGN_DEFAULT(tSettings);
+    }
 	ASSERT_TEXTURE_LOADED(tSettings, "settings");
-	ASSIGN_DEFAULT(tSettings);
 
     char buff[100];
 	for (int i = 0; i < 14; i++) {
@@ -801,39 +837,180 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 #endif
     tAct = GetRandomImage(TEXTURE_ACTIVATE);
 	tAttack = GetRandomImage(TEXTURE_ATTACK);
+	if (!tAct) {
+        REPLACE_TEXTURE_ANY_SIZE(tAct, "act");
+    }
+
+	if (!tAttack) {
+        REPLACE_TEXTURE_ANY_SIZE(tAttack, "attack");
+    }
+
 	tChain = GetRandomImage(TEXTURE_CHAIN);
+	if (!tChain) {
+        REPLACE_TEXTURE_ANY_SIZE(tChain, "chain");
+    }
+
 	tNegated = GetRandomImage(TEXTURE_NEGATED, 128, 128);
+	if (!tNegated) {
+        REPLACE_TEXTURE_WITH_FIXED_SIZE(tNegated, "negated", 128, 128);
+    }
+
 	tLPBar = GetRandomImage(TEXTURE_LP);
+	if (!tLPBar) {
+        REPLACE_TEXTURE_ANY_SIZE(tLPBar, "lp");
+    }
+
 	tLPFrame = GetRandomImage(TEXTURE_LPf);
+	if (!tLPFrame) {
+        REPLACE_TEXTURE_ANY_SIZE(tLPFrame, "lpf");
+    }
+
 	tMask = GetRandomImage(TEXTURE_MASK, 254, 254);
+	if (!tMask) {
+        REPLACE_TEXTURE_WITH_FIXED_SIZE(tMask, "mask", 254, 254);
+    }
+
 	tEquip = GetRandomImage(TEXTURE_EQUIP);
+	if (!tEquip) {
+        REPLACE_TEXTURE_ANY_SIZE(tEquip, "equip");
+    }
+
 	tTarget = GetRandomImage(TEXTURE_TARGET);
+	if (!tTarget) {
+        REPLACE_TEXTURE_ANY_SIZE(tTarget, "target");
+    }
+
 	tChainTarget = GetRandomImage(TEXTURE_CHAINTARGET);
+	if (!tChainTarget) {
+        REPLACE_TEXTURE_ANY_SIZE(tChainTarget, "chaintarget");
+    }
+
 	tLim = GetRandomImage(TEXTURE_LIM);
+	if (!tLim) {
+        REPLACE_TEXTURE_ANY_SIZE(tLim, "lim");
+    }
+
 	tOT = GetRandomImage(TEXTURE_OT);
+	if (!tOT) {
+        REPLACE_TEXTURE_ANY_SIZE(tOT, "ot");
+    }
+
 	tHand[0] = GetRandomImage(TEXTURE_F1, 89, 128);
+	if (!tHand[0]) {
+        REPLACE_TEXTURE_WITH_FIXED_SIZE(tHand[0], "f1", 89, 128);
+    }
+
 	tHand[1] = GetRandomImage(TEXTURE_F2, 89, 128);
+	if (!tHand[1]) {
+        REPLACE_TEXTURE_WITH_FIXED_SIZE(tHand[1], "f2", 89, 128);
+    }
+
 	tHand[2] = GetRandomImage(TEXTURE_F3, 89, 128);
+	if (!tHand[2]) {
+        REPLACE_TEXTURE_WITH_FIXED_SIZE(tHand[2], "f3", 89, 128);
+    }
+
 	tBackGround = GetRandomImage(TEXTURE_BACKGROUND);
+	if (!tBackGround) {
+        REPLACE_TEXTURE_ANY_SIZE(tBackGround, "bg");
+    }
+
 	tBackGround_menu = GetRandomImage(TEXTURE_BACKGROUND_MENU);
+	if(!tBackGround_menu) {
+		tBackGround_menu = tBackGround;
+        REPLACE_TEXTURE_ANY_SIZE(tBackGround_menu, "bg_menu");
+    }
+
 	tBackGround_deck = GetRandomImage(TEXTURE_BACKGROUND_DECK);
+	if(!tBackGround_deck) {
+		tBackGround_deck = tBackGround;
+        REPLACE_TEXTURE_ANY_SIZE(tBackGround_deck, "bg_deck");
+    }
+
 	tField[0][0] = GetRandomImage(TEXTURE_field2);
+	if (!tField[0][0]) {
+        REPLACE_TEXTURE_ANY_SIZE(tField[0][0], "field2");
+    }
+
 	tFieldTransparent[0][0] = GetRandomImage(TEXTURE_field_transparent2);
+	if (!tFieldTransparent[0][0]) {
+        REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[0][0], "field-transparent2");
+    }
+
 	tField[0][1] = GetRandomImage(TEXTURE_field3);
+	if (!tField[0][1]) {
+        REPLACE_TEXTURE_ANY_SIZE(tField[0][1], "field3");
+    }
+
 	tFieldTransparent[0][1] = GetRandomImage(TEXTURE_field_transparent3);
+	if (!tFieldTransparent[0][1]) {
+        REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[0][1], "field-transparent3");
+    }
+
 	tField[0][2] = GetRandomImage(TEXTURE_field);
+	if (!tField[0][2]) {
+        REPLACE_TEXTURE_ANY_SIZE(tField[0][2], "field");
+    }
+
 	tFieldTransparent[0][2] = GetRandomImage(TEXTURE_field_transparent);
+	if (!tFieldTransparent[0][2]) {
+        REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[0][2], "field-transparent");
+    }
+
 	tField[0][3] = GetRandomImage(TEXTURE_field4);
+	if (!tField[0][3]) {
+        REPLACE_TEXTURE_ANY_SIZE(tField[0][3], "field4");
+    }
+
 	tFieldTransparent[0][3] = GetRandomImage(TEXTURE_field_transparent4);
+	if (!tFieldTransparent[0][3]) {
+        REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[0][3], "field-transparent4");
+    }
+
 	tField[1][0] = GetRandomImage(TEXTURE_field_fieldSP2);
+	if (!tField[1][0]) {
+        REPLACE_TEXTURE_ANY_SIZE(tField[1][0], "fieldSP2");
+    }
+
 	tFieldTransparent[1][0] = GetRandomImage(TEXTURE_field_transparentSP2);
+	if (!tFieldTransparent[1][0]) {
+        REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][0], "field-transparentSP2");
+    }
+
 	tField[1][1] = GetRandomImage(TEXTURE_fieldSP3);
+	if (!tField[1][1]) {
+        REPLACE_TEXTURE_ANY_SIZE(tField[1][1], "fieldSP3");
+    }
+
 	tFieldTransparent[1][1] = GetRandomImage(TEXTURE_field_transparentSP3);
+	if (!tFieldTransparent[1][1]) {
+        REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][1], "field-transparentSP3");
+    }
+
 	tField[1][2] = GetRandomImage(TEXTURE_fieldSP);
+	if (!tField[1][2]) {
+        REPLACE_TEXTURE_ANY_SIZE(tField[1][2], "fieldSP");
+    }
+
 	tFieldTransparent[1][2] = GetRandomImage(TEXTURE_field_transparentSP);
+	if (!tFieldTransparent[1][2]) {
+        REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][2], "field-transparentSP");
+    }
+
 	tField[1][3] = GetRandomImage(TEXTURE_fieldSP4);
+	if (!tField[1][3]) {
+        REPLACE_TEXTURE_ANY_SIZE(tField[1][3], "fieldSP4");
+    }
+
 	tFieldTransparent[1][3] = GetRandomImage(TEXTURE_field_transparentSP4);
+	if (!tFieldTransparent[1][3]) {
+        REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][3], "field-transparentSP4");
+    }
+
 	tSettings = GetRandomImage(TEXTURE_SETTING);
+	if (!tSettings) {
+        REPLACE_TEXTURE_ANY_SIZE(tSettings, "settings");
+    }
 	REPLACE_TEXTURE_WITH_FIXED_SIZE(tNumber, "number", 320, 256);
 	REPLACE_TEXTURE_ANY_SIZE(tBackGround_duel_topdown, "bg_duel_topdown");
 	if(!is_base && tBackGround != def_tBackGround && tBackGround_duel_topdown == def_tBackGround_duel_topdown)
