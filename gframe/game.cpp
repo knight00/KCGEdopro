@@ -5354,7 +5354,7 @@ void Game::PopulateResourcesDirectories() {
         pic_dirs.push_back(EPRO_TEXT("./hdpics/jp/"));
     }
     pic_dirs.push_back(EPRO_TEXT("./pics/prerelease/"));
-	//////kdiy//////////	
+	//////kdiy//////////
 	pic_dirs.push_back(EPRO_TEXT("./pics/"));
 	cover_dirs.push_back(EPRO_TEXT("./expansions/pics/cover/"));
 	cover_dirs.push_back(EPRO_TEXT("archives"));

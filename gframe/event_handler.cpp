@@ -2150,6 +2150,19 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 #ifndef VIP
 				gGameConfig->enablessound = false;
 #endif
+				if (gGameConfig->enablessound) {
+					bool filechk = false;
+					for (auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/")), { EPRO_TEXT("mp3") })) {
+						if (Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/") + file)) {
+							filechk = true;
+							break;
+						}
+					}
+					if (!filechk) {
+						gGameConfig->enablessound = false;
+						ygo::GUIUtils::ShowErrorWindow("Missing file", "No character voice files");
+					}
+				}
 				mainGame->gSettings.chkEnableSummonSound->setChecked(gGameConfig->enablessound);
 				return true;
 			}
@@ -2158,6 +2171,19 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 #ifndef VIP
 				gGameConfig->enablecsound = false;
 #endif
+				if (gGameConfig->enablecsound) {
+					bool filechk = false;
+					for (auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/")), { EPRO_TEXT("mp3") })) {
+						if (Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/") + file)) {
+							filechk = true;
+							break;
+						}
+					}
+					if (!filechk) {
+						gGameConfig->enablecsound = false;
+						ygo::GUIUtils::ShowErrorWindow("Missing file", "No character voice files");
+					}
+				}
 				mainGame->gSettings.chkEnableActivateSound->setChecked(gGameConfig->enablecsound);
 				return true;
 			}
@@ -2166,6 +2192,19 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 #ifndef VIP
 				gGameConfig->enableasound = false;
 #endif
+				if (gGameConfig->enableasound) {
+					bool filechk = false;
+					for (auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/")), { EPRO_TEXT("mp3") })) {
+						if (Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/") + file)) {
+							filechk = true;
+							break;
+						}
+					}
+					if (!filechk) {
+						gGameConfig->enableasound = false;
+						ygo::GUIUtils::ShowErrorWindow("Missing file", "No character voice files");
+					}
+				}
 				mainGame->gSettings.chkEnableAttackSound->setChecked(gGameConfig->enableasound);
 				return true;
 			}
@@ -2179,6 +2218,32 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 					mainGame->tabSettings.chkEnableAnime->setChecked(false);
 					mainGame->gSettings.chkEnableAnime->setChecked(false);
 #endif
+					if(gGameConfig->enableanime) {
+						bool filechk = false;
+						for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./movies/")), { EPRO_TEXT("mp4") })) {
+							if(Utils::FileExists(EPRO_TEXT("./movies/") + file)) {
+								filechk = true;
+								break;
+							}
+						}
+						if (!filechk) {
+							gGameConfig->enableanime = false;
+							mainGame->tabSettings.chkEnableAnime->setChecked(false);
+							mainGame->gSettings.chkEnableAnime->setChecked(false);
+							ygo::GUIUtils::ShowErrorWindow("Missing file", "No movie files");
+						}
+
+						if (gGameConfig->enableanime) {
+							gGameConfig->enablesanime = true;
+							mainGame->gSettings.chkEnableSummonAnime->setChecked(true);
+
+							gGameConfig->enablecanime = true;
+							mainGame->gSettings.chkEnableActivateAnime->setChecked(true);
+
+							gGameConfig->enableaanime = true;
+							mainGame->gSettings.chkEnableAttackAnime->setChecked(true);
+						}
+                    }
 				} else {
 					gGameConfig->enableanime = false;
 					mainGame->tabSettings.chkEnableAnime->setChecked(false);
