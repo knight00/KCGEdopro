@@ -2034,6 +2034,8 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				break;
 			}	
 			case BUTTON_CLEAR: {
+                mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8001)).data());
+                mainGame->PopupElement(mainGame->wACMessage, 60);
 				if(Utils::DeleteDirectory(EPRO_TEXT("./pics/"))) {
 					try {
 						gGameConfig->dpi_scale = static_cast<uint32_t>(std::stol(mainGame->gSettings.ebDpiScale->getText())) / 100.0;
@@ -2050,6 +2052,8 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			}	
 			case BUTTON_CLEAR2: {
                 Utils::SystemOpen(EPRO_TEXT("https://edokcg.i234.me/wordpress/%e8%87%aa%e6%9b%b4%e6%96%b0%e5%87%ba%e9%8c%af%e8%a7%a3%e6%b1%ba%e6%96%b9%e6%a1%88/"));
+                mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8040)).data());
+                mainGame->PopupElement(mainGame->wACMessage, 60);
                 Utils::DeleteDirectory(EPRO_TEXT("./config/languages/"));
                 Utils::DeleteDirectory(EPRO_TEXT("./cdb/"));
                 Utils::DeleteDirectory(EPRO_TEXT("./lua/"));
@@ -2065,11 +2069,25 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			case BUTTON_TUT: {
                 Utils::SystemOpen(EPRO_TEXT("https://www.bilibili.com/video/BV1Ey4y1q7pr/"));
 				break;
-			}	
+			}
 			case BUTTON_TUT2: {
                 Utils::SystemOpen(EPRO_TEXT("https://www.bilibili.com/video/BV1a54y127Xx?p=2"));
 				break;
-			}	
+			}
+            case BUTTON_SAVE_SETTING: {
+				Utils::FileCopy(EPRO_TEXT("./config/system.conf"), EPRO_TEXT("./config/system_backup.conf"));
+                mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8024)).data());
+                mainGame->PopupElement(mainGame->wACMessage, 20);
+				break;
+			}
+            case BUTTON_RESTORE_SETTING: {
+                if(Utils::FileExists(EPRO_TEXT("./config/system_backup.conf"))) {
+                    Utils::FileCopy(EPRO_TEXT("./config/system_backup.conf"), EPRO_TEXT("./config/system.conf"));
+                    exit(0);
+                } else
+                    ygo::GUIUtils::ShowErrorWindow("Missing file", "No backup setting");
+				break;
+			}
 			//////kdiy///////
 			case BUTTON_APPLY_RESTART: {
 				try {
@@ -2149,62 +2167,80 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				gGameConfig->enablessound = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
 #ifndef VIP
 				gGameConfig->enablessound = false;
+                gGameConfig->enablecsound = false;
+                gGameConfig->enableasound = false;
 #endif
-				if (gGameConfig->enablessound) {
+				if(gGameConfig->enablessound) {
 					bool filechk = false;
-					for (auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/")), { EPRO_TEXT("mp3") })) {
-						if (Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/") + file)) {
+					for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/")), { EPRO_TEXT("mp3") })) {
+						if(Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/") + file)) {
 							filechk = true;
 							break;
 						}
 					}
-					if (!filechk) {
+					if(!filechk) {
 						gGameConfig->enablessound = false;
+                        gGameConfig->enablecsound = false;
+                        gGameConfig->enableasound = false;
 						ygo::GUIUtils::ShowErrorWindow("Missing file", "No character voice files");
 					}
 				}
-				mainGame->gSettings.chkEnableSummonSound->setChecked(gGameConfig->enablessound);
+                mainGame->gSettings.chkEnableSummonSound->setChecked(gGameConfig->enablessound);
+                mainGame->gSettings.chkEnableActivateSound->setChecked(gGameConfig->enablecsound);
+				mainGame->gSettings.chkEnableAttackSound->setChecked(gGameConfig->enableasound);
 				return true;
 			}
 			case CHECKBOX_ENABLE_CSOUND: {
 				gGameConfig->enablecsound = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
 #ifndef VIP
 				gGameConfig->enablecsound = false;
+                gGameConfig->enablecsound = false;
+                gGameConfig->enableasound = false;
 #endif
-				if (gGameConfig->enablecsound) {
+				if(gGameConfig->enablecsound) {
 					bool filechk = false;
-					for (auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/")), { EPRO_TEXT("mp3") })) {
-						if (Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/") + file)) {
+					for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/")), { EPRO_TEXT("mp3") })) {
+						if(Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/") + file)) {
 							filechk = true;
 							break;
 						}
 					}
-					if (!filechk) {
+					if(!filechk) {
 						gGameConfig->enablecsound = false;
+                        gGameConfig->enablecsound = false;
+                        gGameConfig->enableasound = false;
 						ygo::GUIUtils::ShowErrorWindow("Missing file", "No character voice files");
 					}
 				}
-				mainGame->gSettings.chkEnableActivateSound->setChecked(gGameConfig->enablecsound);
+                mainGame->gSettings.chkEnableSummonSound->setChecked(gGameConfig->enablessound);
+                mainGame->gSettings.chkEnableActivateSound->setChecked(gGameConfig->enablecsound);
+				mainGame->gSettings.chkEnableAttackSound->setChecked(gGameConfig->enableasound);
 				return true;
 			}
 			case CHECKBOX_ENABLE_ASOUND: {
 				gGameConfig->enableasound = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
 #ifndef VIP
 				gGameConfig->enableasound = false;
+                gGameConfig->enablecsound = false;
+                gGameConfig->enableasound = false;
 #endif
-				if (gGameConfig->enableasound) {
+				if(gGameConfig->enableasound) {
 					bool filechk = false;
-					for (auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/")), { EPRO_TEXT("mp3") })) {
-						if (Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/") + file)) {
+					for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/")), { EPRO_TEXT("mp3") })) {
+						if(Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/") + file)) {
 							filechk = true;
 							break;
 						}
 					}
-					if (!filechk) {
+					if(!filechk) {
 						gGameConfig->enableasound = false;
+                        gGameConfig->enablecsound = false;
+                        gGameConfig->enableasound = false;
 						ygo::GUIUtils::ShowErrorWindow("Missing file", "No character voice files");
 					}
 				}
+                mainGame->gSettings.chkEnableSummonSound->setChecked(gGameConfig->enablessound);
+                mainGame->gSettings.chkEnableActivateSound->setChecked(gGameConfig->enablecsound);
 				mainGame->gSettings.chkEnableAttackSound->setChecked(gGameConfig->enableasound);
 				return true;
 			}
@@ -2215,8 +2251,6 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 					mainGame->gSettings.chkEnableAnime->setChecked(gGameConfig->enableanime);
 #if !defined(_WIN32)
 					gGameConfig->enableanime = false;
-					mainGame->tabSettings.chkEnableAnime->setChecked(false);
-					mainGame->gSettings.chkEnableAnime->setChecked(false);
 #endif
 					if(gGameConfig->enableanime) {
 						bool filechk = false;
@@ -2226,14 +2260,11 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 								break;
 							}
 						}
-						if (!filechk) {
+						if(!filechk) {
 							gGameConfig->enableanime = false;
-							mainGame->tabSettings.chkEnableAnime->setChecked(false);
-							mainGame->gSettings.chkEnableAnime->setChecked(false);
 							ygo::GUIUtils::ShowErrorWindow("Missing file", "No movie files");
 						}
-
-						if (gGameConfig->enableanime) {
+						if(gGameConfig->enableanime) {
 							gGameConfig->enablesanime = true;
 							mainGame->gSettings.chkEnableSummonAnime->setChecked(true);
 
@@ -2246,9 +2277,17 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
                     }
 				} else {
 					gGameConfig->enableanime = false;
-					mainGame->tabSettings.chkEnableAnime->setChecked(false);
-					mainGame->gSettings.chkEnableAnime->setChecked(false);
 				}
+                if(!gGameConfig->enableanime) {
+                    mainGame->tabSettings.chkEnableAnime->setChecked(false);
+					mainGame->gSettings.chkEnableAnime->setChecked(false);
+                    gGameConfig->enablesanime = false;
+					mainGame->gSettings.chkEnableSummonAnime->setChecked(false);
+                    gGameConfig->enablecanime = false;
+					mainGame->gSettings.chkEnableActivateAnime->setChecked(false);
+                    gGameConfig->enableaanime = false;
+					mainGame->gSettings.chkEnableAttackAnime->setChecked(false);
+                }
 				return true;
 			}
 			case CHECKBOX_ENABLE_SANIME: {
@@ -2256,18 +2295,38 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 					gGameConfig->enablesanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
 					mainGame->gSettings.chkEnableSummonAnime->setChecked(gGameConfig->enablesanime);
 #if !defined(_WIN32)
-					gGameConfig->enablesanime = false;
-					mainGame->gSettings.chkEnableSummonAnime->setChecked(false);
+					gGameConfig->enableanime = false;
 #endif
                     if(gGameConfig->enablesanime) {
-                        gGameConfig->enableanime = true;
-                        mainGame->tabSettings.chkEnableAnime->setChecked(true);
-					    mainGame->gSettings.chkEnableAnime->setChecked(true);
+                        bool filechk = false;
+						for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./movies/")), { EPRO_TEXT("mp4") })) {
+							if(Utils::FileExists(EPRO_TEXT("./movies/") + file)) {
+								filechk = true;
+								break;
+							}
+						}
+						if(!filechk) {
+							gGameConfig->enableanime = false;
+							ygo::GUIUtils::ShowErrorWindow("Missing file", "No movie files");
+						}
+                        if(gGameConfig->enablesanime) {
+                            gGameConfig->enableanime = true;
+                            mainGame->tabSettings.chkEnableAnime->setChecked(true);
+                            mainGame->gSettings.chkEnableAnime->setChecked(true);
+                        }
                     }
-				} else {
-					gGameConfig->enablesanime = false;
-					mainGame->gSettings.chkEnableSummonAnime->setChecked(false);
-				}
+				} else
+					gGameConfig->enableanime = false;
+                if(!gGameConfig->enableanime) {
+                    mainGame->tabSettings.chkEnableAnime->setChecked(false);
+				    mainGame->gSettings.chkEnableAnime->setChecked(false);
+                    gGameConfig->enablesanime = false;
+                    mainGame->gSettings.chkEnableSummonAnime->setChecked(false);
+                    gGameConfig->enablecanime = false;
+                    mainGame->gSettings.chkEnableActivateAnime->setChecked(false);
+                    gGameConfig->enableaanime = false;
+                    mainGame->gSettings.chkEnableAttackAnime->setChecked(false);
+                }
 				return true;
 				}
 			case CHECKBOX_ENABLE_CANIME: {
@@ -2275,18 +2334,38 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 					gGameConfig->enablecanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
 					mainGame->gSettings.chkEnableActivateAnime->setChecked(gGameConfig->enablecanime);
 #if !defined(_WIN32)
-					gGameConfig->enablecanime = false;
-					mainGame->gSettings.chkEnableActivateAnime->setChecked(false);
+					gGameConfig->enableanime = false;
 #endif
                     if(gGameConfig->enablecanime) {
-                        gGameConfig->enableanime = true;
-                        mainGame->tabSettings.chkEnableAnime->setChecked(true);
-					    mainGame->gSettings.chkEnableAnime->setChecked(true);
+                        bool filechk = false;
+						for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./movies/")), { EPRO_TEXT("mp4") })) {
+							if(Utils::FileExists(EPRO_TEXT("./movies/") + file)) {
+								filechk = true;
+								break;
+							}
+						}
+						if(!filechk) {
+							gGameConfig->enableanime = false;
+							ygo::GUIUtils::ShowErrorWindow("Missing file", "No movie files");
+						}
+                        if(gGameConfig->enablecanime) {
+                            gGameConfig->enableanime = true;
+                            mainGame->tabSettings.chkEnableAnime->setChecked(true);
+                            mainGame->gSettings.chkEnableAnime->setChecked(true);
+                        }
                     }
-				} else {
-					gGameConfig->enablecanime = false;
+				} else
+					gGameConfig->enableanime = false;
+                if(!gGameConfig->enableanime) {
+                    mainGame->tabSettings.chkEnableAnime->setChecked(false);
+					mainGame->gSettings.chkEnableAnime->setChecked(false);
+                    gGameConfig->enablesanime = false;
+					mainGame->gSettings.chkEnableSummonAnime->setChecked(false);
+                    gGameConfig->enablecanime = false;
 					mainGame->gSettings.chkEnableActivateAnime->setChecked(false);
-				}
+                    gGameConfig->enableaanime = false;
+					mainGame->gSettings.chkEnableAttackAnime->setChecked(false);
+                }
 				return true;
 				}
 			case CHECKBOX_ENABLE_AANIME: {
@@ -2294,18 +2373,38 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 					gGameConfig->enableaanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
 					mainGame->gSettings.chkEnableAttackAnime->setChecked(gGameConfig->enableaanime);
 #if !defined(_WIN32)
-					gGameConfig->enableaanime = false;
-					mainGame->gSettings.chkEnableAttackAnime->setChecked(false);
+					gGameConfig->enableanime = false;
 #endif
                     if(gGameConfig->enableaanime) {
-                        gGameConfig->enableanime = true;
-                        mainGame->tabSettings.chkEnableAnime->setChecked(true);
-					    mainGame->gSettings.chkEnableAnime->setChecked(true);
+                        bool filechk = false;
+						for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./movies/")), { EPRO_TEXT("mp4") })) {
+							if(Utils::FileExists(EPRO_TEXT("./movies/") + file)) {
+								filechk = true;
+								break;
+							}
+						}
+						if(!filechk) {
+							gGameConfig->enableanime = false;
+							ygo::GUIUtils::ShowErrorWindow("Missing file", "No movie files");
+						}
+                        if(gGameConfig->enableaanime) {
+                            gGameConfig->enableanime = true;
+                            mainGame->tabSettings.chkEnableAnime->setChecked(true);
+                            mainGame->gSettings.chkEnableAnime->setChecked(true);
+                        }
                     }
-				} else {
-					gGameConfig->enableaanime = false;
+				} else
+					gGameConfig->enableanime = false;
+                if(!gGameConfig->enableanime) {
+                    mainGame->tabSettings.chkEnableAnime->setChecked(false);
+					mainGame->gSettings.chkEnableAnime->setChecked(false);
+                    gGameConfig->enablesanime = false;
+					mainGame->gSettings.chkEnableSummonAnime->setChecked(false);
+                    gGameConfig->enablecanime = false;
+					mainGame->gSettings.chkEnableActivateAnime->setChecked(false);
+                    gGameConfig->enableaanime = false;
 					mainGame->gSettings.chkEnableAttackAnime->setChecked(false);
-				}
+                }
 				return true;
 				}
 			/////kdiy/////////
