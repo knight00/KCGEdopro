@@ -2566,7 +2566,7 @@ void Game::PopulateSettingsWindow() {
 			defaultStrings.emplace_back(gSettings.stCurrentLocale, 2067);
 			PopulateLocales();
 			gSettings.cbCurrentLocale = AddComboBox(env, GetCurrentRectWithXOffset(95, 320), sPanel, COMBOBOX_CURRENT_LOCALE);
-			auto selectedLocale = gSettings.cbCurrentLocale->addItem(L"English");
+			auto selectedLocale = gSettings.cbCurrentLocale->addItem(L"Chs");
 			for(const auto& _locale : locales) {
 				auto& locale = _locale.first;
 				auto itemIndex = gSettings.cbCurrentLocale->addItem(Utils::ToUnicodeIfNeeded(locale).data());
@@ -2602,6 +2602,15 @@ void Game::PopulateSettingsWindow() {
 		gSettings.chkIgnoreDeckContents = env->addCheckBox(gGameConfig->ignoreDeckContents, GetNextRect(), sPanel, CHECKBOX_IGNORE_DECK_CONTENTS, gDataManager->GetSysString(12119).data());
 		menuHandler.MakeElementSynchronized(gSettings.chkIgnoreDeckContents);
 		defaultStrings.emplace_back(gSettings.chkIgnoreDeckContents, 12119);
+        ////kdiy////////
+        {
+			gSettings.btnSaveSetting = env->addButton(GetCurrentRectWithXOffset(15, 160), sPanel, BUTTON_SAVE_SETTING, gDataManager->GetSysString(8024).data());
+			defaultStrings.emplace_back(gSettings.btnSaveSetting, 8024);
+			gSettings.btnRestoreSetting = env->addButton(GetCurrentRectWithXOffset(175, 320), sPanel, BUTTON_RESTORE_SETTING, gDataManager->GetSysString(8027).data());
+			defaultStrings.emplace_back(gSettings.btnRestoreSetting, 8027);
+			IncrementXorY();
+		}
+        ////kdiy////////
 	}
 
 	{

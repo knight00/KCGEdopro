@@ -31,7 +31,7 @@ Materials::Materials() {
 	SetS3DVertex(vCardBack, 0.35f, -0.5f, -0.35f, 0.5f, 0, -1, 0, 0, 1, 1);
 	///////kdiy//////
 	SetS3DVertex(vPScale, -0.35f, -0.5, 0.35, 0.5f, 0, 1, 0, 0, 1, 1);
-    SetS3DVertex(vCloseup, 2.3f, 0.0f, 6.7f, 4.0f, 0.01f, 1, 0, 0, 1, 1);
+    SetS3DVertex(vCloseup, 2.3f, -4.0f, 6.7f, 4.0f, 0.01f, 1, 0, 0, 1, 1);
 	///////kdiy//////
 	SetS3DVertex(vSymbol, -0.35f, -0.35f, 0.35f, 0.35f, 0.01f, 1, 0, 0, 1, 1);
 	SetS3DVertex(vNegate, -0.25f, -0.28f, 0.25f, 0.22f, 0.01f, 1, 0, 0, 1, 1);

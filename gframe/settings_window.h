@@ -72,9 +72,6 @@ struct SettingsWindow {
 	irr::gui::IGUICheckBox* chkFilterBot;
 	irr::gui::IGUICheckBox* chkHideHandsInReplays;
 	irr::gui::IGUICheckBox* chkConfirmDeckClear;
-	/////zdiy/////
-	irr::gui::IGUICheckBox* chkHideNameTag;
-	/////zdiy/////
 	irr::gui::IGUICheckBox* chkIgnoreDeckContents;
 
 	SettingsTab duel;
@@ -109,7 +106,12 @@ struct SettingsWindow {
 	irr::gui::IGUICheckBox* chkEnableSummonAnime;
 	irr::gui::IGUICheckBox* chkEnableActivateAnime;
 	irr::gui::IGUICheckBox* chkEnableAttackAnime;
-	///////kdiy////////	
+    irr::gui::IGUIButton* btnSaveSetting;
+    irr::gui::IGUIButton* btnRestoreSetting;
+	///////kdiy////////
+	/////zdiy/////
+	irr::gui::IGUICheckBox* chkHideNameTag;
+	/////zdiy/////
 	irr::gui::IGUIStaticText* stMusicVolume;
 	irr::gui::IGUIScrollBar* scrMusicVolume;
 	irr::gui::IGUICheckBox* chkLoopMusic;
