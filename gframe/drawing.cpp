@@ -1047,6 +1047,14 @@ void Game::DrawSpec() {
 			matManager.c2d[3] = ((int)std::round(showcarddif) << 25) | 0xffffff;
 			auto rect = ResizeWin(662 - showcarddif * (CARD_IMG_WIDTH_F / CARD_IMG_HEIGHT_F), 277 - showcarddif, 662 + showcarddif * (CARD_IMG_WIDTH_F / CARD_IMG_HEIGHT_F), 277 + showcarddif);
 			driver->draw2DImage(cardtxt, rect, cardrect, 0, matManager.c2d, true);
+            //////ktest//////////
+			auto cardcloseup = imageManager.GetTextureCloseup(showcardcode);
+            auto cardcloseup2 = imageManager.GetTextureCloseup(showcardalias);
+            if(cardcloseup)
+                DrawTextureRect(matManager.vCloseup, cardcloseup);
+            else if(cardcloseup2)
+                DrawTextureRect(matManager.vCloseup, cardcloseup2);
+            //////ktest//////////
 			if(showcarddif < 127.0f) {
 				showcarddif += (540.0f / 1000.0f) * (float)delta_time;
 				if(showcarddif > 127.0f)

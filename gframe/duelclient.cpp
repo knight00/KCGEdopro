@@ -3691,9 +3691,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			}
 			//event_string = epro::sprintf(gDataManager->GetSysString(1603), gDataManager->GetName(code));
 			event_string = epro::sprintf(gDataManager->GetSysString(1603), str);
-            auto cd = gDataManager->GetCardData(code);
-            uint32_t code2 = cd->alias;
-            mainGame->showcardalias = code2;
+            mainGame->showcardalias = pcard->alias;
 			////kdiy///////////
 			mainGame->showcardcode = code;
 			mainGame->showcarddif = 0;
@@ -3767,9 +3765,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			}
 			//event_string = epro::sprintf(gDataManager->GetSysString(1605), gDataManager->GetName(code));
 			event_string = epro::sprintf(gDataManager->GetSysString(1605), str);
-            auto cd = gDataManager->GetCardData(code);
-            uint32_t code2 = cd->alias;
-            mainGame->showcardalias = code2;
+            mainGame->showcardalias = pcard->alias;
 			////kdiy///////////
 			mainGame->showcardcode = code;
 			mainGame->showcarddif = 1;
@@ -3850,9 +3846,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			}
 			//event_string = epro::sprintf(gDataManager->GetSysString(1607), gDataManager->GetName(code));
 			event_string = epro::sprintf(gDataManager->GetSysString(1607), str);
-            auto cd = gDataManager->GetCardData(code);
-            uint32_t code2 = cd->alias;
-            mainGame->showcardalias = code2;
+            mainGame->showcardalias = pcard->alias;
 			////kdiy///////////
 			mainGame->dField.MoveCard(pcard, 10);
 			mainGame->WaitFrameSignal(11, lock);
