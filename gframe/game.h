@@ -362,6 +362,7 @@ public:
 	uint32_t showcardcode;
     ////kdiy//////
     uint32_t showcardalias;
+    bool chklast = true;
     ////kdiy//////
 	float showcarddif;
 	float showcardp;

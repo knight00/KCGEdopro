@@ -3726,6 +3726,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		if(code == 0) {
 		    const auto code = BufferIO::Read<uint32_t>(pbuf);
 			chklast = false;
+            mainGame->chklast = false;
 		}
 		/////kdiy//////
 		/*CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);*/
