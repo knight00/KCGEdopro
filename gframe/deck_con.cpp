@@ -120,8 +120,8 @@ void DeckBuilder::Initialize(bool refresh) {
 	is_lastcard = 0;
 	is_draging = false;
 	/////////kdiy//////
-	prev_deckfolder = mainGame->cbDBDecks2->getSelected();	
-	/////////kdiy//////	
+	prev_deckfolder = mainGame->cbDBDecks2->getSelected();
+	/////////kdiy//////
 	prev_deck = mainGame->cbDBDecks->getSelected();
 	prev_operation = 0;
 	mainGame->SetMessageWindow();
@@ -166,8 +166,8 @@ void DeckBuilder::Terminate(bool showmenu) {
 	/////////kdiy/////
 	int sel2 = mainGame->cbDBDecks2->getSelected();
 	if(sel2 >= 0)
-	    gGameConfig->lastdeckfolder = mainGame->cbDBDecks2->getItem(sel2);	
-	/////////kdiy/////	
+	    gGameConfig->lastdeckfolder = mainGame->cbDBDecks2->getItem(sel2);
+	/////////kdiy/////
 	gGameConfig->lastlflist = gdeckManager->_lfList[mainGame->cbDBLFList->getSelected()].hash;
 }
 bool DeckBuilder::SetCurrentDeckFromFile(epro::path_stringview file, bool separated) {
