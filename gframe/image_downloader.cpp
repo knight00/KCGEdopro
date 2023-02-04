@@ -142,13 +142,13 @@ void ImageDownloader::DownloadPic() {
 				name.append(EPRO_TEXT("_c"));
 				break;
 			}
-			//ktest//////
+			//kdiy//////
 			case imgType::CLOSEUP: {
 				dest = EPRO_TEXT("./pics/closeup/{}"_sv);
 				name.append(EPRO_TEXT("_u"));
 				break;
 			}
-			//ktest//////
+			//kdiy//////
 		}
 		auto dest_folder = epro::format(dest, code);
 		CURLcode res{ static_cast<CURLcode>(1) };

@@ -1091,7 +1091,10 @@ void Game::Initialize() {
 	wBtnSettings->getCloseButton()->setVisible(false);
 	wBtnSettings->setDraggable(false);
 	wBtnSettings->setDrawTitlebar(false);
-    wBtnSettings->setDrawBackground(false);
+    //////kdiy//////
+    //wBtnSettings->setDrawBackground(false);
+    wBtnSettings->setDrawBackground(true);
+    //////kdiy//////
 	auto dimBtnSettings = Scale(0, 0, 50, 50);
 	btnSettings = irr::gui::CGUIImageButton::addImageButton(env, dimBtnSettings, wBtnSettings, BUTTON_SHOW_SETTINGS);
 	btnSettings->setDrawBorder(false);
@@ -3052,14 +3055,7 @@ bool Game::MainLoop() {
 				} else {
 					if(Utils::ToUTF8IfNeeded(gGameConfig->locale) == repo->language) {
 						for(auto& file : files)
-						////kdiy//////////////
-							//refresh_db = gDataManager->LoadLocaleDB(data_path + file) || refresh_db;
-						{
-							if(!(data_path == EPRO_TEXT("./config/languages/") && (Utils::ToPathString(repo->language) == EPRO_TEXT("Chs") || Utils::ToPathString(repo->language) == EPRO_TEXT("Cht") || Utils::ToPathString(repo->language) == EPRO_TEXT("English")) && (file == EPRO_TEXT("ACS.cdb") || file == EPRO_TEXT("ADIY.cdb") || file == EPRO_TEXT("anime.cdb") || file == EPRO_TEXT("cards-skills.cdb") || file == EPRO_TEXT("KCG.cdb")|| file == EPRO_TEXT("neet.cdb")|| file == EPRO_TEXT("ocgtcg.cdb")|| file == EPRO_TEXT("prerelease.cdb")|| file == EPRO_TEXT("rush.cdb"))))
-								continue;
-							refresh_db = gDataManager->LoadLocaleDB(data_path + file) || refresh_db;
-						}
-						////kdiy//////////////
+						    refresh_db = gDataManager->LoadLocaleDB(data_path + file) || refresh_db;
 						gDataManager->LoadLocaleStrings(data_path + EPRO_TEXT("strings.conf"));
 					}
 					auto langpath = Utils::ToPathString(repo->language);
@@ -3547,8 +3543,6 @@ void Game::RefreshDeck() {
     gBot.aiDeckSelect->clear();
 	cbDeck2Select->clear();
     cbDeckSelect->clear();
-	cbDBDecks->clear();
-	cbDBDecks2->clear();
     int dcount = -1;
     int count = 0;
     for(auto& file : Utils::FindFiles(EPRO_TEXT("./deck/"), { EPRO_TEXT("ydk") })) {
@@ -3557,21 +3551,16 @@ void Game::RefreshDeck() {
             dcount++;
             gBot.aiDeckSelect2->addItem(L"");
             cbDeck2Select->addItem(L"");
-			cbDBDecks2->addItem(L"");
             if(gGameConfig->lastAIdeckfolder == gBot.aiDeckSelect2->getItem(dcount))
                 gBot.aiDeckSelect2->setSelected(dcount);
-            if(gGameConfig->lastdeckfolder == cbDeck2Select->getItem(dcount)) {
+            if(gGameConfig->lastdeckfolder == cbDeck2Select->getItem(dcount))
                 cbDeck2Select->setSelected(dcount);
-				cbDBDecks2->setSelected(dcount);
-			}
         }
         file.erase(file.size() - 4);
         if(gGameConfig->lastAIdeckfolder == gBot.aiDeckSelect2->getItem(dcount))
             gBot.aiDeckSelect->addItem(Utils::ToUnicodeIfNeeded(file).data());
 		if(gGameConfig->lastdeckfolder == cbDeck2Select->getItem(dcount))
             cbDeckSelect->addItem(Utils::ToUnicodeIfNeeded(file).data());
-		if(gGameConfig->lastdeckfolder == cbDBDecks2->getItem(dcount))
-            cbDBDecks->addItem(Utils::ToUnicodeIfNeeded(file).data());
 	}
 	auto deckdirs = Utils::FindSubfolders(EPRO_TEXT("./deck/"), 1, false);
 	for(auto& _folder : deckdirs) {
@@ -3582,21 +3571,16 @@ void Game::RefreshDeck() {
                 dcount++;
                 gBot.aiDeckSelect2->addItem(Utils::ToUnicodeIfNeeded(_folder).data());
                 cbDeck2Select->addItem(Utils::ToUnicodeIfNeeded(_folder).data());
-				cbDBDecks2->addItem(Utils::ToUnicodeIfNeeded(_folder).data());
                 if(gGameConfig->lastAIdeckfolder == gBot.aiDeckSelect2->getItem(dcount))
                     gBot.aiDeckSelect2->setSelected(dcount);
                 if(gGameConfig->lastdeckfolder == cbDeck2Select->getItem(dcount))
                     cbDeck2Select->setSelected(dcount);
-				if(gGameConfig->lastdeckfolder == cbDBDecks2->getItem(dcount))
-                    cbDBDecks2->setSelected(dcount);
             }
             file.erase(file.size() - 4);
             if(gGameConfig->lastAIdeckfolder == gBot.aiDeckSelect2->getItem(dcount))
                 gBot.aiDeckSelect->addItem(Utils::ToUnicodeIfNeeded(file).data());
             if(gGameConfig->lastdeckfolder == cbDeck2Select->getItem(dcount))
                 cbDeckSelect->addItem(Utils::ToUnicodeIfNeeded(file).data());
-			if(gGameConfig->lastdeckfolder == cbDBDecks2->getItem(dcount))
-                cbDBDecks->addItem(Utils::ToUnicodeIfNeeded(file).data());
 		}
 	}
     for(size_t i = 0; i < gBot.aiDeckSelect->getItemCount(); ++i) {
@@ -3608,12 +3592,6 @@ void Game::RefreshDeck() {
     for(size_t i = 0; i < cbDeckSelect->getItemCount(); ++i) {
         if(gGameConfig->lastdeck == cbDeckSelect->getItem(i)) {
             cbDeckSelect->setSelected(i);
-            break;
-        }
-	}
-	for(size_t i = 0; i < cbDBDecks->getItemCount(); ++i) {
-        if(gGameConfig->lastdeck == cbDBDecks->getItem(i)) {
-            cbDBDecks->setSelected(i);
             break;
         }
 	}
@@ -3642,6 +3620,8 @@ void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder) {
         cbDeck2 = cbDBDecks2;
 	if(refresh_folder) {
 		cbDeck2->clear();
+        if(cbDeck == cbDBDecks)
+            cbDBDecks22->clear();
         int dcount = -1;
         int count = 0;
 		for(auto& file : Utils::FindFiles(EPRO_TEXT("./deck/"), { EPRO_TEXT("ydk") })) {
@@ -3649,6 +3629,8 @@ void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder) {
             if(count == 1) {
                 dcount++;
                 cbDeck2->addItem(L"");
+                if(cbDeck == cbDBDecks)
+                    cbDBDecks22->addItem(L"");
                 if(cbDeck != gBot.aiDeckSelect
                   && gGameConfig->lastdeckfolder == cbDeck2->getItem(dcount))
                     cbDeck2->setSelected(dcount);
@@ -3672,6 +3654,8 @@ void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder) {
                 if(count == 1) {
                     dcount++;
                     cbDeck2->addItem(Utils::ToUnicodeIfNeeded(_folder).data());
+                    if(cbDeck == cbDBDecks)
+                        cbDBDecks22->addItem(Utils::ToUnicodeIfNeeded(_folder).data());
                     if(cbDeck != gBot.aiDeckSelect
                       && gGameConfig->lastdeckfolder == cbDeck2->getItem(dcount))
                         cbDeck2->setSelected(dcount);
@@ -5391,11 +5375,11 @@ void Game::PopulateResourcesDirectories() {
 	field_dirs.push_back(EPRO_TEXT("./expansions/pics/field/"));
 	field_dirs.push_back(EPRO_TEXT("archives"));
 	field_dirs.push_back(EPRO_TEXT("./pics/field/"));
-	//ktest//////
+	//kdiy//////
 	closeup_dirs.push_back(EPRO_TEXT("./expansions/pics/closeup/"));
 	closeup_dirs.push_back(EPRO_TEXT("archives"));
 	closeup_dirs.push_back(EPRO_TEXT("./pics/closeup/"));
-	//ktest//////
+	//kdiy//////
 }
 
 void Game::PopulateLocales() {
@@ -5410,9 +5394,9 @@ void Game::PopulateLocales() {
 
 void Game::ApplyLocale(size_t index, bool forced) {
 	//////kdiy//////////
-	#ifndef EK
+#ifndef EK
 	return;
-	#endif
+#endif
 	//////kdiy//////////
 	static size_t previndex = 0;
 	if(index > locales.size())
@@ -5427,10 +5411,6 @@ void Game::ApplyLocale(size_t index, bool forced) {
 			gGameConfig->locale = locales[index - 1].first;
 			auto locale = epro::format(EPRO_TEXT("./config/languages/{}"), gGameConfig->locale);
 			for(auto& file : Utils::FindFiles(locale, { EPRO_TEXT("cdb") })) {
-				////kdiy//////////////
-				if(!((gGameConfig->locale == EPRO_TEXT("Chs") || gGameConfig->locale == EPRO_TEXT("Cht") || gGameConfig->locale == EPRO_TEXT("English")) && (file == EPRO_TEXT("ACS.cdb") || file == EPRO_TEXT("ADIY.cdb") || file == EPRO_TEXT("anime.cdb") || file == EPRO_TEXT("cards-skills.cdb") || file == EPRO_TEXT("KCG.cdb")|| file == EPRO_TEXT("neet.cdb")|| file == EPRO_TEXT("ocgtcg.cdb")|| file == EPRO_TEXT("prerelease.cdb")|| file == EPRO_TEXT("rush.cdb"))))
-					continue;
-				////kdiy//////////////
 				gDataManager->LoadLocaleDB(epro::format(EPRO_TEXT("{}/{}"), locale, file));
 			}
 			gDataManager->LoadLocaleStrings(epro::format(EPRO_TEXT("{}/strings.conf"), locale));
@@ -5438,14 +5418,7 @@ void Game::ApplyLocale(size_t index, bool forced) {
 			bool refresh_db = false;
 			for(auto& path : extra) {
 				for(auto& file : Utils::FindFiles(path, { EPRO_TEXT("cdb") }, 0))
-				    ////kdiy//////////////
-					//refresh_db = gDataManager->LoadLocaleDB(path + file) || refresh_db;
-					{
-						if(!(file == EPRO_TEXT("ACS.cdb") || file == EPRO_TEXT("ADIY.cdb") || file == EPRO_TEXT("anime.cdb") || file == EPRO_TEXT("cards-skills.cdb") || file == EPRO_TEXT("KCG.cdb")|| file == EPRO_TEXT("neet.cdb")|| file == EPRO_TEXT("ocgtcg.cdb")|| file == EPRO_TEXT("prerelease.cdb")|| file == EPRO_TEXT("rush.cdb")))
-						    continue;
-						refresh_db = gDataManager->LoadLocaleDB(path + file) || refresh_db;
-					}
-					////kdiy//////////////
+				    refresh_db = gDataManager->LoadLocaleDB(path + file) || refresh_db;
 				gDataManager->LoadLocaleStrings(path + EPRO_TEXT("strings.conf"));
 			}
 			if(refresh_db && is_building && deckBuilder.results.size())

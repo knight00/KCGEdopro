@@ -156,8 +156,6 @@ std::map<std::string, int> RepoManager::GetRepoStatus() {
 void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 	////kdiy//////////
 	std::string tmp_repo3 = "./config/languages";
-    std::string tmp_repo_hdpics = "./hdpics/newrelease";
-    std::string tmp_repo_pics = "./pics/prerelease";
 	bool repo3chk = false;
 	////kdiy//////////
 	auto cit = configs.find("repos");
@@ -216,11 +214,6 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 				JSON_SET_IF_VALID(script_path, string, std::string);
 				JSON_SET_IF_VALID(pics_path, string, std::string);
 				JSON_SET_IF_VALID(is_language, boolean, bool);	
-                
-                if(tmp_repo.repo_path == tmp_repo_hdpics && gGameConfig->hdpic != 1)
-                    continue;
-                if(tmp_repo.repo_path == tmp_repo_pics && gGameConfig->hdpic != 0)
-                    continue;
 
  				if(tmp_repo.is_language)
  					JSON_SET_IF_VALID(language, string, std::string);

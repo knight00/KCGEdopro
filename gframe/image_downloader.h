@@ -17,9 +17,9 @@ enum imgType {
 	ART,
 	FIELD,
 	COVER,
-    ///ktest///////////
+    ///kdiy///////////
 	CLOSEUP,
-	////ktest///////////
+	////kdiy///////////
 	THUMB
 };
 #endif
@@ -56,10 +56,10 @@ private:
 	};
 	using downloading_map = std::map<uint32_t/*code*/, downloadReturn>; /*if the value is not found, the download hasn't started yet*/
 	void DownloadPic();
-    //////ktest/////////
+    //////kdiy/////////
 	//downloading_map downloading_images[3];
     downloading_map downloading_images[4];
-    //////ktest/////////
+    //////kdiy/////////
 	std::deque<downloadParam> to_download;
 	std::pair<std::atomic<int>, std::atomic<int>> sizes[3];
 	epro::mutex pic_download;

@@ -90,7 +90,7 @@ void DataHandler::LoadPicUrls() {
 							continue;
 #endif
 						}
-						//ktest//////
+						//kdiy//////
 						else if(type == "closeup") {
 #ifdef DEFAULT_CLOSEUP_URL
 							imageDownloader->AddDownloadResource({ DEFAULT_CLOSEUP_URL, imgType::CLOSEUP });
@@ -98,15 +98,15 @@ void DataHandler::LoadPicUrls() {
 							continue;
 #endif
 						}
-						//ktest//////
+						//kdiy//////
 					} else {
 						imageDownloader->AddDownloadResource({ url, type == "field" ?
 																imgType::FIELD : (type == "pic") ?
-																//ktest//////
+																//kdiy//////
 																//imgType::ART : imgType::COVER });
 																imgType::ART : (type == "closeup") ?
 																imgType::CLOSEUP :  imgType::COVER});
-																//ktest//////
+																//kdiy//////
 					}
 				}
 				catch(const std::exception& e) {

@@ -33,9 +33,9 @@ enum imgType {
 	ART,
 	FIELD,
 	COVER,
-	///ktest///////////
+	///kdiy///////////
 	CLOSEUP,
-	////ktest///////////
+	////kdiy///////////
 	THUMB
 };
 #endif
@@ -90,8 +90,8 @@ public:
 	std::vector<epro::path_string> ImageList[39+27];
 	int saved_image_id[39+27];
 	//random image
-	irr::video::ITexture* GetRandomImage(int image_type);
-	irr::video::ITexture* GetRandomImage(int image_type, int width, int height);
+	void GetRandomImage(irr::video::ITexture*& src, int image_type);
+	void GetRandomImage(irr::video::ITexture*& src, int image_type, int width, int height);
 	void RefreshRandomImageList();
 	void RefreshImageDir(epro::path_string path, int image_type);
     void RefreshKCGImage();
@@ -108,9 +108,9 @@ public:
 	irr::video::ITexture* GetTextureFromFile(const irr::io::path& file, int width, int height);
 	irr::video::ITexture* GetTextureCard(uint32_t code, imgType type, bool wait = false, bool fit = false, int* chk = nullptr);
 	irr::video::ITexture* GetTextureField(uint32_t code);
-	////////ktest////
+	////////kdiy////
 	irr::video::ITexture* GetTextureCloseup(uint32_t code);
-	////////ktest////
+	////////kdiy////
 	irr::video::ITexture* GetCheckboxScaledTexture(float scale);
 	irr::video::ITexture* guiScalingResizeCached(irr::video::ITexture* src, const irr::core::rect<irr::s32>& srcrect,
 												 const irr::core::rect<irr::s32> &destrect);
@@ -123,9 +123,9 @@ private:
 	texture_map tThumb;
 	std::unordered_map<uint32_t, irr::video::ITexture*> tFields;
 	texture_map tCovers;
-	/////////ktest////
+	/////////kdiy////
 	std::unordered_map<uint32_t, irr::video::ITexture*> tCloseup;
-	/////////ktest////
+	/////////kdiy////
 	irr::IrrlichtDevice* device;
 	irr::video::IVideoDriver* driver;
 public:

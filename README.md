@@ -36,13 +36,14 @@ CTRL + SHIFT + C：複製純文本卡片組列表以進行共享
 CTRL + V：從剪貼板導入“ ydke：//” URL卡片組列表
 
 ##卡組編輯器搜索功能 
-*string： 返回名稱或卡文本中帶有“ string”的所有卡。 
-例如：Hero *@ string 返回屬於“字符串”原型的所有卡片。
-例如：@ Hero *$ string 返回僅名稱中帶有“string”的所有卡片，而忽略卡片文本。 
-例如：$ Heroic *string1 || string2 返回名稱/文本中帶有“ string1”或“ string2”的所有卡。 
-示例：Trickstar || Bounzer *!! string： 否定查詢（不） *string1 * string2 替換任意數量的任何字符。
-例如：Eyes * Dragon將返回卡片Blue-Eyes White Dragon，Red-Eyes B. Dragon，Galaxy-Eyes Photon Dragon等。
-示例：@ blue-eyes || $ blues of blue返回所有屬於'Blue-Eyes'原型或名稱中包含'Eyes of Blue'的卡片。
+string： 返回名稱或卡文本中帶有“string”的卡。 
+`@string`： 返回屬於“string”字段的卡。
+`$string`： 返回僅名稱中帶有“string”的卡，而忽略卡片文本。 
+`string1||string2`： 返回名稱/文本中帶有“ string1”或“ string2”的卡。 
+`!!string`： 否定查詢（不） *string1 * string2 替換任意數量的任何字符。
+`string1*string2`：
+例如：Eyes * Dragon：將返回卡片Blue-Eyes White Dragon，Red-Eyes B. Dragon，Galaxy-Eyes Photon Dragon等。
+示例：@blue-eyes||$eyes of blue：返回屬於'Blue-Eyes'字段或名稱中包含'Eyes of Blue'的卡。
 
 ATK，DEF，Level / Rank和Scale文本框支持搜索“？”。您還可以在搜索前添加比較修飾符<，<=，> =，>和=。
 

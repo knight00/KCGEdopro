@@ -2056,8 +2056,8 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
                 mainGame->PopupElement(mainGame->wACMessage, 60);
                 Utils::DeleteDirectory(EPRO_TEXT("./config/languages/"));
                 Utils::DeleteDirectory(EPRO_TEXT("./cdb/"));
-                Utils::DeleteDirectory(EPRO_TEXT("./lua/"));
                 Utils::DeleteDirectory(EPRO_TEXT("./repositories/kcg/"));
+                Utils::DeleteDirectory(EPRO_TEXT("./repositories/lua/"));
                 Utils::DeleteDirectory(EPRO_TEXT("./puzzles/"));
                 Utils::DeleteDirectory(EPRO_TEXT("./lflists/"));
 				break;

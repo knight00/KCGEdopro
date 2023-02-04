@@ -976,13 +976,13 @@ void Game::DrawGUI() {
 }
 void Game::DrawSpec() {
 	const auto drawrect2 = ResizeWin(574, 150, 574 + CARD_IMG_WIDTH, 150 + CARD_IMG_HEIGHT);
-     //////ktest//////////
+     //////kdiy//////////
 	auto DrawTextureRect = [this](Materials::QuadVertex vertices, irr::video::ITexture* texture) {
 		matManager.mTexture.setTexture(0, texture);
 		driver->setMaterial(matManager.mTexture);
 		driver->drawVertexPrimitiveList(vertices, 4, matManager.iRectangle, 2);
 	};
-    //////ktest//////////
+    //////kdiy//////////
 	if(showcard) {
 		switch(showcard) {
 		case 1: {
@@ -991,14 +991,14 @@ void Game::DrawSpec() {
 			driver->draw2DImage(cardtxt, drawrect2, cardrect);
 			driver->draw2DImage(imageManager.tMask, ResizeWin(574, 150, 574 + (showcarddif > CARD_IMG_WIDTH ? CARD_IMG_WIDTH : showcarddif), 404),
 								Scale<irr::s32>(CARD_IMG_HEIGHT - showcarddif, 0, CARD_IMG_HEIGHT - (showcarddif > CARD_IMG_WIDTH ? showcarddif - CARD_IMG_WIDTH : 0), CARD_IMG_HEIGHT), 0, 0, true);
-            //////ktest//////////
+            //////kdiy//////////
 			auto cardcloseup = imageManager.GetTextureCloseup(showcardcode);
             auto cardcloseup2 = imageManager.GetTextureCloseup(showcardalias);
             if(cardcloseup)
                 DrawTextureRect(matManager.vCloseup, cardcloseup);
             else if(cardcloseup2)
                 DrawTextureRect(matManager.vCloseup, cardcloseup2);
-            //////ktest//////////
+            //////kdiy//////////
 			showcarddif += (900.0f / 1000.0f) * (float)delta_time;
 			if(std::round(showcarddif) >= CARD_IMG_HEIGHT) {
 				showcard = 2;
@@ -1047,7 +1047,7 @@ void Game::DrawSpec() {
 			matManager.c2d[3] = ((int)std::round(showcarddif) << 25) | 0xffffff;
 			auto rect = ResizeWin(662 - showcarddif * (CARD_IMG_WIDTH_F / CARD_IMG_HEIGHT_F), 277 - showcarddif, 662 + showcarddif * (CARD_IMG_WIDTH_F / CARD_IMG_HEIGHT_F), 277 + showcarddif);
 			driver->draw2DImage(cardtxt, rect, cardrect, 0, matManager.c2d, true);
-            //////ktest//////////
+            //////kdiy//////////
             if(chklast) {
                 auto cardcloseup = imageManager.GetTextureCloseup(showcardcode);
                 auto cardcloseup2 = imageManager.GetTextureCloseup(showcardalias);
@@ -1056,7 +1056,7 @@ void Game::DrawSpec() {
                 else if(cardcloseup2)
                     DrawTextureRect(matManager.vCloseup, cardcloseup2);
             }
-            //////ktest//////////
+            //////kdiy//////////
 			if(showcarddif < 127.0f) {
 				showcarddif += (540.0f / 1000.0f) * (float)delta_time;
 				if(showcarddif > 127.0f)
@@ -1086,14 +1086,14 @@ void Game::DrawSpec() {
 			corner[2] = irr::core::vector2di{ b.UpperLeftCorner.X, b.LowerRightCorner.Y };
 			corner[3] = b.LowerRightCorner;
 			irr::gui::Draw2DImageQuad(driver, cardtxt, cardrect, corner);
-            //////ktest//////////
+            //////kdiy//////////
 			auto cardcloseup = imageManager.GetTextureCloseup(showcardcode);
             auto cardcloseup2 = imageManager.GetTextureCloseup(showcardalias);
             if(cardcloseup)
                 DrawTextureRect(matManager.vCloseup, cardcloseup);
             else if(cardcloseup2)
                 DrawTextureRect(matManager.vCloseup, cardcloseup2);
-            //////ktest//////////
+            //////kdiy//////////
 			showcardp += (float)delta_time * 60.0f / 1000.0f;
 			showcarddif += (540.0f / 1000.0f) * (float)delta_time;
 			if(showcarddif >= 90)
