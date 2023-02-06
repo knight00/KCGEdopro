@@ -147,7 +147,6 @@ bool Mode::IsModeBot(std::set<int>& rule) {
 					bot.name = BufferIO::DecodeUTF8(obj.at("name").get_ref<std::string&>());
 					bot.deck = BufferIO::DecodeUTF8(obj.at("deck").get_ref<std::string&>());
 					bot.dialog = BufferIO::DecodeUTF8(obj.at("dialog").get_ref<std::string&>());
-					bot.deckfolder =  L"";
 					bot.deckpath = L"";
 					bot.deckfile = epro::format(L"AI_{}", bot.deck);
 					bot.difficulty = obj.at("difficulty").get<int>();
@@ -745,10 +744,7 @@ void Game::Initialize() {
 	driver = device->getVideoDriver();
 	imageManager.SetDevice(device);
 	imageManager.Initial();
-	/////kdiy///////
-	//RefreshAiDecks();
 	RefreshAiDecks();
-	/////kdiy///////
 	if(!discord.Initialize())
 		gGameConfig->discordIntegration = false;
 	if(gGameConfig->discordIntegration)
@@ -3725,10 +3721,7 @@ void Game::RefreshLFLists() {
 	deckBuilder.filterList = &gdeckManager->_lfList[cbDBLFList->getSelected()];
 	cbFilterBanlist->setSelected(prevFilter);
 }
-/////kdiy///////
-//void Game::RefreshAiDecks() {
-void Game::RefreshAiDecks(bool aichk) {
-/////kdiy///////	
+void Game::RefreshAiDecks() {
 	gBot.bots.clear();
 	FileStream windbots("./WindBot/bots.json", FileStream::in);
 	if (windbots.good()) {
@@ -3761,8 +3754,6 @@ void Game::RefreshAiDecks(bool aichk) {
 					bot.deck = BufferIO::DecodeUTF8(obj.at("deck").get_ref<std::string&>());
 					/////kdiy////////
 					bot.dialog = BufferIO::DecodeUTF8(obj.at("dialog").get_ref<std::string&>());
-					bot.deckfolder = aichk ? gBot.aiDeckSelect2->getItem(gBot.aiDeckSelect2->getSelected()) : L"";
-					bot.deckpath = aichk ? gBot.aiDeckSelect->getItem(gBot.aiDeckSelect->getSelected()) : L"";
 					/////kdiy////////
 					bot.deckfile = epro::format(L"AI_{}", bot.deck);
 					bot.difficulty = obj.at("difficulty").get<int>();

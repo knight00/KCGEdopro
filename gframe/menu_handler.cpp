@@ -825,7 +825,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					if (mainGame->gBot.aiDeckSelect->getSelected() != -1) {
 					   gGameConfig->lastAIdeckfolder = mainGame->gBot.aiDeckSelect2->getItem(mainGame->gBot.aiDeckSelect2->getSelected());
 					   gGameConfig->lastAIdeck = mainGame->gBot.aiDeckSelect->getItem(mainGame->gBot.aiDeckSelect->getSelected());
-					   mainGame->RefreshAiDecks(true);
 					}
 					////////kdiy/////
 					int port = std::stoi(gGameConfig->serverport);

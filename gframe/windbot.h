@@ -19,9 +19,8 @@ struct WindBot {
 	std::wstring deck;
 	/////kdiy//////
 	std::wstring dialog;
-	std::wstring deckfolder;
-	std::wstring deckpath;
-	/////kdiy//////	
+	std::wstring deckpath = L"";
+	/////kdiy//////
 	std::wstring deckfile;
 	int difficulty;
 	std::set<int> masterRules;

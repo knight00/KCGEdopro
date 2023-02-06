@@ -100,15 +100,25 @@ bool WindBotPanel::LaunchSelected(int port, epro::wstringview pass) {
 	if (index < 0 || engine < 0) return false;
 	const wchar_t* overridedeck = nullptr;
 	std::wstring tmpdeck{};
-	const auto maxsize = (int)(bots.size() - (genericEngine != nullptr));
-	if(engine != index || index >= maxsize) {
-		if(index >= maxsize) {
-			tmpdeck = epro::format(L"{}/{}.ydk", absolute_deck_path, cbBotDeck->getItem(cbBotDeck->getSelected()));
-			overridedeck = tmpdeck.data();
-		} else {
-			overridedeck = bots[index].deckfile.data();
-		}
+	/////kdiy//////
+	// const auto maxsize = (int)(bots.size() - (genericEngine != nullptr));
+	// if(engine != index || index >= maxsize) {
+	// 	if(index >= maxsize) {
+	// 		tmpdeck = epro::format(L"{}/{}.ydk", absolute_deck_path, cbBotDeck->getItem(cbBotDeck->getSelected()));
+	// 		overridedeck = tmpdeck.data();
+	// 	} else {
+	// 		overridedeck = bots[index].deckfile.data();
+	// 	}
+	// }
+	if(bots[index].deck == L"AI_perfectdicky") {
+		if(aiDeckSelect2->getSelected() == 0)
+			tmpdeck = epro::format(L"{}/{}.ydk", absolute_deck_path, aiDeckSelect->getItem(aiDeckSelect->getSelected()));
+		else
+		    tmpdeck = epro::format(L"{}/{}/{}.ydk", absolute_deck_path, aiDeckSelect2->getItem(aiDeckSelect2->getSelected()), aiDeckSelect->getItem(aiDeckSelect->getSelected()));
+		overridedeck = tmpdeck.data();
+		bots[index].deckpath = aiDeckSelect->getItem(aiDeckSelect->getSelected());
 	}
+	/////kdiy//////
 	// 1 = scissors, 2 = rock, 3 = paper
 	/////kdiy//////
 	//auto res = bots[engine].Launch(port, pass, !chkMute->isChecked(), chkThrowRock->isChecked() * 2, overridedeck);

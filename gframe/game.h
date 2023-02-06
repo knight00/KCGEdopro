@@ -197,12 +197,9 @@ public:
 	//void RefreshDeck(irr::gui::IGUIComboBox* cbDeck);
     void RefreshDeck();
 	void RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder=false);
-	////////kdiy////////	
+	////////kdiy////////
 	void RefreshLFLists();
-	////////kdiy////////
-	//void RefreshAiDecks();
-	void RefreshAiDecks(bool aichk = false);
-	////////kdiy////////
+	void RefreshAiDecks();
 	void RefreshReplay();
 	void RefreshSingleplay();
 	void DrawSelectionLine(const Materials::QuadVertex vec, bool strip, int width, irr::video::SColor color);

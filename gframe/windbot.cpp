@@ -50,8 +50,8 @@ WindBot::launch_ret_t WindBot::Launch(int port, epro::wstringview pass, bool cha
 		///kdiy//////////
 		//L"WindBot.exe HostInfo=\"{}\" Deck=\"{}\" Port={} Version={} name=\"[AI] {}\" Chat={} Hand={} DbPaths={}{} AssetPath=./WindBot",
 		//pass, deck, port, version, name, chat, hand, serialized_databases, overridedeck ? epro::format(L" DeckFile=\"{}\"", overridedeck) : L""));
-		L"WindBot.exe HostInfo=\"{}\" Deck=\"{}\" Port={} Version={} name=\"[AI] {}\" Dialog=\"{}\" Deckfolder=\"{}\" Deckpath=\"{}\" Chat={} Seed={} Hand={} DbPaths={}{}  AssetPath=./WindBot", 
-		pass, deck, port, version, deck == L"AI_perfectdicky" ? deckpath : name, dialog, deckfolder, deckpath, chat, seed, hand, serialized_databases, overridedeck ? epro::format(L" DeckFile=\"{}\"", overridedeck) : L""));
+		L"WindBot.exe HostInfo=\"{}\" Deck=\"{}\" Port={} Version={} name=\"[AI] {}\" Dialog=\"{}\" Chat={} Seed={} Hand={} DbPaths={}{}  AssetPath=./WindBot",
+		pass, deck, port, version, deck == L"AI_perfectdicky" ? deckpath : name, dialog, chat, seed, hand, serialized_databases, overridedeck ? epro::format(L" DeckFile=\"{}\"", overridedeck) : L""));
 		///kdiy//////////
 	STARTUPINFO si{ sizeof(si) };
 	si.dwFlags = STARTF_USESHOWWINDOW;
@@ -73,10 +73,6 @@ WindBot::launch_ret_t WindBot::Launch(int port, epro::wstringview pass, bool cha
 							{"Name", BufferIO::EncodeUTF8(deck == L"AI_perfectdicky" ? deckpath : name)},
 							///kdiy//////////
 							{"Dialog", BufferIO::EncodeUTF8(dialog)},
-							/////kdiy////////
-							{"Deckfolder", BufferIO::EncodeUTF8(deckfolder)},
-							{"Deckpath", BufferIO::EncodeUTF8(deckpath)},
-							/////kdiy////////
 							{"Chat", fmt::to_string(static_cast<int>(chat))},
 							/////kdiy////////
 							{"Seed", fmt::to_string(static_cast<int>(seed))},
@@ -96,8 +92,6 @@ WindBot::launch_ret_t WindBot::Launch(int port, epro::wstringview pass, bool cha
 	//std::string argName = epro::format("name=[AI] {}", BufferIO::EncodeUTF8(name));
 	std::string argName = epro::format("name=[AI] {}", BufferIO::EncodeUTF8(deck == L"AI_perfectdicky" ? deckpath : name));
 	std::string argDialog = epro::format("Dialog={}", BufferIO::EncodeUTF8(dialog));
-	std::string argDeckfolder = epro::format("Deckfolder={}", BufferIO::EncodeUTF8(deckfolder));
-	std::string argDeckpath = epro::format("Deckpath={}", BufferIO::EncodeUTF8(deckpath));
 	///////////kdiy//////////
 	std::string argChat = epro::format("Chat={}", chat);
 	///////////kdiy//////////
@@ -119,7 +113,7 @@ WindBot::launch_ret_t WindBot::Launch(int port, epro::wstringview pass, bool cha
 		execlp("mono", "WindBot.exe", "./WindBot/WindBot.exe",
 		       ///////kdiy//////////
 			   //argPass.data(), argDeck.data(), argPort.data(), argVersion.data(), argName.data(), argChat.data(),
-			   argPass.data(), argDeck.data(), argPort.data(), argVersion.data(), argName.data(), argDialog.data(), argDeckfolder.data(), argDeckpath.data(), argChat.data(), argSeed.data(),
+			   argPass.data(), argDeck.data(), argPort.data(), argVersion.data(), argName.data(), argDialog.data(), argChat.data(), argSeed.data(),
 			   ///////kdiy//////////
 			   argDbPaths.data(), "AssetPath=./WindBot", argHand.data(), overridedeck ? argDeckFile.data() : nullptr, nullptr);
 		_exit(EXIT_FAILURE);
