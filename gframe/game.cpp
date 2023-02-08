@@ -40,7 +40,7 @@
 #include "CGUIWindowedTabControl/CGUIWindowedTabControl.h"
 #include "file_stream.h"
 //kdiy///////
-#include <openssl/md5.h>
+#include "MD5/md5.h"
 //kdiy///////
 
 #if defined(__ANDROID__) || defined(EDOPRO_IOS)
