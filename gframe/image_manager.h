@@ -90,8 +90,8 @@ public:
 	std::vector<epro::path_string> ImageList[39+27];
 	int saved_image_id[39+27];
 	//random image
-	void GetRandomImage(irr::video::ITexture*& src, int image_type);
-	void GetRandomImage(irr::video::ITexture*& src, int image_type, int width, int height);
+	void GetRandomImage(irr::video::ITexture*& src, int image_type, bool force_random=false);
+	void GetRandomImage(irr::video::ITexture*& src, int image_type, int width, int height, bool force_random = false);
 	void RefreshRandomImageList();
 	void RefreshImageDir(epro::path_string path, int image_type);
     void RefreshKCGImage();

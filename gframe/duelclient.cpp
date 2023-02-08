@@ -1375,7 +1375,7 @@ inline bool PlayChant(SoundManager::CHANT sound, uint32_t code, uint32_t code2, 
 	if(sound == SoundManager::CHANT::ATTACK && !gGameConfig->enableasound) return false;
 	if(!mainGame->dInfo.isCatchingUp)
 		return gSoundManager->PlayChant(sound, code, code2, player, extra);
-/////kdiy///////		
+/////kdiy///////
 	return true;
 }
 inline std::unique_lock<epro::mutex> LockIf() {

@@ -1082,7 +1082,7 @@ void Game::Initialize() {
     
     //////kdiy//////
 	// wBtnSettings = env->addWindow(Scale(0, 610, 30, 640));
-    wBtnSettings = env->addWindow(Scale(mainMenuLeftX-50, 350, mainMenuLeftX, 450));
+    wBtnSettings = env->addWindow(Scale(mainMenuLeftX-50, 400, mainMenuLeftX, 450));
     //////kdiy//////
 	wBtnSettings->getCloseButton()->setVisible(false);
 	wBtnSettings->setDraggable(false);
@@ -2893,7 +2893,7 @@ void Game::PopulateSettingsWindow() {
 		ResetXandY();
 		auto* sPanel = gSettings.system.panel->getSubpanel();
         btHome = env->addButton(GetNextRect(), sPanel, BUTTON_HOME, gDataManager->GetSysString(8006).data());
-	    defaultStrings.emplace_back(btHome, 8006);	
+	    defaultStrings.emplace_back(btHome, 8006);
         btnIntro = env->addButton(GetNextRect(), sPanel, BUTTON_INTRO, gDataManager->GetSysString(8002).data());
         defaultStrings.emplace_back(btnIntro, 8002);
         btnTut = env->addButton(GetNextRect(), sPanel, BUTTON_TUT, gDataManager->GetSysString(8003).data());
@@ -2915,11 +2915,16 @@ void Game::PopulateSettingsWindow() {
 
 		ResetXandY();
 		auto* sPanel = gSettings.system.panel->getSubpanel();
+
         stpics = env->addStaticText(gDataManager->GetSysString(8018).data(), GetCurrentRectWithXOffset(15, 90), false, true, sPanel);
 		defaultStrings.emplace_back(stpics, 8018);
         cbpics = AddComboBox(env, GetCurrentRectWithXOffset(95, 320), sPanel, COMBOBOX_PICS);
         ReloadCBpic();
         cbpics->setSelected(gGameConfig->hdpic);
+        IncrementXorY();
+
+		gSettings.chkRandomtexture = env->addCheckBox(gGameConfig->randomtexture, GetCurrentRectWithXOffset(35, 320), sPanel, -1, gDataManager->GetSysString(8042).data());
+		defaultStrings.emplace_back(gSettings.chkRandomtexture, 8042);
         IncrementXorY();
     }
     /////kdiy////////////
@@ -3835,6 +3840,7 @@ void Game::SaveConfig() {
 	gGameConfig->lastlocalallowedcards = cbRule2->getSelected();
 	TrySaveInt(gGameConfig->localtimeLimit, ebTimeLimit2);
 	gGameConfig->duelrule = cbDuelRule2->getSelected();
+	gGameConfig->randomtexture = gSettings.chkRandomtexture->isChecked();
 	/////kdiy//////
 	auto lastServerIndex = serverChoice->getSelected();
 	if (lastServerIndex >= 0)
@@ -4991,7 +4997,7 @@ void Game::OnResize() {
 	/////zdiy/////
 	#endif
 	wQQ->setRelativePosition(ResizeWin(mainMenuRightX+10, 200, mainMenuRightX+150, 450));
-    wBtnSettings->setRelativePosition(ResizeWin(mainMenuLeftX-50, 350, mainMenuLeftX, 450));
+    wBtnSettings->setRelativePosition(ResizeWin(mainMenuLeftX-50, 400, mainMenuLeftX, 450));
 	////////kdiy///////
 	SetCentered(wCommitsLog);
 	SetCentered(updateWindow, false);

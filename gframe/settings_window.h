@@ -108,6 +108,7 @@ struct SettingsWindow {
 	irr::gui::IGUICheckBox* chkEnableAttackAnime;
     irr::gui::IGUIButton* btnSaveSetting;
     irr::gui::IGUIButton* btnRestoreSetting;
+	irr::gui::IGUICheckBox* chkRandomtexture;
 	///////kdiy////////
 	/////zdiy/////
 	irr::gui::IGUICheckBox* chkHideNameTag;
