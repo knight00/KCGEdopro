@@ -624,8 +624,6 @@ namespace ygo {
 				int percentage = 0;
 				auto reader = archive->createAndOpenFile(i);
 				if(reader) {
-					FileStream out{ epro::format(EPRO_TEXT("{}/{}"), dest, filename), FileStream::out | FileStream::binary };
-					int r, rx = reader->getSize();
 					if(payload) {
 						payload->is_new = true;
 						payload->cur = i;
@@ -634,8 +632,10 @@ namespace ygo {
 						callback(payload);
 						payload->is_new = false;
 					}
+					FileStream out{ epro::format(EPRO_TEXT("{}/{}"), dest, filename), FileStream::out | FileStream::binary };
+					size_t r, rx = reader->getSize();
 					for(r = 0; r < rx; /**/) {
-						int wx = reader->read(buff, buff_size);
+						int wx = static_cast<int>(reader->read(buff, buff_size));
 						out.write(buff, wx);
 						r += wx;
 						cur_fullsize += wx;

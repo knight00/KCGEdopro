@@ -10,22 +10,22 @@ namespace CoreUtils {
 class Packet {
 public:
 	Packet() {}
-	Packet(const uint8_t* buf, int len) {
+	Packet(const uint8_t* buf, size_t len) {
 		uint8_t msg = BufferIO::Read<uint8_t>(buf);
 		Set(msg, buf, len);
 	};
-	Packet(int msg, const uint8_t* buf, int len) {
+	Packet(int msg, const uint8_t* buf, size_t len) {
 		Set(msg, buf, len);
 	};
-	void Set(int msg, const uint8_t* buf, int len) {
-		message = msg;
+	void Set(int msg, const uint8_t* buf, size_t len) {
+		message = static_cast<uint8_t>(msg);
 		buffer.resize(len);
 		if(len)
 			memcpy(buffer.data(), buf, len);
 	};
 	uint8_t* data() { return buffer.data(); }
 	const uint8_t* data() const { return buffer.data(); }
-	uint8_t message;
+	uint8_t message{};
 	std::vector<uint8_t> buffer;
 	auto size() const { return buffer.size() + sizeof(uint8_t); }
 	auto buff_size() const { return buffer.size(); }
@@ -95,8 +95,8 @@ private:
 	std::vector<uint32_t> overlay_cards;
 	std::vector<uint32_t> counters;
 	bool IsPublicQuery(uint32_t to_check_flag) const;
-	uint32_t GetFlagSize(uint32_t to_check_flag) const;
-	uint32_t GetSize() const;
+	size_t GetFlagSize(uint32_t to_check_flag) const;
+	size_t GetSize() const;
 };
 class QueryStream {
 public:
@@ -109,7 +109,7 @@ private:
 	std::vector<Query> queries;
 	void Parse(const uint8_t* buff, bool legacy_race_size);
 	void ParseCompat(const uint8_t* buff, uint32_t len);
-	uint32_t GetSize() const;
+	size_t GetSize() const;
 };
 using OCG_Duel = void*;
 PacketStream ParseMessages(OCG_Duel duel);

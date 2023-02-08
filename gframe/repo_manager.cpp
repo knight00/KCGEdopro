@@ -461,12 +461,13 @@ int RepoManager::FetchCb(const git_indexer_progress* stats, void* payload) {
 }
 
 void RepoManager::CheckoutCb(const char* path, size_t completed_steps, size_t total_steps, void* payload) {
+	(void)path;
 	int percent;
 	if(total_steps == 0)
 		percent = CHECKOUT_PERCENTAGE;
 	else {
 		static constexpr auto DELTA_INCREMENT = CHECKOUT_PERCENTAGE - DELTA_OBJECTS_PERCENTAGE;
-		percent = DELTA_OBJECTS_PERCENTAGE + ((DELTA_INCREMENT * completed_steps) / total_steps);
+		percent = static_cast<int>(DELTA_OBJECTS_PERCENTAGE + ((DELTA_INCREMENT * completed_steps) / total_steps));
 	}
 	auto pl = static_cast<GitCbPayload*>(payload);
 	pl->rm->SetRepoPercentage(pl->path, percent);

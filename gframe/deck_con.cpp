@@ -322,7 +322,7 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 				int sel = -1;
 				{
 					const auto upper = Utils::ToUpperNoAccents<std::wstring>({ dname.data(), dname.size() });
-					for(size_t i = 0; i < mainGame->cbDBDecks->getItemCount(); ++i) {
+					for(irr::u32 i = 0; i < mainGame->cbDBDecks->getItemCount(); ++i) {
 						if(Utils::EqualIgnoreCaseFirst<epro::wstringview>(upper, mainGame->cbDBDecks->getItem(i))) {
 							sel = i;
 							break;
@@ -368,7 +368,7 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 				if(sel == -1 || sel2 < 0 || *dname == 0 || !wcscmp(dname, mainGame->cbDBDecks->getItem(sel)))			
 				/////////kdiy/////		
 					break;
-				for(size_t i = 0; i < mainGame->cbDBDecks->getItemCount(); ++i) {
+				for(auto i = 0; i < static_cast<int>(mainGame->cbDBDecks->getItemCount()); ++i) {
 					if(i == sel)continue;
 					if(!wcscmp(dname, mainGame->cbDBDecks->getItem(i))) {
 						mainGame->stACMessage->setText(gDataManager->GetSysString(1339).data());
@@ -431,8 +431,8 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 					mainGame->PopupMessage(gDataManager->GetSysString(1410));
 					break;
 				}
-				BufferIO::Write<uint32_t>(pdeck, deck.main.size() + deck.extra.size());
-				BufferIO::Write<uint32_t>(pdeck, deck.side.size());
+				BufferIO::Write<uint32_t>(pdeck, static_cast<uint32_t>(deck.main.size() + deck.extra.size()));
+				BufferIO::Write<uint32_t>(pdeck, static_cast<uint32_t>(deck.side.size()));
 				for(const auto& pcard : deck.main)
 					BufferIO::Write<uint32_t>(pdeck, pcard->code);
 				for(const auto& pcard : deck.extra)
@@ -1011,10 +1011,10 @@ void DeckBuilder::GetHoveredCard() {
 	irr::gui::IGUIElement* root = mainGame->env->getRootGUIElement();
 	if(root->getElementFromPoint(mouse_pos) != root)
 		return;
-	irr::core::position2di pos = mainGame->Resize(mouse_pos.X, mouse_pos.Y, true);
-	int x = pos.X;
-	int y = pos.Y;
-	int pre_code = hovered_code;
+	auto relative_mouse_pos = mainGame->Resize(mouse_pos.X, mouse_pos.Y, true);
+	auto x = relative_mouse_pos.X;
+	auto y = relative_mouse_pos.Y;
+	auto pre_code = hovered_code;
 	hovered_pos = 0;
 	hovered_code = 0;
 	is_lastcard = 0;
@@ -1023,7 +1023,7 @@ void DeckBuilder::GetHoveredCard() {
 			int lx = 10, px, py = (y - 164) / 68;
 			hovered_pos = 1;
 			if(current_deck.main.size() > 40)
-				lx = (current_deck.main.size() - 41) / 4 + 11;
+				lx = static_cast<int>(current_deck.main.size() - 41) / 4 + 11;
 			if(x >= 750)
 				px = lx - 1;
 			else
@@ -1036,7 +1036,7 @@ void DeckBuilder::GetHoveredCard() {
 				hovered_code = current_deck.main[hovered_seq]->code;
 			}
 		} else if(y >= 466 && y <= 530) {
-			int lx = current_deck.extra.size();
+			int lx = static_cast<int>(current_deck.extra.size());
 			hovered_pos = 2;
 			if(lx < 10)
 				lx = 10;
@@ -1044,7 +1044,7 @@ void DeckBuilder::GetHoveredCard() {
 				hovered_seq = lx - 1;
 			else
 				hovered_seq = (x - 314) * (lx - 1) / 436;
-			if(hovered_seq >= (int)current_deck.extra.size()) {
+			if(hovered_seq >= static_cast<int>(current_deck.extra.size())) {
 				hovered_seq = -1;
 				hovered_code = 0;
 			} else {
@@ -1053,7 +1053,7 @@ void DeckBuilder::GetHoveredCard() {
 					is_lastcard = 1;
 			}
 		} else if (y >= 564 && y <= 628) {
-			int lx = current_deck.side.size();
+			int lx = static_cast<int>(current_deck.side.size());
 			hovered_pos = 3;
 			if(lx < 10)
 				lx = 10;
@@ -1061,7 +1061,7 @@ void DeckBuilder::GetHoveredCard() {
 				hovered_seq = lx - 1;
 			else
 				hovered_seq = (x - 314) * (lx - 1) / 436;
-			if(hovered_seq >= (int)current_deck.side.size()) {
+			if(hovered_seq >= static_cast<int>(current_deck.side.size())) {
 				hovered_seq = -1;
 				hovered_code = 0;
 			} else {
@@ -1208,7 +1208,7 @@ void DeckBuilder::FilterCards(bool force_refresh) {
 	scroll_pos = 0;
 	if(results.size() > 7) {
 		mainGame->scrFilter->setVisible(true);
-		mainGame->scrFilter->setMax((results.size() - 7) * DECK_SEARCH_SCROLL_STEP);
+		mainGame->scrFilter->setMax(static_cast<irr::s32>(results.size() - 7) * DECK_SEARCH_SCROLL_STEP);
 	} else {
 		mainGame->scrFilter->setVisible(false);
 	}

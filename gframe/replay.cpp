@@ -25,7 +25,7 @@ void Replay::BeginRecord(bool write, epro::path_string name) {
 }
 void Replay::WritePacket(const CoreUtils::Packet& p) {
 	Write<uint8_t>(p.message, false);
-	Write<uint32_t>(p.buff_size(), false);
+	Write<uint32_t>(static_cast<uint32_t>(p.buff_size()), false);
 	WriteData(p.data(), p.buff_size());
 }
 bool Replay::IsStreamedReplay() {
@@ -71,7 +71,7 @@ void Replay::EndRecord(size_t size) {
 		fclose(fp);
 		fp = nullptr;
 	}
-	pheader.base.datasize = replay_data.size() - sizeof(ExtendedReplayHeader);
+	pheader.base.datasize = static_cast<uint32_t>(replay_data.size() - sizeof(ExtendedReplayHeader));
 	pheader.base.flag |= REPLAY_COMPRESSED;
 	size_t propsize = 5;
 	auto comp_size = size;
@@ -224,7 +224,7 @@ void Replay::ParseParams() {
 	else
 		params.duel_flags = Read<uint32_t>();
 	if(pheader.base.flag & REPLAY_SINGLE_MODE && pheader.base.id == REPLAY_YRP1) {
-		size_t slen = Read<uint16_t>();
+		uint16_t slen = Read<uint16_t>();
 		scriptname.resize(slen);
 		ReadData(&scriptname[0], slen);
 	}
@@ -233,11 +233,11 @@ void Replay::ParseDecks() {
 	decks.clear();
 	if(pheader.base.id != REPLAY_YRP1 || (pheader.base.flag & REPLAY_SINGLE_MODE && !(pheader.base.flag & REPLAY_HAND_TEST)))
 		return;
-	for(uint32_t i = 0; i < home_count + opposing_count; i++) {
+	for(uint32_t i = 0; i < home_count + opposing_count; ++i) {
 		ReplayDeck tmp;
-		for(uint32_t i = 0, main = Read<uint32_t>(); i < main && can_read; ++i)
+		for(uint32_t j = 0, main = Read<uint32_t>(); j < main && can_read; ++j)
 			tmp.main_deck.push_back(Read<uint32_t>());
-		for(uint32_t i = 0, extra = Read<uint32_t>(); i < extra && can_read; ++i)
+		for(uint32_t j = 0, extra = Read<uint32_t>(); j < extra && can_read; ++j)
 			tmp.extra_deck.push_back(Read<uint32_t>());
 		decks.push_back(std::move(tmp));
 	}
@@ -269,7 +269,7 @@ void Replay::ParseStream() {
 		if(p.message == MSG_AI_NAME) {
 			auto* pbuf = p.data();
 			uint16_t len = BufferIO::Read<uint16_t>(pbuf);
-			if((len + 1) != p.buff_size() - sizeof(uint16_t))
+			if((len + 1u) != p.buff_size() - sizeof(uint16_t))
 				break;
 			pbuf[len] = 0;
 			players[1] = BufferIO::DecodeUTF8({ reinterpret_cast<char*>(pbuf), len });
@@ -384,7 +384,7 @@ bool Replay::ParseResponses() {
 	return !responses.empty();
 }
 
-bool ExtendedReplayHeader::ParseReplayHeader(const void* data, uint32_t input_len, ExtendedReplayHeader& header, uint32_t* header_length) {
+bool ExtendedReplayHeader::ParseReplayHeader(const void* data, size_t input_len, ExtendedReplayHeader& header, uint32_t* header_length) {
 	if(input_len < sizeof(ReplayHeader))
 		return false;
 	ExtendedReplayHeader ret{};

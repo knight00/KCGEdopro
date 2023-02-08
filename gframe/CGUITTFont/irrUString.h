@@ -350,14 +350,14 @@ public:
 		}
 
 		void go_back(const difference_type v) {
+			// Go to the appropriate position.
+			// TODO: Don't force u32 on an x64 OS.  Make it agnostic.
+			auto i = static_cast<u32>(v);
 			if(is_utf32) {
-				if(pos < (u32)v)
+				if(pos < i)
 					pos = 0;
-				pos -= v;
+				pos -= i;
 			} else {
-				// Go to the appropriate position.
-				// TODO: Don't force u32 on an x64 OS.  Make it agnostic.
-				u32 i = (u32)v;
 				const uchar16_t* a = reinterpret_cast<const uchar16_t*>(ref->data());
 				while(i != 0 && pos != 0) {
 					--pos;
@@ -391,7 +391,7 @@ public:
 	template <class T>
 	ustring16(const T& other)
 		: data_(nullptr), size_(0), size_raw_(0) {
-		assign(other.data(), other.size());
+		assign(other.data(), static_cast<u32>(other.size()));
 	}
 
 
@@ -419,7 +419,7 @@ public:
 
 	template <class T>
 	ustring16& operator=(const T& other) {
-		assign(other.data(), other.size());
+		assign(other.data(), static_cast<u32>(other.size()));
 		return *this;
 	}
 
@@ -442,6 +442,10 @@ public:
 	}
 
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4127) //conditional expression is constant
+#endif
 	//! Returns the length of a ustring16 in full characters.
 	//! \return Length of a ustring16 in full characters.
 	u32 size() const {
@@ -462,6 +466,9 @@ public:
 		}
 		return size_;
 	}
+#ifdef _MSC_VER
+#pragma warning(pop) //conditional expression is constant
+#endif
 
 
 	//! Informs if the ustring is empty or not.
@@ -515,6 +522,10 @@ public:
 	}
 
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4127) //conditional expression is constant
+#endif
 	//! Validate the existing ustring16, checking for valid surrogate pairs and checking for proper termination.
 	//! \return A reference to our current string.
 	void validate() {
@@ -524,6 +535,9 @@ public:
 			return;
 		}
 	}
+#ifdef _MSC_VER
+#pragma warning(pop) //conditional expression is constant
+#endif
 
 
 	//! Returns the raw number of UTF-16 code points in the string which includes the individual surrogates.
@@ -567,8 +581,8 @@ private:
 	//--- member variables
 
 	const wchar_t* data_;
-	size_t size_raw_;
-	mutable size_t size_;
+	u32 size_raw_;
+	mutable u32 size_;
 };
 
 typedef ustring16 ustring;

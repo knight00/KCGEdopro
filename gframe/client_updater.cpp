@@ -14,7 +14,7 @@
 #include <nlohmann/json.hpp>
 #include "epro_thread.h"
 #include <atomic>
-#include <openssl/md5.h>
+#include "MD5/md5.h"
 #include "logging.h"
 #include "config.h"
 #include "utils.h"
@@ -43,6 +43,8 @@ struct Payload {
 };
 
 static int progress_callback(void* ptr, curl_off_t TotalToDownload, curl_off_t NowDownloaded, curl_off_t TotalToUpload, curl_off_t NowUploaded) {
+	(void)TotalToUpload;
+	(void)NowUploaded;
 	Payload* payload = static_cast<Payload*>(ptr);
 	if(payload && payload->callback) {
 		int percentage = 0;
@@ -179,10 +181,10 @@ void ClientUpdater::DownloadUpdate(void* payload, update_callback callback) {
 	cbpayload.callback = callback;
 	cbpayload.total = static_cast<int>(update_urls.size());
 	cbpayload.payload = payload;
-	int i = 1;
+	int cur_file = 1;
 	for(auto& file : update_urls) {
 		auto name = epro::format(formatstr, ygo::Utils::ToPathString(file.name));
-		cbpayload.current = i++;
+		cbpayload.current = cur_file++;
 		cbpayload.filename = file.name.data();
 		cbpayload.is_new = true;
 		cbpayload.previous_percent = -1;

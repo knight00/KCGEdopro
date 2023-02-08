@@ -45,8 +45,8 @@ static void UpdateDeck() {
 	const auto totsize = deck.main.size() + deck.extra.size() + deck.side.size();
 	if(totsize > max_deck_size)
 		return;
-	BufferIO::Write<uint32_t>(pdeck, deck.main.size() + deck.extra.size());
-	BufferIO::Write<uint32_t>(pdeck, deck.side.size());
+	BufferIO::Write<uint32_t>(pdeck, static_cast<uint32_t>(deck.main.size() + deck.extra.size()));
+	BufferIO::Write<uint32_t>(pdeck, static_cast<uint32_t>(deck.side.size()));
 	for(const auto& pcard : deck.main)
 		BufferIO::Write<uint32_t>(pdeck, pcard->code);
 	for(const auto& pcard : deck.extra)
@@ -615,14 +615,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			case BUTTON_HP_KICK: {
-				int id = 0;
-				while(id < 6) {
-					if(mainGame->btnHostPrepKick[id] == caller)
-						break;
-					id++;
-				}
 				CTOS_Kick csk;
-				csk.pos = id;
+				csk.pos = 0;
+				while (csk.pos < 6 && mainGame->btnHostPrepKick[csk.pos] != caller)
+					csk.pos++;
 				DuelClient::SendPacketToServer(CTOS_HS_KICK, csk);
 				break;
 			}

@@ -410,7 +410,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 								if(id == BUTTON_CMD_RESET) continue;
 							}
 							select_options.push_back(activatable_descs[i].first);
-							if (index == -1) index = i;
+							if (index == -1) index = static_cast<int>(i);
 						}
 					}
 					if (select_options.size() == 1) {
@@ -482,7 +482,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				for(size_t i = 0; i < summonable_cards.size(); ++i) {
 					if(summonable_cards[i] == clicked_card) {
 						ClearCommandFlag();
-						DuelClient::SetResponseI(i << 16);
+						DuelClient::SetResponseI(static_cast<uint32_t>(i) << 16);
 						DuelClient::SendResponse();
 						break;
 					}
@@ -497,7 +497,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					for(size_t i = 0; i < spsummonable_cards.size(); ++i) {
 						if(spsummonable_cards[i] == clicked_card) {
 							ClearCommandFlag();
-							DuelClient::SetResponseI((i << 16) + 1);
+							DuelClient::SetResponseI((static_cast<uint32_t>(i) << 16) + 1);
 							DuelClient::SendResponse();
 							break;
 						}
@@ -544,7 +544,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					break;
 				for(size_t i = 0; i < msetable_cards.size(); ++i) {
 					if(msetable_cards[i] == clicked_card) {
-						DuelClient::SetResponseI((i << 16) + 3);
+						DuelClient::SetResponseI((static_cast<uint32_t>(i) << 16) + 3);
 						DuelClient::SendResponse();
 						break;
 					}
@@ -557,7 +557,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					break;
 				for(size_t i = 0; i < ssetable_cards.size(); ++i) {
 					if(ssetable_cards[i] == clicked_card) {
-						DuelClient::SetResponseI((i << 16) + 4);
+						DuelClient::SetResponseI((static_cast<uint32_t>(i) << 16) + 4);
 						DuelClient::SendResponse();
 						break;
 					}
@@ -570,7 +570,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					break;
 				for(size_t i = 0; i < reposable_cards.size(); ++i) {
 					if(reposable_cards[i] == clicked_card) {
-						DuelClient::SetResponseI((i << 16) + 2);
+						DuelClient::SetResponseI((static_cast<uint32_t>(i) << 16) + 2);
 						DuelClient::SendResponse();
 						break;
 					}
@@ -583,7 +583,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					break;
 				for(size_t i = 0; i < attackable_cards.size(); ++i) {
 					if(attackable_cards[i] == clicked_card) {
-						DuelClient::SetResponseI((i << 16) + 1);
+						DuelClient::SetResponseI((static_cast<uint32_t>(i) << 16) + 1);
 						DuelClient::SendResponse();
 						break;
 					}
@@ -697,7 +697,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 									if(list_command == COMMAND_OPERATION) continue;
 								}
 								select_options.push_back(activatable_descs[i].first);
-								if (index == -1) index = i;
+								if (index == -1) index = static_cast<int>(i);
 							}
 						}
 						if (select_options.size() == 1) {
@@ -1493,9 +1493,9 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					clicked_card->is_selected = true;
 					selected_cards.push_back(clicked_card);
 				}
-				uint32_t min = selected_cards.size(), max = 0;
+				uint32_t min = static_cast<uint32_t>(selected_cards.size()), max = 0;
 				if (mainGame->dInfo.curMsg == MSG_SELECT_CARD) {
-					max = selected_cards.size();
+					max = static_cast<uint32_t>(selected_cards.size());
 				} else {
 					for(size_t i = 0; i < selected_cards.size(); ++i)
 						max += selected_cards[i]->opParam;
@@ -1630,9 +1630,9 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				} else {
 					const auto& self = mainGame->dInfo.isTeam1 ? mainGame->dInfo.selfnames : mainGame->dInfo.opponames;
 					const auto& oppo = mainGame->dInfo.isTeam1 ? mainGame->dInfo.opponames : mainGame->dInfo.selfnames;
-					if(mainGame->Resize(327, 8, 630, 51 + (23 * (self.size() - 1))).isPointInside(mousepos))
+					if(mainGame->Resize(327, 8, 630, 51 + static_cast<irr::s32>(23 * (self.size() - 1))).isPointInside(mousepos))
 						mplayer = 0;
-					else if(mainGame->Resize(689, 8, 991, 51 + (23 * (oppo.size() - 1))).isPointInside(mousepos))
+					else if(mainGame->Resize(689, 8, 991, 51 + static_cast<irr::s32>(23 * (oppo.size() - 1))).isPointInside(mousepos))
 						mplayer = 1;
 				}
 			}
@@ -1788,8 +1788,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						player_name = self[mainGame->dInfo.current_player[mplayer]];
 					else
 						player_name = oppo[mainGame->dInfo.current_player[mplayer]];
-					const auto& player_desc_hints = mainGame->dField.player_desc_hints[mplayer];
-					for(const auto& hint : player_desc_hints) {
+					for(const auto& hint : player_desc_hints[mplayer]) {
 						player_name.append(epro::format(L"\n*{}", gDataManager->GetDesc(hint.first, mainGame->dInfo.compat_mode)));
 					}
 					should_show_tip = true;
@@ -3397,7 +3396,7 @@ void ClientField::SetResponseSelectedCards() const {
 }
 void ClientField::SetResponseSelectedOption() const {
 	if(mainGame->dInfo.curMsg == MSG_SELECT_OPTION) {
-		DuelClient::SetResponseI(selected_option);
+		DuelClient::SetResponseI(static_cast<uint32_t>(selected_option));
 	} else {
 		int index = 0;
 		while(activatable_cards[index] != command_card || activatable_descs[index].first != select_options[selected_option]) index++;

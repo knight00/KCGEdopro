@@ -106,7 +106,7 @@ void DeckManager::LoadLFList() {
 }
 //moves the "N/A" lflist at the bottom of the vector
 void DeckManager::RefreshLFList() {
-	if(null_lflist_index != -1 && null_lflist_index != _lfList.size() -1) {
+	if (null_lflist_index != ~size_t() && null_lflist_index != _lfList.size() - 1) {
 		auto it = _lfList.begin() + null_lflist_index;
 		std::rotate(it, it + 1, _lfList.end());
 		null_lflist_index = _lfList.size() - 1;
@@ -239,17 +239,17 @@ DeckError DeckManager::CheckDeckSize(const Deck& deck, const DeckSizes& sizes) {
 	auto skills = TypeCount(deck.main, TYPE_SKILL);
 	if(sizes.main != (deck.main.size() - skills)) {
 		ret.type = DeckError::MAINCOUNT;
-		ret.count.current = deck.main.size() - skills;
+		ret.count.current = static_cast<uint32_t>(deck.main.size()) - skills;
 		ret.count.minimum = sizes.main.min;
 		ret.count.maximum = sizes.main.max;
 	} else if(sizes.extra != deck.extra.size()) {
 		ret.type = DeckError::EXTRACOUNT;
-		ret.count.current = deck.extra.size();
+		ret.count.current = static_cast<uint32_t>(deck.extra.size());
 		ret.count.minimum = sizes.extra.min;
 		ret.count.maximum = sizes.extra.max;
 	} else if(sizes.side != deck.side.size()) {
 		ret.type = DeckError::SIDECOUNT;
-		ret.count.current = deck.side.size();
+		ret.count.current = static_cast<uint32_t>(deck.side.size());
 		ret.count.minimum = sizes.side.min;
 		ret.count.maximum = sizes.side.max;
 	}
@@ -310,7 +310,7 @@ static bool LoadCardList(const epro::path_string& name, cardlist_type* mainlist 
 		}
 	}
 	if(retmainc)
-		*retmainc = res.size() - sidec;
+		*retmainc = static_cast<uint32_t>(res.size() - sidec);
 	if(retsidec)
 		*retsidec = sidec;
 	return true;
@@ -543,7 +543,7 @@ uint32_t gzinflate(const std::vector<uint8_t>& in, uint8_t(&buffer)[N]) {
 		return 0;
 
 	z.next_in = (decltype(z.next_in))in.data();
-	z.avail_in = in.size();
+	z.avail_in = static_cast<decltype(z.avail_in)>(in.size());
 
 	z.next_out = buffer;
 	z.avail_out = N;
@@ -578,6 +578,7 @@ bool DeckManager::ImportDeckBase64Omega(Deck& deck, epro::wstringview buffer) {
 	return true;
 }
 bool DeckManager::DeleteDeck(Deck& deck, epro::path_stringview name) {
+	(void)deck;
 	return Utils::FileDelete(epro::format(EPRO_TEXT("./deck/{}.ydk"), name));
 }
 bool DeckManager::RenameDeck(epro::path_stringview oldname, epro::path_stringview newname) {

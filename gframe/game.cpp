@@ -3544,7 +3544,7 @@ void Game::RefreshDeck() {
     gBot.aiDeckSelect->clear();
 	cbDeck2Select->clear();
     cbDeckSelect->clear();
-    int dcount = -1;
+    irr::u32 dcount = -1;
     int count = 0;
     for(auto& file : Utils::FindFiles(EPRO_TEXT("./deck/"), { EPRO_TEXT("ydk") })) {
         count++;
@@ -3573,9 +3573,9 @@ void Game::RefreshDeck() {
                 gBot.aiDeckSelect2->addItem(Utils::ToUnicodeIfNeeded(_folder).data());
                 cbDeck2Select->addItem(Utils::ToUnicodeIfNeeded(_folder).data());
                 if(gGameConfig->lastAIdeckfolder == gBot.aiDeckSelect2->getItem(dcount))
-                    gBot.aiDeckSelect2->setSelected(dcount);
+                    gBot.aiDeckSelect2->setSelected(static_cast<irr::s32>(dcount));
                 if(gGameConfig->lastdeckfolder == cbDeck2Select->getItem(dcount))
-                    cbDeck2Select->setSelected(dcount);
+                    cbDeck2Select->setSelected(static_cast<irr::s32>(dcount));
             }
             file.erase(file.size() - 4);
             if(gGameConfig->lastAIdeckfolder == gBot.aiDeckSelect2->getItem(dcount))
@@ -3584,15 +3584,15 @@ void Game::RefreshDeck() {
                 cbDeckSelect->addItem(Utils::ToUnicodeIfNeeded(file).data());
 		}
 	}
-    for(size_t i = 0; i < gBot.aiDeckSelect->getItemCount(); ++i) {
+    for(irr::u32 i = 0; i < gBot.aiDeckSelect->getItemCount(); ++i) {
         if(gGameConfig->lastAIdeck == gBot.aiDeckSelect->getItem(i)) {
-            gBot.aiDeckSelect->setSelected(i);
+            gBot.aiDeckSelect->setSelected(static_cast<irr::s32>(i));
             break;
         }
 	}
-    for(size_t i = 0; i < cbDeckSelect->getItemCount(); ++i) {
+    for(irr::u32 i = 0; i < cbDeckSelect->getItemCount(); ++i) {
         if(gGameConfig->lastdeck == cbDeckSelect->getItem(i)) {
-            cbDeckSelect->setSelected(i);
+            cbDeckSelect->setSelected(static_cast<irr::s32>(i));
             break;
         }
 	}
@@ -3606,9 +3606,9 @@ void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder) {
 	// 	file.erase(file.size() - 4);
 	// 	cbDeck->addItem(Utils::ToUnicodeIfNeeded(file).data());
 	//}
-	// for(size_t i = 0; i < cbDeck->getItemCount(); ++i) {
+	// for(irr::u32 i = 0; i < cbDeck->getItemCount(); ++i) {
 	// 	if(gGameConfig->lastdeck == cbDeck->getItem(i)) {
-	// 		cbDeck->setSelected(i);
+	// 		cbDeck->setSelected(static_cast<irr::s32>(i));
 	// 		break;
 	// 	}
 	// }
@@ -3623,7 +3623,7 @@ void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder) {
 		cbDeck2->clear();
         if(cbDeck == cbDBDecks)
             cbDBDecks22->clear();
-        int dcount = -1;
+        irr::u32 dcount = -1;
         int count = 0;
 		for(auto& file : Utils::FindFiles(EPRO_TEXT("./deck/"), { EPRO_TEXT("ydk") })) {
             count++;
@@ -3634,10 +3634,10 @@ void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder) {
                     cbDBDecks22->addItem(L"");
                 if(cbDeck != gBot.aiDeckSelect
                   && gGameConfig->lastdeckfolder == cbDeck2->getItem(dcount))
-                    cbDeck2->setSelected(dcount);
+                    cbDeck2->setSelected(static_cast<irr::s32>(dcount));
                 if(cbDeck == gBot.aiDeckSelect
                   && gGameConfig->lastAIdeckfolder == cbDeck2->getItem(dcount))
-                    cbDeck2->setSelected(dcount);
+                    cbDeck2->setSelected(static_cast<irr::s32>(dcount));
             }
             file.erase(file.size() - 4);
             if(cbDeck != gBot.aiDeckSelect
@@ -3659,10 +3659,10 @@ void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder) {
                         cbDBDecks22->addItem(Utils::ToUnicodeIfNeeded(_folder).data());
                     if(cbDeck != gBot.aiDeckSelect
                       && gGameConfig->lastdeckfolder == cbDeck2->getItem(dcount))
-                        cbDeck2->setSelected(dcount);
+                        cbDeck2->setSelected(static_cast<irr::s32>(dcount));
                     if(cbDeck == gBot.aiDeckSelect
                       && gGameConfig->lastAIdeckfolder == cbDeck2->getItem(dcount))
-                        cbDeck2->setSelected(dcount);
+                        cbDeck2->setSelected(static_cast<irr::s32>(dcount));
                 }
                 file.erase(file.size() - 4);
                 if(cbDeck != gBot.aiDeckSelect
@@ -3673,15 +3673,15 @@ void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder) {
                     cbDeck->addItem(Utils::ToUnicodeIfNeeded(file).data());
             }
 	    }
-        for(size_t i = 0; i < cbDeck->getItemCount(); ++i) {
+        for(irr::u32 i = 0; i < cbDeck->getItemCount(); ++i) {
             if(cbDeck != gBot.aiDeckSelect
 			  && gGameConfig->lastdeck == cbDeck->getItem(i)) {
-                cbDeck->setSelected(i);
+                cbDeck->setSelected(static_cast<irr::s32>(i));
                 break;
             }
             if(cbDeck == gBot.aiDeckSelect
 			   && gGameConfig->lastAIdeck == cbDeck->getItem(i)) {
-                cbDeck->setSelected(i);
+                cbDeck->setSelected(static_cast<irr::s32>(i));
                 break;
             }
         }
@@ -3691,15 +3691,15 @@ void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder) {
             file.erase(file.size() - 4);
 			cbDeck->addItem(Utils::ToUnicodeIfNeeded(file).data());
 		}
-	    for(size_t i = 0; i < cbDeck->getItemCount(); ++i) {
+	    for(irr::u32 i = 0; i < cbDeck->getItemCount(); ++i) {
             if(cbDeck != gBot.aiDeckSelect
 			  && gGameConfig->lastdeck == cbDeck->getItem(i)) {
-                cbDeck->setSelected(i);
+                cbDeck->setSelected(static_cast<irr::s32>(i));
                 break;
             }
             if(cbDeck == gBot.aiDeckSelect
 			  && gGameConfig->lastAIdeck == cbDeck->getItem(i)) {
-                cbDeck->setSelected(i);
+                cbDeck->setSelected(static_cast<irr::s32>(i));
                 break;
             }
         }
@@ -4014,9 +4014,9 @@ void Game::LoadServers() {
 					tmp_server.roomlistport = obj.at("roomlistport").get<uint16_t>();
 					tmp_server.duelport = obj.at("duelport").get<uint16_t>();
 					{
-						auto it = obj.find("roomlistprotocol");
-						if(it != obj.end() && it->is_string()) {
-							tmp_server.protocol = ServerInfo::GetProtocol(it->get_ref<std::string&>());
+						auto protocolIt = obj.find("roomlistprotocol");
+						if(protocolIt != obj.end() && protocolIt->is_string()) {
+							tmp_server.protocol = ServerInfo::GetProtocol(protocolIt->get_ref<std::string&>());
 						}
 					}
 					int i = serverChoice->addItem(tmp_server.name.data());
@@ -4058,6 +4058,16 @@ void Game::LoadLocalServers() {
 ///kdiy/////////
 void Game::ShowCardInfo(uint32_t code, bool resize, imgType type) {
 	static auto prevtype = imgType::ART;
+	if(resize) {
+		//Update the text fields beforehand when resizing so that their horizontal size
+		//is correct when the text is set and is then broken into pieces
+		const auto widthRect = irr::core::recti(Scale(15), 0, Scale(287 * window_scale.X), 10);
+		stInfo->setRelativePosition(widthRect);
+		stDataInfo->setRelativePosition(widthRect);
+		stSetName->setRelativePosition(widthRect);
+		stPasscodeScope->setRelativePosition(widthRect);
+		stText->setRelativePosition(widthRect);
+	};
 	if(code == 0) {
 		ClearCardInfo(0);
 		return;
@@ -4480,10 +4490,10 @@ void Game::UpdateExtraRules(bool set) {
 			extra_rules |= flag;
 	}
 }
-int Game::GetMasterRule(uint64_t param, uint32_t forbiddentypes, int* truerule) {
+int Game::GetMasterRule(uint64_t param, uint32_t forbidden, int* truerule) {
 	if(truerule)
 		*truerule = 0;
-#define CHECK(MR) case DUEL_MODE_MR##MR:{ if (truerule && forbiddentypes == DUEL_MODE_MR##MR##_FORB) *truerule = MR; break; }
+#define CHECK(MR) case DUEL_MODE_MR##MR:{ if (truerule && forbidden == DUEL_MODE_MR##MR##_FORB) *truerule = MR; break; }
 	switch(param) {
 		CHECK(1)
 		CHECK(2)
@@ -4748,6 +4758,7 @@ void Game::ReloadCBLimit() {
 		}
 	} else {
 		chkAnime->setEnabled(false);
+		cbLimit->addItem(gDataManager->GetSysString(1912).data(), DeckBuilder::LIMITATION_FILTER_LEGEND);
 		cbLimit->addItem(gDataManager->GetSysString(1310).data(), DeckBuilder::LIMITATION_FILTER_ALL);
 	}
 }
@@ -4835,7 +4846,7 @@ void Game::ReloadCBCurrentSkin() {
 }
 void Game::ReloadCBCoreLogOutput() {
 	gSettings.cbCoreLogOutput->clear();
-	for (int i = CORE_LOG_NONE; i <= 3; i++) {
+	for (uint32_t i = CORE_LOG_NONE; i <= 3; i++) {
 		auto itemIndex = gSettings.cbCoreLogOutput->addItem(gDataManager->GetSysString(2000 + i).data(), i);
 		if (gGameConfig->coreLogOutput == i) {
 			gSettings.cbCoreLogOutput->setSelected(itemIndex);
@@ -4860,10 +4871,10 @@ void Game::ReloadElementsStrings() {
 		elem.first->setText(gDataManager->GetSysString(elem.second).data());
 	}
 
-	uint32_t nullLFlist = gdeckManager->_lfList.size() - 1;
+	size_t nullLFlist = gdeckManager->_lfList.size() - 1;
 	gdeckManager->_lfList[nullLFlist].listName = gDataManager->GetSysString(1442).data();
 	auto prev = cbDBLFList->getSelected();
-	cbDBLFList->removeItem(nullLFlist);
+	cbDBLFList->removeItem(static_cast<irr::u32>(nullLFlist));
 	cbDBLFList->addItem(gdeckManager->_lfList[nullLFlist].listName.data(), gdeckManager->_lfList[nullLFlist].hash);
 	cbDBLFList->setSelected(prev);
 	//////kdiy//////////
@@ -4872,7 +4883,7 @@ void Game::ReloadElementsStrings() {
 	cbpics->setSelected(prev);
 	//////kdiy//////////	
 	prev = cbHostLFList->getSelected();
-	cbHostLFList->removeItem(nullLFlist);
+	cbHostLFList->removeItem(static_cast<irr::u32>(nullLFlist));
 	cbHostLFList->addItem(gdeckManager->_lfList[nullLFlist].listName.data(), gdeckManager->_lfList[nullLFlist].hash);
 	cbHostLFList->setSelected(prev);
 
@@ -5257,7 +5268,7 @@ std::vector<char> Game::LoadScript(epro::stringview _name) {
 }
 bool Game::LoadScript(OCG_Duel pduel, epro::stringview script_name) {
 	auto buf = LoadScript(script_name);
-	return buf.size() && OCG_LoadScript(pduel, buf.data(), buf.size(), script_name.data());
+	return buf.size() && OCG_LoadScript(pduel, buf.data(), static_cast<uint32_t>(buf.size()), script_name.data());
 }
 /////zdiy/////
 void* Game::ReadCardDataToCore() {
