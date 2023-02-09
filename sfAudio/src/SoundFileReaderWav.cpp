@@ -204,7 +204,7 @@ uint64_t SoundFileReaderWav::read(int16_t* samples, uint64_t maxCount)
             {
                 uint32_t sample = 0;
                 if (decode24bit(*m_stream, sample))
-                    *samples++ = sample >> 8;
+                    *samples++ = static_cast<int16_t>(sample >> 8);
                 else
                     return count;
                 break;
@@ -352,7 +352,7 @@ bool SoundFileReaderWav::parseHeader(Info& info)
             }
 
             // Skip potential extra information
-            if (m_stream->seek(subChunkStart + subChunkSize) == -1)
+            if (m_stream->seek(subChunkStart + subChunkSize) == static_cast<uint64_t>(-1))
                 return false;
         }
         else if ((subChunkId[0] == 'd') && (subChunkId[1] == 'a') && (subChunkId[2] == 't') && (subChunkId[3] == 'a'))
@@ -371,7 +371,7 @@ bool SoundFileReaderWav::parseHeader(Info& info)
         else
         {
             // unknown chunk, skip it
-            if (m_stream->seek(m_stream->tell() + subChunkSize) == -1)
+            if (m_stream->seek(m_stream->tell() + subChunkSize) == static_cast<uint64_t>(-1))
                 return false;
         }
     }

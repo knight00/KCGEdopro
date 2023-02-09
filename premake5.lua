@@ -156,6 +156,15 @@ workspace "ygo"
 	objdir "obj"
 	startproject "ygopro"
 	staticruntime "on"
+	
+	warnings "Extra"
+	filter { "action:vs*" }
+		disablewarnings "4100" --'identifier' : unreferenced formal parameter	
+	filter { "action:not vs*" }
+		disablewarnings { "unknown-warning-option", "unused-parameter", "unknown-pragmas", "ignored-qualifiers", "missing-field-initializers", "implicit-const-int-float-conversion", "missing-braces" }
+	filter { "action:not vs*", "files:**.cpp" }
+		disablewarnings { "deprecated-copy", "unused-lambda-capture" }
+	filter{}
 
 	configurations { "Debug", "Release" }
 
