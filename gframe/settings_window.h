@@ -109,6 +109,7 @@ struct SettingsWindow {
     irr::gui::IGUIButton* btnSaveSetting;
     irr::gui::IGUIButton* btnRestoreSetting;
 	irr::gui::IGUICheckBox* chkRandomtexture;
+	irr::gui::IGUICheckBox* chkCloseup;
 	///////kdiy////////
 	/////zdiy/////
 	irr::gui::IGUICheckBox* chkHideNameTag;

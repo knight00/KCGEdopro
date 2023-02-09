@@ -845,8 +845,9 @@ void Game::Initialize() {
 	#ifndef EK
     wQQ->setVisible(false);
 	#endif
+	//wMainMenu = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 450), false, EDOPRO_VERSION_STRING);	
+	wMainMenu = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 520), false, EDOPRO_VERSION_STRING);	
 	////kdiy////////
-	wMainMenu = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 450), false, EDOPRO_VERSION_STRING);	
 	wMainMenu->getCloseButton()->setVisible(false);
 	//wMainMenu->setVisible(!is_from_discord);
 #define OFFSET(x1, y1, x2, y2) Scale(10, 30 + offset, mainMenuWidth - 10, 60 + offset)
@@ -858,31 +859,24 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(btnLanMode, 1200);
 	offset += 35;
 	////////zdiy////////
-	//btnSingleMode = env->addButton(OFFSET(10, 65, 270, 95), wMainMenu, BUTTON_SINGLE_MODE, gDataManager->GetSysString(1201).data());
-	//defaultStrings.emplace_back(btnSingleMode, 1201);
-	btnEntertainmentMode = env->addButton(OFFSET(10, 65, 270, 95), wMainMenu, BUTTON_ENTERTAUNMENT_MODE, gDataManager->GetSysString(1205).data());
+	btnEntertainmentMode = env->addButton(OFFSET(10, 30, 270, 60), wMainMenu, BUTTON_ENTERTAUNMENT_MODE, gDataManager->GetSysString(1205).data());
 	defaultStrings.emplace_back(btnEntertainmentMode, 1205);
 	btnEntertainmentMode->setEnabled(false);
-	////////zdiy////////
 	offset += 35;
 	////////zdiy////////
-	//btnReplayMode = env->addButton(OFFSET(10, 100, 270, 130), wMainMenu, BUTTON_REPLAY_MODE, gDataManager->GetSysString(1202).data());
-	//defaultStrings.emplace_back(btnReplayMode, 1202);
-	btnSingleMode = env->addButton(OFFSET(10, 100, 270, 130), wMainMenu, BUTTON_SINGLE_MODE, gDataManager->GetSysString(1201).data());
+	btnSingleMode = env->addButton(OFFSET(10, 65, 270, 95), wMainMenu, BUTTON_SINGLE_MODE, gDataManager->GetSysString(1201).data());
 	defaultStrings.emplace_back(btnSingleMode, 1201);
-	////////zdiy////////
 	offset += 35;
-	////////zdiy////////
-	//btnDeckEdit = env->addButton(OFFSET(10, 135, 270, 165), wMainMenu, BUTTON_DECK_EDIT, gDataManager->GetSysString(1204).data());
-	//defaultStrings.emplace_back(btnDeckEdit, 1204);
-	btnReplayMode = env->addButton(OFFSET(10, 135, 270, 165), wMainMenu, BUTTON_REPLAY_MODE, gDataManager->GetSysString(1202).data());
+	btnReplayMode = env->addButton(OFFSET(10, 100, 270, 130), wMainMenu, BUTTON_REPLAY_MODE, gDataManager->GetSysString(1202).data());
 	defaultStrings.emplace_back(btnReplayMode, 1202);
 	offset += 35;
-	btnDeckEdit = env->addButton(OFFSET(10, 170, 270, 200), wMainMenu, BUTTON_DECK_EDIT, gDataManager->GetSysString(1204).data());
+	btnDeckEdit = env->addButton(OFFSET(10, 135, 270, 165), wMainMenu, BUTTON_DECK_EDIT, gDataManager->GetSysString(1204).data());
 	defaultStrings.emplace_back(btnDeckEdit, 1204);
-	////////zdiy////////
 	offset += 35;
-	////////kdiy///////
+	btnSettings2 = env->addButton(OFFSET(10, 170, 270, 200), wMainMenu, BUTTON_SHOW_SETTINGS, gDataManager->GetSysString(8044).data());
+	defaultStrings.emplace_back(btnSettings2, 8044);
+	offset += 35;
+	////kdiy////////
 	int height = 170;
 	int height2 = 30;
 #ifndef EK
@@ -905,7 +899,7 @@ void Game::Initialize() {
 #else
 	btnModeExit = env->addButton(OFFSET(10, height, 270, height+height2), wMainMenu, BUTTON_MODE_EXIT, gDataManager->GetSysString(1210).data());
 #endif
-	////////kdiy///////	
+	////////kdiy///////
 	defaultStrings.emplace_back(btnModeExit, 1210);
 	offset += 35;
 #undef OFFSET
@@ -1080,10 +1074,7 @@ void Game::Initialize() {
 	PopulateTabSettingsWindow();
 	PopulateSettingsWindow();
     
-    //////kdiy//////
-	// wBtnSettings = env->addWindow(Scale(0, 610, 30, 640));
-    wBtnSettings = env->addWindow(Scale(mainMenuLeftX-50, 400, mainMenuLeftX, 450));
-    //////kdiy//////
+    wBtnSettings = env->addWindow(Scale(0, 610, 30, 640));
 	wBtnSettings->getCloseButton()->setVisible(false);
 	wBtnSettings->setDraggable(false);
 	wBtnSettings->setDrawTitlebar(false);
@@ -2926,6 +2917,10 @@ void Game::PopulateSettingsWindow() {
 		gSettings.chkRandomtexture = env->addCheckBox(gGameConfig->randomtexture, GetCurrentRectWithXOffset(35, 320), sPanel, -1, gDataManager->GetSysString(8042).data());
 		defaultStrings.emplace_back(gSettings.chkRandomtexture, 8042);
         IncrementXorY();
+
+		gSettings.chkCloseup = env->addCheckBox(gGameConfig->closeup, GetCurrentRectWithXOffset(35, 320), sPanel, -1, gDataManager->GetSysString(8043).data());
+		defaultStrings.emplace_back(gSettings.chkCloseup, 8043);
+        IncrementXorY();
     }
     /////kdiy////////////
 }
@@ -3841,6 +3836,7 @@ void Game::SaveConfig() {
 	TrySaveInt(gGameConfig->localtimeLimit, ebTimeLimit2);
 	gGameConfig->duelrule = cbDuelRule2->getSelected();
 	gGameConfig->randomtexture = gSettings.chkRandomtexture->isChecked();
+	gGameConfig->closeup = gSettings.chkCloseup->isChecked();
 	/////kdiy//////
 	auto lastServerIndex = serverChoice->getSelected();
 	if (lastServerIndex >= 0)
@@ -4046,7 +4042,7 @@ void Game::LoadLocalServers() {
 					int i = serverChoice2->addItem(tmp_server.name.data());
 					if(gGameConfig->lastLocalServer == tmp_server.name)
 						serverChoice2->setSelected(i);
-					ServerLobby::serversVector2.push_back(std::move(tmp_server));	
+					ServerLobby::serversVector2.push_back(std::move(tmp_server));
 				}
 				catch(const std::exception& e) {
 					ErrorLog(epro::format("Exception occurred while parsing server entry: {}", e.what()));
@@ -4099,7 +4095,7 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type) {
 	auto setcodes = cd->setcodes;
 	///kdiy/////////
 	//if (cd->alias) {
-	if (cd->alias && setcodes.empty()) {	
+	if (cd->alias && setcodes.empty()) {
 	///kdiy/////////
 		auto data = gDataManager->GetCardData(cd->alias);
 		if(data)
@@ -4125,9 +4121,9 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type) {
 			else if(cd->attack >= 9999999 && cd->defense >= 9999999)
 				text.append(epro::format(L"(\u221E)/(\u221E)"));
 			else if(cd->attack >= 8888888 && cd->defense >= 8888888)
-				text.append(epro::format(L"\u221E/\u221E"));	
+				text.append(epro::format(L"\u221E/\u221E"));
 			else if(cd->attack >= 9999999 && cd->defense >= 8888888)
-				text.append(epro::format(L"(\u221E)/\u221E"));	
+				text.append(epro::format(L"(\u221E)/\u221E"));
 			else if(cd->attack >= 8888888 && cd->defense >= 9999999)
 				text.append(epro::format(L"\u221E/(\u221E)"));
 			else if(cd->attack >= 9999999 && cd->defense >= 0)
@@ -4146,7 +4142,7 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type) {
 				text.append(epro::format(L"?/\u221E", cd->defense));
 			else if (cd->defense < 0 && cd->attack >= 8888888)
 				text.append(epro::format(L"\u221E/?", cd->attack));
-			///////////kdiy//////////	
+			///////////kdiy//////////
 			else if (cd->attack < 0)
 				text.append(epro::format(L"?/{}", cd->defense));
 			else if (cd->defense < 0)
@@ -4999,23 +4995,16 @@ void Game::OnResize() {
 		stAbout->setRelativePosition(irr::core::recti(10, 10, minwidth, minheight));
 	}
 	wRoomListPlaceholder->setRelativePosition(irr::core::recti(0, 0, window_size.Width, window_size.Height));
-	////////kdiy///////	
+	////////kdiy///////
 	// wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 450));
-    // wBtnSettings->setRelativePosition(ResizeWin(0, 610, 30, 640));
 	#ifdef EK
-	/////zdiy/////
-	//wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 450));
-	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 485));
-	/////zdiy/////
+	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 520));
 	#else
-	/////zdiy/////
-	//wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 485));
-	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 515));
-	/////zdiy/////
+	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 535));
 	#endif
 	wQQ->setRelativePosition(ResizeWin(mainMenuRightX+10, 200, mainMenuRightX+150, 450));
-    wBtnSettings->setRelativePosition(ResizeWin(mainMenuLeftX-50, 400, mainMenuLeftX, 450));
 	////////kdiy///////
+	wBtnSettings->setRelativePosition(ResizeWin(0, 610, 30, 640));
 	SetCentered(wCommitsLog);
 	SetCentered(updateWindow, false);
 

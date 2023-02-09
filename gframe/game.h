@@ -499,6 +499,7 @@ public:
 	irr::gui::CGUIImageButton* btnQQ;
 	irr::gui::IGUIButton* btnQQ2;
 	irr::gui::IGUIButton* btnQQ22;
+	irr::gui::IGUIButton* btnSettings2;
 	/////kdiy/////////
 	irr::gui::IGUIWindow* wCommitsLog;
 	irr::gui::IGUIContextMenu* mTopMenu;

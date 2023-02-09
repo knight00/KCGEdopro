@@ -1424,7 +1424,7 @@ irr::video::ITexture* ImageManager::GetTextureField(uint32_t code) {
 }
 /////////kdiy////
 irr::video::ITexture* ImageManager::GetTextureCloseup(uint32_t code) {
-	if(code == 0)
+	if(code == 0 || !gGameConfig->closeup)
 		return nullptr;
 	auto tit = tCloseup.find(code);
 	if(tit != tCloseup.end())

@@ -160,7 +160,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				Utils::SystemOpen(EPRO_TEXT("https://qm.qq.com/cgi-bin/qm/qr?k=0BcdVu6E2gUjyc_WmL25uLNYib2mTPoV"));
 				break;
 			}
-			////////kdiy///////		
+			////////kdiy///////
 			case BUTTON_MODE_EXIT: {
 				mainGame->device->closeDevice();
 				break;
