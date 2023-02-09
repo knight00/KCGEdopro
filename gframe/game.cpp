@@ -1600,7 +1600,7 @@ void Game::Initialize() {
 	tmpptr = env->addStaticText(gDataManager->GetSysString(2125).data(), Scale(360, 30, 570, 50), false, true, wEntertainmentPlay);
 	defaultStrings.emplace_back(tmpptr, 2125);
 
-	lstEntertainmentPlayList = irr::gui::CGUIFileSelectListBox::addFileSelectListBox(env, wEntertainmentPlay, LISTBOX_ENTERTAINMENTPLAY_LIST, Scale(10, 30, 350, 400), filesystem, true, true, false);
+	lstEntertainmentPlayList = irr::gui::CGUIFileSelectListBox::addFileSelectListBox(env, wEntertainmentPlay, LISTBOX_ENTERTAINMENTPLAY_LIST, Scale(10, 30, 350, 400), true, true, false);
 	lstEntertainmentPlayList->setItemHeight(Scale(18));
 
 	stEntertainmentPlayInfo = irr::gui::CGUICustomText::addCustomText(L"", false, env, wEntertainmentPlay, -1, Scale(360, 60, 570, 350));
