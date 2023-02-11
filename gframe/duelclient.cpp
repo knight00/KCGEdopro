@@ -3229,6 +3229,20 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		int character = mainGame->dInfo.current_player[player];
 		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
+        int character2 = mainGame->dInfo.current_player[1-player] + mainGame->dInfo.team1;
+		if((1-player == 0 && mainGame->dInfo.isTeam1) || (1-player == 1 && !mainGame->dInfo.isTeam1)) character2 = mainGame->dInfo.current_player[1-player];
+        if(!mainGame->dInfo.isSingleMode) {
+#ifdef VIP
+            if(gSoundManager->character[character] > 0)
+                mainGame->wAvatar[player]->setVisible(true);
+            else
+                mainGame->wAvatar[player]->setVisible(false);
+            if(gSoundManager->character[character2] > 0)
+                mainGame->wAvatar[1-player]->setVisible(true);
+            else
+                mainGame->wAvatar[1-player]->setVisible(false);
+#endif
+        }
 		if(!PlayChant(SoundManager::CHANT::NEXTTURN, 0, 0, character))
 		//////kdiy///
 		Play(SoundManager::SFX::NEXT_TURN);
@@ -3242,14 +3256,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->btnLeaveGame->setVisible(true);
 		}
 		if(!mainGame->dInfo.isReplay && mainGame->dInfo.player_type < 7) {
-            ////kdiy////////
-            if(!mainGame->dInfo.isSingleMode) {
-#ifdef VIP
-                mainGame->wAvatar[0]->setVisible(true);
-                mainGame->wAvatar[1]->setVisible(true);
-#endif
-            }
-            ////kdiy////////
 			if(!mainGame->tabSettings.chkHideChainButtons->isChecked()) {
 				mainGame->btnChainIgnore->setVisible(true);
 				mainGame->btnChainAlways->setVisible(true);
@@ -3260,20 +3266,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				mainGame->btnChainAlways->setVisible(false);
 				mainGame->btnChainWhenAvail->setVisible(false);
 				mainGame->btnCancelOrFinish->setVisible(false);
-				////kdiy////////
-				mainGame->wAvatar[0]->setVisible(false);
-				mainGame->wAvatar[1]->setVisible(false);
-				////kdiy////////
 			}
 		}
-        ////kdiy////////
-        if(mainGame->dInfo.isReplay) {
-#ifdef VIP
-			mainGame->wAvatar[0]->setVisible(true);
-			mainGame->wAvatar[1]->setVisible(true);
-#endif
-        }
-        ////kdiy////////
 		if(!mainGame->dInfo.isCatchingUp) {
 			mainGame->showcardcode = 10;
 			mainGame->showcarddif = 30;
@@ -4948,7 +4942,21 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		} else {	
 			mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1]);
 			mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1]]);
-		}		
+		}
+        int character = mainGame->dInfo.current_player[player];
+		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
+        int character2 = mainGame->dInfo.current_player[1-player] + mainGame->dInfo.team1;
+		if((1-player == 0 && mainGame->dInfo.isTeam1) || (1-player == 1 && !mainGame->dInfo.isTeam1)) character2 = mainGame->dInfo.current_player[1-player];
+#ifdef VIP
+        if(gSoundManager->character[character] > 0)
+            mainGame->wAvatar[player]->setVisible(true);
+        else
+            mainGame->wAvatar[player]->setVisible(false);
+        if(gSoundManager->character[character2] > 0)
+            mainGame->wAvatar[1-player]->setVisible(true);
+        else
+            mainGame->wAvatar[1-player]->setVisible(false);
+#endif
 		//kdiy/////////
 		break;
 	}
