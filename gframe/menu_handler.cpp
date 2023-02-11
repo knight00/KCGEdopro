@@ -839,6 +839,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
             case BUTTON_CHARACTEROK_REPLAY: {
 				mainGame->HideElement(mainGame->wCharacterReplay);
+                mainGame->wCharacter->setVisible(false);
+				mainGame->wCharacterSelect->setVisible(false);
 				break;
 			}
             ////kdiy////////

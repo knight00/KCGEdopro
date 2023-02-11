@@ -208,8 +208,8 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					mainGame->wPhase->setVisible(false);
 					mainGame->btnLeaveGame->setVisible(false);
 					///////kdiy///////
-					mainGame->wCharacter->setVisible(false);
-					mainGame->wCharacterSelect->setVisible(false);
+					mainGame->wAvatar[0]->setVisible(false);
+					mainGame->wAvatar[1]->setVisible(false);
 					///////kdiy///////
 					mainGame->btnSpectatorSwap->setVisible(false);
 					mainGame->wChat->setVisible(false);
@@ -2424,6 +2424,14 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			/////zdiy/////
 			case CHECKBOX_HIDE_NAME_TAG:{
 				gGameConfig->chkHideNameTag = mainGame->gSettings.chkHideNameTag->isChecked();
+				return true;
+			}
+            case CHECKBOX_RANDOM_TEXTURE:{
+				gGameConfig->randomtexture = mainGame->gSettings.chkRandomtexture->isChecked();
+				return true;
+			}
+            case CHECKBOX_CLOSEUP:{
+				gGameConfig->closeup = mainGame->gSettings.chkCloseup->isChecked();
 				return true;
 			}
 			/////zdiy/////

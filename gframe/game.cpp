@@ -1019,23 +1019,23 @@ void Game::Initialize() {
 	btnCharacterSelect2->setImage(imageManager.tcharacterselect2);
 	irr::core::dimension2di avatarsize = { Scale<irr::s32>(CARD_IMG_WIDTH * 0.5f), Scale<irr::s32>(CARD_IMG_HEIGHT * 0.5f) };
 	
-	wAvatar[0] = env->addWindow(Scale(310, 10, 427, 212));
+	wAvatar[0] = env->addWindow(Scale(287, 10, 427, 210));
 	wAvatar[0]->getCloseButton()->setVisible(false);
 	wAvatar[0]->setDraggable(false);
 	wAvatar[0]->setDrawTitlebar(false);
 	wAvatar[0]->setDrawBackground(true);
 	wAvatar[0]->setVisible(false);
-	avatarbutton[0] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 115, 200), wAvatar[0], BUTTON_AVATAR_BORED0);
-	avatarbutton[0]->setImageSize(Scale(0, 0, 115, 200).getSize());
+	avatarbutton[0] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 140, 198), wAvatar[0], BUTTON_AVATAR_BORED0);
+	avatarbutton[0]->setImageSize(Scale(0, 0, 135, 198).getSize());
 	avatarbutton[0]->setDrawBorder(false);
-	wAvatar[1] = env->addWindow(Scale(896, 10, 1013, 212));
+	wAvatar[1] = env->addWindow(Scale(890, 10, 1030, 210));
 	wAvatar[1]->getCloseButton()->setVisible(false);
 	wAvatar[1]->setDraggable(false);
 	wAvatar[1]->setDrawTitlebar(false);
 	wAvatar[1]->setDrawBackground(true);
 	wAvatar[1]->setVisible(false);
-	avatarbutton[1] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 115, 200), wAvatar[1], BUTTON_AVATAR_BORED1);
-	avatarbutton[1]->setImageSize(Scale(0, 0, 115, 200).getSize());
+	avatarbutton[1] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 140, 198), wAvatar[1], BUTTON_AVATAR_BORED1);
+	avatarbutton[1]->setImageSize(Scale(0, 0, 135, 198).getSize());
 	avatarbutton[1]->setDrawBorder(false);
 	///////kdiy///////
 
@@ -1074,7 +1074,10 @@ void Game::Initialize() {
 	PopulateTabSettingsWindow();
 	PopulateSettingsWindow();
     
-    wBtnSettings = env->addWindow(Scale(0, 610, 30, 640));
+    //////kdiy//////
+    //wBtnSettings = env->addWindow(Scale(0, 610, 30, 640));
+    wBtnSettings = env->addWindow(Scale(0, 590, 30, 620));
+    //////kdiy//////
 	wBtnSettings->getCloseButton()->setVisible(false);
 	wBtnSettings->setDraggable(false);
 	wBtnSettings->setDrawTitlebar(false);
@@ -1776,8 +1779,12 @@ void Game::Initialize() {
 	ebNickNameOnline = env->addEditBox(gGameConfig->nickname.data(), Scale(90, 55, 275, 80), true, wRoomListPlaceholder, EDITBOX_NICKNAME);
 
 	//top right host online game button
-	btnCreateHost2 = env->addButton(Scale(904, 25, 1014, 50), wRoomListPlaceholder, BUTTON_CREATE_HOST2, gDataManager->GetSysString(1224).data());
-	defaultStrings.emplace_back(btnCreateHost2, 1224);
+    //////kdiy//////////////
+	//btnCreateHost2 = env->addButton(Scale(904, 25, 1014, 50), wRoomListPlaceholder, BUTTON_CREATE_HOST2, gDataManager->GetSysString(1224).data());
+	//defaultStrings.emplace_back(btnCreateHost2, 1224);
+    btnCreateHost2 = env->addButton(Scale(904, 25, 1014, 50), wRoomListPlaceholder, BUTTON_CREATE_HOST2, gDataManager->GetSysString(8045).data());
+	defaultStrings.emplace_back(btnCreateHost2, 8045);
+    //////kdiy//////////////
 	btnCreateHost2->setAlignment(irr::gui::EGUIA_LOWERRIGHT, irr::gui::EGUIA_LOWERRIGHT, irr::gui::EGUIA_UPPERLEFT, irr::gui::EGUIA_UPPERLEFT);
 
 	//filter dropdowns
@@ -2914,11 +2921,10 @@ void Game::PopulateSettingsWindow() {
         cbpics->setSelected(gGameConfig->hdpic);
         IncrementXorY();
 
-		gSettings.chkRandomtexture = env->addCheckBox(gGameConfig->randomtexture, GetCurrentRectWithXOffset(35, 320), sPanel, -1, gDataManager->GetSysString(8042).data());
+		gSettings.chkRandomtexture = env->addCheckBox(gGameConfig->randomtexture, GetNextRect(), sPanel, CHECKBOX_RANDOM_TEXTURE, gDataManager->GetSysString(8042).data());
 		defaultStrings.emplace_back(gSettings.chkRandomtexture, 8042);
-        IncrementXorY();
 
-		gSettings.chkCloseup = env->addCheckBox(gGameConfig->closeup, GetCurrentRectWithXOffset(35, 320), sPanel, -1, gDataManager->GetSysString(8043).data());
+		gSettings.chkCloseup = env->addCheckBox(gGameConfig->closeup, GetNextRect(), sPanel, CHECKBOX_CLOSEUP, gDataManager->GetSysString(8043).data());
 		defaultStrings.emplace_back(gSettings.chkCloseup, 8043);
         IncrementXorY();
     }
@@ -4997,14 +5003,15 @@ void Game::OnResize() {
 	wRoomListPlaceholder->setRelativePosition(irr::core::recti(0, 0, window_size.Width, window_size.Height));
 	////////kdiy///////
 	// wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 450));
+    // wBtnSettings->setRelativePosition(ResizeWin(0, 610, 30, 640));
 	#ifdef EK
 	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 520));
 	#else
 	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 535));
 	#endif
 	wQQ->setRelativePosition(ResizeWin(mainMenuRightX+10, 200, mainMenuRightX+150, 450));
+    wBtnSettings->setRelativePosition(ResizeWin(0, 590, 30, 620));
 	////////kdiy///////
-	wBtnSettings->setRelativePosition(ResizeWin(0, 610, 30, 640));
 	SetCentered(wCommitsLog);
 	SetCentered(updateWindow, false);
 
@@ -5042,8 +5049,8 @@ void Game::OnResize() {
 	wRules->setRelativePosition(ResizeWin(630, 100, 1000, 310));
 	wReplay->setRelativePosition(ResizeWin(220, 100, 800, 520));
     ////kdiy////////////
-    wAvatar[0]->setRelativePosition(ResizeWin(310, 10, 427, 212));
-    wAvatar[1]->setRelativePosition(ResizeWin(896, 10, 1013, 212));
+    wAvatar[0]->setRelativePosition(ResizeWin(297, 10, 427, 210));
+    wAvatar[1]->setRelativePosition(ResizeWin(890, 10, 1020, 210));
     wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 360, 310));
     ////kdiy////////////
 	wSinglePlay->setRelativePosition(ResizeWin(220, 100, 800, 520));
