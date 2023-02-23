@@ -346,6 +346,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					}
 					gGameConfig->gamename = mainGame->ebServerName->getText();
 					gGameConfig->serverport = mainGame->ebHostPort->getText();
+					mainGame->gBot.Refresh(gGameConfig->filterBot * (mainGame->cbDuelRule->getSelected() + 1), gGameConfig->lastBot);
 					if(!NetServer::StartServer(host_port))
 						break;
 					if(!DuelClient::StartClient(0x100007F /*127.0.0.1 in network byte order*/, host_port)) {
@@ -355,7 +356,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					DuelClient::is_local_host = true;
 					mainGame->btnHostConfirm->setEnabled(false);
 					mainGame->btnHostCancel->setEnabled(false);
-					mainGame->gBot.Refresh(gGameConfig->filterBot * (mainGame->cbDuelRule->getSelected() + 1), gGameConfig->lastBot);
 				}
 				break;
 			}
@@ -1132,7 +1132,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->btnShareReplay->setEnabled(true);
 				std::wstring repinfo;
 				time_t curtime = replay.pheader.base.timestamp;
-				repinfo.append(epro::format(L"{:%Y/%m/%d %H:%M:%S}\n", *std::localtime(&curtime)));
+				repinfo.append(epro::format(L"{:%Y/%m/%d %H:%M:%S}\n", fmt::localtime(curtime)));
 				const auto& names = replay.GetPlayerNames();
 				for(int i = 0; i < replay.GetPlayersCount(0); i++) {
 					repinfo.append(names[i] + L"\n");
@@ -1381,11 +1381,11 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 		case irr::gui::EGET_EDITBOX_CHANGED: {
 			switch(id) {
 			case EDITBOX_PORT_BOX: {
-				std::wstring text = caller->getText();
+				const wchar_t* text = caller->getText();
 				wchar_t filtered[20];
 				int j = 0;
 				bool changed = false;
-				for(int i = 0; text[i]; i++) {
+				for(int i = 0; text[i] && j < 19; i++) {
 					if(text[i] >= L'0' && text[i]<= L'9') {
 						filtered[j] = text[i];
 						j++;
@@ -1393,12 +1393,13 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					}
 				}
 				filtered[j] = 0;
-				if(BufferIO::GetVal(filtered) > 65535) {
-					wcscpy(filtered, L"65535");
+				text = filtered;
+				if(BufferIO::GetVal(text) > 65535) {
+					text = L"65535";
 					changed = true;
 				}
 				if(changed)
-					caller->setText(filtered);
+					caller->setText(text);
 				break;
 			}
 			case EDITBOX_TEAM_COUNT: {
