@@ -107,63 +107,8 @@ Mode::Mode()
 	failTimes = 0;
 	LoadJsonInfo();
 };
-bool Mode::IsModeBot(std::set<int>& rule) {
-	if(rule.size() <= 0) return false;
-	return rule.find(-1) != rule.end();
-}
- void Mode::RefreshAiDecks() {
- 	bots.clear();
-	FileStream windbots("./WindBot/bots.json", FileStream::in);
-	if (windbots.good()) {
-		nlohmann::json j;
-		try {
-			windbots >> j;
-		}
-		catch(const std::exception& e) {
-			ErrorLog("Failed to load WindBot Ignite config json: {}", e.what());
-		}
-		if(j.is_array()) {
-#if !defined(__ANDROID__) && !defined(_WIN32)
-			{
-				auto it = gGameConfig->user_configs.find("posixPathExtension");
-				if(it != gGameConfig->user_configs.end() && it->is_string()) {
-					WindBot::executablePath = it->get<epro::path_string>();
-				} else if((it = gGameConfig->configs.find("posixPathExtension")) != gGameConfig->configs.end()
-					&& it->is_string()) {
-					WindBot::executablePath = it->get<epro::path_string>();
-				}
-			}
-#endif
-			WindBot generic_engine_bot;
-			for(auto& obj : j) {
-				try {
-					WindBot bot;
-					for(auto& masterRule : obj.at("masterRules")) {
-						if(masterRule.is_number()) {
-							bot.masterRules.insert(masterRule.get<int>());
-						}
-					}
-					if(!IsModeBot(bot.masterRules)) continue;
-					bot.name = BufferIO::DecodeUTF8(obj.at("name").get_ref<std::string&>());
-					bot.deck = BufferIO::DecodeUTF8(obj.at("deck").get_ref<std::string&>());
-					bot.dialog = BufferIO::DecodeUTF8(obj.at("dialog").get_ref<std::string&>());
-					bot.deckpath = L"";
-					bot.deckfile = epro::format(L"AI_{}", bot.deck);
-					bot.difficulty = obj.at("difficulty").get<int>();
-					bots.push_back(std::move(bot));
-				}
-				catch(const std::exception& e) {
-					ErrorLog("Failed to parse WindBot Ignite config json entry: {}", e.what());
-				}
-			}
-		}
-	} else {
-		ErrorLog("Failed to open WindBot Ignite config json!");
-	}
-}
 bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 	bool res = false;
-	const wchar_t* overridedeck = nullptr;
 	aiNames.clear();
 	if(modeIndex == 0)
 	{
@@ -200,8 +145,7 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 			}
 		}
 		if(index < 0 || index >= bots.size()) return false;
-		overridedeck = bots[index].deckfile.data();
-		res = bots[index].Launch(port, pass, true, 0, overridedeck,-1);
+		res = bots[index].Launch(port, pass, true, 0, nullptr,-1);
 	}
 	if(!res) return false;
 	return true;
@@ -220,7 +164,7 @@ void Mode::InitializeMode() {
 	isAi = false;
 	modeIndex = -1;
 	rule = MODE_RULE_DEFAULT;
-	RefreshAiDecks();
+	mainGame->RefreshAiDecks();
 }
 Mode::~Mode(){};
 void Mode::RefreshControlState(uint32_t state ,bool visible)
@@ -235,6 +179,10 @@ void Mode::RefreshControlState(uint32_t state ,bool visible)
 		mainGame->chkEntertainmentMode_1Check->setVisible(visible);
 		mainGame->cbEntertainmentMode_1Bot->setVisible(visible);
 	}
+}
+bool Mode::IsModeBot(std::set<int>& rule) {
+	if(rule.size() <= 0) return false;
+	return rule.find(-1) != rule.end();
 }
 void Mode::SetControlState(uint32_t index)
 {
@@ -257,14 +205,9 @@ void Mode::SetControlState(uint32_t index)
 		mainGame->chkEntertainmentMode_1Check->setEnabled(true);
 		mainGame->chkEntertainmentMode_1Check->setChecked(false);
 		mainGame->cbEntertainmentMode_1Bot->clear();
-		for (int32_t i = 0; i < bots.size(); ++i)
-		{
-			auto deck = bots[i].deck;
-			if(deck == L"Martyr" || deck == L"PointStar" || deck == L"Ra"
-				|| deck == L"Armor"|| deck == L"Hades")
-			{
+		for (int32_t i = 0; i < bots.size(); ++i) {
+			if(bots[i].mode == L"ZCG")
 				mainGame->cbEntertainmentMode_1Bot->addItem(bots[i].name.data());
-			}
 		}
 		mainGame->cbEntertainmentMode_1Bot->setEnabled(false);
 	}
@@ -324,54 +267,6 @@ void Mode::SetRule(int32_t index) {
 			break;
 		default:
 			rule = MODE_RULE_DEFAULT;
-			break;
-	}
-}
-void Mode::CreateGame(CTOS_CreateGame& cscg,DeckSizes sizes, uint8_t rule,uint8_t mode,uint8_t start_hand,
-	uint32_t start_lp,uint8_t draw_count,uint16_t time_limit,uint32_t lflist,
-	uint8_t duel_rule,uint32_t duel_flag_low,uint32_t duel_flag_high,uint8_t no_check_deck_content,
-	uint8_t no_shuffle_deck,uint32_t handshake,ClientVersion version,int32_t team1,
-	int32_t team2,int32_t best_of,uint32_t forbiddentypes,uint16_t extra_rules) {
-	cscg.info.sizes = sizes;
-	cscg.info.rule = rule;
-	cscg.info.mode = mode;
-	cscg.info.start_hand = start_hand;
-	cscg.info.start_lp = start_lp;
-	cscg.info.draw_count = draw_count;
-	cscg.info.time_limit = time_limit;
-	cscg.info.lflist = lflist;
-	cscg.info.duel_rule = duel_rule;
-	cscg.info.duel_flag_low = duel_flag_low;
-	cscg.info.duel_flag_high = duel_flag_high;
-	cscg.info.no_check_deck_content = no_check_deck_content;
-	cscg.info.no_shuffle_deck = no_shuffle_deck;
-	cscg.info.handshake = handshake;
-	cscg.info.version = version;
-	cscg.info.team1 = team1;
-	cscg.info.team2 = team2;
-	cscg.info.best_of = best_of;
-	cscg.info.forbiddentypes = forbiddentypes;
-	cscg.info.extra_rules = extra_rules;
-
-}
-void Mode::ModeCreateGame(CTOS_CreateGame& cscg) {
-	masterNames.clear();
-	masterNames.push_back(nickName);
-	switch (rule)
-	{
-		case MODE_RULE_ZCG:
-		case MODE_RULE_ZCG_NO_RANDOM:
-			//mainGame->dInfo.secret.game_id = 0;
-			//mainGame->dInfo.secret.pass = pass;
-			//mainGame->duel_param = 858112;
-			//mainGame->forbiddentypes = 67108864;
-			//mainGame->extra_rules = 0;
-			BufferIO::EncodeUTF16(gameName, cscg.name, 20);
-			BufferIO::EncodeUTF16(pass, cscg.pass, 20);
-			CreateGame(cscg,{ {0,999},{0,999},{0,999} },5,0,5,32000,1,223,0,0,858112 & 0xffffffff,(858112 >> 32) & 0xffffffff,
-				false,false,SERVER_HANDSHAKE,{ EXPAND_VERSION(CLIENT_VERSION) },1,1,1,67108864,0);
-			break;
-		default:
 			break;
 	}
 }
@@ -861,7 +756,7 @@ void Game::Initialize() {
 	////////zdiy////////
 	btnEntertainmentMode = env->addButton(OFFSET(10, 30, 270, 60), wMainMenu, BUTTON_ENTERTAUNMENT_MODE, gDataManager->GetSysString(1205).data());
 	defaultStrings.emplace_back(btnEntertainmentMode, 1205);
-	btnEntertainmentMode->setEnabled(false);
+	//btnEntertainmentMode->setEnabled(false);
 	offset += 35;
 	////////zdiy////////
 	btnSingleMode = env->addButton(OFFSET(10, 65, 270, 95), wMainMenu, BUTTON_SINGLE_MODE, gDataManager->GetSysString(1201).data());
@@ -3729,6 +3624,9 @@ void Game::RefreshLFLists() {
 }
 void Game::RefreshAiDecks() {
 	gBot.bots.clear();
+	/////zdiy//////
+	mainGame->mode->bots.clear();
+	/////zdiy//////
 	FileStream windbots("./WindBot/bots.json", FileStream::in);
 	if (windbots.good()) {
 		nlohmann::json j;
@@ -3754,13 +3652,15 @@ void Game::RefreshAiDecks() {
 			for(auto& obj : j) {
 				try {
 					WindBot bot;
-					/////kdiy////////
 					bot.name = BufferIO::DecodeUTF8(obj.at("name").get_ref<std::string&>());
-					/////kdiy////////
 					bot.deck = BufferIO::DecodeUTF8(obj.at("deck").get_ref<std::string&>());
 					/////kdiy////////
 					bot.dialog = BufferIO::DecodeUTF8(obj.at("dialog").get_ref<std::string&>());
 					/////kdiy////////
+					/////zdiy////////
+					if(obj.find("mode") != obj.end())
+					    bot.mode = L"ZCG";
+					/////zdiy////////
 					bot.deckfile = epro::format(L"AI_{}", bot.deck);
 					bot.difficulty = obj.at("difficulty").get<int>();
 					for(auto& masterRule : obj.at("masterRules")) {
@@ -3769,7 +3669,10 @@ void Game::RefreshAiDecks() {
 						}
 					}
 					/////zdiy//////
-					if(mainGame->mode->IsModeBot(bot.masterRules)) continue;
+					if(mainGame->mode->IsModeBot(bot.masterRules)) {
+						mainGame->mode->bots.push_back(std::move(bot));
+						continue;
+					}
 					/////zdiy//////
 					bool is_generic_engine = bot.deck == L"Lucky";
 					if(is_generic_engine)

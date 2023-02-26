@@ -2421,7 +2421,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				mainGame->RefreshCardInfoTextPositions();
 				return true;
 			}
-			/////zdiy/////
+			/////kdiy/////
 			case CHECKBOX_HIDE_NAME_TAG:{
 				gGameConfig->chkHideNameTag = mainGame->gSettings.chkHideNameTag->isChecked();
 				return true;
@@ -2434,7 +2434,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				gGameConfig->closeup = mainGame->gSettings.chkCloseup->isChecked();
 				return true;
 			}
-			/////zdiy/////
+			/////kdiy/////
 			case CHECKBOX_HIDE_PASSCODE_SCOPE: {
 				gGameConfig->hidePasscodeScope = mainGame->gSettings.chkHidePasscodeScope->isChecked();
 				mainGame->stPasscodeScope->setVisible(!gGameConfig->hidePasscodeScope);

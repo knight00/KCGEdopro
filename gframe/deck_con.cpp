@@ -46,12 +46,12 @@ static int parse_filter(const wchar_t* pstr, uint32_t& type) {
 		type = 6;
 		return 0;
 	}
-	/////zdiy/////
+	/////kdiy/////
 	if(*pstr == L'\u221E') {
 		type = 7;
 		return 0;
 	}
-	/////zdiy/////
+	/////kdiy/////
 	type = 0;
 	return 0;
 }
@@ -1227,21 +1227,21 @@ bool DeckBuilder::CheckCard(CardDataM* data, SEARCH_MODIFIER modifier, const std
 		if(filter_atktype) {
 			if((filter_atktype == 1 && data->_data.attack != filter_atk) || (filter_atktype == 2 && data->_data.attack < filter_atk)
 				|| (filter_atktype == 3 && data->_data.attack <= filter_atk) || (filter_atktype == 4 && (data->_data.attack > filter_atk || data->_data.attack < 0))
-				/////zdiy//////
+				/////kdiy//////
 				//|| (filter_atktype == 5 && (data->_data.attack >= filter_atk || data->_data.attack < 0)) || (filter_atktype == 6 && data->_data.attack != -2))
 				|| (filter_atktype == 5 && (data->_data.attack >= filter_atk || data->_data.attack < 0)) || (filter_atktype == 6 && data->_data.attack != -2)
 				||  (filter_atktype == 7 && data->_data.attack < 8888888))
-				/////zdiy//////
+				/////kdiy//////
 				return false;
 		}
 		if(filter_deftype) {
 			if((filter_deftype == 1 && data->_data.defense != filter_def) || (filter_deftype == 2 && data->_data.defense < filter_def)
 				|| (filter_deftype == 3 && data->_data.defense <= filter_def) || (filter_deftype == 4 && (data->_data.defense > filter_def || data->_data.defense < 0))
 				|| (filter_deftype == 5 && (data->_data.defense >= filter_def || data->_data.defense < 0)) || (filter_deftype == 6 && data->_data.defense != -2)
-				/////zdiy//////
+				/////kdiy//////
 				//|| (data->_data.type & TYPE_LINK))
 				|| (data->_data.type & TYPE_LINK) || (filter_atktype == 7 && data->_data.defense < 8888888))
-				/////zdiy//////
+				/////kdiy//////
 				return false;
 		}
 		if(filter_lvtype) {

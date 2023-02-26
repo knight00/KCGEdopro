@@ -279,7 +279,38 @@ catch(...) { what = def; }
             /////zdiy//////
 			} else {
 				CTOS_CreateGame cscg;
-				mainGame->mode->ModeCreateGame(cscg);
+				mainGame->mode->masterNames.clear();
+				mainGame->mode->masterNames.push_back(mainGame->mode->nickName);
+				switch (mainGame->mode->rule)
+				{
+					case MODE_RULE_ZCG:
+					case MODE_RULE_ZCG_NO_RANDOM:
+					    BufferIO::EncodeUTF16(mainGame->mode->gameName, cscg.name, 20);
+						BufferIO::EncodeUTF16(mainGame->mode->pass, cscg.pass, 20);
+						cscg.info.sizes = { {0,999},{0,999},{0,999} };
+						cscg.info.rule = 5;
+						cscg.info.mode = 0;
+						cscg.info.start_hand = 5;
+						cscg.info.start_lp = 32000;
+						cscg.info.draw_count = 1;
+						cscg.info.time_limit = 223;
+						cscg.info.lflist = 0;
+						cscg.info.duel_rule = 0;
+						cscg.info.duel_flag_low = mainGame->duel_param & 0xffffffff;
+						cscg.info.duel_flag_high = (mainGame->duel_param >> 32) & 0xffffffff;
+						cscg.info.no_check_deck_content = 1;
+						cscg.info.no_shuffle_deck = 0;
+						cscg.info.handshake = SERVER_HANDSHAKE;
+						cscg.info.version = { EXPAND_VERSION(CLIENT_VERSION) };
+						cscg.info.team1 = 1;
+						cscg.info.team2 = 1;
+						cscg.info.best_of = 1;
+						cscg.info.forbiddentypes = mainGame->forbiddentypes;
+						cscg.info.extra_rules = mainGame->extra_rules;
+						break;
+					default:
+					    break;
+				}
 				SendPacketToServer(CTOS_CREATE_GAME, cscg);
 			}
 		    /////zdiy//////

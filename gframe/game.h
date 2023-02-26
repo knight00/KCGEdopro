@@ -137,15 +137,15 @@ public:
 		std::wstring name;
 		std::wstring des;
 	};
-	std::vector<ModeText>* modeTexts;
 	std::vector<WindBot> bots;
+	std::vector<ModeText>* modeTexts;
 	std::vector<std::wstring> masterNames,aiNames;
 	//struct DuelPlayer* masterPlayer, * aiPlayer;
 	int port;
 	int modeIndex;
 	const wchar_t * nickName;
 	const wchar_t * gameName;
-	const wchar_t * pass; 
+	const wchar_t * pass;
 	bool isMode;
 	bool isAi;
 	Deck deck;
@@ -157,14 +157,12 @@ public:
 	void RefreshEntertainmentPlay(std::vector<ModeText>* modeTexts);
 	void RefreshControlState(uint32_t state ,bool visible);
 	void SetControlState(uint32_t index);
-	void ModeCreateGame(CTOS_CreateGame& cscg);
 	void ModePlayerEnter(const void* data,size_t len);
 	void ModePlayerChange(const void* data,size_t len ,uint32_t& watching);
 	void ModeJoinGame(const void* data,size_t len);
 	void ModeTypeChange();
 	void ModeDuelStart(uint8_t selftype);
 	void ModePlayerReady(bool isAi);
-	void RefreshAiDecks();
 	void UpdateDeck();
 	void SetTimes(uint8_t player);
 	void SetRule(int32_t index);
@@ -173,11 +171,6 @@ public:
 	Mode();
 	~Mode();
 private:
-	void CreateGame(CTOS_CreateGame& cscg,DeckSizes sizes,uint8_t rule,uint8_t mode,uint8_t start_hand,
-		uint32_t start_lp,uint8_t draw_count,uint16_t time_limit,uint32_t lflist,
-		uint8_t duel_rule,uint32_t duel_flag_low,uint32_t duel_flag_high,uint8_t no_check_deck_content,
-		uint8_t no_shuffle_deck,uint32_t handshake,ClientVersion version,int32_t team1,
-		int32_t team2,int32_t best_of,uint32_t forbiddentypes,uint16_t extra_rules);
 	void SetCurrentDeck();
 	void LoadJsonInfo();
 };

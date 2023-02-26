@@ -20,6 +20,7 @@ struct WindBot {
 	/////kdiy//////
 	std::wstring dialog;
 	std::wstring deckpath = L"";
+	std::wstring mode = L"";
 	/////kdiy//////
 	std::wstring deckfile;
 	int difficulty;

@@ -185,107 +185,6 @@ bool DataManager::ParseDB(sqlite3* pDB) {
 	sqlite3_close(pDB);
 	return true;
 }
-/////zdiy//////
-// uint64_t DataManager::LoadZRace(uint32_t code) {
-// 	switch (code)
-// 	{
-// 		case 77240064:
-// 		case 77240065:
-// 		case 77240066:
-// 			return RACE_DEVIL;
-// 		case 77240315:
-// 		case 77239931:
-// 		case 77239932:
-// 		case 77239933:
-// 		case 77240201:
-// 			return RACE_EVIL;
-// 		case 77240200:
-// 			return RACE_CHAOSGOD;
-// 		case 77239905:
-// 			return RACE_CREATORGOD_II;
-// 		case 77238480:
-// 		case 77239205:
-// 		case 77239211:
-// 		case 77239212:
-// 		case 77239213:
-// 		case 77239214:
-// 		case 77239215:
-// 		case 77239216:
-// 		case 77239218:
-// 		case 77239219:
-// 		case 77239220:
-// 		case 77239221:
-// 		case 77239222:
-// 		case 77239223:
-// 		case 77239225:
-// 		case 77239229:
-// 		case 77239231:
-// 		case 77239232:
-// 		case 77239233:
-// 		case 77239238:
-// 		case 77240221:
-// 		case 77240259:
-// 		case 77240260:
-// 		case 77240261:
-// 		case 77240458:
-// 		case 77240461:
-// 		case 77240462:
-// 		case 77240463:
-// 		case 77240464:
-// 		case 77240465:
-// 		case 77240466:
-// 		case 77240467:
-// 		case 77240468:
-// 		case 77240469:
-// 		case 77240481:
-// 		case 77240482:
-// 		case 77239302:
-// 		case 77240631:
-// 		case 77240666:
-// 			return RACE_LEGENDATYDIVINE;
-// 		case 77239200:
-// 		case 77239201:
-// 		case 77239202:
-// 		case 77239203:
-// 		case 77239204:
-// 		case 77239206:
-// 		case 77239207:
-// 		case 77239208:
-// 		case 77239217:
-// 		case 77239224:
-// 		case 77239227:
-// 		case 77239228:
-// 		case 77239235:
-// 		case 77239236:
-// 		case 77239295:
-// 		case 77240024:
-// 		case 77240076:
-// 		case 77240262:
-// 		case 77240265:
-// 		case 77240630:
-// 			return RACE_LEGENDATYGOD;
-// 		case 77239934:
-// 		case 77240136:
-// 			return RACE_LEGENDATYCHAOSGOD;
-// 		case 77239230:
-// 		case 77239292:
-// 		case 77240472:
-// 			return RACE_SEASERPENTDIVINE;
-// 		case 77239679:
-// 			return RACE_GOD;
-// 		case 77239870:
-// 		case 77239871:
-// 		case 77239872:
-// 			return RACE_DUELIST;
-// 		case 77239135:
-// 		case 77239239:
-// 		case 77239920:
-// 			return RACE_LEAD;
-// 		default:
-// 			return 0;
-// 	}
-// }
-/////zdiy//////
 bool DataManager::ParseLocaleDB(sqlite3* pDB) {
 	if(pDB == nullptr)
 		return false;
@@ -465,7 +364,7 @@ epro::wstringview DataManager::GetName(uint32_t code) const {
 	auto csit = cards.find(code);
 	if(csit == cards.end() || csit->second.GetStrings().name.empty())
 		return unknown_string;
-	/////zdiy/////
+	/////kdiy/////
 	//return csit->second.GetStrings().name;
 	epro::wstringview name = csit->second.GetStrings().name;
 	if(gGameConfig->chkHideNameTag) {
@@ -475,7 +374,7 @@ epro::wstringview DataManager::GetName(uint32_t code) const {
 		else if(index_2 != std::wstring::npos) name = name.substr(0,index_2);
 	}
 	return name;
-	/////zdiy/////
+	/////kdiy/////
 }
 epro::wstringview DataManager::GetText(uint32_t code) const {
 	auto csit = cards.find(code);
