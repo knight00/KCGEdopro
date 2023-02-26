@@ -43,6 +43,9 @@
 #include "MD5/md5.h"
 //kdiy///////
 
+/////zdiy/////
+#include "client_card.h"
+/////zdiy/////
 #if defined(__ANDROID__) || defined(EDOPRO_IOS)
 #include "CGUICustomComboBox/CGUICustomComboBox.h"
 namespace porting {
@@ -93,38 +96,199 @@ static inline epro::path_string NoSkinLabel() {
 Mode::Mode()
 {
 	modeTexts = nullptr;
+	modePloats = nullptr;
 	isMode = false;
 	isAi = false;
-	//aiPlayer = nullptr;
-	//masterPlayer = nullptr;
+	isPlot = false;
 	nickName = nullptr;
 	gameName = nullptr;
 	pass = nullptr;
+	cv = nullptr;
+	lck = nullptr;
+	isEvent = false;
+	flag_100000155 = false;
+	player = 0;
+	plotStep = 0;
+	plotIndex = 0;
 	modeIndex = -1;
+	duelSoundIndex = 0;
 	rule = MODE_RULE_DEFAULT;
 	port = 7911;
 	winTimes = 0;
 	failTimes = 0;
 	LoadJsonInfo();
 };
+void Mode::ModePlaySound(uint32_t type,int32_t index,int32_t type2) {
+	duelSoundIndex = index;
+	switch (type)
+	{
+		case Ploat:
+			gSoundManager->StopSounds();
+			gSoundManager->PlayModeSound(Ploat,index);
+			break;
+		case Duel:
+			//threadSleep = true;
+			//gSoundManager->StopSounds();
+			gSoundManager->PlayModeSound(Duel,index,type2);
+			break;
+		default:
+			break;
+	}
+
+}
+std::wstring Mode::GetPloat(int32_t index,uint32_t code) {
+	std::wstring str = L"";
+	if(index < 0 || index >= mainGame->mode->modePloats->size()) return str;
+	str = mainGame->mode->modePloats->at(index).title;
+	str.append(epro::format(L"{}\n{}{}",L":",L"  ",mainGame->mode->modePloats->at(index).ploat));
+	if(code != 0) {
+		str = epro::sprintf(str, gDataManager->GetName(code));
+	}
+	return str;
+}
+void Mode::NextPlot(int32_t step,int32_t index,uint32_t code) {
+	if(step != 0)plotStep = step;
+	if(index != 0)plotIndex = index;
+	if(plotIndex >= mainGame->mode->modePloats->size() || plotIndex < 0 ) plotIndex = 0;
+	int32_t i = mainGame->mode->modePloats->at(plotIndex).control;
+	if(i < 0 || i > 2 ) i = 0;
+	int32_t plotStep = this->plotStep;
+	int32_t plotIndex = this->plotIndex;
+	++this->plotStep;
+	++this->plotIndex;
+	/*
+		plotStep 0 to 7,part1-1 when game start
+	*/
+	if(plotStep == 0) {
+		mainGame->mode->isPlot = true;
+		std::lock_guard<epro::mutex> lock(mainGame->gMutex);
+		mainGame->mode->SetBodyImage(0);
+		mainGame->ShowElement(mainGame->wBody);
+		mainGame->ShowElement(mainGame->wPloat);
+		mainGame->stPloatInfo->setText(GetPloat(plotIndex).data());
+		mainGame->wChBody[0]->setRelativePosition(mainGame->Scale(475, 323, 527, 375));
+		mainGame->wChBody[1]->setRelativePosition(mainGame->Scale(475, 48, 527, 100));
+
+	}
+	else if(plotStep == 1) {
+		mainGame->wBody->setVisible(false);
+		mainGame->HideElement(mainGame->wPloat);
+		mainGame->mode->SetHeadImage(i);
+		mainGame->ShowElement(mainGame->wChPloatBody[i]);
+		mainGame->ShowElement(mainGame->wChBody[i]);
+		ModePlaySound(SOUND::Ploat,plotIndex);
+		mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
+	}
+	else if(plotStep == 2) {
+		mainGame->mode->SetHeadImage(i);
+		mainGame->ShowElement(mainGame->wChPloatBody[i]);
+		mainGame->ShowElement(mainGame->wChBody[i]);
+		ModePlaySound(SOUND::Ploat,plotIndex);
+		mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
+	}
+	else if(plotStep < 6 ) {
+		ModePlaySound(SOUND::Ploat,plotIndex);
+		mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
+	}
+	else if(plotStep == 6) {
+		mainGame->stChPloatInfo[0]->setText(L"");
+		mainGame->stChPloatInfo[1]->setText(L"");
+		mainGame->HideElement(mainGame->wChPloatBody[0]);
+		mainGame->HideElement(mainGame->wChBody[0]);
+		mainGame->HideElement(mainGame->wChPloatBody[1]);
+		mainGame->HideElement(mainGame->wChBody[1]);
+		std::wstring str =  gDataManager->GetSysString(1700).data();
+		str.append(L"\n\n");
+		for (int32_t i = 0; i < ploatCodes.size(); ++i)
+		{
+			str.append(epro::format(L"{}\n",gDataManager->GetName(ploatCodes[i])));
+		}
+		mainGame->stPloatInfo->setText(str.data());
+		mainGame->ShowElement(mainGame->wPloat);
+	}
+	else if(plotStep == 7) {
+		mainGame->mode->isPlot = false;
+		mainGame->HideElement(mainGame->wPloat);
+		DuelClient::SendPacketToServer(CTOS_MODE_HS_START);
+	}
+	/*
+		plotStep 8 to 14,part1-1 when bot spsummon dark monster
+	*/
+	else if(plotStep == 8) {
+		std::unique_lock<epro::mutex> lck(*this->lck);
+		isPlot = true;
+		mainGame->ShowElement(mainGame->wChPloatBody[i]);
+		mainGame->ShowElement(mainGame->wChBody[i]);
+		ModePlaySound(SOUND::Ploat,plotIndex);
+		mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
+		cv->wait(lck);
+		isEvent = true;
+		mainGame->stChPloatInfo[0]->setText(L"");
+		mainGame->stChPloatInfo[1]->setText(L"");
+		mainGame->HideElement(mainGame->wChPloatBody[0]);
+		mainGame->HideElement(mainGame->wChPloatBody[1]);
+		mainGame->HideElement(mainGame->wChBody[0]);
+		mainGame->HideElement(mainGame->wChBody[1]);
+		ModePlaySound(SOUND::Ploat,21);
+		mainGame->ShowElement(mainGame->wChPloatBody[1]);
+		mainGame->ShowElement(mainGame->wChBody[1]);
+		mainGame->stChPloatInfo[1]->setText(GetPloat(21,100000155).data());
+		cv->wait_for(lck,std::chrono::milliseconds(GetSoundSeconds(duelSoundIndex)));
+		mainGame->stChPloatInfo[1]->setText(L"");
+		mainGame->HideElement(mainGame->wChBody[1]);
+		mainGame->HideElement(mainGame->wChPloatBody[1]);
+		isPlot = false;
+		isEvent = false;
+		lck.unlock();
+	} 
+	else if(plotStep == 9) {
+		mainGame->ShowElement(mainGame->wChPloatBody[i]);
+		mainGame->ShowElement(mainGame->wChBody[i]);
+		ModePlaySound(SOUND::Ploat,plotIndex);
+		mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
+	}
+	else if(plotStep <= 13) {
+		ModePlaySound(SOUND::Ploat,plotIndex);
+		mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
+	}
+	else if(plotStep == 14) {
+		cv->notify_one();		
+	}
+	/*
+		plotStep 15,part1-1 when player summon or activate
+	*/
+	else if(plotStep == 15) {
+		std::unique_lock<epro::mutex> lck(*this->lck);
+		isPlot = true;
+		isEvent = true;
+		ModePlaySound(SOUND::Ploat,plotIndex);
+		mainGame->ShowElement(mainGame->wChBody[i]);
+		mainGame->ShowElement(mainGame->wChPloatBody[i]);
+		mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex,code).data());
+		cv->wait_for(lck,std::chrono::milliseconds(GetSoundSeconds(duelSoundIndex)));
+		mainGame->stChPloatInfo[i]->setText(L"");
+		mainGame->HideElement(mainGame->wChBody[i]);
+		mainGame->HideElement(mainGame->wChPloatBody[i]);
+		isPlot = false;
+		isEvent = false;
+		lck.unlock();
+	}
+}
 bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 	bool res = false;
 	aiNames.clear();
-	if(modeIndex == 0)
-	{
-		int32_t index = -1;
-		if(rule == MODE_RULE_ZCG) {
+	int32_t index = -1;
+	if(rule == MODE_RULE_ZCG) {
 
-			for (int32_t i = 0; i < bots.size(); ++i)
-			{
-				auto bot = bots[i];
-				if(bot.deck == L"Mode") {
-					index = i;
-					std::wstring name = L"[AI] ";
-					name.append(bot.name);
-					aiNames.push_back(name);
-					break;
-				}
+		for (int32_t i = 0; i < bots.size(); ++i)
+		{
+			auto bot = bots[i];
+			if(bot.deck == L"Mode") {
+				index = i;
+				std::wstring name = L"[AI] ";
+				name.append(bot.name);
+				aiNames.push_back(name);
+				break;
 			}
 		}
 		if(rule == MODE_RULE_ZCG_NO_RANDOM) {
@@ -147,6 +311,38 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 		if(index < 0 || index >= bots.size()) return false;
 		res = bots[index].Launch(port, pass, true, 0, nullptr,-1);
 	}
+	if(rule == MODE_RULE_ZCG_NO_RANDOM) {
+		index = mainGame->cbEntertainmentMode_1Bot->getSelected();
+		if(index < 0) return false;
+		auto name =  mainGame->cbEntertainmentMode_1Bot->getItem(index);
+		index = -1;
+		for (int32_t i = 0; i < bots.size(); ++i)
+		{
+			auto bot = bots[i];
+			if(bot.name == name) {
+				index = i;
+				std::wstring name = L"[AI] ";
+				name.append(bot.name);
+				aiNames.push_back(name);
+				break;
+			}
+		}
+	}
+	if(rule == MODE_RULE_5DS_DARK_TUNER) {
+		for (int32_t i = 0; i < bots.size(); ++i)
+		{
+			auto bot = bots[i];
+			if(bot.deck == L"ModeDT1") {
+				index = i;
+				std::wstring name = L"[AI] ";
+				name.append(bot.name);
+				aiNames.push_back(name);
+				break;
+			}
+		}
+	}
+	if(index < 0 || index >= bots.size()) return false;
+	res = bots[index].Launch(port, pass, true, 0, nullptr,-1);
 	if(!res) return false;
 	return true;
 }
@@ -162,22 +358,242 @@ void Mode::InitializeMode() {
 	pass = L"";
 	isMode = true;
 	isAi = false;
+	isPlot = false;
+	isEvent = false;
+	flag_100000155 = false;
+	duelSoundIndex = 0;
+	plotStep = 0;
+	plotIndex = 0;
 	modeIndex = -1;
+	player = 0;
+	deck.clear();
 	rule = MODE_RULE_DEFAULT;
 	mainGame->RefreshAiDecks();
 }
 Mode::~Mode(){};
+void Mode::ModeClientAnalyze(const uint8_t* pbuf,uint8_t msg) {
+#define CARD_SOUND_INDEX  15
+	//if(rule == MODE_RULE_5DS_DARK_TUNER) {
+		//if(draw &&  msg != MSG_UPDATE_DATA && msg != MSG_DRAW) draw = false;
+		if(msg== MSG_MOVE) {
+			const auto & code = BufferIO::Read<uint32_t>(pbuf);
+			CoreUtils::loc_info previous = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+			previous.controler = mainGame->LocalPlayer(previous.controler);
+			CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+			current.controler = mainGame->LocalPlayer(current.controler);
+			const auto reason = BufferIO::Read<uint32_t>(pbuf);
+			switch (code)
+			{
+				case 100000157:{
+					if(previous.controler != 1 || current.controler != 1) return;
+					if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
+					if(!(current.position & POS_FACEUP_DEFENSE)) return;
+					if(!(reason & REASON_RULE) || (reason &(REASON_DESTROY|REASON_REPLACE|REASON_COST|REASON_EFFECT|REASON_RETURN))) return;
+					NextPlot(CARD_SOUND_INDEX,12,code);
+					return;
+				}
+				case 63977008:{
+					if(previous.controler != 0 || current.controler != 0) return;
+					if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
+					if(!(reason & REASON_RULE) || (reason &(REASON_DESTROY|REASON_REPLACE|REASON_COST|REASON_EFFECT|REASON_RETURN))) return;
+					NextPlot(CARD_SOUND_INDEX,14,code);
+					return;
+				}
+				case 511009416:{
+					if(previous.controler != 0 || current.controler != 0) return;
+					if(!(reason & REASON_SPSUMMON)) return;
+					if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE)) return;
+					if(!(current.position & POS_FACEUP)) return;
+					NextPlot(CARD_SOUND_INDEX,16,code);
+					return;
+				}
+				case 100000143:{
+					if(previous.controler != 1 || current.controler != 1) return;
+					if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
+					if(!(reason & REASON_RULE) || (reason &(REASON_DESTROY|REASON_REPLACE|REASON_COST|REASON_EFFECT|REASON_RETURN))) return;
+					NextPlot(CARD_SOUND_INDEX,20,code);
+					return;
+				}
+				case 100000155:{
+					if(previous.controler != 1 || current.controler != 1) return;
+					if(!(reason & REASON_SPSUMMON)) return;
+					if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE)) return;
+					if(!(current.position & POS_FACEUP)) return;
+					NextPlot(8,6,code);
+					return;
+				}
+				case 88559132:{
+					if(previous.controler != 0 || current.controler != 0) return;
+					if(!(reason & REASON_SPSUMMON)) return;
+					if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
+					if(!(current.position & POS_FACEUP)) return;
+					NextPlot(CARD_SOUND_INDEX,24,code);
+					return;
+				}
+				case 96182448:{
+					if(previous.controler != 0 || current.controler != 0) return;
+					if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
+					if(!(reason & REASON_RULE) || (reason &(REASON_DESTROY|REASON_REPLACE|REASON_COST|REASON_EFFECT|REASON_RETURN))) return;
+					NextPlot(CARD_SOUND_INDEX,29,code);
+					return;
+				}
+				case 18013090:{
+					if(previous.controler != 0 || current.controler != 0) return;
+					if(!(reason & REASON_SPSUMMON)) return;
+					if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE)) return;
+					if(!(current.position & POS_FACEUP)) return;
+					NextPlot(CARD_SOUND_INDEX,32,code);
+				}
+				default:
+					return;
+			}
+		}
+		else if(msg == MSG_CHAINING) {
+			const auto code = BufferIO::Read<uint32_t>(pbuf);
+			CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+			ClientCard* pcard = mainGame->dField.GetCard(mainGame->LocalPlayer(info.controler), info.location, info.sequence, info.position);
+			switch (code)
+			{
+				case 511002846:{
+					if(!(pcard->type & TYPE_SPELL) || !(pcard->location & LOCATION_SZONE)) return;
+					if(pcard->controler != 0) return;
+					NextPlot(CARD_SOUND_INDEX,13,code);
+					return;
+				}
+				case 63977008:{
+					if(pcard->controler != 0) return;
+					if(!(pcard->type & TYPE_MONSTER) || !(pcard->location & LOCATION_MZONE)) return;
+					NextPlot(CARD_SOUND_INDEX,15,code);
+					return;
+				}
+				case 97077563:{
+					if(pcard->controler != 1) return;
+					if(!(pcard->type & TYPE_TRAP) || !(pcard->location & LOCATION_SZONE)) return;
+					NextPlot(CARD_SOUND_INDEX,18,code);
+					return;
+				}
+				case 100000158:{
+					if(pcard->controler != 1) return;
+					if(!(pcard->type & TYPE_SPELL) || !(pcard->location & LOCATION_SZONE)) return;
+					NextPlot(CARD_SOUND_INDEX,19,code);
+					return;
+				}
+				case 100000157:{
+					if(pcard->controler != 1) return;
+					NextPlot(CARD_SOUND_INDEX,17,code);
+					return;
+				}
+				case 100000143:{
+					if(pcard->controler != 1) return;
+					if(!(pcard->location & LOCATION_GRAVE)) return;
+					NextPlot(CARD_SOUND_INDEX,22,code);
+					return;
+				}
+				case 42079445:{
+					if(pcard->controler != 0) return;
+					if(!(pcard->location & LOCATION_SZONE)) return;
+					NextPlot(CARD_SOUND_INDEX,23,code);
+					return;
+				}
+				case 100000155:{
+					if(pcard->controler != 1) return;
+					if((pcard->location & LOCATION_GRAVE)) {
+						flag_100000155 = true;
+						NextPlot(CARD_SOUND_INDEX,25,code);
+					}
+					else if((pcard->location & LOCATION_MZONE)) {
+						if(!flag_100000155) return;
+						flag_100000155 = false;
+						NextPlot(CARD_SOUND_INDEX,26);
+					}
+					return;
+				}
+			case 2295440:
+			case 100100001:{
+				if(pcard->controler != 0) return;
+				if(!(pcard->location & LOCATION_SZONE)) return;
+				NextPlot(CARD_SOUND_INDEX,27,code);
+				return;
+			}
+			case 511000197:{
+				if(pcard->controler != 1) return;
+				if(!(pcard->location & LOCATION_SZONE)) return;
+				NextPlot(CARD_SOUND_INDEX,28,code);
+				return;
+			}
+			case 23571046:{
+				if(pcard->controler != 0) return;
+				if(!(pcard->location & LOCATION_GRAVE)) return;
+				NextPlot(CARD_SOUND_INDEX,30,code);
+				return;
+			}
+			case 98273947:{
+				if(pcard->controler != 0) return;
+				if(!(pcard->location & LOCATION_SZONE)) return;
+				NextPlot(CARD_SOUND_INDEX,31,code);
+				return;
+			}
+			case 96182448:{
+				if(pcard->controler != 0) return;
+				if(!(pcard->location & LOCATION_GRAVE)) return;
+				NextPlot(CARD_SOUND_INDEX,33,code);
+			}
+			default:
+				return;
+			}
+		}
+		else if(msg == MSG_ATTACK) {
+			CoreUtils::loc_info info1 = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+			info1.controler = mainGame->LocalPlayer(info1.controler);
+			if(info1.controler != 1) return;
+			mainGame->dField.attacker = mainGame->dField.GetCard(info1.controler, info1.location, info1.sequence);
+			uint32_t code = mainGame->dField.attacker->code;
+			switch (code)
+			{
+				case 100000155: {
+					NextPlot(CARD_SOUND_INDEX,34,code);
+					return;
+				}
+				default:
+					return;
+			}
+		}
+		
+	//}
+
+}
+/*
+ no found the fun to read sound time
+*/
+long long Mode::GetSoundSeconds(int32_t index) {
+	switch (index)
+	{
+		case 0:return 1201;case 1:return 1201;case 2:return 1828;case 3:return 4205;case 4:return 3787;
+		case 5:return 3996;case 6:return 8280;case 12:return 2507;case 13:return 12695;case 14:return 1750;
+		case 15:return 8150; case 16:return 10135;case 17:return 8098;case 18:return 9012;case 19:return 14236;
+		case 20:return 4937;case 21:return 13322;case 22:return 10109;case 23:return 7418;case 24:return 2324;
+		case 25:return 11911;case 26:return 6582;case 27:return 8333;case 28:return 14315;case 29:return 2246;
+		case 30:return 5955;case 31:return 6661;case 32:return 10422;case 33:return 4231;case 34:return 8881;
+		default:return 1000;
+	}
+}
 void Mode::RefreshControlState(uint32_t state ,bool visible)
 {
 	mainGame->btnEntertainmentExitGame->setVisible(true);
 	mainGame->btnEntertainmentExitGame->setEnabled(true);
 	mainGame->lstEntertainmentPlayList->setVisible(true);
 	mainGame->lstEntertainmentPlayList->setEnabled(true);
+	mainGame->chkEntertainmentMode_1Check->setVisible(false);
+	mainGame->cbEntertainmentMode_1Bot->setVisible(false);
 	if(state & 0x1) {
 		mainGame->btnEntertainmentStartGame->setVisible(visible);
 		mainGame->chkEntertainmentPrepReady->setVisible(visible);
 		mainGame->chkEntertainmentMode_1Check->setVisible(visible);
 		mainGame->cbEntertainmentMode_1Bot->setVisible(visible);
+	}
+	if(state & 0x2) {
+		mainGame->chkEntertainmentPrepReady->setVisible(visible);
+		mainGame->btnEntertainmentStartGame->setVisible(visible);
 	}
 }
 bool Mode::IsModeBot(std::set<int>& rule) {
@@ -211,6 +627,10 @@ void Mode::SetControlState(uint32_t index)
 		}
 		mainGame->cbEntertainmentMode_1Bot->setEnabled(false);
 	}
+	else if(index == 1) {
+		mainGame->chkEntertainmentPrepReady->setEnabled(true);
+		mainGame->chkEntertainmentPrepReady->setChecked(false);
+	}
 	mainGame->stEntertainmentPlayInfo->setText(str.data());
 }
 void Mode::RefreshEntertainmentPlay(std::vector<ModeText>*modeTexts) {
@@ -226,6 +646,7 @@ void Mode::DestoryMode()
 	isMode = false;
 	isAi = false;
 	rule = MODE_RULE_DEFAULT;
+	deck.clear();
 	//this->~Mode();
 }
 void Mode::UpdateDeck() {
@@ -251,6 +672,260 @@ void Mode::UpdateDeck() {
 void Mode::SetCurrentDeck() {
 	Deck deck;
 	deck.clear();
+	ploatCodes.clear();
+	this->deck.clear();
+	switch (rule)
+	{
+		case MODE_RULE_ZCG:
+		case MODE_RULE_ZCG_NO_RANDOM:
+			break;
+		case MODE_RULE_5DS_DARK_TUNER: {
+			srand((int)time(0));
+			cardlist_type plot_mainlist;
+			cardlist_type plot_extralist;
+			if(!DeckManager::ModeLoadDeck(L"plot",&plot_mainlist,&plot_extralist,nullptr)) break;
+			for (int32_t i = 0; i < plot_mainlist.size(); ++i)
+				ploatCodes.push_back(plot_mainlist[i]);
+			for (int32_t i = 0; i < plot_extralist.size(); ++i)
+				ploatCodes.push_back(plot_extralist[i]);
+			int32_t index = 0;
+			int32_t nmonster_count = 0;
+			int32_t tmonster_count = 0;
+			int32_t spell_count = 0;
+			int32_t trap_count = 0;
+			int32_t extra_count = plot_extralist.size();
+			if(extra_count < 0) extra_count = 0;
+			const CardDataC* cd = nullptr;
+			for(auto code : plot_mainlist) {
+				cd = gDataManager->GetCardData(code);
+				if(!cd || cd->type & TYPE_TOKEN) continue;
+				if(cd->type & TYPE_TUNER)++tmonster_count;
+				else if(cd->type & TYPE_MONSTER) ++nmonster_count;
+				else if(cd->type & TYPE_SPELL) ++spell_count;
+				else if(cd->type & TYPE_TRAP) ++trap_count;
+			}
+			nmonster_count = 18 - nmonster_count;
+			tmonster_count = 10 - tmonster_count;
+			spell_count = 8 - spell_count;
+			trap_count = 4 - trap_count;
+			extra_count = 7 - extra_count;
+			cardlist_type temp;
+			std::vector<uint32_t>::iterator iter;
+			if(nmonster_count > 0) {
+				if(!DeckManager::ModeLoadDeck(L"nmonster",&temp,nullptr,nullptr)) break;
+			}
+			if(temp.size() > 0) {
+				for (int32_t i = 0; i < nmonster_count; ++i) {
+					index = rand() % temp.size();
+					bool up = false;
+					if(index < 0 || index >= temp.size()) { up = true ; index = temp.size()-1; }
+					uint32_t code = temp.at(index);
+					int32_t count = 0;
+					for(auto _code : plot_mainlist) {
+						if(_code == code) ++count;
+					}
+					if(count >= 3 && !up){ --i; continue; }
+					if(extra_count > 0 && (code == 511002807 || code == 511002883) && (iter = std::find(plot_extralist.begin(),plot_extralist.end(),44508094)) == plot_extralist.end()) {
+						plot_extralist.push_back(44508094);
+						--extra_count;
+					}
+					else if(tmonster_count > 0 && (code == 44935634)) {
+						plot_mainlist.push_back(44935634);
+						--tmonster_count;
+					}
+					else if(code == 61257789) {
+						iter = std::find(plot_extralist.begin(),plot_extralist.end(),44508094);
+						if(iter != plot_extralist.end()) {
+							if(trap_count > 0) {
+								iter = std::find(plot_mainlist.begin(),plot_mainlist.end(),212);
+								if(iter == plot_mainlist.end() && plot_mainlist.size() < 39) {
+									plot_mainlist.push_back(212);
+									--trap_count;
+								}
+							}
+						}
+						else {
+							if(extra_count > 0) {
+								iter = std::find(plot_mainlist.begin(),plot_mainlist.end(),212);
+								if(iter != plot_mainlist.end()) {
+									plot_extralist.push_back(44508094);
+									--extra_count;
+								} else {
+									if(trap_count > 0 && plot_mainlist.size() < 39) {
+										plot_extralist.push_back(44508094);
+										--extra_count;
+										plot_mainlist.push_back(212);
+										--trap_count;
+									}
+								}
+
+							}
+						}
+					}
+					plot_mainlist.push_back(code);
+				}
+			}
+			temp.clear();
+			if(tmonster_count > 0) {
+				if(!DeckManager::ModeLoadDeck(L"tmonster",&temp,nullptr,nullptr)) break;
+			}
+			if(temp.size() > 0) {
+				for (int32_t i = 0; i < tmonster_count; ++i) {
+					index = rand() % temp.size();
+					bool up = false;
+					if(index < 0 || index >= temp.size()) { up = true ; index = temp.size()-1; }
+					uint32_t code = temp.at(index);
+					int32_t count = 0;
+					for(auto _code : plot_mainlist) {
+						if(_code == code) ++count;
+					}
+					if(count >= 3 && !up){ --i; continue; }
+					if(extra_count > 0) {
+						if(code == 71971554 && (iter = std::find(plot_extralist.begin(),plot_extralist.end(),2322421)) == plot_extralist.end()) {
+							plot_extralist.push_back(2322421);
+							--extra_count;
+						}
+						else if(code == 96182448 && (iter = std::find(plot_extralist.begin(),plot_extralist.end(),18013090)) == plot_extralist.end()) {
+							plot_extralist.push_back(18013090);
+							--extra_count;
+						}
+						else if(code == 67270095 && (iter = std::find(plot_extralist.begin(),plot_extralist.end(),46195773)) == plot_extralist.end()) {
+							plot_extralist.push_back(46195773);
+							--extra_count;
+						}
+						else if(code == 511002910 && (iter = std::find(plot_extralist.begin(),plot_extralist.end(),511001982)) == plot_extralist.end()) {
+							plot_extralist.push_back(511001982);
+							--extra_count;
+						}
+						else if(code == 21159309) {
+							iter = std::find(plot_extralist.begin(),plot_extralist.end(),44508094);
+							if(iter != plot_extralist.end()) {
+								iter = std::find(plot_extralist.begin(),plot_extralist.end(),7841112);
+								if(iter == plot_extralist.end()) {
+									plot_extralist.push_back(7841112);
+									--extra_count;
+								}
+							}
+							else {
+								iter = std::find(plot_extralist.begin(),plot_extralist.end(),7841112);
+								if(iter != plot_extralist.end()) {
+									plot_extralist.push_back(44508094);
+									--extra_count;
+								} else {
+									if(extra_count > 1) {
+										plot_extralist.push_back(44508094);
+										plot_extralist.push_back(7841112);
+										extra_count -= 2;
+									}
+								}
+							}
+
+						}
+					}
+					plot_mainlist.push_back(code);
+				}
+			}
+			temp.clear();
+			if(spell_count > 0) {
+				if(!DeckManager::ModeLoadDeck(L"spell",&temp,nullptr,nullptr)) break;
+			}
+			if(temp.size() > 0) {
+				for (int32_t i = 0; i < spell_count; ++i) {
+					index = rand() % temp.size();
+					bool up = false;
+					if(index < 0 || index >= temp.size()) { up = true ; index = temp.size()-1; }
+					uint32_t code = temp.at(index);
+					int32_t count = 0;
+					for(auto _code : plot_mainlist) {
+						if(_code == code) ++count;
+					}
+					if(count >= 3 && !up){ --i; continue; }
+					plot_mainlist.push_back(code);
+				}
+			}
+			temp.clear();
+			if(trap_count > 0) {
+				if(!DeckManager::ModeLoadDeck(L"trap",&temp,nullptr,nullptr)) break;
+			}
+			if(temp.size() > 0) {
+				for (int32_t i = 0; i < trap_count; ++i) {
+					index = rand() % temp.size();
+					bool up = false;
+					if(index < 0 || index >= temp.size()) { up = true ; index = temp.size()-1; }
+					uint32_t code = temp.at(index);
+					int32_t count = 0;
+					for(auto _code : plot_mainlist) {
+						if(_code == code) ++count;
+					}
+					if(count >= 3 && !up){ --i; continue; }
+					if(extra_count > 0 && (code == 47264717 || code == 511002520 || code == 511002519 )&& (iter = std::find(plot_extralist.begin(),plot_extralist.end(),44508094)) == plot_extralist.end()) {
+						plot_extralist.push_back(44508094);
+						--extra_count;
+					}
+					if(code == 513000056) {
+						iter = std::find(plot_extralist.begin(),plot_extralist.end(),44508094);
+						if(iter !=  plot_extralist.end()) {
+							iter = std::find(plot_extralist.begin(),plot_extralist.end(),513000012);
+							if(iter==plot_extralist.end() && extra_count > 0) {
+								plot_extralist.push_back(513000012);
+								--extra_count;
+							}
+						} else {
+							iter = std::find(plot_extralist.begin(),plot_extralist.end(),513000012);
+							if(iter != plot_extralist.end() && extra_count > 0) {
+								plot_extralist.push_back(44508094);
+								--extra_count;
+							}
+							else if(iter == plot_extralist.end() && extra_count > 1) {
+								plot_extralist.push_back(513000012);
+								plot_extralist.push_back(44508094);
+								extra_count-=2;
+							}
+						}
+					}
+					plot_mainlist.push_back(code);
+				}
+			}
+			temp.clear();
+			if(extra_count > 0) {
+				if(!DeckManager::ModeLoadDeck(L"extra",&temp,nullptr,nullptr)) break;
+			}
+			if(temp.size() > 0) {
+				while(extra_count > 0){
+					index = rand() % temp.size();
+					bool up = false;
+					if(index < 0 || index >= temp.size()) { up = true ; index = temp.size()-1; }
+					if(std::find(plot_extralist.begin(),plot_extralist.end(),511001963) == plot_extralist.end()) {
+						bool res = false;
+						for(auto code : plot_extralist) {
+							if((code == 513000012) || (code == 511001658)|| (code == 513000031)
+								|| (code == 371)|| (code == 511000774)){
+								res= true;
+								break;
+							}
+								
+						}
+						if(res){--extra_count ; plot_extralist.push_back(511001963);}
+					}
+					if(extra_count <= 0) break;
+					uint32_t code = temp.at(index);
+					int32_t count = 0;
+					for(auto _code : plot_extralist) {
+						if(_code == code) ++count;
+					}
+					if(count >= 3 && !up) continue;
+					--extra_count;
+					plot_extralist.push_back(code);
+				}
+			}
+			temp.clear();
+			if(plot_mainlist.size() <= 0) break;
+			DeckManager::LoadDeck(deck,plot_mainlist,temp,&plot_extralist);
+			break;
+		}
+		default:
+			break;
+	}
 	this->deck = deck;
 	mainGame->deckBuilder.SetCurrentDeck(deck);
 }
@@ -265,10 +940,16 @@ void Mode::SetRule(int32_t index) {
 				rule = MODE_RULE_ZCG;
 			}		
 			break;
+		case 1:
+			rule = MODE_RULE_5DS_DARK_TUNER;
+			break;
 		default:
 			rule = MODE_RULE_DEFAULT;
 			break;
 	}
+}
+void Mode::ModeStartDuel() {
+
 }
 void Mode::ModePlayerEnter(const void* data,size_t len) {
 	auto pkt = BufferIO::getStruct<STOC_HS_PlayerEnter>(data, len);
@@ -280,7 +961,9 @@ void Mode::ModePlayerEnter(const void* data,size_t len) {
 		mainGame->dInfo.selfnames[pkt.pos] = name;
 	else
 		mainGame->dInfo.opponames[pkt.pos - mainGame->dInfo.team1] = name;
-	UpdateDeck();
+	if(deck.main.size() <= 0) {
+		UpdateDeck();
+	}
 	DuelClient::SendPacketToServer(CTOS_HS_READY);
 	return;
 }
@@ -503,8 +1186,8 @@ void Mode::ModeJoinGame(const void* data,size_t len) {
 	mainGame->dInfo.isTeam1 = mainGame->dInfo.isFirst;
 	return;
 }
-void Mode::LoadJsonInfo() {
-	std::ifstream jsonInfo(EPRO_TEXT("./mode/mode.json"));
+void Mode::LoadJson(epro::path_string path,uint32_t index) {
+	std::ifstream jsonInfo(path);
 	if (jsonInfo.good()) {
 		nlohmann::json j;
 		try {
@@ -514,17 +1197,36 @@ void Mode::LoadJsonInfo() {
 			ErrorLog("无法加载模式的Json文本配置: {}", e.what());
 		}
 		if (j.is_array()) {
-			modeTexts = new std::vector<ModeText>(j.size());
-			modeTexts->clear();
-			for (auto& obj : j) {
-				try {
-					ModeText modeText;
-					modeText.name = BufferIO::DecodeUTF8(obj.at("name").get_ref<std::string&>());
-					modeText.des = BufferIO::DecodeUTF8(obj.at("des").get_ref<std::string&>());
-					modeTexts->push_back(std::move(modeText));
+			if(index == 0) {
+				modeTexts = new std::vector<ModeText>(j.size());
+				modeTexts->clear();
+				for (auto& obj : j) {
+					try {
+						ModeText modeText;
+						modeText.name = BufferIO::DecodeUTF8(obj.at("name").get_ref<std::string&>());
+						modeText.des = BufferIO::DecodeUTF8(obj.at("des").get_ref<std::string&>());
+						modeTexts->push_back(std::move(modeText));
+					}
+					catch (const std::exception& e) {
+						ErrorLog("无法解析模式的Json目录: {}", e.what());
+					}
 				}
-				catch (const std::exception& e) {
-					ErrorLog("无法解析模式的Json目录: {}", e.what());
+			}
+			if(index == 1) {
+				modePloats = new std::vector<ModePloat>(j.size());
+				modePloats->clear();
+				for (auto& obj : j) {
+					try {
+						ModePloat modePloat;
+						modePloat.index = obj.at("index").get<int>();
+						modePloat.title = BufferIO::DecodeUTF8(obj.at("title").get_ref<std::string&>());
+						modePloat.control = obj.at("control").get<int>();
+						modePloat.ploat = BufferIO::DecodeUTF8(obj.at("ploat").get_ref<std::string&>());
+						modePloats->push_back(std::move(modePloat));
+					}
+					catch (const std::exception& e) {
+						ErrorLog("无法解析模式的Json目录: {}", e.what());
+					}
 				}
 			}
 
@@ -533,7 +1235,28 @@ void Mode::LoadJsonInfo() {
 	else {
 		ErrorLog("无法打开模式的Json文本配置!");
 	}
-
+}
+void Mode::LoadJsonInfo() {
+	LoadJson(EPRO_TEXT("./mode/mode.json"),0);
+	LoadJson(EPRO_TEXT("./mode/mode2/ploat.json"),1);
+}
+void Mode::SetBodyImage(uint32_t index) {
+	if (rule != MODE_RULE_5DS_DARK_TUNER) return;
+	uint32_t len = sizeof(mainGame->imageManager.modeBody) / sizeof(mainGame->imageManager.modeBody[0]);
+	if(index>=len) return;
+	if(index == 0) {
+		mainGame->btnBody->setImageSize(mainGame->Scale(0, 0, 250, 263).getSize());
+	}
+	mainGame->btnBody->setImage(mainGame->imageManager.modeBody[index]);
+}
+void Mode::SetHeadImage(uint32_t index) {
+	if (rule != MODE_RULE_5DS_DARK_TUNER) return;
+	uint32_t len = sizeof(mainGame->btnChBody) / sizeof(mainGame->btnChBody[0]);
+	if(index >= len) return;
+	mainGame->btnChBody[index]->setImage(mainGame->imageManager.modeHead[index]);
+	if(index <= 1) {
+		mainGame->btnHead[index]->setImage(mainGame->imageManager.modeHead[index]);
+	}
 }
 /////zdiy//////
 Game::~Game() {
@@ -1481,6 +2204,7 @@ void Game::Initialize() {
 		icon2[i]->setImage(0);
 	}
 	/////zdiy/////
+	//main meun
 	wEntertainmentPlay = env->addWindow(Scale(220, 100, 800, 520), false, gDataManager->GetSysString(1205).data());
 	defaultStrings.emplace_back(wEntertainmentPlay, 1205);
 	wEntertainmentPlay->getCloseButton()->setVisible(false);
@@ -1507,6 +2231,7 @@ void Game::Initialize() {
 	chkEntertainmentPrepReady = env->addCheckBox(false, Scale(420 ,330, 520 ,350), wEntertainmentPlay, CHECKBOX_ENTERTAUNMENT_READY,gDataManager->GetSysString(1149).data());
 	chkEntertainmentPrepReady->setEnabled(false);
 
+	//mode1 bot select
 	chkEntertainmentMode_1Check = env->addCheckBox(false, Scale(420 ,280, 520 ,300), wEntertainmentPlay, CHECKBOX_ENTERTAUNMENT_MODE_1_CHECK,gDataManager->GetSysString(1148).data());
 	chkEntertainmentMode_1Check->setEnabled(false);
 
@@ -1514,13 +2239,94 @@ void Game::Initialize() {
 	cbEntertainmentMode_1Bot->setMaxSelectionRows(5);
 	cbEntertainmentMode_1Bot->setEnabled(false);
 
-	//stLevelInfo = env->addStaticText(gDataManager->GetSysString(2126).data(), Scale(310, 250, 370, 265));
-	//stLevelInfo->setOverrideColor({ 255,255,215,0 });
-	//stLevelInfo->setVisible(false);
+	//mode2 image
+	//first body 
+	wBody = env->addWindow(Scale(370, 175, 570, 475));
+	wBody->getCloseButton()->setVisible(false);
+	wBody->setDraggable(false);
+	wBody->setDrawTitlebar(false);
+	wBody->setDrawBackground(false);
+	wBody->setVisible(false);
+	btnBody = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 100, 150), wBody, -1);
+	btnBody->setImageSize(Scale(0, 0, 200, 300).getSize());
+	btnBody->setDrawBorder(false);
+	btnBody->setEnabled(false);
+	//first infotext
+	wPloat = env->addWindow(Scale(520, 100, 775, 400));
+	wPloat->getCloseButton()->setVisible(false);
+	wPloat->setDraggable(false);
+	wPloat->setVisible(false);
+	stPloatInfo = irr::gui::CGUICustomText::addCustomText(L"", false, env, wPloat, -1, Scale(15, 25, 240, 260));
+	stPloatInfo->setWordWrap(true);
+	//((irr::gui::CGUICustomText*)stPloatInfo)->enableScrollBar();
+	btnPloat = env->addButton(Scale(85, 260, 165, 290), wPloat, BUTTON_ENTERTAUNMENT_PLOAT_CLOSE, gDataManager->GetSysString(1215).data());
+	defaultStrings.emplace_back(btnPloat, 1215);
 
-	//stCoinInfo = env->addStaticText(gDataManager->GetSysString(2127).data(), Scale(310, 280, 410, 295));
-	//stCoinInfo->setOverrideColor({ 255,255,215,0 });
-	//stCoinInfo->setVisible(false);
+	//second  head 0 player + info
+	wChPloatBody[0] = env->addWindow(Scale(475, 375, 775, 455));
+	wChPloatBody[0]->getCloseButton()->setVisible(false);
+	wChPloatBody[0]->setDraggable(false);
+	wChPloatBody[0]->setDrawTitlebar(false);
+	wChPloatBody[0]->setDrawBackground(true);
+	wChPloatBody[0]->setVisible(false);
+	stChPloatInfo[0] = irr::gui::CGUICustomText::addCustomText(L"", false, env, wChPloatBody[0], -1, Scale(5, 15, 300, 80));
+	stChPloatInfo[0]->setWordWrap(true);
+
+	wChBody[0] = env->addWindow(Scale(475, 323, 527, 375));
+	wChBody[0]->getCloseButton()->setVisible(false);
+	wChBody[0]->setDraggable(false);
+	wChBody[0]->setDrawTitlebar(false);
+	wChBody[0]->setDrawBackground(true);
+	wChBody[0]->setVisible(false);
+	btnChBody[0] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 50, 50), wChBody[0], -1);
+	btnChBody[0]->setImageSize(Scale(0, 0, 50, 50).getSize());
+	btnChBody[0]->setDrawBorder(false);
+	btnChBody[0]->setEnabled(false);
+
+	//second  head 1 player + info
+	wChPloatBody[1] = env->addWindow(Scale(475, 100, 775, 180));
+	wChPloatBody[1]->getCloseButton()->setVisible(false);
+	wChPloatBody[1]->setDraggable(false);
+	wChPloatBody[1]->setDrawTitlebar(false);
+	wChPloatBody[1]->setDrawBackground(true);
+	wChPloatBody[1]->setVisible(false);
+	stChPloatInfo[1] = irr::gui::CGUICustomText::addCustomText(L"", false, env, wChPloatBody[1], -1, Scale(5, 15, 300, 80));
+	stChPloatInfo[1]->setWordWrap(true);
+
+	wChBody[1] = env->addWindow(Scale(475, 48, 527, 100));
+	wChBody[1]->getCloseButton()->setVisible(false);
+	wChBody[1]->setDraggable(false);
+	wChBody[1]->setDrawTitlebar(false);
+	wChBody[1]->setDrawBackground(true);      
+	wChBody[1]->setVisible(false);
+	btnChBody[1] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 50, 50), wChBody[1], -1);
+	btnChBody[1]->setImageSize(Scale(0, 0, 50, 50).getSize());
+	btnChBody[1]->setDrawBorder(false);
+	btnChBody[1]->setEnabled(false);
+
+	//head image 
+	wHead[0] = env->addWindow(Scale(352, 5, 404, 57));
+	wHead[0]->getCloseButton()->setVisible(false);
+	wHead[0]->setDraggable(false);
+	wHead[0]->setDrawTitlebar(false);
+	wHead[0]->setDrawBackground(true);
+	wHead[0]->setVisible(false);
+	btnHead[0] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 50, 50), wHead[0], -1);
+	btnHead[0]->setImageSize(Scale(0, 0, 50, 50).getSize());
+	btnHead[0]->setDrawBorder(false);
+	btnHead[0]->setEnabled(false);
+
+	wHead[1] = env->addWindow(Scale(846, 5, 898, 57));
+	wHead[1]->getCloseButton()->setVisible(false);
+	wHead[1]->setDraggable(false);
+	wHead[1]->setDrawTitlebar(false);
+	wHead[1]->setDrawBackground(true);
+	wHead[1]->setVisible(false);
+	btnHead[1] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 50, 50), wHead[1], -1);
+	btnHead[1]->setImageSize(Scale(0, 0, 50, 50).getSize());
+	btnHead[1]->setDrawBorder(false);
+	btnHead[1]->setEnabled(false);
+
 	/////zdiy/////
     ////kdiy////////
 	chkYrp = env->addCheckBox(false, Scale(360, 250, 560, 270), wReplay, -1, gDataManager->GetSysString(1356).data());

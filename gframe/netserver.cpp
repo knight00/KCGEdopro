@@ -336,6 +336,14 @@ void NetServer::HandleCTOSPacket(DuelPlayer* dp, uint8_t* data, uint32_t len) {
 		duel_mode->PlayerKick(dp, pkt.pos);
 		break;
 	}
+	/////zdiy//////
+	case CTOS_MODE_HS_START: {
+		if(!duel_mode || duel_mode->pduel)
+			break;
+		duel_mode->ModeStartDuel(dp);
+		break;
+	}
+	/////zdiy//////
 	case CTOS_HS_START: {
 		if(!duel_mode || duel_mode->pduel)
 			break;

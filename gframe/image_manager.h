@@ -96,6 +96,10 @@ public:
 	void RefreshImageDir(epro::path_string path, int image_type);
     void RefreshKCGImage();
 	/////kdiy/////
+
+	/////zdiy/////
+	void SetModeTextures(epro::path_string path);
+	/////zdiy/////
 	void ChangeTextures(epro::path_stringview path);
 	void ResetTextures();
 	void SetDevice(irr::IrrlichtDevice* dev);
@@ -166,6 +170,11 @@ public:
 	A(scharacter[6])
 	A(QQ)
 	/////////kdiy////
+
+	/////zdiy/////
+	A(modeBody[1])
+	A(modeHead[2])
+	/////zdiy/////
 	A(tSettings)
 	A(tCheckBox[3])
 #undef A

@@ -474,6 +474,14 @@ void GenericDuel::StartDuel(DuelPlayer* dp) {
 		obs->state = CTOS_LEAVE_GAME;
 		NetServer::ReSendToPlayer(obs);
 	}
+	/////zdiy/////
+	if(mainGame->mode->isMode) {
+		if(mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER) {
+			NetServer::SendPacketToPlayer(players.home.front(), STOC_MODE_SHOW_PLOAT);
+			return;
+		}
+	}
+	/////zdiy/////
 	NetServer::SendPacketToPlayer(players.home.front(), STOC_SELECT_HAND);
 	NetServer::ReSendToPlayer(players.opposing.front());
 	hand_result[0] = 0;
@@ -482,6 +490,21 @@ void GenericDuel::StartDuel(DuelPlayer* dp) {
 	players.opposing.front().player->state = CTOS_HAND_RESULT;
 	duel_stage = DUEL_STAGE_FINGER;
 }
+/////zdiy/////
+void GenericDuel::ModeStartDuel(DuelPlayer* dp) {
+	if(mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER) {
+		mainGame->ShowElement((irr::gui::IGUIElement *)mainGame->wHead[0]);
+		mainGame->ShowElement((irr::gui::IGUIElement *)mainGame->wHead[1]);
+	}
+	NetServer::SendPacketToPlayer(players.home.front(), STOC_SELECT_HAND);
+	NetServer::ReSendToPlayer(players.opposing.front());
+	hand_result[0] = 0;
+	hand_result[1] = 0;
+	players.home.front().player->state = CTOS_HAND_RESULT;
+	players.opposing.front().player->state = CTOS_HAND_RESULT;
+	duel_stage = DUEL_STAGE_FINGER;
+}
+/////zdiy/////
 void GenericDuel::HandResult(DuelPlayer* dp, uint8_t res) {
 	if(res > 3 || dp->state != CTOS_HAND_RESULT)
 		return;
@@ -675,9 +698,14 @@ void GenericDuel::TPResult(DuelPlayer* dp, uint8_t tp) {
 		extracards.push_back(86);
 	////kdiy///////
 	/////zdiy/////
-	if(mainGame->mode->isMode &&
-		(mainGame->mode->rule == MODE_RULE_ZCG || mainGame->mode->rule == MODE_RULE_ZCG_NO_RANDOM)){
-		extracards.push_back(99710410);
+	if(mainGame->mode->isMode) {
+		if(mainGame->mode->rule == MODE_RULE_ZCG || mainGame->mode->rule == MODE_RULE_ZCG_NO_RANDOM){
+			extracards.push_back(99710410);
+		}
+		if(mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER) {
+			//extracards.push_back(99710410);
+			extracards.push_back(99710411);
+		}
 	};
 	/////zdiy/////
 	OCG_NewCardInfo card_info = { 0, 0, 0, 0, 0, 0, POS_FACEDOWN_DEFENSE };
@@ -1077,8 +1105,11 @@ void GenericDuel::Sending(CoreUtils::Packet& packet, int& return_value, bool& re
 		SEND(nullptr);
 		for(auto& dueler : (player == 0) ? players.home : players.opposing)
 			NetServer::ReSendToPlayer(dueler);
-		if (!(current.location & (LOCATION_GRAVE + LOCATION_OVERLAY)) && ((current.location & (LOCATION_DECK + LOCATION_HAND)) || (current.position & POS_FACEDOWN)))
+		/////zdiy/////
+		//if (!(current.location & (LOCATION_GRAVE + LOCATION_OVERLAY)) && ((current.location & (LOCATION_DECK + LOCATION_HAND)) || (current.position & POS_FACEDOWN)))
+		if (!mainGame->mode->isMode && !(current.location & (LOCATION_GRAVE + LOCATION_OVERLAY)) && ((current.location & (LOCATION_DECK + LOCATION_HAND)) || (current.position & POS_FACEDOWN)))
 			BufferIO::Write<uint32_t>(pbufw, 0);
+		/////zdiy/////
 		SEND(nullptr);
 		for(auto& dueler : (player == 1) ? players.home : players.opposing)
 			NetServer::ReSendToPlayer(dueler);

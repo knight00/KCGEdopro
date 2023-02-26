@@ -718,10 +718,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			case BUTTON_ENTERTAUNMENT_START_GAME: {
-				int sel = mainGame->lstEntertainmentPlayList->getSelected();
-				if (sel == 0 && mainGame->lstEntertainmentPlayList->isDirectory(sel)) {
-					DuelClient::SendPacketToServer(CTOS_HS_START);
-				}
+				//int sel = mainGame->lstEntertainmentPlayList->getSelected();
+				//if (sel == 0 && mainGame->lstEntertainmentPlayList->isDirectory(sel)) {
+				DuelClient::SendPacketToServer(CTOS_HS_START);
+				//1}
 				break;
 			}
 			case BUTTON_ENTERTAUNMENT_EXIT_GAME: {

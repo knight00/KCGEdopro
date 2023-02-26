@@ -25,6 +25,9 @@ public:
 	//virtual void PlayerReady(DuelPlayer* dp, bool ready);
 	virtual void PlayerReady(DuelPlayer* dp, bool ready, bool ai=false);
 	/////kdiy//////////
+	/////zdiy/////
+	virtual void ModeStartDuel(DuelPlayer* dp);
+	/////zdiy/////
 	virtual void PlayerKick(DuelPlayer* dp, uint8_t pos);
 	virtual void UpdateDeck(DuelPlayer* dp, void* pdata, uint32_t len);
 	virtual void StartDuel(DuelPlayer* dp);

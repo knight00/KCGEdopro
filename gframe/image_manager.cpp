@@ -643,6 +643,18 @@ bool ImageManager::Initial() {
 	sizes[0].second = sizes[1].second = CARD_IMG_HEIGHT * gGameConfig->dpi_scale;
 	sizes[2].first = CARD_THUMB_WIDTH * gGameConfig->dpi_scale;
 	sizes[2].second = CARD_THUMB_HEIGHT * gGameConfig->dpi_scale;
+
+	/////zdiy/////
+#define LEN(arr) (sizeof(arr) / sizeof(arr[0]))
+	for (int i = 0; i < LEN(modeBody); i++) {
+		snprintf(buff, 100, "./mode/mode2/body/%d.png", i);
+		modeBody[i] = driver->getTexture(buff);
+	}
+	for (int i = 0; i < LEN(modeHead); i++) {
+		snprintf(buff, 100, "./mode/mode2/head/%d.jpg", i);
+		modeHead[i] = driver->getTexture(buff);
+	}
+	/////zdiy/////
 	return true;
 }
 //////kdiy//////
@@ -650,6 +662,18 @@ void ImageManager::SetAvatar(int seq, const wchar_t *avatar) {
 	auto string = EPRO_TEXT("./textures/character/custom/") + Utils::ToPathString(avatar) + EPRO_TEXT(".png");
 	scharacter[seq] = driver->getTexture(string.c_str());
 }
+/////zdiy/////
+void ImageManager::SetModeTextures(epro::path_string path) {
+	if(path == L"") {
+		modeHead[0] = driver->getTexture(0);
+	} else
+	{
+		modeHead[0] = driver->getTexture(path.c_str());
+	}
+	//auto string = EPRO_TEXT("./mode/") + Utils::ToPathString(L"1") + EPRO_TEXT(".png");
+
+}
+/////zdiy/////
 void ImageManager::RefreshRandomImageList() {
 	if(!gGameConfig->randomtexture)
 	    return;
