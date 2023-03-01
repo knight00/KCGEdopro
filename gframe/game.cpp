@@ -102,7 +102,6 @@ Mode::Mode()
 	isPlot = false;
 	nickName = nullptr;
 	gameName = nullptr;
-	pass = nullptr;
 	cv = nullptr;
 	lck = nullptr;
 	isEvent = false;
@@ -113,7 +112,6 @@ Mode::Mode()
 	modeIndex = -1;
 	duelSoundIndex = 0;
 	rule = MODE_RULE_DEFAULT;
-	port = 7911;
 	winTimes = 0;
 	failTimes = 0;
 	LoadJsonInfo();
@@ -279,11 +277,10 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 	aiNames.clear();
 	int32_t index = -1;
 	if(rule == MODE_RULE_ZCG) {
-
 		for (int32_t i = 0; i < bots.size(); ++i)
 		{
 			auto bot = bots[i];
-			if(bot.deck == L"Mode") {
+			if(bot.mode == L"MODE_RULE_ZCG") {
 				index = i;
 				std::wstring name = L"[AI] ";
 				name.append(bot.name);
@@ -291,25 +288,6 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 				break;
 			}
 		}
-		if(rule == MODE_RULE_ZCG_NO_RANDOM) {
-			index = mainGame->cbEntertainmentMode_1Bot->getSelected();
-			if(index < 0) return false;
-			auto name =  mainGame->cbEntertainmentMode_1Bot->getItem(index);
-			index = -1;
-			for (int32_t i = 0; i < bots.size(); ++i)
-			{
-				auto bot = bots[i];
-				if(bot.name == name) {
-					index = i;
-					std::wstring name = L"[AI] ";
-					name.append(bot.name);
-					aiNames.push_back(name);
-					break;
-				}
-			}
-		}
-		if(index < 0 || index >= bots.size()) return false;
-		res = bots[index].Launch(port, pass, true, 0, nullptr,-1);
 	}
 	if(rule == MODE_RULE_ZCG_NO_RANDOM) {
 		index = mainGame->cbEntertainmentMode_1Bot->getSelected();
@@ -332,7 +310,7 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 		for (int32_t i = 0; i < bots.size(); ++i)
 		{
 			auto bot = bots[i];
-			if(bot.deck == L"ModeDT1") {
+			if(bot.mode == L"MODE_RULE_5DS_DARK_TUNER") {
 				index = i;
 				std::wstring name = L"[AI] ";
 				name.append(bot.name);
@@ -342,7 +320,7 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 		}
 	}
 	if(index < 0 || index >= bots.size()) return false;
-	res = bots[index].Launch(port, pass, true, 0, nullptr,-1);
+	res = bots[index].Launch(port, pass, true, 0, nullptr, -1);
 	if(!res) return false;
 	return true;
 }
@@ -350,12 +328,10 @@ void Mode::SetTimes(uint8_t player) {
 	player == 0 ? ++gGameConfig->winTimes : ++gGameConfig->failTimes;
 }
 void Mode::InitializeMode() {
-	port = std::stoi(gGameConfig->serverport);
 	nickName = gGameConfig->nickname.data();
 	gameName = gGameConfig->gamename.data();
 	winTimes = gGameConfig->winTimes;
 	failTimes= gGameConfig->failTimes;
-	pass = L"";
 	isMode = true;
 	isAi = false;
 	isPlot = false;
@@ -596,9 +572,9 @@ void Mode::RefreshControlState(uint32_t state ,bool visible)
 		mainGame->btnEntertainmentStartGame->setVisible(visible);
 	}
 }
-bool Mode::IsModeBot(std::set<int>& rule) {
-	if(rule.size() <= 0) return false;
-	return rule.find(-1) != rule.end();
+bool Mode::IsModeBot(std::wstring mode) {
+	if(mode == L"") return false;
+	return true;
 }
 void Mode::SetControlState(uint32_t index)
 {
@@ -622,7 +598,7 @@ void Mode::SetControlState(uint32_t index)
 		mainGame->chkEntertainmentMode_1Check->setChecked(false);
 		mainGame->cbEntertainmentMode_1Bot->clear();
 		for (int32_t i = 0; i < bots.size(); ++i) {
-			if(bots[i].mode == L"ZCG")
+			if(bots[i].mode == L"MODE_RULE_ZCG_NO_RANDOM")
 				mainGame->cbEntertainmentMode_1Bot->addItem(bots[i].name.data());
 		}
 		mainGame->cbEntertainmentMode_1Bot->setEnabled(false);
@@ -934,11 +910,10 @@ void Mode::SetRule(int32_t index) {
 	{
 		case 0:
 			if(mainGame->chkEntertainmentMode_1Check->isChecked()
-				&& mainGame->cbEntertainmentMode_1Bot->getSelected() != -1) {
+				&& mainGame->cbEntertainmentMode_1Bot->getSelected() != -1)
 				rule = MODE_RULE_ZCG_NO_RANDOM;
-			} else {
+			else
 				rule = MODE_RULE_ZCG;
-			}		
 			break;
 		case 1:
 			rule = MODE_RULE_5DS_DARK_TUNER;
@@ -4461,11 +4436,12 @@ void Game::RefreshAiDecks() {
 					bot.name = BufferIO::DecodeUTF8(obj.at("name").get_ref<std::string&>());
 					bot.deck = BufferIO::DecodeUTF8(obj.at("deck").get_ref<std::string&>());
 					/////kdiy////////
-					bot.dialog = BufferIO::DecodeUTF8(obj.at("dialog").get_ref<std::string&>());
+					if(obj.find("dialog") != obj.end())
+					    bot.dialog = BufferIO::DecodeUTF8(obj.at("dialog").get_ref<std::string&>());
 					/////kdiy////////
 					/////zdiy////////
 					if(obj.find("mode") != obj.end())
-					    bot.mode = L"ZCG";
+					    bot.mode = BufferIO::DecodeUTF8(obj.at("mode").get_ref<std::string&>());
 					/////zdiy////////
 					bot.deckfile = epro::format(L"AI_{}", bot.deck);
 					bot.difficulty = obj.at("difficulty").get<int>();
@@ -4475,7 +4451,7 @@ void Game::RefreshAiDecks() {
 						}
 					}
 					/////zdiy//////
-					if(mainGame->mode->IsModeBot(bot.masterRules)) {
+					if(mainGame->mode->IsModeBot(bot.mode)) {
 						mainGame->mode->bots.push_back(std::move(bot));
 						continue;
 					}

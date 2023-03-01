@@ -163,11 +163,9 @@ public:
 	std::vector<std::wstring> masterNames,aiNames;//player+bot names when duel start
 	epro::condition_variable* cv;//should lock thread when play mode-mode2 sound,this cv is in duelclient.cpp
 	epro::mutex * lck;//should lock thread when play mode-mode2 sound,this lck is in duelclient.cpp
-	int port;//duel port from  gGameConfig
 	int modeIndex;//decide to play what kind of mode rule,from meun-list getSelected
 	const wchar_t * nickName;//nickName from  gGameConfig
 	const wchar_t * gameName;//gameName from  gGameConfig
-	const wchar_t * pass; //L""
 	bool isMode;//the duel is mode?
 	bool isAi;//should distinguish ai and player before duel
 	bool isPlot;//the ploat of mode-mode2,if isPlot==true will break all no about ploat events
@@ -198,7 +196,7 @@ public:
 	void SetRule(int32_t index);
 	void ModeStartDuel();
 	bool LoadWindBot(int port, epro::wstringview pass);
-	bool IsModeBot(std::set<int>& rule);
+	bool IsModeBot(std::wstring mode);
 	void SetBodyImage(uint32_t index);
 	void SetHeadImage(uint32_t index);
 	void NextPlot(int32_t step = 0,int32_t index = 0,uint32_t code = 0);

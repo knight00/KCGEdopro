@@ -1087,7 +1087,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				int sel = mainGame->lstEntertainmentPlayList->getSelected();
 				mainGame->mode->modeIndex = sel;
 				if (sel != -1 && mainGame->lstEntertainmentPlayList->isDirectory(sel)) {
-					mainGame->mode->RefreshControlState(1 << mainGame->mode->modeIndex,true);
+					mainGame->mode->RefreshControlState(1 << mainGame->mode->modeIndex, true);
 					mainGame->mode->SetControlState(mainGame->mode->modeIndex);
 				}
 				break;
@@ -1253,24 +1253,27 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 						mainGame->mode->isMode = false;
 						break;
 					} else {
-					uint16_t host_port = mainGame->mode->port;
-					if(!NetServer::StartServer(host_port)) {
-						mainGame->mode->isMode = false;
-						break;
-					}
-					if(!DuelClient::StartClient(0x100007F, host_port)) {
-					NetServer::StopServer();
-						mainGame->mode->isMode = false;
-						break;
-					}
+                        uint16_t host_port = std::stoi(gGameConfig->serverport);
+                        if(!NetServer::StartServer(host_port)) {
+                            mainGame->mode->isMode = false;
+                            break;
+                        }
+                        if(!DuelClient::StartClient(0x100007F, host_port)) {
+                            NetServer::StopServer();
+                            mainGame->mode->isMode = false;
+                            break;
+                        }
 						DuelClient::is_local_host = true;
 					}
 					try {
-						if(mainGame->mode->LoadWindBot(mainGame->mode->port,mainGame->mode->pass))
+						if(mainGame->mode->LoadWindBot(std::stoi(gGameConfig->serverport), L""))
 							break;
-					} catch(...) {}
-					mainGame->PopupMessage(L"Failed to launch windbot");
-					break;
+					}
+					catch(...)
+					{
+						mainGame->PopupMessage(L"Failed to launch windbot");
+					}
+                    break;
 				} else {
 					mainGame->lstEntertainmentPlayList->setEnabled(true);
 					mainGame->btnEntertainmentStartGame->setEnabled(false);
@@ -1284,7 +1287,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				}
 				break;
 			}
-			 /////zdiy/////
+			/////zdiy/////
 			////kdiy///////
 			case CHECKBOX_DEFAULT_LOCAL: {
 				bool chk = true;

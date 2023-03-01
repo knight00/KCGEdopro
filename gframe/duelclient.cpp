@@ -286,7 +286,7 @@ catch(...) { what = def; }
 					case MODE_RULE_ZCG:
 					case MODE_RULE_ZCG_NO_RANDOM:
 					    BufferIO::EncodeUTF16(mainGame->mode->gameName, cscg.name, 20);
-						BufferIO::EncodeUTF16(mainGame->mode->pass, cscg.pass, 20);
+						BufferIO::EncodeUTF16(L"", cscg.pass, 20);
 						cscg.info.sizes = { {0,999},{0,999},{0,999} };
 						cscg.info.rule = 5;
 						cscg.info.mode = 0;
@@ -294,6 +294,30 @@ catch(...) { what = def; }
 						cscg.info.start_lp = 32000;
 						cscg.info.draw_count = 1;
 						cscg.info.time_limit = 223;
+						cscg.info.lflist = 0;
+						cscg.info.duel_rule = 0;
+						cscg.info.duel_flag_low = mainGame->duel_param & 0xffffffff;
+						cscg.info.duel_flag_high = (mainGame->duel_param >> 32) & 0xffffffff;
+						cscg.info.no_check_deck_content = 1;
+						cscg.info.no_shuffle_deck = 0;
+						cscg.info.handshake = SERVER_HANDSHAKE;
+						cscg.info.version = { EXPAND_VERSION(CLIENT_VERSION) };
+						cscg.info.team1 = 1;
+						cscg.info.team2 = 1;
+						cscg.info.best_of = 1;
+						cscg.info.forbiddentypes = mainGame->forbiddentypes;
+						cscg.info.extra_rules = mainGame->extra_rules;
+						break;
+                    case MODE_RULE_5DS_DARK_TUNER:
+					    BufferIO::EncodeUTF16(mainGame->mode->gameName, cscg.name, 20);
+						BufferIO::EncodeUTF16(L"", cscg.pass, 20);
+						cscg.info.sizes = { {0,999},{0,999},{0,999} };
+						cscg.info.rule = 5;
+						cscg.info.mode = 0;
+						cscg.info.start_hand = 5;
+						cscg.info.start_lp = 8000;
+						cscg.info.draw_count = 1;
+						cscg.info.time_limit = 300;
 						cscg.info.lflist = 0;
 						cscg.info.duel_rule = 0;
 						cscg.info.duel_flag_low = mainGame->duel_param & 0xffffffff;
@@ -1805,8 +1829,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		if(player < 2) {
 			player = mainGame->LocalPlayer(player);
 			/////zdiy/////
-			if(mainGame->mode->isMode && (mainGame->mode->rule == MODE_RULE_ZCG ||
-				mainGame->mode->rule == MODE_RULE_ZCG_NO_RANDOM)) {
+			if(mainGame->mode->isMode 
+                && (mainGame->mode->rule == MODE_RULE_ZCG || mainGame->mode->rule == MODE_RULE_ZCG_NO_RANDOM)) {
 				mainGame->mode->SetTimes(player);
 			}
 			/////zdiy/////

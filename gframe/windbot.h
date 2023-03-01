@@ -18,7 +18,7 @@ struct WindBot {
 	std::wstring name;
 	std::wstring deck;
 	/////kdiy//////
-	std::wstring dialog;
+	std::wstring dialog = L"default";
 	std::wstring deckpath = L"";
 	std::wstring mode = L"";
 	/////kdiy//////
