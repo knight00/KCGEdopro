@@ -985,8 +985,20 @@ void Mode::LoadJson(epro::path_string path, uint32_t index) {
 				for (auto& obj : j) {
 					try {
 						ModePloat modePloat;
+                        std::vector<std::wstring> ais;
                         if(obj.find("playerNames") != obj.end())
                             playerNames.insert(std::pair<int, std::wstring>(index, BufferIO::DecodeUTF8(obj.at("playerNames").get_ref<std::string&>())));
+                        if(obj.find("aiNames") != obj.end())
+                            ais.push_back(BufferIO::DecodeUTF8(obj.at("aiNames").get_ref<std::string&>()));
+                        if(obj.find("ai2Names") != obj.end())
+                            ais.push_back(BufferIO::DecodeUTF8(obj.at("ai2Names").get_ref<std::string&>()));
+                        if(obj.find("ai3Names") != obj.end())
+                            ais.push_back(BufferIO::DecodeUTF8(obj.at("ai3Names").get_ref<std::string&>()));
+                        if(obj.find("ai4Names") != obj.end())
+                            ais.push_back(BufferIO::DecodeUTF8(obj.at("ai4Names").get_ref<std::string&>()));
+                        if(obj.find("ai5Names") != obj.end())
+                            ais.push_back(BufferIO::DecodeUTF8(obj.at("ai5Names").get_ref<std::string&>()));
+                        aiNames.insert(std::pair<int, std::vector<std::wstring>>(index, ais));
                         if(obj.find("index") == obj.end())
                             continue;
 						modePloat.index = obj.at("index").get<int>();

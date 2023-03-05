@@ -1271,6 +1271,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		/////zdiy/////
 		if(mainGame->mode->isMode && mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER) {
 			mainGame->stHostPrepDuelist[0]->setText(mainGame->mode->playerNames[1].c_str());
+            mainGame->stHostPrepDuelist[1]->setText(mainGame->mode->aiNames[1][0].c_str());
         } else
 		/////zdiy/////
 		mainGame->stHostPrepDuelist[pkt.pos]->setText(name);
