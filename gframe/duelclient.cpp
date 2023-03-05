@@ -218,11 +218,12 @@ void DuelClient::ClientEvent(bufferevent *bev, short events, void *ctx) {
 		CTOS_PlayerInfo cspi;
 		/////zdiy/////
 		//BufferIO::EncodeUTF16(mainGame->ebNickName->getText(), cspi.name, 20);
-		if(!mainGame->mode->isMode) {
+		if(!(mainGame->mode->isMode && mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER))
 			BufferIO::EncodeUTF16(mainGame->ebNickName->getText(), cspi.name, 20);
-		} else {
-			BufferIO::EncodeUTF16(mainGame->mode->nickName, cspi.name, 20);
-		}
+		else if(mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER)
+            BufferIO::EncodeUTF16(gGameConfig->nickname.data(), cspi.name, 20);
+        else
+			BufferIO::EncodeUTF16(gGameConfig->nickname.data(), cspi.name, 20);
 		/////zdiy/////
 		SendPacketToServer(CTOS_PLAYER_INFO, cspi);
 		if(create_game) {
@@ -279,58 +280,36 @@ catch(...) { what = def; }
             /////zdiy//////
 			} else {
 				CTOS_CreateGame cscg;
-				mainGame->mode->masterNames.clear();
-				mainGame->mode->masterNames.push_back(mainGame->mode->nickName);
+				BufferIO::EncodeUTF16(L"Mode", cscg.name, 20);
+				BufferIO::EncodeUTF16(L"", cscg.pass, 20);
+				cscg.info.sizes = { {0,999},{0,999},{0,999} };
+				cscg.info.rule = 5;
+				cscg.info.mode = 0;
+				cscg.info.start_hand = 5;
+				cscg.info.draw_count = 1;
+				cscg.info.lflist = 0;
+				cscg.info.duel_rule = 0;
+				cscg.info.duel_flag_low = 0x2E800;
+				cscg.info.duel_flag_high = 0;
+				cscg.info.no_check_deck_content = 1;
+				cscg.info.no_shuffle_deck = 0;
+				cscg.info.handshake = SERVER_HANDSHAKE;
+				cscg.info.version = { EXPAND_VERSION(CLIENT_VERSION) };
+				cscg.info.team1 = 1;
+				cscg.info.team2 = 1;
+				cscg.info.best_of = 1;
+				cscg.info.forbiddentypes = 0;
+				cscg.info.extra_rules = 0;
 				switch (mainGame->mode->rule)
 				{
 					case MODE_RULE_ZCG:
 					case MODE_RULE_ZCG_NO_RANDOM:
-					    BufferIO::EncodeUTF16(mainGame->mode->gameName, cscg.name, 20);
-						BufferIO::EncodeUTF16(L"", cscg.pass, 20);
-						cscg.info.sizes = { {0,999},{0,999},{0,999} };
-						cscg.info.rule = 5;
-						cscg.info.mode = 0;
-						cscg.info.start_hand = 5;
-						cscg.info.start_lp = 32000;
-						cscg.info.draw_count = 1;
+				        cscg.info.start_lp = 32000;
 						cscg.info.time_limit = 223;
-						cscg.info.lflist = 0;
-						cscg.info.duel_rule = 0;
-						cscg.info.duel_flag_low = mainGame->duel_param & 0xffffffff;
-						cscg.info.duel_flag_high = (mainGame->duel_param >> 32) & 0xffffffff;
-						cscg.info.no_check_deck_content = 1;
-						cscg.info.no_shuffle_deck = 0;
-						cscg.info.handshake = SERVER_HANDSHAKE;
-						cscg.info.version = { EXPAND_VERSION(CLIENT_VERSION) };
-						cscg.info.team1 = 1;
-						cscg.info.team2 = 1;
-						cscg.info.best_of = 1;
-						cscg.info.forbiddentypes = mainGame->forbiddentypes;
-						cscg.info.extra_rules = mainGame->extra_rules;
 						break;
                     case MODE_RULE_5DS_DARK_TUNER:
-					    BufferIO::EncodeUTF16(mainGame->mode->gameName, cscg.name, 20);
-						BufferIO::EncodeUTF16(L"", cscg.pass, 20);
-						cscg.info.sizes = { {0,999},{0,999},{0,999} };
-						cscg.info.rule = 5;
-						cscg.info.mode = 0;
-						cscg.info.start_hand = 5;
-						cscg.info.start_lp = 8000;
-						cscg.info.draw_count = 1;
+				        cscg.info.start_lp = 8000;
 						cscg.info.time_limit = 300;
-						cscg.info.lflist = 0;
-						cscg.info.duel_rule = 0;
-						cscg.info.duel_flag_low = mainGame->duel_param & 0xffffffff;
-						cscg.info.duel_flag_high = (mainGame->duel_param >> 32) & 0xffffffff;
-						cscg.info.no_check_deck_content = 1;
-						cscg.info.no_shuffle_deck = 0;
-						cscg.info.handshake = SERVER_HANDSHAKE;
-						cscg.info.version = { EXPAND_VERSION(CLIENT_VERSION) };
-						cscg.info.team1 = 1;
-						cscg.info.team2 = 1;
-						cscg.info.best_of = 1;
-						cscg.info.forbiddentypes = mainGame->forbiddentypes;
-						cscg.info.extra_rules = mainGame->extra_rules;
 						break;
 					default:
 					    break;
@@ -392,17 +371,6 @@ void DuelClient::ParserThread() {
 		}
 		auto pkt = std::move(to_analyze.front());
 		to_analyze.pop_front();
-		/////zdiy/////
-		//if(mainGame->mode->isMode) {
-		//	if(mainGame->mode->threadLock) {
-		//		cv.wait(lck);
-		//	}
-		//	if(mainGame->mode->threadSleep) {
-		//		cv.wait_for(lck,std::chrono::milliseconds(mainGame->mode->GetSoundSeconds(mainGame->mode->duelSoundIndex)));
-		//		mainGame->mode->threadSleep = false;
-		//	}
-		//}
-		/////zdiy/////
 		lck.unlock();
 		HandleSTOCPacketLanAsync(pkt);
 	}
@@ -784,15 +752,6 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		break;
 	}
 	case STOC_JOIN_GAME: {
-		/////zdiy//////
-		if(mainGame->mode->isMode) {
-			temp_ver = 0;
-			watching = 0;
-			mainGame->mode->ModeJoinGame(pdata,len);
-			connect_state |= 0x4;
-			break;
-		}
-		/////zdiy//////
 		temp_ver = 0;
 		auto pkt = BufferIO::getStruct<STOC_JoinGame>(pdata, len);
 		mainGame->dInfo.isInLobby = true;
@@ -924,6 +883,8 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		matManager.SetActiveVertices(mainGame->dInfo.HasFieldFlag(DUEL_3_COLUMNS_FIELD),
 									 !mainGame->dInfo.HasFieldFlag(DUEL_SEPARATE_PZONE));
 		int x = (pkt.info.team1 + pkt.info.team2 >= 5) ? 60 : 0;
+        /////zdiy//////
+		if(!mainGame->mode->isMode) {
 		mainGame->btnHostPrepOB->setRelativePosition(mainGame->Scale<irr::s32>(10, 180 + x, 110, 205 + x));
 		mainGame->stHostPrepOB->setRelativePosition(mainGame->Scale<irr::s32>(10, 210 + x, 270, 230 + x));
 		mainGame->stHostPrepRule->setRelativePosition(mainGame->Scale<irr::s32>(280, 30, 460, 270 + x));
@@ -979,10 +940,18 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->icon[i]->setRelativePosition(mainGame->Scale<irr::s32>(40, 10 + 65 + i * 25, 60, 10 + 85 + i * 25));
 			///////kdiy/////////
 		}
+        /////zdiy//////
+        }
+        /////zdiy//////
 		mainGame->dInfo.selfnames.resize(pkt.info.team1);
 		mainGame->dInfo.opponames.resize(pkt.info.team2);
+        /////zdiy//////
+		if(!mainGame->mode->isMode) {
 		mainGame->btnHostPrepReady->setVisible(true);
 		mainGame->btnHostPrepNotReady->setVisible(false);
+        ///////zdiy////
+        }
+        /////zdiy//////
 		mainGame->dInfo.time_limit = pkt.info.time_limit;
 		mainGame->dInfo.time_left[0] = 0;
 		mainGame->dInfo.time_left[1] = 0;
@@ -993,14 +962,21 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		if(mainGame->deckBuilder.filterList == 0)
 			mainGame->deckBuilder.filterList = &gdeckManager->_lfList[0];
 		watching = 0;
+        /////zdiy//////
+		if(!mainGame->mode->isMode) {
 		mainGame->stHostPrepOB->setText(epro::format(L"{} {}", gDataManager->GetSysString(1253), watching).data());
 		mainGame->stHostPrepRule->setText(str.data());
 		mainGame->stHostPrepRuleR->setText(strR.data());
 		mainGame->stHostPrepRuleL->setText(strL.data());
+        /////zdiy//////
+        }
+        /////zdiy//////
 		////////kdiy////////
 		// mainGame->RefreshDeck(mainGame->cbDeckSelect);
 		//mainGame->cbDeckSelect->setEnabled(true);
 		mainGame->RefreshDeck();
+        /////zdiy//////
+		if(!mainGame->mode->isMode) {
 		mainGame->cbDeckSelect->setEnabled(true);
 		mainGame->cbDeck2Select->setEnabled(true);
 		const auto& bot = mainGame->gBot.bots[mainGame->gBot.CurrentIndex()];
@@ -1029,6 +1005,9 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->ShowElement(mainGame->wHostPrepareR);
 		if(strL.size())
 			mainGame->ShowElement(mainGame->wHostPrepareL);
+        /////zdiy//////
+        }
+        /////zdiy//////
 		mainGame->wChat->setVisible(true);
 		mainGame->dInfo.isFirst = (mainGame->dInfo.player_type < mainGame->dInfo.team1) || (mainGame->dInfo.player_type >= 7);
 		mainGame->dInfo.isTeam1 = mainGame->dInfo.isFirst;
@@ -1042,7 +1021,8 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		/////zdiy//////
 		if(mainGame->mode->isMode) {
 			mainGame->dInfo.player_type = selftype;
-			mainGame->mode->ModeTypeChange();
+			mainGame->dInfo.isFirst = (mainGame->dInfo.player_type < mainGame->dInfo.team1) || (mainGame->dInfo.player_type >= 7);
+            mainGame->dInfo.isTeam1 = mainGame->dInfo.isFirst;
 			break;
 		}
 		/////zdiy//////
@@ -1077,15 +1057,10 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		break;
 	}
 	case STOC_DUEL_START: {
-		/////zdiy/////
-		if(mainGame->mode->isMode) {
-			mainGame->mode->ModeDuelStart(selftype);
-			match_kill = 0;
-			replay_stream.clear();
-			break;
-		}
-		/////zdiy/////
 		std::unique_lock<epro::mutex> lock(mainGame->gMutex);
+        /////zdiy/////
+		mainGame->HideElement(mainGame->wEntertainmentPlay);
+        /////zdiy/////
 		mainGame->HideElement(mainGame->wHostPrepare);
 		mainGame->HideElement(mainGame->gBot.window);
 		mainGame->HideElement(mainGame->wHostPrepareL);
@@ -1215,7 +1190,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 				mainGame->stEntertainmentPlayInfo->setText(L"");
 				mainGame->ShowElement(mainGame->wEntertainmentPlay);
 				mainGame->mode->RefreshEntertainmentPlay(mainGame->mode->modeTexts);
-				mainGame->mode->RefreshControlState(0xffffff,false);
+				mainGame->mode->RefreshControlState(0xffffff, false);
 				mainGame->mode->InitializeMode();
 			}
 			/////zdiy/////
@@ -1281,12 +1256,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		break;
 	}
 	case STOC_HS_PLAYER_ENTER: {
-		/////zdiy/////
-		if(mainGame->mode->isMode) {
-			mainGame->mode->ModePlayerEnter(pdata,len);
-			break;
-		}
-		/////zdiy/////
+		if(!mainGame->mode->isMode)
 		gSoundManager->PlaySoundEffect(SoundManager::SFX::PLAYER_ENTER);
 		auto pkt = BufferIO::getStruct<STOC_HS_PlayerEnter>(pdata, len);
 		if(pkt.pos > 5)
@@ -1298,18 +1268,28 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->dInfo.selfnames[pkt.pos] = name;
 		else
 			mainGame->dInfo.opponames[pkt.pos - mainGame->dInfo.team1] = name;
+		/////zdiy/////
+		if(mainGame->mode->isMode && mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER) {
+			mainGame->stHostPrepDuelist[0]->setText(mainGame->mode->playerNames[1].c_str());
+        } else
+		/////zdiy/////
 		mainGame->stHostPrepDuelist[pkt.pos]->setText(name);
+        /////zdiy/////
+		if(!mainGame->mode->isMode) {
+        /////zdiy/////
 		mainGame->btnHostPrepStart->setVisible(is_host);
 		mainGame->btnHostPrepStart->setEnabled(is_host && CheckReady());
+        /////zdiy/////
+        }
+        if(mainGame->mode->isMode) {
+            if(mainGame->mode->deck.main.size() <= 0)
+				mainGame->mode->UpdateDeck();
+            DuelClient::SendPacketToServer(CTOS_HS_READY);
+        }
+        /////zdiy/////
 		break;
 	}
 	case STOC_HS_PLAYER_CHANGE: {
-		/////zdiy//////
-		if(mainGame->mode->isMode) {
-			mainGame->mode->ModePlayerChange(pdata,len,watching);
-			break;
-		}
-		/////zdiy//////
 		auto pkt = BufferIO::getStruct<STOC_HS_PlayerChange>(pdata, len);
 		uint8_t pos = (pkt.status >> 4) & 0xf;
 		uint8_t state = pkt.status & 0xf;
@@ -1381,6 +1361,9 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		break;
 	}
 	case STOC_REMATCH: {
+        /////zdiy//////
+		if(!mainGame->mode->isMode)
+		/////zdiy//////
 		std::lock_guard<epro::mutex> lock(mainGame->gMutex);
 		mainGame->dInfo.checkRematch = true;
 		if(mainGame->wQuery->isVisible())
@@ -1395,6 +1378,15 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->HideElement(mainGame->wANNumber);
 		if(mainGame->wANCard->isVisible())
 			mainGame->HideElement(mainGame->wANCard);
+        /////zdiy//////
+		if(mainGame->mode->isMode && mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER) {
+            mainGame->dInfo.checkRematch = false;
+			CTOS_RematchResponse crr;
+			crr.rematch = false;
+			DuelClient::SendPacketToServer(CTOS_REMATCH_RESPONSE, crr);
+            break;
+        }
+		/////zdiy//////
 		mainGame->stQMessage->setText(gDataManager->GetSysString(1989).data());
 		mainGame->PopupElement(mainGame->wQuery);
 		break;
@@ -1502,11 +1494,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		is_swapping = false;
 	}
 	/////zdiy/////
-	//if(mainGame->mode->isMode) {
-	//	mainGame->mode->cv = &cv;
-	//	mainGame->mode->lck = &to_analyze_mutex;
-	//	mainGame->mode->ModeClientAnalyze(pbuf,mainGame->dInfo.curMsg);
-	//}
 	mainGame->mode->cv = &cv;
 	mainGame->mode->lck = &to_analyze_mutex;
 	mainGame->mode->ModeClientAnalyze(pbuf,mainGame->dInfo.curMsg);
@@ -1828,12 +1815,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		std::wstring formatted_string = L"";
 		if(player < 2) {
 			player = mainGame->LocalPlayer(player);
-			/////zdiy/////
-			if(mainGame->mode->isMode 
-                && (mainGame->mode->rule == MODE_RULE_ZCG || mainGame->mode->rule == MODE_RULE_ZCG_NO_RANDOM)) {
-				mainGame->mode->SetTimes(player);
-			}
-			/////zdiy/////
 			mainGame->showcardcode = player + 1;
 			if(match_kill)
 				mainGame->dInfo.vic_string = epro::sprintf(gDataManager->GetVictoryString(0x20), gDataManager->GetName(match_kill));

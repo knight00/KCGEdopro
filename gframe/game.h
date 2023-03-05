@@ -160,17 +160,14 @@ public:
 	std::vector<ModePloat>* modePloats;//vector modeploat
 	std::vector<uint32_t> ploatCodes;//these codes can be changed to name in mode-mode2,then show names to player
 	std::vector<WindBot> bots;//all mode will load windbots from this
-	std::vector<std::wstring> masterNames,aiNames;//player+bot names when duel start
+    std::map<int, std::wstring> playerNames;
+	std::map<int, std::vector<std::wstring>> aiNames;//player+bot names when duel start
 	epro::condition_variable* cv;//should lock thread when play mode-mode2 sound,this cv is in duelclient.cpp
 	epro::mutex * lck;//should lock thread when play mode-mode2 sound,this lck is in duelclient.cpp
 	int modeIndex;//decide to play what kind of mode rule,from meun-list getSelected
-	const wchar_t * nickName;//nickName from  gGameConfig
-	const wchar_t * gameName;//gameName from  gGameConfig
 	bool isMode;//the duel is mode?
-	bool isAi;//should distinguish ai and player before duel
 	bool isPlot;//the ploat of mode-mode2,if isPlot==true will break all no about ploat events
 	bool isEvent;//if isEvent==true,all events is notify_one() lck
-	//bool draw;//mode-mode2 check is should play sound in draw phase
 	bool flag_100000155;//card 100000155 play sound 
 	Deck deck;//player deck
 	uint8_t player;//new turn player,should distinguish ai and player when play mode-mode2 duel sound
@@ -178,23 +175,15 @@ public:
 	int32_t plotStep;//the step of fun NextPlot()
 	int32_t duelSoundIndex;//the index of mode-mode2 sound,the sound is in  sound_manager.cpp
  	int32_t plotIndex;//the index of plot,decide to set text plot
-	uint32_t winTimes;//record mode-mode1 win times
-	uint32_t failTimes;//record mode-mode1 fail times
 	void InitializeMode();
 	void DestoryMode();
 	void RefreshEntertainmentPlay(std::vector<ModeText>* modeTexts);
 	void RefreshControlState(uint32_t state ,bool visible);
 	void SetControlState(uint32_t index);
-	void ModePlayerEnter(const void* data,size_t len);
 	void ModePlayerChange(const void* data,size_t len ,uint32_t& watching);
-	void ModeJoinGame(const void* data,size_t len);
-	void ModeTypeChange();
-	void ModeDuelStart(uint8_t selftype);
 	void ModePlayerReady(bool isAi);
 	void UpdateDeck();
-	void SetTimes(uint8_t player);
 	void SetRule(int32_t index);
-	void ModeStartDuel();
 	bool LoadWindBot(int port, epro::wstringview pass);
 	bool IsModeBot(std::wstring mode);
 	void SetBodyImage(uint32_t index);
@@ -208,7 +197,7 @@ public:
 	~Mode();
 private:
 	void SetCurrentDeck();
-	void LoadJson(epro::path_string path,uint32_t index);
+	void LoadJson(epro::path_string path, uint32_t index);
 	void LoadJsonInfo();
 };
 #define MODE_RULE_DEFAULT 0x1

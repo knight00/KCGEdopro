@@ -699,13 +699,10 @@ void GenericDuel::TPResult(DuelPlayer* dp, uint8_t tp) {
 	////kdiy///////
 	/////zdiy/////
 	if(mainGame->mode->isMode) {
-		if(mainGame->mode->rule == MODE_RULE_ZCG || mainGame->mode->rule == MODE_RULE_ZCG_NO_RANDOM){
+		if(mainGame->mode->rule == MODE_RULE_ZCG || mainGame->mode->rule == MODE_RULE_ZCG_NO_RANDOM)
 			extracards.push_back(99710410);
-		}
-		if(mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER) {
-			//extracards.push_back(99710410);
+		if(mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER)
 			extracards.push_back(99710411);
-		}
 	};
 	/////zdiy/////
 	OCG_NewCardInfo card_info = { 0, 0, 0, 0, 0, 0, POS_FACEDOWN_DEFENSE };

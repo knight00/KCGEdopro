@@ -1201,9 +1201,6 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				}
 				break;
 			}
-		/*	if(mainGame->mode->isMode && panel) {
-				panel->setVisible(false);
-			}*/
 			/////zdiy/////
 			hovered_location = 0;
 			irr::core::vector2di pos = mainGame->Resize(event.MouseInput.X, event.MouseInput.Y, true);

@@ -98,10 +98,7 @@ Mode::Mode()
 	modeTexts = nullptr;
 	modePloats = nullptr;
 	isMode = false;
-	isAi = false;
 	isPlot = false;
-	nickName = nullptr;
-	gameName = nullptr;
 	cv = nullptr;
 	lck = nullptr;
 	isEvent = false;
@@ -112,8 +109,6 @@ Mode::Mode()
 	modeIndex = -1;
 	duelSoundIndex = 0;
 	rule = MODE_RULE_DEFAULT;
-	winTimes = 0;
-	failTimes = 0;
 	LoadJsonInfo();
 };
 void Mode::ModePlaySound(uint32_t type,int32_t index,int32_t type2) {
@@ -134,19 +129,19 @@ void Mode::ModePlaySound(uint32_t type,int32_t index,int32_t type2) {
 	}
 
 }
-std::wstring Mode::GetPloat(int32_t index,uint32_t code) {
+std::wstring Mode::GetPloat(int32_t index, uint32_t code) {
 	std::wstring str = L"";
 	if(index < 0 || index >= mainGame->mode->modePloats->size()) return str;
 	str = mainGame->mode->modePloats->at(index).title;
-	str.append(epro::format(L"{}\n{}{}",L":",L"  ",mainGame->mode->modePloats->at(index).ploat));
+	str.append(epro::format(L"{}\n{}{}",L":",L"  ", mainGame->mode->modePloats->at(index).ploat));
 	if(code != 0) {
 		str = epro::sprintf(str, gDataManager->GetName(code));
 	}
 	return str;
 }
-void Mode::NextPlot(int32_t step,int32_t index,uint32_t code) {
-	if(step != 0)plotStep = step;
-	if(index != 0)plotIndex = index;
+void Mode::NextPlot(int32_t step, int32_t index, uint32_t code) {
+	if(step != 0) plotStep = step;
+	if(index != 0) plotIndex = index;
 	if(plotIndex >= mainGame->mode->modePloats->size() || plotIndex < 0 ) plotIndex = 0;
 	int32_t i = mainGame->mode->modePloats->at(plotIndex).control;
 	if(i < 0 || i > 2 ) i = 0;
@@ -274,7 +269,6 @@ void Mode::NextPlot(int32_t step,int32_t index,uint32_t code) {
 }
 bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 	bool res = false;
-	aiNames.clear();
 	int32_t index = -1;
 	if(rule == MODE_RULE_ZCG) {
 		for (int32_t i = 0; i < bots.size(); ++i)
@@ -282,9 +276,6 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 			auto bot = bots[i];
 			if(bot.mode == L"MODE_RULE_ZCG") {
 				index = i;
-				std::wstring name = L"[AI] ";
-				name.append(bot.name);
-				aiNames.push_back(name);
 				break;
 			}
 		}
@@ -299,9 +290,6 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 			auto bot = bots[i];
 			if(bot.name == name) {
 				index = i;
-				std::wstring name = L"[AI] ";
-				name.append(bot.name);
-				aiNames.push_back(name);
 				break;
 			}
 		}
@@ -312,28 +300,17 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 			auto bot = bots[i];
 			if(bot.mode == L"MODE_RULE_5DS_DARK_TUNER") {
 				index = i;
-				std::wstring name = L"[AI] ";
-				name.append(bot.name);
-				aiNames.push_back(name);
 				break;
 			}
 		}
 	}
 	if(index < 0 || index >= bots.size()) return false;
-	res = bots[index].Launch(port, pass, true, 0, nullptr, -1);
+	res = bots[index].Launch(port, pass, false, 0, nullptr, -1);
 	if(!res) return false;
 	return true;
 }
-void Mode::SetTimes(uint8_t player) {
-	player == 0 ? ++gGameConfig->winTimes : ++gGameConfig->failTimes;
-}
 void Mode::InitializeMode() {
-	nickName = gGameConfig->nickname.data();
-	gameName = gGameConfig->gamename.data();
-	winTimes = gGameConfig->winTimes;
-	failTimes= gGameConfig->failTimes;
 	isMode = true;
-	isAi = false;
 	isPlot = false;
 	isEvent = false;
 	flag_100000155 = false;
@@ -349,8 +326,6 @@ void Mode::InitializeMode() {
 Mode::~Mode(){};
 void Mode::ModeClientAnalyze(const uint8_t* pbuf,uint8_t msg) {
 #define CARD_SOUND_INDEX  15
-	//if(rule == MODE_RULE_5DS_DARK_TUNER) {
-		//if(draw &&  msg != MSG_UPDATE_DATA && msg != MSG_DRAW) draw = false;
 		if(msg== MSG_MOVE) {
 			const auto & code = BufferIO::Read<uint32_t>(pbuf);
 			CoreUtils::loc_info previous = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
@@ -583,15 +558,6 @@ void Mode::SetControlState(uint32_t index)
 	mainGame->lstEntertainmentPlayList->setEnabled(true);
 	mainGame->btnEntertainmentExitGame->setEnabled(true);
 	if(index == 0) {
-		str.append(L"====================\n");
-		str.append(epro::format(L"{}{}{}\n",gDataManager->GetSysString(2126),gGameConfig->winTimes,gDataManager->GetSysString(2128)));
-		str.append(epro::format(L"{}{}{}\n",gDataManager->GetSysString(2127),gGameConfig->failTimes,gDataManager->GetSysString(2128)));
-		float temp,res = 0,sum = (float)failTimes + (float)winTimes;
-		if(sum > 0.0f) {
-			temp =  (float)winTimes / sum;
-			res = (int)(( temp * 100 + 0.5 ) / 1);
-		}
-		str.append(epro::format(L"{}{}{}\n",gDataManager->GetSysString(2129),res,L"%"));
 		mainGame->chkEntertainmentPrepReady->setEnabled(true);
 		mainGame->chkEntertainmentPrepReady->setChecked(false);
 		mainGame->chkEntertainmentMode_1Check->setEnabled(true);
@@ -602,8 +568,7 @@ void Mode::SetControlState(uint32_t index)
 				mainGame->cbEntertainmentMode_1Bot->addItem(bots[i].name.data());
 		}
 		mainGame->cbEntertainmentMode_1Bot->setEnabled(false);
-	}
-	else if(index == 1) {
+	} else if(index == 1) {
 		mainGame->chkEntertainmentPrepReady->setEnabled(true);
 		mainGame->chkEntertainmentPrepReady->setChecked(false);
 	}
@@ -612,15 +577,12 @@ void Mode::SetControlState(uint32_t index)
 void Mode::RefreshEntertainmentPlay(std::vector<ModeText>*modeTexts) {
 	std::vector<std::wstring>* names = new std::vector<std::wstring>(modeTexts->size());
 	for (size_t i = 0; i < modeTexts->size(); ++i)
-	{
 		names->at(i) = (modeTexts->at(i)).name;
-	}
 	mainGame->lstEntertainmentPlayList->LoadContents(names);
 }
 void Mode::DestoryMode()
 {
 	isMode = false;
-	isAi = false;
 	rule = MODE_RULE_DEFAULT;
 	deck.clear();
 	//this->~Mode();
@@ -634,8 +596,8 @@ void Mode::UpdateDeck() {
 	const auto totsize = deck.main.size() + deck.extra.size() + deck.side.size();
 	if(totsize > max_deck_size)
 		return;
-	BufferIO::Write<uint32_t>(pdeck, deck.main.size() + deck.extra.size());
-	BufferIO::Write<uint32_t>(pdeck, deck.side.size());
+	BufferIO::Write<uint32_t>(pdeck, static_cast<uint32_t>(deck.main.size() + deck.extra.size()));
+	BufferIO::Write<uint32_t>(pdeck, static_cast<uint32_t>(deck.side.size()));
 	for(const auto& pcard : deck.main)
 		BufferIO::Write<uint32_t>(pdeck, pcard->code);
 	for(const auto& pcard : deck.extra)
@@ -643,7 +605,6 @@ void Mode::UpdateDeck() {
 	for(const auto& pcard : deck.side)
 		BufferIO::Write<uint32_t>(pdeck, pcard->code);
 	DuelClient::SendBufferToServer(CTOS_UPDATE_DECK, deckbuf, pdeck - deckbuf);
-	gdeckManager->sent_deck = mainGame->deckBuilder.GetCurrentDeck();
 }
 void Mode::SetCurrentDeck() {
 	Deck deck;
@@ -659,7 +620,8 @@ void Mode::SetCurrentDeck() {
 			srand((int)time(0));
 			cardlist_type plot_mainlist;
 			cardlist_type plot_extralist;
-			if(!DeckManager::ModeLoadDeck(L"plot",&plot_mainlist,&plot_extralist,nullptr)) break;
+			if(!DeckManager::ModeLoadDeck(L"plot", &plot_mainlist, &plot_extralist, nullptr))
+                break;
 			for (int32_t i = 0; i < plot_mainlist.size(); ++i)
 				ploatCodes.push_back(plot_mainlist[i]);
 			for (int32_t i = 0; i < plot_extralist.size(); ++i)
@@ -688,20 +650,29 @@ void Mode::SetCurrentDeck() {
 			cardlist_type temp;
 			std::vector<uint32_t>::iterator iter;
 			if(nmonster_count > 0) {
-				if(!DeckManager::ModeLoadDeck(L"nmonster",&temp,nullptr,nullptr)) break;
+				if(!DeckManager::ModeLoadDeck(L"nmonster", &temp, nullptr, nullptr))
+                    break;
 			}
 			if(temp.size() > 0) {
 				for (int32_t i = 0; i < nmonster_count; ++i) {
 					index = rand() % temp.size();
 					bool up = false;
-					if(index < 0 || index >= temp.size()) { up = true ; index = temp.size()-1; }
+					if(index < 0 || index >= temp.size()) { 
+                        up = true ; 
+                        index = temp.size()-1; 
+                    }
 					uint32_t code = temp.at(index);
 					int32_t count = 0;
 					for(auto _code : plot_mainlist) {
-						if(_code == code) ++count;
+						if(_code == code)
+                            ++count;
 					}
-					if(count >= 3 && !up){ --i; continue; }
-					if(extra_count > 0 && (code == 511002807 || code == 511002883) && (iter = std::find(plot_extralist.begin(),plot_extralist.end(),44508094)) == plot_extralist.end()) {
+					if(count >= 3 && !up) { 
+                        --i; 
+                        continue; 
+                    }
+					if(extra_count > 0 && (code == 511002807 || code == 511002883) 
+                      && (iter = std::find(plot_extralist.begin(),plot_extralist.end(), 44508094)) == plot_extralist.end()) {
 						plot_extralist.push_back(44508094);
 						--extra_count;
 					}
@@ -743,19 +714,26 @@ void Mode::SetCurrentDeck() {
 			}
 			temp.clear();
 			if(tmonster_count > 0) {
-				if(!DeckManager::ModeLoadDeck(L"tmonster",&temp,nullptr,nullptr)) break;
+				if(!DeckManager::ModeLoadDeck(L"tmonster", &temp, nullptr, nullptr)) 
+                    break;
 			}
 			if(temp.size() > 0) {
 				for (int32_t i = 0; i < tmonster_count; ++i) {
 					index = rand() % temp.size();
 					bool up = false;
-					if(index < 0 || index >= temp.size()) { up = true ; index = temp.size()-1; }
+					if(index < 0 || index >= temp.size()) { 
+                        up = true ; 
+                        index = temp.size()-1; 
+                    }
 					uint32_t code = temp.at(index);
 					int32_t count = 0;
 					for(auto _code : plot_mainlist) {
 						if(_code == code) ++count;
 					}
-					if(count >= 3 && !up){ --i; continue; }
+					if(count >= 3 && !up) { 
+                        --i; 
+                        continue; 
+                    }
 					if(extra_count > 0) {
 						if(code == 71971554 && (iter = std::find(plot_extralist.begin(),plot_extralist.end(),2322421)) == plot_extralist.end()) {
 							plot_extralist.push_back(2322421);
@@ -803,37 +781,52 @@ void Mode::SetCurrentDeck() {
 			}
 			temp.clear();
 			if(spell_count > 0) {
-				if(!DeckManager::ModeLoadDeck(L"spell",&temp,nullptr,nullptr)) break;
+				if(!DeckManager::ModeLoadDeck(L"spell", &temp, nullptr, nullptr)) 
+                    break;
 			}
 			if(temp.size() > 0) {
 				for (int32_t i = 0; i < spell_count; ++i) {
 					index = rand() % temp.size();
 					bool up = false;
-					if(index < 0 || index >= temp.size()) { up = true ; index = temp.size()-1; }
+					if(index < 0 || index >= temp.size()) { 
+                        up = true; 
+                        index = temp.size()-1; 
+                    }
 					uint32_t code = temp.at(index);
 					int32_t count = 0;
 					for(auto _code : plot_mainlist) {
 						if(_code == code) ++count;
 					}
-					if(count >= 3 && !up){ --i; continue; }
+					if(count >= 3 && !up) { 
+                        --i; 
+                        continue; 
+                    }
 					plot_mainlist.push_back(code);
 				}
 			}
 			temp.clear();
 			if(trap_count > 0) {
-				if(!DeckManager::ModeLoadDeck(L"trap",&temp,nullptr,nullptr)) break;
+				if(!DeckManager::ModeLoadDeck(L"trap", &temp, nullptr, nullptr)) 
+                    break;
 			}
 			if(temp.size() > 0) {
 				for (int32_t i = 0; i < trap_count; ++i) {
 					index = rand() % temp.size();
 					bool up = false;
-					if(index < 0 || index >= temp.size()) { up = true ; index = temp.size()-1; }
+					if(index < 0 || index >= temp.size()) { 
+                        up = true ; 
+                        index = temp.size()-1; 
+                    }
 					uint32_t code = temp.at(index);
 					int32_t count = 0;
 					for(auto _code : plot_mainlist) {
-						if(_code == code) ++count;
+						if(_code == code) 
+                            ++count;
 					}
-					if(count >= 3 && !up){ --i; continue; }
+					if(count >= 3 && !up) { 
+                        --i; 
+                        continue; 
+                    }
 					if(extra_count > 0 && (code == 47264717 || code == 511002520 || code == 511002519 )&& (iter = std::find(plot_extralist.begin(),plot_extralist.end(),44508094)) == plot_extralist.end()) {
 						plot_extralist.push_back(44508094);
 						--extra_count;
@@ -864,13 +857,17 @@ void Mode::SetCurrentDeck() {
 			}
 			temp.clear();
 			if(extra_count > 0) {
-				if(!DeckManager::ModeLoadDeck(L"extra",&temp,nullptr,nullptr)) break;
+				if(!DeckManager::ModeLoadDeck(L"extra", &temp, nullptr ,nullptr)) 
+                    break;
 			}
 			if(temp.size() > 0) {
 				while(extra_count > 0){
 					index = rand() % temp.size();
 					bool up = false;
-					if(index < 0 || index >= temp.size()) { up = true ; index = temp.size()-1; }
+					if(index < 0 || index >= temp.size()) { 
+                        up = true ; 
+                        index = temp.size()-1; 
+                    }
 					if(std::find(plot_extralist.begin(),plot_extralist.end(),511001963) == plot_extralist.end()) {
 						bool res = false;
 						for(auto code : plot_extralist) {
@@ -881,22 +878,29 @@ void Mode::SetCurrentDeck() {
 							}
 								
 						}
-						if(res){--extra_count ; plot_extralist.push_back(511001963);}
+						if(res) {
+                            --extra_count; 
+                            plot_extralist.push_back(511001963);
+                        }
 					}
-					if(extra_count <= 0) break;
+					if(extra_count <= 0) 
+                        break;
 					uint32_t code = temp.at(index);
 					int32_t count = 0;
 					for(auto _code : plot_extralist) {
-						if(_code == code) ++count;
+						if(_code == code) 
+                            ++count;
 					}
-					if(count >= 3 && !up) continue;
+					if(count >= 3 && !up) 
+                        continue;
 					--extra_count;
 					plot_extralist.push_back(code);
 				}
 			}
 			temp.clear();
-			if(plot_mainlist.size() <= 0) break;
-			DeckManager::LoadDeck(deck,plot_mainlist,temp,&plot_extralist);
+			if(plot_mainlist.size() <= 0) 
+                break;
+			DeckManager::LoadDeck(deck, plot_mainlist, temp, &plot_extralist);
 			break;
 		}
 		default:
@@ -923,30 +927,10 @@ void Mode::SetRule(int32_t index) {
 			break;
 	}
 }
-void Mode::ModeStartDuel() {
 
-}
-void Mode::ModePlayerEnter(const void* data,size_t len) {
-	auto pkt = BufferIO::getStruct<STOC_HS_PlayerEnter>(data, len);
-	if(pkt.pos > 5) return;
-	wchar_t name[20];
-	BufferIO::DecodeUTF16(pkt.name, name, 20);
-	std::lock_guard<epro::mutex> lock(mainGame->gMutex);
-	if(pkt.pos < mainGame->dInfo.team1)
-		mainGame->dInfo.selfnames[pkt.pos] = name;
-	else
-		mainGame->dInfo.opponames[pkt.pos - mainGame->dInfo.team1] = name;
-	if(deck.main.size() <= 0) {
-		UpdateDeck();
-	}
-	DuelClient::SendPacketToServer(CTOS_HS_READY);
-	return;
-}
 void Mode::ModePlayerReady(bool isAi) {
-	this->isAi = isAi;
-	if(isAi) {
+	if(isAi)
 		mainGame->btnEntertainmentStartGame->setEnabled(true);
-	}
 }
 void Mode::ModePlayerChange(const void* data,size_t len,uint32_t& watching) {
 	auto pkt = BufferIO::getStruct<STOC_HS_PlayerChange>(data, len);
@@ -969,199 +953,7 @@ void Mode::ModePlayerChange(const void* data,size_t len,uint32_t& watching) {
 	};
 	return;
 }
-void Mode::ModeTypeChange() {
-	mainGame->dInfo.isFirst = (mainGame->dInfo.player_type < mainGame->dInfo.team1) || (mainGame->dInfo.player_type >= 7);
-	mainGame->dInfo.isTeam1 = mainGame->dInfo.isFirst;
-	return;
-}
-void Mode::ModeDuelStart(uint8_t selftype) {
-	std::unique_lock<epro::mutex> lock(mainGame->gMutex);
-	mainGame->HideElement(mainGame->wEntertainmentPlay);
-	mainGame->WaitFrameSignal(11, lock);
-	mainGame->dField.Clear();
-	mainGame->dInfo.isInLobby = false;
-	mainGame->is_siding = false;
-	mainGame->dInfo.checkRematch = false;
-	mainGame->dInfo.isInDuel = true;
-	mainGame->dInfo.isStarted = false;
-	mainGame->dInfo.lp[0] = 0;
-	mainGame->dInfo.lp[1] = 0;
-	mainGame->dInfo.turn = 0;
-	mainGame->dInfo.time_left[0] = 0;
-	mainGame->dInfo.time_left[1] = 0;
-	mainGame->dInfo.time_player = 2;
-	mainGame->dInfo.current_player[0] = 0;
-	mainGame->dInfo.current_player[1] = 0;
-	mainGame->dInfo.isReplaySwapped = false;
-	mainGame->is_building = false;
-	mainGame->mTopMenu->setVisible(false);
-	mainGame->wCardImg->setVisible(true);
-	mainGame->wInfos->setVisible(true);
-	mainGame->wPhase->setVisible(true);
-	mainGame->btnSideOK->setVisible(false);
-	mainGame->btnDP->setVisible(false);
-	mainGame->btnDP->setSubElement(false);
-	mainGame->btnSP->setVisible(false);
-	mainGame->btnSP->setSubElement(false);
-	mainGame->btnM1->setVisible(false);
-	mainGame->btnM1->setSubElement(false);
-	mainGame->btnBP->setVisible(false);
-	mainGame->btnBP->setSubElement(false);
-	mainGame->btnM2->setVisible(false);
-	mainGame->btnM2->setSubElement(false);
-	mainGame->btnEP->setVisible(false);
-	mainGame->btnEP->setSubElement(false);
-	mainGame->btnShuffle->setVisible(false);
-	mainGame->btnSideShuffle->setVisible(false);
-	mainGame->btnSideSort->setVisible(false);
-	mainGame->btnSideReload->setVisible(false);
-	mainGame->wChat->setVisible(true);
-	mainGame->device->setEventReceiver(&mainGame->dField);
-	mainGame->SetPhaseButtons();
-	mainGame->SetMessageWindow();
-	mainGame->dInfo.selfnames.clear();
-	mainGame->dInfo.opponames.clear();
-	int i;
-	for(i = 0; i < mainGame->dInfo.team1; i++) {
-		try {
-			mainGame->dInfo.selfnames.push_back(masterNames.at(i));
-		} catch(...) {
-			mainGame->dInfo.selfnames.push_back(L"");
-		};
-	}
-	int i2 = 0;
-	for(; i < mainGame->dInfo.team1 + mainGame->dInfo.team2; i++) {
-		try {
-			mainGame->dInfo.opponames.push_back(aiNames.at(i2));
-			++i2;
-		} catch(...) {
-			mainGame->dInfo.opponames.push_back(L"");
-		}
-	}
-	if(selftype >= mainGame->dInfo.team1 + mainGame->dInfo.team2) {
-		mainGame->dInfo.player_type = 7;
-		mainGame->btnLeaveGame->setText(gDataManager->GetSysString(1350).data());
-		mainGame->btnLeaveGame->setVisible(true);
-		mainGame->btnSpectatorSwap->setVisible(true);
-		mainGame->dInfo.isFirst = true;
-		mainGame->dInfo.isTeam1 = true;
-	} else {
-		mainGame->dInfo.isFirst = selftype < mainGame->dInfo.team1;
-		mainGame->dInfo.isTeam1 = mainGame->dInfo.isFirst;
-	}
-	mainGame->dInfo.current_player[0] = 0;
-	mainGame->dInfo.current_player[1] = 0;
-	return;
-}
-void Mode::ModeJoinGame(const void* data,size_t len) {
-	auto pkt = BufferIO::getStruct<STOC_JoinGame>(data, len);
-	mainGame->dInfo.isInLobby = true;
-	mainGame->dInfo.compat_mode = pkt.info.handshake != SERVER_HANDSHAKE;
-	mainGame->dInfo.legacy_race_size = mainGame->dInfo.compat_mode || (pkt.info.version.core.major < 10);
-	if(mainGame->dInfo.compat_mode) {
-		pkt.info.duel_flag_low = 0;
-		pkt.info.duel_flag_high = 0;
-		pkt.info.forbiddentypes = 0;
-		pkt.info.extra_rules = 0;
-		pkt.info.best_of = 1;
-		pkt.info.team1 = 1;
-		pkt.info.team2 = 1;
-		if(pkt.info.mode == MODE_MATCH) {
-			pkt.info.best_of = 3;
-		}
-		if(pkt.info.mode == MODE_TAG) {
-			pkt.info.team1 = 2;
-			pkt.info.team2 = 2;
-		}
-#define CHK(rule) case rule : pkt.info.duel_flag_low = DUEL_MODE_MR##rule;break;
-		switch(pkt.info.duel_rule) {
-			CHK(1)
-				CHK(2)
-				CHK(3)
-				CHK(4)
-				CHK(5)
-		}
-#undef CHK
-	}
-	uint64_t params = (pkt.info.duel_flag_low | ((uint64_t)pkt.info.duel_flag_high) << 32);
-	mainGame->dInfo.duel_params = params;
-	mainGame->dInfo.isRelay = params & DUEL_RELAY;
-	params &= ~DUEL_RELAY;
-	pkt.info.no_shuffle_deck = pkt.info.no_shuffle_deck || ((params & DUEL_PSEUDO_SHUFFLE) != 0);
-	params &= ~DUEL_PSEUDO_SHUFFLE;
-	mainGame->dInfo.team1 = pkt.info.team1;
-	mainGame->dInfo.team2 = pkt.info.team2;
-	mainGame->dInfo.best_of = pkt.info.best_of;
-	std::wstring str, strR, strL;
-	int rule;
-	mainGame->dInfo.duel_field = mainGame->GetMasterRule(params & ~DUEL_TCG_SEGOC_NONPUBLIC, pkt.info.forbiddentypes, &rule);
-	if(mainGame->dInfo.compat_mode)
-		rule = pkt.info.duel_rule;
-	if (rule >= 6) {
-		if(params == DUEL_MODE_SPEED) {
-		} else if(params == DUEL_MODE_RUSH) {
-		} else if(params  == DUEL_MODE_GOAT) {
-		} else {
-			uint64_t filter = 0x100;
-			for(int i = 0; filter && i < sizeofarr(mainGame->chkCustomRules); ++i, filter <<= 1)
-				if(params & filter) {
-				}
-		}
-	} 
-	if(params & DUEL_TCG_SEGOC_NONPUBLIC && params != DUEL_MODE_GOAT) {};
-	static constexpr DeckSizes ocg_deck_sizes{ {40,60}, {0,15}, {0,15} };
-	static constexpr DeckSizes rush_deck_sizes{ {40,60}, {0,15}, {0,15} };
-	static constexpr DeckSizes speed_deck_sizes{ {20,30}, {0,6}, {0,6} };
-	static constexpr DeckSizes goat_deck_sizes{ {40,60}, {0,999}, {0,15} };
-	static constexpr DeckSizes empty_deck_sizes{ {0,0}, {0,0}, {0,0} }; 
-	if(pkt.info.sizes != empty_deck_sizes) {
-		do {
-			if(rule < 6) {
-				if(pkt.info.sizes == ocg_deck_sizes)
-					break;
-			} else {
-				if(params == DUEL_MODE_RUSH && pkt.info.sizes == rush_deck_sizes)
-					break;
-				if(params == DUEL_MODE_GOAT && pkt.info.sizes == goat_deck_sizes)
-					break;
-				if(params == DUEL_MODE_SPEED && pkt.info.sizes == speed_deck_sizes)
-					break;
-			}
-		} while(0);
-	}
-	static constexpr std::pair<uint32_t, uint32_t> MONSTER_TYPES[]{
-		{ TYPE_FUSION, 1056 },
-		{ TYPE_SYNCHRO, 1063 },
-		{ TYPE_XYZ, 1073 },
-		{ TYPE_PENDULUM, 1074 },
-		{ TYPE_LINK, 1076 }
-	};
-	for (const auto& pair : MONSTER_TYPES) {
-		if (pkt.info.forbiddentypes & pair.first) {
-		}
-	}
-	std::lock_guard<epro::mutex> lock(mainGame->gMutex);
-	matManager.SetActiveVertices(mainGame->dInfo.HasFieldFlag(DUEL_3_COLUMNS_FIELD),
-		!mainGame->dInfo.HasFieldFlag(DUEL_SEPARATE_PZONE));
-	int x = (pkt.info.team1 + pkt.info.team2 >= 5) ? 60 : 0;
-	mainGame->dInfo.selfnames.resize(pkt.info.team1);
-	mainGame->dInfo.opponames.resize(pkt.info.team2);
-	mainGame->dInfo.time_limit = pkt.info.time_limit;
-	mainGame->dInfo.time_left[0] = 0;
-	mainGame->dInfo.time_left[1] = 0;
-	mainGame->deckBuilder.filterList = 0;
-	for(auto lit = gdeckManager->_lfList.begin(); lit != gdeckManager->_lfList.end(); ++lit)
-		if(lit->hash == pkt.info.lflist)
-			mainGame->deckBuilder.filterList = &(*lit);
-	if(mainGame->deckBuilder.filterList == 0)
-		mainGame->deckBuilder.filterList = &gdeckManager->_lfList[0];
-	mainGame->RefreshDeck();
-	mainGame->wChat->setVisible(true);
-	mainGame->dInfo.isFirst = (mainGame->dInfo.player_type < mainGame->dInfo.team1) || (mainGame->dInfo.player_type >= 7);
-	mainGame->dInfo.isTeam1 = mainGame->dInfo.isFirst;
-	return;
-}
-void Mode::LoadJson(epro::path_string path,uint32_t index) {
+void Mode::LoadJson(epro::path_string path, uint32_t index) {
 	std::ifstream jsonInfo(path);
 	if (jsonInfo.good()) {
 		nlohmann::json j;
@@ -1169,7 +961,7 @@ void Mode::LoadJson(epro::path_string path,uint32_t index) {
 			jsonInfo >> j;
 		}
 		catch (const std::exception& e) {
-			ErrorLog("无法加载模式的Json文本配置: {}", e.what());
+			ErrorLog("Failed to load Mode json: {}", e.what());
 		}
 		if (j.is_array()) {
 			if(index == 0) {
@@ -1183,7 +975,7 @@ void Mode::LoadJson(epro::path_string path,uint32_t index) {
 						modeTexts->push_back(std::move(modeText));
 					}
 					catch (const std::exception& e) {
-						ErrorLog("无法解析模式的Json目录: {}", e.what());
+						ErrorLog("Failed to parse Mode json entry: {}", e.what());
 					}
 				}
 			}
@@ -1193,6 +985,10 @@ void Mode::LoadJson(epro::path_string path,uint32_t index) {
 				for (auto& obj : j) {
 					try {
 						ModePloat modePloat;
+                        if(obj.find("playerNames") != obj.end())
+                            playerNames.insert(std::pair<int, std::wstring>(index, BufferIO::DecodeUTF8(obj.at("playerNames").get_ref<std::string&>())));
+                        if(obj.find("index") == obj.end())
+                            continue;
 						modePloat.index = obj.at("index").get<int>();
 						modePloat.title = BufferIO::DecodeUTF8(obj.at("title").get_ref<std::string&>());
 						modePloat.control = obj.at("control").get<int>();
@@ -1200,7 +996,7 @@ void Mode::LoadJson(epro::path_string path,uint32_t index) {
 						modePloats->push_back(std::move(modePloat));
 					}
 					catch (const std::exception& e) {
-						ErrorLog("无法解析模式的Json目录: {}", e.what());
+						ErrorLog("Failed to parse Mode json entry: {}", e.what());
 					}
 				}
 			}
@@ -1212,8 +1008,8 @@ void Mode::LoadJson(epro::path_string path,uint32_t index) {
 	}
 }
 void Mode::LoadJsonInfo() {
-	LoadJson(EPRO_TEXT("./mode/mode.json"),0);
-	LoadJson(EPRO_TEXT("./mode/mode2/ploat.json"),1);
+	LoadJson(EPRO_TEXT("./mode/mode.json"), 0);
+	LoadJson(EPRO_TEXT("./mode/mode2/ploat.json"), 1);
 }
 void Mode::SetBodyImage(uint32_t index) {
 	if (rule != MODE_RULE_5DS_DARK_TUNER) return;
@@ -2280,7 +2076,7 @@ void Game::Initialize() {
 	btnChBody[1]->setEnabled(false);
 
 	//head image 
-	wHead[0] = env->addWindow(Scale(352, 5, 404, 57));
+	wHead[0] = env->addWindow(Scale(365, 5, 417, 57));
 	wHead[0]->getCloseButton()->setVisible(false);
 	wHead[0]->setDraggable(false);
 	wHead[0]->setDrawTitlebar(false);
@@ -2291,7 +2087,7 @@ void Game::Initialize() {
 	btnHead[0]->setDrawBorder(false);
 	btnHead[0]->setEnabled(false);
 
-	wHead[1] = env->addWindow(Scale(846, 5, 898, 57));
+	wHead[1] = env->addWindow(Scale(900, 5, 952, 57));
 	wHead[1]->getCloseButton()->setVisible(false);
 	wHead[1]->setDraggable(false);
 	wHead[1]->setDrawTitlebar(false);
@@ -5017,6 +4813,10 @@ void Game::CloseDuelWindow() {
 	wAvatar[0]->setVisible(false);
 	wAvatar[1]->setVisible(false);
 	///////kdiy///////
+    ///////zdiy///////
+    wHead[0]->setVisible(false);
+	wHead[1]->setVisible(false);
+    ///////zdiy///////
 	btnRestartSingle->setVisible(false);
 	btnSpectatorSwap->setVisible(false);
 	btnChainIgnore->setVisible(false);
@@ -5738,6 +5538,16 @@ void Game::OnResize() {
     wAvatar[1]->setRelativePosition(ResizeWin(890, 10, 1020, 210));
     wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 360, 310));
     ////kdiy////////////
+    ///////zdiy///////
+    wHead[0]->setRelativePosition(ResizeWin(365, 5, 417, 57));
+	wHead[1]->setRelativePosition(ResizeWin(900, 5, 952, 57));
+    wBody->setRelativePosition(ResizeWin(370, 175, 570, 475));
+    wPloat->setRelativePosition(ResizeWin(520, 100, 775, 400));
+    wChPloatBody[0]->setRelativePosition(ResizeWin(475, 375, 775, 455));
+    wChBody[0]->setRelativePosition(ResizeWin(475, 323, 527, 375));
+    wChPloatBody[1]->setRelativePosition(ResizeWin(475, 100, 775, 180));
+    wChBody[1]->setRelativePosition(ResizeWin(475, 48, 527, 100));
+    ///////zdiy///////
 	wSinglePlay->setRelativePosition(ResizeWin(220, 100, 800, 520));
 	gBot.window->setRelativePosition(irr::core::position2di(wHostPrepare->getAbsolutePosition().LowerRightCorner.X-290, wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
 	wHand->setRelativePosition(ResizeWin(500, 450, 825, 605));

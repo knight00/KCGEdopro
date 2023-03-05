@@ -29,10 +29,6 @@ OPTION(uint32_t, bestOf, 1)
 OPTION(uint32_t, startLP, 8000)
 OPTION(uint32_t, startHand, 5)
 OPTION(uint32_t, drawCount, 1)
-/////zdiy/////
-OPTION(uint32_t, winTimes, 0)
-OPTION(uint32_t, failTimes, 0)
-/////zdiy/////
 OPTION(bool, relayDuel, false)
 OPTION(bool, noShuffleDeck, false)
 OPTION(bool, noCheckDeckContent, false)
