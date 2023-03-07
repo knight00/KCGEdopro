@@ -137,17 +137,17 @@ public:
 		std::wstring name;
 		std::wstring des;
 	};
-	struct ModePloat {//the ploat text of mode-mode2
+	struct ModePloat {//the ploat text of mode-story
 		int32_t index;
 		int32_t control;
 		std::wstring title;
 		std::wstring ploat;
 	};
-	enum SOUND{//the ploat|duel sound of mode-mode2
+	enum SOUND{//the ploat|duel sound of mode-story
 		Ploat,
 		Duel
 	};
-	enum SOUNDTYPE {//the sound type of mode-mode2 duel sound
+	enum SOUNDTYPE {//the sound type of mode-story duel sound
 		ACTIVATE,
 		ATTACK,
 		DRAW,
@@ -158,22 +158,22 @@ public:
 	};
 	std::vector<ModeText>* modeTexts;//vector modetext
 	std::vector<ModePloat>* modePloats;//vector modeploat
-	std::vector<uint32_t> ploatCodes;//these codes can be changed to name in mode-mode2,then show names to player
+	std::vector<uint32_t> ploatCodes;//these codes can be changed to name in mode-story,then show names to player
 	std::vector<WindBot> bots;//all mode will load windbots from this
     std::map<int, std::wstring> playerNames;
 	std::map<int, std::vector<std::wstring>> aiNames;//player+bot names when duel start
-	epro::condition_variable* cv;//should lock thread when play mode-mode2 sound,this cv is in duelclient.cpp
-	epro::mutex * lck;//should lock thread when play mode-mode2 sound,this lck is in duelclient.cpp
+	epro::condition_variable* cv;//should lock thread when play mode-story sound,this cv is in duelclient.cpp
+	epro::mutex * lck;//should lock thread when play mode-story sound,this lck is in duelclient.cpp
 	int modeIndex;//decide to play what kind of mode rule,from meun-list getSelected
 	bool isMode;//the duel is mode?
-	bool isPlot;//the ploat of mode-mode2,if isPlot==true will break all no about ploat events
+	bool isPlot;//the ploat of mode-story,if isPlot==true will break all no about ploat events
 	bool isEvent;//if isEvent==true,all events is notify_one() lck
 	bool flag_100000155;//card 100000155 play sound 
 	Deck deck;//player deck
-	uint8_t player;//new turn player,should distinguish ai and player when play mode-mode2 duel sound
+	uint8_t player;//new turn player,should distinguish ai and player when play mode-story duel sound
 	int16_t rule;//the rule of duel,zcg|5ds......
 	int32_t plotStep;//the step of fun NextPlot()
-	int32_t duelSoundIndex;//the index of mode-mode2 sound,the sound is in  sound_manager.cpp
+	int32_t duelSoundIndex;//the index of mode-story sound,the sound is in  sound_manager.cpp
  	int32_t plotIndex;//the index of plot,decide to set text plot
 	void InitializeMode();
 	void DestoryMode();

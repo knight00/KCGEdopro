@@ -647,11 +647,11 @@ bool ImageManager::Initial() {
 	/////zdiy/////
 #define LEN(arr) (sizeof(arr) / sizeof(arr[0]))
 	for (int i = 0; i < LEN(modeBody); i++) {
-		snprintf(buff, 100, "./mode/mode2/body/%d.png", i);
+		snprintf(buff, 100, "./mode/story/body/%d.png", i);
 		modeBody[i] = driver->getTexture(buff);
 	}
 	for (int i = 0; i < LEN(modeHead); i++) {
-		snprintf(buff, 100, "./mode/mode2/head/%d.jpg", i);
+		snprintf(buff, 100, "./mode/story/head/%d.jpg", i);
 		modeHead[i] = driver->getTexture(buff);
 	}
 	/////zdiy/////

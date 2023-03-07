@@ -1,7 +1,7 @@
 [
 	{
 		"playerNames": "不动游星",
-		"aiNames": "暗迪克皮塔"
+		"aiNames": ["暗迪克皮塔", "不动"]
 	},
     {
 		"index": 0,

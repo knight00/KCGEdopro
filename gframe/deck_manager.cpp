@@ -328,9 +328,9 @@ bool DeckManager::LoadDeckFromFile(epro::path_stringview file, Deck& out, bool s
 }
 /////zdiy/////
 bool DeckManager::ModeLoadDeck(epro::path_stringview file,cardlist_type* mainlist, cardlist_type* extralist, cardlist_type* sidelist) {
-	if(!LoadCardList(epro::format(EPRO_TEXT("./mode/mode2/deck/0/{}.ydk"),file), mainlist, extralist, sidelist)) {
+	if(!LoadCardList(epro::format(EPRO_TEXT("./mode/story/deck/0/{}.ydk"),file), mainlist, extralist, sidelist)) {
 		mainGame->AddDebugMsg("Can't load mode deck!");
-		mainGame->AddDebugMsg("Please check your file /mode/mode2/deck.");
+		mainGame->AddDebugMsg("Please check your file /mode/story/deck.");
 		return false;
 	}
 	return true;

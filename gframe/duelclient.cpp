@@ -218,10 +218,8 @@ void DuelClient::ClientEvent(bufferevent *bev, short events, void *ctx) {
 		CTOS_PlayerInfo cspi;
 		/////zdiy/////
 		//BufferIO::EncodeUTF16(mainGame->ebNickName->getText(), cspi.name, 20);
-		if(!(mainGame->mode->isMode && mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER))
+		if(!mainGame->mode->isMode)
 			BufferIO::EncodeUTF16(mainGame->ebNickName->getText(), cspi.name, 20);
-		else if(mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER)
-            BufferIO::EncodeUTF16(gGameConfig->nickname.data(), cspi.name, 20);
         else
 			BufferIO::EncodeUTF16(gGameConfig->nickname.data(), cspi.name, 20);
 		/////zdiy/////
@@ -284,7 +282,6 @@ catch(...) { what = def; }
 				BufferIO::EncodeUTF16(L"", cscg.pass, 20);
 				cscg.info.sizes = { {0,999},{0,999},{0,999} };
 				cscg.info.rule = 5;
-				cscg.info.mode = 0;
 				cscg.info.start_hand = 5;
 				cscg.info.draw_count = 1;
 				cscg.info.lflist = 0;
@@ -296,7 +293,6 @@ catch(...) { what = def; }
 				cscg.info.handshake = SERVER_HANDSHAKE;
 				cscg.info.version = { EXPAND_VERSION(CLIENT_VERSION) };
 				cscg.info.team1 = 1;
-				cscg.info.team2 = 1;
 				cscg.info.best_of = 1;
 				cscg.info.forbiddentypes = 0;
 				cscg.info.extra_rules = 0;
@@ -304,10 +300,16 @@ catch(...) { what = def; }
 				{
 					case MODE_RULE_ZCG:
 					case MODE_RULE_ZCG_NO_RANDOM:
+				        cscg.info.mode = 0;
+				        cscg.info.team2 = 1;
 				        cscg.info.start_lp = 32000;
 						cscg.info.time_limit = 223;
 						break;
                     case MODE_RULE_5DS_DARK_TUNER:
+                        cscg.info.mode = 0;
+				        cscg.info.team2 = 1;
+				        // cscg.info.mode = MODE_TAG;
+				        // cscg.info.team2 = 2;
 				        cscg.info.start_lp = 8000;
 						cscg.info.time_limit = 300;
 						break;
@@ -1269,9 +1271,15 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		else
 			mainGame->dInfo.opponames[pkt.pos - mainGame->dInfo.team1] = name;
 		/////zdiy/////
-		if(mainGame->mode->isMode && mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER) {
-			mainGame->stHostPrepDuelist[0]->setText(mainGame->mode->playerNames[1].c_str());
-            mainGame->stHostPrepDuelist[1]->setText(mainGame->mode->aiNames[1][0].c_str());
+		if(mainGame->mode->isMode && mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER
+		   && mainGame->mode->playerNames.find(mainGame->mode->rule) != mainGame->mode->playerNames.end()
+		   && mainGame->mode->aiNames.find(mainGame->mode->rule) != mainGame->mode->aiNames.end()) {
+			mainGame->stHostPrepDuelist[0]->setText(mainGame->mode->playerNames[mainGame->mode->rule].c_str());
+			int name_count = 1;
+			for(auto names : mainGame->mode->aiNames[mainGame->mode->rule]) {
+				mainGame->stHostPrepDuelist[name_count]->setText(mainGame->mode->aiNames[mainGame->mode->rule][name_count-1].c_str());
+				name_count++;
+			}
         } else
 		/////zdiy/////
 		mainGame->stHostPrepDuelist[pkt.pos]->setText(name);

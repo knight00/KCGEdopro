@@ -127,7 +127,6 @@ void Mode::ModePlaySound(uint32_t type,int32_t index,int32_t type2) {
 		default:
 			break;
 	}
-
 }
 std::wstring Mode::GetPloat(int32_t index, uint32_t code) {
 	std::wstring str = L"";
@@ -303,6 +302,9 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 				break;
 			}
 		}
+        // if(index < 0 || index >= bots.size()) return false;
+        // res = bots[index].Launch(port, pass, false, 0, nullptr, -1);
+        // if(!res) return false;
 	}
 	if(index < 0 || index >= bots.size()) return false;
 	res = bots[index].Launch(port, pass, false, 0, nullptr, -1);
@@ -987,18 +989,12 @@ void Mode::LoadJson(epro::path_string path, uint32_t index) {
 						ModePloat modePloat;
                         std::vector<std::wstring> ais;
                         if(obj.find("playerNames") != obj.end())
-                            playerNames.insert(std::pair<int, std::wstring>(index, BufferIO::DecodeUTF8(obj.at("playerNames").get_ref<std::string&>())));
-                        if(obj.find("aiNames") != obj.end())
-                            ais.push_back(BufferIO::DecodeUTF8(obj.at("aiNames").get_ref<std::string&>()));
-                        if(obj.find("ai2Names") != obj.end())
-                            ais.push_back(BufferIO::DecodeUTF8(obj.at("ai2Names").get_ref<std::string&>()));
-                        if(obj.find("ai3Names") != obj.end())
-                            ais.push_back(BufferIO::DecodeUTF8(obj.at("ai3Names").get_ref<std::string&>()));
-                        if(obj.find("ai4Names") != obj.end())
-                            ais.push_back(BufferIO::DecodeUTF8(obj.at("ai4Names").get_ref<std::string&>()));
-                        if(obj.find("ai5Names") != obj.end())
-                            ais.push_back(BufferIO::DecodeUTF8(obj.at("ai5Names").get_ref<std::string&>()));
-                        aiNames.insert(std::pair<int, std::vector<std::wstring>>(index, ais));
+                            playerNames.insert(std::pair<int, std::wstring>(MODE_RULE_5DS_DARK_TUNER, BufferIO::DecodeUTF8(obj.at("playerNames").get_ref<std::string&>())));
+						if(obj.find("aiNames") != obj.end()) {
+							for(auto names : obj.at("aiNames"))
+								ais.push_back(BufferIO::DecodeUTF8(names.get_ref<std::string&>()));
+							aiNames.insert(std::pair<int, std::vector<std::wstring>>(MODE_RULE_5DS_DARK_TUNER, ais));
+						}
                         if(obj.find("index") == obj.end())
                             continue;
 						modePloat.index = obj.at("index").get<int>();
@@ -1021,7 +1017,7 @@ void Mode::LoadJson(epro::path_string path, uint32_t index) {
 }
 void Mode::LoadJsonInfo() {
 	LoadJson(EPRO_TEXT("./mode/mode.json"), 0);
-	LoadJson(EPRO_TEXT("./mode/mode2/ploat.json"), 1);
+	LoadJson(EPRO_TEXT("./mode/story/ploat.json"), 1);
 }
 void Mode::SetBodyImage(uint32_t index) {
 	if (rule != MODE_RULE_5DS_DARK_TUNER) return;
@@ -2022,7 +2018,7 @@ void Game::Initialize() {
 	cbEntertainmentMode_1Bot->setMaxSelectionRows(5);
 	cbEntertainmentMode_1Bot->setEnabled(false);
 
-	//mode2 image
+	//story image
 	//first body 
 	wBody = env->addWindow(Scale(370, 175, 570, 475));
 	wBody->getCloseButton()->setVisible(false);

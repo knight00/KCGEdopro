@@ -275,7 +275,7 @@ void SoundManager::RefreshChantsList() {
 	/////zdiy/////
 	for (int i = 0; i < (sizeof(ModeDialogList)/sizeof(ModeDialogList[0])); i++)
 	{
-		std::string file = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("./mode/mode2/soundDialog/0{}{}"),i,L".mp3"));
+		std::string file = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("./mode/story/soundDialog/0{}{}"),i,L".mp3"));
 		ModeDialogList->push_back(file);
 	}
 	/////zdiy/////
