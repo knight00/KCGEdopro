@@ -379,14 +379,13 @@ void GenericDuel::PlayerReady(DuelPlayer* dp, bool is_ready, bool ai) {
 	/////kdiy/////
 	//if(is_ready) {
 	if(is_ready && !ai) {
-		const CardDataC* cdata;
-		for(auto cd : dueler.pdeck.extra) {
-			if(cd->code == 111) {
-				cdata = cd;
-				break;
-			}
+		std::vector<const CardDataC*>::iterator iter;
+		for(iter = dueler.pdeck.extra.begin(); iter != dueler.pdeck.extra.end(); ) {
+			if((*iter)->code == 111 || (*iter)->code == 112 || (*iter)->code == 211 || (*iter)->code == 208)
+				iter = dueler.pdeck.extra.erase(iter);
+			else
+				++iter;
 		}
-		remove(dueler.pdeck.extra.begin(), dueler.pdeck.extra.end(), cdata);
 	/////kdiy/////
 		DeckError deck_error = DeckManager::CheckDeckSize(dueler.pdeck, host_info.sizes);
 		if(deck_error.type == DeckError::NONE && !host_info.no_check_deck_content) {
