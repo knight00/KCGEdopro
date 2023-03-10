@@ -370,7 +370,7 @@ void GenericDuel::ToObserver(DuelPlayer* dp) {
 /////kdiy//////////
 //void GenericDuel::PlayerReady(DuelPlayer* dp, bool is_ready) {
 void GenericDuel::PlayerReady(DuelPlayer* dp, bool is_ready, bool ai) {
-/////kdiy//////////	
+/////kdiy//////////
 	if(dp->type >= (players.home_size + players.opposing_size))
 		return;
 	auto& dueler = GetAtPos(dp->type);
@@ -379,6 +379,14 @@ void GenericDuel::PlayerReady(DuelPlayer* dp, bool is_ready, bool ai) {
 	/////kdiy/////
 	//if(is_ready) {
 	if(is_ready && !ai) {
+		const CardDataC* cdata;
+		for(auto cd : dueler.pdeck.extra) {
+			if(cd->code == 111) {
+				cdata = cd;
+				break;
+			}
+		}
+		remove(dueler.pdeck.extra.begin(), dueler.pdeck.extra.end(), cdata);
 	/////kdiy/////
 		DeckError deck_error = DeckManager::CheckDeckSize(dueler.pdeck, host_info.sizes);
 		if(deck_error.type == DeckError::NONE && !host_info.no_check_deck_content) {

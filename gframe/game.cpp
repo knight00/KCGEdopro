@@ -278,6 +278,9 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 				break;
 			}
 		}
+	    if(index < 0 || index >= bots.size()) return false;
+        res = bots[index].Launch(port, pass, false, 0, nullptr, -1);
+        if(!res) return false;
 	}
 	if(rule == MODE_RULE_ZCG_NO_RANDOM) {
 		index = mainGame->cbEntertainmentMode_1Bot->getSelected();
@@ -292,6 +295,9 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 				break;
 			}
 		}
+	    if(index < 0 || index >= bots.size()) return false;
+        res = bots[index].Launch(port, pass, false, 0, nullptr, -1);
+        if(!res) return false;
 	}
 	if(rule == MODE_RULE_5DS_DARK_TUNER) {
 		for (int32_t i = 0; i < bots.size(); ++i)
@@ -616,8 +622,53 @@ void Mode::SetCurrentDeck() {
 	switch (rule)
 	{
 		case MODE_RULE_ZCG:
-		case MODE_RULE_ZCG_NO_RANDOM:
+		case MODE_RULE_ZCG_NO_RANDOM: {
+			srand((int)time(0));
+			cardlist_type plot_mainlist;
+			cardlist_type plot_extralist;
+			int32_t index = 0;
+			int32_t nmonster_count = 48;
+			int32_t tmonster_count = 10;
+			int32_t spell_count = 8;
+			int32_t trap_count = 4;
+			int32_t extra_count = 7;
+			const CardDataC* cd = nullptr;
+			cardlist_type temp, temp2;
+			for(auto& card : gDataManager->cards) {
+				cd = &card.second._data;
+				if(!cd || cd->type & TYPE_TOKEN) continue;
+				if((cd->ot & SCOPE_ZCG) && (cd->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_XYZ) || ((cd->type & TYPE_MONSTER) && (cd->type & TYPE_LINK))))
+					temp2.push_back(cd->code);
+				if ((cd->ot & SCOPE_ZCG) && !(cd->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_XYZ) || ((cd->type & TYPE_MONSTER) && (cd->type & TYPE_LINK))))
+					temp.push_back(cd->code);
+			}
+			if(temp.size() > 0) {
+				for (int32_t i = 0; i < nmonster_count; ++i) {
+					index = rand() % temp.size();
+					bool up = false;
+					if(index < 0 || index >= temp.size()) {
+                        up = true ;
+                        index = temp.size()-1;
+                    }
+					uint32_t code = temp.at(index);
+					int32_t count = 0;
+					for(auto _code : plot_mainlist) {
+						if(_code == code)
+                            ++count;
+					}
+					if(count >= 3 && !up) {
+                        --i;
+                        continue;
+                    }
+					plot_mainlist.push_back(code);
+				}
+			}
+			temp.clear();
+			if(plot_mainlist.size() <= 0) 
+                break;
+			DeckManager::LoadDeck(deck, plot_mainlist, temp, &plot_extralist);
 			break;
+		}
 		case MODE_RULE_5DS_DARK_TUNER: {
 			srand((int)time(0));
 			cardlist_type plot_mainlist;
@@ -629,7 +680,7 @@ void Mode::SetCurrentDeck() {
 			for (int32_t i = 0; i < plot_extralist.size(); ++i)
 				ploatCodes.push_back(plot_extralist[i]);
 			int32_t index = 0;
-			int32_t nmonster_count = 0;
+			int32_t ntmonster_count = 0;
 			int32_t tmonster_count = 0;
 			int32_t spell_count = 0;
 			int32_t trap_count = 0;
@@ -639,44 +690,45 @@ void Mode::SetCurrentDeck() {
 			for(auto code : plot_mainlist) {
 				cd = gDataManager->GetCardData(code);
 				if(!cd || cd->type & TYPE_TOKEN) continue;
-				if(cd->type & TYPE_TUNER)++tmonster_count;
-				else if(cd->type & TYPE_MONSTER) ++nmonster_count;
+				if(cd->type & TYPE_TUNER) ++tmonster_count; //count plot monster count
+				else if(cd->type & TYPE_MONSTER) ++ntmonster_count;
 				else if(cd->type & TYPE_SPELL) ++spell_count;
 				else if(cd->type & TYPE_TRAP) ++trap_count;
 			}
-			nmonster_count = 18 - nmonster_count;
+			ntmonster_count = 18 - ntmonster_count; //count how many remaining monster(non-plot) should add to deck
 			tmonster_count = 10 - tmonster_count;
 			spell_count = 8 - spell_count;
 			trap_count = 4 - trap_count;
 			extra_count = 7 - extra_count;
 			cardlist_type temp;
 			std::vector<uint32_t>::iterator iter;
-			if(nmonster_count > 0) {
-				if(!DeckManager::ModeLoadDeck(L"nmonster", &temp, nullptr, nullptr))
+			if(ntmonster_count > 0) {
+				if(!DeckManager::ModeLoadDeck(L"ntmonster", &temp, nullptr, nullptr))
                     break;
 			}
+			//random choose cards from non-plot ydk to deck
 			if(temp.size() > 0) {
-				for (int32_t i = 0; i < nmonster_count; ++i) {
+				for (int32_t i = 0; i < ntmonster_count; ++i) {
 					index = rand() % temp.size();
 					bool up = false;
-					if(index < 0 || index >= temp.size()) { 
-                        up = true ; 
-                        index = temp.size()-1; 
+					if(index < 0 || index >= temp.size()) {
+                        up = true ;
+                        index = temp.size()-1;
                     }
 					uint32_t code = temp.at(index);
 					int32_t count = 0;
 					for(auto _code : plot_mainlist) {
 						if(_code == code)
-                            ++count;
+                            ++count; //count monsters in plot list
 					}
-					if(count >= 3 && !up) { 
-                        --i; 
-                        continue; 
+					if(count >= 3 && !up) {
+                        --i;
+                        continue; //avoid same card>3
                     }
 					if(extra_count > 0 && (code == 511002807 || code == 511002883) 
                       && (iter = std::find(plot_extralist.begin(),plot_extralist.end(), 44508094)) == plot_extralist.end()) {
 						plot_extralist.push_back(44508094);
-						--extra_count;
+						--extra_count; //add one card to deck, so count-1
 					}
 					else if(tmonster_count > 0 && (code == 44935634)) {
 						plot_mainlist.push_back(44935634);
@@ -723,8 +775,8 @@ void Mode::SetCurrentDeck() {
 				for (int32_t i = 0; i < tmonster_count; ++i) {
 					index = rand() % temp.size();
 					bool up = false;
-					if(index < 0 || index >= temp.size()) { 
-                        up = true ; 
+					if(index < 0 || index >= temp.size()) {
+                        up = true ;
                         index = temp.size()-1; 
                     }
 					uint32_t code = temp.at(index);
@@ -732,8 +784,8 @@ void Mode::SetCurrentDeck() {
 					for(auto _code : plot_mainlist) {
 						if(_code == code) ++count;
 					}
-					if(count >= 3 && !up) { 
-                        --i; 
+					if(count >= 3 && !up) {
+                        --i;
                         continue; 
                     }
 					if(extra_count > 0) {
@@ -790,25 +842,25 @@ void Mode::SetCurrentDeck() {
 				for (int32_t i = 0; i < spell_count; ++i) {
 					index = rand() % temp.size();
 					bool up = false;
-					if(index < 0 || index >= temp.size()) { 
-                        up = true; 
-                        index = temp.size()-1; 
+					if(index < 0 || index >= temp.size()) {
+                        up = true;
+                        index = temp.size()-1;
                     }
 					uint32_t code = temp.at(index);
 					int32_t count = 0;
 					for(auto _code : plot_mainlist) {
 						if(_code == code) ++count;
 					}
-					if(count >= 3 && !up) { 
-                        --i; 
-                        continue; 
+					if(count >= 3 && !up) {
+                        --i;
+                        continue;
                     }
 					plot_mainlist.push_back(code);
 				}
 			}
 			temp.clear();
 			if(trap_count > 0) {
-				if(!DeckManager::ModeLoadDeck(L"trap", &temp, nullptr, nullptr)) 
+				if(!DeckManager::ModeLoadDeck(L"trap", &temp, nullptr, nullptr))
                     break;
 			}
 			if(temp.size() > 0) {
@@ -859,16 +911,16 @@ void Mode::SetCurrentDeck() {
 			}
 			temp.clear();
 			if(extra_count > 0) {
-				if(!DeckManager::ModeLoadDeck(L"extra", &temp, nullptr ,nullptr)) 
+				if(!DeckManager::ModeLoadDeck(L"extra", &temp, nullptr ,nullptr))
                     break;
 			}
 			if(temp.size() > 0) {
 				while(extra_count > 0){
 					index = rand() % temp.size();
 					bool up = false;
-					if(index < 0 || index >= temp.size()) { 
-                        up = true ; 
-                        index = temp.size()-1; 
+					if(index < 0 || index >= temp.size()) {
+                        up = true ;
+                        index = temp.size()-1;
                     }
 					if(std::find(plot_extralist.begin(),plot_extralist.end(),511001963) == plot_extralist.end()) {
 						bool res = false;
@@ -878,22 +930,21 @@ void Mode::SetCurrentDeck() {
 								res= true;
 								break;
 							}
-								
 						}
 						if(res) {
-                            --extra_count; 
+                            --extra_count;
                             plot_extralist.push_back(511001963);
                         }
 					}
-					if(extra_count <= 0) 
+					if(extra_count <= 0)
                         break;
 					uint32_t code = temp.at(index);
 					int32_t count = 0;
 					for(auto _code : plot_extralist) {
-						if(_code == code) 
+						if(_code == code)
                             ++count;
 					}
-					if(count >= 3 && !up) 
+					if(count >= 3 && !up)
                         continue;
 					--extra_count;
 					plot_extralist.push_back(code);
@@ -5779,19 +5830,22 @@ bool Game::LoadScript(OCG_Duel pduel, epro::stringview script_name) {
 void* Game::ReadCardDataToCore() {
 	std::unordered_map<uint32_t, std::vector<void*>*>* cards_data = new std::unordered_map<uint32_t, std::vector<void*>*>();
 	uint32_t index = 0;
-	for (auto& _card : gDataManager->cards) {
+	for(auto& _card : gDataManager->cards) {
 		CardDataC* card = &(_card.second._data);
-		if (!card->code || card->code == 0 || (card->type & TYPE_TOKEN)) {
+		if(!card->code || card->code == 0)
 			continue;
-		}
-		std::vector<uint32_t>* CardDataKey_1 = new std::vector<uint32_t>(3);
+		std::vector<uint32_t>* CardDataKey_1 = new std::vector<uint32_t>(4);
 		CardDataKey_1->at(0) = card->code;
 		CardDataKey_1->at(1) = card->type;
-		CardDataKey_1->at(2) = card->ot;
+		CardDataKey_1->at(2) = card->attribute;
+		CardDataKey_1->at(3) = card->ot;
 		std::vector<uint16_t>* CardDataKey_2 = &card->setcodes;
-		std::vector<void*>* CardDataKey = new std::vector<void*>(2);
+		std::vector<uint64_t>* CardDataKey_3 = new std::vector<uint64_t>(1);
+		CardDataKey_3->at(0) = card->race;
+		std::vector<void*>* CardDataKey = new std::vector<void*>(3);
 		CardDataKey->at(0) = CardDataKey_1;
 		CardDataKey->at(1) = CardDataKey_2;
+		CardDataKey->at(2) = CardDataKey_3;
 		cards_data->emplace(index, CardDataKey);
 		++index;
 	}

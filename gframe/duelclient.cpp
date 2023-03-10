@@ -299,13 +299,16 @@ catch(...) { what = def; }
 				switch (mainGame->mode->rule)
 				{
 					case MODE_RULE_ZCG:
-					case MODE_RULE_ZCG_NO_RANDOM:
-				        cscg.info.mode = 0;
-				        cscg.info.team2 = 1;
+					case MODE_RULE_ZCG_NO_RANDOM: {
+				        cscg.info.mode = MODE_TAG;
+				        cscg.info.team2 = 2;
+				        // cscg.info.mode = 0;
+				        // cscg.info.team2 = 1;
 				        cscg.info.start_lp = 32000;
 						cscg.info.time_limit = 223;
 						break;
-                    case MODE_RULE_5DS_DARK_TUNER:
+					}
+                    case MODE_RULE_5DS_DARK_TUNER: {
                         cscg.info.mode = 0;
 				        cscg.info.team2 = 1;
 				        // cscg.info.mode = MODE_TAG;
@@ -313,6 +316,7 @@ catch(...) { what = def; }
 				        cscg.info.start_lp = 8000;
 						cscg.info.time_limit = 300;
 						break;
+					}
 					default:
 					    break;
 				}
@@ -1279,6 +1283,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			for(auto names : mainGame->mode->aiNames[mainGame->mode->rule]) {
 				mainGame->stHostPrepDuelist[name_count]->setText(mainGame->mode->aiNames[mainGame->mode->rule][name_count-1].c_str());
 				name_count++;
+				if(name_count > 5) break;
 			}
         } else
 		/////zdiy/////
@@ -1291,8 +1296,8 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
         /////zdiy/////
         }
         if(mainGame->mode->isMode) {
-            if(mainGame->mode->deck.main.size() <= 0)
-				mainGame->mode->UpdateDeck();
+            // if(mainGame->mode->deck.main.size() <= 0)
+			// 	mainGame->mode->UpdateDeck();
             DuelClient::SendPacketToServer(CTOS_HS_READY);
         }
         /////zdiy/////
