@@ -130,7 +130,7 @@ void Mode::ModePlaySound(uint32_t type,int32_t index,int32_t type2) {
 }
 std::wstring Mode::GetPloat(int32_t index, uint32_t code) {
 	std::wstring str = L"";
-	if(index < 0 || index >= mainGame->mode->modePloats->size()) return str;
+	if(index < 0 || index >= (int32_t)mainGame->mode->modePloats->size()) return str;
 	str = mainGame->mode->modePloats->at(index).title;
 	str.append(epro::format(L"{}\n{}{}",L":",L"  ", mainGame->mode->modePloats->at(index).ploat));
 	if(code != 0) {
@@ -141,7 +141,7 @@ std::wstring Mode::GetPloat(int32_t index, uint32_t code) {
 void Mode::NextPlot(int32_t step, int32_t index, uint32_t code) {
 	if(step != 0) plotStep = step;
 	if(index != 0) plotIndex = index;
-	if(plotIndex >= mainGame->mode->modePloats->size() || plotIndex < 0 ) plotIndex = 0;
+	if(plotIndex >= (int32_t)mainGame->mode->modePloats->size() || plotIndex < 0 ) plotIndex = 0;
 	int32_t i = mainGame->mode->modePloats->at(plotIndex).control;
 	if(i < 0 || i > 2 ) i = 0;
 	int32_t plotStep = this->plotStep;
@@ -191,10 +191,8 @@ void Mode::NextPlot(int32_t step, int32_t index, uint32_t code) {
 		mainGame->HideElement(mainGame->wChBody[1]);
 		std::wstring str =  gDataManager->GetSysString(1700).data();
 		str.append(L"\n\n");
-		for (int32_t i = 0; i < ploatCodes.size(); ++i)
-		{
+		for (uint32_t i = 0; i < ploatCodes.size(); ++i)
 			str.append(epro::format(L"{}\n",gDataManager->GetName(ploatCodes[i])));
-		}
 		mainGame->stPloatInfo->setText(str.data());
 		mainGame->ShowElement(mainGame->wPloat);
 	}
@@ -270,7 +268,7 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 	bool res = false;
 	int32_t index = -1;
 	if(rule == MODE_RULE_ZCG) {
-		for (int32_t i = 0; i < bots.size(); ++i)
+		for (uint32_t i = 0; i < bots.size(); ++i)
 		{
 			auto bot = bots[i];
 			if(bot.mode == L"MODE_RULE_ZCG") {
@@ -287,7 +285,7 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 		if(index < 0) return false;
 		auto name =  mainGame->cbEntertainmentMode_1Bot->getItem(index);
 		index = -1;
-		for (int32_t i = 0; i < bots.size(); ++i)
+		for (uint32_t i = 0; i < bots.size(); ++i)
 		{
 			auto bot = bots[i];
 			if(bot.name == name) {
@@ -300,7 +298,7 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
         // if(!res) return false;
 	}
 	if(rule == MODE_RULE_5DS_DARK_TUNER) {
-		for (int32_t i = 0; i < bots.size(); ++i)
+		for (uint32_t i = 0; i < bots.size(); ++i)
 		{
 			auto bot = bots[i];
 			if(bot.mode == L"MODE_RULE_5DS_DARK_TUNER") {
@@ -312,7 +310,7 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
         // res = bots[index].Launch(port, pass, false, 0, nullptr, -1);
         // if(!res) return false;
 	}
-	if(index < 0 || index >= bots.size()) return false;
+	if(index < 0 || index >= (int32_t)bots.size()) return false;
 	res = bots[index].Launch(port, pass, false, 0, nullptr, -1);
 	if(!res) return false;
 	return true;
@@ -571,7 +569,7 @@ void Mode::SetControlState(uint32_t index)
 		mainGame->chkEntertainmentMode_1Check->setEnabled(true);
 		mainGame->chkEntertainmentMode_1Check->setChecked(false);
 		mainGame->cbEntertainmentMode_1Bot->clear();
-		for (int32_t i = 0; i < bots.size(); ++i) {
+		for (uint32_t i = 0; i < bots.size(); ++i) {
 			if(bots[i].mode == L"MODE_RULE_ZCG_NO_RANDOM")
 				mainGame->cbEntertainmentMode_1Bot->addItem(bots[i].name.data());
 		}
@@ -595,391 +593,391 @@ void Mode::DestoryMode()
 	deck.clear();
 	//this->~Mode();
 }
-void Mode::UpdateDeck() {
-	SetCurrentDeck();
-	const auto& deck = mainGame->deckBuilder.GetCurrentDeck();
-	uint8_t deckbuf[0xf000];
-	auto* pdeck = deckbuf;
-	static constexpr auto max_deck_size = sizeof(deckbuf) / sizeof(uint32_t) - 2;
-	const auto totsize = deck.main.size() + deck.extra.size() + deck.side.size();
-	if(totsize > max_deck_size)
-		return;
-	BufferIO::Write<uint32_t>(pdeck, static_cast<uint32_t>(deck.main.size() + deck.extra.size()));
-	BufferIO::Write<uint32_t>(pdeck, static_cast<uint32_t>(deck.side.size()));
-	for(const auto& pcard : deck.main)
-		BufferIO::Write<uint32_t>(pdeck, pcard->code);
-	for(const auto& pcard : deck.extra)
-		BufferIO::Write<uint32_t>(pdeck, pcard->code);
-	for(const auto& pcard : deck.side)
-		BufferIO::Write<uint32_t>(pdeck, pcard->code);
-	DuelClient::SendBufferToServer(CTOS_UPDATE_DECK, deckbuf, pdeck - deckbuf);
-}
-void Mode::SetCurrentDeck() {
-	Deck deck;
-	deck.clear();
-	ploatCodes.clear();
-	this->deck.clear();
-	switch (rule)
-	{
-		case MODE_RULE_ZCG:
-		case MODE_RULE_ZCG_NO_RANDOM: {
-			srand((int)time(0));
-			cardlist_type plot_mainlist;
-			cardlist_type plot_extralist;
-			int32_t index = 0;
-			int32_t nmonster_count = 48;
-			int32_t tmonster_count = 10;
-			int32_t spell_count = 8;
-			int32_t trap_count = 4;
-			int32_t extra_count = 7;
-			const CardDataC* cd = nullptr;
-			cardlist_type temp, temp2;
-			for(auto& card : gDataManager->cards) {
-				cd = &card.second._data;
-				if(!cd || cd->type & TYPE_TOKEN) continue;
-				if((cd->ot & SCOPE_ZCG) && (cd->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_XYZ) || ((cd->type & TYPE_MONSTER) && (cd->type & TYPE_LINK))))
-					temp2.push_back(cd->code);
-				if ((cd->ot & SCOPE_ZCG) && !(cd->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_XYZ) || ((cd->type & TYPE_MONSTER) && (cd->type & TYPE_LINK))))
-					temp.push_back(cd->code);
-			}
-			//random choose cards to deck
-			if(temp.size() > 0) {
-				for (int32_t i = 0; i < nmonster_count; ++i) {
-					index = rand() % temp.size();
-					bool up = false;
-					if(index < 0 || index >= temp.size()) {
-                        up = true ;
-                        index = temp.size()-1;
-                    }
-					uint32_t code = temp.at(index);
-					int32_t count = 0;
-					for(auto _code : plot_mainlist) {
-						if(_code == code)
-                            ++count; //count monsters in plot list
-					}
-					if(count >= 3 && !up) {
-                        --i; //avoid same card>3
-                        continue;
-                    }
-					plot_mainlist.push_back(code);
-				}
-			}
-			temp.clear();
-			if(plot_mainlist.size() <= 0) 
-                break;
-			DeckManager::LoadDeck(deck, plot_mainlist, temp, &plot_extralist);
-			break;
-		}
-		case MODE_RULE_5DS_DARK_TUNER: {
-			srand((int)time(0));
-			cardlist_type plot_mainlist;
-			cardlist_type plot_extralist;
-			if(!DeckManager::ModeLoadDeck(L"plot", &plot_mainlist, &plot_extralist, nullptr))
-                break;
-			for (int32_t i = 0; i < plot_mainlist.size(); ++i)
-				ploatCodes.push_back(plot_mainlist[i]);
-			for (int32_t i = 0; i < plot_extralist.size(); ++i)
-				ploatCodes.push_back(plot_extralist[i]);
-			int32_t index = 0;
-			int32_t ntmonster_count = 0;
-			int32_t tmonster_count = 0;
-			int32_t spell_count = 0;
-			int32_t trap_count = 0;
-			int32_t extra_count = plot_extralist.size();
-			if(extra_count < 0) extra_count = 0;
-			const CardDataC* cd = nullptr;
-			for(auto code : plot_mainlist) {
-				cd = gDataManager->GetCardData(code);
-				if(!cd || cd->type & TYPE_TOKEN) continue;
-				if(cd->type & TYPE_TUNER) ++tmonster_count; //count plot monster count
-				else if(cd->type & TYPE_MONSTER) ++ntmonster_count;
-				else if(cd->type & TYPE_SPELL) ++spell_count;
-				else if(cd->type & TYPE_TRAP) ++trap_count;
-			}
-			 ntmonster_count = 18 - ntmonster_count; //count how many remaining monster(non-plot) should add to deck
-			 tmonster_count = 10 - tmonster_count;
-			 spell_count = 8 - spell_count;
-			 trap_count = 4 - trap_count;
-			 extra_count = 7 - extra_count;
-			 cardlist_type temp;
-			 std::vector<uint32_t>::iterator iter;
-			 if(ntmonster_count > 0) {
-			 	if(!DeckManager::ModeLoadDeck(L"ntmonster", &temp, nullptr, nullptr))
-                     break;
-			 }
-			//random choose cards from non-plot ydk to deck
-			if(temp.size() > 0) {
-				for (int32_t i = 0; i < ntmonster_count; ++i) {
-					index = rand() % temp.size();
-					bool up = false;
-					if(index < 0 || index >= temp.size()) {
-                        up = true ;
-                        index = temp.size()-1;
-                    }
-					uint32_t code = temp.at(index);
-					int32_t count = 0;
-					for(auto _code : plot_mainlist) {
-						if(_code == code)
-                            ++count; //count monsters in plot list
-					}
-					if(count >= 3 && !up) {
-                        --i;
-                        continue; //avoid same card>3
-                    }
-					if(extra_count > 0 && (code == 511002807 || code == 511002883) 
-                      && (iter = std::find(plot_extralist.begin(),plot_extralist.end(), 44508094)) == plot_extralist.end()) {
-						plot_extralist.push_back(44508094);
-						--extra_count; //add one card to deck, so count-1
-					}
-					else if(tmonster_count > 0 && (code == 44935634)) {
-						plot_mainlist.push_back(44935634);
-						--tmonster_count;
-					}
-					else if(code == 61257789) {
-						iter = std::find(plot_extralist.begin(),plot_extralist.end(),44508094);
-						if(iter != plot_extralist.end()) {
-							if(trap_count > 0) {
-								iter = std::find(plot_mainlist.begin(),plot_mainlist.end(),212);
-								if(iter == plot_mainlist.end() && plot_mainlist.size() < 39) {
-									plot_mainlist.push_back(212);
-									--trap_count;
-								}
-							}
-						}
-						else {
-							if(extra_count > 0) {
-								iter = std::find(plot_mainlist.begin(),plot_mainlist.end(),212);
-								if(iter != plot_mainlist.end()) {
-									plot_extralist.push_back(44508094);
-									--extra_count;
-								} else {
-									if(trap_count > 0 && plot_mainlist.size() < 39) {
-										plot_extralist.push_back(44508094);
-										--extra_count;
-										plot_mainlist.push_back(212);
-										--trap_count;
-									}
-								}
+// void Mode::UpdateDeck() {
+	// SetCurrentDeck();
+	// const auto& deck = mainGame->deckBuilder.GetCurrentDeck();
+	// uint8_t deckbuf[0xf000];
+	// auto* pdeck = deckbuf;
+	// static constexpr auto max_deck_size = sizeof(deckbuf) / sizeof(uint32_t) - 2;
+	// const auto totsize = deck.main.size() + deck.extra.size() + deck.side.size();
+	// if(totsize > max_deck_size)
+	// 	return;
+	// BufferIO::Write<uint32_t>(pdeck, static_cast<uint32_t>(deck.main.size() + deck.extra.size()));
+	// BufferIO::Write<uint32_t>(pdeck, static_cast<uint32_t>(deck.side.size()));
+	// for(const auto& pcard : deck.main)
+	// 	BufferIO::Write<uint32_t>(pdeck, pcard->code);
+	// for(const auto& pcard : deck.extra)
+	// 	BufferIO::Write<uint32_t>(pdeck, pcard->code);
+	// for(const auto& pcard : deck.side)
+	// 	BufferIO::Write<uint32_t>(pdeck, pcard->code);
+	// DuelClient::SendBufferToServer(CTOS_UPDATE_DECK, deckbuf, pdeck - deckbuf);
+// }
+// void Mode::SetCurrentDeck() {
+// 	Deck deck;
+// 	deck.clear();
+// 	ploatCodes.clear();
+// 	this->deck.clear();
+// 	switch (rule)
+// 	{
+// 		case MODE_RULE_ZCG:
+// 		case MODE_RULE_ZCG_NO_RANDOM: {
+// 			srand((int)time(0));
+// 			cardlist_type plot_mainlist;
+// 			cardlist_type plot_extralist;
+// 			int32_t index = 0;
+// 			int32_t nmonster_count = 48;
+// 			int32_t tmonster_count = 10;
+// 			int32_t spell_count = 8;
+// 			int32_t trap_count = 4;
+// 			int32_t extra_count = 7;
+// 			const CardDataC* cd = nullptr;
+// 			cardlist_type temp, temp2;
+// 			for(auto& card : gDataManager->cards) {
+// 				cd = &card.second._data;
+// 				if(!cd || cd->type & TYPE_TOKEN) continue;
+// 				if((cd->ot & SCOPE_ZCG) && (cd->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_XYZ) || ((cd->type & TYPE_MONSTER) && (cd->type & TYPE_LINK))))
+// 					temp2.push_back(cd->code);
+// 				if ((cd->ot & SCOPE_ZCG) && !(cd->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_XYZ) || ((cd->type & TYPE_MONSTER) && (cd->type & TYPE_LINK))))
+// 					temp.push_back(cd->code);
+// 			}
+// 			//random choose cards to deck
+// 			if(temp.size() > 0) {
+// 				for (int32_t i = 0; i < nmonster_count; ++i) {
+// 					index = rand() % temp.size();
+// 					bool up = false;
+// 					if(index < 0 || index >= (int32_t)temp.size()) {
+//                         up = true ;
+//                         index = temp.size()-1;
+//                     }
+// 					uint32_t code = temp.at(index);
+// 					int32_t count = 0;
+// 					for(auto _code : plot_mainlist) {
+// 						if(_code == code)
+//                             ++count; //count monsters in plot list
+// 					}
+// 					if(count >= 3 && !up) {
+//                         --i; //avoid same card>3
+//                         continue;
+//                     }
+// 					plot_mainlist.push_back(code);
+// 				}
+// 			}
+// 			temp.clear();
+// 			if(plot_mainlist.size() <= 0) 
+//                 break;
+// 			DeckManager::LoadDeck(deck, plot_mainlist, temp, &plot_extralist);
+// 			break;
+// 		}
+// 		case MODE_RULE_5DS_DARK_TUNER: {
+// 			srand((int)time(0));
+// 			cardlist_type plot_mainlist;
+// 			cardlist_type plot_extralist;
+// 			if(!DeckManager::ModeLoadDeck(L"plot", &plot_mainlist, &plot_extralist, nullptr))
+//                 break;
+// 			for (uint32_t i = 0; i < plot_mainlist.size(); ++i)
+// 				ploatCodes.push_back(plot_mainlist[i]);
+// 			for (uint32_t i = 0; i < plot_extralist.size(); ++i)
+// 				ploatCodes.push_back(plot_extralist[i]);
+// 			int32_t index = 0;
+// 			int32_t ntmonster_count = 0;
+// 			int32_t tmonster_count = 0;
+// 			int32_t spell_count = 0;
+// 			int32_t trap_count = 0;
+// 			int32_t extra_count = plot_extralist.size();
+// 			if(extra_count < 0) extra_count = 0;
+// 			const CardDataC* cd = nullptr;
+// 			for(auto code : plot_mainlist) {
+// 				cd = gDataManager->GetCardData(code);
+// 				if(!cd || cd->type & TYPE_TOKEN) continue;
+// 				if(cd->type & TYPE_TUNER) ++tmonster_count; //count plot monster count
+// 				else if(cd->type & TYPE_MONSTER) ++ntmonster_count;
+// 				else if(cd->type & TYPE_SPELL) ++spell_count;
+// 				else if(cd->type & TYPE_TRAP) ++trap_count;
+// 			}
+// 			 ntmonster_count = 18 - ntmonster_count; //count how many remaining monster(non-plot) should add to deck
+// 			 tmonster_count = 10 - tmonster_count;
+// 			 spell_count = 8 - spell_count;
+// 			 trap_count = 4 - trap_count;
+// 			 extra_count = 7 - extra_count;
+// 			 cardlist_type temp;
+// 			 std::vector<uint32_t>::iterator iter;
+// 			 if(ntmonster_count > 0) {
+// 			 	if(!DeckManager::ModeLoadDeck(L"ntmonster", &temp, nullptr, nullptr))
+//                      break;
+// 			 }
+// 			//random choose cards from non-plot ydk to deck
+// 			if(temp.size() > 0) {
+// 				for (int32_t i = 0; i < ntmonster_count; ++i) {
+// 					index = rand() % temp.size();
+// 					bool up = false;
+// 					if(index < 0 || index >= (int32_t)temp.size()) {
+//                         up = true ;
+//                         index = temp.size()-1;
+//                     }
+// 					uint32_t code = temp.at(index);
+// 					int32_t count = 0;
+// 					for(auto _code : plot_mainlist) {
+// 						if(_code == code)
+//                             ++count; //count monsters in plot list
+// 					}
+// 					if(count >= 3 && !up) {
+//                         --i;
+//                         continue; //avoid same card>3
+//                     }
+// 					if(extra_count > 0 && (code == 511002807 || code == 511002883) 
+//                       && (iter = std::find(plot_extralist.begin(),plot_extralist.end(), 44508094)) == plot_extralist.end()) {
+// 						plot_extralist.push_back(44508094);
+// 						--extra_count; //add one card to deck, so count-1
+// 					}
+// 					else if(tmonster_count > 0 && (code == 44935634)) {
+// 						plot_mainlist.push_back(44935634);
+// 						--tmonster_count;
+// 					}
+// 					else if(code == 61257789) {
+// 						iter = std::find(plot_extralist.begin(),plot_extralist.end(),44508094);
+// 						if(iter != plot_extralist.end()) {
+// 							if(trap_count > 0) {
+// 								iter = std::find(plot_mainlist.begin(),plot_mainlist.end(),212);
+// 								if(iter == plot_mainlist.end() && plot_mainlist.size() < 39) {
+// 									plot_mainlist.push_back(212);
+// 									--trap_count;
+// 								}
+// 							}
+// 						}
+// 						else {
+// 							if(extra_count > 0) {
+// 								iter = std::find(plot_mainlist.begin(),plot_mainlist.end(),212);
+// 								if(iter != plot_mainlist.end()) {
+// 									plot_extralist.push_back(44508094);
+// 									--extra_count;
+// 								} else {
+// 									if(trap_count > 0 && plot_mainlist.size() < 39) {
+// 										plot_extralist.push_back(44508094);
+// 										--extra_count;
+// 										plot_mainlist.push_back(212);
+// 										--trap_count;
+// 									}
+// 								}
 
-							}
-						}
-					}
-					plot_mainlist.push_back(code);
-				}
-			}
-			temp.clear();
-			if(tmonster_count > 0) {
-				if(!DeckManager::ModeLoadDeck(L"tmonster", &temp, nullptr, nullptr)) 
-                    break;
-			}
-			if(temp.size() > 0) {
-				for (int32_t i = 0; i < tmonster_count; ++i) {
-					index = rand() % temp.size();
-					bool up = false;
-					if(index < 0 || index >= temp.size()) {
-                        up = true ;
-                        index = temp.size()-1; 
-                    }
-					uint32_t code = temp.at(index);
-					int32_t count = 0;
-					for(auto _code : plot_mainlist) {
-						if(_code == code) ++count;
-					}
-					if(count >= 3 && !up) {
-                        --i;
-                        continue; 
-                    }
-					if(extra_count > 0) {
-						if(code == 71971554 && (iter = std::find(plot_extralist.begin(),plot_extralist.end(),2322421)) == plot_extralist.end()) {
-							plot_extralist.push_back(2322421);
-							--extra_count;
-						}
-						else if(code == 96182448 && (iter = std::find(plot_extralist.begin(),plot_extralist.end(),18013090)) == plot_extralist.end()) {
-							plot_extralist.push_back(18013090);
-							--extra_count;
-						}
-						else if(code == 67270095 && (iter = std::find(plot_extralist.begin(),plot_extralist.end(),46195773)) == plot_extralist.end()) {
-							plot_extralist.push_back(46195773);
-							--extra_count;
-						}
-						else if(code == 511002910 && (iter = std::find(plot_extralist.begin(),plot_extralist.end(),511001982)) == plot_extralist.end()) {
-							plot_extralist.push_back(511001982);
-							--extra_count;
-						}
-						else if(code == 21159309) {
-							iter = std::find(plot_extralist.begin(),plot_extralist.end(),44508094);
-							if(iter != plot_extralist.end()) {
-								iter = std::find(plot_extralist.begin(),plot_extralist.end(),7841112);
-								if(iter == plot_extralist.end()) {
-									plot_extralist.push_back(7841112);
-									--extra_count;
-								}
-							}
-							else {
-								iter = std::find(plot_extralist.begin(),plot_extralist.end(),7841112);
-								if(iter != plot_extralist.end()) {
-									plot_extralist.push_back(44508094);
-									--extra_count;
-								} else {
-									if(extra_count > 1) {
-										plot_extralist.push_back(44508094);
-										plot_extralist.push_back(7841112);
-										extra_count -= 2;
-									}
-								}
-							}
+// 							}
+// 						}
+// 					}
+// 					plot_mainlist.push_back(code);
+// 				}
+// 			}
+// 			temp.clear();
+// 			if(tmonster_count > 0) {
+// 				if(!DeckManager::ModeLoadDeck(L"tmonster", &temp, nullptr, nullptr)) 
+//                     break;
+// 			}
+// 			if(temp.size() > 0) {
+// 				for (int32_t i = 0; i < tmonster_count; ++i) {
+// 					index = rand() % temp.size();
+// 					bool up = false;
+// 					if(index < 0 || index >= temp.size()) {
+//                         up = true ;
+//                         index = temp.size()-1; 
+//                     }
+// 					uint32_t code = temp.at(index);
+// 					int32_t count = 0;
+// 					for(auto _code : plot_mainlist) {
+// 						if(_code == code) ++count;
+// 					}
+// 					if(count >= 3 && !up) {
+//                         --i;
+//                         continue; 
+//                     }
+// 					if(extra_count > 0) {
+// 						if(code == 71971554 && (iter = std::find(plot_extralist.begin(),plot_extralist.end(),2322421)) == plot_extralist.end()) {
+// 							plot_extralist.push_back(2322421);
+// 							--extra_count;
+// 						}
+// 						else if(code == 96182448 && (iter = std::find(plot_extralist.begin(),plot_extralist.end(),18013090)) == plot_extralist.end()) {
+// 							plot_extralist.push_back(18013090);
+// 							--extra_count;
+// 						}
+// 						else if(code == 67270095 && (iter = std::find(plot_extralist.begin(),plot_extralist.end(),46195773)) == plot_extralist.end()) {
+// 							plot_extralist.push_back(46195773);
+// 							--extra_count;
+// 						}
+// 						else if(code == 511002910 && (iter = std::find(plot_extralist.begin(),plot_extralist.end(),511001982)) == plot_extralist.end()) {
+// 							plot_extralist.push_back(511001982);
+// 							--extra_count;
+// 						}
+// 						else if(code == 21159309) {
+// 							iter = std::find(plot_extralist.begin(),plot_extralist.end(),44508094);
+// 							if(iter != plot_extralist.end()) {
+// 								iter = std::find(plot_extralist.begin(),plot_extralist.end(),7841112);
+// 								if(iter == plot_extralist.end()) {
+// 									plot_extralist.push_back(7841112);
+// 									--extra_count;
+// 								}
+// 							}
+// 							else {
+// 								iter = std::find(plot_extralist.begin(),plot_extralist.end(),7841112);
+// 								if(iter != plot_extralist.end()) {
+// 									plot_extralist.push_back(44508094);
+// 									--extra_count;
+// 								} else {
+// 									if(extra_count > 1) {
+// 										plot_extralist.push_back(44508094);
+// 										plot_extralist.push_back(7841112);
+// 										extra_count -= 2;
+// 									}
+// 								}
+// 							}
 
-						}
-					}
-					plot_mainlist.push_back(code);
-				}
-			}
-			temp.clear();
-			if(spell_count > 0) {
-				if(!DeckManager::ModeLoadDeck(L"spell", &temp, nullptr, nullptr)) 
-                    break;
-			}
-			if(temp.size() > 0) {
-				for (int32_t i = 0; i < spell_count; ++i) {
-					index = rand() % temp.size();
-					bool up = false;
-					if(index < 0 || index >= temp.size()) {
-                        up = true;
-                        index = temp.size()-1;
-                    }
-					uint32_t code = temp.at(index);
-					int32_t count = 0;
-					for(auto _code : plot_mainlist) {
-						if(_code == code) ++count;
-					}
-					if(count >= 3 && !up) {
-                        --i;
-                        continue;
-                    }
-					plot_mainlist.push_back(code);
-				}
-			}
-			temp.clear();
-			if(trap_count > 0) {
-				if(!DeckManager::ModeLoadDeck(L"trap", &temp, nullptr, nullptr))
-                    break;
-			}
-			if(temp.size() > 0) {
-				for (int32_t i = 0; i < trap_count; ++i) {
-					index = rand() % temp.size();
-					bool up = false;
-					if(index < 0 || index >= temp.size()) { 
-                        up = true ; 
-                        index = temp.size()-1; 
-                    }
-					uint32_t code = temp.at(index);
-					int32_t count = 0;
-					for(auto _code : plot_mainlist) {
-						if(_code == code) 
-                            ++count;
-					}
-					if(count >= 3 && !up) { 
-                        --i; 
-                        continue; 
-                    }
-					if(extra_count > 0 && (code == 47264717 || code == 511002520 || code == 511002519 )&& (iter = std::find(plot_extralist.begin(),plot_extralist.end(),44508094)) == plot_extralist.end()) {
-						plot_extralist.push_back(44508094);
-						--extra_count;
-					}
-					if(code == 513000056) {
-						iter = std::find(plot_extralist.begin(),plot_extralist.end(),44508094);
-						if(iter !=  plot_extralist.end()) {
-							iter = std::find(plot_extralist.begin(),plot_extralist.end(),513000012);
-							if(iter==plot_extralist.end() && extra_count > 0) {
-								plot_extralist.push_back(513000012);
-								--extra_count;
-							}
-						} else {
-							iter = std::find(plot_extralist.begin(),plot_extralist.end(),513000012);
-							if(iter != plot_extralist.end() && extra_count > 0) {
-								plot_extralist.push_back(44508094);
-								--extra_count;
-							}
-							else if(iter == plot_extralist.end() && extra_count > 1) {
-								plot_extralist.push_back(513000012);
-								plot_extralist.push_back(44508094);
-								extra_count-=2;
-							}
-						}
-					}
-					plot_mainlist.push_back(code);
-				}
-			}
-			temp.clear();
-			if(extra_count > 0) {
-				if(!DeckManager::ModeLoadDeck(L"extra", &temp, nullptr ,nullptr))
-                    break;
-			}
-			if(temp.size() > 0) {
-				while(extra_count > 0){
-					index = rand() % temp.size();
-					bool up = false;
-					if(index < 0 || index >= temp.size()) {
-                        up = true ;
-                        index = temp.size()-1;
-                    }
-					if(std::find(plot_extralist.begin(),plot_extralist.end(),511001963) == plot_extralist.end()) {
-						bool res = false;
-						for(auto code : plot_extralist) {
-							if((code == 513000012) || (code == 511001658)|| (code == 513000031)
-								|| (code == 371)|| (code == 511000774)){
-								res= true;
-								break;
-							}
-						}
-						if(res) {
-                            --extra_count;
-                            plot_extralist.push_back(511001963);
-                        }
-					}
-					if(extra_count <= 0)
-                        break;
-					uint32_t code = temp.at(index);
-					int32_t count = 0;
-					for(auto _code : plot_extralist) {
-						if(_code == code)
-                            ++count;
-					}
-					if(count >= 3 && !up)
-                        continue;
-					--extra_count;
-					plot_extralist.push_back(code);
-				}
-			}
-			temp.clear();
-			if(plot_mainlist.size() <= 0) 
-                break;
-			DeckManager::LoadDeck(deck, plot_mainlist, temp, &plot_extralist);
-			break;
-		}
-		default:
-			break;
-	}
-	this->deck = deck;
-	mainGame->deckBuilder.SetCurrentDeck(deck);
-}
-void Mode::SetRule(int32_t index) {
-	switch (index)
-	{
-		case 0:
-			if(mainGame->chkEntertainmentMode_1Check->isChecked()
-				&& mainGame->cbEntertainmentMode_1Bot->getSelected() != -1)
-				rule = MODE_RULE_ZCG_NO_RANDOM;
-			else
-				rule = MODE_RULE_ZCG;
-			break;
-		case 1:
-			rule = MODE_RULE_5DS_DARK_TUNER;
-			break;
-		default:
-			rule = MODE_RULE_DEFAULT;
-			break;
-	}
+// 						}
+// 					}
+// 					plot_mainlist.push_back(code);
+// 				}
+// 			}
+// 			temp.clear();
+// 			if(spell_count > 0) {
+// 				if(!DeckManager::ModeLoadDeck(L"spell", &temp, nullptr, nullptr)) 
+//                     break;
+// 			}
+// 			if(temp.size() > 0) {
+// 				for (int32_t i = 0; i < spell_count; ++i) {
+// 					index = rand() % temp.size();
+// 					bool up = false;
+// 					if(index < 0 || index >= (int32_t)temp.size()) {
+//                         up = true;
+//                         index = temp.size()-1;
+//                     }
+// 					uint32_t code = temp.at(index);
+// 					int32_t count = 0;
+// 					for(auto _code : plot_mainlist) {
+// 						if(_code == code) ++count;
+// 					}
+// 					if(count >= 3 && !up) {
+//                         --i;
+//                         continue;
+//                     }
+// 					plot_mainlist.push_back(code);
+// 				}
+// 			}
+// 			temp.clear();
+// 			if(trap_count > 0) {
+// 				if(!DeckManager::ModeLoadDeck(L"trap", &temp, nullptr, nullptr))
+//                     break;
+// 			}
+// 			if(temp.size() > 0) {
+// 				for (int32_t i = 0; i < trap_count; ++i) {
+// 					index = rand() % temp.size();
+// 					bool up = false;
+// 					if(index < 0 || index >= (int32_t)temp.size()) {
+//                         up = true ; 
+//                         index = temp.size()-1; 
+//                     }
+// 					uint32_t code = temp.at(index);
+// 					int32_t count = 0;
+// 					for(auto _code : plot_mainlist) {
+// 						if(_code == code) 
+//                             ++count;
+// 					}
+// 					if(count >= 3 && !up) { 
+//                         --i; 
+//                         continue; 
+//                     }
+// 					if(extra_count > 0 && (code == 47264717 || code == 511002520 || code == 511002519 )&& (iter = std::find(plot_extralist.begin(),plot_extralist.end(),44508094)) == plot_extralist.end()) {
+// 						plot_extralist.push_back(44508094);
+// 						--extra_count;
+// 					}
+// 					if(code == 513000056) {
+// 						iter = std::find(plot_extralist.begin(),plot_extralist.end(),44508094);
+// 						if(iter !=  plot_extralist.end()) {
+// 							iter = std::find(plot_extralist.begin(),plot_extralist.end(),513000012);
+// 							if(iter==plot_extralist.end() && extra_count > 0) {
+// 								plot_extralist.push_back(513000012);
+// 								--extra_count;
+// 							}
+// 						} else {
+// 							iter = std::find(plot_extralist.begin(),plot_extralist.end(),513000012);
+// 							if(iter != plot_extralist.end() && extra_count > 0) {
+// 								plot_extralist.push_back(44508094);
+// 								--extra_count;
+// 							}
+// 							else if(iter == plot_extralist.end() && extra_count > 1) {
+// 								plot_extralist.push_back(513000012);
+// 								plot_extralist.push_back(44508094);
+// 								extra_count-=2;
+// 							}
+// 						}
+// 					}
+// 					plot_mainlist.push_back(code);
+// 				}
+// 			}
+// 			temp.clear();
+// 			if(extra_count > 0) {
+// 				if(!DeckManager::ModeLoadDeck(L"extra", &temp, nullptr ,nullptr))
+//                     break;
+// 			}
+// 			if(temp.size() > 0) {
+// 				while(extra_count > 0){
+// 					index = rand() % temp.size();
+// 					bool up = false;
+// 					if(index < 0 || index >= (int32_t)temp.size()) {
+//                         up = true ;
+//                         index = temp.size()-1;
+//                     }
+// 					if(std::find(plot_extralist.begin(),plot_extralist.end(),511001963) == plot_extralist.end()) {
+// 						bool res = false;
+// 						for(auto code : plot_extralist) {
+// 							if((code == 513000012) || (code == 511001658)|| (code == 513000031)
+// 								|| (code == 371)|| (code == 511000774)){
+// 								res= true;
+// 								break;
+// 							}
+// 						}
+// 						if(res) {
+//                             --extra_count;
+//                             plot_extralist.push_back(511001963);
+//                         }
+// 					}
+// 					if(extra_count <= 0)
+//                         break;
+// 					uint32_t code = temp.at(index);
+// 					int32_t count = 0;
+// 					for(auto _code : plot_extralist) {
+// 						if(_code == code)
+//                             ++count;
+// 					}
+// 					if(count >= 3 && !up)
+//                         continue;
+// 					--extra_count;
+// 					plot_extralist.push_back(code);
+// 				}
+// 			}
+// 			temp.clear();
+// 			if(plot_mainlist.size() <= 0) 
+//                 break;
+// 			DeckManager::LoadDeck(deck, plot_mainlist, temp, &plot_extralist);
+// 			break;
+// 		}
+// 		default:
+// 			break;
+// 	}
+// 	this->deck = deck;
+// 	mainGame->deckBuilder.SetCurrentDeck(deck);
+// }
+ void Mode::SetRule(int32_t index) {
+ 	switch (index)
+ 	{
+ 		case 0:
+ 			if(mainGame->chkEntertainmentMode_1Check->isChecked()
+ 				&& mainGame->cbEntertainmentMode_1Bot->getSelected() != -1)
+ 				rule = MODE_RULE_ZCG_NO_RANDOM;
+ 			else
+ 				rule = MODE_RULE_ZCG;
+ 			break;
+ 		case 1:
+ 			rule = MODE_RULE_5DS_DARK_TUNER;
+ 			break;
+ 		default:
+ 			rule = MODE_RULE_DEFAULT;
+ 			break;
+ 	}
 }
 
 void Mode::ModePlayerReady(bool isAi) {
@@ -2032,9 +2030,6 @@ void Game::Initialize() {
 	wEntertainmentPlay->getCloseButton()->setVisible(false);
 	wEntertainmentPlay->setVisible(false);
 
-	tmpptr = env->addStaticText(gDataManager->GetSysString(2125).data(), Scale(360, 30, 570, 50), false, true, wEntertainmentPlay);
-	defaultStrings.emplace_back(tmpptr, 2125);
-
 	lstEntertainmentPlayList = irr::gui::CGUIFileSelectListBox::addFileSelectListBox(env, wEntertainmentPlay, LISTBOX_ENTERTAINMENTPLAY_LIST, Scale(10, 30, 350, 400), true, true, false);
 	lstEntertainmentPlayList->setItemHeight(Scale(18));
 
@@ -2795,7 +2790,7 @@ void Game::PopulateGameHostWindows() {
 	gBot.chkSeed = AddComboBox(env, Scale(230, 105, 420, 130), gBot.window);
 	gBot.chkSeed->clear();
 	for (auto i = 8036; i <= 8039; ++i) {
-		int j = gBot.chkSeed->addItem(gDataManager->GetSysString(i).data());
+		uint32_t j = gBot.chkSeed->addItem(gDataManager->GetSysString(i).data());
 		if(gGameConfig->botSeed == j)
 			gBot.chkSeed->setSelected(j);
 		else
@@ -3098,7 +3093,7 @@ void Game::PopulateSettingsWindow() {
 			defaultStrings.emplace_back(gSettings.stCurrentLocale, 2067);
 			PopulateLocales();
 			gSettings.cbCurrentLocale = AddComboBox(env, GetCurrentRectWithXOffset(95, 320), sPanel, COMBOBOX_CURRENT_LOCALE);
-			auto selectedLocale = gSettings.cbCurrentLocale->addItem(L"Chs");
+			auto selectedLocale = gSettings.cbCurrentLocale->addItem(L"en");
 			for(const auto& _locale : locales) {
 				auto& locale = _locale.first;
 				auto itemIndex = gSettings.cbCurrentLocale->addItem(Utils::ToUnicodeIfNeeded(locale).data());
@@ -5384,7 +5379,7 @@ void Game::ReloadCBRule() {
 void Game::ReloadLocalCBDuelRule() {
 	cbDuelRule2->clear();
 	for (auto i = 1260; i <= 1264; ++i) {
-		int j = cbDuelRule2->addItem(gDataManager->GetSysString(i).data());
+		uint32_t j = cbDuelRule2->addItem(gDataManager->GetSysString(i).data());
 		if(gGameConfig->duelrule == j)
 			cbDuelRule2->setSelected(j);
 	}
@@ -6006,10 +6001,7 @@ void Game::ApplyLocale(size_t index, bool forced) {
 			return;
 		}
 	} else
-	    ////kdiy//////////
-		//gGameConfig->locale = EPRO_TEXT("en");
-		gGameConfig->locale = EPRO_TEXT("Chs");
-		////kdiy//////////
+	    gGameConfig->locale = EPRO_TEXT("en");
 	ReloadElementsStrings();
 }
 

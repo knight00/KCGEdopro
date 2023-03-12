@@ -646,11 +646,11 @@ bool ImageManager::Initial() {
 
 	/////zdiy/////
 #define LEN(arr) (sizeof(arr) / sizeof(arr[0]))
-	for (int i = 0; i < LEN(modeBody); i++) {
+	for (uint32_t i = 0; i < LEN(modeBody); i++) {
 		snprintf(buff, 100, "./mode/story/body/%d.png", i);
 		modeBody[i] = driver->getTexture(buff);
 	}
-	for (int i = 0; i < LEN(modeHead); i++) {
+	for (uint32_t i = 0; i < LEN(modeHead); i++) {
 		snprintf(buff, 100, "./mode/story/head/%d.jpg", i);
 		modeHead[i] = driver->getTexture(buff);
 	}
@@ -664,7 +664,7 @@ void ImageManager::SetAvatar(int seq, const wchar_t *avatar) {
 }
 /////zdiy/////
 void ImageManager::SetModeTextures(epro::path_string path) {
-	if(path == L"") {
+	if(path == EPRO_TEXT("")) {
 		modeHead[0] = driver->getTexture(0);
 	} else
 	{

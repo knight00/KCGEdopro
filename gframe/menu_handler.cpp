@@ -963,7 +963,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 137, 295, 187));
 				mainGame->RefreshDeck(mainGame->cbDBDecks, true);
 				auto folder = Utils::ToPathString(mainGame->cbDBDecks2->getItem(mainGame->cbDBDecks2->getSelected()));
-                for(int i = 0; i < mainGame->cbDBDecks2->getItemCount() - 1; i++) {
+                for(uint32_t i = 0; i < mainGame->cbDBDecks2->getItemCount() - 1; i++) {
                     mainGame->cbDBDecks22->addItem(mainGame->cbDBDecks2->getItem(i));
                 }
 				if(open_file && mainGame->deckBuilder.SetCurrentDeckFromFile(folder + EPRO_TEXT("/") + open_file_name, true)) {

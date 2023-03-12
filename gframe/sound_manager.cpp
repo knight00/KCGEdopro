@@ -273,9 +273,8 @@ void SoundManager::RefreshChantsList() {
 		/////kdiy///////
 	}
 	/////zdiy/////
-	for (int i = 0; i < (sizeof(ModeDialogList)/sizeof(ModeDialogList[0])); i++)
-	{
-		std::string file = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("./mode/story/soundDialog/0{}{}"),i,L".mp3"));
+	for (uint32_t i = 0; i < (sizeof(ModeDialogList)/sizeof(ModeDialogList[0])); i++) {
+		std::string file = epro::format("./mode/story/soundDialog/0{}{}",i,".mp3");
 		ModeDialogList->push_back(file);
 	}
 	/////zdiy/////
@@ -289,7 +288,7 @@ void SoundManager::PlayModeSound(int32_t type,int32_t index,int32_t type2) {
 	switch (type)
 	{
 		case Mode::SOUND::Ploat: {
-			if(index >= ModeDialogList->size()) return;
+			if(index >= (int32_t)ModeDialogList->size()) return;
 			const auto& soundfile = ModeDialogList->at(index);
 			if(soundfile.empty()) return;
 			mixer->PlaySound(soundfile);
