@@ -278,9 +278,9 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 				break;
 			}
 		}
-	    if(index < 0 || index >= bots.size()) return false;
-        res = bots[index].Launch(port, pass, false, 0, nullptr, -1);
-        if(!res) return false;
+	    // if(index < 0 || index >= bots.size()) return false;
+        // res = bots[index].Launch(port, pass, false, 0, nullptr, -1);
+        // if(!res) return false;
 	}
 	if(rule == MODE_RULE_ZCG_NO_RANDOM) {
 		index = mainGame->cbEntertainmentMode_1Bot->getSelected();
@@ -295,9 +295,9 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 				break;
 			}
 		}
-	    if(index < 0 || index >= bots.size()) return false;
-        res = bots[index].Launch(port, pass, false, 0, nullptr, -1);
-        if(!res) return false;
+	    // if(index < 0 || index >= bots.size()) return false;
+        // res = bots[index].Launch(port, pass, false, 0, nullptr, -1);
+        // if(!res) return false;
 	}
 	if(rule == MODE_RULE_5DS_DARK_TUNER) {
 		for (int32_t i = 0; i < bots.size(); ++i)
@@ -642,6 +642,7 @@ void Mode::SetCurrentDeck() {
 				if ((cd->ot & SCOPE_ZCG) && !(cd->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_XYZ) || ((cd->type & TYPE_MONSTER) && (cd->type & TYPE_LINK))))
 					temp.push_back(cd->code);
 			}
+			//random choose cards to deck
 			if(temp.size() > 0) {
 				for (int32_t i = 0; i < nmonster_count; ++i) {
 					index = rand() % temp.size();
@@ -654,10 +655,10 @@ void Mode::SetCurrentDeck() {
 					int32_t count = 0;
 					for(auto _code : plot_mainlist) {
 						if(_code == code)
-                            ++count;
+                            ++count; //count monsters in plot list
 					}
 					if(count >= 3 && !up) {
-                        --i;
+                        --i; //avoid same card>3
                         continue;
                     }
 					plot_mainlist.push_back(code);
@@ -695,17 +696,17 @@ void Mode::SetCurrentDeck() {
 				else if(cd->type & TYPE_SPELL) ++spell_count;
 				else if(cd->type & TYPE_TRAP) ++trap_count;
 			}
-			ntmonster_count = 18 - ntmonster_count; //count how many remaining monster(non-plot) should add to deck
-			tmonster_count = 10 - tmonster_count;
-			spell_count = 8 - spell_count;
-			trap_count = 4 - trap_count;
-			extra_count = 7 - extra_count;
-			cardlist_type temp;
-			std::vector<uint32_t>::iterator iter;
-			if(ntmonster_count > 0) {
-				if(!DeckManager::ModeLoadDeck(L"ntmonster", &temp, nullptr, nullptr))
-                    break;
-			}
+			 ntmonster_count = 18 - ntmonster_count; //count how many remaining monster(non-plot) should add to deck
+			 tmonster_count = 10 - tmonster_count;
+			 spell_count = 8 - spell_count;
+			 trap_count = 4 - trap_count;
+			 extra_count = 7 - extra_count;
+			 cardlist_type temp;
+			 std::vector<uint32_t>::iterator iter;
+			 if(ntmonster_count > 0) {
+			 	if(!DeckManager::ModeLoadDeck(L"ntmonster", &temp, nullptr, nullptr))
+                     break;
+			 }
 			//random choose cards from non-plot ydk to deck
 			if(temp.size() > 0) {
 				for (int32_t i = 0; i < ntmonster_count; ++i) {
@@ -985,27 +986,6 @@ void Mode::ModePlayerReady(bool isAi) {
 	if(isAi)
 		mainGame->btnEntertainmentStartGame->setEnabled(true);
 }
-void Mode::ModePlayerChange(const void* data,size_t len,uint32_t& watching) {
-	auto pkt = BufferIO::getStruct<STOC_HS_PlayerChange>(data, len);
-	uint8_t pos = (pkt.status >> 4) & 0xf;
-	uint8_t state = pkt.status & 0xf;
-	if(pos > 5)return;
-	std::lock_guard<epro::mutex> lock(mainGame->gMutex);
-	if(state < 8) {
-		std::wstring prename = mainGame->stHostPrepDuelist[pos]->getText();
-		if(pos < mainGame->dInfo.team1)
-			mainGame->dInfo.selfnames[pos] = L"";
-		else
-			mainGame->dInfo.opponames[pos - mainGame->dInfo.team1] = L"";
-		if(state < mainGame->dInfo.team1)
-			mainGame->dInfo.selfnames[state] = prename;
-		else
-			mainGame->dInfo.opponames[state - mainGame->dInfo.team1] = prename;
-	} else if(state == PLAYERCHANGE_OBSERVE) {
-		watching++;
-	};
-	return;
-}
 void Mode::LoadJson(epro::path_string path, uint32_t index) {
 	std::ifstream jsonInfo(path);
 	if (jsonInfo.good()) {
@@ -1063,15 +1043,20 @@ void Mode::LoadJson(epro::path_string path, uint32_t index) {
 		}
 	}
 	else {
-		ErrorLog("无法打开模式的Json文本配置!");
+		ErrorLog("Failed to load Mode json!");
 	}
 }
 void Mode::LoadJsonInfo() {
-	LoadJson(EPRO_TEXT("./mode/mode.json"), 0);
-	LoadJson(EPRO_TEXT("./mode/story/ploat.json"), 1);
+    if(gGameConfig->locale == EPRO_TEXT("Chs")) {
+        LoadJson(EPRO_TEXT("./mode/languages/Chs/mode.json"), 0);
+        LoadJson(EPRO_TEXT("./mode/languages/Chs/ploat.json"), 1);
+    } else {
+        LoadJson(EPRO_TEXT("./mode/languages/Cht/mode.json"), 0);
+        LoadJson(EPRO_TEXT("./mode/languages/Cht/ploat.json"), 1);
+    }
 }
 void Mode::SetBodyImage(uint32_t index) {
-	if (rule != MODE_RULE_5DS_DARK_TUNER) return;
+	if(rule != MODE_RULE_5DS_DARK_TUNER) return;
 	uint32_t len = sizeof(mainGame->imageManager.modeBody) / sizeof(mainGame->imageManager.modeBody[0]);
 	if(index>=len) return;
 	if(index == 0) {
@@ -1080,7 +1065,7 @@ void Mode::SetBodyImage(uint32_t index) {
 	mainGame->btnBody->setImage(mainGame->imageManager.modeBody[index]);
 }
 void Mode::SetHeadImage(uint32_t index) {
-	if (rule != MODE_RULE_5DS_DARK_TUNER) return;
+	if(rule != MODE_RULE_5DS_DARK_TUNER) return;
 	uint32_t len = sizeof(mainGame->btnChBody) / sizeof(mainGame->btnChBody[0]);
 	if(index >= len) return;
 	mainGame->btnChBody[index]->setImage(mainGame->imageManager.modeHead[index]);
@@ -1141,6 +1126,10 @@ char * calculate_file_md5(const char *filename) {
 //kdiy//////
 
 void Game::Initialize() {
+    //kdiy//////
+    if(Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
+    git_update = true;
+    //kdiy//////
 	dpi_scale = gGameConfig->dpi_scale;
 	duel_param = gGameConfig->lastDuelParam;
 	if(!device)
@@ -1309,7 +1298,7 @@ void Game::Initialize() {
 	////////zdiy////////
 	btnEntertainmentMode = env->addButton(OFFSET(10, 30, 270, 60), wMainMenu, BUTTON_ENTERTAUNMENT_MODE, gDataManager->GetSysString(1205).data());
 	defaultStrings.emplace_back(btnEntertainmentMode, 1205);
-	//btnEntertainmentMode->setEnabled(false);
+	btnEntertainmentMode->setEnabled(coreloaded);
 	offset += 35;
 	////////zdiy////////
 	btnSingleMode = env->addButton(OFFSET(10, 65, 270, 95), wMainMenu, BUTTON_SINGLE_MODE, gDataManager->GetSysString(1201).data());
@@ -1320,6 +1309,9 @@ void Game::Initialize() {
 	offset += 35;
 	btnDeckEdit = env->addButton(OFFSET(10, 135, 270, 165), wMainMenu, BUTTON_DECK_EDIT, gDataManager->GetSysString(1204).data());
 	defaultStrings.emplace_back(btnDeckEdit, 1204);
+    ////kdiy////////
+    btnDeckEdit->setEnabled(coreloaded);
+    ////kdiy////////
 	offset += 35;
 	btnSettings2 = env->addButton(OFFSET(10, 170, 270, 200), wMainMenu, BUTTON_SHOW_SETTINGS, gDataManager->GetSysString(8044).data());
 	defaultStrings.emplace_back(btnSettings2, 8044);
@@ -3635,6 +3627,10 @@ bool Game::MainLoop() {
 						btnHandTest->setEnabled(true);
 						btnHandTestSettings->setEnabled(true);
 						stHandTestSettings->setEnabled(true);
+                        //kdiy///////
+                        btnDeckEdit->setEnabled(true);
+                        btnEntertainmentMode->setEnabled(true);
+                        //kdiy///////
 					}
 					break;
 				}
@@ -3681,6 +3677,9 @@ bool Game::MainLoop() {
 			env->setFocus(stACMessage);
 			stACMessage->setText(epro::format(gDataManager->GetSysString(1431), corename).data());
 			PopupElement(wACMessage, 30);
+            //kdiy///////
+            git_update = true;
+            //kdiy///////
 			coreJustLoaded = false;
 		}
 #endif //YGOPRO_BUILD_DLL

@@ -180,7 +180,6 @@ public:
 	void RefreshEntertainmentPlay(std::vector<ModeText>* modeTexts);
 	void RefreshControlState(uint32_t state ,bool visible);
 	void SetControlState(uint32_t index);
-	void ModePlayerChange(const void* data,size_t len ,uint32_t& watching);
 	void ModePlayerReady(bool isAi);
 	void UpdateDeck();
 	void SetRule(int32_t index);
@@ -378,6 +377,7 @@ public:
 	int showcard;
 	uint32_t showcardcode;
     ////kdiy//////
+    bool git_update = false;
     uint32_t showcardalias;
     bool chklast = true;
     ////kdiy//////

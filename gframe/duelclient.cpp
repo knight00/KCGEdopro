@@ -300,10 +300,10 @@ catch(...) { what = def; }
 				{
 					case MODE_RULE_ZCG:
 					case MODE_RULE_ZCG_NO_RANDOM: {
-				        cscg.info.mode = MODE_TAG;
-				        cscg.info.team2 = 2;
-				        // cscg.info.mode = 0;
-				        // cscg.info.team2 = 1;
+				        // cscg.info.mode = MODE_TAG;
+				        // cscg.info.team2 = 2;
+				        cscg.info.mode = 0;
+				        cscg.info.team2 = 1;
 				        cscg.info.start_lp = 32000;
 						cscg.info.time_limit = 223;
 						break;
@@ -1393,6 +1393,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		if(mainGame->wANCard->isVisible())
 			mainGame->HideElement(mainGame->wANCard);
         /////zdiy//////
+        //not send rematch for stroy mode
 		if(mainGame->mode->isMode && mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER) {
             mainGame->dInfo.checkRematch = false;
 			CTOS_RematchResponse crr;
