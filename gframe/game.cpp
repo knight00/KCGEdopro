@@ -2745,23 +2745,35 @@ void Game::PopulateGameHostWindows() {
 		btnHostPrepKick[i] = env->addButton(Scale(10, 65 + i * 25, 30, 85 + i * 25), wHostPrepare, BUTTON_HP_KICK, L"X");
 		///////kdiy/////////
 		//stHostPrepDuelist[i] = env->addStaticText(L"", Scale(40, 65 + i * 25, 240, 85 + i * 25), true, false, wHostPrepare);
-		stHostPrepDuelist[i] = env->addStaticText(L"", Scale(65, 65 + i * 25, 240, 85 + i * 25), true, false, wHostPrepare);
+		stHostPrepDuelist[i] = env->addStaticText(L"", Scale(65, 65 + i * 25, 130, 85 + i * 25), true, false, wHostPrepare);
+        ebCharacter[i] = AddComboBox(env, Scale(140, 65 + i * 25, 240, 85 + i * 25), wHostPrepare, COMBOBOX_CHARACTER);
+        ebCharacter[i]->clear();
+#ifdef VIP
+        ebCharacter[i]->addItem(gDataManager->GetSysString(8047).data());
+#else
+        ebCharacter[i]->addItem(gDataManager->GetSysString(8048).data());
+        ebCharacter[i]->setEnabled(false);
+#endif
+        for (auto j = 8049; j <= 8049 + gSoundManager->totcharacter - 2; ++j)
+            ebCharacter[i]->addItem(gDataManager->GetSysString(j).data());
+        ebCharacter[i]->setSelected(0);
+        ebCharacter[i]->setMaxSelectionRows(10);
 		///////kdiy/////////
 		chkHostPrepReady[i] = env->addCheckBox(false, Scale(250, 65 + i * 25, 270, 85 + i * 25), wHostPrepare, CHECKBOX_HP_READY, L"");
 		chkHostPrepReady[i]->setEnabled(false);
 		///////kdiy/////////
 		if (i==0)
-		icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON0);
+		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON0);
 		else if (i==1)
-		icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON1);
+		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON1);
 		else if (i==2)
-		icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON2);
+		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON2);
 		else if (i==3)
-		icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON3);
+		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON3);
 		else if (i==4)
-		icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON4);
+		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON4);
 		else if (i==5)
-		icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON5);
+		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON5);
 		icon[i]->setDrawBorder(false);
 		icon[i]->setImageSize(Scale(0, 0, 20, 20).getSize());
 		icon[i]->setImage(0);

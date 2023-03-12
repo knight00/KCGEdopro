@@ -2055,6 +2055,8 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			}
 			//////kdiy///////
             case BUTTON_REPO_DELETE:	{
+                mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8075)).data());
+                mainGame->PopupElement(mainGame->wACMessage, 90);
 				irr::gui::IGUIButton* button = (irr::gui::IGUIButton*)event.GUIEvent.Caller;
 				for(auto& repo : mainGame->repoInfoGui) {
 					if(repo.second.del_button == button) {
@@ -2065,11 +2067,11 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				break;
 			}
 			case BUTTON_HOME: {
-                Utils::SystemOpen(EPRO_TEXT("https://edokcg.i234.me/wordpress/edopro-kcg/"));
+                Utils::SystemOpen(EPRO_TEXT("https://afdian.net/a/Edokcg/"));
 				break;
 			}
 			case BUTTON_FOLDER: {
-                Utils::SystemOpen(EPRO_TEXT("https://edokcg.i234.me/wordpress/%E6%96%87%E4%BB%B6%E5%A4%BE%E7%B0%A1%E4%BB%8B/"));
+                Utils::SystemOpen(EPRO_TEXT("https://afdian.net/p/4a2966dcbb0d11edaaa052540025c377/"));
 				break;
 			}
             case BUTTON_SOUND: {
@@ -2077,15 +2079,9 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				break;
 			}	
 			case BUTTON_CLEAR: {
-                mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8001)).data());
-                mainGame->PopupElement(mainGame->wACMessage, 60);
-				if(Utils::DeleteDirectory(EPRO_TEXT("./pics/"))) {
-					try {
-						gGameConfig->dpi_scale = static_cast<uint32_t>(std::stol(mainGame->gSettings.ebDpiScale->getText())) / 100.0;
-						mainGame->restart = true;
-					} catch(...){}
-				}
-				if(Utils::DeleteDirectory(EPRO_TEXT("./hdpics/"))) {
+                mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8075)).data());
+                mainGame->PopupElement(mainGame->wACMessage, 90);
+				if(Utils::DeleteDirectory(EPRO_TEXT("./pics/")) && Utils::DeleteDirectory(EPRO_TEXT("./hdpics/"))) {
 					try {
 						gGameConfig->dpi_scale = static_cast<uint32_t>(std::stol(mainGame->gSettings.ebDpiScale->getText())) / 100.0;
 						mainGame->restart = true;
@@ -2094,15 +2090,15 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				break;
 			}	
 			case BUTTON_CLEAR2: {
-                Utils::SystemOpen(EPRO_TEXT("https://edokcg.i234.me/wordpress/%e8%87%aa%e6%9b%b4%e6%96%b0%e5%87%ba%e9%8c%af%e8%a7%a3%e6%b1%ba%e6%96%b9%e6%a1%88/"));
-                mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8040)).data());
-                mainGame->PopupElement(mainGame->wACMessage, 60);
+                mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8075)).data());
+                mainGame->PopupElement(mainGame->wACMessage, 90);
                 Utils::DeleteDirectory(EPRO_TEXT("./config/languages/"));
                 Utils::DeleteDirectory(EPRO_TEXT("./cdb/"));
                 Utils::DeleteDirectory(EPRO_TEXT("./repositories/kcg/"));
                 Utils::DeleteDirectory(EPRO_TEXT("./repositories/lua/"));
                 Utils::DeleteDirectory(EPRO_TEXT("./puzzles/"));
                 Utils::DeleteDirectory(EPRO_TEXT("./lflists/"));
+                exit(0);
 				break;
 			}
 			case BUTTON_INTRO: {

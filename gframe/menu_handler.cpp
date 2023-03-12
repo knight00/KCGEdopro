@@ -338,8 +338,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->mode->isMode = false;
 				/////zdiy/////
 				///////kdiy///////
-				for(int i = 0; i < 6; ++i)
+				for(int i = 0; i < 6; ++i) {
 				    mainGame->icon[i]->setImage(mainGame->imageManager.icon[gSoundManager->character[i]]);
+                    mainGame->ebCharacter[i]->setSelected(gSoundManager->character[i]);
+                }
 				///////kdiy///////
 				if(mainGame->isHostingOnline) {
 					ServerLobby::JoinServer(true);
@@ -567,6 +569,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
 				mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
                 mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                mainGame->ebCharacter[mainGame->choose_player]->setSelected(gSoundManager->character[mainGame->choose_player]);
 				break;
 			}
 			case BUTTON_CHARACTER_SELECT: {
@@ -579,6 +582,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
 				mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
                 mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                mainGame->ebCharacter[mainGame->choose_player]->setSelected(gSoundManager->character[mainGame->choose_player]);
 				break;
 			}
 			case BUTTON_PW: {
@@ -1030,7 +1034,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				} else if (prev_operation == ACTION_SHOW_CHANGELOG) {
 					///kupdate//////////
 					// Utils::SystemOpen(EPRO_TEXT("https://github.com/edo9300/edopro/releases?referrer=") EDOPRO_USERAGENT);
-					Utils::SystemOpen(EPRO_TEXT("https://edokcg.i234.me/wordpress/kcg-update/"));
+					Utils::SystemOpen(EPRO_TEXT("https://afdian.net/p/7676acb6c0af11ed898652540025c377/"));
 					mainGame->btnNo->setEnabled(true);
 					///kupdate//////////
 				}
@@ -1642,13 +1646,31 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			///////kdiy//////////
+            case COMBOBOX_CHARACTER: {
+#ifndef VIP
+				    break;
+#endif
+                for(int i = 0; i < 6; i++) {
+                    int sel = mainGame->ebCharacter[i]->getSelected();
+                    if(sel > 0) {
+                        mainGame->choose_player = i;
+                        mainGame->wCharacter->setVisible(true);
+                        mainGame->wCharacterSelect->setVisible(true);
+                        gSoundManager->character[mainGame->choose_player] = sel;
+                        int player = gSoundManager->character[mainGame->choose_player];
+                        mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
+                        mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                        mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+					}
+				}
+				break;
+			}
 			case COMBOBOX_PICS: {
 				int prevsel = gGameConfig->hdpic;
 				gGameConfig->hdpic = mainGame->cbpics->getSelected();
 				//mainGame->device->closeDevice();
 				int sel = mainGame->cbpics->getSelected();
 				if(sel > 0 && prevsel ==0) {
-					Utils::ClearDirectory(EPRO_TEXT("./pics/"));
 				    try {
 						gGameConfig->dpi_scale = static_cast<uint32_t>(std::stol(mainGame->gSettings.ebDpiScale->getText())) / 100.0;
 						mainGame->restart = true;

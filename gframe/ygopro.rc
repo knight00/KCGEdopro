@@ -19,7 +19,7 @@ BEGIN
 			VALUE "OriginalFilename", "EDOPro-KCG.exe"
 			VALUE "InternalName", "ygoprodll"
 			VALUE "FileVersion", "40.1.1.0"
-			VALUE "ProductName", "V16"
+			VALUE "ProductName", "V18"
 			VALUE "ProductVersion", "40.1.1.0"
 			VALUE "LegalCopyright", "Copyright (C) 2020-2023 perfectdicky, edo9300 and others"
 			VALUE "CompanyName", "KCG"

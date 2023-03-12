@@ -660,6 +660,7 @@ public:
 	irr::gui::IGUIStaticText* stHostPrepOB;
 	irr::gui::IGUIStaticText* stDeckSelect;
 	//////////kdiy/////////
+    irr::gui::IGUIComboBox* ebCharacter[6];
     irr::gui::IGUIComboBox* cbDBDecks2;
     irr::gui::IGUIComboBox* cbDBDecks22;
 	irr::gui::CGUIImageButton* icon[6];

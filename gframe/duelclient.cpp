@@ -915,6 +915,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->stHostPrepDuelist[i]->setVisible(false);
 			mainGame->stHostPrepDuelist[i]->setText(L"");
 			///////kdiy/////////
+			mainGame->ebCharacter[i]->setVisible(false);
 			mainGame->icon[i]->setVisible(false);
 			///////kdiy/////////
 		}
@@ -923,8 +924,10 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->stHostPrepDuelist[i]->setVisible(true);
 			mainGame->btnHostPrepKick[i]->setRelativePosition(mainGame->Scale<irr::s32>(10, 65 + i * 25, 30, 85 + i * 25));
 			///////kdiy/////////
+			mainGame->ebCharacter[i]->setVisible(true);
 			//mainGame->stHostPrepDuelist[i]->setRelativePosition(mainGame->Scale<irr::s32>(40, 65 + i * 25, 240, 85 + i * 25));
-			mainGame->stHostPrepDuelist[i]->setRelativePosition(mainGame->Scale<irr::s32>(65, 65 + i * 25, 240, 85 + i * 25));
+			mainGame->stHostPrepDuelist[i]->setRelativePosition(mainGame->Scale<irr::s32>(65, 65 + i * 25, 130, 85 + i * 25));
+			mainGame->ebCharacter[i]->setRelativePosition(mainGame->Scale<irr::s32>(140, 65 + i * 25, 240, 85 + i * 25));
 			///////kdiy/////////
 			mainGame->chkHostPrepReady[i]->setRelativePosition(mainGame->Scale<irr::s32>(250, 65 + i * 25, 270, 85 + i * 25));
 			///////kdiy/////////
@@ -937,8 +940,10 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->stHostPrepDuelist[i]->setVisible(true);
 			mainGame->btnHostPrepKick[i]->setRelativePosition(mainGame->Scale<irr::s32>(10, 10 + 65 + i * 25, 30, 10 + 85 + i * 25));
 			///////kdiy/////////
+			mainGame->ebCharacter[i]->setVisible(true);
 			//mainGame->stHostPrepDuelist[i]->setRelativePosition(mainGame->Scale<irr::s32>(40, 10 + 65 + i * 25, 240, 10 + 85 + i * 25));
-			mainGame->stHostPrepDuelist[i]->setRelativePosition(mainGame->Scale<irr::s32>(65, 10 + 65 + i * 25, 240, 10 + 85 + i * 25));
+			mainGame->stHostPrepDuelist[i]->setRelativePosition(mainGame->Scale<irr::s32>(65, 10 + 65 + i * 25, 130, 10 + 85 + i * 25));
+			mainGame->ebCharacter[i]->setRelativePosition(mainGame->Scale<irr::s32>(140, 10 + 65 + i * 25, 240, 10 + 85 + i * 25));
 			///////kdiy/////////
 			mainGame->chkHostPrepReady[i]->setRelativePosition(mainGame->Scale<irr::s32>(250, 10 + 65 + i * 25, 270, 10 + 85 + i * 25));
 			///////kdiy/////////
