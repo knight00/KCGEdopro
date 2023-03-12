@@ -4191,7 +4191,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		const auto count = CompatRead<uint8_t, uint32_t>(pbuf);
 		auto lock = LockIf();
 		auto& deck = mainGame->dField.deck[player];
-		for (auto it = deck.rbegin(), end = it + 5; it != end; ++it) {
+		for (auto it = deck.crbegin(), end = it + count; it != end; ++it) {
 			auto pcard = *it;
 			const auto code = BufferIO::Read<uint32_t>(pbuf);
 			if(!mainGame->dInfo.compat_mode) {
@@ -5270,8 +5270,7 @@ static std::vector<uint32_t> getAddresses() {
 	hints.ai_socktype = SOCK_DGRAM;
 	if(evutil_getaddrinfo(hname, nullptr, &hints, &res) != 0)
 		return {};
-	int i = 0;
-	for(auto ptr = res; ptr != nullptr && i < 8; ptr = ptr->ai_next, ++i) {
+	for(auto* ptr = res; ptr != nullptr && addresses.size() < 8; ptr = ptr->ai_next) {
 		if(ptr->ai_family == PF_INET) {
 			auto addr_in = reinterpret_cast<sockaddr_in*>(ptr->ai_addr);
 			if(addr_in->sin_addr.s_addr != 0)
@@ -5281,21 +5280,17 @@ static std::vector<uint32_t> getAddresses() {
 	evutil_freeaddrinfo(res);
 #else
 	ifaddrs* allInterfaces;
-	// Get list of all interfaces on the local machine:
 	if(getifaddrs(&allInterfaces) != 0)
 		return {};
-	int i = 0;
-	// For each interface ...
-	for(ifaddrs* interface = allInterfaces; interface != nullptr && i < 8; interface = interface->ifa_next, ++i) {
-		unsigned int flags = interface->ifa_flags;
+	for(auto* interface = allInterfaces; interface != nullptr && addresses.size() < 8; interface = interface->ifa_next) {
+		auto flags = interface->ifa_flags;
 		sockaddr* addr = interface->ifa_addr;
-		// Check for running IPv4 interfaces.
-		if((flags & (IFF_UP | IFF_RUNNING | IFF_LOOPBACK)) == (IFF_UP | IFF_RUNNING)) {
-			if(addr->sa_family == AF_INET) {
-				auto addr_in = reinterpret_cast<sockaddr_in*>(addr);
-				if(addr_in->sin_addr.s_addr != 0)
-					addresses.emplace_back(addr_in->sin_addr.s_addr);
-			}
+		if((flags & (IFF_UP | IFF_RUNNING | IFF_LOOPBACK)) != (IFF_UP | IFF_RUNNING))
+			continue;
+		if(addr->sa_family == AF_INET) {
+			auto addr_in = reinterpret_cast<sockaddr_in*>(addr);
+			if(addr_in->sin_addr.s_addr != 0)
+				addresses.emplace_back(addr_in->sin_addr.s_addr);
 		}
 	}
 	freeifaddrs(allInterfaces);
