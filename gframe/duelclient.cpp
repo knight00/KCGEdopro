@@ -1380,9 +1380,6 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		break;
 	}
 	case STOC_REMATCH: {
-        /////zdiy//////
-		if(!mainGame->mode->isMode)
-		/////zdiy//////
 		std::lock_guard<epro::mutex> lock(mainGame->gMutex);
 		mainGame->dInfo.checkRematch = true;
 		if(mainGame->wQuery->isVisible())

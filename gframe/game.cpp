@@ -265,7 +265,6 @@ void Mode::NextPlot(int32_t step, int32_t index, uint32_t code) {
 	}
 }
 bool Mode::LoadWindBot(int port, epro::wstringview pass) {
-	bool res = false;
 	int32_t index = -1;
 	if(rule == MODE_RULE_ZCG) {
 		for (uint32_t i = 0; i < bots.size(); ++i)
@@ -311,9 +310,12 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
         // if(!res) return false;
 	}
 	if(index < 0 || index >= (int32_t)bots.size()) return false;
-	res = bots[index].Launch(port, pass, false, 0, nullptr, -1);
-	if(!res) return false;
-	return true;
+	auto res = bots[index].Launch(port, pass, false, 0, nullptr, -1);
+#if !defined(_WIN32) && !defined(__ANDROID__)
+	if(res > 0)
+		mainGame->gBot.windbotsPids.push_back(res);
+#endif
+	return res;
 }
 void Mode::InitializeMode() {
 	isMode = true;

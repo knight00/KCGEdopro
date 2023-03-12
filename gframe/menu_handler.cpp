@@ -738,8 +738,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			case BUTTON_ENTERTAUNMENT_EXIT_GAME: {
-				mainGame->dInfo.isInLobby = false;
 				DuelClient::StopClient();
+				mainGame->dInfo.isInLobby = false;
 				mainGame->mode->DestoryMode();
 				mainGame->HideElement(mainGame->wEntertainmentPlay);
 				mainGame->ShowElement(mainGame->wMainMenu);
