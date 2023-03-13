@@ -1269,6 +1269,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
 			case CHECKBOX_ENTERTAUNMENT_READY:{
 				if(mainGame->chkEntertainmentPrepReady->isChecked()) {
+                    mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 45));
 					mainGame->lstEntertainmentPlayList->setEnabled(false);
 					mainGame->chkEntertainmentMode_1Check->setEnabled(false);
 					mainGame->cbEntertainmentMode_1Bot->setEnabled(false);
