@@ -562,9 +562,17 @@ void Game::DrawMisc() {
 	if(dInfo.isTeam1) {
 		avatarbutton[0]->setImage(imageManager.scharacter[dInfo.current_player[0]]);
 		avatarbutton[1]->setImage(imageManager.scharacter[dInfo.current_player[1] + dInfo.team1]);
+        btnHead[0]->setImage(imageManager.modeHead[dInfo.current_player[0]]);
+		btnHead[1]->setImage(imageManager.modeHead[dInfo.current_player[1] + dInfo.team1]);
+        btnChBody[0]->setImage(imageManager.modeHead[dInfo.current_player[0]]);
+		btnChBody[1]->setImage(imageManager.modeHead[dInfo.current_player[1] + dInfo.team1]);
 	} else {
 		avatarbutton[0]->setImage(imageManager.scharacter[dInfo.current_player[0] + dInfo.team1]);
 		avatarbutton[1]->setImage(imageManager.scharacter[dInfo.current_player[1]]);
+		btnHead[0]->setImage(imageManager.modeHead[dInfo.current_player[0] + dInfo.team1]);
+		btnHead[1]->setImage(imageManager.modeHead[dInfo.current_player[1]]);
+        btnChBody[0]->setImage(imageManager.modeHead[dInfo.current_player[0]]);
+		btnChBody[1]->setImage(imageManager.modeHead[dInfo.current_player[1] + dInfo.team1]);
 	}
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(330, 10, 629, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(691, 10, 990, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);

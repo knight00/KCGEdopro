@@ -73,9 +73,6 @@ struct DuelInfo {
 	bool isCatchingUp;
 	bool checkRematch;
 	bool isFirst;
-	/////kdiy///////
-	bool isFirstplayer;
-	/////kdiy///////
 	bool isTeam1;
 	bool isRelay;
 	bool isInLobby;
@@ -175,20 +172,20 @@ public:
 	int32_t plotStep;//the step of fun NextPlot()
 	int32_t duelSoundIndex;//the index of mode-story sound,the sound is in  sound_manager.cpp
  	int32_t plotIndex;//the index of plot,decide to set text plot
+	uint8_t character[6] = { 0,0,0,0,0,0 };
+    uint8_t totcharacter = 4;
 	void InitializeMode();
 	void DestoryMode();
 	void RefreshEntertainmentPlay(std::vector<ModeText>* modeTexts);
 	void RefreshControlState(uint32_t state ,bool visible);
 	void SetControlState(uint32_t index);
 	void ModePlayerReady(bool isAi);
-	void UpdateDeck();
 	void SetRule(int32_t index);
 	bool LoadWindBot(int port, epro::wstringview pass);
 	bool IsModeBot(std::wstring mode);
 	void SetBodyImage(uint32_t index);
 	void SetHeadImage(uint32_t index);
 	void NextPlot(int32_t step = 0,int32_t index = 0,uint32_t code = 0);
-	void ModeClientAnalyze(const uint8_t* pbuf,uint8_t msg);
 	void ModePlaySound(uint32_t type,int32_t index,int32_t type2 = 0);
 	std::wstring GetPloat(int32_t index,uint32_t code = 0);
 	long long GetSoundSeconds(int32_t index);

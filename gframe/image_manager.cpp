@@ -333,6 +333,16 @@ bool ImageManager::Initial() {
 	character[0] = driver->getTexture(0);
 	for(uint8_t i = 0; i < 6; i++) {
         scharacter[i] = driver->getTexture(0);
+        modeHead[i] = driver->getTexture(0);
+    }
+    head[0] = driver->getTexture(0);
+    for(uint8_t i = 1; i < mainGame->mode->totcharacter; i++) {
+        //0: Yusei
+        //1: Darkman
+        //2: Paradox
+        head[i] = driver->getTexture(epro::format(EPRO_TEXT("./mode/story/head/{}.jpg"), i-1).c_str());
+        if(head[i] == nullptr)
+            head[i] = driver->getTexture(epro::format(EPRO_TEXT("./mode/story/head/{}.png"), i-1).c_str());
     }
 #ifdef VIP
     RefreshKCGImage();
@@ -650,10 +660,6 @@ bool ImageManager::Initial() {
 		snprintf(buff, 100, "./mode/story/body/%d.png", i);
 		modeBody[i] = driver->getTexture(buff);
 	}
-	for (uint32_t i = 0; i < LEN(modeHead); i++) {
-		snprintf(buff, 100, "./mode/story/head/%d.jpg", i);
-		modeHead[i] = driver->getTexture(buff);
-	}
 	/////zdiy/////
 	return true;
 }
@@ -662,18 +668,6 @@ void ImageManager::SetAvatar(int seq, const wchar_t *avatar) {
 	auto string = EPRO_TEXT("./textures/character/custom/") + Utils::ToPathString(avatar) + EPRO_TEXT(".png");
 	scharacter[seq] = driver->getTexture(string.c_str());
 }
-/////zdiy/////
-void ImageManager::SetModeTextures(epro::path_string path) {
-	if(path == EPRO_TEXT("")) {
-		modeHead[0] = driver->getTexture(0);
-	} else
-	{
-		modeHead[0] = driver->getTexture(path.c_str());
-	}
-	//auto string = EPRO_TEXT("./mode/") + Utils::ToPathString(L"1") + EPRO_TEXT(".png");
-
-}
-/////zdiy/////
 void ImageManager::RefreshRandomImageList() {
 	if(!gGameConfig->randomtexture)
 	    return;

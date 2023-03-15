@@ -326,16 +326,6 @@ bool DeckManager::LoadDeckFromFile(epro::path_stringview file, Deck& out, bool s
 	LoadDeck(out, mainlist, sidelist, separated ? &extralist : nullptr);
 	return true;
 }
-/////zdiy/////
-bool DeckManager::ModeLoadDeck(epro::path_stringview file,cardlist_type* mainlist, cardlist_type* extralist, cardlist_type* sidelist) {
-	if(!LoadCardList(epro::format(EPRO_TEXT("./mode/story/deck/0/{}.ydk"),file), mainlist, extralist, sidelist)) {
-		mainGame->AddDebugMsg("Can't load mode deck!");
-		mainGame->AddDebugMsg("Please check your file /mode/story/deck.");
-		return false;
-	}
-	return true;
-}
-/////zdiy/////
 uint32_t DeckManager::LoadDeck(Deck& deck, const cardlist_type& mainlist, const cardlist_type& sidelist, const cardlist_type* extralist) {
 	deck.clear();
 	uint32_t errorcode = 0;

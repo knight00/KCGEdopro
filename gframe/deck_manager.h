@@ -78,9 +78,6 @@ public:
 	static bool ImportDeckBase64Omega(Deck& deck, epro::wstringview buffer);
 	static bool DeleteDeck(Deck& deck, epro::path_stringview name);
 	static bool RenameDeck(epro::path_stringview oldname, epro::path_stringview newname);
-	/////zdiy/////
-	static bool ModeLoadDeck(epro::path_stringview file,cardlist_type* mainlist = nullptr, cardlist_type* extralist = nullptr, cardlist_type* sidelist = nullptr);
-	/////zdiy/////
 };
 
 extern DeckManager* gdeckManager;

@@ -733,6 +733,10 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		mainGame->wAvatar[0]->setVisible(false);
 		mainGame->wAvatar[1]->setVisible(false);
 		////kdiy////////
+        ////zdiy////////
+        mainGame->wHead[0]->setVisible(false);
+		mainGame->wHead[1]->setVisible(false);
+        ////zdiy////////
 		mainGame->deckBuilder.result_string = L"0";
 		mainGame->deckBuilder.results.clear();
 		mainGame->deckBuilder.hovered_code = 0;
@@ -1154,10 +1158,6 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->btnChainIgnore->setVisible(false);
 			mainGame->btnChainAlways->setVisible(false);
 			mainGame->btnChainWhenAvail->setVisible(false);
-			////kdiy////////
-			mainGame->wAvatar[0]->setVisible(false);
-			mainGame->wAvatar[1]->setVisible(false);
-			////kdiy////////
 			mainGame->stMessage->setText(gDataManager->GetSysString(1500).data());
 			mainGame->btnCancelOrFinish->setVisible(false);
 			if(mainGame->wQuery->isVisible())
@@ -1189,15 +1189,22 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->btnJoinCancel->setEnabled(true);
 			mainGame->stTip->setVisible(false);
 			mainGame->device->setEventReceiver(&mainGame->menuHandler);
+			////kdiy////////
+			mainGame->wAvatar[0]->setVisible(false);
+			mainGame->wAvatar[1]->setVisible(false);
+			for(int i = 0; i < 6; ++i)
+			{
+				mainGame->imageManager.scharacter[i] = mainGame->imageManager.character[0];
+				mainGame->imageManager.modeHead[i] = mainGame->imageManager.head[0];
+			}
+			////kdiy////////
 			if(mainGame->isHostingOnline) {
 				mainGame->ShowElement(mainGame->wRoomListPlaceholder);
 			}
 			/////zdiy/////
 			else if(mainGame->mode->isMode) {
-				if(mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER) {
-					mainGame->HideElement(mainGame->wHead[0]);
-					mainGame->HideElement(mainGame->wHead[1]);
-				}
+				mainGame->wHead[0]->setVisible(false);
+				mainGame->wHead[1]->setVisible(false);
 				mainGame->stEntertainmentPlayInfo->setText(L"");
 				mainGame->ShowElement(mainGame->wEntertainmentPlay);
 				mainGame->mode->RefreshEntertainmentPlay(mainGame->mode->modeTexts);
@@ -1301,8 +1308,6 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
         /////zdiy/////
         }
         if(mainGame->mode->isMode) {
-            // if(mainGame->mode->deck.main.size() <= 0)
-			// 	mainGame->mode->UpdateDeck();
             DuelClient::SendPacketToServer(CTOS_HS_READY);
         }
         /////zdiy/////
@@ -1476,6 +1481,194 @@ inline std::unique_lock<epro::mutex> LockIf() {
 		return std::unique_lock<epro::mutex>(mainGame->gMutex);
 	return std::unique_lock<epro::mutex>();
 }
+///zdiy/////
+void DuelClient::ModeClientAnalyze(const uint8_t* pbuf, uint8_t msg) {
+#define CARD_SOUND_INDEX  15
+		if(msg== MSG_MOVE) {
+			const auto & code = BufferIO::Read<uint32_t>(pbuf);
+			CoreUtils::loc_info previous = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+			previous.controler = mainGame->LocalPlayer(previous.controler);
+			CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+			current.controler = mainGame->LocalPlayer(current.controler);
+			const auto reason = BufferIO::Read<uint32_t>(pbuf);
+			switch (code)
+			{
+				case 100000157:{
+					if(previous.controler != 1 || current.controler != 1) return;
+					if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
+					if(!(current.position & POS_FACEUP_DEFENSE)) return;
+					if(!(reason & REASON_RULE) || (reason &(REASON_DESTROY|REASON_REPLACE|REASON_COST|REASON_EFFECT|REASON_RETURN))) return;
+					mainGame->mode->NextPlot(CARD_SOUND_INDEX,12,code);
+					return;
+				}
+				case 63977008:{
+					if(previous.controler != 0 || current.controler != 0) return;
+					if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
+					if(!(reason & REASON_RULE) || (reason &(REASON_DESTROY|REASON_REPLACE|REASON_COST|REASON_EFFECT|REASON_RETURN))) return;
+					mainGame->mode->NextPlot(CARD_SOUND_INDEX,14,code);
+					return;
+				}
+				case 511009416:{
+					if(previous.controler != 0 || current.controler != 0) return;
+					if(!(reason & REASON_SPSUMMON)) return;
+					if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE)) return;
+					if(!(current.position & POS_FACEUP)) return;
+					mainGame->mode->NextPlot(CARD_SOUND_INDEX,16,code);
+					return;
+				}
+				case 100000143:{
+					if(previous.controler != 1 || current.controler != 1) return;
+					if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
+					if(!(reason & REASON_RULE) || (reason &(REASON_DESTROY|REASON_REPLACE|REASON_COST|REASON_EFFECT|REASON_RETURN))) return;
+					mainGame->mode->NextPlot(CARD_SOUND_INDEX,20,code);
+					return;
+				}
+				case 100000155:{
+					if(previous.controler != 1 || current.controler != 1) return;
+					if(!(reason & REASON_SPSUMMON)) return;
+					if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE)) return;
+					if(!(current.position & POS_FACEUP)) return;
+					mainGame->mode->NextPlot(8,6,code);
+					return;
+				}
+				case 88559132:{
+					if(previous.controler != 0 || current.controler != 0) return;
+					if(!(reason & REASON_SPSUMMON)) return;
+					if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
+					if(!(current.position & POS_FACEUP)) return;
+					mainGame->mode->NextPlot(CARD_SOUND_INDEX,24,code);
+					return;
+				}
+				case 96182448:{
+					if(previous.controler != 0 || current.controler != 0) return;
+					if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
+					if(!(reason & REASON_RULE) || (reason &(REASON_DESTROY|REASON_REPLACE|REASON_COST|REASON_EFFECT|REASON_RETURN))) return;
+					mainGame->mode->NextPlot(CARD_SOUND_INDEX,29,code);
+					return;
+				}
+				case 18013090:{
+					if(previous.controler != 0 || current.controler != 0) return;
+					if(!(reason & REASON_SPSUMMON)) return;
+					if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE)) return;
+					if(!(current.position & POS_FACEUP)) return;
+					mainGame->mode->NextPlot(CARD_SOUND_INDEX,32,code);
+				}
+				default:
+					return;
+			}
+		}
+		else if(msg == MSG_CHAINING) {
+			const auto code = BufferIO::Read<uint32_t>(pbuf);
+			CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+			ClientCard* pcard = mainGame->dField.GetCard(mainGame->LocalPlayer(info.controler), info.location, info.sequence, info.position);
+			switch (code)
+			{
+				case 511002846:{
+					if(!(pcard->type & TYPE_SPELL) || !(pcard->location & LOCATION_SZONE)) return;
+					if(pcard->controler != 0) return;
+					mainGame->mode->NextPlot(CARD_SOUND_INDEX,13,code);
+					return;
+				}
+				case 63977008:{
+					if(pcard->controler != 0) return;
+					if(!(pcard->type & TYPE_MONSTER) || !(pcard->location & LOCATION_MZONE)) return;
+					mainGame->mode->NextPlot(CARD_SOUND_INDEX,15,code);
+					return;
+				}
+				case 97077563:{
+					if(pcard->controler != 1) return;
+					if(!(pcard->type & TYPE_TRAP) || !(pcard->location & LOCATION_SZONE)) return;
+					mainGame->mode->NextPlot(CARD_SOUND_INDEX,18,code);
+					return;
+				}
+				case 100000158:{
+					if(pcard->controler != 1) return;
+					if(!(pcard->type & TYPE_SPELL) || !(pcard->location & LOCATION_SZONE)) return;
+					mainGame->mode->NextPlot(CARD_SOUND_INDEX,19,code);
+					return;
+				}
+				case 100000157:{
+					if(pcard->controler != 1) return;
+					mainGame->mode->NextPlot(CARD_SOUND_INDEX,17,code);
+					return;
+				}
+				case 100000143:{
+					if(pcard->controler != 1) return;
+					if(!(pcard->location & LOCATION_GRAVE)) return;
+					mainGame->mode->NextPlot(CARD_SOUND_INDEX,22,code);
+					return;
+				}
+				case 42079445:{
+					if(pcard->controler != 0) return;
+					if(!(pcard->location & LOCATION_SZONE)) return;
+					mainGame->mode->NextPlot(CARD_SOUND_INDEX,23,code);
+					return;
+				}
+				case 100000155:{
+					if(pcard->controler != 1) return;
+					if((pcard->location & LOCATION_GRAVE)) {
+						mainGame->mode->flag_100000155 = true;
+						mainGame->mode->NextPlot(CARD_SOUND_INDEX,25,code);
+					}
+					else if((pcard->location & LOCATION_MZONE)) {
+						if(!mainGame->mode->flag_100000155) return;
+						mainGame->mode->flag_100000155 = false;
+						mainGame->mode->NextPlot(CARD_SOUND_INDEX,26);
+					}
+					return;
+				}
+			case 2295440:
+			case 100100001:{
+				if(pcard->controler != 0) return;
+				if(!(pcard->location & LOCATION_SZONE)) return;
+				mainGame->mode->NextPlot(CARD_SOUND_INDEX,27,code);
+				return;
+			}
+			case 511000197:{
+				if(pcard->controler != 1) return;
+				if(!(pcard->location & LOCATION_SZONE)) return;
+				mainGame->mode->NextPlot(CARD_SOUND_INDEX,28,code);
+				return;
+			}
+			case 23571046:{
+				if(pcard->controler != 0) return;
+				if(!(pcard->location & LOCATION_GRAVE)) return;
+				mainGame->mode->NextPlot(CARD_SOUND_INDEX,30,code);
+				return;
+			}
+			case 98273947:{
+				if(pcard->controler != 0) return;
+				if(!(pcard->location & LOCATION_SZONE)) return;
+				mainGame->mode->NextPlot(CARD_SOUND_INDEX,31,code);
+				return;
+			}
+			case 96182448:{
+				if(pcard->controler != 0) return;
+				if(!(pcard->location & LOCATION_GRAVE)) return;
+				mainGame->mode->NextPlot(CARD_SOUND_INDEX,33,code);
+			}
+			default:
+				return;
+			}
+		}
+		else if(msg == MSG_ATTACK) {
+			CoreUtils::loc_info info1 = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+			info1.controler = mainGame->LocalPlayer(info1.controler);
+			if(info1.controler != 1) return;
+			mainGame->dField.attacker = mainGame->dField.GetCard(info1.controler, info1.location, info1.sequence);
+			uint32_t code = mainGame->dField.attacker->code;
+			switch (code)
+			{
+				case 100000155: {
+					mainGame->mode->NextPlot(CARD_SOUND_INDEX,34,code);
+					return;
+				}
+				default:
+					return;
+			}
+		}
+}
+///zdiy/////
 int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 	const auto* pbuf = msg;
 	if(!mainGame->dInfo.isReplay && !mainGame->dInfo.isSingleMode) {
@@ -1513,7 +1706,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 	/////zdiy/////
 	mainGame->mode->cv = &cv;
 	mainGame->mode->lck = &to_analyze_mutex;
-	mainGame->mode->ModeClientAnalyze(pbuf,mainGame->dInfo.curMsg);
+	ModeClientAnalyze(pbuf, mainGame->dInfo.curMsg);
 	/////zdiy////
 	switch(mainGame->dInfo.curMsg) {
 	case MSG_RETRY: {
@@ -1821,8 +2014,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		uint8_t type = BufferIO::Read<uint8_t>(pbuf);
 		std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 		//////kdiy////////
-		for(int i = 0; i < 6; ++i)
-			mainGame->imageManager.scharacter[i] = mainGame->imageManager.character[0];
 		mainGame->should_reload_skin = true;
 		//////kdiy////////
 		mainGame->showcarddif = 110;
@@ -1889,9 +2080,20 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			}
 		}
 		///////////kdiy///////////
-		//mainGame->dInfo.isFirstplayer = mainGame->dInfo.isFirst;
+        for(int i = 0; i < 6; ++i)
+            mainGame->mode->character[i] = 0;
+        if(mainGame->mode->isMode) {
+            if(mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER) {
+                mainGame->mode->character[0] = 1;
+                mainGame->mode->character[1] = 2;
+            }
+        }
 		for(int i = 0; i < 6; ++i) {
 			mainGame->imageManager.scharacter[i] = mainGame->imageManager.character[gSoundManager->character[i]];
+            if(mainGame->mode->isMode) {
+                if(mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER)
+                    mainGame->imageManager.modeHead[i] = mainGame->imageManager.head[mainGame->mode->character[i]];
+            }
 		}
 		///////////kdiy///////////
 		mainGame->dInfo.lp[mainGame->LocalPlayer(0)] = BufferIO::Read<uint32_t>(pbuf);
@@ -3316,7 +3518,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
         int character2 = mainGame->dInfo.current_player[1-player] + mainGame->dInfo.team1;
 		if((1-player == 0 && mainGame->dInfo.isTeam1) || (1-player == 1 && !mainGame->dInfo.isTeam1)) character2 = mainGame->dInfo.current_player[1-player];
-        if(!mainGame->dInfo.isSingleMode) {
+        if(!mainGame->dInfo.isSingleMode && !mainGame->mode->isMode) {
 #ifdef VIP
             if(gSoundManager->character[character] > 0)
                 mainGame->wAvatar[player]->setVisible(true);
@@ -3328,6 +3530,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                 mainGame->wAvatar[1-player]->setVisible(false);
 #endif
         }
+        ////zdiy////////
+        if(mainGame->mode->isMode && mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER) {
+            mainGame->wHead[0]->setVisible(true);
+            mainGame->wHead[1]->setVisible(true);
+        }
+        ////zdiy////////
 		if(!PlayChant(SoundManager::CHANT::NEXTTURN, 0, 0, character))
 		//////kdiy///
 		Play(SoundManager::SFX::NEXT_TURN);
@@ -5025,25 +5233,37 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		if(mainGame->dInfo.isTeam1) {
 			mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0]]);
 			mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1]);
+			mainGame->btnHead[0]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[0]]);
+			mainGame->btnHead[1]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1]);
 		} else {	
 			mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1]);
 			mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1]]);
+			mainGame->btnHead[0]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1]);
+			mainGame->btnHead[1]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[1]]);
 		}
         int character = mainGame->dInfo.current_player[player];
 		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
         int character2 = mainGame->dInfo.current_player[1-player] + mainGame->dInfo.team1;
 		if((1-player == 0 && mainGame->dInfo.isTeam1) || (1-player == 1 && !mainGame->dInfo.isTeam1)) character2 = mainGame->dInfo.current_player[1-player];
+        if(!mainGame->dInfo.isSingleMode && !mainGame->mode->isMode) {
 #ifdef VIP
-        if(gSoundManager->character[character] > 0)
-            mainGame->wAvatar[player]->setVisible(true);
-        else
-            mainGame->wAvatar[player]->setVisible(false);
-        if(gSoundManager->character[character2] > 0)
-            mainGame->wAvatar[1-player]->setVisible(true);
-        else
-            mainGame->wAvatar[1-player]->setVisible(false);
+            if(gSoundManager->character[character] > 0)
+                mainGame->wAvatar[player]->setVisible(true);
+            else
+                mainGame->wAvatar[player]->setVisible(false);
+            if(gSoundManager->character[character2] > 0)
+                mainGame->wAvatar[1-player]->setVisible(true);
+            else
+                mainGame->wAvatar[1-player]->setVisible(false);
 #endif
+        }
 		//kdiy/////////
+        ////zdiy////////
+        if(mainGame->mode->isMode && mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER) {
+            mainGame->wHead[0]->setVisible(true);
+            mainGame->wHead[1]->setVisible(true);
+        }
+        ////zdiy////////
 		break;
 	}
 	case MSG_RELOAD_FIELD: {
@@ -5473,6 +5693,10 @@ void DuelClient::ReplayPrompt(bool local_stream) {
 	mainGame->wAvatar[0]->setVisible(false);
 	mainGame->wAvatar[1]->setVisible(false);
 	////kdiy////////
+    ////zdiy////////
+    mainGame->wHead[0]->setVisible(false);
+	mainGame->wHead[1]->setVisible(false);
+    ////zdiy////////
 	auto now = std::time(nullptr);
 	mainGame->PopupSaveWindow(gDataManager->GetSysString(1340), epro::format(L"{:%Y-%m-%d %H-%M-%S}", fmt::localtime(now)), gDataManager->GetSysString(1342));
 	mainGame->replaySignal.Wait(lock);
