@@ -102,6 +102,10 @@ newoption {
 	value = "font",
 	description = "Path to a font file that will be bundled in the client and used as fallback font for missing glyphs"
 }
+newoption {
+	trigger = "lua-path",
+	description = "Path where the lua library has been installed"
+}
 
 local function default_arch()
 	if os.istarget("linux") or os.istarget("macosx") then return "x64" end
@@ -156,10 +160,10 @@ workspace "ygo"
 	objdir "obj"
 	startproject "ygopro"
 	staticruntime "on"
-	
+
 	warnings "Extra"
 	filter { "action:vs*" }
-		disablewarnings "4100" --'identifier' : unreferenced formal parameter	
+		disablewarnings "4100" --'identifier' : unreferenced formal parameter
 	filter { "action:not vs*" }
 		disablewarnings { "unknown-warning-option", "unused-parameter", "unknown-pragmas", "ignored-qualifiers", "missing-field-initializers", "implicit-const-int-float-conversion", "missing-braces" }
 	filter { "action:not vs*", "files:**.cpp" }
@@ -265,13 +269,13 @@ workspace "ygo"
 		defines "_DEBUG"
 		targetdir "bin/debug"
 		runtime "Debug"
-		
+
 	filter { "configurations:Debug", "architecture:x64" }
 		targetdir "bin/x64/debug"
-		
+
 	filter { "configurations:Debug", "architecture:ARM64" }
 		targetdir "bin/arm64/debug"
-		
+
 	filter { "configurations:Release", "architecture:ARM" }
 		targetdir "bin/armv7/debug"
 
@@ -283,16 +287,16 @@ workspace "ygo"
 		optimize "Size"
 		flags "LinkTimeOptimization"
 		targetdir "bin/release"
-		
+
 	filter { "configurations:Release", "architecture:x64" }
 		targetdir "bin/x64/release"
-		
+
 	filter { "configurations:Release", "architecture:ARM64" }
 		targetdir "bin/arm64/release"
-		
+
 	filter { "configurations:Release", "architecture:ARM" }
 		targetdir "bin/armv7/release"
-	
+
 	filter { "system:linux", "configurations:Release" }
 		linkoptions { "-static-libgcc", "-static-libstdc++" }
 
