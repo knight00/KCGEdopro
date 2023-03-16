@@ -736,6 +736,8 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
         ////zdiy////////
         mainGame->wHead[0]->setVisible(false);
 		mainGame->wHead[1]->setVisible(false);
+		mainGame->wChBody[0]->setVisible(false);
+		mainGame->wChBody[1]->setVisible(false);
         ////zdiy////////
 		mainGame->deckBuilder.result_string = L"0";
 		mainGame->deckBuilder.results.clear();
@@ -1205,6 +1207,8 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			else if(mainGame->mode->isMode) {
 				mainGame->wHead[0]->setVisible(false);
 				mainGame->wHead[1]->setVisible(false);
+				mainGame->wChBody[0]->setVisible(false);
+				mainGame->wChBody[1]->setVisible(false);
 				mainGame->stEntertainmentPlayInfo->setText(L"");
 				mainGame->ShowElement(mainGame->wEntertainmentPlay);
 				mainGame->mode->RefreshEntertainmentPlay(mainGame->mode->modeTexts);
@@ -2080,21 +2084,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			}
 		}
 		///////////kdiy///////////
-        for(int i = 0; i < 6; ++i)
-            mainGame->mode->character[i] = 0;
-        if(mainGame->mode->isMode) {
-            if(mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER) {
-                mainGame->mode->character[0] = 1;
-                mainGame->mode->character[1] = 2;
-            }
-        }
-		for(int i = 0; i < 6; ++i) {
+		for(int i = 0; i < 6; ++i)
 			mainGame->imageManager.scharacter[i] = mainGame->imageManager.character[gSoundManager->character[i]];
-            if(mainGame->mode->isMode) {
-                if(mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER)
-                    mainGame->imageManager.modeHead[i] = mainGame->imageManager.head[mainGame->mode->character[i]];
-            }
-		}
 		///////////kdiy///////////
 		mainGame->dInfo.lp[mainGame->LocalPlayer(0)] = BufferIO::Read<uint32_t>(pbuf);
 		mainGame->dInfo.lp[mainGame->LocalPlayer(1)] = BufferIO::Read<uint32_t>(pbuf);
@@ -5235,7 +5226,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1]);
 			mainGame->btnHead[0]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[0]]);
 			mainGame->btnHead[1]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1]);
-		} else {	
+		} else {
 			mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1]);
 			mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1]]);
 			mainGame->btnHead[0]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1]);
@@ -5696,6 +5687,8 @@ void DuelClient::ReplayPrompt(bool local_stream) {
     ////zdiy////////
     mainGame->wHead[0]->setVisible(false);
 	mainGame->wHead[1]->setVisible(false);
+	mainGame->wChBody[0]->setVisible(false);
+	mainGame->wChBody[1]->setVisible(false);
     ////zdiy////////
 	auto now = std::time(nullptr);
 	mainGame->PopupSaveWindow(gDataManager->GetSysString(1340), epro::format(L"{:%Y-%m-%d %H-%M-%S}", fmt::localtime(now)), gDataManager->GetSysString(1342));

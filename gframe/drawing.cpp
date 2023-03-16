@@ -558,6 +558,22 @@ void Game::DrawMisc() {
 						/////kdiy/////////
 	driver->draw2DRectangle(skin::DUELFIELD_TURNPLAYER_COLOR_VAL, lpframe_pos);
 	driver->draw2DRectangleOutline(lpframe_pos, skin::DUELFIELD_TURNPLAYER_OUTLINE_COLOR_VAL);
+	/////zdiy/////////
+    for(int i = 0; i < 6; ++i)
+        mainGame->mode->character[i] = 0;
+    if(mainGame->mode->isMode) {
+        if(mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER) {
+            mainGame->mode->character[0] = 1;
+            mainGame->mode->character[1] = 2;
+        }
+    }
+	for(int i = 0; i < 6; ++i) {
+        if(mainGame->mode->isMode) {
+            if(mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER)
+                mainGame->imageManager.modeHead[i] = mainGame->imageManager.head[mainGame->mode->character[i]];
+        }
+	}
+	/////zdiy/////////
 	/////kdiy/////////
 	if(dInfo.isTeam1) {
 		avatarbutton[0]->setImage(imageManager.scharacter[dInfo.current_player[0]]);

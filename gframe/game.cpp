@@ -154,9 +154,6 @@ void Mode::NextPlot(int32_t step, int32_t index, uint32_t code) {
 		mainGame->ShowElement(mainGame->wBody);
 		mainGame->ShowElement(mainGame->wPloat);
 		mainGame->stPloatInfo->setText(GetPloat(plotIndex).data());
-		mainGame->wChBody[0]->setRelativePosition(mainGame->Scale(475, 323, 527, 375));
-		mainGame->wChBody[1]->setRelativePosition(mainGame->Scale(475, 48, 527, 100));
-
 	}
 	else if(plotStep == 1) {
 		mainGame->wBody->setVisible(false);
@@ -1555,7 +1552,7 @@ void Game::Initialize() {
 	wChBody[1]->getCloseButton()->setVisible(false);
 	wChBody[1]->setDraggable(false);
 	wChBody[1]->setDrawTitlebar(false);
-	wChBody[1]->setDrawBackground(true);      
+	wChBody[1]->setDrawBackground(true);
 	wChBody[1]->setVisible(false);
 	btnChBody[1] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 50, 50), wChBody[1], -1);
 	btnChBody[1]->setImageSize(Scale(0, 0, 50, 50).getSize());
