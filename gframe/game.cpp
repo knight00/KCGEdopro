@@ -139,7 +139,7 @@ void Mode::NextPlot(int32_t step, int32_t index, uint32_t code) {
 	if(index != 0) plotIndex = index;
 	if(plotIndex >= (int32_t)mainGame->mode->modePloats->size() || plotIndex < 0 ) plotIndex = 0;
 	int32_t i = mainGame->mode->modePloats->at(plotIndex).control;
-	if(i < 0 || i > 2 ) i = 0;
+	if(i < 0 || i > 5) i = 0;
 	int32_t plotStep = this->plotStep;
 	int32_t plotIndex = this->plotIndex;
 	++this->plotStep;
@@ -235,7 +235,7 @@ void Mode::NextPlot(int32_t step, int32_t index, uint32_t code) {
 		mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
 	}
 	else if(plotStep == 14) {
-		cv->notify_one();		
+		cv->notify_one();
 	}
 	/*
 		plotStep 15,part1-1 when player summon or activate
@@ -268,9 +268,6 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 				break;
 			}
 		}
-	    // if(index < 0 || index >= bots.size()) return false;
-        // res = bots[index].Launch(port, pass, false, 0, nullptr, -1);
-        // if(!res) return false;
 	}
 	if(rule == MODE_RULE_ZCG_NO_RANDOM) {
 		index = mainGame->cbEntertainmentMode_1Bot->getSelected();
@@ -285,9 +282,6 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 				break;
 			}
 		}
-	    // if(index < 0 || index >= bots.size()) return false;
-        // res = bots[index].Launch(port, pass, false, 0, nullptr, -1);
-        // if(!res) return false;
 	}
 	if(rule == MODE_RULE_5DS_DARK_TUNER) {
 		for (uint32_t i = 0; i < bots.size(); ++i)
@@ -298,9 +292,14 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 				break;
 			}
 		}
-        // if(index < 0 || index >= bots.size()) return false;
-        // res = bots[index].Launch(port, pass, false, 0, nullptr, -1);
-        // if(!res) return false;
+		//players tune
+//         if(index < 0 || index >= (int32_t)bots.size()) return false;
+// 		auto res2 = bots[index].Launch(port, pass, false, 0, nullptr, -1);
+// 		if(!res2) return false;
+// #if !defined(_WIN32) && !defined(__ANDROID__)
+// 	    if(res2 > 0)
+// 		    mainGame->gBot.windbotsPids.push_back(res2);
+// #endif
 	}
 	if(index < 0 || index >= (int32_t)bots.size()) return false;
 	auto res = bots[index].Launch(port, pass, false, 0, nullptr, -1);

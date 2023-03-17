@@ -337,9 +337,9 @@ bool ImageManager::Initial() {
     }
     head[0] = driver->getTexture(0);
     for(uint8_t i = 1; i < mainGame->mode->totcharacter; i++) {
-        //0: Yusei
-        //1: Darkman
-        //2: Paradox
+        //1: Yusei
+        //2: Darkman
+        //3: Paradox
         head[i] = driver->getTexture(epro::format(EPRO_TEXT("./mode/story/head/{}.jpg"), i-1).c_str());
         if(head[i] == nullptr)
             head[i] = driver->getTexture(epro::format(EPRO_TEXT("./mode/story/head/{}.png"), i-1).c_str());

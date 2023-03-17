@@ -300,8 +300,6 @@ catch(...) { what = def; }
 				{
 					case MODE_RULE_ZCG:
 					case MODE_RULE_ZCG_NO_RANDOM: {
-				        // cscg.info.mode = MODE_TAG;
-				        // cscg.info.team2 = 2;
 				        cscg.info.mode = 0;
 				        cscg.info.team2 = 1;
 				        cscg.info.start_lp = 32000;
@@ -311,6 +309,7 @@ catch(...) { what = def; }
                     case MODE_RULE_5DS_DARK_TUNER: {
                         cscg.info.mode = 0;
 				        cscg.info.team2 = 1;
+						//players tune
 				        // cscg.info.mode = MODE_TAG;
 				        // cscg.info.team2 = 2;
 				        cscg.info.start_lp = 8000;

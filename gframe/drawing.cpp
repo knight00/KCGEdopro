@@ -563,8 +563,10 @@ void Game::DrawMisc() {
         mainGame->mode->character[i] = 0;
     if(mainGame->mode->isMode) {
         if(mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER) {
+			//players icon set
             mainGame->mode->character[0] = 1;
             mainGame->mode->character[1] = 2;
+            // mainGame->mode->character[2] = 3;
         }
     }
 	for(int i = 0; i < 6; ++i) {

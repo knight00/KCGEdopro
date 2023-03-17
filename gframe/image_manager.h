@@ -169,7 +169,7 @@ public:
 	/////////kdiy////
 	/////zdiy/////
 	A(modeBody[1])
-    A(head[3])
+    A(head[4])
 	A(modeHead[6])
 	/////zdiy/////
 	A(tSettings)
