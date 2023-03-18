@@ -81,7 +81,7 @@ public:
 	uint8_t totcharacter = 27;
 	////////kdiy////////
 	/////zdiy/////
-	void PlayModeSound(int32_t type,int32_t index,int32_t type2 = 0);
+	void PlayModeSound(uint8_t type, uint8_t index);
 	/////zdiy/////
 	void SetSoundVolume(double volume);
 	void SetMusicVolume(double volume);

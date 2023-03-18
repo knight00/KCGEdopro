@@ -281,14 +281,14 @@ void SoundManager::RefreshChantsList() {
 #endif	
 }
 /////zdiy/////
-void SoundManager::PlayModeSound(int32_t type,int32_t index,int32_t type2) {
+void SoundManager::PlayModeSound(uint8_t type, uint8_t index) {
 #ifdef BACKEND
 	if(!soundsEnabled) return;
 	//if(!mainGame->mode->isMode) return;
 	switch (type)
 	{
 		case Mode::SOUND::Ploat: {
-			if(index >= (int32_t)ModeDialogList->size()) return;
+			if(index >= ModeDialogList->size()) return;
 			const auto& soundfile = ModeDialogList->at(index);
 			if(soundfile.empty()) return;
 			mixer->PlaySound(soundfile);

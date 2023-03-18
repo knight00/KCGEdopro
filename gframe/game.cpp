@@ -108,7 +108,7 @@ Mode::Mode()
 	rule = MODE_RULE_DEFAULT;
 	LoadJsonInfo();
 };
-void Mode::ModePlaySound(uint32_t type,int32_t index,int32_t type2) {
+void Mode::ModePlaySound(uint8_t type, uint8_t index) {
 	duelSoundIndex = index;
 	switch (type)
 	{
@@ -119,63 +119,65 @@ void Mode::ModePlaySound(uint32_t type,int32_t index,int32_t type2) {
 		case Duel:
 			//threadSleep = true;
 			//gSoundManager->StopSounds();
-			gSoundManager->PlayModeSound(Duel,index,type2);
+			gSoundManager->PlayModeSound(Duel,index);
 			break;
 		default:
 			break;
 	}
 }
-std::wstring Mode::GetPloat(int32_t index, uint32_t code) {
+std::wstring Mode::GetPloat(uint8_t index, uint32_t code) {
 	std::wstring str = L"";
-	if(index < 0 || index >= (int32_t)mainGame->mode->modePloats->size()) return str;
+	if(index < 0 || index >= mainGame->mode->modePloats->size()) return str;
 	str = mainGame->mode->modePloats->at(index).title;
 	str.append(epro::format(L"{}\n{}{}",L":",L"  ", mainGame->mode->modePloats->at(index).ploat));
 	if(code != 0)
 		str = epro::sprintf(str, gDataManager->GetName(code));
 	return str;
 }
-void Mode::NextPlot(int32_t step, int32_t index, uint32_t code) {
+void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 	if(step != 0) plotStep = step;
 	if(index != 0) plotIndex = index;
-	if(plotIndex >= (int32_t)mainGame->mode->modePloats->size() || plotIndex < 0 ) plotIndex = 0;
+	if(plotIndex >= mainGame->mode->modePloats->size() || plotIndex < 0 ) plotIndex = 0;
 	int32_t i = mainGame->mode->modePloats->at(plotIndex).control;
 	if(i < 0 || i > 5) i = 0;
 	int32_t plotStep = this->plotStep;
 	int32_t plotIndex = this->plotIndex;
 	++this->plotStep;
 	++this->plotIndex;
-	/*
-		plotStep 0 to 7,part1-1 when game start
-	*/
+	//plotStep 0 to 7,part1-1 when game start
 	if(plotStep == 0) {
 		mainGame->mode->isPlot = true;
 		std::lock_guard<epro::mutex> lock(mainGame->gMutex);
-		mainGame->mode->SetBodyImage(0);
+        for(int i = 0; i < 6; ++i)
+            mainGame->mode->character[i] = 0;
+        if(mainGame->mode->rule == MODE_STORY) {
+			//players icon set
+            mainGame->mode->character[0] = 1;
+            mainGame->mode->character[1] = 2;
+            // mainGame->mode->character[2] = 3;
+        }
+        for(int i = 0; i < 6; ++i)
+            mainGame->imageManager.modeHead[i] = mainGame->imageManager.head[mainGame->mode->character[i]];
+        mainGame->btnBody->setImage(mainGame->imageManager.modeBody[index]);
 		mainGame->ShowElement(mainGame->wBody);
 		mainGame->ShowElement(mainGame->wPloat);
 		mainGame->stPloatInfo->setText(GetPloat(plotIndex).data());
-	}
-	else if(plotStep == 1) {
+	} else if(plotStep == 1) {
 		mainGame->wBody->setVisible(false);
 		mainGame->HideElement(mainGame->wPloat);
-		mainGame->mode->SetHeadImage(i);
 		mainGame->ShowElement(mainGame->wChPloatBody[i]);
 		mainGame->ShowElement(mainGame->wChBody[i]);
 		ModePlaySound(SOUND::Ploat,plotIndex);
 		mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
-	}
-	else if(plotStep == 2) {
-		mainGame->mode->SetHeadImage(i);
+	} else if(plotStep == 2) {
 		mainGame->ShowElement(mainGame->wChPloatBody[i]);
 		mainGame->ShowElement(mainGame->wChBody[i]);
 		ModePlaySound(SOUND::Ploat,plotIndex);
 		mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
-	}
-	else if(plotStep < 6 ) {
+	} else if(plotStep < 6 ) {
 		ModePlaySound(SOUND::Ploat,plotIndex);
 		mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
-	}
-	else if(plotStep == 6) {
+	} else if(plotStep == 6) {
 		mainGame->stChPloatInfo[0]->setText(L"");
 		mainGame->stChPloatInfo[1]->setText(L"");
 		mainGame->HideElement(mainGame->wChPloatBody[0]);
@@ -188,15 +190,12 @@ void Mode::NextPlot(int32_t step, int32_t index, uint32_t code) {
 			str.append(epro::format(L"{}\n",gDataManager->GetName(ploatCodes[i])));
 		mainGame->stPloatInfo->setText(str.data());
 		mainGame->ShowElement(mainGame->wPloat);
-	}
-	else if(plotStep == 7) {
+	} else if(plotStep == 7) {
 		mainGame->mode->isPlot = false;
 		mainGame->HideElement(mainGame->wPloat);
 		DuelClient::SendPacketToServer(CTOS_MODE_HS_START);
 	}
-	/*
-		plotStep 8 to 14,part1-1 when bot spsummon dark monster
-	*/
+	//plotStep 8 to 14,part1-1 when bot spsummon dark monster
 	else if(plotStep == 8) {
 		std::unique_lock<epro::mutex> lck(*this->lck);
 		isPlot = true;
@@ -223,19 +222,16 @@ void Mode::NextPlot(int32_t step, int32_t index, uint32_t code) {
 		isPlot = false;
 		isEvent = false;
 		lck.unlock();
-	} 
-	else if(plotStep == 9) {
+	} else if(plotStep == 9) {
 		mainGame->ShowElement(mainGame->wChPloatBody[i]);
 		mainGame->ShowElement(mainGame->wChBody[i]);
 		ModePlaySound(SOUND::Ploat,plotIndex);
 		mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
-	}
-	else if(plotStep <= 13) {
+	} else if(plotStep <= 13) {
 		ModePlaySound(SOUND::Ploat,plotIndex);
 		mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
-	}
-	else if(plotStep == 14) {
-		cv->notify_one();
+	} else if(plotStep == 14) {
+		cv->notify_one();		
 	}
 	/*
 		plotStep 15,part1-1 when player summon or activate
@@ -268,6 +264,9 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 				break;
 			}
 		}
+	    // if(index < 0 || index >= bots.size()) return false;
+        // res = bots[index].Launch(port, pass, false, 0, nullptr, -1);
+        // if(!res) return false;
 	}
 	if(rule == MODE_RULE_ZCG_NO_RANDOM) {
 		index = mainGame->cbEntertainmentMode_1Bot->getSelected();
@@ -282,26 +281,24 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 				break;
 			}
 		}
+	    // if(index < 0 || index >= bots.size()) return false;
+        // res = bots[index].Launch(port, pass, false, 0, nullptr, -1);
+        // if(!res) return false;
 	}
-	if(rule == MODE_RULE_5DS_DARK_TUNER) {
+	if(rule == MODE_STORY) {
 		for (uint32_t i = 0; i < bots.size(); ++i)
 		{
 			auto bot = bots[i];
-			if(bot.mode == L"MODE_RULE_5DS_DARK_TUNER") {
+			if(bot.mode == L"MODE_STORY") {
 				index = i;
 				break;
 			}
 		}
-		//players tune
-//         if(index < 0 || index >= (int32_t)bots.size()) return false;
-// 		auto res2 = bots[index].Launch(port, pass, false, 0, nullptr, -1);
-// 		if(!res2) return false;
-// #if !defined(_WIN32) && !defined(__ANDROID__)
-// 	    if(res2 > 0)
-// 		    mainGame->gBot.windbotsPids.push_back(res2);
-// #endif
+        // if(index < 0 || index >= bots.size()) return false;
+        // res = bots[index].Launch(port, pass, false, 0, nullptr, -1);
+        // if(!res) return false;
 	}
-	if(index < 0 || index >= (int32_t)bots.size()) return false;
+	if(index < 0 || index >= bots.size()) return false;
 	auto res = bots[index].Launch(port, pass, false, 0, nullptr, -1);
 #if !defined(_WIN32) && !defined(__ANDROID__)
 	if(res > 0)
@@ -327,7 +324,7 @@ Mode::~Mode(){};
 /*
  no found the fun to read sound time
 */
-long long Mode::GetSoundSeconds(int32_t index) {
+long long Mode::GetSoundSeconds(uint32_t index) {
 	switch (index)
 	{
 		case 0:return 1201;case 1:return 1201;case 2:return 1828;case 3:return 4205;case 4:return 3787;
@@ -339,7 +336,7 @@ long long Mode::GetSoundSeconds(int32_t index) {
 		default:return 1000;
 	}
 }
-void Mode::RefreshControlState(uint32_t state ,bool visible)
+void Mode::RefreshControlState(uint32_t state, bool visible)
 {
 	mainGame->btnEntertainmentExitGame->setVisible(true);
 	mainGame->btnEntertainmentExitGame->setEnabled(true);
@@ -362,7 +359,7 @@ bool Mode::IsModeBot(std::wstring mode) {
 	if(mode == L"") return false;
 	return true;
 }
-void Mode::SetControlState(uint32_t index)
+void Mode::SetControlState(uint8_t index)
 {
 	std::wstring str(mainGame->mode->modeTexts->at(index).des);
 	mainGame->btnEntertainmentStartGame->setEnabled(false);
@@ -398,7 +395,7 @@ void Mode::DestoryMode()
 	deck.clear();
 	//this->~Mode();
 }
- void Mode::SetRule(int32_t index) {
+ void Mode::SetRule(uint8_t index) {
  	switch (index)
  	{
  		case 0:
@@ -409,7 +406,7 @@ void Mode::DestoryMode()
  				rule = MODE_RULE_ZCG;
  			break;
  		case 1:
- 			rule = MODE_RULE_5DS_DARK_TUNER;
+ 			rule = MODE_STORY;
  			break;
  		default:
  			rule = MODE_RULE_DEFAULT;
@@ -455,11 +452,11 @@ void Mode::LoadJson(epro::path_string path, uint32_t index) {
 						ModePloat modePloat;
                         std::vector<std::wstring> ais;
                         if(obj.find("playerNames") != obj.end())
-                            playerNames.insert(std::pair<int, std::wstring>(MODE_RULE_5DS_DARK_TUNER, BufferIO::DecodeUTF8(obj.at("playerNames").get_ref<std::string&>())));
+                            playerNames.insert(std::pair<int, std::wstring>(MODE_STORY, BufferIO::DecodeUTF8(obj.at("playerNames").get_ref<std::string&>())));
 						if(obj.find("aiNames") != obj.end()) {
 							for(auto names : obj.at("aiNames"))
 								ais.push_back(BufferIO::DecodeUTF8(names.get_ref<std::string&>()));
-							aiNames.insert(std::pair<int, std::vector<std::wstring>>(MODE_RULE_5DS_DARK_TUNER, ais));
+							aiNames.insert(std::pair<int, std::vector<std::wstring>>(MODE_STORY, ais));
 						}
                         if(obj.find("index") == obj.end())
                             continue;
@@ -489,24 +486,6 @@ void Mode::LoadJsonInfo() {
         LoadJson(EPRO_TEXT("./mode/languages/Cht/mode.json"), 0);
         LoadJson(EPRO_TEXT("./mode/languages/Cht/ploat.json"), 1);
     }
-}
-void Mode::SetBodyImage(uint32_t index) {
-	if(rule != MODE_RULE_5DS_DARK_TUNER) return;
-	uint32_t len = sizeof(mainGame->imageManager.modeBody) / sizeof(mainGame->imageManager.modeBody[0]);
-	if(index>=len) return;
-	if(index == 0) {
-		mainGame->btnBody->setImageSize(mainGame->Scale(0, 0, 250, 263).getSize());
-	}
-	mainGame->btnBody->setImage(mainGame->imageManager.modeBody[index]);
-}
-void Mode::SetHeadImage(uint32_t index) {
-	// if(rule != MODE_RULE_5DS_DARK_TUNER) return;
-	// uint32_t len = sizeof(mainGame->btnChBody) / sizeof(mainGame->btnChBody[0]);
-	// if(index >= len) return;
-	// mainGame->btnChBody[index]->setImage(mainGame->imageManager.modeHead[index]);
-	// if(index <= 1) {
-	// 	mainGame->btnHead[index]->setImage(mainGame->imageManager.modeHead[index]);
-	// }
 }
 /////zdiy//////
 Game::~Game() {
@@ -1502,7 +1481,7 @@ void Game::Initialize() {
 	wBody->setDrawBackground(false);
 	wBody->setVisible(false);
 	btnBody = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 100, 150), wBody, -1);
-	btnBody->setImageSize(Scale(0, 0, 200, 300).getSize());
+	btnBody->setImageSize(Scale(0, 0, 250, 263).getSize());
 	btnBody->setDrawBorder(false);
 	btnBody->setEnabled(false);
 	//first infotext
@@ -1551,7 +1530,7 @@ void Game::Initialize() {
 	wChBody[1]->getCloseButton()->setVisible(false);
 	wChBody[1]->setDraggable(false);
 	wChBody[1]->setDrawTitlebar(false);
-	wChBody[1]->setDrawBackground(true);
+	wChBody[1]->setDrawBackground(true);      
 	wChBody[1]->setVisible(false);
 	btnChBody[1] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 50, 50), wChBody[1], -1);
 	btnChBody[1]->setImageSize(Scale(0, 0, 50, 50).getSize());

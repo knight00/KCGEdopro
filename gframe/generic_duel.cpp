@@ -482,11 +482,9 @@ void GenericDuel::StartDuel(DuelPlayer* dp) {
 		NetServer::ReSendToPlayer(obs);
 	}
 	/////zdiy/////
-	if(mainGame->mode->isMode) {
-		if(mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER) {
-			NetServer::SendPacketToPlayer(players.home.front(), STOC_MODE_SHOW_PLOAT);
-			return;
-		}
+	if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
+		NetServer::SendPacketToPlayer(players.home.front(), STOC_MODE_SHOW_PLOAT);
+		return;
 	}
 	/////zdiy/////
 	NetServer::SendPacketToPlayer(players.home.front(), STOC_SELECT_HAND);
@@ -687,7 +685,7 @@ void GenericDuel::TPResult(DuelPlayer* dp, uint8_t tp) {
 	if(mainGame->mode->isMode) {
 		if(mainGame->mode->rule == MODE_RULE_ZCG || mainGame->mode->rule == MODE_RULE_ZCG_NO_RANDOM)
 			extracards.push_back(99710410);
-		if(mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER)
+		if(mainGame->mode->rule == MODE_STORY)
 			extracards.push_back(99710411);
 	};
 	/////zdiy/////

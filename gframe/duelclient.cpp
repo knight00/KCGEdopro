@@ -306,7 +306,7 @@ catch(...) { what = def; }
 						cscg.info.time_limit = 223;
 						break;
 					}
-                    case MODE_RULE_5DS_DARK_TUNER: {
+                    case MODE_STORY: {
                         cscg.info.mode = 0;
 				        cscg.info.team2 = 1;
 						//players tune
@@ -1290,7 +1290,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		else
 			mainGame->dInfo.opponames[pkt.pos - mainGame->dInfo.team1] = name;
 		/////zdiy/////
-		if(mainGame->mode->isMode && mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER
+		if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY
 		   && mainGame->mode->playerNames.find(mainGame->mode->rule) != mainGame->mode->playerNames.end()
 		   && mainGame->mode->aiNames.find(mainGame->mode->rule) != mainGame->mode->aiNames.end()) {
 			mainGame->stHostPrepDuelist[0]->setText(mainGame->mode->playerNames[mainGame->mode->rule].c_str());
@@ -1404,7 +1404,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->HideElement(mainGame->wANCard);
         /////zdiy//////
         //not send rematch for stroy mode
-		if(mainGame->mode->isMode && mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER) {
+		if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
             mainGame->dInfo.checkRematch = false;
 			CTOS_RematchResponse crr;
 			crr.rematch = false;
@@ -3521,7 +3521,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 #endif
         }
         ////zdiy////////
-        if(mainGame->mode->isMode && mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER) {
+        if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
             mainGame->wHead[0]->setVisible(true);
             mainGame->wHead[1]->setVisible(true);
         }
@@ -5249,7 +5249,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         }
 		//kdiy/////////
         ////zdiy////////
-        if(mainGame->mode->isMode && mainGame->mode->rule == MODE_RULE_5DS_DARK_TUNER) {
+        if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
             mainGame->wHead[0]->setVisible(true);
             mainGame->wHead[1]->setVisible(true);
         }

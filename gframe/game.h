@@ -168,27 +168,25 @@ public:
 	bool flag_100000155;//card 100000155 play sound 
 	Deck deck;//player deck
 	uint8_t player;//new turn player,should distinguish ai and player when play mode-story duel sound
-	int16_t rule;//the rule of duel,zcg|5ds......
-	int32_t plotStep;//the step of fun NextPlot()
-	int32_t duelSoundIndex;//the index of mode-story sound,the sound is in  sound_manager.cpp
- 	int32_t plotIndex;//the index of plot,decide to set text plot
+	uint8_t rule;//the rule of duel,zcg|5ds......
+	uint8_t plotStep;//the step of fun NextPlot()
+	uint8_t duelSoundIndex;//the index of mode-story sound,the sound is in  sound_manager.cpp
+ 	uint8_t plotIndex;//the index of plot,decide to set text plot
 	uint8_t character[6] = { 0,0,0,0,0,0 };
     uint8_t totcharacter = 4;
 	void InitializeMode();
 	void DestoryMode();
 	void RefreshEntertainmentPlay(std::vector<ModeText>* modeTexts);
-	void RefreshControlState(uint32_t state ,bool visible);
-	void SetControlState(uint32_t index);
+	void RefreshControlState(uint32_t state, bool visible);
+	void SetControlState(uint8_t index);
 	void ModePlayerReady(bool isAi);
-	void SetRule(int32_t index);
+	void SetRule(uint8_t index);
 	bool LoadWindBot(int port, epro::wstringview pass);
 	bool IsModeBot(std::wstring mode);
-	void SetBodyImage(uint32_t index);
-	void SetHeadImage(uint32_t index);
-	void NextPlot(int32_t step = 0,int32_t index = 0,uint32_t code = 0);
-	void ModePlaySound(uint32_t type,int32_t index,int32_t type2 = 0);
-	std::wstring GetPloat(int32_t index,uint32_t code = 0);
-	long long GetSoundSeconds(int32_t index);
+	void NextPlot(uint8_t step = 0, uint8_t index = 0, uint32_t code = 0);
+	void ModePlaySound(uint8_t type, uint8_t index);
+	std::wstring GetPloat(uint8_t index, uint32_t code = 0);
+	long long GetSoundSeconds(uint32_t index);
 	Mode();
 	~Mode();
 private:
@@ -199,7 +197,7 @@ private:
 #define MODE_RULE_DEFAULT 0x1
 #define MODE_RULE_ZCG 0x2
 #define MODE_RULE_ZCG_NO_RANDOM 0x3
-#define MODE_RULE_5DS_DARK_TUNER 0x4
+#define MODE_STORY 0x4
 /////zdiy/////
 
 class Game {
