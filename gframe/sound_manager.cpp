@@ -372,9 +372,6 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 ///////kdiy//////
 #ifdef BACKEND
 	if(!soundsEnabled) return false;
-	/////zdiy/////
-	if(mainGame->mode->isMode) return false;
-	/////zdiy/////
 	///////kdiy//////
 // 	auto key = std::make_pair(chant, code);
 // 	auto chant_it = ChantsList.find(key);
@@ -517,13 +514,32 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 					}
 				}
 				int count = list.size();
-				if (count > 0) {
+				if(count > 0) {
 					int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
 					StopSounds();
 					return mixer->PlaySound(list[soundno]);
 				}
 			}
-		}
+		} else {
+				std::vector<std::string> list;
+				const auto extensions = mixer->GetSupportedSoundExtensions();
+				for (const auto& ext : extensions) {
+					const auto filename = epro::format("{}.{}", chant_it2->second, Utils::ToUTF8IfNeeded(ext));
+					if (Utils::FileExists(Utils::ToPathString(filename)))
+						list.push_back(filename);
+					for (int i = 1; i < 6; i++) {
+						const auto filename2 = epro::format("{}_{}.{}", chant_it2->second, i, Utils::ToUTF8IfNeeded(ext));
+						if (Utils::FileExists(Utils::ToPathString(filename2)))
+							list.push_back(filename2);
+					}
+				}
+				int count = list.size();
+				if(count > 0) {
+					int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+					StopSounds();
+					return mixer->PlaySound(list[soundno]);
+				}
+			}
 		return true;
 	}
 	return false;
