@@ -74,7 +74,7 @@ public:
 		return ClientAnalyze(packet.data(), static_cast<uint32_t>(packet.buff_size()));
 	}
     ///zdiy/////
-	static void ModeClientAnalyze(const uint8_t* pbuf,uint8_t msg);
+	static void ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf,uint8_t msg);
     ///zdiy/////
 	static int GetSpectatorsCount() {
 		return watching;

@@ -76,9 +76,6 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 		return stopPropagation;
 	switch(event.EventType) {
 	case irr::EET_GUI_EVENT: {
-		/////zdiy/////
-		//if(mainGame->mode->isMode && mainGame->mode->isPlot) break;
-		/////zdiy/////
 		int id = event.GUIEvent.Caller->getID();
 		switch(event.GUIEvent.EventType) {
 		case irr::gui::EGET_BUTTON_CLICKED: {
@@ -1625,7 +1622,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				break;
 			/////zdiy/////
 			if(mainGame->mode->isMode && mainGame->mode->isPlot)
-			break;
+			    break;
 			/////zdiy/////
 			bool should_show_tip = false;
 			irr::core::vector2di pos = mainGame->Resize(event.MouseInput.X, event.MouseInput.Y, true);

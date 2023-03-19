@@ -729,7 +729,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->stEntertainmentPlayInfo->setText(L"");
 				mainGame->ShowElement(mainGame->wEntertainmentPlay);
 				mainGame->mode->RefreshEntertainmentPlay(mainGame->mode->modeTexts);
-				mainGame->mode->RefreshControlState(0xffffff, false);
+				mainGame->mode->RefreshControlState(0);
 				mainGame->mode->InitializeMode();
 				break;
 			}
@@ -1112,7 +1112,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				int sel = mainGame->lstEntertainmentPlayList->getSelected();
 				mainGame->mode->modeIndex = sel;
 				if(sel != -1) {
-					mainGame->mode->RefreshControlState(1 << mainGame->mode->modeIndex, true);
+					mainGame->mode->RefreshControlState(mainGame->mode->modeIndex + 1);
 					mainGame->mode->SetControlState(mainGame->mode->modeIndex);
 				}
 				break;
@@ -1285,12 +1285,12 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
                     }
 					DuelClient::is_local_host = true;
 					try {
-						if(mainGame->mode->LoadWindBot(host_port, L""))
-							break;
+						mainGame->mode->LoadWindBot(host_port, L"");
 					}
 					catch(...)
 					{
 						mainGame->PopupMessage(L"Failed to launch windbot");
+                        mainGame->mode->isMode = false;
 					}
                     break;
 				} else {

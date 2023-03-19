@@ -273,7 +273,7 @@ void SoundManager::RefreshChantsList() {
 		/////kdiy///////
 	}
 	/////zdiy/////
-	for (uint32_t i = 0; i < (sizeof(ModeDialogList)/sizeof(ModeDialogList[0])); i++) {
+	for (uint8_t i = 0; i < (sizeof(ModeDialogList)/sizeof(ModeDialogList[0])); i++) {
 		std::string file = epro::format("./mode/story/soundDialog/0{}{}",i,".mp3");
 		ModeDialogList->push_back(file);
 	}

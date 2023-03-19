@@ -135,8 +135,8 @@ public:
 		std::wstring des;
 	};
 	struct ModePloat {//the ploat text of mode-story
-		int32_t index;
-		int32_t control;
+		uint8_t index;
+		uint8_t control;
 		std::wstring title;
 		std::wstring ploat;
 	};
@@ -155,29 +155,32 @@ public:
 	};
 	std::vector<ModeText>* modeTexts;//vector modetext
 	std::vector<ModePloat>* modePloats;//vector modeploat
-	std::vector<uint32_t> ploatCodes;//these codes can be changed to name in mode-story,then show names to player
 	std::vector<WindBot> bots;//all mode will load windbots from this
-    std::map<int, std::wstring> playerNames;
-	std::map<int, std::vector<std::wstring>> aiNames;//player+bot names when duel start
+    std::map<uint8_t, std::wstring> playerNames;
+	std::map<uint8_t, std::vector<std::wstring>> aiNames;//player+bot names when duel start
+    std::map<uint8_t, int32_t> team1;
+    std::map<uint8_t, int32_t> team2;
+    std::map<uint8_t, bool> relay;
 	epro::condition_variable* cv;//should lock thread when play mode-story sound,this cv is in duelclient.cpp
 	epro::mutex * lck;//should lock thread when play mode-story sound,this lck is in duelclient.cpp
 	int modeIndex;//decide to play what kind of mode rule,from meun-list getSelected
 	bool isMode;//the duel is mode?
 	bool isPlot;//the ploat of mode-story,if isPlot==true will break all no about ploat events
 	bool isEvent;//if isEvent==true,all events is notify_one() lck
-	bool flag_100000155;//card 100000155 play sound 
-	Deck deck;//player deck
-	uint8_t player;//new turn player,should distinguish ai and player when play mode-story duel sound
-	uint8_t rule;//the rule of duel,zcg|5ds......
+	bool flag_100000155;//card 100000155 play sound
+	uint8_t rule;//the rule of duel,zcg|story......
+    uint8_t totmode = 1;
+    uint8_t chapter;//story chapter
+    uint8_t totchapter = 2;
 	uint8_t plotStep;//the step of fun NextPlot()
 	uint8_t duelSoundIndex;//the index of mode-story sound,the sound is in  sound_manager.cpp
  	uint8_t plotIndex;//the index of plot,decide to set text plot
 	uint8_t character[6] = { 0,0,0,0,0,0 };
-    uint8_t totcharacter = 4;
+    uint8_t totcharacter;
 	void InitializeMode();
 	void DestoryMode();
 	void RefreshEntertainmentPlay(std::vector<ModeText>* modeTexts);
-	void RefreshControlState(uint32_t state, bool visible);
+	void RefreshControlState(uint8_t state);
 	void SetControlState(uint8_t index);
 	void ModePlayerReady(bool isAi);
 	void SetRule(uint8_t index);
@@ -191,7 +194,7 @@ public:
 	~Mode();
 private:
 	void SetCurrentDeck();
-	void LoadJson(epro::path_string path, uint32_t index);
+	void LoadJson(epro::path_string path, uint8_t index, uint8_t chapter = 0);
 	void LoadJsonInfo();
 };
 #define MODE_RULE_DEFAULT 0x1

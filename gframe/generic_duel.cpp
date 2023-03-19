@@ -409,9 +409,8 @@ void GenericDuel::PlayerReady(DuelPlayer* dp, bool is_ready, bool ai) {
 	NetServer::SendPacketToPlayer(nullptr, STOC_HS_PLAYER_CHANGE, scpc);
 	ResendToAll();
 	/////zdiy/////
-	if(mainGame->mode->isMode) {
+	if(mainGame->mode->isMode)
 		mainGame->mode->ModePlayerReady(ai);
-	}
 	/////zdiy/////
 }
 void GenericDuel::PlayerKick(DuelPlayer* dp, uint8_t pos) {
@@ -686,7 +685,7 @@ void GenericDuel::TPResult(DuelPlayer* dp, uint8_t tp) {
 		if(mainGame->mode->rule == MODE_RULE_ZCG || mainGame->mode->rule == MODE_RULE_ZCG_NO_RANDOM)
 			extracards.push_back(99710410);
 		if(mainGame->mode->rule == MODE_STORY)
-			extracards.push_back(99710411);
+            extracards.push_back(99710410 + mainGame->mode->chapter);
 	};
 	/////zdiy/////
 	OCG_NewCardInfo card_info = { 0, 0, 0, 0, 0, 0, POS_FACEDOWN_DEFENSE };
