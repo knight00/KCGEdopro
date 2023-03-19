@@ -186,7 +186,7 @@ public:
 	void SetRule(uint8_t index);
 	bool LoadWindBot(int port, epro::wstringview pass);
 	bool IsModeBot(std::wstring mode);
-	void NextPlot(uint8_t step = 0, uint8_t index = 0, uint32_t code = 0);
+	void NextPlot(uint8_t step = 0, uint8_t index = 0, uint32_t code = 0); //step: plotStep, index: ploat.json index
 	void ModePlaySound(uint8_t type, uint8_t index);
 	std::wstring GetPloat(uint8_t index, uint32_t code = 0);
 	long long GetSoundSeconds(uint32_t index);
@@ -614,7 +614,7 @@ public:
 	irr::gui::IGUIButton* btnHostConfirm2;
 	irr::gui::IGUIButton* btnHostCancel2;
 	uint8_t character[6] = {0,0,0,0,0,0};
-	uint8_t choose_player = -1;
+	uint8_t choose_player = -1; //0-5th players
 	irr::gui::IGUIWindow* wCharacter;
 	irr::gui::IGUIWindow* wCharacterSelect;
 	irr::gui::CGUIImageButton* btnCharacter;

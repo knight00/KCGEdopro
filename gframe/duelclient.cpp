@@ -76,11 +76,6 @@ uint16_t DuelClient::temp_port = 0;
 uint16_t DuelClient::temp_ver = 0;
 bool DuelClient::try_needed = false;
 
-////kdiy//////
-bool PlayAnime(uint32_t code, uint32_t code2, uint8_t cat);
-bool PlayAnimeC(std::wstring text, bool custom=false);
-////kdiy//////
-
 std::pair<uint32_t, uint16_t> DuelClient::ResolveServer(epro::stringview address, uint16_t port) {
 	uint32_t remote_addr = inet_addr(address.data());
 	if (remote_addr == static_cast<uint32_t>(-1)) {
@@ -1200,6 +1195,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 				mainGame->imageManager.scharacter[i] = mainGame->imageManager.character[0];
 				mainGame->imageManager.modeHead[i] = mainGame->imageManager.head[0];
 			}
+            gSoundManager->soundcount.clear();
 			////kdiy////////
 			if(mainGame->isHostingOnline) {
 				mainGame->ShowElement(mainGame->wRoomListPlaceholder);
@@ -1407,6 +1403,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		if(mainGame->wANCard->isVisible())
 			mainGame->HideElement(mainGame->wANCard);
         /////zdiy//////
+        gSoundManager->soundcount.clear();
         //not send rematch for stroy mode
 		if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
             mainGame->dInfo.checkRematch = false;
@@ -1474,15 +1471,170 @@ inline void Play(SoundManager::SFX sound) {
 // inline bool PlayChant(SoundManager::CHANT sound, uint32_t code) {
 // 	if(!mainGame->dInfo.isCatchingUp)
 // 		return gSoundManager->PlayChant(sound, code);
-inline bool PlayChant(SoundManager::CHANT sound, uint32_t code, uint32_t code2, int player, uint8_t extra = 0) {
+//    return true;
+//}
+inline bool PlayChantcode(SoundManager::CHANT sound, uint32_t code, uint32_t code2, const uint8_t player, uint8_t extra = 0) {
 	if(sound == SoundManager::CHANT::ACTIVATE && !gGameConfig->enablecsound) return false;
 	if(sound == SoundManager::CHANT::SUMMON && !gGameConfig->enablessound) return false;
 	if(sound == SoundManager::CHANT::ATTACK && !gGameConfig->enableasound) return false;
+	int character = mainGame->dInfo.current_player[player];
+	if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1))
+		character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
 	if(!mainGame->dInfo.isCatchingUp)
-		return gSoundManager->PlayChant(sound, code, code2, player, extra);
-/////kdiy///////
+		return gSoundManager->PlayChant(sound, code, code2, character, extra);
 	return true;
 }
+inline bool PlayChant(SoundManager::CHANT sound, ClientCard* card, const uint8_t player) {
+	uint32_t code = 0;
+	if(card != nullptr) code = card->code;
+	uint32_t code2 = 0;
+	if(card != nullptr) code2 = card->alias;
+	uint8_t extra = 0;
+	if(card != nullptr && (card->type & TYPE_FUSION)) extra |= 0x1;
+	if(card != nullptr && (card->type & TYPE_SYNCHRO)) extra |= 0x2;
+	if(card != nullptr && (card->type & TYPE_XYZ)) extra |= 0x4;
+	if(card != nullptr && (card->type & TYPE_LINK)) extra |= 0x8;
+	if(card != nullptr && (card->type & TYPE_RITUAL)) extra |= 0x10;
+	if(card != nullptr && (card->type & TYPE_PENDULUM)) extra |= 0x20;
+	return PlayChantcode(sound, code, code2, player, extra);
+}
+inline bool PlayAnimecode(uint32_t code, uint32_t code2, uint8_t cat) {
+	if(!gGameConfig->enableanime) return false;
+	if(cat == 1 && !gGameConfig->enablecanime) return false;
+	if(cat == 2 && !gGameConfig->enableaanime) return false;
+	if(cat == 0 && !gGameConfig->enablesanime) return false;
+    if(code < 1) return false;
+#ifdef _WIN32
+    std::wstring s2 = L"plugin\\MPC-HCPortable\\MPC-HCPortable.exe";
+	GetFileAttributes(s2.c_str());
+	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s2.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
+		return false;
+	std::wstring s1 = L"./movies/";
+	if(cat == 0)
+		s1 += L"s" + std::to_wstring(code) + L".mp4";
+	if(cat == 1)
+		s1 += L"c" + std::to_wstring(code) + L".mp4";
+	if(cat == 2)
+		s1 += L"a" + std::to_wstring(code) + L".mp4";
+	GetFileAttributes(s1.c_str());
+	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s1.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND)) {
+		s1 = L"./movies/";
+		if(cat == 0)
+		    s1 += L"s" + std::to_wstring(code2) + L".mp4";
+		if(cat == 1)
+		    s1 += L"c" + std::to_wstring(code2) + L".mp4";
+		if(cat == 2)
+		    s1 += L"a" + std::to_wstring(code2) + L".mp4";
+		GetFileAttributes(s1.c_str());	
+		if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s1.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
+		    return false;
+	}
+	STARTUPINFO si{ sizeof(si) };
+	PROCESS_INFORMATION pi{};
+	si.cb = sizeof(STARTUPINFO);
+	wchar_t exepath[100];
+	wcscat(exepath, (s2 + L" " + s1).c_str());
+    if(!CreateProcess(s2.c_str(), exepath, nullptr, nullptr, false, 0, nullptr, nullptr, &si, &pi))
+         return false;
+	gSoundManager->PauseMusic(true);
+	//auto hWnd = GetWindowHandle(mainGame->device->getVideoDriver());
+	/*SHELLEXECUTEINFO ShExecInfo = {0};
+	ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+	ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+	ShExecInfo.hwnd = hWnd;
+	ShExecInfo.lpVerb = L"open";
+	ShExecInfo.lpFile =  s2.c_str();
+	ShExecInfo.lpParameters = s1.c_str();
+	ShExecInfo.lpDirectory = NULL;
+	ShExecInfo.nShow = SW_SHOWNORMAL;
+	ShExecInfo.hInstApp = NULL;*/
+    //::SetParent(hWnd, GetDlgItem(IDC_STATIC)->m_hWnd);
+	/*ShellExecuteEx(&ShExecInfo);*/
+	//WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
+	//::ShowWindow(hWnd, SW_HIDE);
+	//CloseHandle(ShExecInfo.hProcess);
+	WaitForSingleObject(pi.hProcess, INFINITE);
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
+	//::ShowWindow(hWnd, SW_SHOW);
+	gSoundManager->PauseMusic(false);
+	return true;
+#elif __ANDROID__
+    auto a = L"";
+	if (cat == 0)
+		a = L"s";
+	if (cat == 1)
+		a = L"c";
+	if (cat == 2)
+		a = L"a";
+	auto s1 = epro::format(EPRO_TEXT("./movies/{}{}.mp4"), Utils::ToPathString(a), code);
+	if(!Utils::FileExists(s1)) {
+		s1 = epro::format(EPRO_TEXT("./movies/{}{}.mp4"), Utils::ToPathString(a), code2);
+		if(!Utils::FileExists(s1))
+		    return false;
+	}
+	// porting::openAnime(s1);
+	return false;
+#else
+	return false;
+#endif
+}
+inline bool PlayAnime(ClientCard* card, uint8_t cat) {
+	if(card == nullptr || card->code < 1) return false;
+	uint32_t code = card->code;
+	uint32_t code2 = 0;
+	if(card->alias && card->alias > 0) code2 = card->alias;
+	return PlayAnimecode(code, code2, cat);
+}
+inline bool PlayAnimeC(std::wstring text, bool custom) {
+	if(!gGameConfig->enableanime) return false;
+#ifdef _WIN32
+	std::wstring s2 = L"plugin\\MPC-HCPortable\\MPC-HCPortable.exe";
+	GetFileAttributes(s2.c_str());
+	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s2.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
+		return false;
+	std::wstring s1;
+	if(custom) s1 = L"movies\\custom\\";
+	else s1 = L"movies\\";
+	s1 += text;
+	s1 += L".mp4";
+	GetFileAttributes(s1.c_str());
+	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s1.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
+		return false;
+    STARTUPINFO si{ sizeof(si) };
+	PROCESS_INFORMATION pi{};
+	si.cb = sizeof(STARTUPINFO);
+	wchar_t exepath[100];
+	wcscat(exepath, (s2 + L" " + s1).c_str());
+    if(!CreateProcess(s2.c_str(), exepath, nullptr, nullptr, false, 0, nullptr, nullptr, &si, &pi))
+         return false;
+	gSoundManager->PauseMusic(true);
+	// SHELLEXECUTEINFO ShExecInfo = {0};
+	// ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+	// ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+	// ShExecInfo.hwnd = NULL;
+	// ShExecInfo.lpVerb = L"open";
+	// ShExecInfo.lpFile =  s2.c_str();
+	// ShExecInfo.lpParameters = s1.c_str();
+	// ShExecInfo.lpDirectory = NULL;
+	// ShExecInfo.nShow = SW_SHOWNORMAL;
+	// ShExecInfo.hInstApp = NULL;
+	// ShellExecuteEx(&ShExecInfo);
+	// WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
+	// CloseHandle(ShExecInfo.hProcess);
+    WaitForSingleObject(pi.hProcess, INFINITE);
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
+	gSoundManager->PauseMusic(false);
+	return true;
+#elif __ANDROID__
+    auto s1 = epro::format(EPRO_TEXT("./movies/custom/{}.mp4"), Utils::ToPathString(text));
+	if(!Utils::FileExists(s1)) return false;
+	return false;
+#else
+#endif
+}
+/////kdiy///////
 inline std::unique_lock<epro::mutex> LockIf() {
 	if(!mainGame->dInfo.isCatchingUp || !mainGame->dInfo.isReplay)
 		return std::unique_lock<epro::mutex>(mainGame->gMutex);
@@ -1501,36 +1653,36 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 			const auto reason = BufferIO::Read<uint32_t>(pbuf);
 			switch (code)
 			{
-				case 100000157:{
-					if(previous.controler != 1 || current.controler != 1) return;
-					if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
-					if(!(current.position & POS_FACEUP_DEFENSE)) return;
-					if(!(reason & REASON_RULE) || (reason &(REASON_DESTROY|REASON_REPLACE|REASON_COST|REASON_EFFECT|REASON_RETURN))) return;
-					mainGame->mode->NextPlot(CARD_SOUND_INDEX,12,code);
-					return;
-				}
-				case 63977008:{
-					if(previous.controler != 0 || current.controler != 0) return;
-					if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
-					if(!(reason & REASON_RULE) || (reason &(REASON_DESTROY|REASON_REPLACE|REASON_COST|REASON_EFFECT|REASON_RETURN))) return;
-					mainGame->mode->NextPlot(CARD_SOUND_INDEX,14,code);
-					return;
-				}
-				case 511009416:{
-					if(previous.controler != 0 || current.controler != 0) return;
-					if(!(reason & REASON_SPSUMMON)) return;
-					if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE)) return;
-					if(!(current.position & POS_FACEUP)) return;
-					mainGame->mode->NextPlot(CARD_SOUND_INDEX,16,code);
-					return;
-				}
-				case 100000143:{
-					if(previous.controler != 1 || current.controler != 1) return;
-					if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
-					if(!(reason & REASON_RULE) || (reason &(REASON_DESTROY|REASON_REPLACE|REASON_COST|REASON_EFFECT|REASON_RETURN))) return;
-					mainGame->mode->NextPlot(CARD_SOUND_INDEX,20,code);
-					return;
-				}
+				// case 100000157:{
+				// 	if(previous.controler != 1 || current.controler != 1) return;
+				// 	if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
+				// 	if(!(current.position & POS_FACEUP_DEFENSE)) return;
+				// 	if(!(reason & REASON_RULE) || (reason &(REASON_DESTROY|REASON_REPLACE|REASON_COST|REASON_EFFECT|REASON_RETURN))) return;
+				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,12,code);
+				// 	return;
+				// }
+				// case 63977008:{
+				// 	if(previous.controler != 0 || current.controler != 0) return;
+				// 	if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
+				// 	if(!(reason & REASON_RULE) || (reason &(REASON_DESTROY|REASON_REPLACE|REASON_COST|REASON_EFFECT|REASON_RETURN))) return;
+				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,14,code);
+				// 	return;
+				// }
+				// case 511009416:{
+				// 	if(previous.controler != 0 || current.controler != 0) return;
+				// 	if(!(reason & REASON_SPSUMMON)) return;
+				// 	if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE)) return;
+				// 	if(!(current.position & POS_FACEUP)) return;
+				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,16,code);
+				// 	return;
+				// }
+				// case 100000143:{
+				// 	if(previous.controler != 1 || current.controler != 1) return;
+				// 	if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
+				// 	if(!(reason & REASON_RULE) || (reason &(REASON_DESTROY|REASON_REPLACE|REASON_COST|REASON_EFFECT|REASON_RETURN))) return;
+				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,20,code);
+				// 	return;
+				// }
 				case 100000155:{
 					if(previous.controler != 1 || current.controler != 1) return;
 					if(!(reason & REASON_SPSUMMON)) return;
@@ -1539,28 +1691,28 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 					mainGame->mode->NextPlot(8,6,code);
 					return;
 				}
-				case 88559132:{
-					if(previous.controler != 0 || current.controler != 0) return;
-					if(!(reason & REASON_SPSUMMON)) return;
-					if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
-					if(!(current.position & POS_FACEUP)) return;
-					mainGame->mode->NextPlot(CARD_SOUND_INDEX,24,code);
-					return;
-				}
-				case 96182448:{
-					if(previous.controler != 0 || current.controler != 0) return;
-					if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
-					if(!(reason & REASON_RULE) || (reason &(REASON_DESTROY|REASON_REPLACE|REASON_COST|REASON_EFFECT|REASON_RETURN))) return;
-					mainGame->mode->NextPlot(CARD_SOUND_INDEX,29,code);
-					return;
-				}
-				case 18013090:{
-					if(previous.controler != 0 || current.controler != 0) return;
-					if(!(reason & REASON_SPSUMMON)) return;
-					if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE)) return;
-					if(!(current.position & POS_FACEUP)) return;
-					mainGame->mode->NextPlot(CARD_SOUND_INDEX,32,code);
-				}
+				// case 88559132:{
+				// 	if(previous.controler != 0 || current.controler != 0) return;
+				// 	if(!(reason & REASON_SPSUMMON)) return;
+				// 	if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
+				// 	if(!(current.position & POS_FACEUP)) return;
+				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,24,code);
+				// 	return;
+				// }
+				// case 96182448:{
+				// 	if(previous.controler != 0 || current.controler != 0) return;
+				// 	if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
+				// 	if(!(reason & REASON_RULE) || (reason &(REASON_DESTROY|REASON_REPLACE|REASON_COST|REASON_EFFECT|REASON_RETURN))) return;
+				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,29,code);
+				// 	return;
+				// }
+				// case 18013090:{
+				// 	if(previous.controler != 0 || current.controler != 0) return;
+				// 	if(!(reason & REASON_SPSUMMON)) return;
+				// 	if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE)) return;
+				// 	if(!(current.position & POS_FACEUP)) return;
+				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,32,code);
+				// }
 				default:
 					return;
 			}
@@ -1571,47 +1723,47 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 			ClientCard* pcard = mainGame->dField.GetCard(mainGame->LocalPlayer(info.controler), info.location, info.sequence, info.position);
 			switch (code)
 			{
-				case 511002846:{
-					if(!(pcard->type & TYPE_SPELL) || !(pcard->location & LOCATION_SZONE)) return;
-					if(pcard->controler != 0) return;
-					mainGame->mode->NextPlot(CARD_SOUND_INDEX,13,code);
-					return;
-				}
-				case 63977008:{
-					if(pcard->controler != 0) return;
-					if(!(pcard->type & TYPE_MONSTER) || !(pcard->location & LOCATION_MZONE)) return;
-					mainGame->mode->NextPlot(CARD_SOUND_INDEX,15,code);
-					return;
-				}
-				case 97077563:{
-					if(pcard->controler != 1) return;
-					if(!(pcard->type & TYPE_TRAP) || !(pcard->location & LOCATION_SZONE)) return;
-					mainGame->mode->NextPlot(CARD_SOUND_INDEX,18,code);
-					return;
-				}
-				case 100000158:{
-					if(pcard->controler != 1) return;
-					if(!(pcard->type & TYPE_SPELL) || !(pcard->location & LOCATION_SZONE)) return;
-					mainGame->mode->NextPlot(CARD_SOUND_INDEX,19,code);
-					return;
-				}
-				case 100000157:{
-					if(pcard->controler != 1) return;
-					mainGame->mode->NextPlot(CARD_SOUND_INDEX,17,code);
-					return;
-				}
-				case 100000143:{
-					if(pcard->controler != 1) return;
-					if(!(pcard->location & LOCATION_GRAVE)) return;
-					mainGame->mode->NextPlot(CARD_SOUND_INDEX,22,code);
-					return;
-				}
-				case 42079445:{
-					if(pcard->controler != 0) return;
-					if(!(pcard->location & LOCATION_SZONE)) return;
-					mainGame->mode->NextPlot(CARD_SOUND_INDEX,23,code);
-					return;
-				}
+				// case 511002846:{
+				// 	if(!(pcard->type & TYPE_SPELL) || !(pcard->location & LOCATION_SZONE)) return;
+				// 	if(pcard->controler != 0) return;
+				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,13,code);
+				// 	return;
+				// }
+				// case 63977008:{
+				// 	if(pcard->controler != 0) return;
+				// 	if(!(pcard->type & TYPE_MONSTER) || !(pcard->location & LOCATION_MZONE)) return;
+				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,15,code);
+				// 	return;
+				// }
+				// case 97077563:{
+				// 	if(pcard->controler != 1) return;
+				// 	if(!(pcard->type & TYPE_TRAP) || !(pcard->location & LOCATION_SZONE)) return;
+				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,18,code);
+				// 	return;
+				// }
+				// case 100000158:{
+				// 	if(pcard->controler != 1) return;
+				// 	if(!(pcard->type & TYPE_SPELL) || !(pcard->location & LOCATION_SZONE)) return;
+				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,19,code);
+				// 	return;
+				// }
+				// case 100000157:{
+				// 	if(pcard->controler != 1) return;
+				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,17,code);
+				// 	return;
+				// }
+				// case 100000143:{
+				// 	if(pcard->controler != 1) return;
+				// 	if(!(pcard->location & LOCATION_GRAVE)) return;
+				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,22,code);
+				// 	return;
+				// }
+				// case 42079445:{
+				// 	if(pcard->controler != 0) return;
+				// 	if(!(pcard->location & LOCATION_SZONE)) return;
+				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,23,code);
+				// 	return;
+				// }
 				case 100000155:{
 					if(pcard->controler != 1) return;
 					if((pcard->location & LOCATION_GRAVE)) {
@@ -1625,36 +1777,36 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 					}
 					return;
 				}
-			case 2295440:
-			case 100100001:{
-				if(pcard->controler != 0) return;
-				if(!(pcard->location & LOCATION_SZONE)) return;
-				mainGame->mode->NextPlot(CARD_SOUND_INDEX,27,code);
-				return;
-			}
-			case 511000197:{
-				if(pcard->controler != 1) return;
-				if(!(pcard->location & LOCATION_SZONE)) return;
-				mainGame->mode->NextPlot(CARD_SOUND_INDEX,28,code);
-				return;
-			}
-			case 23571046:{
-				if(pcard->controler != 0) return;
-				if(!(pcard->location & LOCATION_GRAVE)) return;
-				mainGame->mode->NextPlot(CARD_SOUND_INDEX,30,code);
-				return;
-			}
-			case 98273947:{
-				if(pcard->controler != 0) return;
-				if(!(pcard->location & LOCATION_SZONE)) return;
-				mainGame->mode->NextPlot(CARD_SOUND_INDEX,31,code);
-				return;
-			}
-			case 96182448:{
-				if(pcard->controler != 0) return;
-				if(!(pcard->location & LOCATION_GRAVE)) return;
-				mainGame->mode->NextPlot(CARD_SOUND_INDEX,33,code);
-			}
+			// case 2295440:
+			// case 100100001:{
+			// 	if(pcard->controler != 0) return;
+			// 	if(!(pcard->location & LOCATION_SZONE)) return;
+			// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,27,code);
+			// 	return;
+			// }
+			// case 511000197:{
+			// 	if(pcard->controler != 1) return;
+			// 	if(!(pcard->location & LOCATION_SZONE)) return;
+			// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,28,code);
+			// 	return;
+			// }
+			// case 23571046:{
+			// 	if(pcard->controler != 0) return;
+			// 	if(!(pcard->location & LOCATION_GRAVE)) return;
+			// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,30,code);
+			// 	return;
+			// }
+			// case 98273947:{
+			// 	if(pcard->controler != 0) return;
+			// 	if(!(pcard->location & LOCATION_SZONE)) return;
+			// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,31,code);
+			// 	return;
+			// }
+			// case 96182448:{
+			// 	if(pcard->controler != 0) return;
+			// 	if(!(pcard->location & LOCATION_GRAVE)) return;
+			// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,33,code);
+			// }
 			default:
 				return;
 			}
@@ -1713,10 +1865,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		is_swapping = false;
 	}
 	/////zdiy/////
-    if(mainGame->mode->isMode) {
+    if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
         mainGame->mode->cv = &cv;
         mainGame->mode->lck = &to_analyze_mutex;
-        ModeClientAnalyze(mainGame->mode->rule, pbuf, mainGame->dInfo.curMsg);
+        ModeClientAnalyze(mainGame->mode->chapter, pbuf, mainGame->dInfo.curMsg);
     }
 	/////zdiy////
 	switch(mainGame->dInfo.curMsg) {
@@ -1849,10 +2001,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			uint32_t code2 = 0;
 			if(cd->alias) code2 = cd->alias;
             mainGame->showcardalias = code2;
-			int character = mainGame->dInfo.current_player[player];
-			if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
-			if(!PlayAnime(data, code2, 1))
-				PlayChant(SoundManager::CHANT::ACTIVATE, data, code2, character);
+			if(!PlayAnimecode(cd->code, code2, 1))
+				PlayChantcode(SoundManager::CHANT::ACTIVATE, cd->code, code2, player);
 			/////kdiy//////	
 			Play(SoundManager::SFX::ACTIVATE);			
 			mainGame->WaitFrameSignal(30, lock);
@@ -3534,7 +3684,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
             mainGame->wHead[1]->setVisible(true);
         }
         ////zdiy////////
-		if(!PlayChant(SoundManager::CHANT::NEXTTURN, 0, 0, character))
+		if(!PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, player))
 		//////kdiy///
 		Play(SoundManager::SFX::NEXT_TURN);
 		//////kdiy///
@@ -3681,16 +3831,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		current.controler = mainGame->LocalPlayer(current.controler);
 		const auto reason = BufferIO::Read<uint32_t>(pbuf);
-		//////kdiy///
-		const auto player = previous.controler;
-		int character = mainGame->dInfo.current_player[player];
-		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
-		//////kdiy///
 		if (previous.location != current.location) {
 			if (reason & REASON_DESTROY)
 			//////kdiy///
 			{
-				if (!PlayChant(SoundManager::CHANT::DESTROY, 0, 0, character))
+				if (!PlayChant(SoundManager::CHANT::DESTROY, nullptr, previous.controler))
 			//////kdiy///					
 					Play(SoundManager::SFX::DESTROYED);
 			//////kdiy///
@@ -3699,7 +3844,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			else if (current.location & LOCATION_REMOVED)
 			//////kdiy///
 			{
-				if (!PlayChant(SoundManager::CHANT::BANISH, 0, 0, character))
+				if (!PlayChant(SoundManager::CHANT::BANISH, nullptr, previous.controler))
 			//////kdiy///					
 					Play(SoundManager::SFX::BANISHED);
 			//////kdiy///
@@ -3894,12 +4039,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 	}
 	case MSG_SET: {
 		//////kdiy///
-		const auto code = BufferIO::Read<uint32_t>(pbuf);
-		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+        CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		const auto player = mainGame->LocalPlayer(info.controler);
-		int character = mainGame->dInfo.current_player[player];
-		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
-		if(!PlayChant(SoundManager::CHANT::SET, 0, 0,character))
+		if(!PlayChant(SoundManager::CHANT::SET, nullptr, player))
 		//////kdiy///		
 		Play(SoundManager::SFX::SET);
 		/*const auto code = BufferIO::Read<uint32_t>(pbuf);*/
@@ -3950,10 +4092,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		const auto player = mainGame->LocalPlayer(info.controler);	
 		/////kdiy//////
+	    ClientCard* pcard = mainGame->dField.GetCard(player, info.location, info.sequence);	
 		if(!mainGame->dInfo.isCatchingUp) {
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 			////kdiy///////////
-			ClientCard* pcard = mainGame->dField.GetCard(player, info.location, info.sequence);	
 			std::wstring str(gDataManager->GetName(code));
             auto index = str.find(L"(");
 			auto index_2 = str.find(65288);
@@ -3996,13 +4138,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->WaitFrameSignal(11, lock);
 		}
 		/////kdiy//////
-		auto cd = gDataManager->GetCardData(code);
-		uint32_t code2 = 0;
-		if(cd->alias) code2 = cd->alias;
-		int character = mainGame->dInfo.current_player[player];
-		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
-		if(!PlayAnime(code, code2, 0))
-		    PlayChant(SoundManager::CHANT::SUMMON, code, code2, character);
+		if(!PlayAnime(pcard, 0))
+		    PlayChant(SoundManager::CHANT::SUMMON, pcard, player);
 		/////kdiy//////
 		return true;
 	}
@@ -4016,6 +4153,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		//if(!PlayChant(SoundManager::CHANT::SUMMON, code))
 		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		const auto player = mainGame->LocalPlayer(info.controler);
+		ClientCard* pcard = mainGame->dField.GetCard(player, info.location, info.sequence);
 		bool chklast = true;
 		if(code == 0) {
 		    const auto code = BufferIO::Read<uint32_t>(pbuf);
@@ -4028,7 +4166,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		if(!mainGame->dInfo.isCatchingUp) {
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 			////kdiy///////////
-			ClientCard* pcard = mainGame->dField.GetCard(player, info.location, info.sequence);	
 			std::wstring str(gDataManager->GetName(code));
             auto index = str.find(L"(");
 			auto index_2 = str.find(65288);
@@ -4071,22 +4208,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		}
 		/////kdiy//////
 		if(!chklast) return true;
-		auto cd = gDataManager->GetCardData(code);
-		uint32_t code2 = 0;
-		if(cd->alias) code2 = cd->alias;
-		int character = mainGame->dInfo.current_player[player];
-		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
-		if(!PlayAnime(code, code2, 0)) {
-			uint8_t extra = 0;
-			ClientCard* pcard = mainGame->dField.GetCard(player, info.location, info.sequence);	
-			if(cd->type & TYPE_FUSION) extra += 0x1;
-			if(cd->type & TYPE_SYNCHRO) extra += 0x2;
-			if(cd->type & TYPE_XYZ) extra += 0x4;
-			if(cd->type & TYPE_LINK) extra += 0x8;
-			if(cd->type & TYPE_RITUAL) extra += 0x10;
-			if(cd->type & TYPE_PENDULUM) extra += 0x20;
-		    PlayChant(SoundManager::CHANT::SUMMON, code, code2, character, extra);
-		}
+		if(!PlayAnime(pcard, 0))
+		    PlayChant(SoundManager::CHANT::SUMMON, pcard, player);
 		/////kdiy//////
 		return true;
 	}
@@ -4109,7 +4232,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		if(!mainGame->dInfo.isCatchingUp) {
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 			////kdiy///////////
-			ClientCard* pcard = mainGame->dField.GetCard(info.controler, info.location, info.sequence);	
 			std::wstring str(gDataManager->GetName(code));
             auto index = str.find(L"(");
 			auto index_2 = str.find(65288);
@@ -4154,13 +4276,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->WaitFrameSignal(11, lock);
 		}
 		/////kdiy//////
-		auto cd = gDataManager->GetCardData(code);
-		uint32_t code2 = 0;
-		if(cd->alias) code2 = cd->alias;
-		int character = mainGame->dInfo.current_player[info.controler];
-		if((info.controler == 0 && !mainGame->dInfo.isTeam1) || (info.controler == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[info.controler] + mainGame->dInfo.team1;
-		if(!PlayAnime(code, code2, 0))
-			PlayChant(SoundManager::CHANT::SUMMON, code, code2, character);
+		if(!PlayAnime(pcard, 0))
+			PlayChant(SoundManager::CHANT::SUMMON, pcard, info.controler);
 		/////kdiy//////
 		return true;
 	}
@@ -4170,11 +4287,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 	}	
 	case MSG_CHAINING: {
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
-		/////kdiy//////	
+		/////kdiy//////
 		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		const auto cc = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
-		int character = mainGame->dInfo.current_player[cc];
-		if((cc == 0 && !mainGame->dInfo.isTeam1) || (cc == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[cc] + mainGame->dInfo.team1;
 		auto cd = gDataManager->GetCardData(code);
 		uint32_t code2 = 0;
 		if(cd->alias) code2 = cd->alias;
@@ -4203,12 +4318,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			// 	cv::destroyWindow(window_name);
 			// }
         //////ktest///////
-		if(!PlayAnime(code, code2, 1)) {
+		if(!PlayAnimecode(code, code2, 1)) {
 			ClientCard* pcard = mainGame->dField.GetCard(mainGame->LocalPlayer(info.controler), info.location, info.sequence, info.position);
 			if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && (info.position == POS_FACEUP) && info.location == LOCATION_SZONE && (info.sequence == 0 || info.sequence == 4 || info.sequence == 6 || info.sequence == 7))
-			    PlayChant(SoundManager::CHANT::PENDULUM, code, code2, character);
+			    PlayChantcode(SoundManager::CHANT::PENDULUM, code, code2, cc);
 			else
-		        PlayChant(SoundManager::CHANT::ACTIVATE, code, code2, character);
+		        PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, cc);
 		}
 		/////kdiy//////			
 			Play(SoundManager::SFX::ACTIVATE);	
@@ -4406,9 +4521,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			}
 		}
 		//////kdiy///
-		int character = mainGame->dInfo.current_player[player];
-		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
-		PlayChant(SoundManager::CHANT::DRAW, 0, 0, character);
+		PlayChant(SoundManager::CHANT::DRAW, nullptr, player);
 		//////kdiy///				
 		for(uint32_t i = 0; i < count; ++i) {
 			Play(SoundManager::SFX::DRAW);
@@ -4427,9 +4540,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 	case MSG_DAMAGE: {
 		//////kdiy///
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
-		int character = mainGame->dInfo.current_player[player];
-		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
-		if(!PlayChant(SoundManager::CHANT::DAMAGE, 0, 0, character))
+		if(!PlayChant(SoundManager::CHANT::DAMAGE, nullptr, player))
 		//////kdiy///
 		Play(SoundManager::SFX::DAMAGE);
 		//////kdiy///
@@ -4473,9 +4584,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 	case MSG_RECOVER: {
 		//////kdiy///
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
-		int character = mainGame->dInfo.current_player[player];
-		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
-		if(!PlayChant(SoundManager::CHANT::RECOVER, 0, 0, character))
+		if(!PlayChant(SoundManager::CHANT::RECOVER, nullptr, player))
 		//////kdiy///
 		Play(SoundManager::SFX::RECOVER);
 		//////kdiy///
@@ -4520,9 +4629,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		//////kdiy///
 		CoreUtils::loc_info info1 = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		const auto player = mainGame->LocalPlayer(info1.controler);
-		int character = mainGame->dInfo.current_player[player];
-		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
-		if(!PlayChant(SoundManager::CHANT::EQUIP, 0, 0, character))
+		if(!PlayChant(SoundManager::CHANT::EQUIP, nullptr, player))
 		//////kdiy///			
 		Play(SoundManager::SFX::EQUIP);
 		//////kdiy///		
@@ -4616,9 +4723,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 	case MSG_PAY_LPCOST: {
 		//////kdiy///
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
-		int character = mainGame->dInfo.current_player[player];
-		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
-		if(!PlayChant(SoundManager::CHANT::DAMAGE, 0, 0, character))
+		if(!PlayChant(SoundManager::CHANT::DAMAGE, nullptr, player))
 		//////kdiy///
 		Play(SoundManager::SFX::DAMAGE);
 		//////kdiy///
@@ -4706,13 +4811,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		mainGame->dField.attacker = mainGame->dField.GetCard(info1.controler, info1.location, info1.sequence);
 		/////kdiy//////	
 		const auto player = mainGame->LocalPlayer(info1.controler);
-		int character = mainGame->dInfo.current_player[player];
-		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
 		//if(!PlayChant(SoundManager::CHANT::ATTACK, mainGame->dField.attacker->code))
-		uint32_t code = 0;
-		if(mainGame->dField.attacker->alias) code = mainGame->dField.attacker->alias;
-		if(!PlayAnime(mainGame->dField.attacker->code, code, 2))
-		    PlayChant(SoundManager::CHANT::ATTACK, mainGame->dField.attacker->code, code, character);
+		if(!PlayAnime(mainGame->dField.attacker, 2))
+		    PlayChant(SoundManager::CHANT::ATTACK, mainGame->dField.attacker, player);
 		/////kdiy//////			
 			Play(SoundManager::SFX::ATTACK);			
 		if(mainGame->dInfo.isCatchingUp)
@@ -5708,155 +5809,4 @@ void DuelClient::ReplayPrompt(bool local_stream) {
 		else last_replay.SaveReplay(EPRO_TEXT("_LastReplay"));
 	}
 }
-//////kdiy////////
-// #ifdef _WIN32
-// static HWND GetWindowHandle(irr::video::IVideoDriver* driver) {
-// 	switch(driver->getDriverType()) {
-// #if !(IRRLICHT_VERSION_MAJOR==1 && IRRLICHT_VERSION_MINOR==9)
-// 	case irr::video::EDT_DIRECT3D8:
-// 		return static_cast<HWND>(driver->getExposedVideoData().D3D8.HWnd);
-// #endif
-// 	case irr::video::EDT_DIRECT3D9:
-// 		return static_cast<HWND>(driver->getExposedVideoData().D3D9.HWnd);
-// 	case irr::video::EDT_OPENGL:
-// #if (IRRLICHT_VERSION_MAJOR==1 && IRRLICHT_VERSION_MINOR==9)
-// 	case irr::video::EDT_OGLES1:
-// 	case irr::video::EDT_OGLES2:
-// #endif
-// 		return static_cast<HWND>(driver->getExposedVideoData().OpenGLWin32.HWnd);
-// 	default:
-// 		break;
-// 	}
-// 	return nullptr;
-// }
-// #endif
-bool PlayAnime(uint32_t code, uint32_t code2, uint8_t cat) {
-	if(!gGameConfig->enableanime) return false;
-	if(cat == 1 && !gGameConfig->enablecanime) return false;
-	if(cat == 2 && !gGameConfig->enableaanime) return false;
-	if(cat == 0 && !gGameConfig->enablesanime) return false;
-#ifdef _WIN32
-    std::wstring s2 = L"plugin\\MPC-HCPortable\\MPC-HCPortable.exe";
-	GetFileAttributes(s2.c_str());
-	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s2.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
-		return false;
-	std::wstring s1 = L"./movies/";
-	if(cat == 0)
-		s1 += L"s" + std::to_wstring(code) + L".mp4";
-	if(cat == 1)
-		s1 += L"c" + std::to_wstring(code) + L".mp4";
-	if(cat == 2)
-		s1 += L"a" + std::to_wstring(code) + L".mp4";
-	GetFileAttributes(s1.c_str());
-	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s1.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND)) {
-		s1 = L"./movies/";
-		if(cat == 0)
-		    s1 += L"s" + std::to_wstring(code2) + L".mp4";
-		if(cat == 1)
-		    s1 += L"c" + std::to_wstring(code2) + L".mp4";
-		if(cat == 2)
-		    s1 += L"a" + std::to_wstring(code2) + L".mp4";
-		GetFileAttributes(s1.c_str());	
-		if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s1.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
-		    return false;
-	}
-	STARTUPINFO si{ sizeof(si) };
-	PROCESS_INFORMATION pi{};
-	si.cb = sizeof(STARTUPINFO);
-	wchar_t exepath[100];
-	wcscat(exepath, (s2 + L" " + s1).c_str());
-    if(!CreateProcess(s2.c_str(), exepath, nullptr, nullptr, false, 0, nullptr, nullptr, &si, &pi))
-         return false;
-	gSoundManager->PauseMusic(true);
-	//auto hWnd = GetWindowHandle(mainGame->device->getVideoDriver());
-	/*SHELLEXECUTEINFO ShExecInfo = {0};
-	ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
-	ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-	ShExecInfo.hwnd = hWnd;
-	ShExecInfo.lpVerb = L"open";
-	ShExecInfo.lpFile =  s2.c_str();
-	ShExecInfo.lpParameters = s1.c_str();
-	ShExecInfo.lpDirectory = NULL;
-	ShExecInfo.nShow = SW_SHOWNORMAL;
-	ShExecInfo.hInstApp = NULL;*/
-    //::SetParent(hWnd, GetDlgItem(IDC_STATIC)->m_hWnd);
-	/*ShellExecuteEx(&ShExecInfo);*/
-	//WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
-	//::ShowWindow(hWnd, SW_HIDE);
-	//CloseHandle(ShExecInfo.hProcess);
-	WaitForSingleObject(pi.hProcess, INFINITE);
-	CloseHandle(pi.hProcess);
-	CloseHandle(pi.hThread);
-	//::ShowWindow(hWnd, SW_SHOW);
-	gSoundManager->PauseMusic(false);
-	return true;
-#elif __ANDROID__
-    auto a = L"";
-	if (cat == 0)
-		a = L"s";
-	if (cat == 1)
-		a = L"c";
-	if (cat == 2)
-		a = L"a";
-	auto s1 = epro::format(EPRO_TEXT("./movies/{}{}.mp4"), Utils::ToPathString(a), code);
-	if(!Utils::FileExists(s1)) {
-		s1 = epro::format(EPRO_TEXT("./movies/{}{}.mp4"), Utils::ToPathString(a), code2);
-		if(!Utils::FileExists(s1))
-		    return false;
-	}
-	// porting::openAnime(s1);
-	return false;
-#else
-	return false;
-#endif
-}
-bool PlayAnimeC(std::wstring text, bool custom) {
-	if(!gGameConfig->enableanime) return false;
-#ifdef _WIN32
-	std::wstring s2 = L"plugin\\MPC-HCPortable\\MPC-HCPortable.exe";
-	GetFileAttributes(s2.c_str());
-	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s2.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
-		return false;
-	std::wstring s1;
-	if(custom) s1 = L"movies\\custom\\";
-	else s1 = L"movies\\";
-	s1 += text;
-	s1 += L".mp4";
-	GetFileAttributes(s1.c_str());
-	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s1.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
-		return false;
-    STARTUPINFO si{ sizeof(si) };
-	PROCESS_INFORMATION pi{};
-	si.cb = sizeof(STARTUPINFO);
-	wchar_t exepath[100];
-	wcscat(exepath, (s2 + L" " + s1).c_str());
-    if(!CreateProcess(s2.c_str(), exepath, nullptr, nullptr, false, 0, nullptr, nullptr, &si, &pi))
-         return false;
-	gSoundManager->PauseMusic(true);
-	// SHELLEXECUTEINFO ShExecInfo = {0};
-	// ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
-	// ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-	// ShExecInfo.hwnd = NULL;
-	// ShExecInfo.lpVerb = L"open";
-	// ShExecInfo.lpFile =  s2.c_str();
-	// ShExecInfo.lpParameters = s1.c_str();
-	// ShExecInfo.lpDirectory = NULL;
-	// ShExecInfo.nShow = SW_SHOWNORMAL;
-	// ShExecInfo.hInstApp = NULL;
-	// ShellExecuteEx(&ShExecInfo);
-	// WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
-	// CloseHandle(ShExecInfo.hProcess);
-    WaitForSingleObject(pi.hProcess, INFINITE);
-	CloseHandle(pi.hProcess);
-	CloseHandle(pi.hThread);
-	gSoundManager->PauseMusic(false);
-	return true;
-#elif __ANDROID__
-    auto s1 = epro::format(EPRO_TEXT("./movies/custom/{}.mp4"), Utils::ToPathString(text));
-	if(!Utils::FileExists(s1)) return false;
-	return false;
-#else
-#endif
-}
-//////kdiy////////
 }

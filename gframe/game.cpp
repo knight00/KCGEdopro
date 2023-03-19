@@ -153,12 +153,13 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
             mainGame->mode->character[i] = 0;
         if(mainGame->mode->chapter == 1) {
 			//players icon set
-            mainGame->mode->character[0] = 1;
-            mainGame->mode->character[1] = 2;
+            mainGame->mode->character[0] = 1; //Player1: Yusei
+            mainGame->mode->character[1] = 2; //Player1: Dark Siner
+            gSoundManager->character[0] = 15; //Set Player 1 voice Yusei 
         } else {
             mainGame->mode->character[0] = 2;
             mainGame->mode->character[1] = 1;
-            mainGame->mode->character[2] = 3;
+            mainGame->mode->character[2] = 3; //Player3: Paradox
         }
         for(int i = 0; i < 6; ++i)
             mainGame->imageManager.modeHead[i] = mainGame->imageManager.head[mainGame->mode->character[i]];
@@ -396,8 +397,7 @@ void Mode::DestoryMode()
  			rule = MODE_RULE_ZCG;
  	} else if(index >= totmode) {
  		rule = MODE_STORY;
-        for(uint8_t i = 0; i < totchapter; i++)
-            chapter = totmode + i;
+        chapter = index - totmode + 1;
  	} else
  		rule = MODE_RULE_DEFAULT;
 }
