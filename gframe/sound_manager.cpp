@@ -421,19 +421,19 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 					std::string esound = "";
 					for(int i = 0; i < count; i++) {
 						std::string sound = list[i];
-						if ((extra & 0x1) && sound.find("fusion") != std::string::npos) {
+						if((extra & 0x1) && sound.find("fusion") != std::string::npos) {
 							extrasound = 1;
 							list_fusion.push_back(sound);
 						}
-						if ((extra & 0x2) && sound.find("synchro") != std::string::npos) {
+						if((extra & 0x2) && sound.find("synchro") != std::string::npos) {
 							extrasound = 2;
 							list_synchro.push_back(sound);
 						}
-						if ((extra & 0x4) && sound.find("xyz") != std::string::npos) {
+						if((extra & 0x4) && sound.find("xyz") != std::string::npos) {
 							extrasound = 3;
 							list_xyz.push_back(sound);
 						}
-						if ((extra & 0x8) && sound.find("link") != std::string::npos) {
+						if((extra & 0x8) && sound.find("link") != std::string::npos) {
 							extrasound = 4;
 							list_link.push_back(sound);
 						}
@@ -441,7 +441,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 							extrasound = 5;
 							list_ritual.push_back(sound);
 						}
-						if ((extra & 0x20) && sound.find("pendulum") != std::string::npos) {
+						if((extra & 0x20) && sound.find("pendulum") != std::string::npos) {
 							extrasound = 6;
 							list_pendulum.push_back(sound);
 						}
@@ -503,42 +503,54 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 			} else {
 				std::vector<std::string> list;
 				const auto extensions = mixer->GetSupportedSoundExtensions();
-				for (const auto& ext : extensions) {
+				for(const auto& ext : extensions) {
 					const auto filename = epro::format("{}.{}", chant_it->second, Utils::ToUTF8IfNeeded(ext));
-					if (Utils::FileExists(Utils::ToPathString(filename)))
+					if(Utils::FileExists(Utils::ToPathString(filename)))
 						list.push_back(filename);
-					for (int i = 1; i < 6; i++) {
+					for(int i = 1; i < 6; i++) {
 						const auto filename2 = epro::format("{}_{}.{}", chant_it->second, i, Utils::ToUTF8IfNeeded(ext));
 						if (Utils::FileExists(Utils::ToPathString(filename2)))
 							list.push_back(filename2);
 					}
 				}
+				for(auto file : gSoundManager->soundcount)
+					list.erase(std::remove(list.begin(), list.end(), file), list.end());
 				int count = list.size();
 				if(count > 0) {
 					int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+                    if(std::find(gSoundManager->soundcount.begin(), gSoundManager->soundcount.end(), list[soundno]) != gSoundManager->soundcount.end())
+                        return false;
+                    gSoundManager->soundcount.push_back(list[soundno]);
 					StopSounds();
 					return mixer->PlaySound(list[soundno]);
-				}
+				} else
+					return false;
 			}
 		} else {
 				std::vector<std::string> list;
 				const auto extensions = mixer->GetSupportedSoundExtensions();
-				for (const auto& ext : extensions) {
+				for(const auto& ext : extensions) {
 					const auto filename = epro::format("{}.{}", chant_it2->second, Utils::ToUTF8IfNeeded(ext));
-					if (Utils::FileExists(Utils::ToPathString(filename)))
+					if(Utils::FileExists(Utils::ToPathString(filename)))
 						list.push_back(filename);
-					for (int i = 1; i < 6; i++) {
+					for(int i = 1; i < 6; i++) {
 						const auto filename2 = epro::format("{}_{}.{}", chant_it2->second, i, Utils::ToUTF8IfNeeded(ext));
-						if (Utils::FileExists(Utils::ToPathString(filename2)))
+						if(Utils::FileExists(Utils::ToPathString(filename2)))
 							list.push_back(filename2);
 					}
 				}
+				for(auto file : gSoundManager->soundcount)
+					list.erase(std::remove(list.begin(), list.end(), file), list.end());
 				int count = list.size();
 				if(count > 0) {
 					int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+                    if(std::find(gSoundManager->soundcount.begin(), gSoundManager->soundcount.end(), list[soundno]) != gSoundManager->soundcount.end())
+                        return false;
+                    gSoundManager->soundcount.push_back(list[soundno]);
 					StopSounds();
 					return mixer->PlaySound(list[soundno]);
-				}
+				} else
+					return false;
 			}
 		return true;
 	}
