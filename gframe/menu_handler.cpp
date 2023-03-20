@@ -552,7 +552,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					mainGame->icon[i]->setEnabled(true);
 				}
 #ifdef VIP
-				    gSoundManager->PlayChant(SoundManager::CHANT::STARTUP, 0, 0, mainGame->choose_player);
+				gSoundManager->PlayChant(SoundManager::CHANT::STARTUP, 0, 0, mainGame->choose_player);
 #endif
 				mainGame->choose_player = -1;
 				mainGame->wCharacter->setVisible(false);

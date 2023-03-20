@@ -89,7 +89,7 @@ void SoundManager::RefreshBGMList() {
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/playmaker"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/soulburner"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/blueangel"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/darksiner"));
+	//Utils::MakeDirectory(EPRO_TEXT("./sound/character/darksiner"));
 	////////kdiy////
 	Utils::MakeDirectory(EPRO_TEXT("./sound/BGM/"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/BGM/duel"));
@@ -221,7 +221,7 @@ void SoundManager::RefreshChantsList() {
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/playmaker/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/soulburner/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/blueangel/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/darksiner/{}"), chantType.second));
+		//searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/darksiner/{}"), chantType.second));
 
 		for (auto path : searchPath)
 			Utils::MakeDirectory(path);
@@ -286,9 +286,9 @@ int32_t SoundManager::GetSoundDuration(const std::string& name) {
 #ifdef BACKEND
     if(mixer)
 		return mixer->GetSoundDuration(name);
-	else return -1;
+	else return 10000;
 #else
-	return -1;
+	return 10000;
 #endif
 }
 void SoundManager::PlayModeSound(uint8_t index) {

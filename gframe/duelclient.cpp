@@ -2073,21 +2073,15 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		case HINT_AVATAR: {
 			auto text = gDataManager->GetDesc(data, mainGame->dInfo.compat_mode).data();
 			if(mainGame->dInfo.isTeam1) {
-				if(player == 0) {
-					gSoundManager->character[mainGame->dInfo.current_player[0]] = 7;
+				if(player == 0)
 				    mainGame->imageManager.SetAvatar(mainGame->dInfo.current_player[0], text);
-				} else {
-					gSoundManager->character[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1] = 7;
+				else
 					mainGame->imageManager.SetAvatar(mainGame->dInfo.current_player[1] + mainGame->dInfo.team1, text);
-				}
 			} else {	
-				if(player == 0) {
-					gSoundManager->character[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1] = 7;
+				if(player == 0)
 					mainGame->imageManager.SetAvatar(mainGame->dInfo.current_player[0] + mainGame->dInfo.team1, text);
-				} else {
-					gSoundManager->character[mainGame->dInfo.current_player[1]] = 7;
+				else
 					mainGame->imageManager.SetAvatar(mainGame->dInfo.current_player[1], text);
-				}
 			}	
 			break;			
 		}		
