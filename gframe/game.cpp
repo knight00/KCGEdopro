@@ -90,8 +90,7 @@ static inline epro::path_string NoSkinLabel() {
 	return Utils::ToPathString(gDataManager->GetSysString(2065));
 }
 /////zdiy//////
-Mode::Mode()
-{
+Mode::Mode() {
 	modeTexts = nullptr;
 	modePloats = nullptr;
 	isMode = false;
@@ -106,26 +105,8 @@ Mode::Mode()
 	duelSoundIndex = 0;
 	rule = MODE_RULE_DEFAULT;
     chapter = 0;
-    totcharacter = 4;
 	LoadJsonInfo();
 };
-void Mode::ModePlaySound(uint8_t type, uint8_t index) {
-	duelSoundIndex = index;
-	switch (type)
-	{
-		case Ploat:
-			gSoundManager->StopSounds();
-			gSoundManager->PlayModeSound(Ploat, index);
-			break;
-		case Duel:
-			//threadSleep = true;
-			//gSoundManager->StopSounds();
-			gSoundManager->PlayModeSound(Duel, index);
-			break;
-		default:
-			break;
-	}
-}
 std::wstring Mode::GetPloat(uint8_t index, uint32_t code) {
 	std::wstring str = L"";
 	if(index < 0 || index >= mainGame->mode->modePloats->size()) return str;
@@ -155,7 +136,8 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 			//players icon set
             mainGame->mode->character[0] = 1; //Player1: Yusei
             mainGame->mode->character[1] = 2; //Player1: Dark Siner
-            gSoundManager->character[0] = 15; //Set Player 1 voice Yusei 
+            gSoundManager->character[0] = 15; //Set Player 1 voice Yusei
+            gSoundManager->character[1] = 27; //Set Player 1 voice Yusei 
         } else {
             mainGame->mode->character[0] = 2;
             mainGame->mode->character[1] = 1;
@@ -173,15 +155,15 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 			mainGame->HideElement(mainGame->wPloat);
 		    mainGame->ShowElement(mainGame->wChBody[i]);
 			mainGame->ShowElement(mainGame->wChPloatBody[i]);
-			ModePlaySound(SOUND::Ploat, plotIndex);
+			gSoundManager->PlayModeSound(plotIndex);
 			mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
 		} else if(plotStep == 2) {
 		    mainGame->ShowElement(mainGame->wChBody[i]);
 			mainGame->ShowElement(mainGame->wChPloatBody[i]);
-			ModePlaySound(SOUND::Ploat, plotIndex);
+			gSoundManager->PlayModeSound(plotIndex);
 			mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
 		} else if(plotStep < 5) {
-			ModePlaySound(SOUND::Ploat, plotIndex);
+			gSoundManager->PlayModeSound(plotIndex);
 			mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
 		} else if(plotStep == 6) {
 			isPlot = false;
@@ -199,7 +181,7 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 			isPlot = true;
 		    mainGame->ShowElement(mainGame->wChBody[i]);
 			mainGame->ShowElement(mainGame->wChPloatBody[i]);
-			ModePlaySound(SOUND::Ploat, plotIndex);
+			gSoundManager->PlayModeSound(plotIndex);
 			mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
 			cv->wait(lck);
 			isEvent = true;
@@ -209,11 +191,11 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 			mainGame->HideElement(mainGame->wChPloatBody[1]);
 			mainGame->HideElement(mainGame->wChBody[0]);
 			mainGame->HideElement(mainGame->wChBody[1]);
-			ModePlaySound(SOUND::Ploat, 21);
+			gSoundManager->PlayModeSound(21);
 			mainGame->ShowElement(mainGame->wChPloatBody[1]);
 			mainGame->ShowElement(mainGame->wChBody[1]);
 			mainGame->stChPloatInfo[1]->setText(GetPloat(21, 100000155).data());
-			cv->wait_for(lck, std::chrono::milliseconds(GetSoundSeconds(duelSoundIndex)));
+			cv->wait_for(lck, std::chrono::milliseconds(gSoundManager->GetSoundDuration(gSoundManager->ModeDialogList->at(21))));
 			mainGame->stChPloatInfo[1]->setText(L"");
 			mainGame->HideElement(mainGame->wChBody[1]);
 			mainGame->HideElement(mainGame->wChPloatBody[1]);
@@ -223,10 +205,10 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 		} else if(plotStep == 9) {
 		    mainGame->ShowElement(mainGame->wChBody[i]);
 			mainGame->ShowElement(mainGame->wChPloatBody[i]);
-			ModePlaySound(SOUND::Ploat, plotIndex);
+			gSoundManager->PlayModeSound(plotIndex);
 			mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
 		} else if(plotStep <= 13) {
-			ModePlaySound(SOUND::Ploat, plotIndex);
+			gSoundManager->PlayModeSound(plotIndex);
 			mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
 		} else if(plotStep == 14) {
 			cv->notify_one();
@@ -236,7 +218,7 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 			std::unique_lock<epro::mutex> lck(*this->lck);
 			isPlot = true;
 			isEvent = true;
-			ModePlaySound(SOUND::Ploat, plotIndex);
+			gSoundManager->PlayModeSound(plotIndex);
 		    mainGame->ShowElement(mainGame->wChBody[i]);
 			mainGame->ShowElement(mainGame->wChPloatBody[i]);
 			mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex, code).data());
@@ -338,7 +320,7 @@ void Mode::RefreshControlState(uint8_t state)
 	mainGame->chkEntertainmentMode_1Check->setVisible(false);
 	mainGame->cbEntertainmentMode_1Bot->setVisible(false);
 	if(state > 0) { //duel mode
-        if(state <= totmode) {
+        if(state <= PLAY_MODE) {
             mainGame->chkEntertainmentPrepReady->setVisible(true);
             mainGame->chkEntertainmentMode_1Check->setVisible(true);
             mainGame->cbEntertainmentMode_1Bot->setVisible(true);
@@ -359,7 +341,7 @@ void Mode::SetControlState(uint8_t index)
 	mainGame->btnEntertainmentStartGame->setEnabled(false);
 	mainGame->lstEntertainmentPlayList->setEnabled(true);
 	mainGame->btnEntertainmentExitGame->setEnabled(true);
-	if(index < totmode) { //duel mode
+	if(index < PLAY_MODE) { //duel mode
 		mainGame->chkEntertainmentPrepReady->setEnabled(true);
 		mainGame->chkEntertainmentPrepReady->setChecked(false);
 		mainGame->chkEntertainmentMode_1Check->setEnabled(true);
@@ -395,9 +377,9 @@ void Mode::DestoryMode()
  			rule = MODE_RULE_ZCG_NO_RANDOM;
  		else
  			rule = MODE_RULE_ZCG;
- 	} else if(index >= totmode) {
+ 	} else if(index >= PLAY_MODE) {
  		rule = MODE_STORY;
-        chapter = index - totmode + 1;
+        chapter = index - PLAY_MODE + 1;
  	} else
  		rule = MODE_RULE_DEFAULT;
 }
@@ -475,13 +457,13 @@ void Mode::LoadJson(epro::path_string path, uint8_t index, uint8_t chapter) {
 void Mode::LoadJsonInfo() {
     if(gGameConfig->locale == EPRO_TEXT("Chs")) {
         LoadJson(EPRO_TEXT("./mode/languages/Chs/mode.json"), 0);
-        for(uint8_t chapter = 1; chapter <= totchapter; chapter++) {
+        for(uint8_t chapter = 1; chapter <= CHAPTER; chapter++) {
             if(Utils::FileExists(epro::format(EPRO_TEXT("./mode/languages/Chs/ploat{}.json"), chapter)))
                 LoadJson(epro::format(EPRO_TEXT("./mode/languages/Chs/ploat{}.json"), chapter), 1, chapter);
         }
     } else {
         LoadJson(EPRO_TEXT("./mode/languages/Cht/mode.json"), 0);
-        for(uint8_t chapter = 1; chapter <= totchapter; chapter++) {
+        for(uint8_t chapter = 1; chapter <= CHAPTER; chapter++) {
             if(Utils::FileExists(epro::format(EPRO_TEXT("./mode/languages/Cht/ploat{}.json"), chapter)))
                 LoadJson(epro::format(EPRO_TEXT("./mode/languages/Cht/ploat{}.json"), chapter), 1, chapter);
         }
@@ -2165,7 +2147,7 @@ void Game::PopulateGameHostWindows() {
         ebCharacter[i]->addItem(gDataManager->GetSysString(8048).data());
         ebCharacter[i]->setEnabled(false);
 #endif
-        for (auto j = 8049; j <= 8049 + gSoundManager->totcharacter - 2; ++j)
+        for (auto j = 8049; j <= 8049 + CHARACTER_VOICE - 2; ++j)
             ebCharacter[i]->addItem(gDataManager->GetSysString(j).data());
         ebCharacter[i]->setSelected(0);
         ebCharacter[i]->setMaxSelectionRows(10);

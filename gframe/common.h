@@ -469,4 +469,16 @@
 #define DUEL_MODE_MR4_FORB     0
 #define DUEL_MODE_MR5_FORB     0
 
+//////kdiy//////
+#define MODE_RULE_DEFAULT       0x1
+#define MODE_RULE_ZCG           0x2
+#define MODE_RULE_ZCG_NO_RANDOM 0x3
+#define MODE_STORY              0x4
+#define CHARACTER_VOICE         27
+#define CHARACTER_STORY_ONLY    1
+#define CHARACTER_STORY         4
+#define PLAY_MODE               1
+#define CHAPTER                 2
+//////kdiy//////
+
 #endif /* COMMON_H_ */

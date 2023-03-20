@@ -4,10 +4,6 @@
 #include "game.h"
 #include "core_utils.h"
 
-//////ktest///////
-//#include "sound_manager.h"
-//////ktest///////
-
 namespace ygo {
 
 ReplayStream GenericDuel::replay_stream;

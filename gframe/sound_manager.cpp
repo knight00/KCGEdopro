@@ -89,6 +89,7 @@ void SoundManager::RefreshBGMList() {
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/playmaker"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/soulburner"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/blueangel"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/darksiner"));
 	////////kdiy////
 	Utils::MakeDirectory(EPRO_TEXT("./sound/BGM/"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/BGM/duel"));
@@ -180,12 +181,11 @@ void SoundManager::RefreshChantsList() {
 		{CHANT::ACTIVATE,  EPRO_TEXT("activate"_sv)}
 	};
 	/////kdiy//////
-	for (auto list : ChantsList)
+	for(auto list : ChantsList)
 		list.clear();
 	int i = -1;
-	for(int i=0; i< 11; i++)
-    {
-		for (int j = 0; j < totcharacter; j++)
+	for(int i = 0; i < 11; i++) {
+		for(int j = 0; j < CHARACTER_VOICE + CHARACTER_STORY_ONLY; j++)
 			ChantSPList[i][j].clear();
 	}
 	/////kdiy///////
@@ -221,6 +221,7 @@ void SoundManager::RefreshChantsList() {
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/playmaker/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/soulburner/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/blueangel/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/darksiner/{}"), chantType.second));
 
 		for (auto path : searchPath)
 			Utils::MakeDirectory(path);
@@ -237,7 +238,7 @@ void SoundManager::RefreshChantsList() {
 			if(chantType.first == CHANT::BORED) i = 9;
 			if(chantType.first == CHANT::SUMMON) i = 10;
 			if(i == -1) continue;
-			for(int x=0; x< totcharacter; x++) {
+			for(int x =0 ; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
 				for (auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
 					auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
 					std::string files = Utils::ToUTF8IfNeeded(file);
@@ -249,7 +250,7 @@ void SoundManager::RefreshChantsList() {
 		if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM) {
 		//for (auto& file : Utils::FindFiles(searchPath, mixer->GetSupportedSoundExtensions())) {
 			// auto scode = Utils::GetFileName(file);
-		for(int x=0; x< totcharacter; x++) {
+		for(int x = 0; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
 			for (auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
 				auto scode = Utils::GetFileName(file);
 				try {
@@ -273,33 +274,33 @@ void SoundManager::RefreshChantsList() {
 		/////kdiy///////
 	}
 	/////zdiy/////
-	for (uint8_t i = 0; i < (sizeof(ModeDialogList)/sizeof(ModeDialogList[0])); i++) {
-		std::string file = epro::format("./mode/story/soundDialog/0{}{}",i,".mp3");
+	for(uint8_t i = 0; i < (sizeof(ModeDialogList)/sizeof(ModeDialogList[0])); i++) {
+		std::string file = epro::format("./mode/story/soundDialog/0{}{}", i, ".mp3");
 		ModeDialogList->push_back(file);
 	}
 	/////zdiy/////
 #endif	
 }
 /////zdiy/////
-void SoundManager::PlayModeSound(uint8_t type, uint8_t index) {
+int32_t SoundManager::GetSoundDuration(const std::string& name) {
+#ifdef BACKEND
+    if(mixer)
+		return mixer->GetSoundDuration(name);
+	else return -1;
+#else
+	return -1;
+#endif
+}
+void SoundManager::PlayModeSound(uint8_t index) {
 #ifdef BACKEND
 	if(!soundsEnabled) return;
-	//if(!mainGame->mode->isMode) return;
-	switch (type)
-	{
-		case Mode::SOUND::Ploat: {
-			if(index >= ModeDialogList->size()) return;
-			const auto& soundfile = ModeDialogList->at(index);
-			if(soundfile.empty()) return;
-			mixer->PlaySound(soundfile);
-			break;
-		}
-		case Mode::SOUND::Duel: {
-			break;
-		}			
-		default:
-			break;
-	}
+	if(!mainGame->mode->isMode) return;
+	if(index >= ModeDialogList->size()) return;
+	mainGame->mode->duelSoundIndex = index;
+	gSoundManager->StopSounds();
+	const auto& soundfile = ModeDialogList->at(index);
+	if(soundfile.empty()) return;
+	mixer->PlaySound(soundfile);
 #endif
 }
 /////zdiy/////

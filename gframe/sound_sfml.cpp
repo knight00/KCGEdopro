@@ -48,6 +48,20 @@ const sf::SoundBuffer& SoundSFMLBase::LookupSound(const std::string& name)
 	return *it->second;
 }
 
+///kdiy/////////
+int32_t SoundSFMLBase::GetSoundDuration(const std::string& name)
+{
+	auto it = buffers.find(name);
+	if (it == buffers.end()) {
+		std::unique_ptr<sf::SoundBuffer> new_buf(new sf::SoundBuffer);
+		new_buf->loadFromFile(name);
+		const auto ret = buffers.emplace(name, std::move(new_buf));
+		it = ret.first;
+	}
+	return it->second->getDuration().asMilliseconds();
+}
+///kdiy/////////
+
 bool SoundSFMLBase::PlaySound(const std::string& name)
 {
 	auto& buf = LookupSound(name);

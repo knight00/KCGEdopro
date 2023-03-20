@@ -11,6 +11,9 @@
 #include "epro_mutex.h"
 #include "epro_condition_variable.h"
 #include "epro_thread.h"
+///kdiy////////
+#include "common.h"
+///kdiy////////
 
 namespace irr {
 class IrrlichtDevice;
@@ -85,10 +88,9 @@ public:
 	~ImageManager();
 	bool Initial();
 	/////kdiy/////
-	uint8_t totcharacter = 27;
 	void SetAvatar(int seq, const wchar_t *avatar);
-	std::vector<epro::path_string> ImageList[39+27];
-	int saved_image_id[39+27];
+	std::vector<epro::path_string> ImageList[39+CHARACTER_VOICE];
+	int saved_image_id[39+CHARACTER_VOICE];
 	//random image
 	void GetRandomImage(irr::video::ITexture*& src, int image_type, bool force_random=false);
 	void GetRandomImage(irr::video::ITexture*& src, int image_type, int width, int height, bool force_random = false);
@@ -160,8 +162,8 @@ public:
 	/////////kdiy////
 	A(tRScale[14])
 	A(tLScale[14])
-	A(icon[27])
-	A(character[27])
+	A(icon[CHARACTER_VOICE])
+	A(character[CHARACTER_VOICE])
 	A(tcharacterselect)
 	A(tcharacterselect2)
 	A(scharacter[6])

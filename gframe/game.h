@@ -140,19 +140,6 @@ public:
 		std::wstring title;
 		std::wstring ploat;
 	};
-	enum SOUND{//the ploat|duel sound of mode-story
-		Ploat,
-		Duel
-	};
-	enum SOUNDTYPE {//the sound type of mode-story duel sound
-		ACTIVATE,
-		ATTACK,
-		DRAW,
-		END,
-		SET,
-		SPSUMMON,
-		SUMMON
-	};
 	std::vector<ModeText>* modeTexts;//vector modetext
 	std::vector<ModePloat>* modePloats;//vector modeploat
 	std::vector<WindBot> bots;//all mode will load windbots from this
@@ -169,14 +156,11 @@ public:
 	bool isEvent;//if isEvent==true,all events is notify_one() lck
 	bool flag_100000155;//card 100000155 play sound
 	uint8_t rule;//the rule of duel,zcg|story......
-    uint8_t totmode = 1;
     uint8_t chapter;//story chapter
-    uint8_t totchapter = 2;
 	uint8_t plotStep;//the step of fun NextPlot()
 	uint8_t duelSoundIndex;//the index of mode-story sound,the sound is in  sound_manager.cpp
  	uint8_t plotIndex;//the index of plot,decide to set text plot
 	uint8_t character[6] = { 0,0,0,0,0,0 };
-    uint8_t totcharacter;
 	void InitializeMode();
 	void DestoryMode();
 	void RefreshEntertainmentPlay(std::vector<ModeText>* modeTexts);
@@ -187,7 +171,6 @@ public:
 	bool LoadWindBot(int port, epro::wstringview pass);
 	bool IsModeBot(std::wstring mode);
 	void NextPlot(uint8_t step = 0, uint8_t index = 0, uint32_t code = 0); //step: plotStep, index: ploat.json index
-	void ModePlaySound(uint8_t type, uint8_t index);
 	std::wstring GetPloat(uint8_t index, uint32_t code = 0);
 	long long GetSoundSeconds(uint32_t index);
 	Mode();
@@ -197,10 +180,6 @@ private:
 	void LoadJson(epro::path_string path, uint8_t index, uint8_t chapter = 0);
 	void LoadJsonInfo();
 };
-#define MODE_RULE_DEFAULT 0x1
-#define MODE_RULE_ZCG 0x2
-#define MODE_RULE_ZCG_NO_RANDOM 0x3
-#define MODE_STORY 0x4
 /////zdiy/////
 
 class Game {

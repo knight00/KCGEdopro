@@ -563,7 +563,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 #ifndef VIP
 				    break;
 #endif
-				if(gSoundManager->character[mainGame->choose_player] == gSoundManager->totcharacter - 1) gSoundManager->character[mainGame->choose_player] = 0;
+				if(gSoundManager->character[mainGame->choose_player] == CHARACTER_VOICE - 1) gSoundManager->character[mainGame->choose_player] = 0;
 				else gSoundManager->character[mainGame->choose_player] ++;
 				int player = gSoundManager->character[mainGame->choose_player];
 				mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
@@ -576,7 +576,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 #ifndef VIP
 				    break;
 #endif
-				if(gSoundManager->character[mainGame->choose_player] == 0) gSoundManager->character[mainGame->choose_player] = gSoundManager->totcharacter - 1;
+				if(gSoundManager->character[mainGame->choose_player] == 0) gSoundManager->character[mainGame->choose_player] = CHARACTER_VOICE - 1;
 				else gSoundManager->character[mainGame->choose_player] --;
 				int player = gSoundManager->character[mainGame->choose_player];
 				mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);

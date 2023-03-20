@@ -25,6 +25,9 @@ public:
 	virtual void PauseMusic(bool pause) override;
 	virtual bool MusicPlaying() override;
 	virtual void Tick() override;
+	/////kdiy///////
+	virtual int32_t GetSoundDuration(const std::string& name) override;
+	/////kdiy///////
 private:
 	std::string cur_music;
 	sf::Music music;

@@ -24,6 +24,11 @@ public:
 	virtual std::vector<epro::path_stringview> GetSupportedMusicExtensions() const override {
 		return m_BaseBackend->GetSupportedMusicExtensions();
 	}
+	//kdiy//////////
+	virtual int32_t GetSoundDuration(const std::string& name) override {
+		return m_BaseBackend->GetSoundDuration(name);
+	}
+	//kdiy//////////
 protected:
 	explicit SoundThreadedBackend(std::unique_ptr<SoundBackend>&&);
 private:
