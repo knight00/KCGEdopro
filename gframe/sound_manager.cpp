@@ -274,15 +274,15 @@ void SoundManager::RefreshChantsList() {
 		/////kdiy///////
 	}
 	/////zdiy/////
-	for(uint8_t i = 0; i < (sizeof(ModeDialogList)/sizeof(ModeDialogList[0])); i++) {
-		std::string file = epro::format("./mode/story/soundDialog/0{}{}", i, ".mp3");
-		ModeDialogList->push_back(file);
-	}
+    for(uint8_t chap = 0; chap < CHAPTER - 1; chap++) {
+       for(uint8_t i = 0; i < (sizeof(ModeDialogList[chap])/sizeof(ModeDialogList[chap][0])); i++)
+            ModeDialogList[chap]->push_back(i);
+    }
 	/////zdiy/////
 #endif	
 }
 /////zdiy/////
-int32_t SoundManager::GetSoundDuration(const std::string& name) {
+int32_t SoundManager::GetSoundDuration(std::string name) {
 #ifdef BACKEND
     if(mixer && soundsEnabled)
 		return mixer->GetSoundDuration(name);
@@ -291,16 +291,21 @@ int32_t SoundManager::GetSoundDuration(const std::string& name) {
 	return 1000;
 #endif
 }
-void SoundManager::PlayModeSound(uint8_t index) {
+void SoundManager::PlayModeSound(uint8_t index, bool lock) {
 #ifdef BACKEND
 	if(!soundsEnabled) return;
 	if(!mainGame->mode->isMode) return;
-	if(index >= ModeDialogList->size()) return;
+	if(index >= ModeDialogList[mainGame->mode->chapter - 1]->size()) return;
 	mainGame->mode->duelSoundIndex = index;
-	const auto& soundfile = ModeDialogList->at(index);
-	if(soundfile.empty()) return;
+    std::string file = epro::format("./mode/story/story{}/soundDialog/{}.mp3", mainGame->mode->chapter, ModeDialogList[mainGame->mode->chapter - 1]->at(index));
+	if(!Utils::FileExists(Utils::ToPathString(file))) return;
 	gSoundManager->StopSounds();
-	mixer->PlaySound(soundfile);
+	mixer->PlaySound(file);
+    if(lock) {
+        std::unique_lock<epro::mutex> lck(*mainGame->mode->lck);
+        mainGame->mode->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(file)));
+        lck.unlock();
+    }
 #endif
 }
 /////zdiy/////

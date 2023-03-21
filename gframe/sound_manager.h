@@ -82,11 +82,9 @@ public:
 	bool PlayChant(CHANT chant, uint32_t code, uint32_t code2, int player, uint8_t extra = 0);
 	uint8_t character[6] = {0,0,0,0,0,0}; //0: empty, 1: muto, 2: atem, 3: kaiba, 4: joey, 5: marik, 6: dartz, 7:bakura, 8: aigami, 9: judai, 10: manjome, 11: kaisa, 12: phoenix, 13: john, 14: yubel, 15: yusei, 16: jack, 17: arki, 18: yuma, 19: shark, 20: kaito, 21: DonThousand, 22: yuya, 23: declan, 24: playmaker, 25: soulburner, 26: blueangel, 27: darksiner
     std::vector<std::string> soundcount;
+	int32_t GetSoundDuration(std::string name);
+	void PlayModeSound(uint8_t index, bool lock=false);
 	////////kdiy////////
-	/////zdiy/////
-	int32_t GetSoundDuration(const std::string& name);
-	void PlayModeSound(uint8_t index);
-	/////zdiy/////
 	void SetSoundVolume(double volume);
 	void SetMusicVolume(double volume);
 	void EnableSounds(bool enable);
@@ -101,7 +99,7 @@ public:
 	void PauseMusic(bool pause);
 	void Tick();
 	/////zdiy/////
-	std::vector<std::string> ModeDialogList[100];
+	std::vector<uint8_t> ModeDialogList[CHAPTER][100];
 	/////zdiy/////
 
 private:

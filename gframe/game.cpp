@@ -136,7 +136,7 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
             mainGame->mode->character[0] = 1; //Player1 icon: Yusei
             mainGame->mode->character[1] = 2; //Player2 icon: Dark Siner
             gSoundManager->character[0] = 15; //Player 1 voice: Yusei
-            // gSoundManager->character[1] = 27; //Player 2 voice: Dark Siner
+            gSoundManager->character[1] = 27; //Player 2 voice: Dark Siner
         } else {
             mainGame->mode->character[0] = 2;
             mainGame->mode->character[1] = 1;
@@ -154,16 +154,16 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 			mainGame->HideElement(mainGame->wPloat);
 		    mainGame->ShowElement(mainGame->wChBody[i]);
 			mainGame->ShowElement(mainGame->wChPloatBody[i]);
-			gSoundManager->PlayModeSound(plotIndex);
 			mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
+			gSoundManager->PlayModeSound(plotIndex);
 		} else if(plotStep == 2) {
 		    mainGame->ShowElement(mainGame->wChBody[i]);
 			mainGame->ShowElement(mainGame->wChPloatBody[i]);
-			gSoundManager->PlayModeSound(plotIndex);
 			mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
+			gSoundManager->PlayModeSound(plotIndex);
 		} else if(plotStep < 5) {
-			gSoundManager->PlayModeSound(plotIndex);
 			mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
+			gSoundManager->PlayModeSound(plotIndex);
 		} else if(plotStep == 6) {
 			isPlot = false;
 			mainGame->stChPloatInfo[0]->setText(L"");
@@ -176,28 +176,29 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 		}
 		//plotStep 8 to 13,part1-1 when bot spsummon dark monster
 		else if(plotStep == 8) {
-			std::unique_lock<epro::mutex> lck(*this->lck);
+			// std::unique_lock<epro::mutex> lck(*this->lck);
 			isPlot = true;
 			isEvent = true;
 		    mainGame->ShowElement(mainGame->wChBody[i]);
 			mainGame->ShowElement(mainGame->wChPloatBody[i]);
-			gSoundManager->PlayModeSound(plotIndex);
 			mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
-            cv->wait_for(lck, std::chrono::milliseconds(gSoundManager->GetSoundDuration(gSoundManager->ModeDialogList->at(plotIndex))));
+            gSoundManager->PauseMusic(true);
+			gSoundManager->PlayModeSound(plotIndex, true);
+            // cv->wait_for(lck, std::chrono::milliseconds(gSoundManager->GetSoundDuration(gSoundManager->ModeDialogList[chapter][plotIndex])));
 			// cv->wait(lck);
 			// isEvent = true;
             plotIndex++;
             i = mainGame->mode->modePloats->at(plotIndex).control;
             mainGame->ShowElement(mainGame->wChBody[i]);
 			mainGame->ShowElement(mainGame->wChPloatBody[i]);
-			gSoundManager->PlayModeSound(plotIndex);
 			mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
-            cv->wait_for(lck, std::chrono::milliseconds(gSoundManager->GetSoundDuration(gSoundManager->ModeDialogList->at(plotIndex))));
+			gSoundManager->PlayModeSound(plotIndex, true);
+            // cv->wait_for(lck, std::chrono::milliseconds(gSoundManager->GetSoundDuration(gSoundManager->ModeDialogList[chapter][plotIndex])));
             for(int indx = plotIndex + 1; indx < plotIndex + 4; indx++) {
                 i = mainGame->mode->modePloats->at(indx).control;
-                gSoundManager->PlayModeSound(indx);
                 mainGame->stChPloatInfo[i]->setText(GetPloat(indx).data());
-                cv->wait_for(lck, std::chrono::milliseconds(gSoundManager->GetSoundDuration(gSoundManager->ModeDialogList->at(indx))));
+                gSoundManager->PlayModeSound(indx, true);
+                // cv->wait_for(lck, std::chrono::milliseconds(gSoundManager->GetSoundDuration(gSoundManager->ModeDialogList[chapter][indx])));
             }
 			mainGame->stChPloatInfo[0]->setText(L"");
 			mainGame->stChPloatInfo[1]->setText(L"");
@@ -205,17 +206,18 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 			mainGame->HideElement(mainGame->wChPloatBody[1]);
 			mainGame->HideElement(mainGame->wChBody[0]);
 			mainGame->HideElement(mainGame->wChBody[1]);
-			gSoundManager->PlayModeSound(21);
 			mainGame->ShowElement(mainGame->wChPloatBody[1]);
 			mainGame->ShowElement(mainGame->wChBody[1]);
 			mainGame->stChPloatInfo[1]->setText(GetPloat(21, 100000155).data());
-			cv->wait_for(lck, std::chrono::milliseconds(gSoundManager->GetSoundDuration(gSoundManager->ModeDialogList->at(21))));
+			gSoundManager->PlayModeSound(21, true);
+			// cv->wait_for(lck, std::chrono::milliseconds(gSoundManager->GetSoundDuration(gSoundManager->ModeDialogList[chapter][21])));
+            gSoundManager->PauseMusic(false);
 			mainGame->stChPloatInfo[1]->setText(L"");
 			mainGame->HideElement(mainGame->wChBody[1]);
 			mainGame->HideElement(mainGame->wChPloatBody[1]);
 			isPlot = false;
 			isEvent = false;
-			lck.unlock();
+			// lck.unlock();
 		// } else if(plotStep == 9) {
 		//     mainGame->ShowElement(mainGame->wChBody[i]);
 		// 	mainGame->ShowElement(mainGame->wChPloatBody[i]);
@@ -229,20 +231,20 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 		}
 		//plotStep 15,part1-1 when player summon or activate
 		else if(plotStep == 15) {
-			std::unique_lock<epro::mutex> lck(*this->lck);
-			isPlot = true;
-			isEvent = true;
-			gSoundManager->PlayModeSound(plotIndex);
-		    mainGame->ShowElement(mainGame->wChBody[i]);
-			mainGame->ShowElement(mainGame->wChPloatBody[i]);
-			mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex, code).data());
-			cv->wait_for(lck, std::chrono::milliseconds(GetSoundSeconds(duelSoundIndex)));
-			mainGame->stChPloatInfo[i]->setText(L"");
-			mainGame->HideElement(mainGame->wChBody[i]);
-			mainGame->HideElement(mainGame->wChPloatBody[i]);
-			isPlot = false;
-			isEvent = false;
-			lck.unlock();
+			// std::unique_lock<epro::mutex> lck(*this->lck);
+			// isPlot = true;
+			// isEvent = true;
+			// gSoundManager->PlayModeSound(plotIndex);
+		    // mainGame->ShowElement(mainGame->wChBody[i]);
+			// mainGame->ShowElement(mainGame->wChPloatBody[i]);
+			// mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex, code).data());
+			// cv->wait_for(lck, std::chrono::milliseconds(GetSoundSeconds(duelSoundIndex)));
+			// mainGame->stChPloatInfo[i]->setText(L"");
+			// mainGame->HideElement(mainGame->wChBody[i]);
+			// mainGame->HideElement(mainGame->wChPloatBody[i]);
+			// isPlot = false;
+			// isEvent = false;
+			// lck.unlock();
 		}
 	}
 }
