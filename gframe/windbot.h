@@ -36,6 +36,7 @@ struct WindBot {
 	//launch_ret_t Launch(int port, epro::wstringview pass, bool chat, int hand, const wchar_t* overridedeck) const;
 	launch_ret_t Launch(int port, epro::wstringview pass, bool chat, int hand, const wchar_t* overridedeck, int seed) const;
 	////kdiy//////
+	std::wstring GetLaunchParameters(int port, epro::wstringview pass, bool chat, int hand, const wchar_t* overridedeck) const;
 
 #ifndef __ANDROID__
 	static nlohmann::ordered_json databases;

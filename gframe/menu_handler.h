@@ -2,6 +2,7 @@
 #define MENU_HANDLER_H
 
 #include "config.h"
+#include <unordered_map>
 #include <IEventReceiver.h>
 #include <IGUIElement.h>
 #include <map>
@@ -113,6 +114,7 @@ enum GUI {
 	COMBOBOX_CHARACTER,
 	BUTTON_HP_AI_TOGGLE,
 	BUTTON_BOT_ADD,
+	BUTTON_BOT_COPY_COMMAND,
 	EDITBOX_CHAT,
 	EDITBOX_PORT_BOX,
 	COMBOBOX_BOT_DECK,
