@@ -152,7 +152,7 @@ public:
 	epro::mutex * lck;//should lock thread when play mode-story sound,this lck is in duelclient.cpp
 	int modeIndex;//decide to play what kind of mode rule,from meun-list getSelected
 	bool isMode;//the duel is mode?
-	bool isPlot;//the ploat of mode-story,if isPlot==true will break all no about ploat events
+	bool isPlot;//ignore mouse/keyboard inputs
 	bool isEvent;//if isEvent==true,all events is notify_one() lck
 	bool flag_100000155;//card 100000155 play sound
 	uint8_t rule;//the rule of duel,zcg|story......

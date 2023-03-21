@@ -339,8 +339,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				/////zdiy/////
 				///////kdiy///////
 				for(int i = 0; i < 6; ++i) {
+					if(gSoundManager->character[i] > CHARACTER_VOICE - 1)
+					    gSoundManager->character[i] = 0;
+					mainGame->ebCharacter[i]->setSelected(gSoundManager->character[i]);
 				    mainGame->icon[i]->setImage(mainGame->imageManager.icon[gSoundManager->character[i]]);
-                    mainGame->ebCharacter[i]->setSelected(gSoundManager->character[i]);
                 }
 				///////kdiy///////
 				if(mainGame->isHostingOnline) {
@@ -478,9 +480,28 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			case BUTTON_ICON0: {
-				for(int i = 1; i < 6; ++i) {
-					mainGame->icon[i]->setEnabled(false);
+#ifndef VIP
+				    break;
+#endif
+				bool filechk = false;
+				for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/")), { EPRO_TEXT("mp3") })) {
+					if(Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/") + file)) {
+						filechk = true;
+						break;
+					}
 				}
+				if(!filechk) {
+					gGameConfig->enablessound = false;
+					gGameConfig->enablessound = false;
+                    gGameConfig->enablecsound = false;
+                    gGameConfig->enableasound = false;
+					ygo::GUIUtils::ShowErrorWindow("Missing file", "No character voice files");
+					for(int i = 0; i < 6; ++i)
+					    mainGame->icon[i]->setEnabled(false);
+					break;
+				}
+				for(int i = 1; i < 6; ++i)
+					mainGame->icon[i]->setEnabled(false);
 				mainGame->choose_player = 0;
 				mainGame->wCharacter->setVisible(true);
 				mainGame->wCharacterSelect->setVisible(true);
@@ -489,6 +510,26 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			case BUTTON_ICON1: {
+#ifndef VIP
+				    break;
+#endif
+				bool filechk = false;
+				for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/")), { EPRO_TEXT("mp3") })) {
+					if(Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/") + file)) {
+						filechk = true;
+						break;
+					}
+				}
+				if(!filechk) {
+					gGameConfig->enablessound = false;
+					gGameConfig->enablessound = false;
+                    gGameConfig->enablecsound = false;
+                    gGameConfig->enableasound = false;
+					ygo::GUIUtils::ShowErrorWindow("Missing file", "No character voice files");
+					for(int i = 0; i < 6; ++i)
+					    mainGame->icon[i]->setEnabled(false);
+					break;
+				}
 				for(int i = 0; i < 6; ++i) {
 					if (i==1) continue;
 					mainGame->icon[i]->setEnabled(false);
@@ -501,6 +542,26 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			case BUTTON_ICON2: {
+#ifndef VIP
+				    break;
+#endif
+				bool filechk = false;
+				for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/")), { EPRO_TEXT("mp3") })) {
+					if(Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/") + file)) {
+						filechk = true;
+						break;
+					}
+				}
+				if(!filechk) {
+					gGameConfig->enablessound = false;
+					gGameConfig->enablessound = false;
+                    gGameConfig->enablecsound = false;
+                    gGameConfig->enableasound = false;
+					ygo::GUIUtils::ShowErrorWindow("Missing file", "No character voice files");
+					for(int i = 0; i < 6; ++i)
+					    mainGame->icon[i]->setEnabled(false);
+					break;
+				}
 				for(int i = 0; i < 6; ++i) {
 					if (i==2) continue;
 					mainGame->icon[i]->setEnabled(false);
@@ -513,6 +574,26 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			case BUTTON_ICON3: {
+#ifndef VIP
+				    break;
+#endif
+				bool filechk = false;
+				for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/")), { EPRO_TEXT("mp3") })) {
+					if(Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/") + file)) {
+						filechk = true;
+						break;
+					}
+				}
+				if(!filechk) {
+					gGameConfig->enablessound = false;
+					gGameConfig->enablessound = false;
+                    gGameConfig->enablecsound = false;
+                    gGameConfig->enableasound = false;
+					ygo::GUIUtils::ShowErrorWindow("Missing file", "No character voice files");
+					for(int i = 0; i < 6; ++i)
+					    mainGame->icon[i]->setEnabled(false);
+					break;
+				}
 				for(int i = 0; i < 6; ++i) {
 					if (i==3) continue;
 					mainGame->icon[i]->setEnabled(false);
@@ -525,6 +606,26 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			case BUTTON_ICON4: {
+#ifndef VIP
+				    break;
+#endif
+				bool filechk = false;
+				for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/")), { EPRO_TEXT("mp3") })) {
+					if(Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/") + file)) {
+						filechk = true;
+						break;
+					}
+				}
+				if(!filechk) {
+					gGameConfig->enablessound = false;
+					gGameConfig->enablessound = false;
+                    gGameConfig->enablecsound = false;
+                    gGameConfig->enableasound = false;
+					ygo::GUIUtils::ShowErrorWindow("Missing file", "No character voice files");
+					for(int i = 0; i < 6; ++i)
+					    mainGame->icon[i]->setEnabled(false);
+					break;
+				}
 				for(int i = 0; i < 6; ++i) {
 					if (i==4) continue;
 					mainGame->icon[i]->setEnabled(false);
@@ -537,9 +638,28 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			case BUTTON_ICON5: {
-				for(int i = 0; i < 5; ++i) {
-					mainGame->icon[i]->setEnabled(false);
+#ifndef VIP
+				    break;
+#endif
+				bool filechk = false;
+				for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/")), { EPRO_TEXT("mp3") })) {
+					if(Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/") + file)) {
+						filechk = true;
+						break;
+					}
 				}
+				if(!filechk) {
+					gGameConfig->enablessound = false;
+					gGameConfig->enablessound = false;
+                    gGameConfig->enablecsound = false;
+                    gGameConfig->enableasound = false;
+					ygo::GUIUtils::ShowErrorWindow("Missing file", "No character voice files");
+					for(int i = 0; i < 6; ++i)
+					    mainGame->icon[i]->setEnabled(false);
+					break;
+				}
+				for(int i = 0; i < 5; ++i)
+					mainGame->icon[i]->setEnabled(false);
 				mainGame->choose_player = 5;
 				mainGame->wCharacter->setVisible(true);
 				mainGame->wCharacterSelect->setVisible(true);
@@ -548,9 +668,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			case BUTTON_CHARACTER: {
-				for(int i = 0; i < 6; ++i) {
+				for(int i = 0; i < 6; ++i)
 					mainGame->icon[i]->setEnabled(true);
-				}
 #ifdef VIP
 				gSoundManager->PlayChant(SoundManager::CHANT::STARTUP, 0, 0, mainGame->choose_player);
 #endif
@@ -865,8 +984,11 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
             ////kdiy////////
             case BUTTON_CHARACTER_REPLAY: {
 				mainGame->PopupElement(mainGame->wCharacterReplay);
-                for(int i = 0; i < 6; ++i)
-				    mainGame->icon2[i]->setImage(mainGame->imageManager.icon[gSoundManager->character[i]]);	
+                for(int i = 0; i < 6; ++i) {
+					if(gSoundManager->character[i] > CHARACTER_VOICE - 1)
+					    mainGame->imageManager.icon[gSoundManager->character[i]] = 0;
+				    mainGame->icon2[i]->setImage(mainGame->imageManager.icon[gSoundManager->character[i]]);
+				}
                 break;
 			}
             case BUTTON_CHARACTEROK_REPLAY: {
@@ -1661,6 +1783,25 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 #ifndef VIP
 				    break;
 #endif
+				bool filechk = false;
+				for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/")), { EPRO_TEXT("mp3") })) {
+					if(Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/") + file)) {
+						filechk = true;
+						break;
+					}
+				}
+				if(!filechk) {
+					gGameConfig->enablessound = false;
+					gGameConfig->enablessound = false;
+                    gGameConfig->enablecsound = false;
+                    gGameConfig->enableasound = false;
+					ygo::GUIUtils::ShowErrorWindow("Missing file", "No character voice files");
+					for(int i = 0; i < 6; ++i) {
+						mainGame->ebCharacter[i]->setSelected(0);
+					    mainGame->ebCharacter[i]->setEnabled(false);
+					}
+					break;
+				}
                 for(int i = 0; i < 6; i++) {
                     int sel = mainGame->ebCharacter[i]->getSelected();
                     if(sel > 0) {

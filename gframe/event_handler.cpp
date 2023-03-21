@@ -101,7 +101,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			}
 			///////kdiy///////
 			/////zdiy/////
-			case BUTTON_ENTERTAUNMENT_PLOAT_CLOSE: {
+			case BUTTON_ENTERTAUNMENT_PLOAT_CLOSE: { //story start after click ok
 				mainGame->mode->NextPlot();
 				break;
 			}
@@ -1193,9 +1193,8 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				if(mainGame->mode->isEvent) {
 					mainGame->mode->cv->notify_one();
 					gSoundManager->StopSounds();
-				} else {
+				} else
 					mainGame->mode->NextPlot();
-				}
 				break;
 			}
 			/////zdiy/////

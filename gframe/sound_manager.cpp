@@ -284,11 +284,11 @@ void SoundManager::RefreshChantsList() {
 /////zdiy/////
 int32_t SoundManager::GetSoundDuration(const std::string& name) {
 #ifdef BACKEND
-    if(mixer)
+    if(mixer && soundsEnabled)
 		return mixer->GetSoundDuration(name);
-	else return 10000;
+	else return 1000;
 #else
-	return 10000;
+	return 1000;
 #endif
 }
 void SoundManager::PlayModeSound(uint8_t index) {
@@ -297,9 +297,9 @@ void SoundManager::PlayModeSound(uint8_t index) {
 	if(!mainGame->mode->isMode) return;
 	if(index >= ModeDialogList->size()) return;
 	mainGame->mode->duelSoundIndex = index;
-	gSoundManager->StopSounds();
 	const auto& soundfile = ModeDialogList->at(index);
 	if(soundfile.empty()) return;
+	gSoundManager->StopSounds();
 	mixer->PlaySound(soundfile);
 #endif
 }

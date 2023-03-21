@@ -655,7 +655,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		break;
 	}
 	/////zdiy/////
-	case STOC_MODE_SHOW_PLOAT: {
+	case STOC_MODE_SHOW_PLOAT: { //pop out 1st ploat
 		mainGame->mode->NextPlot();
 		break;
 	}
@@ -2235,8 +2235,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			}
 		}
 		///////////kdiy///////////
-		for(int i = 0; i < 6; ++i)
+		for(int i = 0; i < 6; ++i) {
+			if(gSoundManager->character[i] > CHARACTER_VOICE - 1)
+			    mainGame->imageManager.character[gSoundManager->character[i]] = 0;
 			mainGame->imageManager.scharacter[i] = mainGame->imageManager.character[gSoundManager->character[i]];
+		}
 		///////////kdiy///////////
 		mainGame->dInfo.lp[mainGame->LocalPlayer(0)] = BufferIO::Read<uint32_t>(pbuf);
 		mainGame->dInfo.lp[mainGame->LocalPlayer(1)] = BufferIO::Read<uint32_t>(pbuf);

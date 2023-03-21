@@ -129,7 +129,7 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 	//plotStep 0 to 7,part1-1 when game start
 	if(plotStep == 0) {
 		isPlot = true;
-		std::lock_guard<epro::mutex> lock(mainGame->gMutex);
+		std::lock_guard<epro::mutex> lock(mainGame->gMutex); //big lock, unlock until CTOS_MODE_HS_START
         for(int i = 0; i < 6; ++i)
             mainGame->mode->character[i] = 0;
         if(mainGame->mode->chapter == 1) {
@@ -185,6 +185,7 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 			mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
             cv->wait_for(lck, std::chrono::milliseconds(gSoundManager->GetSoundDuration(gSoundManager->ModeDialogList->at(plotIndex))));
 			// cv->wait(lck);
+			// isEvent = true;
             plotIndex++;
             i = mainGame->mode->modePloats->at(plotIndex).control;
             mainGame->ShowElement(mainGame->wChBody[i]);
