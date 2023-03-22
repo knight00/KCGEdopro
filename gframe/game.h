@@ -354,6 +354,8 @@ public:
 	uint32_t showcardcode;
     ////kdiy//////
     bool git_update = false;
+    bool git_error = false;
+    bool first_play = false;
     uint32_t showcardalias;
     bool chklast = true;
 	epro::condition_variable* cv = nullptr;//should lock thread when play mode-story sound,this cv is in duelclient.cpp

@@ -2222,7 +2222,8 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 						gGameConfig->enablessound = false;
                         gGameConfig->enablecsound = false;
                         gGameConfig->enableasound = false;
-						ygo::GUIUtils::ShowErrorWindow("Missing file", "群文件下載語音包");
+                        mainGame->stACMessage->setText(gDataManager->GetSysString(8076).data());
+                        mainGame->PopupElement(mainGame->wACMessage, 20);
 					}
 				}
                 mainGame->gSettings.chkEnableSummonSound->setChecked(gGameConfig->enablessound);
@@ -2249,7 +2250,8 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 						gGameConfig->enablecsound = false;
                         gGameConfig->enablecsound = false;
                         gGameConfig->enableasound = false;
-						ygo::GUIUtils::ShowErrorWindow("Missing file", "群文件下載語音包");
+                        mainGame->stACMessage->setText(gDataManager->GetSysString(8076).data());
+                        mainGame->PopupElement(mainGame->wACMessage, 20);
 					}
 				}
                 mainGame->gSettings.chkEnableSummonSound->setChecked(gGameConfig->enablessound);
@@ -2276,7 +2278,8 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 						gGameConfig->enableasound = false;
                         gGameConfig->enablecsound = false;
                         gGameConfig->enableasound = false;
-						ygo::GUIUtils::ShowErrorWindow("Missing file", "群文件下載語音包");
+                        mainGame->stACMessage->setText(gDataManager->GetSysString(8076).data());
+                        mainGame->PopupElement(mainGame->wACMessage, 20);
 					}
 				}
                 mainGame->gSettings.chkEnableSummonSound->setChecked(gGameConfig->enablessound);
@@ -2302,7 +2305,8 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 						}
 						if(!filechk) {
 							gGameConfig->enableanime = false;
-							ygo::GUIUtils::ShowErrorWindow("Missing file", "群文件下載movie包");
+                            mainGame->stACMessage->setText(gDataManager->GetSysString(8077).data());
+                            mainGame->PopupElement(mainGame->wACMessage, 20);
 						}
 						if(gGameConfig->enableanime) {
 							gGameConfig->enablesanime = true;
@@ -2347,7 +2351,8 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 						}
 						if(!filechk) {
 							gGameConfig->enableanime = false;
-							ygo::GUIUtils::ShowErrorWindow("Missing file", "群文件下載movie包");
+                            mainGame->stACMessage->setText(gDataManager->GetSysString(8077).data());
+                            mainGame->PopupElement(mainGame->wACMessage, 20);
 						}
                         if(gGameConfig->enablesanime) {
                             gGameConfig->enableanime = true;
@@ -2386,7 +2391,8 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 						}
 						if(!filechk) {
 							gGameConfig->enableanime = false;
-							ygo::GUIUtils::ShowErrorWindow("Missing file", "群文件下載movie包");
+                            mainGame->stACMessage->setText(gDataManager->GetSysString(8077).data());
+                            mainGame->PopupElement(mainGame->wACMessage, 20);
 						}
                         if(gGameConfig->enablecanime) {
                             gGameConfig->enableanime = true;
@@ -2425,7 +2431,8 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 						}
 						if(!filechk) {
 							gGameConfig->enableanime = false;
-							ygo::GUIUtils::ShowErrorWindow("Missing file", "群文件下載movie包");
+                            mainGame->stACMessage->setText(gDataManager->GetSysString(8077).data());
+                            mainGame->PopupElement(mainGame->wACMessage, 20);
 						}
                         if(gGameConfig->enableaanime) {
                             gGameConfig->enableanime = true;

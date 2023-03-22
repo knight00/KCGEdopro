@@ -1865,11 +1865,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		is_swapping = false;
 	}
 	/////zdiy/////
-    if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
-        mainGame->cv = &cv;
-        mainGame->lck = &to_analyze_mutex;
-        ModeClientAnalyze(mainGame->mode->chapter, pbuf, mainGame->dInfo.curMsg);
-    }
+    // if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
+    mainGame->cv = &cv;
+    mainGame->lck = &to_analyze_mutex;
+    ModeClientAnalyze(mainGame->mode->chapter, pbuf, mainGame->dInfo.curMsg);
+    // }
 	/////zdiy////
 	switch(mainGame->dInfo.curMsg) {
 	case MSG_RETRY: {

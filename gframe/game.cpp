@@ -128,7 +128,7 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 	//plotStep 0 to 7,part1-1 when game start
 	if(plotStep == 0) {
 		isPlot = true;
-		std::lock_guard<epro::mutex> lock(mainGame->gMutex); //big lock, unlock until CTOS_MODE_HS_START
+		std::lock_guard<epro::mutex> lock(mainGame->gMutex);
         for(int i = 0; i < 6; ++i)
             character[i] = 0;
         if(chapter == 1) {
@@ -551,7 +551,9 @@ void Game::Initialize() {
 	cv = nullptr;
 	lck = nullptr;
     if(Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
-    git_update = true;
+        git_update = true;
+    if(!Utils::FileExists(EPRO_TEXT("./cdb/cards.cdb")))
+        first_play = true;
     //kdiy//////
 	dpi_scale = gGameConfig->dpi_scale;
 	duel_param = gGameConfig->lastDuelParam;
@@ -3122,10 +3124,16 @@ bool Game::MainLoop() {
 			env->setFocus(stACMessage);
 			stACMessage->setText(epro::format(gDataManager->GetSysString(1431), corename).data());
 			PopupElement(wACMessage, 30);
+			coreJustLoaded = false;
             //kdiy///////
             git_update = true;
+            if(first_play) {
+                try {
+					gGameConfig->dpi_scale = static_cast<uint32_t>(std::stol(mainGame->gSettings.ebDpiScale->getText())) / 100.0;
+					mainGame->restart = true;
+				} catch(...){}
+            }
             //kdiy///////
-			coreJustLoaded = false;
 		}
 #endif //YGOPRO_BUILD_DLL
 		frame_counter += (float)delta_time * 60.0f/1000.0f;
@@ -3921,6 +3929,7 @@ void Game::LoadGithubRepositories() {
 void Game::UpdateRepoInfo(const GitRepo* repo, RepoGui* grepo) {
 	if(repo->history.error.size()) {
 		////kdiy/////////
+        git_error = true;
 		//ErrorLog("The repo {} couldn't be cloned", repo->url);
 		ErrorLog("The repo {} couldn't be cloned", repo->repo_name);
 		//ErrorLog("Error: {}", repo->history.error);

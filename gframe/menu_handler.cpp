@@ -279,7 +279,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_CREATE_HOST: {
                 ///////kdiy/////////////
-                if(!mainGame->git_update) {
+                if(!mainGame->git_update || mainGame->git_error || mainGame->first_play) {
                     mainGame->stACMessage->setText(gDataManager->GetSysString(8046).data());
                     mainGame->PopupElement(mainGame->wACMessage, 20);
                     break;
@@ -495,7 +495,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					gGameConfig->enablessound = false;
                     gGameConfig->enablecsound = false;
                     gGameConfig->enableasound = false;
-					ygo::GUIUtils::ShowErrorWindow("Missing file", "群文件下載語音包");
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8076).data());
+                    mainGame->PopupElement(mainGame->wACMessage, 20);
 					for(int i = 0; i < 6; ++i)
 					    mainGame->icon[i]->setEnabled(false);
 					break;
@@ -525,7 +526,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					gGameConfig->enablessound = false;
                     gGameConfig->enablecsound = false;
                     gGameConfig->enableasound = false;
-					ygo::GUIUtils::ShowErrorWindow("Missing file", "群文件下載語音包");
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8076).data());
+                    mainGame->PopupElement(mainGame->wACMessage, 20);
 					for(int i = 0; i < 6; ++i)
 					    mainGame->icon[i]->setEnabled(false);
 					break;
@@ -557,7 +559,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					gGameConfig->enablessound = false;
                     gGameConfig->enablecsound = false;
                     gGameConfig->enableasound = false;
-					ygo::GUIUtils::ShowErrorWindow("Missing file", "群文件下載語音包");
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8076).data());
+                    mainGame->PopupElement(mainGame->wACMessage, 20);
 					for(int i = 0; i < 6; ++i)
 					    mainGame->icon[i]->setEnabled(false);
 					break;
@@ -589,7 +592,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					gGameConfig->enablessound = false;
                     gGameConfig->enablecsound = false;
                     gGameConfig->enableasound = false;
-					ygo::GUIUtils::ShowErrorWindow("Missing file", "群文件下載語音包");
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8076).data());
+                    mainGame->PopupElement(mainGame->wACMessage, 20);
 					for(int i = 0; i < 6; ++i)
 					    mainGame->icon[i]->setEnabled(false);
 					break;
@@ -621,7 +625,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					gGameConfig->enablessound = false;
                     gGameConfig->enablecsound = false;
                     gGameConfig->enableasound = false;
-					ygo::GUIUtils::ShowErrorWindow("Missing file", "群文件下載語音包");
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8076).data());
+                    mainGame->PopupElement(mainGame->wACMessage, 20);
 					for(int i = 0; i < 6; ++i)
 					    mainGame->icon[i]->setEnabled(false);
 					break;
@@ -653,7 +658,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					gGameConfig->enablessound = false;
                     gGameConfig->enablecsound = false;
                     gGameConfig->enableasound = false;
-					ygo::GUIUtils::ShowErrorWindow("Missing file", "群文件下載語音包");
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8076).data());
+                    mainGame->PopupElement(mainGame->wACMessage, 20);
 					for(int i = 0; i < 6; ++i)
 					    mainGame->icon[i]->setEnabled(false);
 					break;
@@ -836,7 +842,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
 			/////zdiy//////
 			case BUTTON_ENTERTAUNMENT_MODE: {
-                if(!mainGame->git_update) {
+                if(!mainGame->git_update || mainGame->git_error || mainGame->first_play) {
                     mainGame->stACMessage->setText(gDataManager->GetSysString(8046).data());
                     mainGame->PopupElement(mainGame->wACMessage, 20);
                     break;
@@ -871,7 +877,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
              /////zdiy//////
 			case BUTTON_SINGLE_MODE: {
                 //////kdiy/////
-                if(!mainGame->git_update) {
+                if(!mainGame->git_update || mainGame->git_error || mainGame->first_play) {
                     mainGame->stACMessage->setText(gDataManager->GetSysString(8046).data());
                     mainGame->PopupElement(mainGame->wACMessage, 20);
                     break;
@@ -1086,7 +1092,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_DECK_EDIT: {
 				//////kdiy/////
-                if(!mainGame->git_update) {
+                if(!mainGame->git_update || mainGame->git_error || mainGame->first_play) {
                     mainGame->stACMessage->setText(gDataManager->GetSysString(8046).data());
                     mainGame->PopupElement(mainGame->wACMessage, 20);
                     break;
@@ -1795,7 +1801,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					gGameConfig->enablessound = false;
                     gGameConfig->enablecsound = false;
                     gGameConfig->enableasound = false;
-					ygo::GUIUtils::ShowErrorWindow("Missing file", "群文件下載語音包");
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8076).data());
+                    mainGame->PopupElement(mainGame->wACMessage, 20);
 					for(int i = 0; i < 6; ++i) {
 						mainGame->ebCharacter[i]->setSelected(0);
 					    mainGame->ebCharacter[i]->setEnabled(false);
