@@ -1866,8 +1866,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 	}
 	/////zdiy/////
     if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
-        mainGame->mode->cv = &cv;
-        mainGame->mode->lck = &to_analyze_mutex;
+        mainGame->cv = &cv;
+        mainGame->lck = &to_analyze_mutex;
         ModeClientAnalyze(mainGame->mode->chapter, pbuf, mainGame->dInfo.curMsg);
     }
 	/////zdiy////

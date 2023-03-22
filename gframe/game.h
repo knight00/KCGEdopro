@@ -148,8 +148,6 @@ public:
     std::map<uint8_t, int32_t> team1;
     std::map<uint8_t, int32_t> team2;
     std::map<uint8_t, bool> relay;
-	epro::condition_variable* cv;//should lock thread when play mode-story sound,this cv is in duelclient.cpp
-	epro::mutex * lck;//should lock thread when play mode-story sound,this lck is in duelclient.cpp
 	int modeIndex;//decide to play what kind of mode rule,from meun-list getSelected
 	bool isMode;//the duel is mode?
 	bool isPlot;//is showing ploat, ignore mouse/keyboard inputs
@@ -358,6 +356,8 @@ public:
     bool git_update = false;
     uint32_t showcardalias;
     bool chklast = true;
+	epro::condition_variable* cv = nullptr;//should lock thread when play mode-story sound,this cv is in duelclient.cpp
+	epro::mutex * lck = nullptr;//should lock thread when play mode-story sound,this lck is in duelclient.cpp
     ////kdiy//////
 	float showcarddif;
 	float showcardp;

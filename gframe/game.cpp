@@ -95,8 +95,6 @@ Mode::Mode() {
 	modePloats = nullptr;
 	isMode = false;
 	isPlot = false;
-	cv = nullptr;
-	lck = nullptr;
 	endstart_plotStep = 2;
 	isStartEvent = false;
 	isEvent = false;
@@ -550,6 +548,8 @@ char * calculate_file_md5(const char *filename) {
 
 void Game::Initialize() {
     //kdiy//////
+	cv = nullptr;
+	lck = nullptr;
     if(Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
     git_update = true;
     //kdiy//////

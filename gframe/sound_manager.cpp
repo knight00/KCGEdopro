@@ -294,8 +294,8 @@ void SoundManager::PlayModeSound(uint8_t index, bool lock) {
 	gSoundManager->StopSounds();
 	mixer->PlaySound(file);
     if(lock && mainGame->mode->isEvent) { //if isEvent=false->skipped continuous ploat, no more lock allowed
-        std::unique_lock<epro::mutex> lck(*mainGame->mode->lck);
-        mainGame->mode->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(file)));
+        std::unique_lock<epro::mutex> lck(*mainGame->lck);
+        mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(file)));
 		lck.unlock();
     }
 #endif
@@ -495,7 +495,12 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 					} else
 						return false;
 					StopSounds();
-					return mixer->PlaySound(esound);
+					if(mixer->PlaySound(esound)) {
+						std::unique_lock<epro::mutex> lck(*mainGame->lck);
+						mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(esound)));
+						lck.unlock();
+						return true;
+					} else return false;
 				}
 				return false;
 			} else {
@@ -520,7 +525,12 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
                         return false;
                     gSoundManager->soundcount.push_back(list[soundno]);
 					StopSounds();
-					return mixer->PlaySound(list[soundno]);
+					if(mixer->PlaySound(list[soundno])) {
+						std::unique_lock<epro::mutex> lck(*mainGame->lck);
+						mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list[soundno])));
+						lck.unlock();
+						return true;
+					} else return false;
 				} else
 					return false;
 			}
@@ -546,7 +556,12 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
                         return false;
                     gSoundManager->soundcount.push_back(list[soundno]);
 					StopSounds();
-					return mixer->PlaySound(list[soundno]);
+					if(mixer->PlaySound(list[soundno])) {
+						std::unique_lock<epro::mutex> lck(*mainGame->lck);
+						mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list[soundno])));
+						lck.unlock();
+						return true;
+					} else return false;
 				} else
 					return false;
 			}

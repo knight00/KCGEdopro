@@ -1196,7 +1196,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				if(mainGame->mode->plotStep <= 1) break;
 				if(mainGame->mode->isEvent) {
 					mainGame->mode->isEvent = false;
-					mainGame->mode->cv->notify_one();
+					mainGame->cv->notify_one();
 					gSoundManager->StopSounds();
 				}
 				mainGame->mode->NextPlot();
