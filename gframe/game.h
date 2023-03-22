@@ -152,13 +152,14 @@ public:
 	epro::mutex * lck;//should lock thread when play mode-story sound,this lck is in duelclient.cpp
 	int modeIndex;//decide to play what kind of mode rule,from meun-list getSelected
 	bool isMode;//the duel is mode?
-	bool isPlot;//ignore mouse/keyboard inputs
-	bool isEvent;//if isEvent==true,all events is notify_one() lck
+	bool isPlot;//is showing ploat, ignore mouse/keyboard inputs
+	uint8_t endstart_plotStep;//starting ploating, locking flow, allow left mouse click notify_one() to skip starting continuous ploat
+	bool isStartEvent;//ploating, locking flow, allow left mouse click notify_one() to skip continuous ploat
+	bool isEvent;//ploating, locking flow, allow left mouse click notify_one() to skip continuous ploat
 	bool flag_100000155;//card 100000155 play sound
 	uint8_t rule;//the rule of duel,zcg|story......
     uint8_t chapter;//story chapter
 	uint8_t plotStep;//the step of fun NextPlot()
-	uint8_t duelSoundIndex;//the index of mode-story sound,the sound is in  sound_manager.cpp
  	uint8_t plotIndex;//the index of plot,decide to set text plot
 	uint8_t character[6] = { 0,0,0,0,0,0 };
 	void InitializeMode();

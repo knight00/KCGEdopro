@@ -97,21 +97,22 @@ Mode::Mode() {
 	isPlot = false;
 	cv = nullptr;
 	lck = nullptr;
+	endstart_plotStep = 2;
+	isStartEvent = false;
 	isEvent = false;
 	flag_100000155 = false;
 	plotStep = 0;
 	plotIndex = 0;
 	modeIndex = -1;
-	duelSoundIndex = 0;
 	rule = MODE_RULE_DEFAULT;
     chapter = 0;
 	LoadJsonInfo();
 };
 std::wstring Mode::GetPloat(uint8_t index, uint32_t code) {
 	std::wstring str = L"";
-	if(index < 0 || index >= mainGame->mode->modePloats->size()) return str;
-	str = mainGame->mode->modePloats->at(index).title;
-	str.append(epro::format(L"{}\n{}{}",L":",L"  ", mainGame->mode->modePloats->at(index).ploat));
+	if(index < 0 || index >= modePloats->size()) return str;
+	str = modePloats->at(index).title;
+	str.append(epro::format(L"{}\n{}{}",L":",L"  ", modePloats->at(index).ploat));
 	if(code != 0)
 		str = epro::sprintf(str, gDataManager->GetName(code));
 	return str;
@@ -119,8 +120,8 @@ std::wstring Mode::GetPloat(uint8_t index, uint32_t code) {
 void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 	if(step != 0) plotStep = step;
 	if(index != 0) plotIndex = index;
-	if(plotIndex >= mainGame->mode->modePloats->size() || plotIndex < 0 ) plotIndex = 0;
-	uint8_t i = mainGame->mode->modePloats->at(plotIndex).control;
+	if(plotIndex >= modePloats->size() || plotIndex < 0 ) plotIndex = 0;
+	uint8_t i = modePloats->at(plotIndex).control;
 	if(i < 0 || i > 5) i = 0;
 	uint8_t plotStep = this->plotStep;
 	uint8_t plotIndex = this->plotIndex;
@@ -131,41 +132,47 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 		isPlot = true;
 		std::lock_guard<epro::mutex> lock(mainGame->gMutex); //big lock, unlock until CTOS_MODE_HS_START
         for(int i = 0; i < 6; ++i)
-            mainGame->mode->character[i] = 0;
-        if(mainGame->mode->chapter == 1) {
-            mainGame->mode->character[0] = 1; //Player1 icon: Yusei
-            mainGame->mode->character[1] = 2; //Player2 icon: Dark Siner
+            character[i] = 0;
+        if(chapter == 1) {
+            character[0] = 1; //Player1 icon: Yusei
+            character[1] = 2; //Player2 icon: Dark Siner
             gSoundManager->character[0] = 15; //Player 1 voice: Yusei
             gSoundManager->character[1] = 27; //Player 2 voice: Dark Siner
+			endstart_plotStep = 6;
         } else {
-            mainGame->mode->character[0] = 2;
-            mainGame->mode->character[1] = 1;
-            mainGame->mode->character[2] = 3; //Player3: Paradox
+            character[0] = 2;
+            character[1] = 1;
+            character[2] = 3; //Player3: Paradox
+			endstart_plotStep = 6;
         }
         for(int i = 0; i < 6; ++i)
-            mainGame->imageManager.modeHead[i] = mainGame->imageManager.head[mainGame->mode->character[i]];
+            mainGame->imageManager.modeHead[i] = mainGame->imageManager.head[character[i]];
         mainGame->btnBody->setImage(mainGame->imageManager.modeBody[index]);
 		mainGame->ShowElement(mainGame->wBody);
 		mainGame->ShowElement(mainGame->wPloat);
 		mainGame->stPloatInfo->setText(GetPloat(plotIndex).data());
-	} else {
+	} else if(chapter >= 1) {
 		if(plotStep == 1) {
+			isStartEvent = true;
 			mainGame->wBody->setVisible(false);
 			mainGame->HideElement(mainGame->wPloat);
 		    mainGame->ShowElement(mainGame->wChBody[i]);
 			mainGame->ShowElement(mainGame->wChPloatBody[i]);
 			mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
+            gSoundManager->PauseMusic(true);
 			gSoundManager->PlayModeSound(plotIndex);
 		} else if(plotStep == 2) {
 		    mainGame->ShowElement(mainGame->wChBody[i]);
 			mainGame->ShowElement(mainGame->wChPloatBody[i]);
 			mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
 			gSoundManager->PlayModeSound(plotIndex);
-		} else if(plotStep < 5) {
-			mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
-			gSoundManager->PlayModeSound(plotIndex);
+		} else if(plotStep < 6) {
+			mainGame->stChPloatInfo[i]->setText(GetPloat(plotStep).data());
+			gSoundManager->PlayModeSound(plotStep);
 		} else if(plotStep == 6) {
 			isPlot = false;
+			isStartEvent = false;
+            gSoundManager->PauseMusic(false);
 			mainGame->stChPloatInfo[0]->setText(L"");
 			mainGame->stChPloatInfo[1]->setText(L"");
 			mainGame->HideElement(mainGame->wChPloatBody[0]);
@@ -176,7 +183,6 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 		}
 		//plotStep 8 to 13,part1-1 when bot spsummon dark monster
 		else if(plotStep == 8) {
-			// std::unique_lock<epro::mutex> lck(*this->lck);
 			isPlot = true;
 			isEvent = true;
 		    mainGame->ShowElement(mainGame->wChBody[i]);
@@ -184,21 +190,18 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 			mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
             gSoundManager->PauseMusic(true);
 			gSoundManager->PlayModeSound(plotIndex, true);
-            // cv->wait_for(lck, std::chrono::milliseconds(gSoundManager->GetSoundDuration(gSoundManager->ModeDialogList[chapter][plotIndex])));
 			// cv->wait(lck);
 			// isEvent = true;
-            plotIndex++;
-            i = mainGame->mode->modePloats->at(plotIndex).control;
+			auto pstep = plotIndex + 1;
+            i = modePloats->at(pstep).control;
             mainGame->ShowElement(mainGame->wChBody[i]);
 			mainGame->ShowElement(mainGame->wChPloatBody[i]);
-			mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
-			gSoundManager->PlayModeSound(plotIndex, true);
-            // cv->wait_for(lck, std::chrono::milliseconds(gSoundManager->GetSoundDuration(gSoundManager->ModeDialogList[chapter][plotIndex])));
-            for(int indx = plotIndex + 1; indx < plotIndex + 4; indx++) {
-                i = mainGame->mode->modePloats->at(indx).control;
+			mainGame->stChPloatInfo[i]->setText(GetPloat(pstep).data());
+			gSoundManager->PlayModeSound(pstep, true);
+            for(int indx = pstep + 1; indx < pstep + 4; indx++) {
+                i = modePloats->at(indx).control;
                 mainGame->stChPloatInfo[i]->setText(GetPloat(indx).data());
                 gSoundManager->PlayModeSound(indx, true);
-                // cv->wait_for(lck, std::chrono::milliseconds(gSoundManager->GetSoundDuration(gSoundManager->ModeDialogList[chapter][indx])));
             }
 			mainGame->stChPloatInfo[0]->setText(L"");
 			mainGame->stChPloatInfo[1]->setText(L"");
@@ -210,14 +213,21 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 			mainGame->ShowElement(mainGame->wChBody[1]);
 			mainGame->stChPloatInfo[1]->setText(GetPloat(21, 100000155).data());
 			gSoundManager->PlayModeSound(21, true);
-			// cv->wait_for(lck, std::chrono::milliseconds(gSoundManager->GetSoundDuration(gSoundManager->ModeDialogList[chapter][21])));
-            gSoundManager->PauseMusic(false);
-			mainGame->stChPloatInfo[1]->setText(L"");
-			mainGame->HideElement(mainGame->wChBody[1]);
-			mainGame->HideElement(mainGame->wChPloatBody[1]);
 			isPlot = false;
 			isEvent = false;
-			// lck.unlock();
+            gSoundManager->PauseMusic(false);
+			mainGame->stChPloatInfo[1]->setText(L"");
+			mainGame->HideElement(mainGame->wChPloatBody[1]);
+			mainGame->HideElement(mainGame->wChBody[1]);
+		} else if(plotStep == 9) { //left mouse click skipped continuos ploat
+			isPlot = false;
+            gSoundManager->PauseMusic(false);
+			mainGame->stChPloatInfo[0]->setText(L"");
+			mainGame->stChPloatInfo[1]->setText(L"");
+			mainGame->HideElement(mainGame->wChPloatBody[0]);
+			mainGame->HideElement(mainGame->wChPloatBody[1]);
+			mainGame->HideElement(mainGame->wChBody[0]);
+			mainGame->HideElement(mainGame->wChBody[1]);
 		// } else if(plotStep == 9) {
 		//     mainGame->ShowElement(mainGame->wChBody[i]);
 		// 	mainGame->ShowElement(mainGame->wChPloatBody[i]);
@@ -230,7 +240,7 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 		// 	cv->notify_one();
 		}
 		//plotStep 15,part1-1 when player summon or activate
-		else if(plotStep == 15) {
+		// else if(plotStep == 15) {
 			// std::unique_lock<epro::mutex> lck(*this->lck);
 			// isPlot = true;
 			// isEvent = true;
@@ -245,7 +255,7 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 			// isPlot = false;
 			// isEvent = false;
 			// lck.unlock();
-		}
+		// }
 	}
 }
 bool Mode::LoadWindBot(int port, epro::wstringview pass) {
@@ -299,9 +309,10 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 void Mode::InitializeMode() {
 	isMode = true;
 	isPlot = false;
+	endstart_plotStep = 2;
+	isStartEvent = false;
 	isEvent = false;
 	flag_100000155 = false;
-	duelSoundIndex = 0;
 	plotStep = 0;
 	plotIndex = 0;
 	modeIndex = -1;

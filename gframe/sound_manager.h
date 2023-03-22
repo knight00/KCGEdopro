@@ -98,9 +98,6 @@ public:
 	void StopMusic();
 	void PauseMusic(bool pause);
 	void Tick();
-	/////zdiy/////
-	std::vector<uint8_t> ModeDialogList[CHAPTER][100];
-	/////zdiy/////
 
 private:
 	std::vector<std::string> BGMList[8];

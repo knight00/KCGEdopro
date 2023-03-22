@@ -273,12 +273,6 @@ void SoundManager::RefreshChantsList() {
 		}
 		/////kdiy///////
 	}
-	/////zdiy/////
-    for(uint8_t chap = 0; chap < CHAPTER - 1; chap++) {
-       for(uint8_t i = 0; i < (sizeof(ModeDialogList[chap])/sizeof(ModeDialogList[chap][0])); i++)
-            ModeDialogList[chap]->push_back(i);
-    }
-	/////zdiy/////
 #endif	
 }
 /////zdiy/////
@@ -295,16 +289,14 @@ void SoundManager::PlayModeSound(uint8_t index, bool lock) {
 #ifdef BACKEND
 	if(!soundsEnabled) return;
 	if(!mainGame->mode->isMode) return;
-	if(index >= ModeDialogList[mainGame->mode->chapter - 1]->size()) return;
-	mainGame->mode->duelSoundIndex = index;
-    std::string file = epro::format("./mode/story/story{}/soundDialog/{}.mp3", mainGame->mode->chapter, ModeDialogList[mainGame->mode->chapter - 1]->at(index));
+    std::string file = epro::format("./mode/story/story{}/soundDialog/{}.mp3", mainGame->mode->chapter, index);
 	if(!Utils::FileExists(Utils::ToPathString(file))) return;
 	gSoundManager->StopSounds();
 	mixer->PlaySound(file);
-    if(lock) {
+    if(lock && mainGame->mode->isEvent) { //if isEvent=false->skipped continuous ploat, no more lock allowed
         std::unique_lock<epro::mutex> lck(*mainGame->mode->lck);
         mainGame->mode->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(file)));
-        lck.unlock();
+		lck.unlock();
     }
 #endif
 }
