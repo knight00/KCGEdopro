@@ -116,6 +116,10 @@ WindBot::launch_ret_t WindBot::Launch(int port, epro::wstringview pass, bool cha
 		const char* argVersion_cstr = argVersion.data();
 		const char* argName_cstr = argName.data();
 		const char* argChat_cstr = argChat.data();
+		///////////kdiy//////////
+		const char* argDialog_cstr = argDialog.data();
+		const char* argSeed_cstr = argSeed.data();
+		///////////kdiy//////////
 		const char* argHand_cstr = argHand.data();
 		const char* argDbPaths_cstr = argDbPaths.data();
 		const char* argDeckFile_cstr = overridedeck ? argDeckFile.data() : nullptr;
