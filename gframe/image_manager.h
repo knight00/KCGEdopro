@@ -170,8 +170,8 @@ public:
 	A(QQ)
 	/////////kdiy////
 	/////zdiy/////
-	A(modeBody[1])
-    A(head[4])
+	A(modeBody[CHAPTER])
+    A(head[CHARACTER_STORY])
 	A(modeHead[6])
 	/////zdiy/////
 	A(tSettings)

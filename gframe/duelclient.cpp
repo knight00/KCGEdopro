@@ -1011,7 +1011,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		////////kdiy////////
 		else if(mainGame->wCreateHost2->isVisible())
 			mainGame->HideElement(mainGame->wCreateHost2);
-		////////kdiy////////	
+		////////kdiy////////
 		else if (mainGame->wLanWindow->isVisible())
 			mainGame->HideElement(mainGame->wLanWindow);
 		mainGame->ShowElement(mainGame->wHostPrepare);		
@@ -1310,9 +1310,8 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		mainGame->btnHostPrepStart->setEnabled(is_host && CheckReady());
         /////zdiy/////
         }
-        if(mainGame->mode->isMode) {
+        if(mainGame->mode->isMode)
             DuelClient::SendPacketToServer(CTOS_HS_READY);
-        }
         /////zdiy/////
 		break;
 	}
@@ -1653,36 +1652,6 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 			const auto reason = BufferIO::Read<uint32_t>(pbuf);
 			switch (code)
 			{
-				// case 100000157:{
-				// 	if(previous.controler != 1 || current.controler != 1) return;
-				// 	if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
-				// 	if(!(current.position & POS_FACEUP_DEFENSE)) return;
-				// 	if(!(reason & REASON_RULE) || (reason &(REASON_DESTROY|REASON_REPLACE|REASON_COST|REASON_EFFECT|REASON_RETURN))) return;
-				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,12,code);
-				// 	return;
-				// }
-				// case 63977008:{
-				// 	if(previous.controler != 0 || current.controler != 0) return;
-				// 	if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
-				// 	if(!(reason & REASON_RULE) || (reason &(REASON_DESTROY|REASON_REPLACE|REASON_COST|REASON_EFFECT|REASON_RETURN))) return;
-				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,14,code);
-				// 	return;
-				// }
-				// case 511009416:{
-				// 	if(previous.controler != 0 || current.controler != 0) return;
-				// 	if(!(reason & REASON_SPSUMMON)) return;
-				// 	if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE)) return;
-				// 	if(!(current.position & POS_FACEUP)) return;
-				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,16,code);
-				// 	return;
-				// }
-				// case 100000143:{
-				// 	if(previous.controler != 1 || current.controler != 1) return;
-				// 	if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
-				// 	if(!(reason & REASON_RULE) || (reason &(REASON_DESTROY|REASON_REPLACE|REASON_COST|REASON_EFFECT|REASON_RETURN))) return;
-				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,20,code);
-				// 	return;
-				// }
 				case 100000155:{
 					if(previous.controler != 1 || current.controler != 1) return;
 					if(!(reason & REASON_SPSUMMON)) return;
@@ -1691,28 +1660,6 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 					mainGame->mode->NextPlot(8,6,code);
 					return;
 				}
-				// case 88559132:{
-				// 	if(previous.controler != 0 || current.controler != 0) return;
-				// 	if(!(reason & REASON_SPSUMMON)) return;
-				// 	if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
-				// 	if(!(current.position & POS_FACEUP)) return;
-				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,24,code);
-				// 	return;
-				// }
-				// case 96182448:{
-				// 	if(previous.controler != 0 || current.controler != 0) return;
-				// 	if(!(previous.location & LOCATION_HAND) || !(current.location & LOCATION_MZONE)) return;
-				// 	if(!(reason & REASON_RULE) || (reason &(REASON_DESTROY|REASON_REPLACE|REASON_COST|REASON_EFFECT|REASON_RETURN))) return;
-				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,29,code);
-				// 	return;
-				// }
-				// case 18013090:{
-				// 	if(previous.controler != 0 || current.controler != 0) return;
-				// 	if(!(reason & REASON_SPSUMMON)) return;
-				// 	if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE)) return;
-				// 	if(!(current.position & POS_FACEUP)) return;
-				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,32,code);
-				// }
 				default:
 					return;
 			}
@@ -1723,47 +1670,6 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 			ClientCard* pcard = mainGame->dField.GetCard(mainGame->LocalPlayer(info.controler), info.location, info.sequence, info.position);
 			switch (code)
 			{
-				// case 511002846:{
-				// 	if(!(pcard->type & TYPE_SPELL) || !(pcard->location & LOCATION_SZONE)) return;
-				// 	if(pcard->controler != 0) return;
-				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,13,code);
-				// 	return;
-				// }
-				// case 63977008:{
-				// 	if(pcard->controler != 0) return;
-				// 	if(!(pcard->type & TYPE_MONSTER) || !(pcard->location & LOCATION_MZONE)) return;
-				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,15,code);
-				// 	return;
-				// }
-				// case 97077563:{
-				// 	if(pcard->controler != 1) return;
-				// 	if(!(pcard->type & TYPE_TRAP) || !(pcard->location & LOCATION_SZONE)) return;
-				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,18,code);
-				// 	return;
-				// }
-				// case 100000158:{
-				// 	if(pcard->controler != 1) return;
-				// 	if(!(pcard->type & TYPE_SPELL) || !(pcard->location & LOCATION_SZONE)) return;
-				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,19,code);
-				// 	return;
-				// }
-				// case 100000157:{
-				// 	if(pcard->controler != 1) return;
-				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,17,code);
-				// 	return;
-				// }
-				// case 100000143:{
-				// 	if(pcard->controler != 1) return;
-				// 	if(!(pcard->location & LOCATION_GRAVE)) return;
-				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,22,code);
-				// 	return;
-				// }
-				// case 42079445:{
-				// 	if(pcard->controler != 0) return;
-				// 	if(!(pcard->location & LOCATION_SZONE)) return;
-				// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,23,code);
-				// 	return;
-				// }
 				case 100000155:{
 					if(pcard->controler != 1) return;
 					if((pcard->location & LOCATION_GRAVE)) {
@@ -1777,36 +1683,6 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 					}
 					return;
 				}
-			// case 2295440:
-			// case 100100001:{
-			// 	if(pcard->controler != 0) return;
-			// 	if(!(pcard->location & LOCATION_SZONE)) return;
-			// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,27,code);
-			// 	return;
-			// }
-			// case 511000197:{
-			// 	if(pcard->controler != 1) return;
-			// 	if(!(pcard->location & LOCATION_SZONE)) return;
-			// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,28,code);
-			// 	return;
-			// }
-			// case 23571046:{
-			// 	if(pcard->controler != 0) return;
-			// 	if(!(pcard->location & LOCATION_GRAVE)) return;
-			// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,30,code);
-			// 	return;
-			// }
-			// case 98273947:{
-			// 	if(pcard->controler != 0) return;
-			// 	if(!(pcard->location & LOCATION_SZONE)) return;
-			// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,31,code);
-			// 	return;
-			// }
-			// case 96182448:{
-			// 	if(pcard->controler != 0) return;
-			// 	if(!(pcard->location & LOCATION_GRAVE)) return;
-			// 	mainGame->mode->NextPlot(CARD_SOUND_INDEX,33,code);
-			// }
 			default:
 				return;
 			}

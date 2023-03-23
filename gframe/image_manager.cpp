@@ -655,8 +655,7 @@ bool ImageManager::Initial() {
 	sizes[2].second = CARD_THUMB_HEIGHT * gGameConfig->dpi_scale;
 
 	/////zdiy/////
-#define LEN(arr) (sizeof(arr) / sizeof(arr[0]))
-	for (uint32_t i = 0; i < LEN(modeBody); i++) {
+	for (uint32_t i = 0; i < CHAPTER; i++) {
 		snprintf(buff, 100, "./mode/story/body/%d.png", i);
 		modeBody[i] = driver->getTexture(buff);
 	}

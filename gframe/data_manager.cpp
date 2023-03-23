@@ -9,9 +9,9 @@
 #include "utils.h"
 #include "common.h"
 #include "file_stream.h"
-/////zdiy/////
+/////kdiy/////
 #include "game_config.h"
-/////zdiy/////
+/////kdiy/////
 
 namespace ygo {
 

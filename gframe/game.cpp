@@ -145,7 +145,7 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
         }
         for(int i = 0; i < 6; ++i)
             mainGame->imageManager.modeHead[i] = mainGame->imageManager.head[character[i]];
-        mainGame->btnBody->setImage(mainGame->imageManager.modeBody[index]);
+        mainGame->btnBody->setImage(mainGame->imageManager.modeBody[character - 1]);
 		mainGame->ShowElement(mainGame->wBody);
 		mainGame->ShowElement(mainGame->wPloat);
 		mainGame->stPloatInfo->setText(GetPloat(plotIndex).data());
@@ -237,23 +237,6 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 		// } else if(plotStep == 14) {
 		// 	cv->notify_one();
 		}
-		//plotStep 15,part1-1 when player summon or activate
-		// else if(plotStep == 15) {
-			// std::unique_lock<epro::mutex> lck(*this->lck);
-			// isPlot = true;
-			// isEvent = true;
-			// gSoundManager->PlayModeSound(plotIndex);
-		    // mainGame->ShowElement(mainGame->wChBody[i]);
-			// mainGame->ShowElement(mainGame->wChPloatBody[i]);
-			// mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex, code).data());
-			// cv->wait_for(lck, std::chrono::milliseconds(GetSoundSeconds(duelSoundIndex)));
-			// mainGame->stChPloatInfo[i]->setText(L"");
-			// mainGame->HideElement(mainGame->wChBody[i]);
-			// mainGame->HideElement(mainGame->wChPloatBody[i]);
-			// isPlot = false;
-			// isEvent = false;
-			// lck.unlock();
-		// }
 	}
 }
 bool Mode::LoadWindBot(int port, epro::wstringview pass) {

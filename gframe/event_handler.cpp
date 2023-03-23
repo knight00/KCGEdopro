@@ -1169,7 +1169,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			if(mainGame->mode->isMode && mainGame->mode->isPlot) {
 				if(mainGame->mode->plotStep <= 1) break;
 				if(mainGame->mode->isStartEvent)
-				    mainGame->mode->NextPlot(mainGame->mode->endstart_plotStep);
+				    mainGame->mode->NextPlot(mainGame->mode->endstart_plotStep); //skip starting continuous ploat
 				break;
 			}
 			/////zdiy/////
