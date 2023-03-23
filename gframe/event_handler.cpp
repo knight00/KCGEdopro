@@ -2115,7 +2115,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				break;
 			}
             case BUTTON_SAVE_SETTING: {
-				Utils::FileCopy(EPRO_TEXT("./config/system.conf"), EPRO_TEXT("./config/system_backup.conf"));
+				mainGame->SaveConfig(true);
                 mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8024)).data());
                 mainGame->PopupElement(mainGame->wACMessage, 20);
 				break;

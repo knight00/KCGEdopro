@@ -3795,11 +3795,11 @@ inline void TrySaveInt(T& dest, const irr::gui::IGUIElement* src) {
 	}
 	catch (...) {}
 }
-void Game::SaveConfig() {
+/////kdiy/////
+//void Game::SaveConfig() {
+void Game::SaveConfig(bool backup) {
+/////kdiy/////
 	gGameConfig->nickname = ebNickName->getText();
-	//////kdiy/////////
-	gGameConfig->hdpic = cbpics->getSelected();
-	//////kdiy/////////
 	gGameConfig->lastallowedcards = cbRule->getSelected();
 	gGameConfig->lastDuelParam = duel_param;
 	gGameConfig->lastExtraRules = extra_rules;
@@ -3836,6 +3836,7 @@ void Game::SaveConfig() {
 	gGameConfig->randomtexture = gSettings.chkRandomtexture->isChecked();
 	gGameConfig->closeup = gSettings.chkCloseup->isChecked();
 	/////kdiy//////
+	gGameConfig->hdpic = cbpics->getSelected();
 	auto lastServerIndex = serverChoice->getSelected();
 	if (lastServerIndex >= 0)
 		gGameConfig->lastServer = serverChoice->getItem(lastServerIndex);
@@ -3861,6 +3862,11 @@ void Game::SaveConfig() {
 	gGameConfig->useIntegratedGpu = gSettings.chkIntegratedGPU->isChecked();
 #endif
 	gGameConfig->driver_type = static_cast<irr::video::E_DRIVER_TYPE>(gSettings.cbVideoDriver->getItemData(gSettings.cbVideoDriver->getSelected()));
+	////kdiy////////
+	if(backup)
+	gGameConfig->Save(EPRO_TEXT("./config/system_backup.conf"));
+	else
+	////kdiy////////
 	gGameConfig->Save(EPRO_TEXT("./config/system.conf"));
 }
 Game::RepoGui* Game::AddGithubRepositoryStatusWindow(const GitRepo* repo) {
