@@ -4080,7 +4080,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->WaitFrameSignal(11, lock);
 		}
 		/////kdiy//////
-		if(!chklast) return true;
+		// if(!chklast) return true;
 		if(!PlayAnime(pcard, 0))
 		    PlayChant(SoundManager::CHANT::SUMMON, pcard, player);
 		/////kdiy//////
