@@ -1652,7 +1652,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
             if(chapter == 1) {
                 if(previous.controler != 1 || current.controler != 1) return;
                 if(!(reason & REASON_SPSUMMON)) return;
-                if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE));
+                if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE)) return;
                 if(!(current.position & POS_FACEUP)) return;
                 mainGame->mode->NextPlot(8,6,code);
             }

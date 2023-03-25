@@ -147,7 +147,10 @@ std::wstring WindBotPanel::GetParameters(int port, epro::wstringview pass) {
 		}
 	}
 	// 1 = scissors, 2 = rock, 3 = paper
-	return bots[engine].GetLaunchParameters(port, pass, !chkMute->isChecked(), chkThrowRock->isChecked() * 2, overridedeck);
+    ////kdiy/////////
+	//return bots[engine].GetLaunchParameters(port, pass, !chkMute->isChecked(), chkThrowRock->isChecked() * 2, overridedeck);
+    return bots[engine].GetLaunchParameters(port, pass, !chkMute->isChecked(), chkThrowRock->isChecked() * 2, overridedeck, chkSeed->getSelected());
+    ////kdiy/////////
 }
 
 }

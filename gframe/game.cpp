@@ -266,7 +266,7 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 	if(rule == MODE_STORY) {
 		for(uint32_t i = 0; i < bots.size(); ++i) {
 			auto bot = bots[i];
-            if(bot.mode == epro::format(EPRO_TEXT("STORY{}"), chapter)) {
+            if(bot.mode == epro::format(L"STORY{}", chapter)) {
 				index = i;
                 break;
             }
@@ -274,12 +274,12 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
         //1 VS ...
         auto team = mainGame->dInfo.team1 + mainGame->dInfo.team2;
         for(auto count = team; count > 2; count--) {
-            if(index < 0 || index >= bots.size()) return false;
+            if(index < 0 || index >= (int32_t)bots.size()) return false;
             auto res2 = bots[index].Launch(port, pass, false, 0, nullptr, -1);
             if(!res2) return false;
         }
 	}
-	if(index < 0 || index >= bots.size()) return false;
+	if(index < 0 || index >= (int32_t)bots.size()) return false;
 	auto res = bots[index].Launch(port, pass, false, 0, nullptr, -1);
 #if !defined(_WIN32) && !defined(__ANDROID__)
 	if(res > 0)
@@ -2219,7 +2219,7 @@ void Game::PopulateAIBotWindow() {
 #endif
 	///////kdiy/////////
 	// gBot.window = env->addWindow(Scale(750, 120, 960, showWindbotArgs ? 455 : 420), false, gDataManager->GetSysString(2051).data());
-	gBot.window = env->addWindow(Scale(750, 120, 1220, showWindbotArgs ? 395 : 360), false, gDataManager->GetSysString(2051).data());
+	gBot.window = env->addWindow(Scale(750, 120, 1220, showWindbotArgs ? 430 : 395), false, gDataManager->GetSysString(2051).data());
 	///////kdiy/////////
 	defaultStrings.emplace_back(gBot.window, 2051);
 	gBot.window->getCloseButton()->setVisible(false);
@@ -2259,7 +2259,10 @@ void Game::PopulateAIBotWindow() {
 	///////kdiy/////////
 	defaultStrings.emplace_back(gBot.btnAdd, 2054);
 	if(showWindbotArgs) {
-		gBot.btnCommand = env->addButton(Scale(10, 295, 200, 320), gBot.window, BUTTON_BOT_COPY_COMMAND, gDataManager->GetSysString(12120).data());
+        ///////kdiy/////////
+		//gBot.btnCommand = env->addButton(Scale(10, 295, 200, 320), gBot.window, BUTTON_BOT_COPY_COMMAND, gDataManager->GetSysString(12120).data());
+		gBot.btnCommand = env->addButton(Scale(10, 265, 200, 290), gBot.window, BUTTON_BOT_COPY_COMMAND, gDataManager->GetSysString(12120).data());
+        ///////kdiy/////////
 		defaultStrings.emplace_back(gBot.btnCommand, 12120);
 	}
 }

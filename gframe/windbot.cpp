@@ -142,18 +142,32 @@ WindBot::launch_ret_t WindBot::Launch(int port, epro::wstringview pass, bool cha
 #endif
 }
 
-std::wstring WindBot::GetLaunchParameters(int port, epro::wstringview pass, bool chat, int hand, const wchar_t* overridedeck) const {
+/////kdiy//////
+//std::wstring WindBot::GetLaunchParameters(int port, epro::wstringview pass, bool chat, int hand, const wchar_t* overridedeck) const {
+std::wstring WindBot::GetLaunchParameters(int port, epro::wstringview pass, bool chat, int hand, const wchar_t* overridedeck, int seed) const {
+/////kdiy//////
 #ifndef __ANDROID__
 	if(!serialized) {
 		serialized = true;
 		serialized_databases = base64_encode<decltype(serialized_databases)>(databases.dump(-1, ' ', false, nlohmann::detail::error_handler_t::replace));
 	}
 #endif
+///////fixedo//////////
+#if !defined(__ANDROID__) && !defined(EDOPRO_IOS)
+///////fixedo//////////
 	const auto assets_path = Utils::GetAbsolutePath(EPRO_TEXT("./WindBot"_sv));
 	const auto override_deck = overridedeck ? epro::format(L" DeckFile=\"{}\"", overridedeck) : L"";
 	return epro::format(
-		L"HostInfo=\"{}\" Deck=\"{}\" Port={} Version={} name=\"[AI] {}\" Chat={} Hand={} DbPaths={}{} AssetPath=\"{}\"",
-		pass, deck, port, version, name, chat, hand, Utils::ToUnicodeIfNeeded(serialized_databases), override_deck, Utils::ToUnicodeIfNeeded(assets_path));
+		///////kdiy//////////
+		//L"HostInfo=\"{}\" Deck=\"{}\" Port={} Version={} name=\"[AI] {}\" Chat={} Hand={} DbPaths={}{} AssetPath=\"{}\"",
+		//pass, deck, port, version, name, chat, hand, Utils::ToUnicodeIfNeeded(serialized_databases), override_deck, Utils::ToUnicodeIfNeeded(assets_path));
+		L"HostInfo=\"{}\" Deck=\"{}\" Port={} Version={} name=\"[AI] {}\" Dialog=\"{}\" Chat={} Seed={} Hand={} DbPaths={}{} AssetPath=\"{}\"",
+		pass, deck, port, version, deck == L"AI_perfectdicky" ? deckpath : name, dialog, chat, seed, hand, Utils::ToUnicodeIfNeeded(serialized_databases), override_deck, Utils::ToUnicodeIfNeeded(assets_path));
+	    ///////kdiy//////////
+///////fixedo//////////
+#endif
+	return L"";
+///////fixedo//////////
 }
 
 void WindBot::AddDatabase(epro::path_stringview database) {
