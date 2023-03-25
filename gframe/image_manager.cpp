@@ -78,9 +78,10 @@ namespace ygo {
 #define TEXTURE_DONTHOUSAND         60
 #define TEXTURE_YUYA                61
 #define TEXTURE_DECLAN              62
-#define TEXTURE_PLAYMAKER           63
-#define TEXTURE_SOULBURNER          64
-#define TEXTURE_BLUEANGEL           65
+#define TEXTURE_SHAY                63
+#define TEXTURE_PLAYMAKER           64
+#define TEXTURE_SOULBURNER          65
+#define TEXTURE_BLUEANGEL           66
 ////////kdiy/////
 
 #define ASSERT_TEXTURE_LOADED(what, name) do { if(!what) { throw std::runtime_error("Couldn't load texture: " name); }} while(0)
@@ -154,6 +155,7 @@ bool ImageManager::Initial() {
 	searchPath.push_back(EPRO_TEXT("./textures/character/DonThousand"));
 	searchPath.push_back(EPRO_TEXT("./textures/character/yuya"));
 	searchPath.push_back(EPRO_TEXT("./textures/character/declan"));
+	searchPath.push_back(EPRO_TEXT("./textures/character/shay"));
 	searchPath.push_back(EPRO_TEXT("./textures/character/playmaker"));
 	searchPath.push_back(EPRO_TEXT("./textures/character/soulburner"));
 	searchPath.push_back(EPRO_TEXT("./textures/character/blueangel"));
@@ -733,6 +735,7 @@ void ImageManager::RefreshRandomImageList() {
 	RefreshImageDir(EPRO_TEXT("character/Donthousand/icon"), TEXTURE_DONTHOUSAND);
 	RefreshImageDir(EPRO_TEXT("character/yuya/icon"), TEXTURE_YUYA);
 	RefreshImageDir(EPRO_TEXT("character/declan/icon"), TEXTURE_DECLAN);
+	RefreshImageDir(EPRO_TEXT("character/shay/icon"), TEXTURE_SHAY);
 	RefreshImageDir(EPRO_TEXT("character/playmaker/icon"), TEXTURE_PLAYMAKER);
 	RefreshImageDir(EPRO_TEXT("character/soulburner/icon"), TEXTURE_SOULBURNER);
 	RefreshImageDir(EPRO_TEXT("character/blueangel/icon"), TEXTURE_BLUEANGEL);
@@ -781,8 +784,8 @@ void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, in
 	src = GetTextureFromFile(name, width, height);
 }
 void ImageManager::RefreshKCGImage() {
-	const wchar_t* textcharacter[] = {L"muto",L"atem",L"kaiba",L"joey",L"marik",L"dartz",L"bakura",L"aigami",L"judai",L"manjome",L"kaisa",L"phoenix",L"john",L"yubel",L"yusei",L"jack",L"arki",L"yuma",L"shark",L"kaito",L"DonThousand",L"yuya",L"declan",L"playmaker",L"soulburner",L"blueangel"};
-	int imgcharacter[] = {TEXTURE_MUTO,TEXTURE_ATEM,TEXTURE_KAIBA,TEXTURE_JOEY,TEXTURE_MARIK,TEXTURE_DARTZ,TEXTURE_BAKURA,TEXTURE_AIGAMI,TEXTURE_JUDAI,TEXTURE_MANJOME,TEXTURE_KAISA,TEXTURE_PHORNIX,TEXTURE_JOHN,TEXTURE_YUBEL,TEXTURE_YUSEI,TEXTURE_JACK,TEXTURE_ARKI,TEXTURE_YUMA,TEXTURE_SHARK,TEXTURE_KAITO,TEXTURE_DONTHOUSAND,TEXTURE_YUYA,TEXTURE_DECLAN,TEXTURE_PLAYMAKER,TEXTURE_SOULBURNER,TEXTURE_BLUEANGEL};
+	const wchar_t* textcharacter[] = {L"muto",L"atem",L"kaiba",L"joey",L"marik",L"dartz",L"bakura",L"aigami",L"judai",L"manjome",L"kaisa",L"phoenix",L"john",L"yubel",L"yusei",L"jack",L"arki",L"yuma",L"shark",L"kaito",L"DonThousand",L"yuya",L"declan",L"shay",L"playmaker",L"soulburner",L"blueangel"};
+	int imgcharacter[] = {TEXTURE_MUTO,TEXTURE_ATEM,TEXTURE_KAIBA,TEXTURE_JOEY,TEXTURE_MARIK,TEXTURE_DARTZ,TEXTURE_BAKURA,TEXTURE_AIGAMI,TEXTURE_JUDAI,TEXTURE_MANJOME,TEXTURE_KAISA,TEXTURE_PHORNIX,TEXTURE_JOHN,TEXTURE_YUBEL,TEXTURE_YUSEI,TEXTURE_JACK,TEXTURE_ARKI,TEXTURE_YUMA,TEXTURE_SHARK,TEXTURE_KAITO,TEXTURE_DONTHOUSAND,TEXTURE_YUYA,TEXTURE_DECLAN,TEXTURE_SHAY,TEXTURE_PLAYMAKER,TEXTURE_SOULBURNER,TEXTURE_BLUEANGEL};
     for(uint8_t playno = 1; playno < CHARACTER_VOICE; playno++) {
         icon[playno] = driver->getTexture((EPRO_TEXT("./textures/character/") + Utils::ToPathString(textcharacter[playno-1]) + EPRO_TEXT("/mini_icon.png")).c_str());
         GetRandomImage(character[playno], imgcharacter[playno-1], true);

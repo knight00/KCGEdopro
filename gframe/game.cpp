@@ -135,7 +135,7 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
             character[0] = 1; //Player1 icon: Yusei
             character[1] = 2; //Player2 icon: Dark Siner
             gSoundManager->character[0] = 15; //Player 1 voice: Yusei
-            gSoundManager->character[1] = 27; //Player 2 voice: Dark Siner
+            gSoundManager->character[1] = CHARACTER_VOICE; //Player 2 voice: Dark Siner
 			endstart_plotStep = 6;
         } else {
             character[0] = 2;
@@ -145,7 +145,7 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
         }
         for(int i = 0; i < 6; ++i)
             mainGame->imageManager.modeHead[i] = mainGame->imageManager.head[character[i]];
-        mainGame->btnBody->setImage(mainGame->imageManager.modeBody[character - 1]);
+        mainGame->btnBody->setImage(mainGame->imageManager.modeBody[chapter - 1]);
 		mainGame->ShowElement(mainGame->wBody);
 		mainGame->ShowElement(mainGame->wPloat);
 		mainGame->stPloatInfo->setText(GetPloat(plotIndex).data());
@@ -2160,7 +2160,7 @@ void Game::PopulateGameHostWindows() {
         ebCharacter[i]->addItem(gDataManager->GetSysString(8048).data());
         ebCharacter[i]->setEnabled(false);
 #endif
-        for (auto j = 8049; j <= 8049 + CHARACTER_VOICE - 2; ++j)
+        for (auto j = 9000; j <= 9000 + CHARACTER_VOICE - 2; ++j)
             ebCharacter[i]->addItem(gDataManager->GetSysString(j).data());
         ebCharacter[i]->setSelected(0);
         ebCharacter[i]->setMaxSelectionRows(10);

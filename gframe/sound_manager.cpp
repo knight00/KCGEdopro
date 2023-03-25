@@ -86,10 +86,11 @@ void SoundManager::RefreshBGMList() {
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/DonThousand"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yuya"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/declan"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/shay"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/playmaker"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/soulburner"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/blueangel"));
-	//Utils::MakeDirectory(EPRO_TEXT("./sound/character/darksiner"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/darksiner"));
 	////////kdiy////
 	Utils::MakeDirectory(EPRO_TEXT("./sound/BGM/"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/BGM/duel"));
@@ -122,7 +123,6 @@ void SoundManager::RefreshSoundsList() {
 		{REVEAL, EPRO_TEXT("./sound/reveal.{}"_sv)},
 		{EQUIP, EPRO_TEXT("./sound/equip.{}"_sv)},
 		{DESTROYED, EPRO_TEXT("./sound/destroyed.{}"_sv)},
-		{BANISHED, EPRO_TEXT("./sound/banished.{}"_sv)},
 		{TOKEN, EPRO_TEXT("./sound/token.{}"_sv)},
 		{ATTACK, EPRO_TEXT("./sound/attack.{}"_sv)},
 		{DIRECT_ATTACK, EPRO_TEXT("./sound/directattack.{}"_sv)},
@@ -167,7 +167,6 @@ void SoundManager::RefreshChantsList() {
 		{CHANT::SET,       EPRO_TEXT("set"_sv)},
 		{CHANT::EQUIP,     EPRO_TEXT("equip"_sv)},
 		{CHANT::DESTROY,   EPRO_TEXT("destroyed"_sv)},
-		{CHANT::BANISH,    EPRO_TEXT("banished"_sv)},
 		{CHANT::DRAW,      EPRO_TEXT("draw"_sv)},
 		{CHANT::DAMAGE,    EPRO_TEXT("damage"_sv)},
 		{CHANT::RECOVER,   EPRO_TEXT("gainlp"_sv)},
@@ -184,7 +183,7 @@ void SoundManager::RefreshChantsList() {
 	for(auto list : ChantsList)
 		list.clear();
 	int i = -1;
-	for(int i = 0; i < 11; i++) {
+	for(int i = 0; i < 10; i++) {
 		for(int j = 0; j < CHARACTER_VOICE + CHARACTER_STORY_ONLY; j++)
 			ChantSPList[i][j].clear();
 	}
@@ -218,10 +217,11 @@ void SoundManager::RefreshChantsList() {
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/DonThousand/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/yuya/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/declan/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/shay/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/playmaker/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/soulburner/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/blueangel/{}"), chantType.second));
-		//searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/darksiner/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/darksiner/{}"), chantType.second));
 
 		for (auto path : searchPath)
 			Utils::MakeDirectory(path);
@@ -229,20 +229,19 @@ void SoundManager::RefreshChantsList() {
 			if(chantType.first == CHANT::SET) i = 0;
 			if(chantType.first == CHANT::EQUIP) i = 1;
 			if(chantType.first == CHANT::DESTROY) i = 2;
-			if(chantType.first == CHANT::BANISH) i = 3;
-			if(chantType.first == CHANT::DRAW) i = 4;
-			if(chantType.first == CHANT::DAMAGE) i = 5;
-			if(chantType.first == CHANT::RECOVER) i = 6;
-			if(chantType.first == CHANT::NEXTTURN) i = 7;
-			if(chantType.first == CHANT::STARTUP) i = 8;
-			if(chantType.first == CHANT::BORED) i = 9;
-			if(chantType.first == CHANT::SUMMON) i = 10;
+			if(chantType.first == CHANT::DRAW) i = 3;
+			if(chantType.first == CHANT::DAMAGE) i = 4;
+			if(chantType.first == CHANT::RECOVER) i = 5;
+			if(chantType.first == CHANT::NEXTTURN) i = 6;
+			if(chantType.first == CHANT::STARTUP) i = 7;
+			if(chantType.first == CHANT::BORED) i = 8;
+			if(chantType.first == CHANT::SUMMON) i = 9;
 			if(i == -1) continue;
-			for(int x =0 ; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
+			for(int x = 0 ; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
 				for (auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
 					auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
 					std::string files = Utils::ToUTF8IfNeeded(file);
-					if((i == 10 && (files.find("fusion") != std::string::npos || files.find("synchro") != std::string::npos || files.find("xyz") != std::string::npos || files.find("link") != std::string::npos || files.find("ritual") != std::string::npos || files.find("pendulum") != std::string::npos)) || i != 10)
+					if((i == 9 && (files.find("fusion") != std::string::npos || files.find("synchro") != std::string::npos || files.find("xyz") != std::string::npos || files.find("link") != std::string::npos || files.find("ritual") != std::string::npos || files.find("pendulum") != std::string::npos)) || i != 9)
 					    ChantSPList[i][x].push_back(conv);
 				}
 			}
@@ -369,7 +368,7 @@ void SoundManager::PlayCustomBGM(std::string num) {
 #endif
 }
 //bool SoundManager::PlayChant(CHANT chant, uint32_t code) {
-bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int player, uint8_t extra) {
+bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t player, uint8_t extra) {
 ///////kdiy//////
 #ifdef BACKEND
 	if(!soundsEnabled) return false;
@@ -385,13 +384,12 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 		if(chant == CHANT::SET) i = 0;
 		if(chant == CHANT::EQUIP) i = 1;
 		if(chant == CHANT::DESTROY) i = 2;
-		if(chant == CHANT::BANISH) i = 3;
-		if(chant == CHANT::DRAW) i = 4;
-		if(chant == CHANT::DAMAGE) i = 5;
-		if(chant == CHANT::RECOVER) i = 6;
-		if(chant == CHANT::NEXTTURN) i = 7;
-		if(chant == CHANT::STARTUP) i = 8;
-		if(chant == CHANT::BORED) i = 9;
+		if(chant == CHANT::DRAW) i = 3;
+		if(chant == CHANT::DAMAGE) i = 4;
+		if(chant == CHANT::RECOVER) i = 5;
+		if(chant == CHANT::NEXTTURN) i = 6;
+		if(chant == CHANT::STARTUP) i = 7;
+		if(chant == CHANT::BORED) i = 8;
 		if(i == -1) return false;
 		std::vector<std::string> list;
 		list = ChantSPList[i][character[player]];
@@ -399,9 +397,14 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 		if(count > 0) {
 			int bgm = (std::uniform_int_distribution<>(0, count - 1))(rnd);
 			std::string BGMName = list[bgm];
+            if(i < 3) {
+                if(std::find(gSoundManager->soundcount2.begin(), gSoundManager->soundcount2.end(), BGMName) != gSoundManager->soundcount2.end())
+                return false;
+                gSoundManager->soundcount2.push_back(BGMName);
+            }
 			StopSounds();
 			if(mixer->PlaySound(BGMName)) {
-                if(i >= 8) return true;
+                if(i >= 7) return true;
                 std::unique_lock<epro::mutex> lck(*mainGame->lck);
                 mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(BGMName)));
                 // lck.unlock();
@@ -417,7 +420,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 			if(chant_it == ChantsList[character[player]].end()) {
 				if(extra != 0) {
 					int i = -1;
-					if(chant == CHANT::SUMMON) i = 10;
+					if(chant == CHANT::SUMMON) i = 9;
 					if(i == -1) return false;
 					std::vector<std::string> list;
 					list = ChantSPList[i][character[player]];
@@ -503,6 +506,9 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, int pla
 						}
 					} else
 						return false;
+                    if(std::find(gSoundManager->soundcount.begin(), gSoundManager->soundcount.end(), esound) != gSoundManager->soundcount.end())
+                        return false;
+                    gSoundManager->soundcount.push_back(esound);
 					StopSounds();
 					if(mixer->PlaySound(esound)) {
 						std::unique_lock<epro::mutex> lck(*mainGame->lck);

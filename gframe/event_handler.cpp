@@ -2056,7 +2056,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			}
 			//////kdiy///////
             case BUTTON_REPO_DELETE:	{
-                mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8075)).data());
+                mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8049)).data());
                 mainGame->PopupElement(mainGame->wACMessage, 90);
 				irr::gui::IGUIButton* button = (irr::gui::IGUIButton*)event.GUIEvent.Caller;
 				for(auto& repo : mainGame->repoInfoGui) {
@@ -2080,7 +2080,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				break;
 			}	
 			case BUTTON_CLEAR: {
-                mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8075)).data());
+                mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8049)).data());
                 mainGame->PopupElement(mainGame->wACMessage, 90);
 				if(Utils::DeleteDirectory(EPRO_TEXT("./pics/")) && Utils::DeleteDirectory(EPRO_TEXT("./hdpics/"))) {
 					try {
@@ -2091,7 +2091,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				break;
 			}	
 			case BUTTON_CLEAR2: {
-                mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8075)).data());
+                mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8049)).data());
                 mainGame->PopupElement(mainGame->wACMessage, 90);
                 Utils::DeleteDirectory(EPRO_TEXT("./config/languages/"));
                 Utils::DeleteDirectory(EPRO_TEXT("./cdb/"));
@@ -2222,7 +2222,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 						gGameConfig->enablessound = false;
                         gGameConfig->enablecsound = false;
                         gGameConfig->enableasound = false;
-                        mainGame->stACMessage->setText(gDataManager->GetSysString(8076).data());
+                        mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
                         mainGame->PopupElement(mainGame->wACMessage, 20);
 					}
 				}
@@ -2250,7 +2250,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 						gGameConfig->enablecsound = false;
                         gGameConfig->enablecsound = false;
                         gGameConfig->enableasound = false;
-                        mainGame->stACMessage->setText(gDataManager->GetSysString(8076).data());
+                        mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
                         mainGame->PopupElement(mainGame->wACMessage, 20);
 					}
 				}
@@ -2278,7 +2278,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 						gGameConfig->enableasound = false;
                         gGameConfig->enablecsound = false;
                         gGameConfig->enableasound = false;
-                        mainGame->stACMessage->setText(gDataManager->GetSysString(8076).data());
+                        mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
                         mainGame->PopupElement(mainGame->wACMessage, 20);
 					}
 				}
@@ -2305,7 +2305,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 						}
 						if(!filechk) {
 							gGameConfig->enableanime = false;
-                            mainGame->stACMessage->setText(gDataManager->GetSysString(8077).data());
+                            mainGame->stACMessage->setText(gDataManager->GetSysString(8051).data());
                             mainGame->PopupElement(mainGame->wACMessage, 20);
 						}
 						if(gGameConfig->enableanime) {
@@ -2351,7 +2351,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 						}
 						if(!filechk) {
 							gGameConfig->enableanime = false;
-                            mainGame->stACMessage->setText(gDataManager->GetSysString(8077).data());
+                            mainGame->stACMessage->setText(gDataManager->GetSysString(8051).data());
                             mainGame->PopupElement(mainGame->wACMessage, 20);
 						}
                         if(gGameConfig->enablesanime) {
@@ -2391,7 +2391,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 						}
 						if(!filechk) {
 							gGameConfig->enableanime = false;
-                            mainGame->stACMessage->setText(gDataManager->GetSysString(8077).data());
+                            mainGame->stACMessage->setText(gDataManager->GetSysString(8051).data());
                             mainGame->PopupElement(mainGame->wACMessage, 20);
 						}
                         if(gGameConfig->enablecanime) {
@@ -2431,7 +2431,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 						}
 						if(!filechk) {
 							gGameConfig->enableanime = false;
-                            mainGame->stACMessage->setText(gDataManager->GetSysString(8077).data());
+                            mainGame->stACMessage->setText(gDataManager->GetSysString(8051).data());
                             mainGame->PopupElement(mainGame->wACMessage, 20);
 						}
                         if(gGameConfig->enableaanime) {

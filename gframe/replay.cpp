@@ -6,10 +6,6 @@
 #include "utils.h"
 #include "file_stream.h"
 
-//////ktest///////
-//#include "sound_manager.h"
-//////ktest///////
-
 namespace ygo {
 void Replay::BeginRecord(bool write, epro::path_string name) {
 	Reset();

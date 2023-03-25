@@ -95,9 +95,6 @@ int ReplayMode::ReplayThread() {
 	const auto first_oppo_player = names.begin() + mainGame->dInfo.team1;
 	mainGame->dInfo.selfnames.assign(names.begin(), first_oppo_player);
 	mainGame->dInfo.opponames.assign(first_oppo_player, names.end());
-	///////////ktest///////////
-	//gSoundManager->character[6] = cur_replay.params.character[6];
-	///////////ktest///////////
 	mainGame->dInfo.duel_params = cur_replay.params.duel_flags;
 	mainGame->dInfo.duel_field = mainGame->GetMasterRule(mainGame->dInfo.duel_params);
 	matManager.SetActiveVertices(mainGame->dInfo.HasFieldFlag(DUEL_3_COLUMNS_FIELD),

@@ -495,7 +495,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					gGameConfig->enablessound = false;
                     gGameConfig->enablecsound = false;
                     gGameConfig->enableasound = false;
-                    mainGame->stACMessage->setText(gDataManager->GetSysString(8076).data());
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
                     mainGame->PopupElement(mainGame->wACMessage, 20);
 					for(int i = 0; i < 6; ++i)
 					    mainGame->icon[i]->setEnabled(false);
@@ -526,7 +526,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					gGameConfig->enablessound = false;
                     gGameConfig->enablecsound = false;
                     gGameConfig->enableasound = false;
-                    mainGame->stACMessage->setText(gDataManager->GetSysString(8076).data());
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
                     mainGame->PopupElement(mainGame->wACMessage, 20);
 					for(int i = 0; i < 6; ++i)
 					    mainGame->icon[i]->setEnabled(false);
@@ -559,7 +559,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					gGameConfig->enablessound = false;
                     gGameConfig->enablecsound = false;
                     gGameConfig->enableasound = false;
-                    mainGame->stACMessage->setText(gDataManager->GetSysString(8076).data());
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
                     mainGame->PopupElement(mainGame->wACMessage, 20);
 					for(int i = 0; i < 6; ++i)
 					    mainGame->icon[i]->setEnabled(false);
@@ -592,7 +592,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					gGameConfig->enablessound = false;
                     gGameConfig->enablecsound = false;
                     gGameConfig->enableasound = false;
-                    mainGame->stACMessage->setText(gDataManager->GetSysString(8076).data());
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
                     mainGame->PopupElement(mainGame->wACMessage, 20);
 					for(int i = 0; i < 6; ++i)
 					    mainGame->icon[i]->setEnabled(false);
@@ -625,7 +625,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					gGameConfig->enablessound = false;
                     gGameConfig->enablecsound = false;
                     gGameConfig->enableasound = false;
-                    mainGame->stACMessage->setText(gDataManager->GetSysString(8076).data());
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
                     mainGame->PopupElement(mainGame->wACMessage, 20);
 					for(int i = 0; i < 6; ++i)
 					    mainGame->icon[i]->setEnabled(false);
@@ -658,7 +658,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					gGameConfig->enablessound = false;
                     gGameConfig->enablecsound = false;
                     gGameConfig->enableasound = false;
-                    mainGame->stACMessage->setText(gDataManager->GetSysString(8076).data());
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
                     mainGame->PopupElement(mainGame->wACMessage, 20);
 					for(int i = 0; i < 6; ++i)
 					    mainGame->icon[i]->setEnabled(false);
@@ -1801,7 +1801,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					gGameConfig->enablessound = false;
                     gGameConfig->enablecsound = false;
                     gGameConfig->enableasound = false;
-                    mainGame->stACMessage->setText(gDataManager->GetSysString(8076).data());
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
                     mainGame->PopupElement(mainGame->wACMessage, 20);
 					for(int i = 0; i < 6; ++i) {
 						mainGame->ebCharacter[i]->setSelected(0);
