@@ -1172,11 +1172,11 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					mainGame->btnNo->setEnabled(true);
 					///kdiy//////////
 				} else if (prev_operation == ACTION_SHOW_CHANGELOG) {
-					///kupdate//////////
+					///kdiy//////////
 					// Utils::SystemOpen(EPRO_TEXT("https://github.com/edo9300/edopro/releases?referrer=") EDOPRO_USERAGENT);
 					Utils::SystemOpen(EPRO_TEXT("https://afdian.net/p/7676acb6c0af11ed898652540025c377/"));
 					mainGame->btnNo->setEnabled(true);
-					///kupdate//////////
+					///kdiy//////////
 				}
 				prev_operation = 0;
 				prev_sel = -1;
@@ -1812,15 +1812,17 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
                 for(int i = 0; i < 6; i++) {
                     int sel = mainGame->ebCharacter[i]->getSelected();
                     if(sel > 0) {
-                        mainGame->choose_player = i;
                         mainGame->wCharacter->setVisible(true);
                         mainGame->wCharacterSelect->setVisible(true);
+                    }
+                    if(sel >= 0) {
+                        mainGame->choose_player = i;
                         gSoundManager->character[mainGame->choose_player] = sel;
                         int player = gSoundManager->character[mainGame->choose_player];
                         mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
                         mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
                         mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
-					}
+                    }
 				}
 				break;
 			}

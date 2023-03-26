@@ -153,7 +153,6 @@ public:
 	bool isPlot;//is showing ploat, ignore mouse/keyboard inputs
 	uint8_t endstart_plotStep;//starting ploating, locking flow, allow left mouse click notify_one() to skip starting continuous ploat
 	bool isStartEvent;//ploating, locking flow, allow left mouse click notify_one() to skip continuous ploat
-	bool isEvent;//ploating, locking flow, allow left mouse click notify_one() to skip continuous ploat
 	bool flag_100000155;//card 100000155 play sound
 	uint8_t rule;//the rule of duel,zcg|story......
     uint8_t chapter;//story chapter
@@ -361,8 +360,9 @@ public:
     bool first_play = false;
     uint32_t showcardalias;
     bool chklast = true;
-	epro::condition_variable* cv = nullptr;//should lock thread when play mode-story sound,this cv is in duelclient.cpp
-	epro::mutex * lck = nullptr;//should lock thread when play mode-story sound,this lck is in duelclient.cpp
+	bool isEvent;//locking flow, allow left mouse click notify_one() to skip
+	epro::condition_variable* cv;//should lock thread when play mode-story sound,this cv is in duelclient.cpp
+	epro::mutex * lck;//should lock thread when play mode-story sound,this lck is in duelclient.cpp
     ////kdiy//////
 	float showcarddif;
 	float showcardp;

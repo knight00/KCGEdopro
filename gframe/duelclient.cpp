@@ -1189,6 +1189,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->stTip->setVisible(false);
 			mainGame->device->setEventReceiver(&mainGame->menuHandler);
 			////kdiy////////
+            mainGame->isEvent = false;
 			mainGame->wAvatar[0]->setVisible(false);
 			mainGame->wAvatar[1]->setVisible(false);
 			for(int i = 0; i < 6; ++i) {
@@ -5640,6 +5641,7 @@ void DuelClient::ReplayPrompt(bool local_stream) {
 	mainGame->btnChainWhenAvail->setVisible(false);
 	mainGame->btnCancelOrFinish->setVisible(false);
 	////kdiy////////
+    mainGame->isEvent = false;
 	mainGame->wAvatar[0]->setVisible(false);
 	mainGame->wAvatar[1]->setVisible(false);
 	////kdiy////////

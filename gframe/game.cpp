@@ -97,7 +97,6 @@ Mode::Mode() {
 	isPlot = false;
 	endstart_plotStep = 2;
 	isStartEvent = false;
-	isEvent = false;
 	flag_100000155 = false;
 	plotStep = 0;
 	plotIndex = 0;
@@ -182,7 +181,7 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 		//plotStep 8 to 13,part1-1 when bot spsummon dark monster
 		else if(plotStep == 8) {
 			isPlot = true;
-			isEvent = true;
+			mainGame->isEvent = true;
 		    mainGame->ShowElement(mainGame->wChBody[i]);
 			mainGame->ShowElement(mainGame->wChPloatBody[i]);
 			mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
@@ -212,7 +211,7 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 			mainGame->stChPloatInfo[1]->setText(GetPloat(21, 100000155).data());
 			gSoundManager->PlayModeSound(21, true);
 			isPlot = false;
-			isEvent = false;
+			mainGame->isEvent = false;
             gSoundManager->PauseMusic(false);
 			mainGame->stChPloatInfo[1]->setText(L"");
 			mainGame->HideElement(mainGame->wChPloatBody[1]);
@@ -292,7 +291,6 @@ void Mode::InitializeMode() {
 	isPlot = false;
 	endstart_plotStep = 2;
 	isStartEvent = false;
-	isEvent = false;
 	flag_100000155 = false;
 	plotStep = 0;
 	plotIndex = 0;
@@ -533,6 +531,7 @@ void Game::Initialize() {
     //kdiy//////
 	cv = nullptr;
 	lck = nullptr;
+	isEvent = false;
     if(Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
         git_update = true;
     if(!Utils::FileExists(EPRO_TEXT("./cdb/cards.cdb")))
