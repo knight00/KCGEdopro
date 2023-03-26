@@ -1194,14 +1194,18 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			/////zdiy/////
 			if(mainGame->mode->isMode && mainGame->mode->isPlot){
 				if(mainGame->mode->plotStep <= 1) break;
-				if(mainGame->mode->isEvent) {
-					mainGame->mode->isEvent = false;
+				if(mainGame->isEvent) {
+					mainGame->isEvent = false;
 					mainGame->cv->notify_one();
 					gSoundManager->StopSounds();
 				}
 				mainGame->mode->NextPlot();
 				break;
-			}
+			} else if(mainGame->isEvent) {
+				mainGame->isEvent = false;
+				mainGame->cv->notify_one();
+				gSoundManager->StopSounds();
+            }
 			/////zdiy/////
 			hovered_location = 0;
 			irr::core::vector2di pos = mainGame->Resize(event.MouseInput.X, event.MouseInput.Y, true);
@@ -1700,7 +1704,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 							mainGame->hideChat = true;
 					}
 					SetShowMark(mcard, true);
-					if(mcard->code) {
+                    ///////kdiy/////////
+					//if(mcard->code) {
+                    if(mcard->code && (mcard->type || mainGame->dInfo.isSingleMode)) {
+                    ///////kdiy/////////
 						mainGame->ShowCardInfo(mcard->code);
 						if(mcard->location & (0xe|0x400)) {
 							std::wstring str(gDataManager->GetName(mcard->code));
