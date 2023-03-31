@@ -376,6 +376,37 @@ epro::wstringview DataManager::GetName(uint32_t code) const {
 	return name;
 	/////kdiy/////
 }
+/////kdiy/////
+std::wstring DataManager::GetVirtualName(uint32_t code, uint32_t alias) const {
+	std::wstring codename(GetName(code));
+	std::wstring aliasname(GetName(alias));
+	if(alias && alias == 27 && wcscmp(codename.data(), aliasname.data())) {
+		std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x1073)));
+		codename.insert(0, str2);
+	} else if(alias && alias == 28 && wcscmp(codename.data(), aliasname.data())) {
+		std::wstring str2(gDataManager->GetSetName(0xcf));
+		codename.insert(0, str2);
+	} else if(alias && alias == 29 && wcscmp(codename.data(), aliasname.data())) {
+		std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x4073)));
+		codename.insert(0, str2);
+	} else if(alias && alias == 36 && wcscmp(codename.data(), aliasname.data())) {
+		std::wstring str2(gDataManager->GetSetName(0x2048));
+		codename.insert(0, str2, str2.size()-3);
+	} else if((alias && alias == 42 || alias == 43 || alias == 44) && wcscmp(codename.data(), aliasname.data())) {
+		std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0xa1)));
+		codename.insert(0, str2);
+	} else if(alias && alias == 102 && wcscmp(codename.data(), aliasname.data())) {
+		std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x23)));
+		codename.insert(0, str2);
+	} else if(alias && alias == 347 && wcscmp(codename.data(), aliasname.data())) {
+		std::wstring str2(epro::format(L"{} ", aliasname));
+		codename.insert(0, str2);
+	} else if(alias && alias == 213 && wcscmp(codename.data(), aliasname.data())) {
+		codename.append(epro::format(L"{}", gDataManager->GetSetName(0x104f)));
+	}
+	return codename;
+}
+/////kdiy/////
 epro::wstringview DataManager::GetText(uint32_t code) const {
 	auto csit = cards.find(code);
 	if(csit == cards.end() || csit->second.GetStrings().text.empty())

@@ -4079,7 +4079,10 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type) {
 	auto tmp_code = code;
 	if(cd->IsInArtworkOffsetRange())
 		tmp_code = cd->alias;
-	stName->setText(gDataManager->GetName(tmp_code).data());
+	///kdiy/////////
+	//stName->setText(gDataManager->GetName(tmp_code).data());
+	stName->setText(gDataManager->GetVirtualName(tmp_code, cd->alias).data());
+	///kdiy/////////
 	stPasscodeScope->setText(epro::format(L"[{:08}] {}", tmp_code, gDataManager->FormatScope(cd->ot)).data());
 	stSetName->setText(L"");
 	auto setcodes = cd->setcodes;
