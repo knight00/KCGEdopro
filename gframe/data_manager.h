@@ -138,7 +138,7 @@ public:
 	const CardDataC* GetMappedCardData(uint32_t code) const;
 	epro::wstringview GetName(uint32_t code) const;
 	/////kdiy/////
-	std::wstring GetVirtualName(uint32_t code, uint32_t alias) const;
+	std::wstring GetVirtualName(uint32_t code, uint32_t alias, bool removenametag=true) const;
 	/////kdiy/////
 	epro::wstringview GetText(uint32_t code) const;
 	epro::wstringview GetUppercaseName(uint32_t code) const;

@@ -21,6 +21,7 @@
 #include "windbot_panel.h"
 #include "ocgapi_types.h"
 /////zdiy/////
+#include "client_card.h"
 #include "network.h"
 /////zdiy/////
 struct unzip_payload;
@@ -241,8 +242,9 @@ public:
 	void LoadLocalServers();
 	void ReloadLocalCBDuelRule();
 	void ReloadLocalCBRule();
+	//void ShowCardInfo(uint32_t code, bool resize = false, imgType type = imgType::ART);
+    void ShowCardInfo(uint32_t code, bool resize = false, imgType type = imgType::ART, ClientCard* pcard = nullptr);
 	///kdiy//////////
-	void ShowCardInfo(uint32_t code, bool resize = false, imgType type = imgType::ART);
 	void RefreshCardInfoTextPositions();
 	void ClearCardInfo(int player = 0);
 	void AddChatMsg(epro::wstringview msg, int player, int type);

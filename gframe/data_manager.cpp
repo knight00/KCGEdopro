@@ -370,16 +370,33 @@ epro::wstringview DataManager::GetName(uint32_t code) const {
 	if(gGameConfig->chkHideNameTag) {
 		auto index = name.find(L"(");
 		auto index_2 = name.find(65288);
-		if(index != std::wstring::npos) name = name.substr(0,index);
-		else if(index_2 != std::wstring::npos) name = name.substr(0,index_2);
+        auto index_3 = name.find(L" (");
+        if(index != std::wstring::npos) name = name.substr(0,index);
+        else if(index_3 != std::wstring::npos) name = name.substr(0,index_3);
+        else if(index_2 != std::wstring::npos) name = name.substr(0,index_2);
 	}
 	return name;
 	/////kdiy/////
 }
 /////kdiy/////
-std::wstring DataManager::GetVirtualName(uint32_t code, uint32_t alias) const {
+std::wstring DataManager::GetVirtualName(uint32_t code, uint32_t alias, bool removenametag) const {
 	std::wstring codename(GetName(code));
 	std::wstring aliasname(GetName(alias));
+    if(removenametag 
+        || (alias && (alias == 27 || alias == 28 || alias == 29 || alias == 36 || alias == 42 || alias == 43 || alias == 44 || alias == 102 || alias == 347 || alias == 213) && wcscmp(codename.data(), aliasname.data()))) {
+        auto index = codename.find(L"(");
+        auto index_2 = codename.find(65288);
+        auto index_3 = codename.find(L" (");
+        if(index_3 != std::wstring::npos) codename = codename.substr(0,index_3);
+        else if(index != std::wstring::npos) codename = codename.substr(0,index);
+        else if(index_2 != std::wstring::npos) codename = codename.substr(0,index_2);
+        index = aliasname.find(L"(");
+        index_2 = aliasname.find(65288);
+        index_3 = aliasname.find(L" (");
+        if(index_3 != std::wstring::npos) aliasname = aliasname.substr(0,index_3);
+        else if(index != std::wstring::npos) aliasname = aliasname.substr(0,index);
+        else if(index_2 != std::wstring::npos) aliasname = aliasname.substr(0,index_2);
+    }
 	if(alias && alias == 27 && wcscmp(codename.data(), aliasname.data())) {
 		std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x1073)));
 		codename.insert(0, str2);

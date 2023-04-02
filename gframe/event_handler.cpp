@@ -1706,9 +1706,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					SetShowMark(mcard, true);
                     ///////kdiy/////////
 					//if(mcard->code) {
+						//mainGame->ShowCardInfo(mcard->code);
                     if(mcard->code && (mcard->type || mainGame->dInfo.isSingleMode)) {
+						mainGame->ShowCardInfo(mcard->code, false, imgType::ART, mcard);
                     ///////kdiy/////////
-						mainGame->ShowCardInfo(mcard->code);
 						if(mcard->location & (0xe|0x400)) {
 							///////kdiy/////////
 							//std::wstring str(gDataManager->GetName(mcard->code));
@@ -1719,10 +1720,17 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 								if(mcard->alias && (mcard->alias < mcard->code - 10 || mcard->alias > mcard->code + 10)
 										&& wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
 									///////kdiy/////////
-									//str.append(epro::format(L"\n({})",gDataManager->GetName(mcard->alias)));
-									if(mcard->alias != 27 && mcard->alias != 28 && mcard->alias != 29 && mcard->alias != 36 && mcard->alias != 42 && mcard->alias != 43 && mcard->alias != 44 && mcard->alias != 102 && mcard->alias != 347 && mcard->alias != 213)
-									    str.append(epro::format(L"\n({})",gDataManager->GetName(mcard->alias)));
+                                    std::wstring str2(gDataManager->GetName(mcard->alias));
+                                    auto index = str2.find(L"(");
+                                    auto index_2 = str2.find(65288);
+                                    auto index_3 = str2.find(L" (");
+                                    if(index_3 != std::wstring::npos) str2 = str2.substr(0,index_3);
+                                    else if(index != std::wstring::npos) str2 = str2.substr(0,index);
+                                    else if(index_2 != std::wstring::npos) str2 = str2.substr(0,index_2);
+									if(mcard->alias != 27 && mcard->alias != 28 && mcard->alias != 29 && mcard->alias != 36 && mcard->alias != 42 && mcard->alias != 43 && mcard->alias != 44 && mcard->alias != 102 && mcard->alias != 347 && mcard->alias != 213
+                                        && wcscmp(str2.data(), str.data()))
 									///////kdiy/////////
+									str.append(epro::format(L"\n({})",gDataManager->GetName(mcard->alias)));
 								}
 								//////kdiy/////
 								//if (mcard->type & TYPE_LINK) {
@@ -1755,7 +1763,15 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 							} else {
 								if(mcard->alias && (mcard->alias < mcard->code - 10 || mcard->alias > mcard->code + 10)) {
 									///////kdiy/////////
-									if(mcard->alias != 27 && mcard->alias != 28 && mcard->alias != 29 && mcard->alias != 36 && mcard->alias != 42 && mcard->alias != 43 && mcard->alias != 44 && mcard->alias != 102 && mcard->alias != 347 && mcard->alias != 213)
+                                    std::wstring str2(gDataManager->GetName(mcard->alias));
+                                    auto index = str2.find(L"(");
+                                    auto index_2 = str2.find(65288);
+                                    auto index_3 = str2.find(L" (");
+                                    if(index_3 != std::wstring::npos) str2 = str2.substr(0,index_3);
+                                    else if(index != std::wstring::npos) str2 = str2.substr(0,index);
+                                    else if(index_2 != std::wstring::npos) str2 = str2.substr(0,index_2);
+									if(mcard->alias != 27 && mcard->alias != 28 && mcard->alias != 29 && mcard->alias != 36 && mcard->alias != 42 && mcard->alias != 43 && mcard->alias != 44 && mcard->alias != 102 && mcard->alias != 347 && mcard->alias != 213
+                                        && wcscmp(str2.data(), str.data()))
 									///////kdiy/////////
 									str.append(epro::format(L"\n({})", gDataManager->GetName(mcard->alias)));
 								}

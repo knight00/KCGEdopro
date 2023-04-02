@@ -4041,8 +4041,9 @@ void Game::LoadLocalServers() {
 		}
 	}
 }
+//void Game::ShowCardInfo(uint32_t code, bool resize, imgType type) {
+void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pcard) {
 ///kdiy/////////
-void Game::ShowCardInfo(uint32_t code, bool resize, imgType type) {
 	static auto prevtype = imgType::ART;
 	if(resize) {
 		//Update the text fields beforehand when resizing so that their horizontal size
@@ -4062,7 +4063,10 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type) {
 	if(!cd)
 		ClearCardInfo(0);
 	bool only_texture = !cd;
-	if(showingcard == code) {
+    ///kdiy/////////
+	// if(showingcard == code) {
+    if(showingcard == code && pcard == nullptr) {
+    ///kdiy/////////
 		if(!resize && !cardimagetextureloading)
 			return;
 		only_texture = only_texture || !resize;
@@ -4080,9 +4084,11 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type) {
 	if(cd->IsInArtworkOffsetRange())
 		tmp_code = cd->alias;
 	///kdiy/////////
-	//stName->setText(gDataManager->GetName(tmp_code).data());
-	stName->setText(gDataManager->GetVirtualName(tmp_code, cd->alias).data());
+    if(pcard != nullptr && pcard->alias)
+	stName->setText(gDataManager->GetVirtualName(tmp_code, pcard->alias, false).data());
+    else
 	///kdiy/////////
+    stName->setText(gDataManager->GetName(tmp_code).data());
 	stPasscodeScope->setText(epro::format(L"[{:08}] {}", tmp_code, gDataManager->FormatScope(cd->ot)).data());
 	stSetName->setText(L"");
 	auto setcodes = cd->setcodes;
@@ -4160,6 +4166,26 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type) {
 			stDataInfo->setText(L"");
 	}
 	RefreshCardInfoTextPositions();
+    ///kdiy/////////
+    if(pcard != nullptr) {
+        std::wstring text(gDataManager->GetText(code));
+        std::wstring posit = L"";
+        auto pos1 = text.find('①：');auto pos2 = text.find('②：');auto pos3 = text.find('③：');auto pos4 = text.find('④：');auto pos5 = text.find('⑤：');auto pos6 = text.find('⑥：');auto pos7 = text.find('⑦：');auto pos8 = text.find('⑧：');auto pos9 = text.find('⑨：');
+		if(pos9 != std::wstring::npos) posit = L"⑩：";
+        else if(pos8 != std::wstring::npos) posit = L"⑨：";
+        else if(pos7 != std::wstring::npos) posit = L"⑧：";
+        else if(pos6 != std::wstring::npos) posit = L"⑦：";
+        else if(pos5 != std::wstring::npos) posit = L"⑥：";
+        else if(pos4 != std::wstring::npos) posit = L"⑤：";
+        else if(pos3 != std::wstring::npos) posit = L"④：";
+        else if(pos2 != std::wstring::npos) posit = L"③：";
+        else if(pos1 != std::wstring::npos) posit = L"②：";
+        for(auto iter = pcard->text_hints.begin(); iter != pcard->text_hints.end(); ++iter) {
+			text.append(epro::format(L"\n{}{}", posit, gDataManager->GetDesc(iter->first, mainGame->dInfo.compat_mode)));
+		}
+	    stText->setText(text.data());
+    } else
+	///kdiy/////////
 	stText->setText(gDataManager->GetText(code).data());
 }
 void Game::RefreshCardInfoTextPositions() {
