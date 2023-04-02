@@ -4703,15 +4703,58 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		const auto chtype = BufferIO::Read<uint8_t>(pbuf);
 		const auto value = CompatRead<uint32_t, uint64_t>(pbuf);
+        //kdiy////////
+        const auto addtotext = BufferIO::Read<bool>(pbuf);
+		const auto cardtext = CompatRead<uint32_t, uint64_t>(pbuf);
+		const auto cardtext2 = CompatRead<uint32_t, uint64_t>(pbuf);
+		const auto cardtext3 = CompatRead<uint32_t, uint64_t>(pbuf);
+		const auto cardtext4 = CompatRead<uint32_t, uint64_t>(pbuf);
+        //kdiy////////
 		ClientCard* pcard = mainGame->dField.GetCard(mainGame->LocalPlayer(info.controler), info.location, info.sequence);
 		if(!pcard)
 			return true;
 		if(chtype == CHINT_DESC_ADD) {
-			pcard->desc_hints[value]++;
+            //kdiy////////
+            if(addtotext) {
+                if(cardtext4 > 0)
+                    pcard->text_hints[cardtext4]++;
+                if(cardtext3 > 0)
+                    pcard->text_hints[cardtext3]++;
+                if(cardtext2 > 0)
+                    pcard->text_hints[cardtext2]++;
+                if(cardtext > 0)
+                    pcard->text_hints[cardtext]++;
+                if(value > 0)
+                    pcard->text_hints[value]++;
+            } else
+            //kdiy////////
+            pcard->desc_hints[value]++;
 		} else if(chtype == CHINT_DESC_REMOVE) {
+            //kdiy////////
+            if(addtotext) {
+                pcard->text_hints[cardtext4]--;
+                if(pcard->text_hints[cardtext4] <= 0)
+				    pcard->text_hints.erase(cardtext4);
+                pcard->text_hints[cardtext3]--;
+                if(pcard->text_hints[cardtext3] <= 0)
+				    pcard->text_hints.erase(cardtext3);
+                pcard->text_hints[cardtext2]--;
+                if(pcard->text_hints[cardtext2] <= 0)
+				    pcard->text_hints.erase(cardtext2);
+                pcard->text_hints[cardtext]--;
+                if(pcard->text_hints[cardtext] <= 0)
+				    pcard->text_hints.erase(cardtext);
+                pcard->text_hints[value]--;
+                if(pcard->text_hints[value] <= 0)
+				    pcard->text_hints.erase(value);
+            } else {
+            //kdiy////////
 			pcard->desc_hints[value]--;
 			if(pcard->desc_hints[value] <= 0)
 				pcard->desc_hints.erase(value);
+            //kdiy////////
+            }
+            //kdiy////////
 		} else {
 			pcard->cHint = chtype;
 			pcard->chValue = value;

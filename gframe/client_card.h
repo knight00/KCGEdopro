@@ -77,6 +77,9 @@ public:
 	std::set<ClientCard*> ownerTarget;
 	std::map<int, int> counters;
 	std::map<irr::u64, int> desc_hints;
+    //kdiy////////
+	std::map<irr::u64, int> text_hints;
+    //kdiy////////
 	std::wstring atkstring;
 	std::wstring defstring;
 	std::wstring lvstring;
