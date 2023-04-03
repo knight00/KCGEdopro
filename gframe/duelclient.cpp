@@ -4716,37 +4716,37 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		if(chtype == CHINT_DESC_ADD) {
             //kdiy////////
             if(addtotext) {
-                if(cardtext4 > 0)
-                    pcard->text_hints[cardtext4]++;
-                if(cardtext3 > 0)
-                    pcard->text_hints[cardtext3]++;
-                if(cardtext2 > 0)
-                    pcard->text_hints[cardtext2]++;
-                if(cardtext > 0)
-                    pcard->text_hints[cardtext]++;
                 if(value > 0)
                     pcard->text_hints[value]++;
+                if(cardtext > 0)
+                    pcard->text_hints[cardtext]++;
+                if(cardtext2 > 0)
+                    pcard->text_hints[cardtext2]++;
+                if(cardtext3 > 0)
+                    pcard->text_hints[cardtext3]++;
+                if(cardtext4 > 0)
+                    pcard->text_hints[cardtext4]++;
             } else
             //kdiy////////
             pcard->desc_hints[value]++;
 		} else if(chtype == CHINT_DESC_REMOVE) {
             //kdiy////////
             if(addtotext) {
-                pcard->text_hints[cardtext4]--;
-                if(pcard->text_hints[cardtext4] <= 0)
-				    pcard->text_hints.erase(cardtext4);
-                pcard->text_hints[cardtext3]--;
-                if(pcard->text_hints[cardtext3] <= 0)
-				    pcard->text_hints.erase(cardtext3);
-                pcard->text_hints[cardtext2]--;
-                if(pcard->text_hints[cardtext2] <= 0)
-				    pcard->text_hints.erase(cardtext2);
-                pcard->text_hints[cardtext]--;
-                if(pcard->text_hints[cardtext] <= 0)
-				    pcard->text_hints.erase(cardtext);
                 pcard->text_hints[value]--;
                 if(pcard->text_hints[value] <= 0)
 				    pcard->text_hints.erase(value);
+                pcard->text_hints[cardtext]--;
+                if(pcard->text_hints[cardtext] <= 0)
+				    pcard->text_hints.erase(cardtext);
+                pcard->text_hints[cardtext2]--;
+                if(pcard->text_hints[cardtext2] <= 0)
+				    pcard->text_hints.erase(cardtext2);
+                pcard->text_hints[cardtext3]--;
+                if(pcard->text_hints[cardtext3] <= 0)
+				    pcard->text_hints.erase(cardtext3);
+                pcard->text_hints[cardtext4]--;
+                if(pcard->text_hints[cardtext4] <= 0)
+				    pcard->text_hints.erase(cardtext4);
             } else {
             //kdiy////////
 			pcard->desc_hints[value]--;

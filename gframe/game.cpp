@@ -4170,7 +4170,7 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
     if(pcard != nullptr) {
         std::wstring text(gDataManager->GetText(code));
         std::wstring posit = L"";
-        auto pos1 = text.find('①：');auto pos2 = text.find('②：');auto pos3 = text.find('③：');auto pos4 = text.find('④：');auto pos5 = text.find('⑤：');auto pos6 = text.find('⑥：');auto pos7 = text.find('⑦：');auto pos8 = text.find('⑧：');auto pos9 = text.find('⑨：');
+        auto pos1 = text.find(L"①：");auto pos2 = text.find(L"②：");auto pos3 = text.find(L"③：");auto pos4 = text.find(L"④：");auto pos5 = text.find(L"⑤：");auto pos6 = text.find(L"⑥：");auto pos7 = text.find(L"⑦：");auto pos8 = text.find(L"⑧：");auto pos9 = text.find(L"⑨：");
 		if(pos9 != std::wstring::npos) posit = L"⑩：";
         else if(pos8 != std::wstring::npos) posit = L"⑨：";
         else if(pos7 != std::wstring::npos) posit = L"⑧：";
