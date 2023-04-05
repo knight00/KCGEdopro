@@ -4169,19 +4169,8 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
     ///kdiy/////////
     if(pcard != nullptr) {
         std::wstring text(gDataManager->GetText(code));
-        std::wstring posit = L"";
-        auto pos1 = text.find(L"①：");auto pos2 = text.find(L"②：");auto pos3 = text.find(L"③：");auto pos4 = text.find(L"④：");auto pos5 = text.find(L"⑤：");auto pos6 = text.find(L"⑥：");auto pos7 = text.find(L"⑦：");auto pos8 = text.find(L"⑧：");auto pos9 = text.find(L"⑨：");
-		if(pos9 != std::wstring::npos) posit = L"⑩：";
-        else if(pos8 != std::wstring::npos) posit = L"⑨：";
-        else if(pos7 != std::wstring::npos) posit = L"⑧：";
-        else if(pos6 != std::wstring::npos) posit = L"⑦：";
-        else if(pos5 != std::wstring::npos) posit = L"⑥：";
-        else if(pos4 != std::wstring::npos) posit = L"⑤：";
-        else if(pos3 != std::wstring::npos) posit = L"④：";
-        else if(pos2 != std::wstring::npos) posit = L"③：";
-        else if(pos1 != std::wstring::npos) posit = L"②：";
         for(auto iter = pcard->text_hints.begin(); iter != pcard->text_hints.end(); ++iter) {
-			text.append(epro::format(L"\n{}{}", posit, gDataManager->GetDesc(iter->first, mainGame->dInfo.compat_mode)));
+			text.append(epro::format(L"\n{}", gDataManager->GetDesc(iter->first, mainGame->dInfo.compat_mode)));
 		}
 	    stText->setText(text.data());
     } else
