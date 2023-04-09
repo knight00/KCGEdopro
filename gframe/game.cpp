@@ -2679,6 +2679,13 @@ void Game::PopulateSettingsWindow() {
 	        gSettings.chkEnableAttackSound->setEnabled(false);
             defaultStrings.emplace_back(gSettings.chkEnableAttackSound, 8022);
 #endif
+            IncrementXorY();
+            gSettings.chkPauseduel = env->addCheckBox(gGameConfig->pauseduel, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_PAUSE_DUEL, gDataManager->GetSysString(8052).data());
+            defaultStrings.emplace_back(gSettings.chkPauseduel, 8052);
+#ifndef VIP
+            gSettings.chkPauseduel->setEnabled(false);
+#endif
+            IncrementXorY();
 		}
         //////kdiy///////////
 	}
@@ -4170,7 +4177,7 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
     if(pcard != nullptr) {
         std::wstring text(gDataManager->GetText(code));
         for(auto iter = pcard->text_hints.begin(); iter != pcard->text_hints.end(); ++iter) {
-			text.append(epro::format(L"\n{}", gDataManager->GetDesc(iter->first, mainGame->dInfo.compat_mode)));
+			text.append(epro::format(L"\n*{}", iter->first));
 		}
 	    stText->setText(text.data());
     } else
