@@ -78,7 +78,8 @@ public:
 	std::map<int, int> counters;
 	std::map<irr::u64, int> desc_hints;
     //kdiy////////
-	std::unordered_map<irr::u64, int> text_hints;
+	std::unordered_map<irr::u64, int> eff_hints;
+	std::unordered_map<std::wstring, int> text_hints;
     //kdiy////////
 	std::wstring atkstring;
 	std::wstring defstring;
