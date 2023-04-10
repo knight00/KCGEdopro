@@ -2236,15 +2236,17 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		else
 			mainGame->dInfo.startlp = 8000;
 		///////////kdiy///////////
-		if (mainGame->dInfo.lp[0] >= 8888888)
+		if (mainGame->dInfo.lp[0] >= 8888888) {
+            mainGame->dInfo.lp[0] = 8888888;
 			mainGame->dInfo.strLP[0] = L"\u221E";
-		else
+        } else
 		///////////kdiy///////////
 			mainGame->dInfo.strLP[0] = fmt::to_wstring(mainGame->dInfo.lp[0]);
 		///////////kdiy///////////		
-		if (mainGame->dInfo.lp[1] >= 8888888)
+		if (mainGame->dInfo.lp[1] >= 8888888) {
+            mainGame->dInfo.lp[1] = 8888888;
 			mainGame->dInfo.strLP[1] = L"\u221E";
-		else
+        } else
 		///////////kdiy///////////
 			mainGame->dInfo.strLP[1] = fmt::to_wstring(mainGame->dInfo.lp[1]);
 		uint16_t deckc = BufferIO::Read<uint16_t>(pbuf);
@@ -3635,15 +3637,43 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 	case MSG_CHANGE: {
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
 		CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+        const auto type = BufferIO::Read<uint32_t>(pbuf);
+        const auto level = BufferIO::Read<uint32_t>(pbuf);
+        const auto attribute = BufferIO::Read<uint32_t>(pbuf);
+        const auto race = BufferIO::Read<uint64_t>(pbuf);
+        const auto attack = BufferIO::Read<int32_t>(pbuf);
+        const auto defense = BufferIO::Read<int32_t>(pbuf);
+        const auto lscale = BufferIO::Read<uint32_t>(pbuf);
+        const auto rscale = BufferIO::Read<uint32_t>(pbuf);
+        const auto link_marker = BufferIO::Read<uint32_t>(pbuf);
 		current.controler = mainGame->LocalPlayer(current.controler);
 		//auto lock = LockIf();
 		if(!(current.location & LOCATION_OVERLAY)) {
 			ClientCard* pcard = mainGame->dField.GetCard(current.controler, current.location, current.sequence);
 			pcard->code = code;
+			pcard->is_real = true;
+			pcard->rtype = type;
+			pcard->rlevel = level;
+			pcard->rattribute = attribute;
+			pcard->rrace = race;
+			pcard->rattack = attack;
+			pcard->rdefense = defense;
+			pcard->rlscale = lscale;
+			pcard->rrscale = rscale;
+			pcard->rlink_marker = link_marker;
 		} else {
 			ClientCard* olcard = mainGame->dField.GetCard(current.controler, current.location & (~LOCATION_OVERLAY) & 0xff, current.sequence);
 			ClientCard* pcard = olcard->overlayed[current.position];
 			pcard->code = code;
+			pcard->rtype = type;
+			pcard->rlevel = level;
+			pcard->rattribute = attribute;
+			pcard->rrace = race;
+			pcard->rattack = attack;
+			pcard->rdefense = defense;
+			pcard->rlscale = lscale;
+			pcard->rrscale = rscale;
+			pcard->rlink_marker = link_marker;
 		}
 		// if(!mainGame->dInfo.isCatchingUp) {
 		// 	mainGame->WaitFrameSignal(5, lock);
@@ -4232,9 +4262,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		}
 		mainGame->dInfo.lp[player] = final;
 		///////////kdiy///////////
-		if(mainGame->dInfo.lp[player] >= 8888888)
+		if(mainGame->dInfo.lp[player] >= 8888888) {
+        mainGame->dInfo.lp[player] = 8888888;
 		mainGame->dInfo.strLP[player] = L"\u221E";
-		else
+        } else
 		///////////kdiy///////////		
 		mainGame->dInfo.strLP[player] = fmt::to_wstring(mainGame->dInfo.lp[player]);
 		return true;
@@ -4270,9 +4301,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		}
 		mainGame->dInfo.lp[player] = final;
 		///////////kdiy///////////
-		if(mainGame->dInfo.lp[player] >= 8888888)
+		if(mainGame->dInfo.lp[player] >= 8888888) {
+        mainGame->dInfo.lp[player] = 8888888;
 		mainGame->dInfo.strLP[player] = L"\u221E";
-		else
+        } else
 		///////////kdiy///////////		
 		mainGame->dInfo.strLP[player] = fmt::to_wstring(mainGame->dInfo.lp[player]);
 		return true;
@@ -4312,9 +4344,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		}
 		mainGame->dInfo.lp[player] = val;
 		///////////kdiy///////////
-		if(mainGame->dInfo.lp[player] >= 8888888)
-			mainGame->dInfo.strLP[player] = L"\u221E";
-		else
+		if(mainGame->dInfo.lp[player] >= 8888888) {
+        mainGame->dInfo.lp[player] = 8888888;
+		mainGame->dInfo.strLP[player] = L"\u221E";
+        } else
 		///////////kdiy///////////	
 		mainGame->dInfo.strLP[player] = fmt::to_wstring(mainGame->dInfo.lp[player]);
 		return true;
@@ -4395,9 +4428,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		}
 		mainGame->dInfo.lp[player] = final;
 		///////////kdiy///////////
-	    if(mainGame->dInfo.lp[player] >= 8888888)
+	    if(mainGame->dInfo.lp[player] >= 8888888) {
+        mainGame->dInfo.lp[player] = 8888888;
 		mainGame->dInfo.strLP[player] = L"\u221E";
-		else
+        } else
 		///////////kdiy///////////
 		mainGame->dInfo.strLP[player] = fmt::to_wstring(mainGame->dInfo.lp[player]);
 		return true;
@@ -4981,9 +5015,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			int p = mainGame->LocalPlayer(i);
 			mainGame->dInfo.lp[p] = BufferIO::Read<uint32_t>(pbuf);
 			///////////kdiy///////////
-			if(mainGame->dInfo.lp[p] >= 8888888)
+			if(mainGame->dInfo.lp[p] >= 8888888) {
+                mainGame->dInfo.lp[p] = 8888888;
 				mainGame->dInfo.strLP[p] = L"\u221E";
-			else
+            } else
 			///////////kdiy///////////
 				mainGame->dInfo.strLP[p] = fmt::to_wstring(mainGame->dInfo.lp[p]);
 			for(int seq = 0; seq < 7; ++seq) {

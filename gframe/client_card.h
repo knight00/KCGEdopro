@@ -45,6 +45,16 @@ public:
 	//uint32_t rank;
 	//uint32_t link;
 	int32_t link;
+	bool is_real = false;
+	uint32_t rtype;
+	int32_t rlevel;
+	uint32_t rattribute;
+	uint64_t rrace;
+	int32_t rattack;
+	int32_t rdefense;
+	uint32_t rlscale;
+	uint32_t rrscale;
+	uint32_t rlink_marker;
     /////////kdiy/////////
 	uint32_t attribute;
 	uint64_t race;
