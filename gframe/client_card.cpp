@@ -57,8 +57,10 @@ void ClientCard::UpdateInfo(const CoreUtils::Query& query) {
 				atkstring = L"?";
             //////////kdiy////////////////////
             } else if (attack >= 9999999) {
+                attack = 9999999;
                 atkstring = L"(\u221E)";
             } else if (attack >= 8888888) {
+                attack = 8888888;
                 atkstring = L"\u221E";
             //////////kdiy////////////////////
 			} else
@@ -71,8 +73,10 @@ void ClientCard::UpdateInfo(const CoreUtils::Query& query) {
 				defstring = L"?";
             //////////kdiy////////////////////
             } else if (defense >= 9999999) {
+                 defense = 9999999;
                 defstring = L"(\u221E)";
             } else if (defense >= 8888888) {
+                defense = 8888888;
                 defstring = L"\u221E";
             //////////kdiy////////////////////
 			} else

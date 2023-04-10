@@ -372,17 +372,10 @@ void GenericDuel::PlayerReady(DuelPlayer* dp, bool is_ready, bool ai) {
 	auto& dueler = GetAtPos(dp->type);
 	if(dueler.ready == is_ready)
 		return;
-	/////kdiy/////
+    /////kdiy//////////
 	//if(is_ready) {
-	if(is_ready && !ai) {
-		std::vector<const CardDataC*>::iterator iter;
-		for(iter = dueler.pdeck.extra.begin(); iter != dueler.pdeck.extra.end(); ) {
-			if((*iter)->code == 111 || (*iter)->code == 112 || (*iter)->code == 211 || (*iter)->code == 208)
-				iter = dueler.pdeck.extra.erase(iter);
-			else
-				++iter;
-		}
-	/////kdiy/////
+    if(is_ready && !ai) {
+    /////kdiy//////////
 		DeckError deck_error = DeckManager::CheckDeckSize(dueler.pdeck, host_info.sizes);
 		if(deck_error.type == DeckError::NONE && !host_info.no_check_deck_content) {
 			if(dueler.deck_error) {

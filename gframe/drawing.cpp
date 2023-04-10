@@ -618,8 +618,10 @@ void Game::DrawMisc() {
 		dInfo.lp[lpplayer] -= lpd * delta_frames;
 		dInfo.strLP[lpplayer] = fmt::to_wstring(std::max(0, dInfo.lp[lpplayer]));
 		///////////kdiy///////////
-		if(dInfo.lp[lpplayer] >= 8888888)
+		if(dInfo.lp[lpplayer] >= 8888888) {
+            dInfo.lp[lpplayer] = 8888888l;
 			dInfo.strLP[lpplayer] = L"\u221E";
+        }
 		///////////kdiy///////////	
 		lpcalpha -= 0x19 * delta_frames;
 		lpframe -= delta_frames;

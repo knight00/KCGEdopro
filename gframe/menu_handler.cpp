@@ -48,10 +48,19 @@ static void UpdateDeck() {
 	BufferIO::Write<uint32_t>(pdeck, static_cast<uint32_t>(deck.main.size() + deck.extra.size()));
 	BufferIO::Write<uint32_t>(pdeck, static_cast<uint32_t>(deck.side.size()));
 	for(const auto& pcard : deck.main)
+        ///////kdiy/////////
+        if(!(pcard->code == 111 || pcard->code == 112 || pcard->code == 211 || pcard->code == 208))
+        ///////kdiy/////////
 		BufferIO::Write<uint32_t>(pdeck, pcard->code);
 	for(const auto& pcard : deck.extra)
+        ///////kdiy/////////
+        if(!(pcard->code == 111 || pcard->code == 112 || pcard->code == 211 || pcard->code == 208))
+        ///////kdiy/////////
 		BufferIO::Write<uint32_t>(pdeck, pcard->code);
 	for(const auto& pcard : deck.side)
+        ///////kdiy/////////
+        if(!(pcard->code == 111 || pcard->code == 112 || pcard->code == 211 || pcard->code == 208))
+        ///////kdiy/////////
 		BufferIO::Write<uint32_t>(pdeck, pcard->code);
 	DuelClient::SendBufferToServer(CTOS_UPDATE_DECK, deckbuf, pdeck - deckbuf);
 	gdeckManager->sent_deck = mainGame->deckBuilder.GetCurrentDeck();
