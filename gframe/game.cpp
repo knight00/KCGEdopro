@@ -4091,30 +4091,13 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 	if(cd->IsInArtworkOffsetRange())
 		tmp_code = cd->alias;
     ///kdiy/////////
-    bool realcard = false;
-    std::wstring codename(gDataManager->GetName(pcard->code));
-	std::wstring aliasname(gDataManager->GetName(pcard->alias));
-    auto index = codename.find(L"(");
-    auto index_2 = codename.find(65288);
-    auto index_3 = codename.find(L" (");
-    if(index_3 != std::wstring::npos) codename = codename.substr(0,index_3);
-    else if(index != std::wstring::npos) codename = codename.substr(0,index);
-    else if(index_2 != std::wstring::npos) codename = codename.substr(0,index_2);
-    index = aliasname.find(L"(");
-    index_2 = aliasname.find(65288);
-    index_3 = aliasname.find(L" (");
-    if(index_3 != std::wstring::npos) aliasname = aliasname.substr(0,index_3);
-    else if(index != std::wstring::npos) aliasname = aliasname.substr(0,index);
-    else if(index_2 != std::wstring::npos) aliasname = aliasname.substr(0,index_2);
-    if(pcard != nullptr && pcard->alias && (pcard->alias == 27 || pcard->alias == 28 || pcard->alias == 29 || pcard->alias == 36 || pcard->alias == 42 || pcard->alias == 43 || pcard->alias == 44 || pcard->alias == 102 || pcard->alias == 347 || pcard->alias == 213) && wcscmp(codename.data(), aliasname.data()))
-        realcard = true;
-    if(realcard)
-	stName->setText(gDataManager->GetVirtualName(tmp_code, pcard->alias, false).data());
+    if(pcard && pcard->is_real)
+	stName->setText(gDataManager->GetVirtualName(pcard, tmp_code, false).data());
     else
 	///kdiy/////////
     stName->setText(gDataManager->GetName(tmp_code).data());
     ///kdiy/////////
-    if(pcard->is_real)
+    if(pcard && pcard->is_real)
     stPasscodeScope->setText(epro::format(L"[{:08}] {}", tmp_code, gDataManager->FormatScope(0x4)).data());
     else
     ///kdiy/////////
@@ -4130,29 +4113,15 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 			setcodes = data->setcodes;
 	}
     ///kdiy/////////
-    if(realcard) {
-        if(pcard->alias == 27)
-            setcodes.push_back(0x1073);
-        else if(pcard->alias == 28)
-		    setcodes.push_back(0xcf);
-        else if(pcard->alias == 29)
-		    setcodes.push_back(0x4073);
-        else if(pcard->alias == 36)
-		    setcodes.push_back(0x2048);
-        else if(pcard->alias == 42 || pcard->alias == 43 || pcard->alias == 44)
-		    setcodes.push_back(0xa1);
-        else if(pcard->alias == 102)
-		    setcodes.push_back(0x23);
-        else if(pcard->alias == 213)
-		    setcodes.push_back(0x104f);
-    }
+    if(pcard && pcard->is_real && pcard->realaddsetcode)
+	    setcodes.insert(setcodes.begin(), pcard->realaddsetcode);
     ///kdiy/////////
 	if (setcodes.size()) {
 		stSetName->setText(epro::format(L"{}{}", gDataManager->GetSysString(1329), gDataManager->FormatSetName(setcodes)).data());
 	}
-	if(cd->type & TYPE_MONSTER) {
-        ///kdiy/////////
-        if(pcard->is_real) {
+	///kdiy/////////
+    if(pcard && pcard->is_change) {
+		if(pcard->rtype & TYPE_MONSTER) {
         stInfo->setText(epro::format(L"[{}] {} {}", gDataManager->FormatType(pcard->rtype), gDataManager->FormatAttribute(pcard->rattribute), gDataManager->FormatRace(pcard->rrace)).data());
         std::wstring text;
 		if(pcard->rtype & TYPE_LINK){
@@ -4200,8 +4169,21 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 			text.append(epro::format(L"   {}/{}", pcard->rlscale, pcard->rrscale));
 		}
 		stDataInfo->setText(text.data());
-        } else {
-        ///kdiy/////////
+		} else {
+		if(pcard->rtype & TYPE_SKILL) { // TYPE_SKILL created by hints
+			// Hack: Race encodes the character for now
+			stInfo->setText(epro::format(L"[{}|{}]", gDataManager->FormatRace(pcard->rrace, true), gDataManager->FormatType(pcard->rtype)).data());
+		} else {
+			stInfo->setText(epro::format(L"[{}]", gDataManager->FormatType(pcard->rtype)).data());
+		}
+        if(pcard->rtype & TYPE_LINK) {
+			stDataInfo->setText(epro::format(L"LINK {}   {}", pcard->rlevel, gDataManager->FormatLinkMarker(pcard->rlink_marker)).data());
+		} else
+			stDataInfo->setText(L"");
+	    }
+	} else {
+    ///kdiy/////////
+	if(cd->type & TYPE_MONSTER) {
 		stInfo->setText(epro::format(L"[{}] {} {}", gDataManager->FormatType(cd->type), gDataManager->FormatAttribute(cd->attribute), gDataManager->FormatRace(cd->race)).data());
 		std::wstring text;
 		if(cd->type & TYPE_LINK){
@@ -4251,41 +4233,25 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 			text.append(epro::format(L"   {}/{}", cd->lscale, cd->rscale));
 		}
 		stDataInfo->setText(text.data());
-        ///kdiy/////////
-        }
-        ///kdiy/////////
 	} else {
 		if(cd->type & TYPE_SKILL) { // TYPE_SKILL created by hints
 			// Hack: Race encodes the character for now
 			stInfo->setText(epro::format(L"[{}|{}]", gDataManager->FormatRace(cd->race, true), gDataManager->FormatType(cd->type)).data());
 		} else {
-            ///kdiy/////////
-            if(pcard->is_real)
-            stInfo->setText(epro::format(L"[{}]", gDataManager->FormatType(pcard->rtype)).data());
-            else
-            ///kdiy/////////
 			stInfo->setText(epro::format(L"[{}]", gDataManager->FormatType(cd->type)).data());
 		}
 
-		///kdiy/////////
-        if(pcard->is_real) {
-         if(pcard->rtype & TYPE_LINK) {
-			stDataInfo->setText(epro::format(L"LINK {}   {}", pcard->rlevel, gDataManager->FormatLinkMarker(pcard->rlink_marker)).data());
-		} else
-			stDataInfo->setText(L"");    
-        } else {
-        ///kdiy/////////
         if(cd->type & TYPE_LINK) {
 			stDataInfo->setText(epro::format(L"LINK {}   {}", cd->level, gDataManager->FormatLinkMarker(cd->link_marker)).data());
 		} else
 			stDataInfo->setText(L"");
-        ///kdiy/////////
-        }
-        ///kdiy/////////
 	}
+    ///kdiy/////////
+    }
+    ///kdiy/////////
 	RefreshCardInfoTextPositions();
     ///kdiy/////////
-    if(pcard != nullptr) {
+    if(pcard && pcard->is_real) {
         std::wstring text(gDataManager->GetText(code));
         for(auto iter = pcard->text_hints.begin(); iter != pcard->text_hints.end(); ++iter) {
 			text.append(epro::format(L"\n*{}", iter->first));

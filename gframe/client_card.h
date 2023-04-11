@@ -45,7 +45,7 @@ public:
 	//uint32_t rank;
 	//uint32_t link;
 	int32_t link;
-	bool is_real = false;
+	bool is_change = false;
 	uint32_t rtype;
 	int32_t rlevel;
 	uint32_t rattribute;
@@ -55,6 +55,11 @@ public:
 	uint32_t rlscale;
 	uint32_t rrscale;
 	uint32_t rlink_marker;
+	bool is_real = false;
+	uint8_t realchange;
+	uint16_t realsetcode;
+	uint32_t realname;
+	uint16_t realaddsetcode;
     /////////kdiy/////////
 	uint32_t attribute;
 	uint64_t race;

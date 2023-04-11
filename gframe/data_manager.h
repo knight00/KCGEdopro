@@ -6,6 +6,9 @@
 #include <memory>
 #include "text_types.h"
 #include "utils.h"
+/////kdiy/////
+#include "client_card.h"
+/////kdiy/////
 
 struct sqlite3;
 struct sqlite3_stmt;
@@ -138,7 +141,8 @@ public:
 	const CardDataC* GetMappedCardData(uint32_t code) const;
 	epro::wstringview GetName(uint32_t code) const;
 	/////kdiy/////
-	std::wstring GetVirtualName(uint32_t code, uint32_t alias, bool removenametag=true) const;
+	std::wstring GetVirtualName(ClientCard* pcard, bool removenametag=true) const;
+	std::wstring GetVirtualName(ClientCard* pcard, uint32_t code, bool removenametag=true) const;
 	/////kdiy/////
 	epro::wstringview GetText(uint32_t code) const;
 	epro::wstringview GetUppercaseName(uint32_t code) const;

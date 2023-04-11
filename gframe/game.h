@@ -20,10 +20,10 @@
 #include "discord_wrapper.h"
 #include "windbot_panel.h"
 #include "ocgapi_types.h"
-/////zdiy/////
+/////kdiy/////
 #include "client_card.h"
 #include "network.h"
-/////zdiy/////
+/////kdiy/////
 struct unzip_payload;
 class CGUISkinSystem;
 class IProgressBar;

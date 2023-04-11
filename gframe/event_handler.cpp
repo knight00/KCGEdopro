@@ -1714,7 +1714,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 							///////kdiy/////////
 							//std::wstring str(gDataManager->GetName(mcard->code));
 							//if(mcard->type & TYPE_MONSTER) {
-							std::wstring str(gDataManager->GetVirtualName(mcard->code, mcard->alias));
+							std::wstring str(gDataManager->GetVirtualName(mcard, mcard->code));
 							if((!(mcard->type & (TYPE_SPELL | TYPE_TRAP)) || (mcard->type & TYPE_TRAPMONSTER)) && !mcard->equipTarget) {
 							///////kdiy/////////
 								if(mcard->alias && (mcard->alias < mcard->code - 10 || mcard->alias > mcard->code + 10)
@@ -3298,7 +3298,7 @@ void ClientField::ShowCardInfoInList(ClientCard* pcard, irr::gui::IGUIElement* e
 	if(pcard->code) {
 		////kdiy///////////
 		//str.append(gDataManager->GetName(pcard->code).data());
-		str.append(gDataManager->GetVirtualName(pcard->code, pcard->alias).data());
+		str.append(gDataManager->GetVirtualName(pcard, pcard->code).data());
 		////kdiy///////////
 	}
 	if((pcard->status & STATUS_PROC_COMPLETE)
@@ -3312,7 +3312,7 @@ void ClientField::ShowCardInfoInList(ClientCard* pcard, irr::gui::IGUIElement* e
 		if(chit.target.find(pcard) != chit.target.end()) {
 			////kdiy///////////
 			//str.append(L"\n").append(epro::sprintf(gDataManager->GetSysString(217), i + 1, gDataManager->GetName(chit.chain_card->code)));
-			str.append(L"\n").append(epro::sprintf(gDataManager->GetSysString(217), i + 1, gDataManager->GetVirtualName(chit.chain_card->code, chit.chain_card->alias)));
+			str.append(L"\n").append(epro::sprintf(gDataManager->GetSysString(217), i + 1, gDataManager->GetVirtualName(chit.chain_card, chit.chain_card->code)));
 			////kdiy///////////
 		}
 	}
