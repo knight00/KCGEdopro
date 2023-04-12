@@ -4113,8 +4113,14 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 			setcodes = data->setcodes;
 	}
     ///kdiy/////////
-    if(pcard && pcard->is_real && pcard->realaddsetcode)
-	    setcodes.insert(setcodes.begin(), pcard->realaddsetcode);
+    if(pcard && pcard->is_real && pcard->rsetnames) {
+		setcodes.clear();
+	    for(int i = 0; i < 4; i++) {
+			uint16_t setcode = (pcard->rsetnames >> (i * 16)) & 0xffff;
+			if(setcode)
+				setcodes.push_back(setcode);
+		}
+	}
     ///kdiy/////////
 	if (setcodes.size()) {
 		stSetName->setText(epro::format(L"{}{}", gDataManager->GetSysString(1329), gDataManager->FormatSetName(setcodes)).data());

@@ -46,6 +46,7 @@ public:
 	//uint32_t link;
 	int32_t link;
 	bool is_change = false;
+	uint64_t rsetnames;
 	uint32_t rtype;
 	int32_t rlevel;
 	uint32_t rattribute;
@@ -59,7 +60,6 @@ public:
 	uint8_t realchange;
 	uint16_t realsetcode;
 	uint32_t realname;
-	uint16_t realaddsetcode;
     /////////kdiy/////////
 	uint32_t attribute;
 	uint64_t race;

@@ -3637,6 +3637,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 	case MSG_CHANGE: {
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
 		CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+        const auto setnames = BufferIO::Read<uint64_t>(pbuf);
         const auto type = BufferIO::Read<uint32_t>(pbuf);
         const auto level = BufferIO::Read<uint32_t>(pbuf);
         const auto attribute = BufferIO::Read<uint32_t>(pbuf);
@@ -3649,13 +3650,13 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         const auto realchange = BufferIO::Read<uint8_t>(pbuf);
         const auto realsetcode = BufferIO::Read<uint16_t>(pbuf);
         const auto realname = BufferIO::Read<uint32_t>(pbuf);
-        const auto realaddsetcode = BufferIO::Read<uint16_t>(pbuf);
 		current.controler = mainGame->LocalPlayer(current.controler);
 		//auto lock = LockIf();
 		if(!(current.location & LOCATION_OVERLAY)) {
 			ClientCard* pcard = mainGame->dField.GetCard(current.controler, current.location, current.sequence);
 			pcard->code = code;
 			pcard->is_change = true;
+			pcard->rsetnames = setnames;
 			pcard->rtype = type;
 			pcard->rlevel = level;
 			pcard->rattribute = attribute;
@@ -3672,13 +3673,13 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				    pcard->realsetcode = realsetcode;
 				else if(realchange == 3 || realchange == 4)
 				    pcard->realname = realname;
-				pcard->realaddsetcode = realaddsetcode;
 			}
 		} else {
 			ClientCard* olcard = mainGame->dField.GetCard(current.controler, current.location & (~LOCATION_OVERLAY) & 0xff, current.sequence);
 			ClientCard* pcard = olcard->overlayed[current.position];
 			pcard->code = code;
 			pcard->is_change = true;
+			pcard->rsetnames = setnames;
 			pcard->rtype = type;
 			pcard->rlevel = level;
 			pcard->rattribute = attribute;
@@ -3695,7 +3696,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				    pcard->realsetcode = realsetcode;
 				else if(realchange == 3 || realchange == 4)
 				    pcard->realname = realname;
-				pcard->realaddsetcode = realaddsetcode;
 			}
 		}
 		// if(!mainGame->dInfo.isCatchingUp) {
