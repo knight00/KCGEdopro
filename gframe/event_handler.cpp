@@ -1093,7 +1093,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					SetShowMark(mcard, true);
 					ShowCardInfoInList(mcard, mainGame->btnCardSelect[id - BUTTON_CARD_0], mainGame->wCardSelect);
 					if(mcard->code) {
-						mainGame->ShowCardInfo(mcard->code);
+                        ///////kdiy/////////
+						//mainGame->ShowCardInfo(mcard->code);
+                        mainGame->ShowCardInfo(mcard->code, false, imgType::ART, mcard);
+                        ///////kdiy/////////
 					} else {
 						if(mcard->cover)
 							mainGame->ShowCardInfo(mcard->cover, false, imgType::COVER);
@@ -1109,7 +1112,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					SetShowMark(mcard, true);
 					ShowCardInfoInList(mcard, mainGame->btnCardDisplay[id - BUTTON_DISPLAY_0], mainGame->wCardDisplay);
 					if(mcard->code) {
-						mainGame->ShowCardInfo(mcard->code);
+						///////kdiy/////////
+						//mainGame->ShowCardInfo(mcard->code);
+                        mainGame->ShowCardInfo(mcard->code, false, imgType::ART, mcard);
+                        ///////kdiy/////////
 					} else {
 						if(mcard->cover)
 							mainGame->ShowCardInfo(mcard->cover, false, imgType::COVER);
