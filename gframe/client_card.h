@@ -60,6 +60,7 @@ public:
 	uint8_t realchange;
 	uint16_t realsetcode;
 	uint32_t realname;
+	uint32_t effcode;
     /////////kdiy/////////
 	uint32_t attribute;
 	uint64_t race;
@@ -93,8 +94,7 @@ public:
 	std::map<int, int> counters;
 	std::map<irr::u64, int> desc_hints;
     //kdiy////////
-	std::unordered_map<irr::u64, int> eff_hints;
-	std::unordered_map<std::wstring, int> text_hints;
+	std::vector<std::wstring> text_hints;
     //kdiy////////
 	std::wstring atkstring;
 	std::wstring defstring;

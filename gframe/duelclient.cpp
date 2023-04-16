@@ -3650,6 +3650,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         const auto realchange = BufferIO::Read<uint8_t>(pbuf);
         const auto realsetcode = BufferIO::Read<uint16_t>(pbuf);
         const auto realname = BufferIO::Read<uint32_t>(pbuf);
+        const auto effcode = BufferIO::Read<uint32_t>(pbuf);
 		current.controler = mainGame->LocalPlayer(current.controler);
 		//auto lock = LockIf();
 		if(!(current.location & LOCATION_OVERLAY)) {
@@ -3673,6 +3674,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				    pcard->realsetcode = realsetcode;
 				else if(realchange == 3 || realchange == 4)
 				    pcard->realname = realname;
+				pcard->effcode = effcode;
 			}
 		} else {
 			ClientCard* olcard = mainGame->dField.GetCard(current.controler, current.location & (~LOCATION_OVERLAY) & 0xff, current.sequence);
@@ -3696,6 +3698,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				    pcard->realsetcode = realsetcode;
 				else if(realchange == 3 || realchange == 4)
 				    pcard->realname = realname;
+				pcard->effcode = effcode;
 			}
 		}
 		// if(!mainGame->dInfo.isCatchingUp) {
@@ -4772,50 +4775,25 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		std::wstring text = L"";
 		if(addtotext && value > 0)
 		{
-			pcard->eff_hints[value]++;
+			text.append(epro::format(L"{}", gDataManager->GetDesc(value, mainGame->dInfo.compat_mode)));
 			if(cardtext > 0)
-				pcard->eff_hints[cardtext]++;
+				text.append(epro::format(L"{}", gDataManager->GetDesc(cardtext, mainGame->dInfo.compat_mode)));
 			if(cardtext2 > 0)
-				pcard->eff_hints[cardtext2]++;
+				text.append(epro::format(L"{}", gDataManager->GetDesc(cardtext2, mainGame->dInfo.compat_mode)));
 			if(cardtext3 > 0)
-				pcard->eff_hints[cardtext3]++;
-			if(cardtext4 > 0)
-				pcard->eff_hints[cardtext4]++;
-			for(auto iter = pcard->eff_hints.begin(); iter != pcard->eff_hints.end(); ++iter)
-			{
-				text.append(epro::format(L"{}", gDataManager->GetDesc(iter->first, mainGame->dInfo.compat_mode)));
-			}
-			pcard->eff_hints[value]--;
-			if(pcard->eff_hints[value] <= 0)
-				pcard->eff_hints.erase(value);
-			pcard->eff_hints[cardtext]--;
-			if(pcard->eff_hints[cardtext] <= 0)
-				pcard->eff_hints.erase(cardtext);
-			pcard->eff_hints[cardtext2]--;
-			if(pcard->eff_hints[cardtext2] <= 0)
-				pcard->eff_hints.erase(cardtext2);
-			pcard->eff_hints[cardtext3]--;
-			if(pcard->eff_hints[cardtext3] <= 0)
-				pcard->eff_hints.erase(cardtext3);
-			pcard->eff_hints[cardtext4]--;
-			if(pcard->eff_hints[cardtext4] <= 0)
-				pcard->eff_hints.erase(cardtext4);
+				text.append(epro::format(L"{}", gDataManager->GetDesc(cardtext3, mainGame->dInfo.compat_mode)));
 		}
 		//kdiy////////
 		if(chtype == CHINT_DESC_ADD) {
             //kdiy////////
             if(addtotext && value > 0)
-                pcard->text_hints[text]++;
+            pcard->text_hints.push_back(text);
             else
             //kdiy////////
             pcard->desc_hints[value]++;
 		} else if(chtype == CHINT_DESC_REMOVE) {
-            //kdiy////////
-            if(addtotext && value > 0) {
-				pcard->text_hints[text]--;
-				if(pcard->text_hints[text] <= 0)
-					pcard->text_hints.erase(text);
-            } else {
+             //kdiy////////
+            if(!(addtotext && value > 0)) {
             //kdiy////////
 			pcard->desc_hints[value]--;
 			if(pcard->desc_hints[value] <= 0)

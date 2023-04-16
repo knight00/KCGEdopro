@@ -4113,7 +4113,7 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 			setcodes = data->setcodes;
 	}
     ///kdiy/////////
-    if(pcard && pcard->is_real && pcard->rsetnames) {
+    if(pcard && pcard->is_change && pcard->rsetnames && pcard->rsetnames > 0) {
 		setcodes.clear();
 	    for(int i = 0; i < 4; i++) {
 			uint16_t setcode = (pcard->rsetnames >> (i * 16)) & 0xffff;
@@ -4258,10 +4258,9 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 	RefreshCardInfoTextPositions();
     ///kdiy/////////
     if(pcard && pcard->is_real) {
-        std::wstring text(gDataManager->GetText(code));
-        for(auto iter = pcard->text_hints.begin(); iter != pcard->text_hints.end(); ++iter) {
-			text.append(epro::format(L"\n*{}", iter->first));
-		}
+        std::wstring text((pcard->effcode) ? gDataManager->GetText(pcard->effcode) : gDataManager->GetText(code));
+		for(std::vector<std::wstring>::size_type i = 0; i != pcard->text_hints.size(); i++)
+			text.append(epro::format(L"\n*{}", pcard->text_hints[i]));
 	    stText->setText(text.data());
     } else
 	///kdiy/////////
