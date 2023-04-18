@@ -401,18 +401,37 @@ std::wstring DataManager::GetVirtualName(ClientCard* pcard, uint32_t code, bool 
         else if(index != std::wstring::npos) aliasname = aliasname.substr(0,index);
         else if(index_2 != std::wstring::npos) aliasname = aliasname.substr(0,index_2);
     }
-	if(pcard->is_real && pcard->realchange == 1 && pcard->realsetcode && wcscmp(codename.data(), aliasname.data())) {
-		std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(pcard->realsetcode)));
-		codename.insert(0, str2);
-	} else if(pcard->is_real && pcard->realchange == 2 && pcard->realsetcode && wcscmp(codename.data(), aliasname.data())) {
-		codename.append(epro::format(L"{}", gDataManager->GetSetName(pcard->realsetcode)));
-	} else if(pcard->is_real && pcard->realchange == 3 && pcard->realname && wcscmp(codename.data(), aliasname.data())) {
-		std::wstring rname(GetName(pcard->realname));
-		std::wstring str2(epro::format(L"{} ", rname));
-		codename.insert(0, str2);
-	} else if(pcard->is_real && pcard->realchange == 4 && pcard->realname && wcscmp(codename.data(), aliasname.data())) {
-		std::wstring rname(GetName(pcard->realname));
-		codename.append(epro::format(L"{}", rname));
+	if(pcard->is_real && pcard->realchange > 0 && wcscmp(codename.data(), aliasname.data())) {
+		if(pcard->realsetcode > 0) {
+			if(pcard->realchange & 0x1) {
+				std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(pcard->realsetcode)));
+				codename.insert(0, str2);
+			} else if(pcard->realchange & 0x2) {
+				codename.append(epro::format(L" {}", gDataManager->GetSetName(pcard->realsetcode)));
+			} else if(pcard->realchange & 0x4) {
+				std::wstring str2(epro::format(L"{}", gDataManager->GetSetName(pcard->realsetcode)));
+				codename.insert(0, str2);
+			} else if(pcard->realchange & 0x8) {
+				codename.append(epro::format(L"{}", gDataManager->GetSetName(pcard->realsetcode)));
+			}
+		}
+	    if(pcard->realname > 0) {
+			if(pcard->realchange & 0x10) {
+				std::wstring rname(GetName(pcard->realname));
+				std::wstring str2(epro::format(L"{} ", rname));
+				codename.insert(0, str2);
+			} else if(pcard->realchange & 0x20) {
+				std::wstring rname(GetName(pcard->realname));
+				codename.append(epro::format(L" {}", rname));
+			} else if(pcard->realchange & 0x40) {
+				std::wstring rname(GetName(pcard->realname));
+				std::wstring str2(epro::format(L"{}", rname));
+				codename.insert(0, str2);
+			} else if(pcard->realchange & 0x80) {
+				std::wstring rname(GetName(pcard->realname));
+				codename.append(epro::format(L"{}", rname));
+			}
+		}
 	}
 	// if(alias && alias == 27 && wcscmp(codename.data(), aliasname.data())) {
 	// 	std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x1073)));

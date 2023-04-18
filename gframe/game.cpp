@@ -4257,10 +4257,10 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
     ///kdiy/////////
 	RefreshCardInfoTextPositions();
     ///kdiy/////////
-    if(pcard && pcard->is_real) {
-        std::wstring text((pcard->effcode) ? gDataManager->GetText(pcard->effcode) : gDataManager->GetText(code));
+    if(pcard && pcard->is_real && !pcard->text_hints.empty()) {
+        std::wstring text;
 		for(std::vector<std::wstring>::size_type i = 0; i != pcard->text_hints.size(); i++)
-			text.append(epro::format(L"\n*{}", pcard->text_hints[i]));
+			text.append(epro::format(i == 0 ? L"{}" : L"\n{}", pcard->text_hints[i]));
 	    stText->setText(text.data());
     } else
 	///kdiy/////////

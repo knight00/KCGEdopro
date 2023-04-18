@@ -57,10 +57,10 @@ public:
 	uint32_t rrscale;
 	uint32_t rlink_marker;
 	bool is_real = false;
-	uint8_t realchange;
-	uint16_t realsetcode;
-	uint32_t realname;
-	uint32_t effcode;
+	uint8_t realchange = 0;
+	uint16_t realsetcode = 0;
+	uint32_t realname = 0;
+	uint32_t effcode = 0;
     /////////kdiy/////////
 	uint32_t attribute;
 	uint64_t race;
