@@ -379,15 +379,19 @@ epro::wstringview DataManager::GetName(uint32_t code) const {
 	/////kdiy/////
 }
 /////kdiy/////
+std::wstring DataManager::GetVirtualName(uint32_t code, bool removenametag) const {
+	return gDataManager->GetVirtualName(nullptr, code, removenametag);
+}
 std::wstring DataManager::GetVirtualName(ClientCard* pcard, bool removenametag) const {
 	return gDataManager->GetVirtualName(pcard, pcard->code, removenametag);
 }
 std::wstring DataManager::GetVirtualName(ClientCard* pcard, uint32_t code, bool removenametag) const {
-	uint32_t alias = pcard->alias;
+	uint32_t alias = 0;
+    if(pcard) alias = pcard->alias;
 	std::wstring codename(GetName(code));
 	std::wstring aliasname(GetName(alias));
     if(removenametag 
-        || (alias && pcard->is_real && wcscmp(codename.data(), aliasname.data()))) {
+        || (alias && pcard->is_real)) {
         auto index = codename.find(L"(");
         auto index_2 = codename.find(65288);
         auto index_3 = codename.find(L" (");
@@ -401,7 +405,7 @@ std::wstring DataManager::GetVirtualName(ClientCard* pcard, uint32_t code, bool 
         else if(index != std::wstring::npos) aliasname = aliasname.substr(0,index);
         else if(index_2 != std::wstring::npos) aliasname = aliasname.substr(0,index_2);
     }
-	if(pcard->is_real && pcard->realchange > 0 && wcscmp(codename.data(), aliasname.data())) {
+	if(pcard->is_real && pcard->realchange > 0) {
 		if(pcard->realsetcode > 0) {
 			if(pcard->realchange & 0x1) {
 				std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(pcard->realsetcode)));
@@ -433,30 +437,6 @@ std::wstring DataManager::GetVirtualName(ClientCard* pcard, uint32_t code, bool 
 			}
 		}
 	}
-	// if(alias && alias == 27 && wcscmp(codename.data(), aliasname.data())) {
-	// 	std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x1073)));
-	// 	codename.insert(0, str2);
-	// } else if(alias && alias == 28 && wcscmp(codename.data(), aliasname.data())) {
-	// 	std::wstring str2(gDataManager->GetSetName(0xcf));
-	// 	codename.insert(0, str2);
-	// } else if(alias && alias == 29 && wcscmp(codename.data(), aliasname.data())) {
-	// 	std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x4073)));
-	// 	codename.insert(0, str2);
-	// } else if(alias && alias == 36 && wcscmp(codename.data(), aliasname.data())) {
-	// 	std::wstring str2(gDataManager->GetSetName(0x2048));
-	// 	codename.insert(0, str2, str2.size()-3);
-	// } else if((alias && alias == 42 || alias == 43 || alias == 44) && wcscmp(codename.data(), aliasname.data())) {
-	// 	std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0xa1)));
-	// 	codename.insert(0, str2);
-	// } else if(alias && alias == 102 && wcscmp(codename.data(), aliasname.data())) {
-	// 	std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(0x23)));
-	// 	codename.insert(0, str2);
-	// } else if(alias && alias == 347 && wcscmp(codename.data(), aliasname.data())) {
-	// 	std::wstring str2(epro::format(L"{} ", aliasname));
-	// 	codename.insert(0, str2);
-	// } else if(alias && alias == 213 && wcscmp(codename.data(), aliasname.data())) {
-	// 	codename.append(epro::format(L"{}", gDataManager->GetSetName(0x104f)));
-	// }
 	return codename;
 }
 /////kdiy/////

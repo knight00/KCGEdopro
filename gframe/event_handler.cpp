@@ -1733,8 +1733,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
                                     if(index_3 != std::wstring::npos) str2 = str2.substr(0,index_3);
                                     else if(index != std::wstring::npos) str2 = str2.substr(0,index);
                                     else if(index_2 != std::wstring::npos) str2 = str2.substr(0,index_2);
-									if(mcard->alias != 27 && mcard->alias != 28 && mcard->alias != 29 && mcard->alias != 36 && mcard->alias != 42 && mcard->alias != 43 && mcard->alias != 44 && mcard->alias != 102 && mcard->alias != 347 && mcard->alias != 213
-                                        && wcscmp(str2.data(), str.data()))
+									if(!mcard->is_real && wcscmp(str2.data(), str.data()))
 									///////kdiy/////////
 									str.append(epro::format(L"\n({})",gDataManager->GetName(mcard->alias)));
 								}
@@ -1776,8 +1775,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
                                     if(index_3 != std::wstring::npos) str2 = str2.substr(0,index_3);
                                     else if(index != std::wstring::npos) str2 = str2.substr(0,index);
                                     else if(index_2 != std::wstring::npos) str2 = str2.substr(0,index_2);
-									if(mcard->alias != 27 && mcard->alias != 28 && mcard->alias != 29 && mcard->alias != 36 && mcard->alias != 42 && mcard->alias != 43 && mcard->alias != 44 && mcard->alias != 102 && mcard->alias != 347 && mcard->alias != 213
-                                        && wcscmp(str2.data(), str.data()))
+									if(!mcard->is_real && wcscmp(str2.data(), str.data()))
 									///////kdiy/////////
 									str.append(epro::format(L"\n({})", gDataManager->GetName(mcard->alias)));
 								}

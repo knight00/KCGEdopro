@@ -3652,6 +3652,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         const auto realchange = BufferIO::Read<uint8_t>(pbuf);
         const auto realsetcode = BufferIO::Read<uint16_t>(pbuf);
         const auto realname = BufferIO::Read<uint32_t>(pbuf);
+		CoreUtils::loc_info current2 = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+        ClientCard* ocard = mainGame->dField.GetCard(current2.controler, current2.location, current2.sequence);
+        if(current2.location & LOCATION_OVERLAY)
+            ocard = mainGame->dField.GetCard(current2.controler, current2.location & (~LOCATION_OVERLAY) & 0xff, current2.sequence);
 		current.controler = mainGame->LocalPlayer(current.controler);
 		//auto lock = LockIf();
 		if(!(current.location & LOCATION_OVERLAY)) {
@@ -3671,12 +3675,20 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			if(realcode > 0) {
 				pcard->is_real = true;
 				pcard->effcode = effcode;
+                pcard->text_hints.clear();
+                if(effcode > 0) {
+                    std::wstring text(epro::format(gDataManager->GetText(pcard->effcode), gDataManager->GetName(pcard->code).data()));
+                    if(text != gDataManager->unknown_string)
+                        pcard->text_hints.insert(pcard->text_hints.begin(), text);
+                } else if(ocard)
+                    pcard->text_hints = ocard->text_hints;
 				pcard->realchange = realchange;
 				if((realchange & 0x1) || (realchange & 0x2) || (realchange & 0x4) || (realchange & 0x8))
 				    pcard->realsetcode = realsetcode;
-				else if((realchange & 0x10) || (realchange & 0x20) || (realchange & 0x40) || (realchange & 0x80))
+				if((realchange & 0x10) || (realchange & 0x20) || (realchange & 0x40) || (realchange & 0x80))
 				    pcard->realname = realname;
-			}
+			} else
+				pcard->is_real = false;
 		} else {
 			ClientCard* olcard = mainGame->dField.GetCard(current.controler, current.location & (~LOCATION_OVERLAY) & 0xff, current.sequence);
 			ClientCard* pcard = olcard->overlayed[current.position];
@@ -3695,12 +3707,20 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			if(realcode > 0) {
 				pcard->is_real = true;
 				pcard->effcode = effcode;
+                pcard->text_hints.clear();
+                if(effcode > 0) {
+                    std::wstring text(epro::format(gDataManager->GetText(pcard->effcode), gDataManager->GetName(pcard->code).data()));
+                    if(text != gDataManager->unknown_string)
+                        pcard->text_hints.insert(pcard->text_hints.begin(), text);
+                } else if(ocard)
+                    pcard->text_hints = ocard->text_hints;
 				pcard->realchange = realchange;
 				if((realchange & 0x1) || (realchange & 0x2) || (realchange & 0x4) || (realchange & 0x8))
 				    pcard->realsetcode = realsetcode;
-				else if((realchange & 0x10) || (realchange & 0x20) || (realchange & 0x40) || (realchange & 0x80))
+				if((realchange & 0x10) || (realchange & 0x20) || (realchange & 0x40) || (realchange & 0x80))
 				    pcard->realname = realname;
-			}
+			} else
+				pcard->is_real = false;
 		}
 		// if(!mainGame->dInfo.isCatchingUp) {
 		// 	mainGame->WaitFrameSignal(5, lock);
@@ -4798,20 +4818,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		//kdiy////////
 		if(chtype == CHINT_DESC_ADD) {
             //kdiy////////
-            if(pcard->effcode && addtotext && value > 0) {
-				if(!pcard->text_hints.empty()) {
-					if(addtofront)
-					    pcard->text_hints.insert(pcard->text_hints.begin(), text);
-					else
-					    pcard->text_hints.push_back(text);
-				} else {
-					std::wstring text2(epro::format(gDataManager->GetText(pcard->effcode), gDataManager->GetName(pcard->code).data()));
-					text2.append(L"\n" + text);
-					if(addtofront)
-						pcard->text_hints.insert(pcard->text_hints.begin(), text2);
-					else
-					    pcard->text_hints.push_back(text2);
-				}
+            if(addtotext && value > 0) {
+				if(addtofront)
+				    pcard->text_hints.insert(pcard->text_hints.begin(), text);
+				else
+					pcard->text_hints.push_back(text);
 			} else
             //kdiy////////
             pcard->desc_hints[value]++;

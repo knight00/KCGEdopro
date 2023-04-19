@@ -141,6 +141,7 @@ public:
 	const CardDataC* GetMappedCardData(uint32_t code) const;
 	epro::wstringview GetName(uint32_t code) const;
 	/////kdiy/////
+    std::wstring GetVirtualName(uint32_t code, bool removenametag=true) const;
 	std::wstring GetVirtualName(ClientCard* pcard, bool removenametag=true) const;
 	std::wstring GetVirtualName(ClientCard* pcard, uint32_t code, bool removenametag=true) const;
 	/////kdiy/////
