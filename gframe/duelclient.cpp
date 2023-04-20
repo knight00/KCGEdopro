@@ -1506,7 +1506,7 @@ inline bool PlayAnimecode(uint32_t code, uint32_t code2, uint8_t cat) {
 	if(cat == 2 && !gGameConfig->enableaanime) return false;
 	if(cat == 0 && !gGameConfig->enablesanime) return false;
     if(code < 1) return false;
-#ifdef _WIN32
+#if EDOPRO_WINDOWS
     std::wstring s2 = L"plugin\\MPC-HCPortable\\MPC-HCPortable.exe";
 	GetFileAttributes(s2.c_str());
 	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s2.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
@@ -1544,7 +1544,7 @@ inline bool PlayAnimecode(uint32_t code, uint32_t code2, uint8_t cat) {
 	CloseHandle(pi.hThread);
 	gSoundManager->PauseMusic(false);
 	return true;
-#elif __ANDROID__
+#elif EDOPRO_ANDROID
     auto a = L"";
 	if (cat == 0)
 		a = L"s";
@@ -1573,7 +1573,7 @@ inline bool PlayAnime(ClientCard* card, uint8_t cat) {
 }
 inline bool PlayAnimeC(std::wstring text, bool custom) {
 	if(!gGameConfig->enableanime) return false;
-#ifdef _WIN32
+#if EDOPRO_WINDOWS
 	std::wstring s2 = L"plugin\\MPC-HCPortable\\MPC-HCPortable.exe";
 	GetFileAttributes(s2.c_str());
 	if(INVALID_FILE_ATTRIBUTES == GetFileAttributes(s2.c_str()) && (GetLastError() == ERROR_FILE_NOT_FOUND || GetLastError() == ERROR_PATH_NOT_FOUND))
@@ -1599,7 +1599,7 @@ inline bool PlayAnimeC(std::wstring text, bool custom) {
 	CloseHandle(pi.hThread);
 	gSoundManager->PauseMusic(false);
 	return true;
-#elif __ANDROID__
+#elif EDOPRO_ANDROID
     auto s1 = epro::format(EPRO_TEXT("./movies/custom/{}.mp4"), Utils::ToPathString(text));
 	if(!Utils::FileExists(s1)) return false;
 	return false;

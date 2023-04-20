@@ -2297,7 +2297,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 					gGameConfig->enableanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
 					mainGame->tabSettings.chkEnableAnime->setChecked(gGameConfig->enableanime);
 					mainGame->gSettings.chkEnableAnime->setChecked(gGameConfig->enableanime);
-#if !defined(_WIN32)
+#if !EDOPRO_WINDOWS
 					gGameConfig->enableanime = false;
 #endif
 					if(gGameConfig->enableanime) {
@@ -2343,7 +2343,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				if(gGameConfig->system_engine) {
 					gGameConfig->enablesanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
 					mainGame->gSettings.chkEnableSummonAnime->setChecked(gGameConfig->enablesanime);
-#if !defined(_WIN32)
+#if !EDOPRO_WINDOWS
 					gGameConfig->enableanime = false;
 #endif
                     if(gGameConfig->enablesanime) {
@@ -2383,7 +2383,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				if(gGameConfig->system_engine) {
 					gGameConfig->enablecanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
 					mainGame->gSettings.chkEnableActivateAnime->setChecked(gGameConfig->enablecanime);
-#if !defined(_WIN32)
+#if !EDOPRO_WINDOWS
 					gGameConfig->enableanime = false;
 #endif
                     if(gGameConfig->enablecanime) {
@@ -2423,7 +2423,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				if(gGameConfig->system_engine) {
 					gGameConfig->enableaanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
 					mainGame->gSettings.chkEnableAttackAnime->setChecked(gGameConfig->enableaanime);
-#if !defined(_WIN32)
+#if !EDOPRO_WINDOWS
 					gGameConfig->enableanime = false;
 #endif
                     if(gGameConfig->enableaanime) {
