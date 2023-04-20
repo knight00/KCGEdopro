@@ -1,9 +1,10 @@
 #include "windbot.h"
 #include "utils.h"
-#ifdef _WIN32
+#include "config.h"
+#if EDOPRO_WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
-#elif defined(__ANDROID__)
+#elif EDOPRO_ANDROID
 #include "porting.h"
 #include <nlohmann/json.hpp>
 #else
@@ -11,7 +12,7 @@
 #include <unistd.h>
 #endif
 #include <fmt/format.h>
-#ifndef __ANDROID__
+#if !EDOPRO_ANDROID
 #include "Base64.h"
 #endif
 #include "config.h"
@@ -20,31 +21,27 @@
 
 namespace ygo {
 
-#if !defined(_WIN32) && !defined(__ANDROID__)
+#if EDOPRO_LINUX || EDOPRO_MACOS
 epro::path_string WindBot::executablePath{};
 #endif
 static constexpr uint32_t version{ CLIENT_VERSION };
-#ifndef __ANDROID__
+#if !EDOPRO_ANDROID
 nlohmann::ordered_json WindBot::databases{};
 bool WindBot::serialized{ false };
-#ifdef _WIN32
-std::wstring WindBot::serialized_databases{};
-#else
-std::string WindBot::serialized_databases{};
-#endif
+decltype(WindBot::serialized_databases) WindBot::serialized_databases{};
 #endif
 
 /////kdiy//////
 //WindBot::launch_ret_t WindBot::Launch(int port, epro::wstringview pass, bool chat, int hand, const wchar_t* overridedeck) const {
 WindBot::launch_ret_t WindBot::Launch(int port, epro::wstringview pass, bool chat, int hand, const wchar_t* overridedeck, int seed) const {
-/////kdiy//////	
-#ifndef __ANDROID__
+/////kdiy//////
+#if !EDOPRO_ANDROID
 	if(!serialized) {
 		serialized = true;
 		serialized_databases = base64_encode<decltype(serialized_databases)>(databases.dump(-1, ' ', false, nlohmann::detail::error_handler_t::replace));
 	}
 #endif
-#ifdef _WIN32
+#if EDOPRO_WINDOWS
 	//Windows can modify this string
 	auto args = Utils::ToPathString(epro::format(
 		///kdiy//////////
@@ -62,7 +59,7 @@ WindBot::launch_ret_t WindBot::Launch(int port, epro::wstringview pass, bool cha
 	CloseHandle(pi.hProcess);
 	CloseHandle(pi.hThread);
 	return true;
-#elif defined(__ANDROID__)
+#elif EDOPRO_ANDROID
 	nlohmann::json param({
 							{"HostInfo", BufferIO::EncodeUTF8(pass)},
 							{"Deck", BufferIO::EncodeUTF8(deck)},
@@ -83,7 +80,7 @@ WindBot::launch_ret_t WindBot::Launch(int port, epro::wstringview pass, bool cha
 		param["DeckFile"] = BufferIO::EncodeUTF8(overridedeck);
 	porting::launchWindbot(param.dump());
 	return true;
-#else
+#elif EDOPRO_LINUX || EDOPRO_MACOS
 	std::string argPass = epro::format("HostInfo={}", BufferIO::EncodeUTF8(pass));
 	std::string argDeck = epro::format("Deck={}", BufferIO::EncodeUTF8(deck));
 	std::string argPort = epro::format("Port={}", port);
@@ -146,32 +143,23 @@ WindBot::launch_ret_t WindBot::Launch(int port, epro::wstringview pass, bool cha
 //std::wstring WindBot::GetLaunchParameters(int port, epro::wstringview pass, bool chat, int hand, const wchar_t* overridedeck) const {
 std::wstring WindBot::GetLaunchParameters(int port, epro::wstringview pass, bool chat, int hand, const wchar_t* overridedeck, int seed) const {
 /////kdiy//////
-#ifndef __ANDROID__
+#if !EDOPRO_ANDROID
 	if(!serialized) {
 		serialized = true;
 		serialized_databases = base64_encode<decltype(serialized_databases)>(databases.dump(-1, ' ', false, nlohmann::detail::error_handler_t::replace));
 	}
-#endif
-///////fixedo//////////
-#if !defined(__ANDROID__) && !defined(EDOPRO_IOS)
-///////fixedo//////////
 	const auto assets_path = Utils::GetAbsolutePath(EPRO_TEXT("./WindBot"_sv));
 	const auto override_deck = overridedeck ? epro::format(L" DeckFile=\"{}\"", overridedeck) : L"";
 	return epro::format(
-		///////kdiy//////////
-		//L"HostInfo=\"{}\" Deck=\"{}\" Port={} Version={} name=\"[AI] {}\" Chat={} Hand={} DbPaths={}{} AssetPath=\"{}\"",
-		//pass, deck, port, version, name, chat, hand, Utils::ToUnicodeIfNeeded(serialized_databases), override_deck, Utils::ToUnicodeIfNeeded(assets_path));
-		L"HostInfo=\"{}\" Deck=\"{}\" Port={} Version={} name=\"[AI] {}\" Dialog=\"{}\" Chat={} Seed={} Hand={} DbPaths={}{} AssetPath=\"{}\"",
-		pass, deck, port, version, deck == L"AI_perfectdicky" ? deckpath : name, dialog, chat, seed, hand, Utils::ToUnicodeIfNeeded(serialized_databases), override_deck, Utils::ToUnicodeIfNeeded(assets_path));
-	    ///////kdiy//////////
-///////fixedo//////////
+		L"HostInfo=\"{}\" Deck=\"{}\" Port={} Version={} name=\"[AI] {}\" Chat={} Hand={} DbPaths={}{} AssetPath=\"{}\"",
+		pass, deck, port, version, name, chat, hand, Utils::ToUnicodeIfNeeded(serialized_databases), override_deck, Utils::ToUnicodeIfNeeded(assets_path));
+#else
+	return {};
 #endif
-	return L"";
-///////fixedo//////////
 }
 
 void WindBot::AddDatabase(epro::path_stringview database) {
-#ifdef __ANDROID__
+#if EDOPRO_ANDROID
 	porting::addWindbotDatabase(Utils::GetAbsolutePath(database));
 #else
 	serialized = false;

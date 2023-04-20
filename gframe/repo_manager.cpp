@@ -77,7 +77,7 @@ RepoManager::RepoManager() {
 	git_libgit2_init();
 	if(gGameConfig->ssl_certificate_path.size() && Utils::FileExists(Utils::ToPathString(gGameConfig->ssl_certificate_path)))
 		git_libgit2_opts(GIT_OPT_SET_SSL_CERT_LOCATIONS, gGameConfig->ssl_certificate_path.data(), "");
-#ifdef _WIN32
+#if EDOPRO_WINDOWS
 	else
 		git_libgit2_opts(GIT_OPT_SET_SSL_CERT_LOCATIONS, "SYSTEM", "");
 #endif
@@ -105,7 +105,7 @@ RepoManager::~RepoManager() {
 
 size_t RepoManager::GetUpdatingReposNumber() const {
 	return available_repos.size();
-};
+}
 
 std::vector<const GitRepo*> RepoManager::GetAllRepos() const {
 	std::vector<const GitRepo*> res;

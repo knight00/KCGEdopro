@@ -8,7 +8,7 @@
 
 class SoundThreadedBackend : public SoundBackend {
 public:
-	~SoundThreadedBackend();
+	virtual ~SoundThreadedBackend() override;
 	virtual void SetSoundVolume(double volume) override;
 	virtual void SetMusicVolume(double volume) override;
 	virtual bool PlayMusic(const std::string& name, bool loop) override;
@@ -43,11 +43,6 @@ private:
 		MUSIC_PLAYING,
 		TICK,
 		TERMINATE
-	};
-	enum class ResponseType {
-		PLAY_MUSIC,
-		PLAY_SOUND,
-		MUSIC_PLAYING
 	};
 	struct Response {
 		bool answer;
@@ -88,10 +83,10 @@ private:
 };
 
 template<typename T>
-class SoundThreadedBackendHelper : public SoundThreadedBackend {
+class SoundThreadedBackendHelper final : public SoundThreadedBackend {
 public:
 	SoundThreadedBackendHelper() : SoundThreadedBackend(std::unique_ptr<SoundBackend>(new T())) {}
-	~SoundThreadedBackendHelper() = default;
+	virtual ~SoundThreadedBackendHelper() override = default;
 };
 
 #endif //SOUND_THREADED_BACKEND_H

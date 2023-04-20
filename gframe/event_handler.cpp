@@ -39,6 +39,7 @@
 #include <IGUIScrollBar.h>
 #include "joystick_wrapper.h"
 #include "porting.h"
+#include "config.h"
 
 namespace {
 
@@ -55,7 +56,7 @@ inline void SetCheckbox(irr::gui::IGUICheckBox* chk, bool state) {
 	TriggerEvent(chk, irr::gui::EGET_CHECKBOX_CHANGED);
 }
 
-#if defined(__ANDROID__) || defined(EDOPRO_IOS)
+#if EDOPRO_ANDROID || EDOPRO_IOS
 inline bool TransformEvent(const irr::SEvent& event, bool& stopPropagation) {
 	return porting::transformEvent(event, stopPropagation);
 }
@@ -1960,7 +1961,7 @@ static bool IsTrulyVisible(const irr::gui::IGUIElement* elem) {
 			return true;
 	}
 	return false;
-};
+}
 bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation) {
 	static irr::u32 buttonstates = 0;
 	static uint8_t resizestate = gGameConfig->fullscreen ? 2 : 0;
@@ -2560,7 +2561,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				gGameConfig->logDownloadErrors = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
 				break;
 			}
-#ifdef __ANDROID__
+#if EDOPRO_ANDROID
 			case CHECKBOX_NATIVE_KEYBOARD: {
 				gGameConfig->native_keyboard = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
 				break;

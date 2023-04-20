@@ -1,15 +1,16 @@
 #include "config.h"
-#ifdef _WIN32
+#if EDOPRO_WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include <Tchar.h> //_tmain
 #else
-#if defined(EDOPRO_IOS)
+#if EDOPRO_IOS
 #define _tmain epro_ios_main
 #else
 #define _tmain main
 #endif //EDOPRO_IOS
 #include <unistd.h>
-#endif //_WIN32
+#include <signal.h>
+#endif //EDOPRO_WINDOWS
 #include <curl/curl.h>
 #include <event2/thread.h>
 #include <IrrlichtDevice.h>
@@ -27,7 +28,7 @@
 #include "log.h"
 #include "joystick_wrapper.h"
 #include "utils_gui.h"
-#ifdef EDOPRO_MACOS
+#if EDOPRO_MACOS
 #include "osx_menu.h"
 #endif
 
@@ -121,7 +122,7 @@ void CheckArguments(const args_t& args) {
 }
 
 inline void ThreadsStartup() {
-#ifdef _WIN32
+#if EDOPRO_WINDOWS
 	const WORD wVersionRequested = MAKEWORD(2, 2);
 	WSADATA wsaData;
 	auto wsaret = WSAStartup(wVersionRequested, &wsaData);
@@ -140,7 +141,7 @@ inline void ThreadsStartup() {
 inline void ThreadsCleanup() {
 	curl_global_cleanup();
 	libevent_global_shutdown();
-#ifdef _WIN32
+#if EDOPRO_WINDOWS
 	WSACleanup();
 #endif
 }
@@ -192,9 +193,14 @@ int _tmain(int argc, epro::path_char* argv[]) {
 		return EXIT_FAILURE;
 	}
 	show_changelog = args[LAUNCH_PARAM::CHANGELOG].enabled;
-#ifndef _WIN32
+#if EDOPRO_POSIX
 	setlocale(LC_CTYPE, "UTF-8");
-#endif //_WIN32
+	struct sigaction sa;
+	sa.sa_handler = SIG_IGN;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	(void)sigaction(SIGCHLD, &sa, 0);
+#endif //EDOPRO_POSIX
 	ygo::ClientUpdater updater(args[LAUNCH_PARAM::OVERRIDE_UPDATE_URL].argument);
 	ygo::gClientUpdater = &updater;
 	std::unique_ptr<ygo::DataHandler> data{ nullptr };
@@ -217,11 +223,11 @@ int _tmain(int argc, epro::path_char* argv[]) {
 	}
 	if (!data->configs->noClientUpdates)
 		updater.CheckUpdates();
-#ifdef _WIN32
+#if EDOPRO_WINDOWS
 	if(!data->configs->showConsole)
 		FreeConsole();
 #endif
-#ifdef EDOPRO_MACOS
+#if EDOPRO_MACOS
 	EDOPRO_SetupMenuBar([]() {
 		ygo::gGameConfig->fullscreen = !ygo::gGameConfig->fullscreen;
 		ygo::mainGame->gSettings.chkFullscreen->setChecked(ygo::gGameConfig->fullscreen);
