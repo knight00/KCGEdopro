@@ -171,13 +171,12 @@ public:
 	bool IsModeBot(std::wstring mode);
 	void NextPlot(uint8_t step = 0, uint8_t index = 0, uint32_t code = 0); //step: plotStep, index: ploat.json index
 	std::wstring GetPloat(uint8_t index, uint32_t code = 0);
-	long long GetSoundSeconds(uint32_t index);
 	Mode();
+	void LoadJsonInfo();
 	~Mode();
 private:
 	void SetCurrentDeck();
 	void LoadJson(epro::path_string path, uint8_t index, uint8_t chapter = 0);
-	void LoadJsonInfo();
 };
 /////zdiy/////
 

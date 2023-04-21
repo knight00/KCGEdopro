@@ -100,7 +100,6 @@ Mode::Mode() {
 	modeIndex = -1;
 	rule = MODE_RULE_DEFAULT;
     chapter = 0;
-	LoadJsonInfo();
 };
 std::wstring Mode::GetPloat(uint8_t index, uint32_t code) {
 	std::wstring str = L"";
@@ -299,21 +298,6 @@ void Mode::InitializeMode() {
 	mainGame->RefreshAiDecks();
 }
 Mode::~Mode(){};
-/*
- no found the fun to read sound time
-*/
-long long Mode::GetSoundSeconds(uint32_t index) {
-	switch (index)
-	{
-		case 0:return 1201;case 1:return 1201;case 2:return 1828;case 3:return 4205;case 4:return 3787;
-		case 5:return 3996;case 6:return 8280;case 12:return 2507;case 13:return 12695;case 14:return 1750;
-		case 15:return 8150; case 16:return 10135;case 17:return 8098;case 18:return 9012;case 19:return 14236;
-		case 20:return 4937;case 21:return 13322;case 22:return 10109;case 23:return 7418;case 24:return 2324;
-		case 25:return 11911;case 26:return 6582;case 27:return 8333;case 28:return 14315;case 29:return 2246;
-		case 30:return 5955;case 31:return 6661;case 32:return 10422;case 33:return 4231;case 34:return 8881;
-		default:return 1000;
-	}
-}
 void Mode::RefreshControlState(uint8_t state)
 {
 	mainGame->btnEntertainmentExitGame->setVisible(true);

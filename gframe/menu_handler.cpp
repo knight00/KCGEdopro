@@ -856,6 +856,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
                     mainGame->PopupElement(mainGame->wACMessage, 20);
                     break;
                 }
+				mainGame->mode->LoadJsonInfo();
  				mainGame->HideElement(mainGame->wMainMenu);
 #ifdef EK
 				mainGame->HideElement(mainGame->wQQ);
