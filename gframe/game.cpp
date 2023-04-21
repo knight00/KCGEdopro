@@ -2551,15 +2551,15 @@ void Game::PopulateSettingsWindow() {
 		gSettings.chkIgnoreDeckContents = env->addCheckBox(gGameConfig->ignoreDeckContents, GetNextRect(), sPanel, CHECKBOX_IGNORE_DECK_CONTENTS, gDataManager->GetSysString(12119).data());
 		menuHandler.MakeElementSynchronized(gSettings.chkIgnoreDeckContents);
 		defaultStrings.emplace_back(gSettings.chkIgnoreDeckContents, 12119);
-        ////kdiy////////
-        {
-			gSettings.btnSaveSetting = env->addButton(GetCurrentRectWithXOffset(15, 160), sPanel, BUTTON_SAVE_SETTING, gDataManager->GetSysString(8024).data());
-			defaultStrings.emplace_back(gSettings.btnSaveSetting, 8024);
-			gSettings.btnRestoreSetting = env->addButton(GetCurrentRectWithXOffset(175, 320), sPanel, BUTTON_RESTORE_SETTING, gDataManager->GetSysString(8027).data());
-			defaultStrings.emplace_back(gSettings.btnRestoreSetting, 8027);
-			IncrementXorY();
-		}
-        ////kdiy////////
+        ////kremove////////
+        // {
+		// 	gSettings.btnSaveSetting = env->addButton(GetCurrentRectWithXOffset(15, 160), sPanel, BUTTON_SAVE_SETTING, gDataManager->GetSysString(8024).data());
+		// 	defaultStrings.emplace_back(gSettings.btnSaveSetting, 8024);
+		// 	gSettings.btnRestoreSetting = env->addButton(GetCurrentRectWithXOffset(175, 320), sPanel, BUTTON_RESTORE_SETTING, gDataManager->GetSysString(8027).data());
+		// 	defaultStrings.emplace_back(gSettings.btnRestoreSetting, 8027);
+		// 	IncrementXorY();
+		// }
+        ////kremove////////
 	}
 
 	{
@@ -3784,10 +3784,10 @@ inline void TrySaveInt(T& dest, const irr::gui::IGUIElement* src) {
 	}
 	catch (...) {}
 }
-/////kdiy/////
-//void Game::SaveConfig() {
-void Game::SaveConfig(bool backup) {
-/////kdiy/////
+/////kremove/////
+void Game::SaveConfig() {
+//void Game::SaveConfig(bool backup) {
+/////kremove/////
 	gGameConfig->nickname = ebNickName->getText();
 	gGameConfig->lastallowedcards = cbRule->getSelected();
 	gGameConfig->lastDuelParam = duel_param;
@@ -3857,11 +3857,11 @@ void Game::SaveConfig(bool backup) {
 		return;
 	}
 #endif
-    ////kdiy////////
-	if(backup)
-	gGameConfig->Save(EPRO_TEXT("./config/system_backup.conf"));
-	else
-	////kdiy////////
+    ////kremove////////
+	// if(backup)
+	// gGameConfig->Save(EPRO_TEXT("./config/system_backup.conf"));
+	// else
+	////kremove////////
 	gGameConfig->Save(EPRO_TEXT("./config/system.conf"));
 }
 Game::RepoGui* Game::AddGithubRepositoryStatusWindow(const GitRepo* repo) {

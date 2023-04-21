@@ -2119,20 +2119,22 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
                 Utils::SystemOpen(EPRO_TEXT("https://www.bilibili.com/video/BV1a54y127Xx?p=2"));
 				break;
 			}
-            case BUTTON_SAVE_SETTING: {
-				mainGame->SaveConfig(true);
-                mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8024)).data());
-                mainGame->PopupElement(mainGame->wACMessage, 20);
-				break;
-			}
-            case BUTTON_RESTORE_SETTING: {
-                if(Utils::FileExists(EPRO_TEXT("./config/system_backup.conf"))) {
-                    Utils::FileCopy(EPRO_TEXT("./config/system_backup.conf"), EPRO_TEXT("./config/system.conf"));
-                    exit(0);
-                } else
-                    ygo::GUIUtils::ShowErrorWindow("Missing file", "No backup setting");
-				break;
-			}
+			//////kremove///////
+            // case BUTTON_SAVE_SETTING: {
+			// 	mainGame->SaveConfig(true);
+            //     mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8024)).data());
+            //     mainGame->PopupElement(mainGame->wACMessage, 20);
+			// 	break;
+			// }
+            // case BUTTON_RESTORE_SETTING: {
+            //     if(Utils::FileExists(EPRO_TEXT("./config/system_backup.conf"))) {
+            //         Utils::FileCopy(EPRO_TEXT("./config/system_backup.conf"), EPRO_TEXT("./config/system.conf"));
+            //         exit(0);
+            //     } else
+            //         ygo::GUIUtils::ShowErrorWindow("Missing file", "No backup setting");
+			// 	break;
+			// }
+			//////kremove///////
 			//////kdiy///////
 			case BUTTON_APPLY_RESTART: {
 				try {

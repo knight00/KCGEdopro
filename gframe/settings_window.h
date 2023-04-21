@@ -107,8 +107,10 @@ struct SettingsWindow {
 	irr::gui::IGUICheckBox* chkEnableActivateAnime;
 	irr::gui::IGUICheckBox* chkEnableAttackAnime;
     irr::gui::IGUICheckBox* chkPauseduel;
-    irr::gui::IGUIButton* btnSaveSetting;
-    irr::gui::IGUIButton* btnRestoreSetting;
+	///////kremove////////
+    // irr::gui::IGUIButton* btnSaveSetting;
+    // irr::gui::IGUIButton* btnRestoreSetting;
+	///////kremove////////
 	irr::gui::IGUICheckBox* chkRandomtexture;
 	irr::gui::IGUICheckBox* chkCloseup;
 	irr::gui::IGUICheckBox* chkHideNameTag;

@@ -215,10 +215,10 @@ public:
 	void WaitFrameSignal(int frame, std::unique_lock<epro::mutex>& _lck);
 	void DrawThumb(const CardDataC* cp, irr::core::position2di pos, LFList* lflist, bool drag = false, const irr::core::recti* cliprect = nullptr, bool loadimage = true);
 	void DrawDeckBd();
-	/////kdiy/////
-	//void SaveConfig();
-	void SaveConfig(bool backup=false);
-	/////kdiy/////
+	////kremove////////
+	void SaveConfig();
+	//void SaveConfig(bool backup=false);
+	////kremove////////
 	/////zdiy/////
 	void* ReadCardDataToCore();
 	/////zdiy/////
