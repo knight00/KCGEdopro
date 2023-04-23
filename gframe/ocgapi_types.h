@@ -73,9 +73,9 @@ typedef struct OCG_DuelOptions {
 	void* payload3; /* relayed to errorHandler */
 	OCG_DataReaderDone cardReaderDone;
 	void* payload4; /* relayed to cardReader */
-	/////zdiy/////
+	/////kdiy/////
 	void* payload5; /* get cardData */
-	/////zdiy/////
+	/////kdiy/////
 	uint8_t enableUnsafeLibraries;
 }OCG_DuelOptions;
 

@@ -168,12 +168,10 @@ public:
 	A(tcharacterselect2)
 	A(scharacter[6])
 	A(QQ)
-	/////////kdiy////
-	/////zdiy/////
 	A(modeBody[CHAPTER])
     A(head[CHARACTER_STORY])
 	A(modeHead[6])
-	/////zdiy/////
+	/////kdiy/////
 	A(tSettings)
 	A(tCheckBox[3])
 #undef A

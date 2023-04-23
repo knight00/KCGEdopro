@@ -14,10 +14,8 @@
 #endif
 /////kdiy/////////
 #include "game_config.h"
-/////kdiy/////////
-/////zdiy/////
 #include "game.h"
-/////zdiy/////
+/////kdiy/////
 namespace ygo {
 SoundManager::SoundManager(double sounds_volume, double music_volume, bool sounds_enabled, bool music_enabled) {
 #ifdef BACKEND
@@ -274,7 +272,7 @@ void SoundManager::RefreshChantsList() {
 	}
 #endif	
 }
-/////zdiy/////
+/////kdiy/////
 int32_t SoundManager::GetSoundDuration(std::string name) {
 #ifdef BACKEND
     if(mixer && soundsEnabled)
@@ -302,7 +300,7 @@ void SoundManager::PlayModeSound(uint8_t index, bool lock) {
     }
 #endif
 }
-/////zdiy/////
+/////kdiy/////
 void SoundManager::PlaySoundEffect(SFX sound) {
 #ifdef BACKEND
 	if(!soundsEnabled) return;

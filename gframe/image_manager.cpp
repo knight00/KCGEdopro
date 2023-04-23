@@ -343,9 +343,9 @@ bool ImageManager::Initial() {
         //1: Yusei
         //2: Darkman
         //3: Paradox
-        head[i] = driver->getTexture(epro::format(EPRO_TEXT("./mode/story/head/{}.jpg"), i-1).c_str());
+        head[i] = driver->getTexture(epro::format(EPRO_TEXT("./mode/story/head/{}.jpg"), i).c_str());
         if(head[i] == nullptr)
-            head[i] = driver->getTexture(epro::format(EPRO_TEXT("./mode/story/head/{}.png"), i-1).c_str());
+            head[i] = driver->getTexture(epro::format(EPRO_TEXT("./mode/story/head/{}.png"), i).c_str());
     }
 #ifdef VIP
     RefreshKCGImage();
@@ -639,6 +639,15 @@ bool ImageManager::Initial() {
 		snprintf(buff, 100, "textures/pscale/lscale_%d.png", i);
 		tLScale[i] = driver->getTexture(buff);
 	}
+    modeBody[0] = driver->getTexture(0);
+	for (uint32_t i = 1; i <= CHAPTER; i++) {
+		snprintf(buff, 100, "./mode/story/body/%d.png", i);
+		modeBody[i] = driver->getTexture(buff);
+        if(modeBody[i] == nullptr) {
+            snprintf(buff, 100, "./mode/story/body/%d.jpg", i);
+            modeBody[i] = driver->getTexture(buff);
+        }
+	}
     ///kdiy/////
 
 	// Not required to be present
@@ -657,12 +666,6 @@ bool ImageManager::Initial() {
 	sizes[2].first = CARD_THUMB_WIDTH * gGameConfig->dpi_scale;
 	sizes[2].second = CARD_THUMB_HEIGHT * gGameConfig->dpi_scale;
 
-	/////zdiy/////
-	for (uint32_t i = 0; i < CHAPTER; i++) {
-		snprintf(buff, 100, "./mode/story/body/%d.png", i);
-		modeBody[i] = driver->getTexture(buff);
-	}
-	/////zdiy/////
 	return true;
 }
 //////kdiy//////

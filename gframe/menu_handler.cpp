@@ -343,10 +343,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_HOST_CONFIRM: {
 				DuelClient::is_local_host = false;
-				/////zdiy/////
+				/////kdiy/////
 				mainGame->mode->isMode = false;
-				/////zdiy/////
-				///////kdiy///////
 				for(int i = 0; i < 6; ++i) {
 					if(gSoundManager->character[i] > CHARACTER_VOICE - 1)
 					    gSoundManager->character[i] = 0;
@@ -849,7 +847,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->RefreshReplay();
 				break;
 			}
-			/////zdiy//////
+			/////kdiy//////
 			case BUTTON_ENTERTAUNMENT_MODE: {
                 if(!mainGame->git_update || mainGame->git_error || mainGame->first_play) {
                     mainGame->stACMessage->setText(gDataManager->GetSysString(8046).data());
@@ -884,7 +882,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->wChat->setVisible(false);
 				break;
 			}
-             /////zdiy//////
+            /////kdiy//////
 			case BUTTON_SINGLE_MODE: {
                 //////kdiy/////
                 if(!mainGame->git_update || mainGame->git_error || mainGame->first_play) {
@@ -1257,7 +1255,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 		}
 		case irr::gui::EGET_LISTBOX_CHANGED: {
 			switch(id) {
-			/////zdiy/////
+			/////kdiy/////
 			case LISTBOX_ENTERTAINMENTPLAY_LIST: {
 				int sel = mainGame->lstEntertainmentPlayList->getSelected();
 				mainGame->mode->modeIndex = sel;
@@ -1267,7 +1265,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				}
 				break;
 			}
-		    /////zdiy/////
+		    /////kdiy/////
 			case LISTBOX_LAN_HOST: {
 				int sel = mainGame->lstHostList->getSelected();
 				if(sel == -1)
@@ -1406,7 +1404,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 		}
 		case irr::gui::EGET_CHECKBOX_CHANGED: {
 			switch(id) {
-			/////zdiy/////
+			/////kdiy/////
 			case CHECKBOX_ENTERTAUNMENT_MODE_1_CHECK: {
 
 				if(mainGame->chkEntertainmentMode_1Check->isChecked())
@@ -1455,8 +1453,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				}
 				break;
 			}
-			/////zdiy/////
-			////kdiy///////
 			case CHECKBOX_DEFAULT_LOCAL: {
 				bool chk = true;
 				if(mainGame->chkdefaultlocal->isChecked()) {

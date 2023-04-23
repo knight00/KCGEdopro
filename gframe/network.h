@@ -234,10 +234,8 @@ public:
 	/////kdiy//////////
 	//virtual void PlayerReady(DuelPlayer* dp, bool is_ready) = 0;
 	virtual void PlayerReady(DuelPlayer* dp, bool is_ready, bool ai=false) = 0;
-	/////kdiy//////////
-	/////zdiy/////
 	virtual void ModeStartDuel(DuelPlayer* dp) = 0;
-	/////zdiy/////
+	/////kdiy/////
 	virtual void PlayerKick(DuelPlayer* dp, uint8_t pos) = 0;
 	virtual void UpdateDeck(DuelPlayer* dp, void* pdata, uint32_t len) = 0;
 	virtual void StartDuel(DuelPlayer* dp) = 0;
@@ -297,9 +295,8 @@ public:
 #define CTOS_HS_NOTREADY	0x23
 #define CTOS_HS_KICK		0x24
 #define CTOS_HS_START		0x25
-/////zdiy/////
 #define CTOS_MODE_HS_START	0x26
-/////zdiy/////
+/////kdiy/////
 
 #define CTOS_REMATCH_RESPONSE 0xf0
 
@@ -323,9 +320,9 @@ public:
 #define STOC_HS_PLAYER_ENTER	0x20
 #define STOC_HS_PLAYER_CHANGE	0x21
 #define STOC_HS_WATCH_CHANGE	0x22
-/////zdiy/////
+/////kdiy/////
 #define STOC_MODE_SHOW_PLOAT	0x23
-/////zdiy/////
+/////kdiy/////
 #define STOC_CATCHUP		0xf0
 #define STOC_REMATCH		0xf1
 #define STOC_WAITING_REMATCH	0xf2

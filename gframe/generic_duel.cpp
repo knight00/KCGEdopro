@@ -397,10 +397,10 @@ void GenericDuel::PlayerReady(DuelPlayer* dp, bool is_ready, bool ai) {
 	scpc.status = (dp->type << 4) | (is_ready ? PLAYERCHANGE_READY : PLAYERCHANGE_NOTREADY);
 	NetServer::SendPacketToPlayer(nullptr, STOC_HS_PLAYER_CHANGE, scpc);
 	ResendToAll();
-	/////zdiy/////
+	/////kdiy/////
 	if(mainGame->mode->isMode)
 		mainGame->mode->ModePlayerReady(ai);
-	/////zdiy/////
+	/////kdiy/////
 }
 void GenericDuel::PlayerKick(DuelPlayer* dp, uint8_t pos) {
 	if(pos >= (players.home_size + players.opposing_size))
@@ -469,12 +469,12 @@ void GenericDuel::StartDuel(DuelPlayer* dp) {
 		obs->state = CTOS_LEAVE_GAME;
 		NetServer::ReSendToPlayer(obs);
 	}
-	/////zdiy/////
+	/////kdiy/////
 	if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
 		NetServer::SendPacketToPlayer(players.home.front(), STOC_MODE_SHOW_PLOAT);
 		return;
 	}
-	/////zdiy/////
+	/////kdiy/////
 	NetServer::SendPacketToPlayer(players.home.front(), STOC_SELECT_HAND);
 	NetServer::ReSendToPlayer(players.opposing.front());
 	hand_result[0] = 0;
@@ -483,7 +483,7 @@ void GenericDuel::StartDuel(DuelPlayer* dp) {
 	players.opposing.front().player->state = CTOS_HAND_RESULT;
 	duel_stage = DUEL_STAGE_FINGER;
 }
-/////zdiy/////
+/////kdiy/////
 void GenericDuel::ModeStartDuel(DuelPlayer* dp) {
 	NetServer::SendPacketToPlayer(players.home.front(), STOC_SELECT_HAND);
 	NetServer::ReSendToPlayer(players.opposing.front());
@@ -493,7 +493,7 @@ void GenericDuel::ModeStartDuel(DuelPlayer* dp) {
 	players.opposing.front().player->state = CTOS_HAND_RESULT;
 	duel_stage = DUEL_STAGE_FINGER;
 }
-/////zdiy/////
+/////zkdiydiy/////
 void GenericDuel::HandResult(DuelPlayer* dp, uint8_t res) {
 	if(res > 3 || dp->state != CTOS_HAND_RESULT)
 		return;
@@ -668,15 +668,13 @@ void GenericDuel::TPResult(DuelPlayer* dp, uint8_t tp) {
 		extracards.push_back(85);
 	if(host_info.extra_rules & Field_System)
 		extracards.push_back(86);
-	////kdiy///////
-	/////zdiy/////
 	if(mainGame->mode->isMode) {
 		if(mainGame->mode->rule == MODE_RULE_ZCG || mainGame->mode->rule == MODE_RULE_ZCG_NO_RANDOM)
 			extracards.push_back(99710410);
 		if(mainGame->mode->rule == MODE_STORY)
             extracards.push_back(99710410 + mainGame->mode->chapter);
 	};
-	/////zdiy/////
+	/////kdiy/////
 	OCG_NewCardInfo card_info = { 0, 0, 0, 0, 0, 0, POS_FACEDOWN_DEFENSE };
 	for(auto it = extracards.crbegin(), end = extracards.crend(); it != end; ++it) {
 		card_info.code = *it;
@@ -1074,11 +1072,11 @@ void GenericDuel::Sending(CoreUtils::Packet& packet, int& return_value, bool& re
 		SEND(nullptr);
 		for(auto& dueler : (player == 0) ? players.home : players.opposing)
 			NetServer::ReSendToPlayer(dueler);
-		/////zdiy/////
+		/////kdiy/////
 		//if (!(current.location & (LOCATION_GRAVE + LOCATION_OVERLAY)) && ((current.location & (LOCATION_DECK + LOCATION_HAND)) || (current.position & POS_FACEDOWN)))
 		if (!mainGame->mode->isMode && !(current.location & (LOCATION_GRAVE + LOCATION_OVERLAY)) && ((current.location & (LOCATION_DECK + LOCATION_HAND)) || (current.position & POS_FACEDOWN)))
 			BufferIO::Write<uint32_t>(pbufw, 0);
-		/////zdiy/////
+		/////kdiy/////
 		SEND(nullptr);
 		for(auto& dueler : (player == 1) ? players.home : players.opposing)
 			NetServer::ReSendToPlayer(dueler);

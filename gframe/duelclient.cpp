@@ -212,20 +212,20 @@ void DuelClient::ClientEvent(bufferevent *bev, short events, void *ctx) {
 	if (events & BEV_EVENT_CONNECTED) {
 		bool create_game = (size_t)ctx != 0;
 		CTOS_PlayerInfo cspi;
-		/////zdiy/////
+		/////kdiy/////
 		//BufferIO::EncodeUTF16(mainGame->ebNickName->getText(), cspi.name, 20);
 		if(!mainGame->mode->isMode)
 			BufferIO::EncodeUTF16(mainGame->ebNickName->getText(), cspi.name, 20);
         else
 			BufferIO::EncodeUTF16(gGameConfig->nickname.data(), cspi.name, 20);
-		/////zdiy/////
+		/////kdiy/////
 		SendPacketToServer(CTOS_PLAYER_INFO, cspi);
 		if(create_game) {
 #define TOI(what, from, def) try { what = std::stoi(from);  }\
 catch(...) { what = def; }
-			/////zdiy//////
+			/////kdiy//////
 			if (!mainGame->mode->isMode) {
-			/////zdiy//////
+			/////kdiy//////
 				CTOS_CreateGame cscg;
 				mainGame->dInfo.secret.game_id = 0;
 				BufferIO::EncodeUTF16(mainGame->ebServerName->getText(), cscg.name, 20);
@@ -271,7 +271,7 @@ catch(...) { what = def; }
 					BufferIO::EncodeUTF8(mainGame->ebHostNotes->getText(), cscg.notes, 200);
 				}
 				SendPacketToServer(CTOS_CREATE_GAME, cscg);
-            /////zdiy//////
+            /////kdiy//////
 			} else {
 				CTOS_CreateGame cscg;
 				BufferIO::EncodeUTF16(L"Mode", cscg.name, 20);
@@ -318,7 +318,7 @@ catch(...) { what = def; }
 				}
 				SendPacketToServer(CTOS_CREATE_GAME, cscg);
 			}
-		    /////zdiy//////
+		    /////kdiy//////
 		} else {
 			CTOS_JoinGame csjg;
 			if (temp_ver)
@@ -655,12 +655,12 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		}
 		break;
 	}
-	/////zdiy/////
+	/////kdiy/////
 	case STOC_MODE_SHOW_PLOAT: { //pop out 1st ploat
 		mainGame->mode->NextPlot();
 		break;
 	}
-	/////zdiy/////
+	/////kdiy/////
 	case STOC_SELECT_HAND: {
 		mainGame->wHand->setVisible(true);
 		break;
@@ -728,15 +728,13 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		////kdiy////////
 		mainGame->wAvatar[0]->setVisible(false);
 		mainGame->wAvatar[1]->setVisible(false);
-		////kdiy////////
-        ////zdiy////////
         mainGame->wHead[0]->setVisible(false);
 		mainGame->wHead[1]->setVisible(false);
 		mainGame->wChBody[0]->setVisible(false);
 		mainGame->wChBody[1]->setVisible(false);
         mainGame->wChPloatBody[0]->setVisible(false);
         mainGame->wChPloatBody[1]->setVisible(false);
-        ////zdiy////////
+        ////kdiy////////
 		mainGame->deckBuilder.result_string = L"0";
 		mainGame->deckBuilder.results.clear();
 		mainGame->deckBuilder.hovered_code = 0;
@@ -893,13 +891,12 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		matManager.SetActiveVertices(mainGame->dInfo.HasFieldFlag(DUEL_3_COLUMNS_FIELD),
 									 !mainGame->dInfo.HasFieldFlag(DUEL_SEPARATE_PZONE));
 		int x = (pkt.info.team1 + pkt.info.team2 >= 5) ? 60 : 0;
-        /////zdiy//////
+        /////kdiy//////
 		if(!mainGame->mode->isMode) {
 		mainGame->btnHostPrepOB->setRelativePosition(mainGame->Scale<irr::s32>(10, 180 + x, 110, 205 + x));
 		mainGame->stHostPrepOB->setRelativePosition(mainGame->Scale<irr::s32>(10, 210 + x, 270, 230 + x));
 		mainGame->stHostPrepRule->setRelativePosition(mainGame->Scale<irr::s32>(280, 30, 460, 270 + x));
 		mainGame->stDeckSelect->setRelativePosition(mainGame->Scale<irr::s32>(10, 235 + x, 110, 255 + x));
-		//////kdiy/////////
 		//mainGame->cbDeckSelect->setRelativePosition(mainGame->Scale<irr::s32>(120, 230 + x, 270, 255 + x));
 		mainGame->cbDeck2Select->setRelativePosition(mainGame->Scale<irr::s32>(120, 230 + x, 210, 250 + x));
 		mainGame->cbDeckSelect->setRelativePosition(mainGame->Scale<irr::s32>(220, 230 + x, 430, 250 + x));
@@ -955,18 +952,17 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->icon[i]->setRelativePosition(mainGame->Scale<irr::s32>(40, 10 + 65 + i * 25, 60, 10 + 85 + i * 25));
 			///////kdiy/////////
 		}
-        /////zdiy//////
+        /////kdiy//////
         }
-        /////zdiy//////
+        /////kdiy//////
 		mainGame->dInfo.selfnames.resize(pkt.info.team1);
 		mainGame->dInfo.opponames.resize(pkt.info.team2);
-        /////zdiy//////
+        /////kdiy//////
 		if(!mainGame->mode->isMode) {
 		mainGame->btnHostPrepReady->setVisible(true);
 		mainGame->btnHostPrepNotReady->setVisible(false);
-        ///////zdiy////
         }
-        /////zdiy//////
+        /////kdiy//////
 		mainGame->dInfo.time_limit = pkt.info.time_limit;
 		mainGame->dInfo.time_left[0] = 0;
 		mainGame->dInfo.time_left[1] = 0;
@@ -977,20 +973,16 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		if(mainGame->deckBuilder.filterList == 0)
 			mainGame->deckBuilder.filterList = &gdeckManager->_lfList[0];
 		watching = 0;
-        /////zdiy//////
+		////////kdiy////////
 		if(!mainGame->mode->isMode) {
 		mainGame->stHostPrepOB->setText(epro::format(L"{} {}", gDataManager->GetSysString(1253), watching).data());
 		mainGame->stHostPrepRule->setText(str.data());
 		mainGame->stHostPrepRuleR->setText(strR.data());
 		mainGame->stHostPrepRuleL->setText(strL.data());
-        /////zdiy//////
         }
-        /////zdiy//////
-		////////kdiy////////
 		// mainGame->RefreshDeck(mainGame->cbDeckSelect);
 		//mainGame->cbDeckSelect->setEnabled(true);
 		mainGame->RefreshDeck();
-        /////zdiy//////
 		if(!mainGame->mode->isMode) {
 		mainGame->cbDeckSelect->setEnabled(true);
 		mainGame->cbDeck2Select->setEnabled(true);
@@ -1020,9 +1012,9 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->ShowElement(mainGame->wHostPrepareR);
 		if(strL.size())
 			mainGame->ShowElement(mainGame->wHostPrepareL);
-        /////zdiy//////
+        /////kdiy//////
         }
-        /////zdiy//////
+        /////kdiy//////
 		mainGame->wChat->setVisible(true);
 		mainGame->dInfo.isFirst = (mainGame->dInfo.player_type < mainGame->dInfo.team1) || (mainGame->dInfo.player_type >= 7);
 		mainGame->dInfo.isTeam1 = mainGame->dInfo.isFirst;
@@ -1033,14 +1025,14 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		auto pkt = BufferIO::getStruct<STOC_TypeChange>(pdata, len);
 		selftype = pkt.type & 0xf;
 		is_host = ((pkt.type >> 4) & 0xf) != 0;
-		/////zdiy//////
+		/////kdiy//////
 		if(mainGame->mode->isMode) {
 			mainGame->dInfo.player_type = selftype;
 			mainGame->dInfo.isFirst = (mainGame->dInfo.player_type < mainGame->dInfo.team1) || (mainGame->dInfo.player_type >= 7);
             mainGame->dInfo.isTeam1 = mainGame->dInfo.isFirst;
 			break;
 		}
-		/////zdiy//////
+		/////kdiy//////
 		for(int i = 0; i < mainGame->dInfo.team1 + mainGame->dInfo.team2; i++) {
 			mainGame->btnHostPrepKick[i]->setVisible(is_host);
 		}
@@ -1073,9 +1065,9 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 	}
 	case STOC_DUEL_START: {
 		std::unique_lock<epro::mutex> lock(mainGame->gMutex);
-        /////zdiy/////
+        /////kdiy/////
 		mainGame->HideElement(mainGame->wEntertainmentPlay);
-        /////zdiy/////
+        /////kdiy/////
 		mainGame->HideElement(mainGame->wHostPrepare);
 		mainGame->HideElement(mainGame->gBot.window);
 		mainGame->HideElement(mainGame->wHostPrepareL);
@@ -1202,7 +1194,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			if(mainGame->isHostingOnline) {
 				mainGame->ShowElement(mainGame->wRoomListPlaceholder);
 			}
-			/////zdiy/////
+			/////kdiy/////
 			else if(mainGame->mode->isMode) {
 				mainGame->wHead[0]->setVisible(false);
 				mainGame->wHead[1]->setVisible(false);
@@ -1216,7 +1208,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 				mainGame->mode->RefreshControlState(0);
 				mainGame->mode->InitializeMode();
 			}
-			/////zdiy/////
+			/////kdiy/////
 			else {
 				mainGame->ShowElement(mainGame->wLanWindow);
 			}
@@ -1291,7 +1283,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->dInfo.selfnames[pkt.pos] = name;
 		else
 			mainGame->dInfo.opponames[pkt.pos - mainGame->dInfo.team1] = name;
-		/////zdiy/////
+		/////kdiy/////
 		if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY
 		   && mainGame->mode->playerNames.find(mainGame->mode->chapter) != mainGame->mode->playerNames.end()
 		   && mainGame->mode->aiNames.find(mainGame->mode->chapter) != mainGame->mode->aiNames.end()) {
@@ -1303,18 +1295,18 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 				if(name_count > 5) break;
 			}
         } else
-		/////zdiy/////
+		/////kdiy/////
 		mainGame->stHostPrepDuelist[pkt.pos]->setText(name);
-        /////zdiy/////
+        /////kdiy/////
 		if(!mainGame->mode->isMode) {
-        /////zdiy/////
+        /////kdiy/////
 		mainGame->btnHostPrepStart->setVisible(is_host);
 		mainGame->btnHostPrepStart->setEnabled(is_host && CheckReady());
-        /////zdiy/////
+        /////kdiy/////
         }
         if(mainGame->mode->isMode)
             DuelClient::SendPacketToServer(CTOS_HS_READY);
-        /////zdiy/////
+        /////kdiy/////
 		break;
 	}
 	case STOC_HS_PLAYER_CHANGE: {
@@ -1638,6 +1630,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
             mainGame->wHead[0]->setVisible(true);
             mainGame->wHead[1]->setVisible(true);
+            //mainGame->mode->NextPlot(1, 6, 100000155);
         }
 		PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, player);
 		return;
@@ -1649,6 +1642,29 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		current.controler = mainGame->LocalPlayer(current.controler);
 		const auto reason = BufferIO::Read<uint32_t>(pbuf);
+        ClientCard* pcard = mainGame->dField.GetCard(previous.controler, previous.location, previous.sequence);
+        if(chapter >= 1) {
+            if(!(current.position & POS_FACEUP)) return;
+            if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE)) return;
+            if(code==100000155) mainGame->mode->NextPlot(1, 6, 100000155);
+            // for(uint8_t index = 1; index < mainGame->mode->modePloats->size(); index++) {
+            //     auto controler = mainGame->mode->modePloats->at(index).control;
+            //     if(previous.controler != controler || current.controler != controler) return;
+            //     uint32_t mcode = mainGame->mode->modePloats->at(index).code;
+            //     if(mcode < 1) continue;
+            //     bool summon_extramonster = mainGame->mode->modePloats->at(index).summon_extramonster;
+            //     if(summon_extramonster) {
+            //         if(!(reason & REASON_SPSUMMON)) continue;
+            //         if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE)) continue;
+            //     }
+            //     uint32_t acode = 0;
+            //     if(pcard->alias) acode = pcard->alias;
+            //     if(code == mcode || acode == mcode) {
+            //         mainGame->mode->NextPlot(1, index, mcode);
+            //         break;
+            //     }
+            // }
+        }
         switch (code) {
         case 100000155: {
             if(chapter == 1) {
@@ -1853,13 +1869,13 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		mainGame->dField.ReplaySwap();
 		is_swapping = false;
 	}
-	/////zdiy/////
+	/////kdiy/////
     // if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
     mainGame->cv = &cv;
     mainGame->lck = &to_analyze_mutex;
     ModeClientAnalyze(mainGame->mode->chapter, pbuf, mainGame->dInfo.curMsg);
     // }
-	/////zdiy////
+	/////kdiy////
 	switch(mainGame->dInfo.curMsg) {
 	case MSG_RETRY: {
 		if(!mainGame->dInfo.compat_mode) {
@@ -5017,13 +5033,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                 mainGame->wAvatar[1-player]->setVisible(false);
 #endif
         }
-		//kdiy/////////
-        ////zdiy////////
         if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
             mainGame->wHead[0]->setVisible(true);
             mainGame->wHead[1]->setVisible(true);
         }
-        ////zdiy////////
+        ////kdiy////////
 		break;
 	}
 	case MSG_RELOAD_FIELD: {
@@ -5454,15 +5468,13 @@ void DuelClient::ReplayPrompt(bool local_stream) {
     mainGame->isEvent = false;
 	mainGame->wAvatar[0]->setVisible(false);
 	mainGame->wAvatar[1]->setVisible(false);
-	////kdiy////////
-    ////zdiy////////
     mainGame->wHead[0]->setVisible(false);
 	mainGame->wHead[1]->setVisible(false);
 	mainGame->wChBody[0]->setVisible(false);
 	mainGame->wChBody[1]->setVisible(false);
     mainGame->wChPloatBody[0]->setVisible(false);
 	mainGame->wChPloatBody[1]->setVisible(false);
-    ////zdiy////////
+    ////kdiy////////
 	auto now = std::time(nullptr);
 	mainGame->PopupSaveWindow(gDataManager->GetSysString(1340), epro::format(L"{:%Y-%m-%d %H-%M-%S}", fmt::localtime(now)), gDataManager->GetSysString(1342));
 	mainGame->replaySignal.Wait(lock);

@@ -100,13 +100,11 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				gSoundManager->PlayChant(SoundManager::CHANT::BORED, 0, 0, character);
 				break;
 			}
-			///////kdiy///////
-			/////zdiy/////
 			case BUTTON_ENTERTAUNMENT_PLOAT_CLOSE: { //story start after click ok
 				mainGame->mode->NextPlot(); //ploatstep 0->1
 				break;
 			}
-			/////zdiy/////
+			/////kdiy/////
 			case BUTTON_HAND1:
 			case BUTTON_HAND2:
 			case BUTTON_HAND3: {
@@ -1172,14 +1170,22 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				break;
 			if(mainGame->wCardDisplay->isVisible())
 				break;
-			/////zdiy/////
+			/////kdiy/////
 			if(mainGame->mode->isMode && mainGame->mode->isPlot) {
-				if(mainGame->mode->plotStep <= 1) break;
-				if(mainGame->mode->isStartEvent)
-				    mainGame->mode->NextPlot(mainGame->mode->endstart_plotStep); //skip starting continuous ploat
+				if(mainGame->mode->plotStep < 1) break;
+                if(!mainGame->mode->isStartDuel && !mainGame->dInfo.isStarted) {
+                    mainGame->mode->isStartEvent = false;
+                    mainGame->mode->isStartDuel = true;
+				    mainGame->mode->NextPlot();
+                    break;
+                }
+                if(mainGame->mode->isStartEvent) {
+                    mainGame->mode->isStartEvent = false;
+				    mainGame->mode->NextPlot(); //skip continuous ploat
+                }
 				break;
 			}
-			/////zdiy/////
+			/////kdiy/////
 			irr::core::vector2di mousepos(event.MouseInput.X, event.MouseInput.Y);
 			irr::gui::IGUIElement* root = mainGame->env->getRootGUIElement();
 			if(root->getElementFromPoint(mousepos) != root)
@@ -1198,22 +1204,18 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 		case irr::EMIE_LMOUSE_LEFT_UP: {
 			if(!mainGame->dInfo.isInDuel)
 				break;
-			/////zdiy/////
+			/////kdiy/////
 			if(mainGame->mode->isMode && mainGame->mode->isPlot){
-				if(mainGame->mode->plotStep <= 1) break;
-				if(mainGame->isEvent) {
-					mainGame->isEvent = false;
-					mainGame->cv->notify_one();
-					gSoundManager->StopSounds();
-				}
+				if(mainGame->mode->plotStep < 1) break;
 				mainGame->mode->NextPlot();
 				break;
-			} else if(mainGame->isEvent) {
+			}
+            if(mainGame->isEvent) {
 				mainGame->isEvent = false;
 				mainGame->cv->notify_one();
 				gSoundManager->StopSounds();
             }
-			/////zdiy/////
+			/////kdiy/////
 			hovered_location = 0;
 			irr::core::vector2di pos = mainGame->Resize(event.MouseInput.X, event.MouseInput.Y, true);
 			irr::core::vector2di mousepos(event.MouseInput.X, event.MouseInput.Y);
@@ -1613,10 +1615,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 		case irr::EMIE_RMOUSE_LEFT_UP: {
 			if(mainGame->dInfo.isReplay)
 				break;
-			/////zdiy/////
+			/////kdiy/////
 			if(mainGame->mode->isMode && mainGame->mode->isPlot)
 				break;
-			/////zdiy/////
+			/////kdiy/////
 			auto x = event.MouseInput.X;
 			auto y = event.MouseInput.Y;
 			irr::core::vector2di pos(x, y);
@@ -1635,10 +1637,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 		case irr::EMIE_MOUSE_MOVED: {
 			if(!mainGame->dInfo.isInDuel)
 				break;
-			/////zdiy/////
+			/////kdiy/////
 			if(mainGame->mode->isMode && mainGame->mode->isPlot)
 			    break;
-			/////zdiy/////
+			/////kdiy/////
 			bool should_show_tip = false;
 			irr::core::vector2di pos = mainGame->Resize(event.MouseInput.X, event.MouseInput.Y, true);
 			irr::core::vector2di mousepos(event.MouseInput.X, event.MouseInput.Y);
@@ -1845,10 +1847,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 		case irr::EMIE_LMOUSE_PRESSED_DOWN: {
 			if(!mainGame->dInfo.isInDuel || !isroot || event.MouseInput.X <= 300)
 				break;
-			/////zdiy/////
+			/////kdiy/////
 			if(mainGame->mode->isMode && mainGame->mode->isPlot)
 				break;
-			/////zdiy/////
+			/////kdiy/////
 			mainGame->always_chain = true;
 			mainGame->ignore_chain = false;
 			mainGame->chain_when_avail = false;
@@ -1858,10 +1860,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 		case irr::EMIE_RMOUSE_PRESSED_DOWN: {
 			if(!mainGame->dInfo.isInDuel || !isroot || event.MouseInput.X <= 300)
 				break;
-			/////zdiy/////
+			/////kdiy/////
 			if(mainGame->mode->isMode && mainGame->mode->isPlot)
 				break;
-			/////zdiy/////
+			/////kdiy/////
 			mainGame->ignore_chain = true;
 			mainGame->always_chain = false;
 			mainGame->chain_when_avail = false;
@@ -1874,10 +1876,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 		break;
 	}
 	case irr::EET_KEY_INPUT_EVENT: {
-		/////zdiy/////
+		/////kdiy/////
 		if(mainGame->mode->isMode && mainGame->mode->isPlot)
 			break;
-		/////zdiy/////
+		/////kdiy/////
 		switch(event.KeyInput.Key) {
 		case irr::KEY_KEY_A: {
 			if(!mainGame->HasFocus(irr::gui::EGUIET_EDIT_BOX)) {

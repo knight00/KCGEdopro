@@ -128,7 +128,7 @@ struct FadingUnit {
 	irr::core::vector2di fadingDest;
 	bool wasEnabled;
 };
-/////zdiy/////
+/////kdiy/////
 class Mode {
 public:
 	struct ModeText {//the text of mode meun
@@ -136,10 +136,15 @@ public:
 		std::wstring des;
 	};
 	struct ModePloat {//the ploat text of mode-story
-		uint8_t index;
-		uint8_t control;
-		std::wstring title;
-		std::wstring ploat;
+		uint8_t index = 0;
+		int control = 0;
+        uint8_t icon = 0;
+		std::wstring title = L"";
+		std::wstring ploat = L"";
+        bool isStartEvent = true;
+        bool isStartDuel = false;
+        bool summon_extramonster = false;
+        uint32_t code = 0;
 	};
 	std::vector<ModeText>* modeTexts;//vector modetext
 	std::vector<ModePloat>* modePloats;//vector modeploat
@@ -152,8 +157,8 @@ public:
 	int modeIndex;//decide to play what kind of mode rule,from meun-list getSelected
 	bool isMode;//the duel is mode?
 	bool isPlot;//is showing ploat, ignore mouse/keyboard inputs
-	uint8_t endstart_plotStep;//starting ploating, locking flow, allow left mouse click notify_one() to skip starting continuous ploat
 	bool isStartEvent;//ploating, locking flow, allow left mouse click notify_one() to skip continuous ploat
+	bool isStartDuel;
 	bool flag_100000155;//card 100000155 play sound
 	uint8_t rule;//the rule of duel,zcg|story......
     uint8_t chapter;//story chapter
@@ -170,6 +175,7 @@ public:
 	bool LoadWindBot(int port, epro::wstringview pass);
 	bool IsModeBot(std::wstring mode);
 	void NextPlot(uint8_t step = 0, uint8_t index = 0, uint32_t code = 0); //step: plotStep, index: ploat.json index
+    void PlayNextPlot(uint8_t index); //step: plotStep, index: ploat.json index
 	std::wstring GetPloat(uint8_t index, uint32_t code = 0);
 	Mode();
 	void LoadJsonInfo();
@@ -178,7 +184,7 @@ private:
 	void SetCurrentDeck();
 	void LoadJson(epro::path_string path, uint8_t index, uint8_t chapter = 0);
 };
-/////zdiy/////
+/////kdiy/////
 
 class Game {
 
@@ -218,9 +224,9 @@ public:
 	void SaveConfig();
 	//void SaveConfig(bool backup=false);
 	////kremove////////
-	/////zdiy/////
+	/////kdiy/////
 	void* ReadCardDataToCore();
-	/////zdiy/////
+	/////kdiy/////
 	struct RepoGui {
 		std::string path;
 		IProgressBar* progress1;
@@ -688,7 +694,7 @@ public:
 	irr::gui::IGUIButton* btnOpenSinglePlay;
 	irr::gui::IGUIButton* btnShareSinglePlay;
 	irr::gui::IGUIButton* btnSinglePlayCancel;
-	//////////zdiy/////////
+	//////////kdiy/////////
 	Mode* mode = new Mode();
 	irr::gui::IGUICheckBox* chkEntertainmentPrepReady;
 	irr::gui::IGUICheckBox* chkEntertainmentMode_1Check;
@@ -713,7 +719,7 @@ public:
 	irr::gui::CGUIImageButton* btnChBody[2];
 	irr::gui::IGUIWindow* wHead[2];
 	irr::gui::CGUIImageButton* btnHead[2];
-    //////////zdiy/////////
+    //////////kdiy/////////
 	//hand
 	irr::gui::IGUIWindow* wHand;
 	irr::gui::CGUIImageButton* btnHand[3];
