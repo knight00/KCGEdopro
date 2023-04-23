@@ -40,7 +40,9 @@
 		"index": 5,
 		"title": "不動遊星",
 		"control": 0,
-		"ploat": "黑暗決鬥，好吧，我要問清一切！"
+		"ploat": "黑暗決鬥，好吧，我要問清一切！",
+        "isStartEvent": false,
+        "isStartDuel": true
 	},
 	{
 		"index": 6,
