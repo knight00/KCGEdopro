@@ -88,8 +88,9 @@ static inline epro::path_string NoSkinLabel() {
 }
 /////kdiy//////
 Mode::Mode() {
-	modeTexts = nullptr;
-	modePloats = nullptr;
+    modeTexts = nullptr;
+    for(uint8_t i = 0; i < CHAPTER; i++)
+	    modePloats[i] = nullptr;
 	isMode = false;
 	isPlot = false;
 	isStartEvent = false;
@@ -103,32 +104,33 @@ Mode::Mode() {
 };
 std::wstring Mode::GetPloat(uint8_t index, uint32_t code) {
 	std::wstring str = L"";
-	if(index < 0 || index >= modePloats->size()) return str;
-	str = modePloats->at(index).title;
-	str.append(epro::format(L"{}\n{}{}",L":",L"  ", modePloats->at(index).ploat));
+	if(index < 0 || index >= modePloats[chapter]->size()) return str;
+	str = modePloats[chapter - 1]->at(index).title;
+	str.append(epro::format(L"{}\n{}{}",L":",L"  ", modePloats[chapter - 1]->at(index).ploat));
 	if(code > 0)
 		str = epro::sprintf(str, gDataManager->GetVirtualName(code, true));
 	return str;
 }
 void Mode::PlayNextPlot(uint8_t index, uint32_t code) {
-    int i = modePloats->at(index).control;
+    int i = modePloats[chapter - 1]->at(index).control;
 	if(i < 0 || i > 5) i = 0;
     mainGame->isEvent = true;
     gSoundManager->PauseMusic(true);
     mainGame->ShowElement(mainGame->wChBody[i]);
     mainGame->ShowElement(mainGame->wChPloatBody[i]);
-    mainGame->stChPloatInfo[i]->setText(GetPloat(index, code).data());
+    //mainGame->stChPloatInfo[i]->setText(GetPloat(index, code).data());
+    mainGame->stChPloatInfo[i]->setText(std::to_wstring(index).data());
     gSoundManager->PlayModeSound(index, mainGame->dInfo.isStarted);
 }
 void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 	if(step != 0) plotStep = step;
 	if(index != 0) plotIndex = index;
-	if(plotIndex >= modePloats->size() || plotIndex < 0) plotIndex = 0;
-	int i = modePloats->at(plotIndex).control;
+	if(plotIndex >= modePloats[chapter - 1]->size() || plotIndex < 0) plotIndex = 0;
+	int i = modePloats[chapter - 1]->at(plotIndex).control;
 	if(i < 0 || i > 5) i = 0;
 	uint8_t plotStep = this->plotStep;
 	uint8_t plotIndex = this->plotIndex;
-    character[i] = modePloats->at(plotIndex).icon;
+    character[i] = modePloats[chapter - 1]->at(plotIndex).icon;
             // character[0] = 1; //Player1 icon: Yusei
             // character[1] = 2; //Player2 icon: Dark Siner
     for(int i = 0; i < 6; ++i)
@@ -156,18 +158,20 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 	} else if(plotStep == 1) { //event
 		mainGame->wBody->setVisible(false);
 		mainGame->wPloat->setVisible(false);
+        isStartEvent = true;
+        for(uint8_t indx = plotIndex; indx <= modePloats[chapter - 1]->size(); indx++) {
+            plotIndex = indx;
+            if(isStartDuel) break;
+            ++this->plotIndex;
+            if(!isStartDuel && !mainGame->dInfo.isStarted)
+                isStartDuel = modePloats[chapter - 1]->at(plotIndex).isStartDuel;
+		    isStartEvent = modePloats[chapter - 1]->at(plotIndex).isStartEvent;
+            PlayNextPlot(plotIndex, code);
+            if(!isStartEvent || isStartDuel) break;
+            if(!mainGame->dInfo.isStarted) break;
+        }
 	}
-	for(int indx = plotIndex; indx <= modePloats->size(); indx++) {
-		plotIndex = indx;
-		++this->plotIndex;
-		if(!isStartDuel && !mainGame->dInfo.isStarted)
-            isStartDuel = modePloats->at(plotIndex).isStartDuel;
-		isStartEvent = modePloats->at(plotIndex).isStartEvent;
-		if(!isStartEvent || isStartDuel) break;
-		PlayNextPlot(plotIndex, code);
-		if(!mainGame->dInfo.isStarted) break;
-	}
-    if(!isStartEvent || isStartDuel) {
+    if(!isStartEvent || isStartDuel || plotStep > 1) {
         isPlot = false;
 		isStartEvent = false;
         mainGame->isEvent = false;
@@ -180,60 +184,59 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 		mainGame->HideElement(mainGame->wChBody[1]);
     }
     if(isStartDuel) {
-        DuelClient::SendPacketToServer(CTOS_MODE_HS_START);
 		isStartDuel = false;
+        DuelClient::SendPacketToServer(CTOS_MODE_HS_START);
 	}
     
-    if(chapter == 1) {
-		//plotStep 8 to 13,part1-1 when bot spsummon dark monster
-		if(plotStep == 8) {
-			isPlot = true;
-			mainGame->isEvent = true;
-		    mainGame->ShowElement(mainGame->wChBody[i]);
-			mainGame->ShowElement(mainGame->wChPloatBody[i]);
-			mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
-            gSoundManager->PauseMusic(true);
-			gSoundManager->PlayModeSound(plotIndex, true);
-			// cv->wait(lck);
-			// isEvent = true;
-			auto pstep = plotIndex + 1;
-            i = modePloats->at(pstep).control;
-            mainGame->ShowElement(mainGame->wChBody[i]);
-			mainGame->ShowElement(mainGame->wChPloatBody[i]);
-			mainGame->stChPloatInfo[i]->setText(GetPloat(pstep).data());
-			gSoundManager->PlayModeSound(pstep, true);
-            for(int indx = pstep + 1; indx < pstep + 4; indx++) {
-                i = modePloats->at(indx).control;
-                mainGame->stChPloatInfo[i]->setText(GetPloat(indx).data());
-                gSoundManager->PlayModeSound(indx, true);
-            }
-			mainGame->stChPloatInfo[0]->setText(L"");
-			mainGame->stChPloatInfo[1]->setText(L"");
-			mainGame->HideElement(mainGame->wChPloatBody[0]);
-			mainGame->HideElement(mainGame->wChPloatBody[1]);
-			mainGame->HideElement(mainGame->wChBody[0]);
-			mainGame->HideElement(mainGame->wChBody[1]);
-			mainGame->ShowElement(mainGame->wChPloatBody[1]);
-			mainGame->ShowElement(mainGame->wChBody[1]);
-			mainGame->stChPloatInfo[1]->setText(GetPloat(21, 100000155).data());
-			gSoundManager->PlayModeSound(21, true);
-			isPlot = false;
-			mainGame->isEvent = false;
-            gSoundManager->PauseMusic(false);
-			mainGame->stChPloatInfo[1]->setText(L"");
-			mainGame->HideElement(mainGame->wChPloatBody[1]);
-			mainGame->HideElement(mainGame->wChBody[1]);
-		} else if(plotStep == 9) { //left mouse click skipped continuos ploat
-			isPlot = false;
-            gSoundManager->PauseMusic(false);
-			mainGame->stChPloatInfo[0]->setText(L"");
-			mainGame->stChPloatInfo[1]->setText(L"");
-			mainGame->HideElement(mainGame->wChPloatBody[0]);
-			mainGame->HideElement(mainGame->wChPloatBody[1]);
-			mainGame->HideElement(mainGame->wChBody[0]);
-			mainGame->HideElement(mainGame->wChBody[1]);
-		}
-	}
+    // if(chapter == 1) {
+	// 	//plotStep 8 to 13,part1-1 when bot spsummon dark monster
+	// 	if(plotStep == 8) {
+	// 		isPlot = true;
+	// 		mainGame->isEvent = true;
+	// 	    mainGame->ShowElement(mainGame->wChBody[i]);
+	// 		mainGame->ShowElement(mainGame->wChPloatBody[i]);
+	// 		mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
+    //         gSoundManager->PauseMusic(true);
+	// 		gSoundManager->PlayModeSound(plotIndex, true);
+	// 		// cv->wait(lck);
+	// 		auto pstep = plotIndex + 1;
+    //         i = modePloats->at(pstep).control;
+    //         mainGame->ShowElement(mainGame->wChBody[i]);
+	// 		mainGame->ShowElement(mainGame->wChPloatBody[i]);
+	// 		mainGame->stChPloatInfo[i]->setText(GetPloat(pstep).data());
+	// 		gSoundManager->PlayModeSound(pstep, true);
+    //         for(int indx = pstep + 1; indx < pstep + 4; indx++) {
+    //             i = modePloats->at(indx).control;
+    //             mainGame->stChPloatInfo[i]->setText(GetPloat(indx).data());
+    //             gSoundManager->PlayModeSound(indx, true);
+    //         }
+	// 		mainGame->stChPloatInfo[0]->setText(L"");
+	// 		mainGame->stChPloatInfo[1]->setText(L"");
+	// 		mainGame->HideElement(mainGame->wChPloatBody[0]);
+	// 		mainGame->HideElement(mainGame->wChPloatBody[1]);
+	// 		mainGame->HideElement(mainGame->wChBody[0]);
+	// 		mainGame->HideElement(mainGame->wChBody[1]);
+	// 		mainGame->ShowElement(mainGame->wChPloatBody[1]);
+	// 		mainGame->ShowElement(mainGame->wChBody[1]);
+	// 		mainGame->stChPloatInfo[1]->setText(GetPloat(21, 100000155).data());
+	// 		gSoundManager->PlayModeSound(21, true);
+	// 		isPlot = false;
+	// 		mainGame->isEvent = false;
+    //         gSoundManager->PauseMusic(false);
+	// 		mainGame->stChPloatInfo[1]->setText(L"");
+	// 		mainGame->HideElement(mainGame->wChPloatBody[1]);
+	// 		mainGame->HideElement(mainGame->wChBody[1]);
+	// 	} else if(plotStep == 9) { //left mouse click skipped continuos ploat
+	// 		isPlot = false;
+    //         gSoundManager->PauseMusic(false);
+	// 		mainGame->stChPloatInfo[0]->setText(L"");
+	// 		mainGame->stChPloatInfo[1]->setText(L"");
+	// 		mainGame->HideElement(mainGame->wChPloatBody[0]);
+	// 		mainGame->HideElement(mainGame->wChPloatBody[1]);
+	// 		mainGame->HideElement(mainGame->wChBody[0]);
+	// 		mainGame->HideElement(mainGame->wChBody[1]);
+	// 	}
+	// }
 }
 bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 	int32_t index = -1;
@@ -403,8 +406,8 @@ void Mode::LoadJson(epro::path_string path, uint8_t index, uint8_t chapter) {
 				}
 			}
 			if(index == 1) {
-				modePloats = new std::vector<ModePloat>(j.size());
-				modePloats->clear();
+				modePloats[chapter - 1] = new std::vector<ModePloat>(j.size());
+				modePloats[chapter - 1]->clear();
 				for (auto& obj : j) {
 					try {
 						ModePloat modePloat;
@@ -427,23 +430,28 @@ void Mode::LoadJson(epro::path_string path, uint8_t index, uint8_t chapter) {
 						modePloat.index = obj.at("index").get<uint8_t>();
 						modePloat.title = BufferIO::DecodeUTF8(obj.at("title").get_ref<std::string&>());
 						modePloat.control = obj.at("control").get<int>();
-                        modePloat.icon = 0;
 						if(obj.find("icon") != obj.end())
                             modePloat.icon = obj.at("icon").get<uint8_t>();
+                        else
+                            modePloat.icon = 1;
 						modePloat.ploat = BufferIO::DecodeUTF8(obj.at("ploat").get_ref<std::string&>());
-						modePloats->push_back(std::move(modePloat));
-						modePloat.isStartEvent = true;
-						if(obj.find("isStartEvent") != obj.end())
+						if(obj.find("isStartEvent") != obj.end() && obj.find("isStartEvent")->is_boolean())
                             modePloat.isStartEvent = obj.at("isStartEvent").get<bool>();
-						modePloat.isStartDuel = false;
-						if(obj.find("isStartDuel") != obj.end())
+                        else
+                            modePloat.isStartEvent = true;
+						if(obj.find("isStartDuel") != obj.end() && obj.find("isStartDuel")->is_boolean())
 							modePloat.isStartDuel = obj.at("isStartDuel").get<bool>();
-						modePloat.summon_extramonster = false;
-						if(obj.find("summon_extramonster") != obj.end())
-                            modePloat.summon_extramonster = obj.at("summon_extramonster").get<bool>();
-						modePloat.code = 0;
+                        else
+                            modePloat.isStartDuel = false;
+						if(obj.find("sextramonster") != obj.end() && obj.find("sextramonster")->is_boolean())
+                            modePloat.sextramonster = obj.at("sextramonster").get<bool>();
+                        else
+                            modePloat.sextramonster = false;
 						if(obj.find("code") != obj.end())
                             modePloat.code = obj.at("code").get<uint32_t>();
+                        else
+                            modePloat.code = 0;
+						modePloats[chapter - 1]->push_back(std::move(modePloat));
 					}
 					catch (const std::exception& e) {
 						ErrorLog("Failed to parse Mode json entry: {}", e.what());
@@ -3731,10 +3739,12 @@ void Game::RefreshAiDecks() {
 					/////kdiy////////
 					if(obj.find("dialog") != obj.end())
 					    bot.dialog = BufferIO::DecodeUTF8(obj.at("dialog").get_ref<std::string&>());
-					/////kdiy////////
-					/////kdiy////////
+                    else
+                        bot.dialog = L"default";
 					if(obj.find("mode") != obj.end())
 					    bot.mode = BufferIO::DecodeUTF8(obj.at("mode").get_ref<std::string&>());
+                    else
+                        bot.mode = L"";
 					/////kdiy////////
 					bot.deckfile = epro::format(L"AI_{}", bot.deck);
 					bot.difficulty = obj.at("difficulty").get<int>();

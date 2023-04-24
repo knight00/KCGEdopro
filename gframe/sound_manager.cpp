@@ -293,7 +293,7 @@ void SoundManager::PlayModeSound(uint8_t index, bool lock) {
     gSoundManager->soundcount.push_back(file);
 	gSoundManager->StopSounds();
 	mixer->PlaySound(file);
-    if(lock && mainGame->isEvent && gGameConfig->pauseduel) { //if isEvent=false->skipped continuous ploat, no more lock allowed
+    if(lock && mainGame->isEvent) { //if isEvent=false->skipped continuous ploat, no more lock allowed
         std::unique_lock<epro::mutex> lck(*mainGame->lck);
         mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(file)));
 		lck.unlock();

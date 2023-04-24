@@ -143,11 +143,11 @@ public:
 		std::wstring ploat;
         bool isStartEvent;
         bool isStartDuel;
-        bool summon_extramonster;
+        bool sextramonster;
         uint32_t code;
 	};
 	std::vector<ModeText>* modeTexts;//vector modetext
-	std::vector<ModePloat>* modePloats;//vector modeploat
+	std::vector<ModePloat>* modePloats[CHAPTER];//vector modeploat
 	std::vector<WindBot> bots;//all mode will load windbots from this
     std::map<uint8_t, std::wstring> playerNames;
 	std::map<uint8_t, std::vector<std::wstring>> aiNames;//player+bot names when duel start

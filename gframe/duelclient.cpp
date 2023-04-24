@@ -1652,8 +1652,8 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
             //     if(previous.controler != controler || current.controler != controler) return;
             //     uint32_t mcode = mainGame->mode->modePloats->at(index).code;
             //     if(mcode < 1) continue;
-            //     bool summon_extramonster = mainGame->mode->modePloats->at(index).summon_extramonster;
-            //     if(summon_extramonster) {
+            //     bool sextramonster = mainGame->mode->modePloats->at(index).sextramonster;
+            //     if(sextramonster) {
             //         if(!(reason & REASON_SPSUMMON)) continue;
             //         if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE)) continue;
             //     }

@@ -1206,7 +1206,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			/////kdiy/////
 			if(mainGame->mode->isMode && mainGame->mode->isPlot){
 				if(mainGame->mode->plotStep < 1) break;
-				mainGame->mode->NextPlot();
+                if(mainGame->dInfo.isStarted)
+				    mainGame->mode->NextPlot(2);
+                else
+				    mainGame->mode->NextPlot();
 				break;
 			}
             if(mainGame->isEvent) {
