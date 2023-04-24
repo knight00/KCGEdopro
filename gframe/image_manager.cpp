@@ -339,7 +339,7 @@ bool ImageManager::Initial() {
         modeHead[i] = driver->getTexture(0);
     }
     head[0] = driver->getTexture(0);
-    for(uint8_t i = 1; i < CHARACTER_STORY; i++) {
+    for(uint8_t i = 1; i <= CHARACTER_STORY; i++) {
         //1: Yusei
         //2: Darkman
         //3: Paradox

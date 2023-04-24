@@ -136,15 +136,15 @@ public:
 		std::wstring des;
 	};
 	struct ModePloat {//the ploat text of mode-story
-		uint8_t index = 0;
-		int control = 0;
-        uint8_t icon = 0;
-		std::wstring title = L"";
-		std::wstring ploat = L"";
-        bool isStartEvent = true;
-        bool isStartDuel = false;
-        bool summon_extramonster = false;
-        uint32_t code = 0;
+		uint8_t index;
+		int control;
+        uint8_t icon;
+		std::wstring title;
+		std::wstring ploat;
+        bool isStartEvent;
+        bool isStartDuel;
+        bool summon_extramonster;
+        uint32_t code;
 	};
 	std::vector<ModeText>* modeTexts;//vector modetext
 	std::vector<ModePloat>* modePloats;//vector modeploat
@@ -175,7 +175,7 @@ public:
 	bool LoadWindBot(int port, epro::wstringview pass);
 	bool IsModeBot(std::wstring mode);
 	void NextPlot(uint8_t step = 0, uint8_t index = 0, uint32_t code = 0); //step: plotStep, index: ploat.json index
-    void PlayNextPlot(uint8_t index); //step: plotStep, index: ploat.json index
+    void PlayNextPlot(uint8_t index, uint32_t code);
 	std::wstring GetPloat(uint8_t index, uint32_t code = 0);
 	Mode();
 	void LoadJsonInfo();

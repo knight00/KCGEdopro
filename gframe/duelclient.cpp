@@ -1630,7 +1630,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
             mainGame->wHead[0]->setVisible(true);
             mainGame->wHead[1]->setVisible(true);
-            //mainGame->mode->NextPlot(1, 6, 100000155);
+            mainGame->mode->NextPlot(1, 6, 100000155);
         }
 		PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, player);
 		return;
@@ -1646,7 +1646,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         if(chapter >= 1) {
             if(!(current.position & POS_FACEUP)) return;
             if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE)) return;
-            if(code==100000155) mainGame->mode->NextPlot(1, 6, 100000155);
+            // if(code==100000155) mainGame->mode->NextPlot(1, 6, 100000155);
             // for(uint8_t index = 1; index < mainGame->mode->modePloats->size(); index++) {
             //     auto controler = mainGame->mode->modePloats->at(index).control;
             //     if(previous.controler != controler || current.controler != controler) return;

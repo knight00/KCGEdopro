@@ -1174,7 +1174,6 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			if(mainGame->mode->isMode && mainGame->mode->isPlot) {
 				if(mainGame->mode->plotStep < 1) break;
                 if(!mainGame->mode->isStartDuel && !mainGame->dInfo.isStarted) {
-                    mainGame->mode->isStartEvent = false;
                     mainGame->mode->isStartDuel = true;
 				    mainGame->mode->NextPlot();
                     break;
