@@ -405,7 +405,7 @@ std::wstring DataManager::GetVirtualName(ClientCard* pcard, uint32_t code, bool 
         else if(index != std::wstring::npos) aliasname = aliasname.substr(0,index);
         else if(index_2 != std::wstring::npos) aliasname = aliasname.substr(0,index_2);
     }
-	if(pcard->is_real && pcard->realchange > 0) {
+	if(pcard && pcard->is_real && pcard->realchange > 0) {
 		if(pcard->realsetcode > 0) {
 			if(pcard->realchange & 0x1) {
 				std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(pcard->realsetcode)));

@@ -106,9 +106,10 @@ std::wstring Mode::GetPloat(uint8_t index, uint32_t code) {
 	std::wstring str = L"";
 	if(index < 0 || index >= modePloats[chapter]->size()) return str;
 	str = modePloats[chapter - 1]->at(index).title;
-	str.append(epro::format(L"{}\n{}{}",L":",L"  ", modePloats[chapter - 1]->at(index).ploat));
 	if(code > 0)
-		str = epro::sprintf(str, gDataManager->GetVirtualName(code, true));
+	    str.append(epro::format(epro::format(L"{}\n{}{}",L":",L"  ", modePloats[chapter - 1]->at(index).ploat), gDataManager->GetVirtualName(code, true)));
+	else
+	    str.append(epro::format(L"{}\n{}{}",L":",L"  ", modePloats[chapter - 1]->at(index).ploat));
 	return str;
 }
 void Mode::PlayNextPlot(uint8_t index, uint32_t code) {
@@ -126,20 +127,18 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
 	if(step != 0) plotStep = step;
 	if(index != 0) plotIndex = index;
 	if(plotIndex >= modePloats[chapter - 1]->size() || plotIndex < 0) plotIndex = 0;
+	uint8_t pindex = plotIndex;
 	int i = modePloats[chapter - 1]->at(plotIndex).control;
 	if(i < 0 || i > 5) i = 0;
-	uint8_t plotStep = this->plotStep;
-	uint8_t plotIndex = this->plotIndex;
     character[i] = modePloats[chapter - 1]->at(plotIndex).icon;
             // character[0] = 1; //Player1 icon: Yusei
             // character[1] = 2; //Player2 icon: Dark Siner
     for(int i = 0; i < 6; ++i)
         mainGame->imageManager.modeHead[i] = mainGame->imageManager.head[character[i]];
-	isPlot = true;
 
 	if(plotStep == 0) { //start
-	    ++this->plotStep;
-		++this->plotIndex;
+	    ++plotStep;
+		++plotIndex;
 		std::lock_guard<epro::mutex> lock(mainGame->gMutex);
         for(int i = 0; i < 6; ++i)
             character[i] = 0;
@@ -153,36 +152,46 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
         mainGame->btnBody->setImage(mainGame->imageManager.modeBody[chapter - 1]);
 		mainGame->ShowElement(mainGame->wBody);
 		mainGame->ShowElement(mainGame->wPloat);
-		mainGame->stPloatInfo->setText(GetPloat(plotIndex).data());
+		mainGame->stPloatInfo->setText(GetPloat(pindex).data());
         return;
 	} else if(plotStep == 1) { //event
+	    isPlot = true;
 		mainGame->wBody->setVisible(false);
 		mainGame->wPloat->setVisible(false);
         isStartEvent = true;
-        for(uint8_t indx = plotIndex; indx <= modePloats[chapter - 1]->size(); indx++) {
-            plotIndex = indx;
-            if(isStartDuel) break;
-            ++this->plotIndex;
+        for(uint8_t indx = pindex; indx < modePloats[chapter - 1]->size(); indx++) {
+            ++plotIndex;
             if(!isStartDuel && !mainGame->dInfo.isStarted)
-                isStartDuel = modePloats[chapter - 1]->at(plotIndex).isStartDuel;
-		    isStartEvent = modePloats[chapter - 1]->at(plotIndex).isStartEvent;
-            PlayNextPlot(plotIndex, code);
-            if(!isStartEvent || isStartDuel) break;
-            if(!mainGame->dInfo.isStarted) break;
+                isStartDuel = modePloats[chapter - 1]->at(indx).isStartDuel;
+		    isStartEvent = modePloats[chapter - 1]->at(indx).isStartEvent;
+            PlayNextPlot(indx, code);
+			if(isStartDuel) {
+				this->plotStep = 2;
+				return;
+				break;
+			}
+            if(!mainGame->dInfo.isStarted) {
+				return;
+				break;
+			}
+            if(!isStartEvent)
+				break;
         }
 	}
-    if(!isStartEvent || isStartDuel || plotStep > 1) {
-        isPlot = false;
-		isStartEvent = false;
-        mainGame->isEvent = false;
-        gSoundManager->PauseMusic(false);
-        mainGame->stChPloatInfo[0]->setText(L"");
-		mainGame->stChPloatInfo[1]->setText(L"");
-		mainGame->HideElement(mainGame->wChPloatBody[0]);
-		mainGame->HideElement(mainGame->wChBody[0]);
-		mainGame->HideElement(mainGame->wChPloatBody[1]);
-		mainGame->HideElement(mainGame->wChBody[1]);
-    }
+    isPlot = false;
+	isStartEvent = false;
+    mainGame->isEvent = false;
+    gSoundManager->PauseMusic(false);
+    mainGame->stChPloatInfo[0]->setText(L"");
+	mainGame->stChPloatInfo[1]->setText(L"");
+	mainGame->HideElement(mainGame->wChPloatBody[0]);
+	mainGame->HideElement(mainGame->wChBody[0]);
+	mainGame->HideElement(mainGame->wChPloatBody[1]);
+	mainGame->HideElement(mainGame->wChBody[1]);
+	if(mainGame->dInfo.isStarted) {
+		mainGame->cv->notify_one();
+		gSoundManager->StopSounds();
+	}
     if(isStartDuel) {
 		isStartDuel = false;
         DuelClient::SendPacketToServer(CTOS_MODE_HS_START);

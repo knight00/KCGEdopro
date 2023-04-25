@@ -1173,15 +1173,8 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			/////kdiy/////
 			if(mainGame->mode->isMode && mainGame->mode->isPlot) {
 				if(mainGame->mode->plotStep < 1) break;
-                if(!mainGame->mode->isStartDuel && !mainGame->dInfo.isStarted) {
-                    mainGame->mode->isStartDuel = true;
-				    mainGame->mode->NextPlot();
-                    break;
-                }
-                if(mainGame->mode->isStartEvent) {
-                    mainGame->mode->isStartEvent = false;
-				    mainGame->mode->NextPlot(); //skip continuous ploat
-                }
+				mainGame->mode->isStartDuel = true;
+				mainGame->mode->NextPlot(2); //skip continuous ploat
 				break;
 			}
 			/////kdiy/////
