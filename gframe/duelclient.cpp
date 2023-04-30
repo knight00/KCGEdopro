@@ -4738,24 +4738,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 	case MSG_ANNOUNCE_RACE: {
 		/*const auto player = */mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		mainGame->dField.announce_count = BufferIO::Read<uint8_t>(pbuf);
-		const auto available = BufferIO::Read<uint64_t>(pbuf);
-		uint64_t filter = 0x1;
-		for(int i = 0; i < 25; ++i, filter <<= 1) {
-			mainGame->chkRace[i]->setChecked(false);
-			if(filter & available)
-				mainGame->chkRace[i]->setVisible(true);
-			else mainGame->chkRace[i]->setVisible(false);
-		}
-		/////zdiy/////
-		uint64_t z_filter = 0x10000000000000;
-		for(int i = 25; i < 36;  ++i, z_filter <<= 1) {
-			mainGame->chkRace[i]->setChecked(false);
-			if(z_filter & available)
-				mainGame->chkRace[i]->setVisible(true);
-			else mainGame->chkRace[i]->setVisible(false);
-		}
-		/////zdiy/////
+		const auto available = CompatRead<uint32_t, uint64_t>(pbuf);
 		std::unique_lock<epro::mutex> lock(mainGame->gMutex);
+		mainGame->dField.ShowSelectRace(available);
 		mainGame->wANRace->setText(gDataManager->GetDesc(select_hint ? select_hint : 563, mainGame->dInfo.compat_mode).data());
 		mainGame->PopupElement(mainGame->wANRace);
 		select_hint = 0;
@@ -4765,14 +4750,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		/*const auto player = */mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		mainGame->dField.announce_count = BufferIO::Read<uint8_t>(pbuf);
 		const auto available = BufferIO::Read<uint32_t>(pbuf);
-		/////zdiy/////
-		//for(int i = 0, filter = 0x1; i < 7; ++i, filter <<= 1) {
-		for(int i = 0, filter = 0x1; i < 8; ++i, filter <<= 1) {
-		/////zdiy/////
+		uint32_t filter = 0x1;
+		for(auto i = 0u; i < sizeofarr(mainGame->chkAttribute); ++i, filter <<= 1) {
 			mainGame->chkAttribute[i]->setChecked(false);
-			if(filter & available)
-				mainGame->chkAttribute[i]->setVisible(true);
-			else mainGame->chkAttribute[i]->setVisible(false);
+			mainGame->chkAttribute[i]->setVisible((filter& available) != 0);
 		}
 		std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 		mainGame->wANAttribute->setText(gDataManager->GetDesc(select_hint ? select_hint : 562, mainGame->dInfo.compat_mode).data());

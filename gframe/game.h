@@ -787,10 +787,7 @@ public:
 	/////zdiy/////
 	//announce race
 	irr::gui::IGUIWindow* wANRace;
-	/////zdiy/////
-	//irr::gui::IGUICheckBox* chkRace[25];
-	irr::gui::IGUICheckBox* chkRace[36];
-	/////zdiy/////
+	irr::gui::IGUICheckBox* chkRace[64];
 	//cmd menu
 	irr::gui::IGUIWindow* wCmdMenu;
 	irr::gui::IGUIButton* btnActivate;

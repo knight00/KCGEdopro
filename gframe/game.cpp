@@ -1097,10 +1097,15 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(wANRace, 563);
 	wANRace->getCloseButton()->setVisible(false);
 	wANRace->setVisible(false);
-	for(int i = 0; i < 25; ++i) {
-		chkRace[i] = env->addCheckBox(false, Scale(10 + (i % 4) * 90, 25 + (i / 4) * 25, 100 + (i % 4) * 90, 50 + (i / 4) * 25),
-									  wANRace, CHECK_RACE, gDataManager->GetSysString(1020 + i).data());
-		defaultStrings.emplace_back(chkRace[i], 1020 + i);
+	{
+		auto tmpPanel = irr::gui::Panel::addPanel(env, wANRace, -1, wANRace->getClientRect(), true, false);
+		auto crPanel = tmpPanel->getSubpanel();
+		for(int i = 0; i < static_cast<int>(sizeofarr(chkRace)); ++i) {
+			auto string = gDataManager->GetRaceStringIndex(i);
+			chkRace[i] = env->addCheckBox(false, Scale(10 + (i % 3) * 120, (i / 3) * 25, 150 + (i % 3) * 120, 25 + (i / 3) * 25),
+										  crPanel, CHECK_RACE, gDataManager->GetSysString(string).data());
+			defaultStrings.emplace_back(chkRace[i], string);
+		}
 	}
 	/////zdiy/////
 	int j = 0;
@@ -4904,13 +4909,16 @@ void Game::ReloadCBRace() {
 	cbRace->clear();
 	cbRace->addItem(gDataManager->GetSysString(1310).data(), 0);
 	//currently corresponding to RACE_GALAXY
-	static constexpr auto RACE_MAX = UINT64_C(0x80000000);
-	uint64_t filter = 0x1;
-	for(uint32_t i = 1020; i <= 1049 && filter <= RACE_MAX; i++, filter <<= 1)
-		cbRace->addItem(gDataManager->GetSysString(i).data(), filter);
-	for(uint32_t i = 2500; filter <= RACE_MAX; i++, filter <<= 1)
-		cbRace->addItem(gDataManager->GetSysString(i).data(), filter);
-	///////zdiy/////
+	static constexpr auto CURRENTLY_KNOWN_RACES = 32;
+	uint32_t i = 0;
+	for(; i < CURRENTLY_KNOWN_RACES; ++i)
+		cbRace->addItem(gDataManager->GetSysString(gDataManager->GetRaceStringIndex(i)).data(), i + 1);
+	for(; i < 64; ++i) {
+		auto idx = gDataManager->GetRaceStringIndex(i);
+		if(gDataManager->HasSysString(idx))
+			cbRace->addItem(gDataManager->GetSysString(idx).data(), i + 1);
+	}
+    ///////zdiy/////
 	static constexpr auto ZCG_RACE_MAX = 0x400;
 	uint32_t z_filter = 0x1;
 	for(uint32_t i = 2600; z_filter <= ZCG_RACE_MAX; i++, z_filter <<= 1)

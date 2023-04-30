@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <cstdint>
 #include <memory>
+#include "common.h"
 #include "text_types.h"
 #include "utils.h"
 /////kdiy/////
@@ -152,7 +153,10 @@ public:
 	inline epro::wstringview GetSysString(uint32_t code)  const {
 		return _sysStrings.GetLocale(code);
 	}
-	inline epro::wstringview GetVictoryString(int code)  const {
+	inline bool HasSysString(uint32_t code)  const {
+		return _sysStrings.HasLocale(code);
+	}
+	inline epro::wstringview GetVictoryString(uint32_t code)  const {
 		return _victoryStrings.GetLocale(code);
 	}
 	inline epro::wstringview GetCounterName(uint32_t code)  const {
@@ -160,6 +164,12 @@ public:
 	}
 	inline epro::wstringview GetSetName(uint32_t code)  const {
 		return _setnameStrings.GetLocale(code, L"");
+	}
+	inline uint32_t GetRaceStringIndex(uint32_t race_idx)  const {
+		if(race_idx < 30)
+			return 1020 + race_idx;
+		//strings 1050 above are already used, read the rest from this other range
+		return (2500 - 30) + race_idx;
 	}
 	std::vector<uint16_t> GetSetCode(const std::vector<std::wstring>& setname) const;
 	std::wstring GetNumString(size_t num, bool bracket = false) const;
@@ -191,6 +201,13 @@ private:
 			if(search == map.end() || search->second.first.empty())
 				return ret;
 			return search->second.second.size() ? search->second.second : search->second.first;
+		}
+		bool HasLocale(uint32_t code) const {
+			auto search = map.find(code);
+			return search != map.end() && !search->second.first.empty();
+			if(search == map.end() || search->second.first.empty())
+				return false;
+			return true;
 		}
 		void ClearLocales() {
 			for(auto& elem : map)
