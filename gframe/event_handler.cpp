@@ -1173,7 +1173,12 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			/////kdiy/////
 			if(mainGame->mode->isMode && mainGame->mode->isPlot) {
 				if(mainGame->mode->plotStep < 1) break;
-				mainGame->mode->isStartDuel = true;
+                if(!mainGame->dInfo.isStarted)
+				    mainGame->mode->isStartDuel = true;
+                else {
+                    mainGame->cv->notify_one();
+                    gSoundManager->StopSounds();
+                }
 				mainGame->mode->NextPlot(2); //skip continuous ploat
 				break;
 			}
@@ -1199,10 +1204,11 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			/////kdiy/////
 			if(mainGame->mode->isMode && mainGame->mode->isPlot){
 				if(mainGame->mode->plotStep < 1) break;
-                if(mainGame->dInfo.isStarted)
-				    mainGame->mode->NextPlot(2);
-                else
-				    mainGame->mode->NextPlot();
+                if(mainGame->dInfo.isStarted) {
+                    mainGame->cv->notify_one();
+                    gSoundManager->StopSounds();
+                } else if(!(mainGame->dInfo.isStarted && mainGame->mode->isStartEvent))
+                    mainGame->mode->NextPlot();
 				break;
 			}
             if(mainGame->isEvent) {
@@ -2292,6 +2298,12 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				return true;
 			}
 			case CHECKBOX_ENABLE_ANIME: {
+#ifndef VIP
+                gGameConfig->enableanime = false;
+				gGameConfig->enablesanime = false;
+                gGameConfig->enablecanime = false;
+                gGameConfig->enableaanime = false;
+#endif
 				if(gGameConfig->system_engine) {
 					gGameConfig->enableanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
 					mainGame->tabSettings.chkEnableAnime->setChecked(gGameConfig->enableanime);
@@ -2339,6 +2351,12 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				return true;
 			}
 			case CHECKBOX_ENABLE_SANIME: {
+#ifndef VIP
+                gGameConfig->enableanime = false;
+				gGameConfig->enablesanime = false;
+                gGameConfig->enablecanime = false;
+                gGameConfig->enableaanime = false;
+#endif
 				if(gGameConfig->system_engine) {
 					gGameConfig->enablesanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
 					mainGame->gSettings.chkEnableSummonAnime->setChecked(gGameConfig->enablesanime);
@@ -2379,6 +2397,12 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				return true;
 				}
 			case CHECKBOX_ENABLE_CANIME: {
+#ifndef VIP
+                gGameConfig->enableanime = false;
+				gGameConfig->enablesanime = false;
+                gGameConfig->enablecanime = false;
+                gGameConfig->enableaanime = false;
+#endif
 				if(gGameConfig->system_engine) {
 					gGameConfig->enablecanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
 					mainGame->gSettings.chkEnableActivateAnime->setChecked(gGameConfig->enablecanime);
@@ -2419,6 +2443,12 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				return true;
 				}
 			case CHECKBOX_ENABLE_AANIME: {
+#ifndef VIP
+                gGameConfig->enableanime = false;
+				gGameConfig->enablesanime = false;
+                gGameConfig->enablecanime = false;
+                gGameConfig->enableaanime = false;
+#endif
 				if(gGameConfig->system_engine) {
 					gGameConfig->enableaanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
 					mainGame->gSettings.chkEnableAttackAnime->setChecked(gGameConfig->enableaanime);

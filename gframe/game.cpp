@@ -89,8 +89,6 @@ static inline epro::path_string NoSkinLabel() {
 /////kdiy//////
 Mode::Mode() {
     modeTexts = nullptr;
-    for(uint8_t i = 0; i < CHAPTER; i++)
-	    modePloats[i] = nullptr;
 	isMode = false;
 	isPlot = false;
 	isStartEvent = false;
@@ -102,32 +100,39 @@ Mode::Mode() {
 	rule = MODE_RULE_DEFAULT;
     chapter = 0;
 };
-std::wstring Mode::GetPloat(uint8_t index, uint32_t code) {
+std::wstring Mode::GetPloat(uint32_t code) {
 	std::wstring str = L"";
-	if(index < 0 || index >= modePloats[chapter]->size()) return str;
-	str = modePloats[chapter - 1]->at(index).title;
+	if(plotIndex >= modePloats[chapter - 1]->size() || plotIndex < 0) return str;
+	str = modePloats[chapter - 1]->at(plotIndex).title;
 	if(code > 0)
-	    str.append(epro::format(epro::format(L"{}\n{}{}",L":",L"  ", modePloats[chapter - 1]->at(index).ploat), gDataManager->GetVirtualName(code, true)));
+	    str.append(epro::format(epro::format(L"{}\n{}{}",L":",L"  ", modePloats[chapter - 1]->at(plotIndex).ploat), gDataManager->GetVirtualName(code, true)));
 	else
-	    str.append(epro::format(L"{}\n{}{}",L":",L"  ", modePloats[chapter - 1]->at(index).ploat));
+	    str.append(epro::format(L"{}\n{}{}",L":",L"  ", modePloats[chapter - 1]->at(plotIndex).ploat));
 	return str;
 }
-void Mode::PlayNextPlot(uint8_t index, uint32_t code) {
-    int i = modePloats[chapter - 1]->at(index).control;
+void Mode::PlayNextPlot(uint32_t code) {
+    int i = modePloats[chapter - 1]->at(plotIndex).control;
 	if(i < 0 || i > 5) i = 0;
     mainGame->isEvent = true;
-    gSoundManager->PauseMusic(true);
-    mainGame->ShowElement(mainGame->wChBody[i]);
-    mainGame->ShowElement(mainGame->wChPloatBody[i]);
-    //mainGame->stChPloatInfo[i]->setText(GetPloat(index, code).data());
-    mainGame->stChPloatInfo[i]->setText(std::to_wstring(index).data());
-    gSoundManager->PlayModeSound(index, mainGame->dInfo.isStarted);
+    //mainGame->stChPloatInfo[i]->setText(std::to_wstring(plotIndex).data());
+    int playmode = gSoundManager->PlayModeSound(mainGame->dInfo.isStarted);
+    if(playmode < 2) {
+        gSoundManager->PauseMusic(true);
+        mainGame->ShowElement(mainGame->wChBody[i]);
+        mainGame->ShowElement(mainGame->wChPloatBody[i]);
+        mainGame->stChPloatInfo[i]->setText(GetPloat(code).data());
+    } else
+        return;
+    if(mainGame->dInfo.isStarted) {
+        if(playmode == 0)
+            gSoundManager->PlayMode();
+        else
+            gSoundManager->PlayMode(true);
+    }
 }
-void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
+void Mode::NextPlot(uint8_t step, uint32_t code) {
 	if(step != 0) plotStep = step;
-	if(index != 0) plotIndex = index;
-	if(plotIndex >= modePloats[chapter - 1]->size() || plotIndex < 0) plotIndex = 0;
-	uint8_t pindex = plotIndex;
+	if(plotIndex >= modePloats[chapter - 1]->size() || plotIndex < 0) return;
 	int i = modePloats[chapter - 1]->at(plotIndex).control;
 	if(i < 0 || i > 5) i = 0;
     character[i] = modePloats[chapter - 1]->at(plotIndex).icon;
@@ -135,10 +140,7 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
             // character[1] = 2; //Player2 icon: Dark Siner
     for(int i = 0; i < 6; ++i)
         mainGame->imageManager.modeHead[i] = mainGame->imageManager.head[character[i]];
-
 	if(plotStep == 0) { //start
-	    ++plotStep;
-		++plotIndex;
 		std::lock_guard<epro::mutex> lock(mainGame->gMutex);
         for(int i = 0; i < 6; ++i)
             character[i] = 0;
@@ -152,19 +154,24 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
         mainGame->btnBody->setImage(mainGame->imageManager.modeBody[chapter - 1]);
 		mainGame->ShowElement(mainGame->wBody);
 		mainGame->ShowElement(mainGame->wPloat);
-		mainGame->stPloatInfo->setText(GetPloat(pindex).data());
+		mainGame->stPloatInfo->setText(GetPloat().data());
+	    ++plotStep;
+		++plotIndex;
         return;
 	} else if(plotStep == 1) { //event
 	    isPlot = true;
 		mainGame->wBody->setVisible(false);
 		mainGame->wPloat->setVisible(false);
         isStartEvent = true;
+        uint8_t pindex = plotIndex;
         for(uint8_t indx = pindex; indx < modePloats[chapter - 1]->size(); indx++) {
-            ++plotIndex;
+            plotIndex = indx;
             if(!isStartDuel && !mainGame->dInfo.isStarted)
                 isStartDuel = modePloats[chapter - 1]->at(indx).isStartDuel;
 		    isStartEvent = modePloats[chapter - 1]->at(indx).isStartEvent;
-            PlayNextPlot(indx, code);
+            PlayNextPlot(code);
+            if(isStartEvent)
+                ++plotIndex;
 			if(isStartDuel) {
 				this->plotStep = 2;
 				return;
@@ -184,68 +191,18 @@ void Mode::NextPlot(uint8_t step, uint8_t index, uint32_t code) {
     gSoundManager->PauseMusic(false);
     mainGame->stChPloatInfo[0]->setText(L"");
 	mainGame->stChPloatInfo[1]->setText(L"");
-	mainGame->HideElement(mainGame->wChPloatBody[0]);
-	mainGame->HideElement(mainGame->wChBody[0]);
-	mainGame->HideElement(mainGame->wChPloatBody[1]);
-	mainGame->HideElement(mainGame->wChBody[1]);
-	if(mainGame->dInfo.isStarted) {
-		mainGame->cv->notify_one();
-		gSoundManager->StopSounds();
-	}
+    if(mainGame->wChPloatBody[0]->isVisible())
+	    mainGame->HideElement(mainGame->wChPloatBody[0]);
+	if(mainGame->wChBody[0]->isVisible())
+		mainGame->HideElement(mainGame->wChBody[0]);
+	if(mainGame->wChPloatBody[1]->isVisible())
+		mainGame->HideElement(mainGame->wChPloatBody[1]);
+	if(mainGame->wChBody[1]->isVisible())
+		mainGame->HideElement(mainGame->wChBody[1]);
     if(isStartDuel) {
 		isStartDuel = false;
         DuelClient::SendPacketToServer(CTOS_MODE_HS_START);
 	}
-    
-    // if(chapter == 1) {
-	// 	//plotStep 8 to 13,part1-1 when bot spsummon dark monster
-	// 	if(plotStep == 8) {
-	// 		isPlot = true;
-	// 		mainGame->isEvent = true;
-	// 	    mainGame->ShowElement(mainGame->wChBody[i]);
-	// 		mainGame->ShowElement(mainGame->wChPloatBody[i]);
-	// 		mainGame->stChPloatInfo[i]->setText(GetPloat(plotIndex).data());
-    //         gSoundManager->PauseMusic(true);
-	// 		gSoundManager->PlayModeSound(plotIndex, true);
-	// 		// cv->wait(lck);
-	// 		auto pstep = plotIndex + 1;
-    //         i = modePloats->at(pstep).control;
-    //         mainGame->ShowElement(mainGame->wChBody[i]);
-	// 		mainGame->ShowElement(mainGame->wChPloatBody[i]);
-	// 		mainGame->stChPloatInfo[i]->setText(GetPloat(pstep).data());
-	// 		gSoundManager->PlayModeSound(pstep, true);
-    //         for(int indx = pstep + 1; indx < pstep + 4; indx++) {
-    //             i = modePloats->at(indx).control;
-    //             mainGame->stChPloatInfo[i]->setText(GetPloat(indx).data());
-    //             gSoundManager->PlayModeSound(indx, true);
-    //         }
-	// 		mainGame->stChPloatInfo[0]->setText(L"");
-	// 		mainGame->stChPloatInfo[1]->setText(L"");
-	// 		mainGame->HideElement(mainGame->wChPloatBody[0]);
-	// 		mainGame->HideElement(mainGame->wChPloatBody[1]);
-	// 		mainGame->HideElement(mainGame->wChBody[0]);
-	// 		mainGame->HideElement(mainGame->wChBody[1]);
-	// 		mainGame->ShowElement(mainGame->wChPloatBody[1]);
-	// 		mainGame->ShowElement(mainGame->wChBody[1]);
-	// 		mainGame->stChPloatInfo[1]->setText(GetPloat(21, 100000155).data());
-	// 		gSoundManager->PlayModeSound(21, true);
-	// 		isPlot = false;
-	// 		mainGame->isEvent = false;
-    //         gSoundManager->PauseMusic(false);
-	// 		mainGame->stChPloatInfo[1]->setText(L"");
-	// 		mainGame->HideElement(mainGame->wChPloatBody[1]);
-	// 		mainGame->HideElement(mainGame->wChBody[1]);
-	// 	} else if(plotStep == 9) { //left mouse click skipped continuos ploat
-	// 		isPlot = false;
-    //         gSoundManager->PauseMusic(false);
-	// 		mainGame->stChPloatInfo[0]->setText(L"");
-	// 		mainGame->stChPloatInfo[1]->setText(L"");
-	// 		mainGame->HideElement(mainGame->wChPloatBody[0]);
-	// 		mainGame->HideElement(mainGame->wChPloatBody[1]);
-	// 		mainGame->HideElement(mainGame->wChBody[0]);
-	// 		mainGame->HideElement(mainGame->wChBody[1]);
-	// 	}
-	// }
 }
 bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 	int32_t index = -1;
@@ -389,6 +346,7 @@ void Mode::ModePlayerReady(bool isAi) {
 		mainGame->btnEntertainmentStartGame->setEnabled(true);
 }
 void Mode::LoadJson(epro::path_string path, uint8_t index, uint8_t chapter) {
+    if(!Utils::FileExists(path)) return;
 	std::ifstream jsonInfo(path);
 	if (jsonInfo.good()) {
 		nlohmann::json j;
@@ -452,10 +410,33 @@ void Mode::LoadJson(epro::path_string path, uint8_t index, uint8_t chapter) {
 							modePloat.isStartDuel = obj.at("isStartDuel").get<bool>();
                         else
                             modePloat.isStartDuel = false;
+						if(obj.find("isWinDuel") != obj.end() && obj.find("isWinDuel")->is_boolean())
+							modePloat.isWinDuel = obj.at("isWinDuel").get<bool>();
+                        else
+                            modePloat.isWinDuel = false;
+						if(obj.find("isLoseDuel") != obj.end() && obj.find("isLoseDuel")->is_boolean())
+							modePloat.isLoseDuel = obj.at("isLoseDuel").get<bool>();
+                        else
+                            modePloat.isLoseDuel = false;
+                        if(modePloat.isWinDuel && modePloat.isLoseDuel) modePloat.isLoseDuel = false;
 						if(obj.find("sextramonster") != obj.end() && obj.find("sextramonster")->is_boolean())
                             modePloat.sextramonster = obj.at("sextramonster").get<bool>();
                         else
                             modePloat.sextramonster = false;
+                        if(obj.find("smonster") != obj.end() && obj.find("smonster")->is_boolean())
+                            modePloat.smonster = obj.at("smonster").get<bool>();
+                        else
+                            modePloat.smonster = false;
+                        if(modePloat.sextramonster && modePloat.smonster) modePloat.smonster = false;
+                        if(obj.find("activate") != obj.end() && obj.find("activate")->is_boolean())
+                            modePloat.activate = obj.at("activate").get<bool>();
+                        else
+                            modePloat.activate = false;
+                        if(obj.find("attackeff") != obj.end() && obj.find("attackeff")->is_boolean())
+                            modePloat.attackeff = obj.at("attackeff").get<bool>();
+                        else
+                            modePloat.attackeff = false;
+                        if(modePloat.attackeff) modePloat.activate = true;
 						if(obj.find("code") != obj.end())
                             modePloat.code = obj.at("code").get<uint32_t>();
                         else
@@ -477,15 +458,19 @@ void Mode::LoadJson(epro::path_string path, uint8_t index, uint8_t chapter) {
 void Mode::LoadJsonInfo() {
     if(gGameConfig->locale == EPRO_TEXT("Chs")) {
         LoadJson(EPRO_TEXT("./config/languages/Chs/mode.json"), 0);
-        for(uint8_t chapter = 1; chapter <= CHAPTER; chapter++) {
-            if(Utils::FileExists(epro::format(EPRO_TEXT("./config/languages/Chs/ploat{}.json"), chapter)))
-                LoadJson(epro::format(EPRO_TEXT("./config/languages/Chs/ploat{}.json"), chapter), 1, chapter);
+        LoadJson(EPRO_TEXT("./mode/languages/Chs/mode.json"), 0);
+        for(uint8_t chapter = 1; chapter <= modeTexts->size() - PLAY_MODE; chapter++) {
+            LoadJson(epro::format(EPRO_TEXT("./config/languages/Chs/ploat{}.json"), chapter), 1, chapter);
+            LoadJson(epro::format(EPRO_TEXT("./mode/languages/Chs/ploat{}.json"), chapter), 1, chapter);
+            if(!Utils::FileExists(epro::format(EPRO_TEXT("./config/languages/Chs/ploat{}.json"), chapter)) && !Utils::FileExists(epro::format(EPRO_TEXT("./config/languages/Chs/ploat{}.json"), chapter))) break;
         }
     } else {
         LoadJson(EPRO_TEXT("./config/languages/Cht/mode.json"), 0);
-        for(uint8_t chapter = 1; chapter <= CHAPTER; chapter++) {
-            if(Utils::FileExists(epro::format(EPRO_TEXT("./config/languages/Cht/ploat{}.json"), chapter)))
-                LoadJson(epro::format(EPRO_TEXT("./config/languages/Cht/ploat{}.json"), chapter), 1, chapter);
+        LoadJson(EPRO_TEXT("./mode/languages/Cht/mode.json"), 0);
+        for(uint8_t chapter = 1; chapter <= modeTexts->size() - PLAY_MODE; chapter++) {
+            LoadJson(epro::format(EPRO_TEXT("./config/languages/Cht/ploat{}.json"), chapter), 1, chapter);
+            LoadJson(epro::format(EPRO_TEXT("./mode/languages/Cht/ploat{}.json"), chapter), 1, chapter);
+			if(!Utils::FileExists(epro::format(EPRO_TEXT("./config/languages/Cht/ploat{}.json"), chapter)) && !Utils::FileExists(epro::format(EPRO_TEXT("./config/languages/Cht/ploat{}.json"), chapter))) break;
         }
     }
 }
@@ -546,8 +531,10 @@ void Game::Initialize() {
 	cv = nullptr;
 	lck = nullptr;
 	isEvent = false;
-    if(Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
+    if(Utils::FileExists(EPRO_TEXT("./config/user_configs.json"))) {
+		mainGame->mode->LoadJsonInfo();
         git_update = true;
+    }
     if(!Utils::FileExists(EPRO_TEXT("./cdb/cards.cdb")))
         first_play = true;
     //kdiy//////
@@ -2417,6 +2404,11 @@ void Game::PopulateTabSettingsWindow() {
         tabSettings.chkEnableAnime->setChecked(false);
 		tabSettings.chkEnableAnime->setEnabled(false);
 #endif
+#ifndef VIP
+        tabSettings.chkEnableAnime->setChecked(false);
+		tabSettings.chkEnableAnime->setEnabled(false);
+        defaultStrings.emplace_back(tabSettings.chkEnableAnime, 8053);
+#endif
 		//////kdiy///////////
 		menuHandler.MakeElementSynchronized(tabSettings.chkEnableMusic);
 		defaultStrings.emplace_back(tabSettings.chkEnableMusic, 2046);
@@ -2641,6 +2633,11 @@ void Game::PopulateSettingsWindow() {
         gSettings.chkEnableAnime->setChecked(false);
     	gSettings.chkEnableAnime->setEnabled(false);
 #endif
+#ifndef VIP
+        gSettings.chkEnableAnime->setChecked(false);
+		gSettings.chkEnableAnime->setEnabled(false);
+        defaultStrings.emplace_back(gSettings.chkEnableAnime, 8053);
+#endif
         gSettings.stSound = env->addStaticText(gDataManager->GetSysString(8015).data(), GetCurrentRectWithXOffset(15, 90), false, false, sPanel);
 		defaultStrings.emplace_back(gSettings.stSound, 8015);
         IncrementXorY();
@@ -2656,6 +2653,9 @@ void Game::PopulateSettingsWindow() {
 	        gSettings.chkEnableSummonAnime->setEnabled(false);
 #endif
 #ifndef VIP
+            gSettings.chkEnableSummonAnime->setChecked(false);
+            gSettings.chkEnableSummonAnime->setEnabled(false);
+            defaultStrings.emplace_back(gSettings.chkEnableSummonAnime, 8054);
 	        gSettings.chkEnableSummonSound->setChecked(false);
 	        gSettings.chkEnableSummonSound->setEnabled(false);
             defaultStrings.emplace_back(gSettings.chkEnableSummonSound, 8021);
@@ -2671,7 +2671,10 @@ void Game::PopulateSettingsWindow() {
 	        gSettings.chkEnableActivateAnime->setEnabled(false);
 #endif
 #ifndef VIP
-	        gSettings.chkEnableActivateSound->setChecked(false);
+	        gSettings.chkEnableActivateAnime->setChecked(false);
+	        gSettings.chkEnableActivateAnime->setEnabled(false);
+            defaultStrings.emplace_back(gSettings.chkEnableActivateAnime, 8056);
+            gSettings.chkEnableActivateSound->setChecked(false);
 	        gSettings.chkEnableActivateSound->setEnabled(false);
             defaultStrings.emplace_back(gSettings.chkEnableActivateSound, 8023);
 #endif
@@ -2686,7 +2689,10 @@ void Game::PopulateSettingsWindow() {
 	        gSettings.chkEnableAttackAnime->setEnabled(false);
 #endif
 #ifndef VIP
-	        gSettings.chkEnableAttackSound->setChecked(false);
+	        gSettings.chkEnableActivateAnime->setChecked(false);
+	        gSettings.chkEnableActivateAnime->setEnabled(false);
+            defaultStrings.emplace_back(gSettings.chkEnableActivateAnime, 8055);
+            gSettings.chkEnableAttackSound->setChecked(false);
 	        gSettings.chkEnableAttackSound->setEnabled(false);
             defaultStrings.emplace_back(gSettings.chkEnableAttackSound, 8022);
 #endif
@@ -3129,7 +3135,10 @@ bool Game::MainLoop() {
 			PopupElement(wACMessage, 30);
 			coreJustLoaded = false;
             //kdiy///////
-            git_update = true;
+            if(!git_update) {
+                mainGame->mode->LoadJsonInfo();
+                git_update = true;
+            }
             if(first_play) {
                 try {
 					gGameConfig->dpi_scale = static_cast<uint32_t>(std::stol(mainGame->gSettings.ebDpiScale->getText())) / 100.0;
@@ -5435,7 +5444,9 @@ OCG_Duel Game::SetupDuel(OCG_DuelOptions opts) {
 	LoadScript(pduel, "utility.lua");
 	/////kdiy/////
 	if(gGameConfig->system_engine) {
+#ifdef VIP
 		LoadScript(pduel, "Kconstant.lua");
+#endif
 		LoadScript(pduel, "Kcore.lua");
 	}
 	/////kdiy/////

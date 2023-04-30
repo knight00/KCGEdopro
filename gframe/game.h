@@ -137,14 +137,19 @@ public:
 	};
 	struct ModePloat {//the ploat text of mode-story
 		uint8_t index;
-		int control;
-        uint8_t icon;
-		std::wstring title;
-		std::wstring ploat;
-        bool isStartEvent;
-        bool isStartDuel;
-        bool sextramonster;
-        uint32_t code;
+		int control = 0;
+        uint8_t icon = 0;
+		std::wstring title = L"";
+		std::wstring ploat = L"";
+        bool isStartEvent = true;
+        bool isStartDuel = false;
+        bool isWinDuel = false;
+        bool isLoseDuel = false;
+        bool sextramonster = false;
+        bool smonster = false;
+        bool activate = false;
+        bool attackeff = false;
+        uint32_t code = 0;
 	};
 	std::vector<ModeText>* modeTexts;//vector modetext
 	std::vector<ModePloat>* modePloats[CHAPTER];//vector modeploat
@@ -162,7 +167,7 @@ public:
 	bool flag_100000155;//card 100000155 play sound
 	uint8_t rule;//the rule of duel,zcg|story......
     uint8_t chapter;//story chapter
-	uint8_t plotStep;//the step of fun NextPlot()
+	uint8_t plotStep;//0: initial ploat, 1: normal ploat, 2: stop ploat
  	uint8_t plotIndex;//the index of plot,decide to set text plot
 	uint8_t character[6] = { 0,0,0,0,0,0 };
 	void InitializeMode();
@@ -174,9 +179,9 @@ public:
 	void SetRule(uint8_t index);
 	bool LoadWindBot(int port, epro::wstringview pass);
 	bool IsModeBot(std::wstring mode);
-	void NextPlot(uint8_t step = 0, uint8_t index = 0, uint32_t code = 0); //step: plotStep, index: ploat.json index
-    void PlayNextPlot(uint8_t index, uint32_t code);
-	std::wstring GetPloat(uint8_t index, uint32_t code = 0);
+	void NextPlot(uint8_t step = 0, uint32_t code = 0); //step: plotStep, index: ploat.json index
+    void PlayNextPlot(uint32_t code);
+	std::wstring GetPloat(uint32_t code = 0);
 	Mode();
 	void LoadJsonInfo();
 	~Mode();

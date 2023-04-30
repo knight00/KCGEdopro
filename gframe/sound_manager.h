@@ -83,7 +83,8 @@ public:
     std::vector<std::string> soundcount;
     std::vector<std::string> soundcount2;
 	int32_t GetSoundDuration(std::string name);
-	void PlayModeSound(uint8_t index, bool lock=false);
+	int PlayModeSound(bool lock=false);
+    void PlayMode(bool lock=false);
 	////////kdiy////////
 	void SetSoundVolume(double volume);
 	void SetMusicVolume(double volume);

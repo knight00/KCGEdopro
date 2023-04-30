@@ -854,7 +854,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
                     mainGame->PopupElement(mainGame->wACMessage, 20);
                     break;
                 }
-				mainGame->mode->LoadJsonInfo();
  				mainGame->HideElement(mainGame->wMainMenu);
 #ifdef EK
 				mainGame->HideElement(mainGame->wQQ);
@@ -1817,15 +1816,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				}
                 for(int i = 0; i < 6; i++) {
                     int sel = mainGame->ebCharacter[i]->getSelected();
-                    if(sel > 0) {
-                        mainGame->wCharacter->setVisible(true);
-                        mainGame->wCharacterSelect->setVisible(true);
-                    }
                     if(sel >= 0) {
                         mainGame->choose_player = i;
                         gSoundManager->character[mainGame->choose_player] = sel;
                         int player = gSoundManager->character[mainGame->choose_player];
-                        mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
                         mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
                         mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
                     }

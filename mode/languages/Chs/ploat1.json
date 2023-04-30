@@ -13,253 +13,320 @@
 		"index": 1,
 		"title": "不动游星",
 		"control": 0,
+        "icon": 1,
 		"ploat": "你是什么人？"
 	},
 	{
 		"index": 2,
 		"title": "暗迪克皮塔",
 		"control": 1,
+        "icon": 2,
 		"ploat": "哼哼哼哼......"
 	},
 	{
 		"index": 3,
 		"title": "不动游星",
 		"control": 0,
+        "icon": 1,
 		"ploat": "你知道卫星区发生了什么吗？"
 	},
 	{
 		"index": 4,
 		"title": "暗迪克皮塔",
 		"control": 1,
+        "icon": 2,
 		"ploat": "去问黑暗决斗吧，黑暗知道一切......"
 	},
 	{
 		"index": 5,
 		"title": "不动游星",
 		"control": 0,
-		"ploat": "黑暗决斗，好吧，我要问清一切！"
+        "icon": 1,
+		"ploat": "黑暗决斗，好吧，我要问清一切！",
+        "isStartEvent": false,
+        "isStartDuel": true
 	},
 	{
 		"index": 6,
 		"title": "暗迪克皮塔",
 		"control": 1,
-		"ploat": "哼哼，我将用我场上的怪兽黑暗同调！"
+        "icon": 2,
+		"ploat": "哼哼，我将用我场上的怪兽黑暗同调！",
+        "sextramonster": true,
+        "code": 94515289
 	},
 	{
 		"index": 7,
 		"title": "不动游星",
 		"control": 0,
+        "icon": 1,
 		"ploat": "怎么回事，星星变成黑暗的了！"
 	},
 	{
 		"index": 8,
 		"title": "暗迪克皮塔",
 		"control": 1,
+        "icon": 2,
 		"ploat": "对，光明变成了黑暗，黑暗同调，是从同调怪兽以外的1只怪兽的等级减去黑暗同调怪兽的等级后可以同调召唤等级与此数量相同的同调怪兽。"
 	},
-	{
+    {
 		"index": 9,
 		"title": "不动游星",
 		"control": 0,
+        "icon": 1,
 		"ploat": "难道，怎么可能会有这种事，LV3减去LV8的话......"
 	},
 	{
 		"index": 10,
 		"title": "暗迪克皮塔",
 		"control": 1,
+        "icon": 2,
 		"ploat": "有的，在我们的黑暗世界，有LV-5的怪兽。"
 	},
 	{
 		"index": 11,
 		"title": "不动游星",
 		"control": 0,
+        "icon": 1,
 		"ploat": "不可能!!"
 	},
 	{
 		"index": 12,
 		"title": "暗迪克皮塔",
 		"control": 1,
-		"ploat": "将%ls以守备表示召唤。"
+        "icon": 2,
+		"ploat": "黑暗与黑暗重叠之时，冥府之门将被打开，去那无光世界吧！黑暗同调！出现吧！{}！",
+        "isStartEvent": false
 	},
 	{
 		"index": 13,
 		"title": "不动游星",
 		"control": 0,
-		"ploat": "将魔法卡%ls发动，从卡组把1只调整怪兽加入手卡，并从卡组中将那张卡的等级数的卡送去墓地。"
+        "icon": 1,
+		"ploat": "将魔法卡{}发动，从卡组把1只调整怪兽加入手卡，并从卡组中将那张卡的等级数的卡送去墓地。",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 96363153
 	},
 	{
 		"index": 14,
 		"title": "不动游星",
 		"control": 0,
-		"ploat": "召唤%ls。"
+        "icon": 1,
+		"ploat": "{}召唤成功时，可以将墓地中存在的1只LV2以下的怪兽以守备表示特殊召唤。",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 63977008
 	},
-	{
+    {
 		"index": 15,
 		"title": "不动游星",
 		"control": 0,
-		"ploat": "%ls召唤成功时，可以将墓地中存在的1只LV2以下的怪兽以守备表示特殊召唤。"
+        "icon": 1,
+		"ploat": "聚集的群星将唤醒新生的力量，成为光芒闪耀的道路吧！同调召唤！出来吧！{}！",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 0
 	},
 	{
 		"index": 16,
-		"title": "不动游星",
-		"control": 0,
-		"ploat": "聚集的群星将唤醒新生的力量，成为光芒闪耀的道路吧！同调召唤！出来吧！%ls！"
+		"title": "暗迪克皮塔",
+		"control": 1,
+        "icon": 2,
+		"ploat": "发动{}的效果，这张卡被破坏时，给对方玩家300点的伤害。",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 100000157
 	},
 	{
 		"index": 17,
 		"title": "暗迪克皮塔",
 		"control": 1,
-		"ploat": "发动%ls的效果，这张卡被破坏时，给对方玩家300点的伤害。"
+        "icon": 2,
+		"ploat": "永久陷阱{}，从自己的墓地中选择1只怪兽，以攻击表示特殊召唤。",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 97077563
 	},
 	{
 		"index": 18,
 		"title": "暗迪克皮塔",
 		"control": 1,
-		"ploat": "永久陷阱%ls，从自己的墓地中选择1只怪兽，以攻击表示特殊召唤。"
+        "icon": 2,
+		"ploat": "魔法卡{}发动，选择我方场上存在的1只LV3以下的水属性怪兽，从卡组中将与那怪兽相同的怪兽特殊召唤。",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 100000158
 	},
-	{
+    {
 		"index": 19,
 		"title": "暗迪克皮塔",
 		"control": 1,
-		"ploat": "魔法卡%ls发动，选择我方场上存在的1只LV3以下的水属性怪兽，从卡组中将与那怪兽相同的怪兽特殊召唤。"
+        "icon": 2,
+		"ploat": "将LV8的黑暗同调怪兽{}上级召唤。",
+        "isStartEvent": false,
+        "smonster": true,
+        "code": 100000143
 	},
 	{
 		"index": 20,
 		"title": "暗迪克皮塔",
 		"control": 1,
-		"ploat": "将LV8的黑暗同调怪兽%ls上级召唤。"
+        "icon": 2,
+		"ploat": "调整怪兽{}的怪兽效果，把这怪兽作为同调召唤的素材时，将对方场上的1张卡破坏！",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 100000143
 	},
 	{
 		"index": 21,
-		"title": "暗迪克皮塔",
-		"control": 1,
-		"ploat": "黑暗与黑暗重叠之时，冥府之门将被打开，去那无光世界吧！黑暗同调！出现吧！%ls！"
+		"title": "不动游星",
+		"control": 0,
+        "icon": 1,
+		"ploat": "发动陷阱，{}！将墓地中的同调怪兽以守备表示特殊召唤。",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 98273947
 	},
 	{
 		"index": 22,
 		"title": "暗迪克皮塔",
 		"control": 1,
-		"ploat": "调整怪兽%ls的怪兽效果，把这怪兽作为同调召唤的素材时，将对方场上的1张卡破坏！"
+        "icon": 2,
+		"ploat": "{}的怪兽效果，在自己场上不存在怪兽时，将由于战斗被破坏的这只怪兽以守备表示特殊召唤。",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 94515289
 	},
 	{
 		"index": 23,
-		"title": "游星",
-		"control": 0,
-		"ploat": "发动陷阱，%ls！将墓地中的同调怪兽以守备表示特殊召唤。"
+		"title": "暗迪克皮塔",
+		"control": 1,
+        "icon": 2,
+		"ploat": "{}进行攻击时，对方在伤害步骤结束前不能发动魔法陷阱卡。",
+        "activate": true,
+        "attackeff": true,
+        "code": 94515289
 	},
 	{
 		"index": 24,
-		"title": "游星",
-		"control": 0,
-		"ploat": "特殊召唤%ls！"
-	},
-	{
-		"index": 25,
 		"title": "暗迪克皮塔",
 		"control": 1,
-		"ploat": "%ls的怪兽效果，在自己场上不存在怪兽时，将由于战斗被破坏的这只怪兽以守备表示特殊召唤。"
+        "icon": 2,
+		"ploat": "再有在战斗结束时，将攻击了这怪兽的怪兽全部破坏！",
+        "isStartEvent": false
+	},
+    {
+		"index": 25,
+		"title": "不动游星",
+		"control": 0,
+        "icon": 1,
+		"ploat": "魔法卡，{}，将手卡中的怪兽卡送入墓地，特殊召唤手卡·卡组中的LV1的怪兽。",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 2295440
 	},
 	{
 		"index": 26,
 		"title": "暗迪克皮塔",
 		"control": 1,
-		"ploat": "再有在战斗结束时，将攻击了这怪兽的怪兽全部破坏！"
+        "icon": 2,
+		"ploat": "装备上{}，由于这个，攻击守备怪兽时，如果攻击力超过了守备力，给对方那数值的一半的伤害，我回复同样数值的生命。",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 511000197
 	},
 	{
 		"index": 27,
-		"title": "游星",
+		"title": "不动游星",
 		"control": 0,
-		"ploat": "魔法卡，%ls，将手卡中的怪兽卡送入墓地，特殊召唤手卡中的LV1的怪兽。"
+        "icon": 1,
+		"ploat": "由于我场上有同调怪兽出现，特殊召唤墓地中的{}！",
+        "isStartEvent": false
 	},
 	{
 		"index": 28,
-		"title": "暗迪克皮塔",
-		"control": 1,
-		"ploat": "装备上%ls，由于这个，攻击守备怪兽时，如果攻击力超过了守备力，给对方那数值的一半的伤害，我回复同样数值的生命。"
+		"title": "不动游星",
+		"control": 0,
+        "icon": 1,
+		"ploat": "永续陷阱{}，特殊召唤墓地中存在的LV2以下的怪兽。",
+        "isStartEvent": false
 	},
 	{
 		"index": 29,
-		"title": "游星",
+		"title": "不动游星",
 		"control": 0,
-		"ploat": "召唤%ls。"
+        "icon": 1,
+		"ploat": "聚集的思念在此化为新生的力量，成为光芒耀眼的道路吧！同调召唤！燃烧吧！{}",
+        "isStartEvent": false
 	},
 	{
 		"index": 30,
-		"title": "游星",
+		"title": "不动游星",
 		"control": 0,
-		"ploat": "由于我场上有同调怪兽出现，特殊召唤墓地中的%ls！"
+        "icon": 1,
+		"ploat": "由于{}的效果，抽1张卡！",
+        "isStartEvent": false
 	},
 	{
 		"index": 31,
-		"title": "游星",
-		"control": 0,
-		"ploat": "永续陷阱%ls，特殊召唤墓地中存在的LV2以下的怪兽。"
+		"title": "暗迪克皮塔",
+		"control": 1,
+        "icon": 2,
+		"ploat": "暗痣人绝不会被打倒，与黑色印记一起，会不断的复活。",
+        "isWinDuel": true
 	},
 	{
 		"index": 32,
-		"title": "游星",
+		"title": "不动游星",
 		"control": 0,
-		"ploat": "聚集的思念在此化为新生的力量，成为光芒耀眼的道路吧！同调召唤！燃烧吧！%ls"
+        "icon": 1,
+		"ploat": "你说暗痣人？"
 	},
 	{
 		"index": 33,
-		"title": "游星",
-		"control": 0,
-		"ploat": "由于%ls的效果，抽1张卡！"
+		"title": "暗迪克皮塔",
+		"control": 1,
+        "icon": 2,
+		"ploat": "你们持有的红色印记，不久也会迎来染成漆黑的时刻！",
+        "isStartEvent": false
 	},
 	{
 		"index": 34,
-		"title": "暗迪克皮塔",
-		"control": 1,
-		"ploat": "%ls进行攻击时，对方在伤害步骤结束前不能发动魔法陷阱卡。"
+		"title": "不动游星",
+		"control": 0,
+        "icon": 1,
+		"ploat": "你究竟知道些什么！",
+        "isLoseDuel": true
 	},
 	{
 		"index": 35,
 		"title": "暗迪克皮塔",
 		"control": 1,
-		"ploat": "暗痣人绝不会被打倒，与黑色印记一起，会不断的复活。"
+        "icon": 2,
+		"ploat": "那就是这场决斗有力地诉说着的。"
 	},
 	{
 		"index": 36,
-		"title": "游星",
+		"title": "不动游星",
 		"control": 0,
-		"ploat": "你说暗痣人？"
+        "icon": 1,
+		"ploat": "什么？！"
 	},
 	{
 		"index": 37,
 		"title": "暗迪克皮塔",
 		"control": 1,
-		"ploat": "你们持有的红色印记，不久也会迎来染成漆黑的时刻！"
-	},
-	{
-		"index": 38,
-		"title": "游星",
-		"control": 0,
-		"ploat": "你究竟知道些什么！"
-	},
-	{
-		"index": 39,
-		"title": "暗迪克皮塔",
-		"control": 1,
-		"ploat": "那就是这场决斗有力地诉说着的。"
-	},
-	{
-		"index": 40,
-		"title": "游星",
-		"control": 0,
-		"ploat": "什么？！"
-	},
-	{
-		"index": 41,
-		"title": "暗迪克皮塔",
-		"control": 1,
+        "icon": 2,
 		"ploat": "你依靠的人全都会从这世界消失，就如你场上的怪兽一样。"
 	},
 	{
-		"index": 42,
-		"title": "游星",
+		"index": 38,
+		"title": "不动游星",
 		"control": 0,
-		"ploat": "别胡扯了！"
+        "icon": 1,
+		"ploat": "别胡扯了！",
+        "isStartEvent": false
 	}
 
 ]

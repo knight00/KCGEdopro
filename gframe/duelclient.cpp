@@ -1480,9 +1480,12 @@ inline bool PlayChantcode(SoundManager::CHANT sound, uint32_t code, uint32_t cod
 }
 inline bool PlayChant(SoundManager::CHANT sound, ClientCard* card, const uint8_t player) {
 	uint32_t code = 0;
-	if(card != nullptr) code = card->code;
-	uint32_t code2 = 0;
-	if(card != nullptr) code2 = card->alias;
+    uint32_t code2 = 0;
+	if(card != nullptr) {
+        code = card->code;
+        auto cd = gDataManager->GetCardData(code);
+        if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
+    }
 	uint8_t extra = 0;
 	if(card != nullptr && (card->type & TYPE_FUSION)) extra |= 0x1;
 	if(card != nullptr && (card->type & TYPE_SYNCHRO)) extra |= 0x2;
@@ -1493,6 +1496,7 @@ inline bool PlayChant(SoundManager::CHANT sound, ClientCard* card, const uint8_t
 	return PlayChantcode(sound, code, code2, player, extra);
 }
 inline bool PlayAnimecode(uint32_t code, uint32_t code2, uint8_t cat) {
+#ifdef VIP
 	if(!gGameConfig->enableanime) return false;
 	if(cat == 1 && !gGameConfig->enablecanime) return false;
 	if(cat == 2 && !gGameConfig->enableaanime) return false;
@@ -1555,15 +1559,20 @@ inline bool PlayAnimecode(uint32_t code, uint32_t code2, uint8_t cat) {
 #else
 	return false;
 #endif
+#else
+	return false;
+#endif
 }
 inline bool PlayAnime(ClientCard* card, uint8_t cat) {
 	if(card == nullptr || card->code < 1) return false;
 	uint32_t code = card->code;
+	auto cd = gDataManager->GetCardData(code);
 	uint32_t code2 = 0;
-	if(card->alias && card->alias > 0) code2 = card->alias;
+	if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
 	return PlayAnimecode(code, code2, cat);
 }
 inline bool PlayAnimeC(std::wstring text, bool custom) {
+#ifdef VIP
 	if(!gGameConfig->enableanime) return false;
 #if EDOPRO_WINDOWS
 	std::wstring s2 = L"plugin\\MPC-HCPortable\\MPC-HCPortable.exe";
@@ -1596,6 +1605,10 @@ inline bool PlayAnimeC(std::wstring text, bool custom) {
 	if(!Utils::FileExists(s1)) return false;
 	return false;
 #else
+	return false;
+#endif
+#else
+	return false;
 #endif
 }
 /////kdiy///////
@@ -1606,7 +1619,6 @@ inline std::unique_lock<epro::mutex> LockIf() {
 }
 ///kdiy/////
 void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t msg) {
-#define CARD_SOUND_INDEX  15
 	switch(msg) {
     case MSG_NEW_TURN: {
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
@@ -1630,10 +1642,9 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
             mainGame->wHead[0]->setVisible(true);
             mainGame->wHead[1]->setVisible(true);
-            mainGame->mode->NextPlot(1, 6, 100000155);
         }
 		PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, player);
-		return;
+		break;
     } 
     case MSG_MOVE: {
         const auto code = BufferIO::Read<uint32_t>(pbuf);
@@ -1643,53 +1654,41 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		current.controler = mainGame->LocalPlayer(current.controler);
 		const auto reason = BufferIO::Read<uint32_t>(pbuf);
         ClientCard* pcard = mainGame->dField.GetCard(previous.controler, previous.location, previous.sequence);
-        if(chapter >= 1) {
+        auto cd = gDataManager->GetCardData(code);
+        uint32_t code2 = 0;
+        if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
+        if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY && chapter > 0) {
             if(!(current.position & POS_FACEUP)) return;
-            if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE)) return;
-            // if(code==100000155) mainGame->mode->NextPlot(1, 6, 100000155);
-            // for(uint8_t index = 1; index < mainGame->mode->modePloats->size(); index++) {
-            //     auto controler = mainGame->mode->modePloats->at(index).control;
-            //     if(previous.controler != controler || current.controler != controler) return;
-            //     uint32_t mcode = mainGame->mode->modePloats->at(index).code;
-            //     if(mcode < 1) continue;
-            //     bool sextramonster = mainGame->mode->modePloats->at(index).sextramonster;
-            //     if(sextramonster) {
-            //         if(!(reason & REASON_SPSUMMON)) continue;
-            //         if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE)) continue;
-            //     }
-            //     uint32_t acode = 0;
-            //     if(pcard->alias) acode = pcard->alias;
-            //     if(code == mcode || acode == mcode) {
-            //         mainGame->mode->NextPlot(1, index, mcode);
-            //         break;
-            //     }
-            // }
-        }
-        switch (code) {
-        case 100000155: {
-            if(chapter == 1) {
-                if(previous.controler != 1 || current.controler != 1) return;
-                if(!(reason & REASON_SPSUMMON)) return;
-                if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE)) return;
-                if(!(current.position & POS_FACEUP)) return;
-                mainGame->mode->NextPlot(8,6,code);
+            for(uint8_t index = 1; index < mainGame->mode->modePloats[chapter - 1]->size(); index++) {
+                auto controler = mainGame->mode->modePloats[chapter - 1]->at(index).control;
+                if(previous.controler != controler || current.controler != controler) continue;
+                uint32_t mcode = mainGame->mode->modePloats[chapter - 1]->at(index).code;
+                if(mcode < 1) continue;
+                bool sextramonster = mainGame->mode->modePloats[chapter - 1]->at(index).sextramonster;
+                bool smonster = mainGame->mode->modePloats[chapter - 1]->at(index).smonster;
+				if(!sextramonster && !smonster) continue;
+                if(!(current.location & LOCATION_MZONE)) continue;
+                if(sextramonster) {
+                    if(!(reason & REASON_SPSUMMON)) continue;
+                    if(!(previous.location & LOCATION_EXTRA) || !(current.location & LOCATION_MZONE)) continue;
+                }
+                if(code == mcode || code2 == mcode) {
+                    mainGame->mode->plotIndex = index;
+                    mainGame->mode->NextPlot(1, mcode);
+                    break;
+                }
             }
-            return;
         }
-        default: {
-			if(previous.location != current.location && (reason & REASON_DESTROY)) {
-				PlayChant(SoundManager::CHANT::DESTROY, nullptr, previous.controler);
-			}
-			return;
-        }
-        }
-	}
+		if(previous.location != current.location && (reason & REASON_DESTROY))
+			PlayChant(SoundManager::CHANT::DESTROY, nullptr, previous.controler);
+		break;
+    }
     case MSG_SET: {
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
         CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
         const auto player = mainGame->LocalPlayer(info.controler);
         PlayChant(SoundManager::CHANT::SET, nullptr, player);
-		return;
+		break;
     }
     case MSG_SUMMONING: {
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
@@ -1699,7 +1698,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		if(!PlayAnime(pcard, 0)) {
 			PlayChant(SoundManager::CHANT::SUMMON, pcard, player);
 		}
-		return;
+		break;
     }
     case MSG_SPSUMMONING: {
 		const auto code = BufferIO::Read<uint32_t>(pbuf);	
@@ -1716,7 +1715,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		if(!PlayAnime(pcard, 0)) {
 			PlayChant(SoundManager::CHANT::SUMMON, pcard, player);
 		}
-		return;
+		break;
     }
     case MSG_FLIPSUMMONING: {
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
@@ -1726,7 +1725,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		if(!PlayAnime(pcard, 0)) {
 			PlayChant(SoundManager::CHANT::SUMMON, pcard, info.controler);
 		}
-		return;
+		break;
     }
 	case MSG_CHAINING: {
         const auto code = BufferIO::Read<uint32_t>(pbuf);
@@ -1735,7 +1734,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto cc = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		auto cd = gDataManager->GetCardData(code);
 		uint32_t code2 = 0;
-		if(cd->alias) code2 = cd->alias;
+		if(cd->alias && cd->alias > 0) code2 = cd->alias;
 		//////ktest///////
 		//默认摄像头
 			// cv::VideoCapture cap("./movies/c28649820.mp4");
@@ -1760,77 +1759,88 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 			// 	cv::destroyWindow(window_name);
 			// }
 		//////ktest///////
-        switch (code) {
-        case 100000155: {
-            if(chapter == 1) {
-                if(pcard->controler != 1) return;
-                if((pcard->location & LOCATION_GRAVE)) {
-                    mainGame->mode->flag_100000155 = true;
-                    mainGame->mode->NextPlot(CARD_SOUND_INDEX,25,code);
-                } else if((pcard->location & LOCATION_MZONE)) {
-                    if(!mainGame->mode->flag_100000155) return;
-                    mainGame->mode->flag_100000155 = false;
-                    mainGame->mode->NextPlot(CARD_SOUND_INDEX,26);
+        bool mode = false;
+        if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
+            if(!(info.position & POS_FACEUP)) return;
+            for(uint8_t index = 1; index < mainGame->mode->modePloats[chapter - 1]->size(); index++) {
+                auto controler = mainGame->mode->modePloats[chapter - 1]->at(index).control;
+                if(info.controler != controler) continue;
+                uint32_t mcode = mainGame->mode->modePloats[chapter - 1]->at(index).code;
+                if(mcode < 1) continue;
+                bool activate = mainGame->mode->modePloats[chapter - 1]->at(index).activate;
+				bool attackeff = mainGame->mode->modePloats[chapter - 1]->at(index).attackeff;
+                if(!activate) continue;
+                if(attackeff) {
+                    if(!mainGame->dField.attacker || mainGame->dField.attacker != pcard) continue;
+                }
+                if(code == mcode || code2 == mcode) {
+                    mode = true;
+                    mainGame->mode->plotIndex = index;
+                    mainGame->mode->NextPlot(1, mcode);
+                    break;
                 }
             }
-            return;
         }
-        default: {
-			if(!PlayAnimecode(code, code2, 1)) {
-				if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && (info.position == POS_FACEUP) && info.location == LOCATION_SZONE && (info.sequence == 0 || info.sequence == 4 || info.sequence == 6 || info.sequence == 7))
-					PlayChantcode(SoundManager::CHANT::PENDULUM, code, code2, cc);
-				else
-					PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, cc);
-			}
-            return;
+		if(!PlayAnimecode(code, code2, 1) && !mode) {
+			if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && (info.position == POS_FACEUP) && info.location == LOCATION_SZONE && (info.sequence == 0 || info.sequence == 4 || info.sequence == 6 || info.sequence == 7))
+				PlayChantcode(SoundManager::CHANT::PENDULUM, code, code2, cc);
+			else
+				PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, cc);
         }
-        }
+        break;
     }
     case MSG_DRAW: {
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		PlayChant(SoundManager::CHANT::DRAW, nullptr, player);
-        return;
+        break;
 	}
     case MSG_DAMAGE: {
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		PlayChant(SoundManager::CHANT::DAMAGE, nullptr, player);
-        return;
+        break;
     }
     case MSG_RECOVER: {
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		PlayChant(SoundManager::CHANT::RECOVER, nullptr, player);
-        return;
+        break;
     }
     case MSG_EQUIP: {
 		CoreUtils::loc_info info1 = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		const auto player = mainGame->LocalPlayer(info1.controler);
 		PlayChant(SoundManager::CHANT::EQUIP, nullptr, player);
-        return;
+        break;
     }
     case MSG_PAY_LPCOST: {
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		PlayChant(SoundManager::CHANT::DAMAGE, nullptr, player);
-        return;
+        break;
     }
 	case MSG_ATTACK: {
         CoreUtils::loc_info info1 = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
         info1.controler = mainGame->LocalPlayer(info1.controler);
         mainGame->dField.attacker = mainGame->dField.GetCard(info1.controler, info1.location, info1.sequence);
         uint32_t code = mainGame->dField.attacker->code;
-        switch (code) {
-        case 100000155: {
-            if(chapter == 1) {
-                if(info1.controler != 1) return;
-                mainGame->mode->NextPlot(CARD_SOUND_INDEX, 34, code);
+        if(!PlayAnime(mainGame->dField.attacker, 2))
+		    PlayChant(SoundManager::CHANT::ATTACK, mainGame->dField.attacker, info1.controler);
+		break;
+    }
+    case MSG_WIN: {
+		uint8_t player = BufferIO::Read<uint8_t>(pbuf);
+		uint8_t type = BufferIO::Read<uint8_t>(pbuf);
+        player = mainGame->LocalPlayer(player);
+        if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
+            for(uint8_t index = 1; index < mainGame->mode->modePloats[chapter - 1]->size(); index++) {
+                auto controler = mainGame->mode->modePloats[chapter - 1]->at(index).control;
+                bool isWinDuel = mainGame->mode->modePloats[chapter - 1]->at(index).isWinDuel;
+				bool isLoseDuel = mainGame->mode->modePloats[chapter - 1]->at(index).isLoseDuel;
+                if(!isWinDuel && !isLoseDuel) continue;
+                if(isWinDuel && player != 0) continue;
+                mainGame->mode->plotIndex = index;
+                mainGame->mode->NextPlot(1);
+                break;
             }
-            return;
         }
-        default: {
-            if(!PlayAnime(mainGame->dField.attacker, 2))
-		        PlayChant(SoundManager::CHANT::ATTACK, mainGame->dField.attacker, info1.controler);
-			return;
-        }
-        }
+        break;
     }
     }
 }
@@ -2004,7 +2014,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			/////kdiy//////
 			auto cd = gDataManager->GetCardData(data);
 			uint32_t code2 = 0;
-			if(cd->alias) code2 = cd->alias;
+			if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
             mainGame->showcardalias = code2;
 			if(!PlayAnimecode(cd->code, code2, 1))
 				PlayChantcode(SoundManager::CHANT::ACTIVATE, cd->code, code2, player);
@@ -3994,12 +4004,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		if(!mainGame->dInfo.isCatchingUp) {
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 			////kdiy///////////
-			CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
-			const auto player = mainGame->LocalPlayer(info.controler);
-			ClientCard* pcard = mainGame->dField.GetCard(player, info.location, info.sequence);
 			//event_string = epro::sprintf(gDataManager->GetSysString(1603), gDataManager->GetName(code));
-			event_string = epro::sprintf(gDataManager->GetSysString(1603), gDataManager->GetVirtualName(pcard, code));
-            mainGame->showcardalias = pcard->alias;
+			event_string = epro::sprintf(gDataManager->GetSysString(1603), gDataManager->GetVirtualName(code));
+            auto cd = gDataManager->GetCardData(code);
+			uint32_t code2 = 0;
+			if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
+            mainGame->showcardalias = code2;
 			////kdiy///////////
 			mainGame->showcardcode = code;
 			mainGame->showcarddif = 0;
@@ -4025,12 +4035,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		if(!mainGame->dInfo.isCatchingUp) {
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 			////kdiy///////////
-            CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
-            const auto player = mainGame->LocalPlayer(info.controler);
-            ClientCard* pcard = mainGame->dField.GetCard(player, info.location, info.sequence);
 			//event_string = epro::sprintf(gDataManager->GetSysString(1605), gDataManager->GetName(code));
-			event_string = epro::sprintf(gDataManager->GetSysString(1605), gDataManager->GetVirtualName(pcard, code));
-            mainGame->showcardalias = pcard->alias;
+			event_string = epro::sprintf(gDataManager->GetSysString(1605), gDataManager->GetVirtualName(code));
+            auto cd = gDataManager->GetCardData(code);
+			uint32_t code2 = 0;
+			if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
+            mainGame->showcardalias = code2;
 			////kdiy///////////
 			mainGame->showcardcode = code;
 			mainGame->showcarddif = 1;
@@ -4061,7 +4071,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			////kdiy///////////
 			//event_string = epro::sprintf(gDataManager->GetSysString(1607), gDataManager->GetName(code));
 			event_string = epro::sprintf(gDataManager->GetSysString(1607), gDataManager->GetVirtualName(pcard, code));
-            mainGame->showcardalias = pcard->alias;
+			uint32_t code2 = 0;
+			if(pcard->alias && pcard->alias > 0) code2 = pcard->alias;
+            mainGame->showcardalias = code2;
 			////kdiy///////////
 			mainGame->dField.MoveCard(pcard, 10);
 			mainGame->WaitFrameSignal(11, lock);
@@ -4101,8 +4113,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		}
 		if(!mainGame->dInfo.isCatchingUp) {
             /////kdiy//////
-            uint32_t code2 = 0;
-            if(pcard->alias) code2 = pcard->alias;
+			uint32_t code2 = 0;
+			if(pcard->alias && pcard->alias > 0) code2 = pcard->alias;
             mainGame->showcardalias = code2;
             /////kdiy//////
 			mainGame->showcardcode = code;

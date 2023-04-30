@@ -282,23 +282,33 @@ int32_t SoundManager::GetSoundDuration(std::string name) {
 	return 1000;
 #endif
 }
-void SoundManager::PlayModeSound(uint8_t index, bool lock) {
+int SoundManager::PlayModeSound(bool lock) {
 #ifdef BACKEND
-	if(!soundsEnabled) return;
-	if(!mainGame->mode->isMode) return;
-    std::string file = epro::format("./mode/story/story{}/soundDialog/{}.mp3", mainGame->mode->chapter, index);
-	if(!Utils::FileExists(Utils::ToPathString(file))) return;
+	if(!soundsEnabled) return 0;
+	if(!mainGame->mode->isMode) return 0;
+    std::string file = epro::format("./mode/story/story{}/soundDialog/{}.mp3", mainGame->mode->chapter, mainGame->mode->plotIndex);
+	if(!Utils::FileExists(Utils::ToPathString(file)))
+        return 0;
     if(std::find(gSoundManager->soundcount.begin(), gSoundManager->soundcount.end(), file) != gSoundManager->soundcount.end())
-        return;
+        return 2;
     gSoundManager->soundcount.push_back(file);
 	gSoundManager->StopSounds();
 	mixer->PlaySound(file);
-    if(lock && mainGame->isEvent) { //if isEvent=false->skipped continuous ploat, no more lock allowed
-        std::unique_lock<epro::mutex> lck(*mainGame->lck);
-        mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(file)));
-		lck.unlock();
-    }
+    return 1;
 #endif
+    return 0;
+}
+void SoundManager::PlayMode(bool lock) {
+    if(!lock) {
+        std::unique_lock<epro::mutex> lck(*mainGame->lck);
+        mainGame->cv->wait_for(lck, std::chrono::milliseconds(2500));
+        lck.unlock();
+        return;
+    }
+    std::string file = epro::format("./mode/story/story{}/soundDialog/{}.mp3", mainGame->mode->chapter, mainGame->mode->plotIndex);
+    std::unique_lock<epro::mutex> lck(*mainGame->lck);
+    mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(file)));
+	lck.unlock();
 }
 /////kdiy/////
 void SoundManager::PlaySoundEffect(SFX sound) {

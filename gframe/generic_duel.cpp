@@ -3,7 +3,6 @@
 #include "netserver.h"
 #include "game.h"
 #include "core_utils.h"
-
 namespace ygo {
 
 ReplayStream GenericDuel::replay_stream;
@@ -375,6 +374,29 @@ void GenericDuel::PlayerReady(DuelPlayer* dp, bool is_ready, bool ai) {
     /////kdiy//////////
 	//if(is_ready) {
     if(is_ready && !ai) {
+#ifndef VIP
+        bool kcgwarn = false;
+        std::vector<const CardDataC*>::iterator iter;
+		for(iter = dueler.pdeck.main.begin(); iter != dueler.pdeck.main.end(); ) {
+			if((*iter)->code == 10 || (*iter)->code == 810 || (*iter)->code == 707 || (*iter)->code == 708 || (*iter)->code == 709 || (*iter)->code == 799 || (*iter)->code == 818 || (*iter)->code == 819 || (*iter)->code == 821 || (*iter)->code == 822 || (*iter)->code == 824 || (*iter)->code == 825 || (*iter)->code == 280 || (*iter)->code == 281 || (*iter)->code == 282 || (*iter)->code == 292 || (*iter)->code == 330 || (*iter)->code == 336 || (*iter)->code == 102|| (*iter)->code == 204 || (*iter)->code == 10000083 || (*iter)->code == 212 || (*iter)->code == 213 || (*iter)->code == 214 || (*iter)->code == 48 || (*iter)->code == 57 || (*iter)->code == 105 || (*iter)->code == 366 || (*iter)->code == 574 || (*iter)->code == 706 || (*iter)->code == 900000061 || (*iter)->code == 900000062 || (*iter)->code == 900000071 || (*iter)->code == 900000074 || (*iter)->code == 732) {
+                kcgwarn = true;
+				iter = dueler.pdeck.main.erase(iter);
+            } else
+				++iter;
+        }
+        for(iter = dueler.pdeck.extra.begin(); iter != dueler.pdeck.extra.end(); ) {
+			if((*iter)->code == 10000044 || (*iter)->code == 265 || (*iter)->code == 54 || (*iter)->code == 214) {
+                kcgwarn = true;
+				iter = dueler.pdeck.extra.erase(iter);
+            } else
+				++iter;
+		}
+        if(kcgwarn) {
+			DeckError deck_error = DeckManager::CheckDeckSize(dueler.pdeck, host_info.sizes);
+			deck_error.type = DeckError::UNKNOWNCARD;
+			deck_error.code = dueler.deck_error;
+        }
+#endif
     /////kdiy//////////
 		DeckError deck_error = DeckManager::CheckDeckSize(dueler.pdeck, host_info.sizes);
 		if(deck_error.type == DeckError::NONE && !host_info.no_check_deck_content) {
@@ -471,6 +493,7 @@ void GenericDuel::StartDuel(DuelPlayer* dp) {
 	}
 	/////kdiy/////
 	if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
+        mainGame->isHostingOnline = false;
 		NetServer::SendPacketToPlayer(players.home.front(), STOC_MODE_SHOW_PLOAT);
 		return;
 	}

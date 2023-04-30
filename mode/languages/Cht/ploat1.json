@@ -1,7 +1,7 @@
 [
 	{
 		"playerNames": "不動遊星",
-        "aiNames": ["暗迪克皮塔"],
+        "aiNames": ["暗迪克皮塔", "Paradox"],
         "team1": 1,
         "team2": 1
 	},
@@ -15,253 +15,320 @@
 		"index": 1,
 		"title": "不動遊星",
 		"control": 0,
+        "icon": 1,
 		"ploat": "你是什麼人？"
 	},
 	{
 		"index": 2,
 		"title": "暗迪克皮塔",
 		"control": 1,
+        "icon": 2,
 		"ploat": "哼哼哼哼......"
 	},
 	{
 		"index": 3,
 		"title": "不動遊星",
 		"control": 0,
+        "icon": 1,
 		"ploat": "你知道衛星區發生了什麼嗎？"
 	},
 	{
 		"index": 4,
 		"title": "暗迪克皮塔",
 		"control": 1,
+        "icon": 2,
 		"ploat": "去問黑暗決鬥吧，黑暗知道一切......"
 	},
 	{
 		"index": 5,
 		"title": "不動遊星",
 		"control": 0,
-		"ploat": "黑暗決鬥，好吧，我要問清一切！"
+        "icon": 1,
+		"ploat": "黑暗決鬥，好吧，我要問清一切！",
+        "isStartEvent": false,
+        "isStartDuel": true
 	},
 	{
 		"index": 6,
 		"title": "暗迪克皮塔",
 		"control": 1,
-		"ploat": "哼哼，我將用我場上的怪獸黑暗同調！"
+        "icon": 2,
+		"ploat": "哼哼，我將用我場上的怪獸黑暗同調！",
+        "sextramonster": true,
+        "code": 94515289
 	},
 	{
 		"index": 7,
 		"title": "不動遊星",
 		"control": 0,
+        "icon": 1,
 		"ploat": "怎麼回事，星星變成黑暗的了！"
 	},
 	{
 		"index": 8,
 		"title": "暗迪克皮塔",
 		"control": 1,
+        "icon": 2,
 		"ploat": "對，光明變成了黑暗，黑暗同調，是從同調怪獸以外的1只怪獸的等級減去黑暗同調怪獸的等級後可以同調召喚等級與此數量相同的同調怪獸。"
 	},
 	{
 		"index": 9,
 		"title": "不動遊星",
 		"control": 0,
+        "icon": 1,
 		"ploat": "難道，怎麼可能會有這種事，LV3減去LV8的話......"
 	},
 	{
 		"index": 10,
 		"title": "暗迪克皮塔",
 		"control": 1,
+        "icon": 2,
 		"ploat": "有的，在我們的黑暗世界，有LV-5的怪獸。"
 	},
 	{
 		"index": 11,
 		"title": "不動遊星",
 		"control": 0,
+        "icon": 1,
 		"ploat": "不可能!!"
 	},
 	{
 		"index": 12,
 		"title": "暗迪克皮塔",
 		"control": 1,
-		"ploat": "將%ls以守備表示召喚。"
+        "icon": 2,
+		"ploat": "黑暗與黑暗重疊之時，冥府之門將被打開，去那無光世界吧！黑暗同調！出現吧！{}！",
+        "isStartEvent": false
 	},
 	{
 		"index": 13,
 		"title": "不動遊星",
 		"control": 0,
-		"ploat": "將魔法卡%ls發動，從卡組把1只調整怪獸加入手卡，並從卡組中將那張卡的等級數的卡送去墓地。"
+        "icon": 1,
+		"ploat": "將魔法卡{}發動，從卡組把1只調整怪獸加入手卡，並從卡組中將那張卡的等級數的卡送去墓地。",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 96363153
 	},
 	{
 		"index": 14,
 		"title": "不動遊星",
 		"control": 0,
-		"ploat": "召喚%ls。"
+        "icon": 1,
+		"ploat": "{}召喚成功時，可以將墓地中存在的1只LV2以下的怪獸以守備表示特殊召喚。",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 63977008
 	},
 	{
 		"index": 15,
 		"title": "不動遊星",
 		"control": 0,
-		"ploat": "%ls召喚成功時，可以將墓地中存在的1只LV2以下的怪獸以守備表示特殊召喚。"
+        "icon": 1,
+		"ploat": "聚集的群星將喚醒新生的力量，成為光芒閃耀的道路吧！同調召喚！出來吧！{}！",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 0
 	},
 	{
 		"index": 16,
-		"title": "不動遊星",
-		"control": 0,
-		"ploat": "聚集的群星將喚醒新生的力量，成為光芒閃耀的道路吧！同調召喚！出來吧！%ls！"
+		"title": "暗迪克皮塔",
+		"control": 1,
+        "icon": 2,
+		"ploat": "發動{}的效果，這張卡被破壞時，給對方玩家300點的傷害。",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 100000157
 	},
 	{
 		"index": 17,
 		"title": "暗迪克皮塔",
 		"control": 1,
-		"ploat": "發動%ls的效果，這張卡被破壞時，給對方玩家300點的傷害。"
+        "icon": 2,
+		"ploat": "永久陷阱{}，從自己的墓地中選擇1只怪獸，以攻擊表示特殊召喚。",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 97077563
 	},
 	{
 		"index": 18,
 		"title": "暗迪克皮塔",
 		"control": 1,
-		"ploat": "永久陷阱%ls，從自己的墓地中選擇1只怪獸，以攻擊表示特殊召喚。"
+        "icon": 2,
+		"ploat": "魔法卡{}發動，選擇我方場上存在的1只LV3以下的水屬性怪獸，從卡組中將與那怪獸相同的怪獸特殊召喚。",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 100000158
 	},
 	{
 		"index": 19,
 		"title": "暗迪克皮塔",
 		"control": 1,
-		"ploat": "魔法卡%ls發動，選擇我方場上存在的1只LV3以下的水屬性怪獸，從卡組中將與那怪獸相同的怪獸特殊召喚。"
+        "icon": 2,
+		"ploat": "將LV8的黑暗同調怪獸{}上級召喚。",
+        "isStartEvent": false,
+        "smonster": true,
+        "code": 100000143
 	},
 	{
 		"index": 20,
 		"title": "暗迪克皮塔",
 		"control": 1,
-		"ploat": "將LV8的黑暗同調怪獸%ls上級召喚。"
+        "icon": 2,
+		"ploat": "調整怪獸{}的怪獸效果，把這怪獸作為同調召喚的素材時，將對方場上的1張卡破壞！",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 100000143
 	},
 	{
 		"index": 21,
-		"title": "暗迪克皮塔",
-		"control": 1,
-		"ploat": "黑暗與黑暗重疊之時，冥府之門將被打開，去那無光世界吧！黑暗同調！出現吧！%ls！"
+		"title": "不動遊星",
+		"control": 0,
+        "icon": 1,
+		"ploat": "發動陷阱，{}！將墓地中的同調怪獸以守備表示特殊召喚。",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 98273947
 	},
 	{
 		"index": 22,
 		"title": "暗迪克皮塔",
 		"control": 1,
-		"ploat": "調整怪獸%ls的怪獸效果，把這怪獸作為同調召喚的素材時，將對方場上的1張卡破壞！"
+        "icon": 2,
+		"ploat": "{}的怪獸效果，在自己場上不存在怪獸時，將由於戰鬥被破壞的這只怪獸以守備表示特殊召喚。",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 94515289
 	},
 	{
 		"index": 23,
-		"title": "遊星",
-		"control": 0,
-		"ploat": "發動陷阱，%ls！將墓地中的同調怪獸以守備表示特殊召喚。"
+		"title": "暗迪克皮塔",
+		"control": 1,
+        "icon": 2,
+		"ploat": "{}進行攻擊時，對方在傷害步驟結束前不能發動魔法陷阱卡。",
+        "activate": true,
+        "attackeff": true,
+        "code": 94515289
 	},
 	{
 		"index": 24,
-		"title": "遊星",
-		"control": 0,
-		"ploat": "特殊召喚%ls！"
+		"title": "暗迪克皮塔",
+		"control": 1,
+        "icon": 2,
+		"ploat": "再有在戰鬥結束時，將攻擊了這怪獸的怪獸全部破壞！",
+        "isStartEvent": false
 	},
 	{
 		"index": 25,
-		"title": "暗迪克皮塔",
-		"control": 1,
-		"ploat": "%ls的怪獸效果，在自己場上不存在怪獸時，將由於戰鬥被破壞的這只怪獸以守備表示特殊召喚。"
+		"title": "不動遊星",
+		"control": 0,
+        "icon": 1,
+		"ploat": "魔法卡，{}，將手卡中的怪獸卡送入墓地，特殊召喚手卡·卡組中的LV1的怪獸。",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 2295440
 	},
 	{
 		"index": 26,
 		"title": "暗迪克皮塔",
 		"control": 1,
-		"ploat": "再有在戰鬥結束時，將攻擊了這怪獸的怪獸全部破壞！"
+        "icon": 2,
+		"ploat": "裝備上{}，由於這個，攻擊守備怪獸時，如果攻擊力超過了守備力，給對方那數值的一半的傷害，我回復同樣數值的生命。",
+        "isStartEvent": false,
+        "activate": true,
+        "code": 511000197
 	},
 	{
 		"index": 27,
-		"title": "遊星",
+		"title": "不動遊星",
 		"control": 0,
-		"ploat": "魔法卡，%ls，將手卡中的怪獸卡送入墓地，特殊召喚手卡中的LV1的怪獸。"
+        "icon": 1,
+		"ploat": "由於我場上有同調怪獸出現，特殊召喚墓地中的{}！",
+        "isStartEvent": false
 	},
 	{
 		"index": 28,
-		"title": "暗迪克皮塔",
-		"control": 1,
-		"ploat": "裝備上%ls，由於這個，攻擊守備怪獸時，如果攻擊力超過了守備力，給對方那數值的一半的傷害，我回復同樣數值的生命。"
+		"title": "不動遊星",
+		"control": 0,
+        "icon": 1,
+		"ploat": "永續陷阱{}，特殊召喚墓地中存在的LV2以下的怪獸。",
+        "isStartEvent": false
 	},
 	{
 		"index": 29,
-		"title": "遊星",
+		"title": "不動遊星",
 		"control": 0,
-		"ploat": "召喚%ls。"
+        "icon": 1,
+		"ploat": "聚集的思念在此化為新生的力量，成為光芒耀眼的道路吧！同調召喚！燃燒吧！{}",
+        "isStartEvent": false
 	},
 	{
 		"index": 30,
-		"title": "遊星",
+		"title": "不動遊星",
 		"control": 0,
-		"ploat": "由於我場上有同調怪獸出現，特殊召喚墓地中的%ls！"
+        "icon": 1,
+		"ploat": "由於{}的效果，抽1張卡！",
+        "isStartEvent": false
 	},
 	{
 		"index": 31,
-		"title": "遊星",
-		"control": 0,
-		"ploat": "永續陷阱%ls，特殊召喚墓地中存在的LV2以下的怪獸。"
+		"title": "暗迪克皮塔",
+		"control": 1,
+        "icon": 2,
+		"ploat": "暗痣人絕不會被打倒，與黑色印記一起，會不斷的複活。",
+        "isWinDuel": true
 	},
 	{
 		"index": 32,
-		"title": "遊星",
+		"title": "不動遊星",
 		"control": 0,
-		"ploat": "聚集的思念在此化為新生的力量，成為光芒耀眼的道路吧！同調召喚！燃燒吧！%ls"
+        "icon": 1,
+		"ploat": "你說暗痣人？"
 	},
 	{
 		"index": 33,
-		"title": "遊星",
-		"control": 0,
-		"ploat": "由於%ls的效果，抽1張卡！"
+		"title": "暗迪克皮塔",
+		"control": 1,
+        "icon": 2,
+		"ploat": "你們持有的紅色印記，不久也會迎來染成漆黑的時刻！",
+        "isStartEvent": false
 	},
 	{
 		"index": 34,
-		"title": "暗迪克皮塔",
-		"control": 1,
-		"ploat": "%ls進行攻擊時，對方在傷害步驟結束前不能發動魔法陷阱卡。"
+		"title": "不動遊星",
+		"control": 0,
+        "icon": 1,
+		"ploat": "你究竟知道些什麼！",
+        "isLoseDuel": true
 	},
 	{
 		"index": 35,
 		"title": "暗迪克皮塔",
 		"control": 1,
-		"ploat": "暗痣人絕不會被打倒，與黑色印記一起，會不斷的複活。"
+        "icon": 2,
+		"ploat": "那就是這場決鬥有力地訴說著的。"
 	},
 	{
 		"index": 36,
-		"title": "遊星",
+		"title": "不動遊星",
 		"control": 0,
-		"ploat": "你說暗痣人？"
+        "icon": 1,
+		"ploat": "什麼？！"
 	},
 	{
 		"index": 37,
 		"title": "暗迪克皮塔",
 		"control": 1,
-		"ploat": "你們持有的紅色印記，不久也會迎來染成漆黑的時刻！"
-	},
-	{
-		"index": 38,
-		"title": "遊星",
-		"control": 0,
-		"ploat": "你究竟知道些什麼！"
-	},
-	{
-		"index": 39,
-		"title": "暗迪克皮塔",
-		"control": 1,
-		"ploat": "那就是這場決鬥有力地訴說著的。"
-	},
-	{
-		"index": 40,
-		"title": "遊星",
-		"control": 0,
-		"ploat": "什麼？！"
-	},
-	{
-		"index": 41,
-		"title": "暗迪克皮塔",
-		"control": 1,
+        "icon": 2,
 		"ploat": "你依靠的人全都會從這世界消失，就如你場上的怪獸一樣。"
 	},
 	{
-		"index": 42,
-		"title": "遊星",
+		"index": 38,
+		"title": "不動遊星",
 		"control": 0,
-		"ploat": "別胡扯了！"
+        "icon": 1,
+		"ploat": "別胡扯了！",
+        "isStartEvent": false
 	}
 
 ]

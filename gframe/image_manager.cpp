@@ -642,10 +642,12 @@ bool ImageManager::Initial() {
     modeBody[0] = driver->getTexture(0);
 	for (uint32_t i = 1; i <= CHAPTER; i++) {
 		snprintf(buff, 100, "./mode/story/body/%d.png", i);
-		modeBody[i] = driver->getTexture(buff);
+        if(Utils::FileExists(Utils::ToPathString(buff)))
+		    modeBody[i] = driver->getTexture(buff);
         if(modeBody[i] == nullptr) {
             snprintf(buff, 100, "./mode/story/body/%d.jpg", i);
-            modeBody[i] = driver->getTexture(buff);
+			if(Utils::FileExists(Utils::ToPathString(buff)))
+		        modeBody[i] = driver->getTexture(buff);
         }
 	}
     ///kdiy/////
