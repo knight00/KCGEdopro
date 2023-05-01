@@ -151,7 +151,7 @@ void Mode::NextPlot(uint8_t step, uint32_t code) {
             gSoundManager->character[0] = 15; //Player 1 voice: Yusei
             gSoundManager->character[1] = CHARACTER_VOICE; //Player 2 voice: Dark Siner
         }
-        mainGame->btnBody->setImage(mainGame->imageManager.modeBody[chapter - 1]);
+        mainGame->btnBody->setImage(mainGame->imageManager.modeBody[chapter]);
 		mainGame->ShowElement(mainGame->wBody);
 		mainGame->ShowElement(mainGame->wPloat);
 		mainGame->stPloatInfo->setText(GetPloat().data());
@@ -4918,12 +4918,6 @@ void Game::ReloadCBRace() {
 		if(gDataManager->HasSysString(idx))
 			cbRace->addItem(gDataManager->GetSysString(idx).data(), i + 1);
 	}
-    ///////zdiy/////
-	static constexpr auto ZCG_RACE_MAX = 0x400;
-	uint32_t z_filter = 0x1;
-	for(uint32_t i = 2600; z_filter <= ZCG_RACE_MAX; i++, z_filter <<= 1)
-		cbRace->addItem(gDataManager->GetSysString(i).data(), 0x5 + z_filter);
-	///////zdiy/////
 }
 void Game::ReloadCBFilterRule() {
 	cbFilterRule->clear();

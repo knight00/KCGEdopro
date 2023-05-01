@@ -1125,13 +1125,6 @@ void DeckBuilder::StartFilter(bool force_refresh) {
 		if(selected == 0)
 			filter_race = 0;
 		else
-        /////zdiy/////
-		if(filter_race > 0x5 && ((filter_race - 0x5 == 0x1) || ((filter_race - 0x5) % 2 == 0))) {
-            filter_race -= 0x5;
-            filter_race <<= 52;
-        }
-        else
-		/////zdiy/////
 			filter_race = UINT64_C(1) << (selected - 1);
 		filter_atk = parse_filter(mainGame->ebAttack->getText(), filter_atktype);
 		filter_def = parse_filter(mainGame->ebDefense->getText(), filter_deftype);

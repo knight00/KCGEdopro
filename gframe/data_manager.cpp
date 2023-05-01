@@ -560,10 +560,6 @@ static std::wstring FormatSkill(uint64_t skill_type) {
 std::wstring DataManager::FormatRace(uint64_t race, bool isSkill) const {
 	if(isSkill) return FormatSkill(race);
 	std::wstring res;
-	///zdiy///////
-    uint64_t zcgrace = race >> 52;
-    race &= 0xffffffff;
-    ///zdiy///////
     for(uint32_t i = 0; race; race >>= 1, ++i) {
 		if(race & 0x1u) {
 			if(!res.empty())
@@ -571,15 +567,6 @@ std::wstring DataManager::FormatRace(uint64_t race, bool isSkill) const {
 			appendstring(res, GetSysString(GetRaceStringIndex(i)));
 		}
 	}
-    ///zdiy///////
-    for(uint32_t j = 2600; zcgrace; zcgrace >>= 1, ++j) {
-        if(zcgrace & 0x1u) {
-            if(!res.empty())
-                res += L'|';
-            appendstring(res, GetSysString(j));
-        }
-    }
-    ///zdiy///////
 	if(res.empty())
 		return std::wstring{ unknown_string };
 	return res;
