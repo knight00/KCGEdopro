@@ -102,7 +102,7 @@ Mode::Mode() {
 };
 std::wstring Mode::GetPloat(uint32_t code) {
 	std::wstring str = L"";
-	if(plotIndex >= modePloats[chapter - 1]->size() || plotIndex < 0) return str;
+	if(plotIndex > modePloats[chapter - 1]->size() || plotIndex < 0) return str;
 	str = modePloats[chapter - 1]->at(plotIndex).title;
 	if(code > 0)
 	    str.append(epro::format(epro::format(L"{}\n{}{}",L":",L"  ", modePloats[chapter - 1]->at(plotIndex).ploat), gDataManager->GetVirtualName(code, true)));
@@ -132,7 +132,7 @@ void Mode::PlayNextPlot(uint32_t code) {
 }
 void Mode::NextPlot(uint8_t step, uint32_t code) {
 	if(step != 0) plotStep = step;
-	if(plotIndex >= modePloats[chapter - 1]->size() || plotIndex < 0) return;
+	if(plotIndex > modePloats[chapter - 1]->size() || plotIndex < 0) return;
 	int i = modePloats[chapter - 1]->at(plotIndex).control;
 	if(i < 0 || i > 5) i = 0;
     character[i] = modePloats[chapter - 1]->at(plotIndex).icon;
@@ -170,6 +170,8 @@ void Mode::NextPlot(uint8_t step, uint32_t code) {
                 isStartDuel = modePloats[chapter - 1]->at(indx).isStartDuel;
 		    isStartEvent = modePloats[chapter - 1]->at(indx).isStartEvent;
             PlayNextPlot(code);
+            if(plotIndex > modePloats[chapter - 1]->size())
+                isStartEvent = false;
             if(isStartEvent)
                 ++plotIndex;
 			if(isStartDuel) {
@@ -4283,8 +4285,13 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
     ///kdiy/////////
     if(pcard && pcard->is_real && !pcard->text_hints.empty()) {
         std::wstring text;
-		for(std::vector<std::wstring>::size_type i = 0; i != pcard->text_hints.size(); i++)
-			text.append(epro::format(i == 0 ? L"{}" : L"\n{}", pcard->text_hints[i]));
+		for(std::vector<std::wstring>::size_type i = 0; i != pcard->text_hints.size(); i++) {
+			std::wstring texts = pcard->text_hints[i];
+			if(i == 0)
+				text.append(epro::format(L"{}", texts));
+			else
+				text.append(epro::format(L"\n{}", texts));
+		}
 	    stText->setText(text.data());
     } else
 	///kdiy/////////

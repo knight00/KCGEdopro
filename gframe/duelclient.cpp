@@ -1653,7 +1653,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		current.controler = mainGame->LocalPlayer(current.controler);
 		const auto reason = BufferIO::Read<uint32_t>(pbuf);
-        ClientCard* pcard = mainGame->dField.GetCard(previous.controler, previous.location, previous.sequence);
+        //ClientCard* pcard = mainGame->dField.GetCard(previous.controler, previous.location, previous.sequence);
         auto cd = gDataManager->GetCardData(code);
         uint32_t code2 = 0;
         if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
@@ -1830,7 +1830,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         player = mainGame->LocalPlayer(player);
         if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
             for(uint8_t index = 1; index < mainGame->mode->modePloats[chapter - 1]->size(); index++) {
-                auto controler = mainGame->mode->modePloats[chapter - 1]->at(index).control;
+                //auto controler = mainGame->mode->modePloats[chapter - 1]->at(index).control;
                 bool isWinDuel = mainGame->mode->modePloats[chapter - 1]->at(index).isWinDuel;
 				bool isLoseDuel = mainGame->mode->modePloats[chapter - 1]->at(index).isLoseDuel;
                 if(!isWinDuel && !isLoseDuel) continue;
@@ -4815,6 +4815,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				    text.append(epro::format(epro::format(L"{}", gDataManager->GetDesc(cardtext2, mainGame->dInfo.compat_mode)), gDataManager->GetName(replacetext).data()));
 			    if(cardtext3 > 0)
 				    text.append(epro::format(epro::format(L"{}", gDataManager->GetDesc(cardtext3, mainGame->dInfo.compat_mode)), gDataManager->GetName(replacetext).data()));
+			    if(cardtext4 > 0)
+				    text.append(epro::format(epro::format(L"{}", gDataManager->GetDesc(cardtext4, mainGame->dInfo.compat_mode)), gDataManager->GetName(replacetext).data()));
 			} else {
 			    text.append(epro::format(L"{}", gDataManager->GetDesc(value, mainGame->dInfo.compat_mode)));
 				if(cardtext > 0)
@@ -4823,6 +4825,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				    text.append(epro::format(L"{}", gDataManager->GetDesc(cardtext2, mainGame->dInfo.compat_mode)));
 			    if(cardtext3 > 0)
 				    text.append(epro::format(L"{}", gDataManager->GetDesc(cardtext3, mainGame->dInfo.compat_mode)));
+			    if(cardtext4 > 0)
+				    text.append(epro::format(L"{}", gDataManager->GetDesc(cardtext4, mainGame->dInfo.compat_mode)));
 			}
 		}
 		//kdiy////////
