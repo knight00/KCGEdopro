@@ -1107,15 +1107,6 @@ void Game::Initialize() {
 			defaultStrings.emplace_back(chkRace[i], string);
 		}
 	}
-	/////zdiy/////
-	int j = 0;
-	for(int i = 25; i < 36; ++i) {
-		chkRace[i] = env->addCheckBox(false, Scale(10 + (i % 4) * 90, 25 + (i / 4) * 25, 100 + (i % 4) * 90, 50 + (i / 4) * 25),
-									  wANRace, CHECK_RACE, gDataManager->GetSysString(2600 + j).data());
-		defaultStrings.emplace_back(chkRace[i], 2600 + j);
-		++j;
-	}
-	/////zdiy/////
 	//selection hint
 	stHintMsg = env->addStaticText(L"", Scale(500, 60, 820, 90), true, false, 0, -1, false);
 	stHintMsg->setBackgroundColor(skin::DUELFIELD_TOOLTIP_TEXT_BACKGROUND_COLOR_VAL);
