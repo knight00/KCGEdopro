@@ -49,17 +49,17 @@ static void UpdateDeck() {
 	BufferIO::Write<uint32_t>(pdeck, static_cast<uint32_t>(deck.side.size()));
 	for(const auto& pcard : deck.main)
         ///////kdiy/////////
-        if(!(pcard->code == 111 || pcard->code == 112 || pcard->code == 211 || pcard->code == 208))
+        if(!(pcard->code == 111 || pcard->code == 112 || pcard->code == 211 || pcard->code == 208 || pcard->code == 85 || pcard->code == 86))
         ///////kdiy/////////
 		BufferIO::Write<uint32_t>(pdeck, pcard->code);
 	for(const auto& pcard : deck.extra)
         ///////kdiy/////////
-        if(!(pcard->code == 111 || pcard->code == 112 || pcard->code == 211 || pcard->code == 208))
+        if(!(pcard->code == 111 || pcard->code == 112 || pcard->code == 211 || pcard->code == 208 || pcard->code == 85 || pcard->code == 86))
         ///////kdiy/////////
 		BufferIO::Write<uint32_t>(pdeck, pcard->code);
 	for(const auto& pcard : deck.side)
         ///////kdiy/////////
-        if(!(pcard->code == 111 || pcard->code == 112 || pcard->code == 211 || pcard->code == 208))
+        if(!(pcard->code == 111 || pcard->code == 112 || pcard->code == 211 || pcard->code == 208 || pcard->code == 85 || pcard->code == 86))
         ///////kdiy/////////
 		BufferIO::Write<uint32_t>(pdeck, pcard->code);
 	DuelClient::SendBufferToServer(CTOS_UPDATE_DECK, deckbuf, pdeck - deckbuf);
