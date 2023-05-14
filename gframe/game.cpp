@@ -3751,6 +3751,12 @@ void Game::RefreshAiDecks() {
 					bot.name = BufferIO::DecodeUTF8(obj.at("name").get_ref<std::string&>());
 					bot.deck = BufferIO::DecodeUTF8(obj.at("deck").get_ref<std::string&>());
 					/////kdiy////////
+                    if(obj.find("vip") != obj.end())
+                        bot.vip = obj.at("vip").get<bool>();
+#ifndef VIP
+                    if(bot.vip)
+                        continue;
+#endif
 					if(obj.find("dialog") != obj.end())
 					    bot.dialog = BufferIO::DecodeUTF8(obj.at("dialog").get_ref<std::string&>());
                     else
