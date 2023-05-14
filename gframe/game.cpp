@@ -3988,6 +3988,9 @@ void Game::UpdateRepoInfo(const GitRepo* repo, RepoGui* grepo) {
 		}
 	} else {
 		if(repo->history.warning.size()) {
+            ////kdiy/////////
+            git_error = true;
+            ////kdiy/////////
 			grepo->history_button1->setText(gDataManager->GetSysString(1448).data());
 			defaultStrings.emplace_back(grepo->history_button1, 1448);
 			grepo->history_button2->setText(gDataManager->GetSysString(1448).data());
