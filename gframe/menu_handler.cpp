@@ -219,9 +219,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->HideElement(mainGame->wRoomListPlaceholder);
 				mainGame->ShowElement(mainGame->wMainMenu);
 				////kdiy////////
-				#ifdef EK
+#ifdef EK
 				mainGame->ShowElement(mainGame->wQQ);
-				#endif
+#endif
 				////kdiy////////
 				break;
 			}
@@ -241,9 +241,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->btnJoinCancel->setEnabled(true);
 				mainGame->HideElement(mainGame->wMainMenu);
 				////kdiy////////
-				#ifdef EK
+#ifdef EK
 				mainGame->HideElement(mainGame->wQQ);
-				#endif
+#endif
 				////kdiy////////
 				mainGame->ShowElement(mainGame->wLanWindow);
 				break;
@@ -277,9 +277,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->HideElement(mainGame->wLanWindow);
 				mainGame->ShowElement(mainGame->wMainMenu);
 				////kdiy////////
-				#ifdef EK
+#ifdef EK
 				mainGame->ShowElement(mainGame->wQQ);
-				#endif
+#endif
 				////kdiy////////
 				break;
 			}
@@ -411,10 +411,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			case BUTTON_LOCAL_HOST_CONFIRM: {
 				auto selected = mainGame->serverChoice2->getSelected();
 				if(selected < 0) break;
-				std::pair<uint32_t, uint16_t> serverinfo;
 				try {
-					ServerInfo server = ServerLobby::serversVector2[selected];
-					serverinfo = DuelClient::ResolveServer(server.address, server.duelport);
+					const auto serverinfo = ServerLobby::serversVector2[selected].Resolved();
 					std::wstring pass = L"";
 					std::wstring symbol = L"#";
 					if(mainGame->chkAI->isChecked()) {
@@ -460,7 +458,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 						break;
 					}
 					mainGame->dInfo.secret.pass = pass;
-					if(DuelClient::StartClient(serverinfo.first, serverinfo.second, 0, false)) {
+					if(DuelClient::StartClient(serverinfo.address, serverinfo.port, 0, false)) {
 						mainGame->btnCreateHost->setEnabled(false);
 						mainGame->btnJoinHost->setEnabled(false);
 						mainGame->btnJoinCancel->setEnabled(false);
@@ -802,7 +800,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				///////kdiy///////
 				mainGame->wCharacter->setVisible(false);
 				mainGame->wCharacterSelect->setVisible(false);
-				//////kdiy/////				
+				//////kdiy/////
 				DuelClient::SendPacketToServer(CTOS_HS_START);
 				break;
 			}
@@ -832,9 +830,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			case BUTTON_REPLAY_MODE: {
 				mainGame->HideElement(mainGame->wMainMenu);
 				////kdiy////////
-				#ifdef EK
+#ifdef EK
 				mainGame->HideElement(mainGame->wQQ);
-				#endif
+#endif
 				////kdiy////////
 				mainGame->stReplayInfo->setText(L"");
 				mainGame->btnLoadReplay->setEnabled(false);
@@ -954,9 +952,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->ShowElement(mainGame->wMainMenu);
 				////kdiy////////
                 mainGame->HideElement(mainGame->wCharacterReplay);
-				#ifdef EK
+#ifdef EK
 				mainGame->ShowElement(mainGame->wQQ);
-				#endif
+#endif
 				////kdiy////////
 				break;
 			}
@@ -1093,9 +1091,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->HideElement(mainGame->wSinglePlay);
 				mainGame->ShowElement(mainGame->wMainMenu);
 				////kdiy////////
-				#ifdef EK
+#ifdef EK
 				mainGame->ShowElement(mainGame->wQQ);
-				#endif
+#endif
 				////kdiy////////
 				break;
 			}
@@ -1421,12 +1419,19 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					mainGame->cbEntertainmentMode_1Bot->setEnabled(false);
 					mainGame->mode->SetRule(mainGame->mode->modeIndex);
 					DuelClient::is_local_host = false;
-					uint16_t host_port = std::stoi(gGameConfig->serverport);
+					uint16_t host_port;
+					try {
+						host_port = static_cast<uint16_t>(std::stoul(mainGame->ebHostPort->getText()));
+					}
+					catch(...) {
+						break;
+					}
                     if(!NetServer::StartServer(host_port)) {
                         mainGame->mode->isMode = false;
                         break;
                     }
-                    if(!DuelClient::StartClient(0x100007F, host_port)) {
+					const auto ip = 0x100007F; //127.0.0.1 in network byte order
+					if(!DuelClient::StartClient({ &ip, epro::Address::INET }, host_port)) {
                         NetServer::StopServer();
                         mainGame->mode->isMode = false;
                         break;
@@ -1936,9 +1941,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 						mainGame->cbDBDecks->setSelected(-1);
 						mainGame->HideElement(mainGame->wMainMenu);
 						//////kdiy/////
-						#ifdef EK
+#ifdef EK
 						mainGame->HideElement(mainGame->wQQ);
-						#endif
+#endif
 						//////kdiy/////
 						mainGame->deckBuilder.Initialize();
 						return true;

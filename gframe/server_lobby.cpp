@@ -289,12 +289,6 @@ void ServerLobby::JoinServer(bool host) {
 	auto selected = mainGame->serverChoice->getSelected();
 	if (selected < 0) return;
 	const auto serverinfo = serversVector[selected].Resolved();
-	///////kdiy/////////
-	if(server.address == BufferIO::EncodeUTF8(L"default")) {
-		server.address = BufferIO::EncodeUTF8(L"124.222.111.91");
-		serverinfo.port = 18000;
-	}
-	///////kdiy/////////
 	if(serverinfo.address.family == epro::Address::UNK)
 		return;
 	if(host) {
@@ -325,6 +319,10 @@ void ServerLobby::JoinServer(bool host) {
 const epro::Host& ServerInfo::Resolved() const {
 	if(!resolved) {
 		try {
+			///////kdiy/////////
+			if (address == BufferIO::EncodeUTF8(L"default")) resolved_address = epro::Host::resolve(BufferIO::EncodeUTF8(L"124.222.111.91"), 18000);
+			else
+			///////kdiy/////////
 			resolved_address = epro::Host::resolve(address, duelport);
 			resolved = true;
 		} catch(const std::exception& e) {
