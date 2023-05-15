@@ -17,6 +17,7 @@
 #include "utils_gui.h"
 #include "custom_skin_enum.h"
 #include "game_config.h"
+#include "address.h"
 
 namespace ygo {
 
@@ -287,21 +288,17 @@ void ServerLobby::JoinServer(bool host) {
 	mainGame->ebNickName->setText(mainGame->ebNickNameOnline->getText());
 	auto selected = mainGame->serverChoice->getSelected();
 	if (selected < 0) return;
-	std::pair<uint32_t, uint16_t> serverinfo;
-	try {
-		const ServerInfo& server = serversVector[selected];
-		///////kdiy/////////
-		if(server.address == BufferIO::EncodeUTF8(L"default")) serverinfo = DuelClient::ResolveServer(BufferIO::EncodeUTF8(L"124.222.111.91"), 18000);
-		else
-		///////kdiy/////////
-		serverinfo = DuelClient::ResolveServer(server.address, server.duelport);
+	const auto serverinfo = serversVector[selected].Resolved();
+	///////kdiy/////////
+	if(server.address == BufferIO::EncodeUTF8(L"default")) {
+		server.address = BufferIO::EncodeUTF8(L"124.222.111.91");
+		serverinfo.port = 18000;
 	}
-	catch(const std::exception& e) {
-		ErrorLog("Exception occurred: {}", e.what());
+	///////kdiy/////////
+	if(serverinfo.address.family == epro::Address::UNK)
 		return;
-	}
 	if(host) {
-		if(!DuelClient::StartClient(serverinfo.first, serverinfo.second))
+		if(!DuelClient::StartClient(serverinfo.address, serverinfo.port))
 			return;
 	} else {
 		//client
@@ -320,10 +317,21 @@ void ServerLobby::JoinServer(bool host) {
 			mainGame->dInfo.secret.pass = text;
 		} else
 			mainGame->dInfo.secret.pass.clear();
-		if(!DuelClient::StartClient(serverinfo.first, serverinfo.second, room->id, false))
+		if(!DuelClient::StartClient(serverinfo.address, serverinfo.port, room->id, false))
 			return;
 	}
 }
 
+const epro::Host& ServerInfo::Resolved() const {
+	if(!resolved) {
+		try {
+			resolved_address = epro::Host::resolve(address, duelport);
+			resolved = true;
+		} catch(const std::exception& e) {
+			ErrorLog("Exception occurred: {}", e.what());
+		}
+	}
+	return resolved_address;
+}
 
 }
