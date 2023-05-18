@@ -413,6 +413,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				if(selected < 0) break;
 				try {
 					const auto serverinfo = ServerLobby::serversVector2[selected].Resolved();
+					if(serverinfo.address.family == epro::Address::UNK)
+					    return;
 					std::wstring pass = L"";
 					std::wstring symbol = L"#";
 					if(mainGame->chkAI->isChecked()) {

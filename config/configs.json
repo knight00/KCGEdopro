@@ -1,0 +1,185 @@
+{
+	"repos": [
+		{
+			"url": "default/Ch",
+			"repo_name": "語言更新",
+			"repo_path": "./config/languages",
+			"should_read": true
+		},				
+		{
+			"url": "default/LFLists",
+			"repo_name": "禁卡表",
+			"repo_path": "./lflists",
+			"lflist_path": ".",
+			"should_read": true
+		},
+		{
+			"url": "default/Puzzles",
+			"repo_name": "殘局",
+			"repo_path": "./puzzles/Canon collection",
+			"should_read": true
+		},
+        {
+			"url": "default/BabelCDB",
+			"repo_name": "卡片更新",
+			"repo_path": "./cdb",
+			"data_path": ".",
+			"should_read": true
+		},
+		{
+			"url": "default/lua",
+			"repo_name": "卡片更新2",
+			"repo_path": "./repositories/lua",
+            "data_path": ".",
+			"script_path": ".",
+			"should_read": true
+		},	
+		{
+			"url": "default/KCG",
+			"repo_name": "KCG 卡片更新",
+			"repo_path": "./repositories/kcg",
+			"has_core": true,
+			"core_path": "bin",
+			"data_path": "",
+			"script_path": "script",
+			"should_read": true
+		}
+	],
+	"urls": [
+		{
+			"url": "jp",
+			"type": "hdpic"
+		},		
+		{
+			"url": "default",
+			"type": "pic"
+		},
+		{
+			"url": "default",
+			"type": "field"
+		},
+        {
+			"url": "https://storage.googleapis.com/ygoprodeck.com/pics/{}.jpg",
+			"type": "pic"
+		},
+		{
+			"url": "https://storage.googleapis.com/ygoprodeck.com/pics_artgame/{}.jpg",
+			"type": "field"
+		},
+		{
+			"url": "default",
+			"type": "cover"
+		},
+		{
+			"url": "default",
+			"type": "closeup"
+		}
+	],
+	"servers": [
+		{
+			"name": "KCG 服務器",
+			"address": "default",
+			"duelport": 18000,
+			"roomaddress": "default",
+			"roomlistport": 18001
+		},
+		{
+			"name": "Edopro 亞洲服",
+			"address": "ignis-duel.ygopro.cn",
+			"duelport": 44444,
+			"roomaddress": "ignis-room.ygopro.cn",
+			"roomlistprotocol": "https",
+			"roomlistport": 443
+		},
+		{
+			"name": "Edopro 歐洲娛樂服",
+			"address": "eu.projectignis.org",
+			"duelport": 7912,
+			"roomaddress": "eu.projectignis.org",
+			"roomlistprotocol": "http",
+			"roomlistport": 7923
+		},
+		{
+			"name": "Edopro 歐洲競技服",
+			"address": "eu.projectignis.org",
+			"duelport": 7911,
+			"roomaddress": "eu.projectignis.org",
+			"roomlistprotocol": "http",
+			"roomlistport": 7922
+		},
+		{
+			"name": "Edopro 美國娛樂服",
+			"address": "us.projectignis.org",
+			"duelport": 7911,
+			"roomaddress": "us.projectignis.org",
+			"roomlistprotocol": "http",
+			"roomlistport": 7922
+		},
+		{
+			"name": "Edopro 美國競技服",
+			"address": "us.projectignis.org",
+			"duelport": 7912,
+			"roomaddress": "us.projectignis.org",
+			"roomlistprotocol": "http",
+			"roomlistport": 7923
+		}
+	],
+    "oldservers": [
+		{
+			"name": "233服",
+			"address": "s1.ygo233.com",
+			"duelport": 233
+		},
+		{
+			"name": "233 第2服",
+			"address": "s2.ygo233.com",
+			"duelport": 233
+		},
+		{
+			"name": "222服",
+			"address": "ayane.mycard.moe",
+			"duelport": 222
+		},
+		{
+			"name": "222 第2服",
+			"address": "koishi.momobako.com",
+			"duelport": 222
+		},
+		{
+			"name": "222 第3服",
+			"address": "222diy.momobako.com",
+			"duelport": 222
+		},
+		{
+			"name": "GX服",
+			"address": "dragonn73.oicp.net",
+			"duelport": 2015
+		},
+		{
+			"name": "Zexal服",
+			"address": "z4.momobako.com",
+			"duelport": 44441
+		},
+		{
+			"name": "94服",
+			"address": "ygo94.xyz",
+			"duelport": 20094
+		},
+		{
+			"name": "81服",
+			"address": "103.79.77.219",
+			"duelport": 11037
+		},
+		{
+			"name": "DTCG服",
+			"address": "server.ygoanime.com",
+			"duelport": 1000
+		},
+		{
+			"name": "WIXOSS服",
+			"address": "server.ygoanime.com",
+			"duelport": 4000
+		}
+    ],
+	"posixPathExtension": "/usr/local/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands"
+}

@@ -73,7 +73,6 @@ ffmpeg/
 updates/
 diy/
 KCGEdopro.7z
-config/configs.json
 config/system.conf
 config/system_user.conf
 moviesace.zip
