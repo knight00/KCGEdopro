@@ -412,9 +412,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				auto selected = mainGame->serverChoice2->getSelected();
 				if(selected < 0) break;
 				try {
-					const auto serverinfo = ServerLobby::serversVector2[selected].Resolved();
-					if(serverinfo.address.family == epro::Address::UNK)
-					    return;
+                    const auto serverinfo = epro::Host::resolve(ServerLobby::serversVector2[selected].address, ServerLobby::serversVector2[selected].duelport);
 					std::wstring pass = L"";
 					std::wstring symbol = L"#";
 					if(mainGame->chkAI->isChecked()) {

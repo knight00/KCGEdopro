@@ -137,16 +137,11 @@
 		},
 		{
 			"name": "222服",
-			"address": "ayane.mycard.moe",
-			"duelport": 222
-		},
-		{
-			"name": "222 第2服",
 			"address": "koishi.momobako.com",
 			"duelport": 222
 		},
 		{
-			"name": "222 第3服",
+			"name": "222 第2服",
 			"address": "222diy.momobako.com",
 			"duelport": 222
 		},

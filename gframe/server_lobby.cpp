@@ -320,7 +320,7 @@ const epro::Host& ServerInfo::Resolved() const {
 	if(!resolved) {
 		try {
 			///////kdiy/////////
-			if (address == BufferIO::EncodeUTF8(L"default")) resolved_address = epro::Host::resolve(BufferIO::EncodeUTF8(L"124.222.111.91"), 18000);
+			if (address == "default") resolved_address = epro::Host::resolve(BufferIO::EncodeUTF8(L"124.222.111.91"), 18000);
 			else
 			///////kdiy/////////
 			resolved_address = epro::Host::resolve(address, duelport);
