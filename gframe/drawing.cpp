@@ -778,7 +778,6 @@ void Game::DrawStatus(ClientCard* pcard) {
 	auto rk = adFont->getDimensionustring(pcard->rkstring);
 	auto lk = adFont->getDimensionustring(pcard->linkstring);
 	//////kdiy////////
-	
 	const auto slash = adFont->getDimensionustring(L"/");
 	const auto half_slash_width = static_cast<int>(std::floor(slash.Width / 2));
 
@@ -796,7 +795,21 @@ void Game::DrawStatus(ClientCard* pcard) {
 					   padding_1111, GetDefColor(), 0xff000000);
 	}
 	////kdiy//////////
-	if (pcard->level != 0 && pcard->rank != 0 && pcard->link != 0) {
+	// if (pcard->level != 0 && pcard->rank != 0) {
+	// 	DrawShadowText(adFont, L"/", irr::core::recti(x2 - half_slash_width, y2, x2 + half_slash_width, y2 + 1),
+	// 	               padding_1111, 0xffffffff, 0xff000000, true);
+		//DrawShadowText(adFont, pcard->lvstring, irr::core::recti(x2 - half_slash_width - atk.Width - slash.Width, y2, x2 - half_slash_width, y2 + 1),
+					   //padding_1111, GetLevelColor(), 0xff000000);
+		//DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2 + half_slash_width + slash.Width, y2, x2 - half_slash_width, y2 + 1),
+					   //padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
+	// else if (pcard->rank != 0)
+	// 	DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1011, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
+	// else if (pcard->level != 0)
+	// 	DrawShadowText(adFont, pcard->lvstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1011, GetLevelColor(), 0xff000000);
+	// else if (pcard->link != 0)
+	// 	DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1011, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
+	//has lv, rk, lk
+	if ((pcard->level != 0 || (pcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL))) && (pcard->rank != 0 || (pcard->type & TYPE_XYZ)) && (pcard->link != 0 || (pcard->type & TYPE_LINK))) {
 		DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2 - std::floor(rk.Width / 2), y2, x2 + std::floor(rk.Width / 2), y2 + 1),
 					   padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000, true);
 		DrawShadowText(adFont, L"/", irr::core::recti(x2 - std::floor(rk.Width / 2) - slash.Width, y2, x2 - std::floor(rk.Width / 2), y2 + 1),
@@ -807,41 +820,38 @@ void Game::DrawStatus(ClientCard* pcard) {
 					   padding_1111, GetLevelColor(), 0xff000000);
 		DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x2 + std::floor(rk.Width / 2) + slash.Width, y2, x2 + std::floor(rk.Width / 2) + slash.Width + lk.Width, y2 + 1),
 		               padding_1111, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
-	} else if (pcard->link != 0 && pcard->rank != 0) {
+	//has lk, rk
+	} else if ((pcard->link != 0 || (pcard->type & TYPE_LINK)) && (pcard->rank != 0 || (pcard->type & TYPE_XYZ))) {
 		DrawShadowText(adFont, L"/", irr::core::recti(x2 - std::floor(slash.Width / 2), y2, x2 + std::floor(slash.Width / 2), y2 + 1),
 		               padding_1111, 0xffffffff, 0xff000000, true);
 		DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2 - std::floor(slash.Width / 2) - rk.Width, y2, x2 - std::floor(slash.Width / 2), y2 + 1),
 					   padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
 		DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x2 + std::floor(slash.Width / 2), y2, x2 + std::floor(slash.Width / 2) + lk.Width, y2 + 1),
 					   padding_1011, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
-	} else if (pcard->link != 0 && pcard->level != 0) {
+	//has lk, lv
+	} else if ((pcard->link != 0 || (pcard->type & TYPE_LINK)) && (pcard->level != 0 || (pcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL)))) {
 		DrawShadowText(adFont, L"/", irr::core::recti(x2 - std::floor(slash.Width / 2), y2, x2 + std::floor(slash.Width / 2), y2 + 1),
 		               padding_1111, 0xffffffff, 0xff000000, true);
 		DrawShadowText(adFont, pcard->lvstring, irr::core::recti(x2 - half_slash_width - lv.Width, y2, x2 - half_slash_width, y2 + 1),
 					   padding_1111, GetLevelColor(), 0xff000000);
 		DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x2 + std::floor(slash.Width / 2), y2, x2 + std::floor(slash.Width / 2) + lk.Width, y2 + 1),
 					   padding_1011, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
-	} else
-	////kdiy//////////
-	if (pcard->level != 0 && pcard->rank != 0) {
+	//has lv, rk
+	} else if ((pcard->level != 0 || (pcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL))) && (pcard->rank != 0 || (pcard->type & TYPE_XYZ))) {
 		DrawShadowText(adFont, L"/", irr::core::recti(x2 - half_slash_width, y2, x2 + half_slash_width, y2 + 1),
 		               padding_1111, 0xffffffff, 0xff000000, true);
-		////kdiy//////////
-		//DrawShadowText(adFont, pcard->lvstring, irr::core::recti(x2 - half_slash_width - atk.Width - slash.Width, y2, x2 - half_slash_width, y2 + 1),
-					   //padding_1111, GetLevelColor(), 0xff000000);
-		//DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2 + half_slash_width + slash.Width, y2, x2 - half_slash_width, y2 + 1),
-					   //padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
 		DrawShadowText(adFont, pcard->lvstring, irr::core::recti(x2 - half_slash_width - lv.Width, y2, x2 - half_slash_width, y2 + 1),
 					   padding_1111, GetLevelColor(), 0xff000000);
 		DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2 + half_slash_width, y2, x2 + half_slash_width + rk.Width, y2 + 1),
 					   padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
-		////kdiy//////////
-	}
-	else if (pcard->rank != 0)
+	//has rk
+	} else if (pcard->rank != 0 || (pcard->type & TYPE_XYZ))
 		DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1011, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
-	else if (pcard->level != 0)
+	//has lv
+	else if (pcard->level != 0 || !(pcard->type & (TYPE_XYZ | TYPE_LINK)))
 		DrawShadowText(adFont, pcard->lvstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1011, GetLevelColor(), 0xff000000);
-	else if (pcard->link != 0)
+	//has lk
+	else if (pcard->link != 0 || (pcard->type & TYPE_LINK))
 		DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1011, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
 }
 /*
@@ -1542,17 +1552,36 @@ void Game::DrawDeckBd() {
 			if(ptr->type & TYPE_MONSTER) {
 				DrawShadowTextPos(textFont, gDataManager->GetName(ptr->code), Resize(859, height_offset + 164 + i * 66, 955, height_offset + 185 + i * 66),
 								  Resize(860, height_offset + 165 + i * 66, 955, height_offset + 185 + i * 66), 0xffffffff, 0xff000000, false, false, &rect);
-				if(ptr->type & TYPE_LINK) {
-					DrawShadowTextPos(textFont, epro::format(L"{}/{}", gDataManager->FormatAttribute(ptr->attribute), gDataManager->FormatRace(ptr->race)),
+				///////kdiy////////////
+				// if(ptr->type & TYPE_LINK) {
+				// 	DrawShadowTextPos(textFont, epro::format(L"{}/{}", gDataManager->FormatAttribute(ptr->attribute), gDataManager->FormatRace(ptr->race)),
+				// 					  Resize(859, height_offset + 186 + i * 66, 955, height_offset + 207 + i * 66),
+				// 					  Resize(860, height_offset + 187 + i * 66, 955, height_offset + 207 + i * 66), 0xffffffff, 0xff000000, false, false, &rect);
+				// } else {
+				// 	const wchar_t* form = L"\u2605";
+				// 	if(ptr->type & TYPE_XYZ) form = L"\u2606";
+				// 	DrawShadowTextPos(textFont, epro::format(L"{}/{} {}{}", gDataManager->FormatAttribute(ptr->attribute), gDataManager->FormatRace(ptr->race), form, ptr->level),
+				// 					  Resize(859, height_offset + 186 + i * 66, 955, height_offset + 207 + i * 66),
+				// 					  Resize(860, height_offset + 187 + i * 66, 955, height_offset + 207 + i * 66), 0xffffffff, 0xff000000, false, false, &rect);
+				// }
+				//has lv, rk
+				if ((ptr->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL)) && (ptr->type & TYPE_XYZ)) {
+					DrawShadowTextPos(textFont, epro::format(L"{}/{} {}{}{}", gDataManager->FormatAttribute(ptr->attribute), gDataManager->FormatRace(ptr->race), L"\u2605", L"\u2606", ptr->level),
 									  Resize(859, height_offset + 186 + i * 66, 955, height_offset + 207 + i * 66),
 									  Resize(860, height_offset + 187 + i * 66, 955, height_offset + 207 + i * 66), 0xffffffff, 0xff000000, false, false, &rect);
-				} else {
+				//no link
+				} else if(!(ptr->type & TYPE_LINK)){
 					const wchar_t* form = L"\u2605";
 					if(ptr->type & TYPE_XYZ) form = L"\u2606";
 					DrawShadowTextPos(textFont, epro::format(L"{}/{} {}{}", gDataManager->FormatAttribute(ptr->attribute), gDataManager->FormatRace(ptr->race), form, ptr->level),
 									  Resize(859, height_offset + 186 + i * 66, 955, height_offset + 207 + i * 66),
 									  Resize(860, height_offset + 187 + i * 66, 955, height_offset + 207 + i * 66), 0xffffffff, 0xff000000, false, false, &rect);
+				} else {
+					DrawShadowTextPos(textFont, epro::format(L"{}/{}", gDataManager->FormatAttribute(ptr->attribute), gDataManager->FormatRace(ptr->race)),
+									  Resize(859, height_offset + 186 + i * 66, 955, height_offset + 207 + i * 66),
+									  Resize(860, height_offset + 187 + i * 66, 955, height_offset + 207 + i * 66), 0xffffffff, 0xff000000, false, false, &rect);
 				}
+				///////kdiy////////////
 			} else {
 				DrawShadowTextPos(textFont, gDataManager->GetName(ptr->code), Resize(859, height_offset + 164 + i * 66, 955, height_offset + 185 + i * 66),
 								  Resize(860, height_offset + 165 + i * 66, 955, height_offset + 185 + i * 66), 0xffffffff, 0xff000000, false, false, &rect);
@@ -1563,53 +1592,78 @@ void Game::DrawDeckBd() {
 				auto scope = gDataManager->FormatScope(ptr->ot, true);
 				if(ptr->type & TYPE_MONSTER) {
 					std::wstring buffer;
+					///////kdiy////////////
+					// if(ptr->type & TYPE_LINK) {
+						//if(ptr->attack < 0)
+							//buffer = epro::format(L"?/Link {}\t", ptr->level);
+						// else
+						// 	buffer = epro::format(L"{}/Link {}\t", ptr->attack, ptr->level);
+					// } else {
+					// 	if(ptr->attack < 0 && ptr->defense < 0)
+					// 		buffer = L"?/?";
+					// 	else if(ptr->attack < 0)
+					// 		buffer = epro::format(L"?/{}", ptr->defense);
+					// 	else if(ptr->defense < 0)
+					// 		buffer = epro::format(L"{}/?", ptr->attack);
+					// 	else
+					// 		buffer = epro::format(L"{}/{}", ptr->attack, ptr->defense);
+					int link_marker = ptr->link_marker;
+					int32_t mixlink = 0;
 					if(ptr->type & TYPE_LINK) {
-						if(ptr->attack < 0)
-							buffer = epro::format(L"?/Link {}\t", ptr->level);
-						///////kdiy////////////
-						else if(ptr->attack >= 9999999)
-						    buffer = L"(\u221E)/Link " + epro::format(L"{}	", ptr->level);
-						else if(ptr->attack >= 8888888)
-						    buffer = L"\u221E/Link " + epro::format(L"{}	", ptr->level);
-						///////kdiy////////////
-						else
-							buffer = epro::format(L"{}/Link {}\t", ptr->attack, ptr->level);
-					} else {
-						if(ptr->attack < 0 && ptr->defense < 0)
-							buffer = L"?/?";
-						///////kdiy////////////
+						if(link_marker & LINK_MARKER_BOTTOM_LEFT) mixlink += 1;
+						if(link_marker & LINK_MARKER_BOTTOM_RIGHT) mixlink += 1;
+						if(link_marker & LINK_MARKER_BOTTOM) mixlink += 1;
+						if(link_marker & LINK_MARKER_LEFT) mixlink += 1;
+						if(link_marker & LINK_MARKER_RIGHT) mixlink += 1;
+						if(link_marker & LINK_MARKER_TOP) mixlink += 1;
+						if(link_marker & LINK_MARKER_TOP_LEFT) mixlink += 1;
+						if(link_marker & LINK_MARKER_TOP_RIGHT) mixlink += 1;
+					} else mixlink = ptr->level;
+					std::wstring ltext;
+					if (!(ptr->type & TYPE_LINK)) {
+						if (ptr->attack < 0 && ptr->defense < 0)
+						    buffer = L"?/?";
 						else if(ptr->attack >= 9999999 && ptr->defense >= 9999999)
 						    buffer = epro::format(L"(\u221E)/(\u221E)");
-						else if(ptr->attack >= 9999999 && ptr->defense >= 8888888)
-						    buffer = epro::format(L"(\u221E)/\u221E");
-						else if(ptr->attack >= 8888888 && ptr->defense >= 9999999)
-						    buffer = epro::format(L"\u221E/(\u221E)");
 						else if(ptr->attack >= 8888888 && ptr->defense >= 8888888)
 						    buffer = epro::format(L"\u221E/\u221E");
+						else if(ptr->attack >= 9999999 && ptr->defense >= 8888888)
+						    buffer = epro::format(L"(\u221E)/\u221E");
+						else if(ptr->attack >= 8888888 && ptr->defense>= 9999999)
+						    buffer = epro::format(L"\u221E/(\u221E)");
 						else if(ptr->attack >= 9999999 && ptr->defense >= 0)
 						    buffer = epro::format(L"(\u221E)/{}", ptr->defense);
-						else if(ptr->attack >= 0 && ptr->defense >= 9999999)
+						else if(ptr->defense >= 9999999 && ptr->attack >= 0)
 						    buffer = epro::format(L"{}/(\u221E)", ptr->attack);
 						else if(ptr->attack >= 8888888 && ptr->defense >= 0)
 						    buffer = epro::format(L"\u221E/{}", ptr->defense);
-						else if(ptr->attack >= 0 && ptr->defense >= 8888888)
+						else if(ptr->defense >= 8888888 && ptr->attack >= 0)
 						    buffer = epro::format(L"{}/\u221E", ptr->attack);
-						else if(ptr->attack >= 9999999 && ptr->defense < 0)
-						    buffer = epro::format(L"(\u221E)/?");
-						else if(ptr->defense >= 9999999 && ptr->attack < 0)
-						    buffer = epro::format(L"?/(\u221E)");
-						else if(ptr->attack >= 8888888 && ptr->defense < 0)
-						    buffer = epro::format(L"\u221E/?");
-						else if(ptr->defense >= 8888888 && ptr->attack < 0)
-						    buffer = epro::format(L"?/\u221E");
-						///////kdiy////////////
-						else if(ptr->attack < 0)
-							buffer = epro::format(L"?/{}", ptr->defense);
-						else if(ptr->defense < 0)
-							buffer = epro::format(L"{}/?", ptr->attack);
+						else if(ptr->attack < 0 && ptr->defense >= 9999999)
+						    buffer = epro::format(L"?/(\u221E)", ptr->defense);
+						else if(ptr->defense < 0 && ptr->attack >= 9999999)
+						    buffer = epro::format(L"(\u221E)/?", ptr->attack);
+						else if(ptr->attack < 0 && ptr->defense >= 8888888)
+						    buffer = epro::format(L"?/\u221E", ptr->defense);
+						else if(ptr->defense < 0 && ptr->attack >= 8888888)
+						    buffer = epro::format(L"\u221E/?", ptr->attack);
+						else if (ptr->attack < 0)
+						    buffer = epro::format(L"?/{}", ptr->defense);
+						else if (ptr->defense < 0)
+						    buffer = epro::format(L"{}/?", ptr->attack);
 						else
-							buffer = epro::format(L"{}/{}", ptr->attack, ptr->defense);
+						    buffer = epro::format(L"{}/{}", ptr->attack, ptr->defense);
+					} else {
+						if (ptr->attack < 0)
+							buffer = epro::format(L"?/LINK {}\t", mixlink);
+						else if(ptr->attack >= 9999999)
+							buffer = epro::format(L"(\u221E)/LINK {}\t", mixlink);
+						else if(ptr->attack >= 8888888)
+							buffer = epro::format(L"\u221E/LINK {}\t", mixlink);
+						else
+							buffer = epro::format(L"{}/LINK {}\t", ptr->attack, mixlink);
 					}
+					///////kdiy////////////
 					if(ptr->type & TYPE_PENDULUM)
 						buffer.append(epro::format(L" {}/{}", ptr->lscale, ptr->rscale));
 					if(!scope.empty())

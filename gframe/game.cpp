@@ -4159,115 +4159,197 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 		stSetName->setText(epro::format(L"{}{}", gDataManager->GetSysString(1329), gDataManager->FormatSetName(setcodes)).data());
 	}
 	///kdiy/////////
+	int32_t mixlink = 0;
+	if(pcard && pcard->is_change) {
+		if(cd->type & TYPE_LINK) {
+			if(pcard->rlink_marker & LINK_MARKER_BOTTOM_LEFT) mixlink += 1;
+			if(pcard->rlink_marker & LINK_MARKER_BOTTOM_RIGHT) mixlink += 1;
+			if(pcard->rlink_marker & LINK_MARKER_BOTTOM) mixlink += 1;
+			if(pcard->rlink_marker & LINK_MARKER_LEFT) mixlink += 1;
+			if(pcard->rlink_marker & LINK_MARKER_RIGHT) mixlink += 1;
+			if(pcard->rlink_marker & LINK_MARKER_TOP) mixlink += 1;
+			if(pcard->rlink_marker & LINK_MARKER_TOP_LEFT) mixlink += 1;
+			if(pcard->rlink_marker & LINK_MARKER_TOP_RIGHT) mixlink += 1;
+		} else mixlink = pcard->rlevel;
+	} else {
+		if(cd->type & TYPE_LINK) {
+			if(cd->link_marker & LINK_MARKER_BOTTOM_LEFT) mixlink += 1;
+			if(cd->link_marker & LINK_MARKER_BOTTOM_RIGHT) mixlink += 1;
+			if(cd->link_marker & LINK_MARKER_BOTTOM) mixlink += 1;
+			if(cd->link_marker & LINK_MARKER_LEFT) mixlink += 1;
+			if(cd->link_marker & LINK_MARKER_RIGHT) mixlink += 1;
+			if(cd->link_marker & LINK_MARKER_TOP) mixlink += 1;
+			if(cd->link_marker & LINK_MARKER_TOP_LEFT) mixlink += 1;
+			if(cd->link_marker & LINK_MARKER_TOP_RIGHT) mixlink += 1;
+		} else mixlink = cd->level;
+	}
     if(pcard && pcard->is_change) {
 		if(pcard->rtype & TYPE_MONSTER) {
-        stInfo->setText(epro::format(L"[{}] {} {}", gDataManager->FormatType(pcard->rtype), gDataManager->FormatAttribute(pcard->rattribute), gDataManager->FormatRace(pcard->rrace)).data());
-        std::wstring text;
-		if(pcard->rtype & TYPE_LINK){
-			if(pcard->rattack < 0)
-				text.append(epro::format(L"?/LINK {}	  ", pcard->rlevel));
-			else
-				text.append(epro::format(L"{}/LINK {}   ", pcard->rattack, pcard->rlevel));
-			text.append(gDataManager->FormatLinkMarker(pcard->rlink_marker));
+			stInfo->setText(epro::format(L"[{}] {} {}", gDataManager->FormatType(pcard->rtype), gDataManager->FormatAttribute(pcard->rattribute), gDataManager->FormatRace(pcard->rrace)).data());
+			std::wstring text;
+			std::wstring ltext;
+			if (!(pcard->rtype & TYPE_LINK)) {
+				if (pcard->rattack < 0 && pcard->rdefense < 0)
+				    ltext.append(L"?/?");
+			    else if(pcard->rattack >= 9999999 && pcard->rdefense >= 9999999)
+				    ltext.append(epro::format(L"(\u221E)/(\u221E)"));
+			    else if(pcard->rattack >= 8888888 && pcard->rdefense >= 8888888)
+				    ltext.append(epro::format(L"\u221E/\u221E"));
+			    else if(pcard->rattack >= 9999999 && pcard->rdefense >= 8888888)
+				    ltext.append(epro::format(L"(\u221E)/\u221E"));
+			    else if(pcard->rattack >= 8888888 && pcard->rdefense >= 9999999)
+				    ltext.append(epro::format(L"\u221E/(\u221E)"));
+			    else if(pcard->rattack >= 9999999 && pcard->rdefense >= 0)
+				    ltext.append(epro::format(L"(\u221E)/{}", pcard->rdefense));
+			    else if(pcard->rdefense >= 9999999 && pcard->rattack >= 0)
+				    ltext.append(epro::format(L"{}/(\u221E)", cd->attack));
+				else if(pcard->rattack >= 8888888 && pcard->rdefense >= 0)
+				    ltext.append(epro::format(L"\u221E/{}", pcard->rdefense));
+				else if(pcard->rdefense >= 8888888 && pcard->rattack >= 0)
+				    ltext.append(epro::format(L"{}/\u221E", pcard->rattack));
+			    else if(pcard->rattack < 0 && pcard->rdefense >= 9999999)
+				    ltext.append(epro::format(L"?/(\u221E)", pcard->rdefense));
+			    else if(pcard->rdefense < 0 && pcard->rattack >= 9999999)
+				    ltext.append(epro::format(L"(\u221E)/?", pcard->rattack));
+			    else if(pcard->rattack < 0 && pcard->rdefense >= 8888888)
+				    ltext.append(epro::format(L"?/\u221E", pcard->rdefense));
+			    else if(pcard->rdefense < 0 && pcard->rattack >= 8888888)
+				    ltext.append(epro::format(L"\u221E/?", pcard->rattack));
+			    else if (pcard->rattack < 0)
+				    ltext.append(epro::format(L"?/{}", pcard->rdefense));
+			    else if (pcard->rdefense < 0)
+				    ltext.append(epro::format(L"{}/?", pcard->rattack));
+			    else
+				    ltext.append(epro::format(L"{}/{}", pcard->rattack, pcard->rdefense));
+			} else {
+				if (pcard->rattack < 0)
+				    ltext.append(epro::format(L"?/LINK {}	  ", mixlink));
+			    else if(pcard->rattack >= 9999999)
+				    ltext.append(epro::format(L"(\u221E)/LINK {}	  ", mixlink));
+			    else if(pcard->rattack >= 8888888)
+				    ltext.append(epro::format(L"\u221E/LINK {}	  ", mixlink));
+			    else
+				    ltext.append(epro::format(L"{}/LINK {}	  ", pcard->rattack, mixlink));
+			    ltext.append(gDataManager->FormatLinkMarker(pcard->rlink_marker));
+			}
+			//has lv, rk, lk
+			if ((pcard->rtype & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL)) && (pcard->rtype & TYPE_XYZ) && (pcard->rtype & TYPE_LINK)) {
+				text.append(epro::format(L"[{}{}{}] ", L"\u2605", L"\u2606", pcard->rlevel));
+				text.append(ltext);
+			//has lk, rk/lv
+			} else if ((pcard->rtype & TYPE_LINK) && ((pcard->rtype & TYPE_XYZ) || (pcard->rtype & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL)))) {
+				text.append(epro::format(L"[{}{}] ", (pcard->rtype & TYPE_XYZ) ? L"\u2606" : L"\u2605", pcard->rlevel));
+				text.append(ltext);
+			//has lv, rk
+			} else if ((pcard->rtype & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL)) && (pcard->rtype & TYPE_XYZ)) {
+				text.append(epro::format(L"[{}{}{}] ", L"\u2605", L"\u2606", pcard->rlevel));
+				text.append(ltext);
+			//has rk/lv
+			} else if ((pcard->rtype & TYPE_XYZ) || (pcard->rtype & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL))) {
+				text.append(epro::format(L"[{}{}] ", (pcard->rtype & TYPE_XYZ) ? L"\u2606" : L"\u2605", pcard->rlevel));
+				text.append(ltext);
+			//has lk
+			} else if (pcard->rtype & TYPE_LINK)
+			    text.append(ltext);
+			if(pcard->rtype & TYPE_PENDULUM) {
+				text.append(epro::format(L"   {}/{}", pcard->rlscale, pcard->rrscale));
+			}
+			stDataInfo->setText(text.data());
 		} else {
-			text.append(epro::format(L"[{}{}] ", (pcard->rtype & TYPE_XYZ) ? L"\u2606" : L"\u2605", pcard->rlevel));
-			if (pcard->rattack < 0 && pcard->rdefense < 0)
-				text.append(L"?/?");
-			else if(pcard->rattack >= 9999999 && pcard->rdefense >= 9999999)
-				text.append(epro::format(L"(\u221E)/(\u221E)"));
-			else if(pcard->rattack >= 8888888 && pcard->rdefense >= 8888888)
-				text.append(epro::format(L"\u221E/\u221E"));
-			else if(pcard->rattack >= 9999999 && pcard->rdefense >= 8888888)
-				text.append(epro::format(L"(\u221E)/\u221E"));
-			else if(pcard->rattack >= 8888888 && pcard->rdefense >= 9999999)
-				text.append(epro::format(L"\u221E/(\u221E)"));
-			else if(pcard->rattack >= 9999999 && pcard->rdefense >= 0)
-				text.append(epro::format(L"(\u221E)/{}", pcard->rdefense));
-			else if(pcard->rdefense >= 9999999 && pcard->rattack >= 0)
-				text.append(epro::format(L"{}/(\u221E)", cd->attack));
-			else if(pcard->rattack >= 8888888 && pcard->rdefense >= 0)
-				text.append(epro::format(L"\u221E/{}", pcard->rdefense));
-			else if(pcard->rdefense >= 8888888 && pcard->rattack >= 0)
-				text.append(epro::format(L"{}/\u221E", pcard->rattack));
-			else if(pcard->rattack < 0 && pcard->rdefense >= 9999999)
-				text.append(epro::format(L"?/(\u221E)", pcard->rdefense));
-			else if(pcard->rdefense < 0 && pcard->rattack >= 9999999)
-				text.append(epro::format(L"(\u221E)/?", pcard->rattack));
-			else if(pcard->rattack < 0 && pcard->rdefense >= 8888888)
-				text.append(epro::format(L"?/\u221E", pcard->rdefense));
-			else if(pcard->rdefense < 0 && pcard->rattack >= 8888888)
-				text.append(epro::format(L"\u221E/?", pcard->rattack));
-			else if (pcard->rattack < 0)
-				text.append(epro::format(L"?/{}", pcard->rdefense));
-			else if (pcard->rdefense < 0)
-				text.append(epro::format(L"{}/?", pcard->rattack));	
-			else
-				text.append(epro::format(L"{}/{}", pcard->rattack, pcard->rdefense));
+			if(pcard->rtype & TYPE_SKILL) { // TYPE_SKILL created by hints
+			    stInfo->setText(epro::format(L"[{}|{}]", gDataManager->FormatRace(pcard->rrace, true), gDataManager->FormatType(pcard->rtype)).data());
+			} else {
+				stInfo->setText(epro::format(L"[{}]", gDataManager->FormatType(pcard->rtype)).data());
+			}
 		}
-		if(pcard->rtype & TYPE_PENDULUM) {
-			text.append(epro::format(L"   {}/{}", pcard->rlscale, pcard->rrscale));
-		}
-		stDataInfo->setText(text.data());
-		} else {
-		if(pcard->rtype & TYPE_SKILL) { // TYPE_SKILL created by hints
-			// Hack: Race encodes the character for now
-			stInfo->setText(epro::format(L"[{}|{}]", gDataManager->FormatRace(pcard->rrace, true), gDataManager->FormatType(pcard->rtype)).data());
-		} else {
-			stInfo->setText(epro::format(L"[{}]", gDataManager->FormatType(pcard->rtype)).data());
-		}
-        if(pcard->rtype & TYPE_LINK) {
-			stDataInfo->setText(epro::format(L"LINK {}   {}", pcard->rlevel, gDataManager->FormatLinkMarker(pcard->rlink_marker)).data());
-		} else
-			stDataInfo->setText(L"");
-	    }
 	} else {
     ///kdiy/////////
 	if(cd->type & TYPE_MONSTER) {
 		stInfo->setText(epro::format(L"[{}] {} {}", gDataManager->FormatType(cd->type), gDataManager->FormatAttribute(cd->attribute), gDataManager->FormatRace(cd->race)).data());
 		std::wstring text;
-		if(cd->type & TYPE_LINK){
-			if(cd->attack < 0)
-				text.append(epro::format(L"?/LINK {}	  ", cd->level));
-			else
-				text.append(epro::format(L"{}/LINK {}   ", cd->attack, cd->level));
-			text.append(gDataManager->FormatLinkMarker(cd->link_marker));
-		} else {
-			text.append(epro::format(L"[{}{}] ", (cd->type & TYPE_XYZ) ? L"\u2606" : L"\u2605", cd->level));
+		///////////kdiy//////////
+		// if(cd->type & TYPE_LINK){
+		// 	if(cd->attack < 0)
+		// 		text.append(epro::format(L"?/LINK {}	  ", cd->level));
+		// 	else
+		// 		text.append(epro::format(L"{}/LINK {}   ", cd->attack, cd->level));
+		// 	text.append(gDataManager->FormatLinkMarker(cd->link_marker));
+		// } else {
+		// 	text.append(epro::format(L"[{}{}] ", (cd->type & TYPE_XYZ) ? L"\u2606" : L"\u2605", cd->level));
+		// 	if (cd->attack < 0 && cd->defense < 0)
+		// 		text.append(L"?/?");
+		// 	else if (cd->attack < 0)
+		// 		text.append(epro::format(L"?/{}", cd->defense));
+		// 	else if (cd->defense < 0)
+		// 		text.append(epro::format(L"{}/?", cd->attack));	
+		// 	else
+		// 		text.append(epro::format(L"{}/{}", cd->attack, cd->defense));
+		// }
+		std::wstring ltext;
+		if (!(cd->type & TYPE_LINK)) {
 			if (cd->attack < 0 && cd->defense < 0)
-				text.append(L"?/?");
-			///////////kdiy//////////
+				ltext.append(L"?/?");
 			else if(cd->attack >= 9999999 && cd->defense >= 9999999)
-				text.append(epro::format(L"(\u221E)/(\u221E)"));
+				ltext.append(epro::format(L"(\u221E)/(\u221E)"));
 			else if(cd->attack >= 8888888 && cd->defense >= 8888888)
-				text.append(epro::format(L"\u221E/\u221E"));
+				ltext.append(epro::format(L"\u221E/\u221E"));
 			else if(cd->attack >= 9999999 && cd->defense >= 8888888)
-				text.append(epro::format(L"(\u221E)/\u221E"));
-			else if(cd->attack >= 8888888 && cd->defense >= 9999999)
-				text.append(epro::format(L"\u221E/(\u221E)"));
+				ltext.append(epro::format(L"(\u221E)/\u221E"));
+			else if(cd->attack >= 8888888 && cd->defense>= 9999999)
+				ltext.append(epro::format(L"\u221E/(\u221E)"));
 			else if(cd->attack >= 9999999 && cd->defense >= 0)
-				text.append(epro::format(L"(\u221E)/{}", cd->defense));
+				ltext.append(epro::format(L"(\u221E)/{}", cd->defense));
 			else if(cd->defense >= 9999999 && cd->attack >= 0)
-				text.append(epro::format(L"{}/(\u221E)", cd->attack));
+				ltext.append(epro::format(L"{}/(\u221E)", cd->attack));
 			else if(cd->attack >= 8888888 && cd->defense >= 0)
-				text.append(epro::format(L"\u221E/{}", cd->defense));
+				ltext.append(epro::format(L"\u221E/{}", cd->defense));
 			else if(cd->defense >= 8888888 && cd->attack >= 0)
-				text.append(epro::format(L"{}/\u221E", cd->attack));
+				ltext.append(epro::format(L"{}/\u221E", cd->attack));
 			else if(cd->attack < 0 && cd->defense >= 9999999)
-				text.append(epro::format(L"?/(\u221E)", cd->defense));
+				ltext.append(epro::format(L"?/(\u221E)", cd->defense));
 			else if(cd->defense < 0 && cd->attack >= 9999999)
-				text.append(epro::format(L"(\u221E)/?", cd->attack));
+				ltext.append(epro::format(L"(\u221E)/?", cd->attack));
 			else if(cd->attack < 0 && cd->defense >= 8888888)
-				text.append(epro::format(L"?/\u221E", cd->defense));
+				ltext.append(epro::format(L"?/\u221E", cd->defense));
 			else if(cd->defense < 0 && cd->attack >= 8888888)
-				text.append(epro::format(L"\u221E/?", cd->attack));
-			///////////kdiy//////////
+				ltext.append(epro::format(L"\u221E/?", cd->attack));
 			else if (cd->attack < 0)
-				text.append(epro::format(L"?/{}", cd->defense));
+				ltext.append(epro::format(L"?/{}", cd->defense));
 			else if (cd->defense < 0)
-				text.append(epro::format(L"{}/?", cd->attack));	
+				ltext.append(epro::format(L"{}/?", cd->attack));
 			else
-				text.append(epro::format(L"{}/{}", cd->attack, cd->defense));
+				ltext.append(epro::format(L"{}/{}", cd->attack, cd->defense));
+		} else {
+			if (cd->attack < 0)
+				ltext.append(epro::format(L"?/LINK {}	  ", mixlink));
+			else if(cd->attack >= 9999999)
+				ltext.append(epro::format(L"(\u221E)/LINK {}	  ", mixlink));
+			else if(cd->attack >= 8888888)
+				ltext.append(epro::format(L"\u221E/LINK {}	  ", mixlink));
+			else
+				ltext.append(epro::format(L"{}/LINK {}	  ", cd->attack, mixlink));
+			ltext.append(gDataManager->FormatLinkMarker(cd->link_marker));
 		}
+		//has lv, rk, lk
+		if ((cd->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL)) && (cd->type & TYPE_XYZ) && (cd->type & TYPE_LINK)) {
+			text.append(epro::format(L"[{}{}{}] ", L"\u2605", L"\u2606", cd->level));
+			text.append(ltext);
+		//has lk, rk/lv
+		} else if ((cd->type & TYPE_LINK) && ((cd->type & TYPE_XYZ) || (cd->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL)))) {
+			text.append(epro::format(L"[{}{}] ", (cd->type & TYPE_XYZ) ? L"\u2606" : L"\u2605", cd->level));
+			text.append(ltext);
+		//has lv, rk
+		} else if ((cd->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL)) && (cd->type & TYPE_XYZ)) {
+			text.append(epro::format(L"[{}{}{}] ", L"\u2605", L"\u2606", cd->level));
+			text.append(ltext);
+		//has rk/lv
+		} else if ((cd->type & TYPE_XYZ) || (cd->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL))) {
+			text.append(epro::format(L"[{}{}] ", (cd->type & TYPE_XYZ) ? L"\u2606" : L"\u2605", cd->level));
+			text.append(ltext);
+		//has lk
+		} else if (cd->type & TYPE_LINK)
+			text.append(ltext);
+		///////////kdiy//////////
 		if(cd->type & TYPE_PENDULUM) {
 			text.append(epro::format(L"   {}/{}", cd->lscale, cd->rscale));
 		}

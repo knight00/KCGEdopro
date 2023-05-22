@@ -130,6 +130,19 @@ void ClientCard::UpdateInfo(const CoreUtils::Query& query) {
 		if(IsDifferent(link, query.link) || linkstring.empty())
 			linkstring = epro::format(L"L{}", link);
 		link_marker = query.link_marker;
+		//////kdiy//////////
+		int32_t mixlink = 0;
+		if(link_marker & LINK_MARKER_BOTTOM_LEFT) mixlink += 1;
+		if(link_marker & LINK_MARKER_BOTTOM_RIGHT) mixlink += 1;
+		if(link_marker & LINK_MARKER_BOTTOM) mixlink += 1;
+		if(link_marker & LINK_MARKER_LEFT) mixlink += 1;
+		if(link_marker & LINK_MARKER_RIGHT) mixlink += 1;
+		if(link_marker & LINK_MARKER_TOP) mixlink += 1;
+		if(link_marker & LINK_MARKER_TOP_LEFT) mixlink += 1;
+		if(link_marker & LINK_MARKER_TOP_RIGHT) mixlink += 1;
+		if(IsDifferent(mixlink, query.link))
+			linkstring = epro::format(L"L{}", mixlink);
+		//////kdiy//////////
 	}
 }
 void ClientCard::ClearTarget() {
