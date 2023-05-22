@@ -135,7 +135,7 @@ function get_vcpkg_root_path(arch)
 			return "-ios"
 		end
 	end
-	return absolute_vcpkg_path .. "/installed/" .. arch .. vcpkg_triplet_path()
+	return absolute_vcpkg_path .. "/installed/" .. ((arch == "armv7" and "arm") or arch) .. vcpkg_triplet_path()
 end
 
 archs={}
@@ -165,7 +165,7 @@ workspace "ygo"
 	filter { "action:vs*" }
 		disablewarnings "4100" --'identifier' : unreferenced formal parameter
 	filter { "action:not vs*" }
-		disablewarnings { "unknown-warning-option", "unused-parameter", "unknown-pragmas", "ignored-qualifiers", "missing-field-initializers", "implicit-const-int-float-conversion", "missing-braces" }
+		disablewarnings { "unknown-warning-option", "unused-parameter", "unknown-pragmas", "ignored-qualifiers", "missing-field-initializers", "implicit-const-int-float-conversion", "missing-braces", "invalid-utf8" }
 	filter { "action:not vs*", "files:**.cpp" }
 		disablewarnings { "deprecated-copy", "unused-lambda-capture" }
 	filter{}
@@ -224,7 +224,7 @@ workspace "ygo"
 		for _,arch in ipairs(archs) do
 			local full_vcpkg_root_path=get_vcpkg_root_path(arch)
 			print(full_vcpkg_root_path)
-			local platform="platforms:" .. (arch=="x86" and os.istarget("windows") and "Win32" or (arch == "armv7" and "arm") or arch)
+			local platform="platforms:" .. (arch=="x86" and os.istarget("windows") and "Win32" or arch)
 			filter { "action:not vs*", platform }
 				_includedirs { full_vcpkg_root_path .. "/include" }
 
@@ -237,15 +237,16 @@ workspace "ygo"
 	end
 
 	filter "system:macosx"
-		defines { "GL_SILENCE_DEPRECATION" }
 		_includedirs { "/usr/local/include" }
 		libdirs { "/usr/local/lib" }
 		--systemversion "10.10"
 
-	filter "system:ios"
-		systemversion "9.0"
+	filter { "system:ios", "platforms:x86 or x64"}
 		buildoptions { "-mios-simulator-version-min=9.0" }
 		linkoptions { "-mios-simulator-version-min=9.0" }
+	filter { "system:ios", "platforms:arm64 or armv7"}
+		buildoptions { "-miphoneos-version-min=9.0" }
+		linkoptions { "-miphoneos-version-min=9.0" }
 
 	filter "action:vs*"
 		vectorextensions "SSE2"
@@ -276,7 +277,7 @@ workspace "ygo"
 	filter { "configurations:Debug", "architecture:ARM64" }
 		targetdir "bin/arm64/debug"
 
-	filter { "configurations:Release", "architecture:ARM" }
+	filter { "configurations:Debug", "architecture:ARM" }
 		targetdir "bin/armv7/debug"
 
 	filter { "configurations:Release*" , "action:not vs*" }
