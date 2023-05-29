@@ -75,6 +75,7 @@ public:
 	void PlaySoundEffect(SFX sound);
 	void PlayBGM(BGM scene, bool loop = true);
 	////////kdiy////////
+	bool PlayCardBGM(uint32_t code, uint32_t code2);
 	void PlayCustomMusic(std::string num);
 	void PlayCustomBGM(std::string num);
 	//bool PlayChant(CHANT chant, uint32_t code);
@@ -104,6 +105,7 @@ private:
 	std::vector<std::string> BGMList[8];
 	std::string SFXList[SFX::SFX_TOTAL_SIZE];
 	////////kdiy////
+	std::map<uint32_t, std::string> ChantsBGMList;
 	std::map<std::pair<CHANT, uint32_t>, std::string> ChantsList[CHARACTER_VOICE + CHARACTER_STORY_ONLY];
 	std::vector<std::string> ChantSPList[10][CHARACTER_VOICE + CHARACTER_STORY_ONLY];
 	std::string bgm_now = "";

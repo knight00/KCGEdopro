@@ -98,6 +98,9 @@ void SoundManager::RefreshBGMList() {
 	Utils::MakeDirectory(EPRO_TEXT("./sound/BGM/disadvantage"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/BGM/win"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/BGM/lose"));
+	////////kdiy////
+	Utils::MakeDirectory(EPRO_TEXT("./sound/BGM/card/"));
+	////////kdiy////
 	for (auto& list : BGMList)
 		list.clear();
 	RefreshBGMDir(EPRO_TEXT(""), BGM::DUEL);
@@ -178,6 +181,7 @@ void SoundManager::RefreshChantsList() {
 		{CHANT::ACTIVATE,  EPRO_TEXT("activate"_sv)}
 	};
 	/////kdiy//////
+	ChantsBGMList.clear();
 	for(auto list : ChantsList)
 		list.clear();
 	int i = -1;
@@ -223,6 +227,23 @@ void SoundManager::RefreshChantsList() {
 
 		for (auto path : searchPath)
 			Utils::MakeDirectory(path);
+		
+		for (auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("{}/sound/BGM/card"), Utils::ToPathString(working_dir)), mixer->GetSupportedSoundExtensions())) {
+			auto scode = Utils::GetFileName(file);
+			try {
+				uint32_t code = static_cast<uint32_t>(std::stoul(scode));
+				if (code && !ChantsBGMList.count(code)) {
+					auto extension = Utils::GetFileExtension(file);
+					auto chop = 4;
+					if (extension == EPRO_TEXT("flac")) chop = 5;
+					ChantsBGMList[code] = epro::format("{}/{}", working_dir, Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("./sound/BGM/card/{}"), file.substr(0, file.size() - chop))));
+				}
+			}
+			catch (...) {
+				continue;
+			}
+		}
+		
 		if(chantType.first != CHANT::ATTACK && chantType.first != CHANT::ACTIVATE && chantType.first != CHANT::PENDULUM) {
 			if(chantType.first == CHANT::SET) i = 0;
 			if(chantType.first == CHANT::EQUIP) i = 1;
@@ -346,6 +367,77 @@ void SoundManager::PlayBGM(BGM scene, bool loop) {
 #endif
 }
 ///////kdiy//////
+bool SoundManager::PlayCardBGM(uint32_t code, uint32_t code2) {
+#ifdef BACKEND
+	if (musicEnabled) {
+		auto chant_it = ChantsBGMList.find(code);
+		auto chant_it2 = ChantsBGMList.find(code2);
+		if(chant_it2 == ChantsBGMList.end()) {
+			if(chant_it == ChantsBGMList.end())
+				return false;
+			else {
+				std::vector<std::string> list;
+				const auto extensions = mixer->GetSupportedSoundExtensions();
+				for(const auto& ext : extensions) {
+					const auto filename = epro::format("{}.{}", chant_it->second, Utils::ToUTF8IfNeeded(ext));
+					if(Utils::FileExists(Utils::ToPathString(filename)))
+						list.push_back(filename);
+					for(int i = 1; i < 6; i++) {
+						const auto filename2 = epro::format("{}_{}.{}", chant_it->second, i, Utils::ToUTF8IfNeeded(ext));
+						if (Utils::FileExists(Utils::ToPathString(filename2)))
+							list.push_back(filename2);
+					}
+				}
+				for(auto file : gSoundManager->soundcount)
+					list.erase(std::remove(list.begin(), list.end(), file), list.end());
+				int count = list.size();
+				if(count > 0) {
+					int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+                    if(std::find(gSoundManager->soundcount.begin(), gSoundManager->soundcount.end(), list[soundno]) != gSoundManager->soundcount.end())
+                        return false;
+                    gSoundManager->soundcount.push_back(list[soundno]);
+					if(mixer->MusicPlaying())
+		 	            mixer->StopMusic();
+					if(mixer->PlayMusic(list[soundno], gGameConfig->loopMusic))
+						return true;
+					else return false;
+				} else
+					return false;
+			}
+		} else {
+			std::vector<std::string> list;
+			const auto extensions = mixer->GetSupportedSoundExtensions();
+			for(const auto& ext : extensions) {
+				const auto filename = epro::format("{}.{}", chant_it2->second, Utils::ToUTF8IfNeeded(ext));
+				if(Utils::FileExists(Utils::ToPathString(filename)))
+					list.push_back(filename);
+				for(int i = 1; i < 6; i++) {
+					const auto filename2 = epro::format("{}_{}.{}", chant_it2->second, i, Utils::ToUTF8IfNeeded(ext));
+					if(Utils::FileExists(Utils::ToPathString(filename2)))
+						list.push_back(filename2);
+				}
+			}
+			for(auto file : gSoundManager->soundcount)
+				list.erase(std::remove(list.begin(), list.end(), file), list.end());
+			int count = list.size();
+			if(count > 0) {
+				int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+                if(std::find(gSoundManager->soundcount.begin(), gSoundManager->soundcount.end(), list[soundno]) != gSoundManager->soundcount.end())
+                    return false;
+                gSoundManager->soundcount.push_back(list[soundno]);
+				if(mixer->MusicPlaying())
+		 	        mixer->StopMusic();
+				if(mixer->PlayMusic(list[soundno], gGameConfig->loopMusic))
+					return true;
+				else return false;
+			} else
+				return false;
+		}
+		return true;
+	}
+	return false;
+#endif
+}
 void SoundManager::PlayCustomMusic(std::string num) {
 #ifdef BACKEND
 	if(soundsEnabled) {
@@ -567,39 +659,39 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 					return false;
 			}
 		} else {
-				std::vector<std::string> list;
-				const auto extensions = mixer->GetSupportedSoundExtensions();
-				for(const auto& ext : extensions) {
-					const auto filename = epro::format("{}.{}", chant_it2->second, Utils::ToUTF8IfNeeded(ext));
-					if(Utils::FileExists(Utils::ToPathString(filename)))
-						list.push_back(filename);
-					for(int i = 1; i < 6; i++) {
-						const auto filename2 = epro::format("{}_{}.{}", chant_it2->second, i, Utils::ToUTF8IfNeeded(ext));
-						if(Utils::FileExists(Utils::ToPathString(filename2)))
-							list.push_back(filename2);
-					}
+			std::vector<std::string> list;
+			const auto extensions = mixer->GetSupportedSoundExtensions();
+			for(const auto& ext : extensions) {
+				const auto filename = epro::format("{}.{}", chant_it2->second, Utils::ToUTF8IfNeeded(ext));
+				if(Utils::FileExists(Utils::ToPathString(filename)))
+					list.push_back(filename);
+				for(int i = 1; i < 6; i++) {
+					const auto filename2 = epro::format("{}_{}.{}", chant_it2->second, i, Utils::ToUTF8IfNeeded(ext));
+					if(Utils::FileExists(Utils::ToPathString(filename2)))
+						list.push_back(filename2);
 				}
-				for(auto file : gSoundManager->soundcount)
-					list.erase(std::remove(list.begin(), list.end(), file), list.end());
-				int count = list.size();
-				if(count > 0) {
-					int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-                    if(std::find(gSoundManager->soundcount.begin(), gSoundManager->soundcount.end(), list[soundno]) != gSoundManager->soundcount.end())
-                        return false;
-                    gSoundManager->soundcount.push_back(list[soundno]);
-					StopSounds();
-					if(mixer->PlaySound(list[soundno])) {
-                        mainGame->isEvent = true;
-                        if(gGameConfig->pauseduel) {
-                            std::unique_lock<epro::mutex> lck(*mainGame->lck);
-                            mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list[soundno])));
-                            lck.unlock();
-                        }
-						return true;
-					} else return false;
-				} else
-					return false;
 			}
+			for(auto file : gSoundManager->soundcount)
+				list.erase(std::remove(list.begin(), list.end(), file), list.end());
+			int count = list.size();
+			if(count > 0) {
+				int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+                if(std::find(gSoundManager->soundcount.begin(), gSoundManager->soundcount.end(), list[soundno]) != gSoundManager->soundcount.end())
+                    return false;
+                gSoundManager->soundcount.push_back(list[soundno]);
+				StopSounds();
+				if(mixer->PlaySound(list[soundno])) {
+                    mainGame->isEvent = true;
+                    if(gGameConfig->pauseduel) {
+                        std::unique_lock<epro::mutex> lck(*mainGame->lck);
+                        mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list[soundno])));
+                        lck.unlock();
+                    }
+					return true;
+				} else return false;
+			} else
+				return false;
+		}
 		return true;
 	}
 	return false;

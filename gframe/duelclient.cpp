@@ -1465,6 +1465,16 @@ inline void Play(SoundManager::SFX sound) {
 		gSoundManager->PlaySoundEffect(sound);
 }
 /////kdiy///////
+inline bool PlayCardBGM(ClientCard* card) {
+	uint32_t code = 0;
+    uint32_t code2 = 0;
+	if(card != nullptr) {
+        code = card->code;
+        auto cd = gDataManager->GetCardData(code);
+        if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
+    }
+	return gSoundManager->PlayCardBGM(code, code2);
+}
 // inline bool PlayChant(SoundManager::CHANT sound, uint32_t code) {
 // 	if(!mainGame->dInfo.isCatchingUp)
 // 		return gSoundManager->PlayChant(sound, code);
@@ -1700,6 +1710,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 	    ClientCard* pcard = mainGame->dField.GetCard(player, info.location, info.sequence);
 		if(!PlayAnime(pcard, 0)) {
 			PlayChant(SoundManager::CHANT::SUMMON, pcard, player);
+			PlayCardBGM(pcard);
 		}
 		break;
     }
@@ -1717,6 +1728,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		// if(!chklast) return true;
 		if(!PlayAnime(pcard, 0)) {
 			PlayChant(SoundManager::CHANT::SUMMON, pcard, player);
+			PlayCardBGM(pcard);
 		}
 		break;
     }

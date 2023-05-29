@@ -1407,8 +1407,8 @@ void Game::Initialize() {
     btnCharacterSelect_replay->setEnabled(false);
     defaultStrings.emplace_back(btnCharacterSelect_replay, 8025);
 #endif
-    wCharacterReplay = env->addWindow(Scale(220, 100, 360, 310), false, gDataManager->GetSysString(8011).data());
-	defaultStrings.emplace_back(wCharacterReplay, 8011);
+    wCharacterReplay = env->addWindow(Scale(220, 100, 360, 310), false, gDataManager->GetSysString(8015).data());
+	defaultStrings.emplace_back(wCharacterReplay, 8015);
     wCharacterReplay->getCloseButton()->setVisible(false);
 	wCharacterReplay->setVisible(false);
     btnCharacterSelect_replayclose = env->addButton(Scale(70, 45, 120, 70), wCharacterReplay, BUTTON_CHARACTEROK_REPLAY, gDataManager->GetSysString(1211).data());
@@ -2685,9 +2685,9 @@ void Game::PopulateSettingsWindow() {
 	        gSettings.chkEnableAttackAnime->setEnabled(false);
 #endif
 #ifndef VIP
-	        gSettings.chkEnableActivateAnime->setChecked(false);
-	        gSettings.chkEnableActivateAnime->setEnabled(false);
-            defaultStrings.emplace_back(gSettings.chkEnableActivateAnime, 8055);
+	        gSettings.chkEnableAttackAnime->setChecked(false);
+	        gSettings.chkEnableAttackAnime->setEnabled(false);
+            defaultStrings.emplace_back(gSettings.chkEnableAttackAnime, 8055);
             gSettings.chkEnableAttackSound->setChecked(false);
 	        gSettings.chkEnableAttackSound->setEnabled(false);
             defaultStrings.emplace_back(gSettings.chkEnableAttackSound, 8022);

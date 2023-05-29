@@ -85,7 +85,7 @@ irr::IrrlichtDevice* GUIUtils::CreateDevice(GameConfig* configs) {
 	// This correspond to the program's class name, used by window managers and
 	// desktop environments to group multiple instances with their desktop file
 	params.ClassName = EPRO_TEXT("edopro");
-	params.WindowCaption = EPRO_TEXT("Project Ignis: EDOPro");
+	params.WindowCaption = EPRO_TEXT("EDOPro-KCG");
 	params.OGLES2ShaderPath = EPRO_TEXT("BUNDLED");
 	params.WindowResizable = true;
 #if EDOPRO_WINDOWS
