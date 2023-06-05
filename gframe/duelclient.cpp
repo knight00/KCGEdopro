@@ -2554,20 +2554,20 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		if(desc == 0) {
 			text = epro::format(L"{}\n{}", event_string,
 			                   ////kdiy///////////
-							   //fmt::sprintf(gDataManager->GetSysString(200), gDataManager->GetName(code), gDataManager->FormatLocation(info.location, info.sequence)));
-							   fmt::sprintf(gDataManager->GetSysString(200), gDataManager->GetVirtualName(pcard, code), gDataManager->FormatLocation(info.location, info.sequence)));
+							   //epro::sprintf(gDataManager->GetSysString(200), gDataManager->GetName(code), gDataManager->FormatLocation(info.location, info.sequence)));
+							   epro::sprintf(gDataManager->GetSysString(200), gDataManager->GetVirtualName(pcard, code), gDataManager->FormatLocation(info.location, info.sequence)));
 							   ////kdiy///////////
 		} else if(desc == 221) {
 			text = epro::format(L"{}\n{}\n{}", event_string,
 			                   ////kdiy///////////
-							   //fmt::sprintf(gDataManager->GetSysString(221), gDataManager->GetName(code), gDataManager->FormatLocation(info.location, info.sequence)),
-							   fmt::sprintf(gDataManager->GetSysString(221), gDataManager->GetVirtualName(pcard, code), gDataManager->FormatLocation(info.location, info.sequence)),
+							   //epro::sprintf(gDataManager->GetSysString(221), gDataManager->GetName(code), gDataManager->FormatLocation(info.location, info.sequence)),
+							   epro::sprintf(gDataManager->GetSysString(221), gDataManager->GetVirtualName(pcard, code), gDataManager->FormatLocation(info.location, info.sequence)),
 							   ////kdiy///////////
 							   gDataManager->GetSysString(223));
 		} else {
 			////kdiy///////////
-			//text = fmt::sprintf(gDataManager->GetDesc(desc, mainGame->dInfo.compat_mode), gDataManager->GetName(code));
-			text = fmt::sprintf(gDataManager->GetDesc(desc, mainGame->dInfo.compat_mode), gDataManager->GetVirtualName(pcard, code));
+			//text = epro::sprintf(gDataManager->GetDesc(desc, mainGame->dInfo.compat_mode), gDataManager->GetName(code));
+			text = epro::sprintf(gDataManager->GetDesc(desc, mainGame->dInfo.compat_mode), gDataManager->GetVirtualName(pcard, code));
 			////kdiy///////////
 		}
 		std::lock_guard<epro::mutex> lock(mainGame->gMutex);
