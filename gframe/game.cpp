@@ -3723,7 +3723,7 @@ void Game::RefreshAiDecks() {
 	/////kdiy//////
 	mainGame->mode->bots.clear();
 	/////zkdiydiy//////
-	FileStream windbots("./WindBot/bots.json", FileStream::in);
+	FileStream windbots{ EPRO_TEXT("./WindBot/bots.json"), FileStream::in };
 	if (windbots.good()) {
 		nlohmann::json j;
 		try {
