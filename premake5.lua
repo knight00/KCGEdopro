@@ -167,7 +167,11 @@ workspace "ygo"
 	location "build"
 	language "C++"
 	objdir "obj"
-	startproject "ygopro"
+	if not _OPTIONS["no-core"] then
+		startproject "ygopro"
+	else
+		startproject "ygoprodll"
+	end
 	staticruntime "on"
 
 	warnings "Extra"
@@ -301,8 +305,10 @@ workspace "ygo"
 
 	filter "configurations:Release"
 		optimize "Size"
-		flags "LinkTimeOptimization"
 		targetdir "bin/release"
+
+	filter { "configurations:Release", "action:vs* or system:not windows" }
+		flags "LinkTimeOptimization"
 
 	filter { "configurations:Release", "architecture:x64" }
 		targetdir "bin/x64/release"
