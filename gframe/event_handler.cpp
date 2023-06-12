@@ -189,6 +189,9 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			case BUTTON_LEAVE_GAME: {
+			    ////kdiy////////
+                gSoundManager->soundcount.clear();
+			    ////kdiy////////
 				if(mainGame->dInfo.isSingleMode) {
 					SingleMode::singleSignal.SetNoWait(true);
 					SingleMode::StopPlay(false);
@@ -243,6 +246,9 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			case BUTTON_RESTART_SINGLE: {
+                ////kdiy////////
+                gSoundManager->soundcount.clear();
+			    ////kdiy////////
 				if(mainGame->dInfo.isSingleMode)
 					SingleMode::Restart();
 				break;

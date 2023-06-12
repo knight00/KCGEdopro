@@ -17,6 +17,30 @@ public:
 	enum SFX {
 		SUMMON,
 		SPECIAL_SUMMON,
+        ///kdiy////////
+        FUSION_SUMMON,
+        SYNCHRO_SUMMON,
+        XYZ_SUMMON,
+        PENDULUM_SUMMON,
+        LINK_SUMMON,
+        SUMMON_DARK,
+        SUMMON_DIVINE,
+        SUMMON_EARTH,
+        SUMMON_FIRE,
+        SUMMON_LIGHT,
+        SUMMON_WATER,
+        SUMMON_WIND,
+        SPECIAL_SUMMON_DARK,
+        SPECIAL_SUMMON_DIVINE,
+        SPECIAL_SUMMON_EARTH,
+        SPECIAL_SUMMON_FIRE,
+        SPECIAL_SUMMON_LIGHT,
+        SPECIAL_SUMMON_WATER,
+        SPECIAL_SUMMON_WIND,
+        OVERLAY,
+        NEGATE,
+        ATTACK_DISABLED,
+        ///kdiy////////
 		ACTIVATE,
 		SET,
 		FLIP,
@@ -78,6 +102,7 @@ public:
 	bool PlayCardBGM(uint32_t code, uint32_t code2);
 	void PlayCustomMusic(std::string num);
 	void PlayCustomBGM(std::string num);
+    bool PlayFieldSound();
 	//bool PlayChant(CHANT chant, uint32_t code);
 	bool PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t player, uint8_t extra = 0);
 	uint8_t character[6] = {0,0,0,0,0,0}; //0: empty, 1: muto, 2: atem, 3: kaiba, 4: joey, 5: marik, 6: dartz, 7:bakura, 8: aigami, 9: judai, 10: manjome, 11: kaisa, 12: phoenix, 13: john, 14: yubel, 15: yusei, 16: jack, 17: arki, 18: yuma, 19: shark, 20: kaito, 21: DonThousand, 22: yuya, 23: declan, 24: shay, 25: playmaker, 26: soulburner, 27: blueangel, 28: darksiner
@@ -103,8 +128,9 @@ public:
 
 private:
 	std::vector<std::string> BGMList[8];
-	std::string SFXList[SFX::SFX_TOTAL_SIZE];
 	////////kdiy////
+	//std::string SFXList[SFX::SFX_TOTAL_SIZE];
+    std::vector<std::string> SFXList[SFX::SFX_TOTAL_SIZE];
 	std::map<uint32_t, std::string> ChantsBGMList;
 	std::map<std::pair<CHANT, uint32_t>, std::string> ChantsList[CHARACTER_VOICE + CHARACTER_STORY_ONLY];
 	std::vector<std::string> ChantSPList[10][CHARACTER_VOICE + CHARACTER_STORY_ONLY];

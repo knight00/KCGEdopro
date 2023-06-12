@@ -116,39 +116,92 @@ void SoundManager::RefreshBGMList() {
 void SoundManager::RefreshSoundsList() {
 #ifdef BACKEND
 	static constexpr std::pair<SFX, epro::path_stringview> fx[]{
-		{SUMMON, EPRO_TEXT("./sound/summon.{}"_sv)},
-		{SPECIAL_SUMMON, EPRO_TEXT("./sound/specialsummon.{}"_sv)},
-		{ACTIVATE, EPRO_TEXT("./sound/activate.{}"_sv)},
-		{SET, EPRO_TEXT("./sound/set.{}"_sv)},
-		{FLIP, EPRO_TEXT("./sound/flip.{}"_sv)},
-		{REVEAL, EPRO_TEXT("./sound/reveal.{}"_sv)},
-		{EQUIP, EPRO_TEXT("./sound/equip.{}"_sv)},
-		{DESTROYED, EPRO_TEXT("./sound/destroyed.{}"_sv)},
-		{TOKEN, EPRO_TEXT("./sound/token.{}"_sv)},
-		{ATTACK, EPRO_TEXT("./sound/attack.{}"_sv)},
-		{DIRECT_ATTACK, EPRO_TEXT("./sound/directattack.{}"_sv)},
-		{DRAW, EPRO_TEXT("./sound/draw.{}"_sv)},
-		{SHUFFLE, EPRO_TEXT("./sound/shuffle.{}"_sv)},
-		{DAMAGE, EPRO_TEXT("./sound/damage.{}"_sv)},
-		{RECOVER, EPRO_TEXT("./sound/gainlp.{}"_sv)},
-		{COUNTER_ADD, EPRO_TEXT("./sound/addcounter.{}"_sv)},
-		{COUNTER_REMOVE, EPRO_TEXT("./sound/removecounter.{}"_sv)},
-		{COIN, EPRO_TEXT("./sound/coinflip.{}"_sv)},
-		{DICE, EPRO_TEXT("./sound/diceroll.{}"_sv)},
-		{NEXT_TURN, EPRO_TEXT("./sound/nextturn.{}"_sv)},
-		{PHASE, EPRO_TEXT("./sound/phase.{}"_sv)},
-		{PLAYER_ENTER, EPRO_TEXT("./sound/playerenter.{}"_sv)},
-		{CHAT, EPRO_TEXT("./sound/chatmessage.{}"_sv)}
+        /////kdiy///////
+		// {SUMMON, EPRO_TEXT("./sound/summon.{}"_sv)},
+		// {SPECIAL_SUMMON, EPRO_TEXT("./sound/specialsummon.{}"_sv)},
+		// {ACTIVATE, EPRO_TEXT("./sound/activate.{}"_sv)},
+		// {SET, EPRO_TEXT("./sound/set.{}"_sv)},
+		// {FLIP, EPRO_TEXT("./sound/flip.{}"_sv)},
+		// {REVEAL, EPRO_TEXT("./sound/reveal.{}"_sv)},
+		// {EQUIP, EPRO_TEXT("./sound/equip.{}"_sv)},
+		// {DESTROYED, EPRO_TEXT("./sound/destroyed.{}"_sv)},
+		// {TOKEN, EPRO_TEXT("./sound/token.{}"_sv)},
+		// {ATTACK, EPRO_TEXT("./sound/attack.{}"_sv)},
+		// {DIRECT_ATTACK, EPRO_TEXT("./sound/directattack.{}"_sv)},
+		// {DRAW, EPRO_TEXT("./sound/draw.{}"_sv)},
+		// {SHUFFLE, EPRO_TEXT("./sound/shuffle.{}"_sv)},
+		// {DAMAGE, EPRO_TEXT("./sound/damage.{}"_sv)},
+		// {RECOVER, EPRO_TEXT("./sound/gainlp.{}"_sv)},
+		// {COUNTER_ADD, EPRO_TEXT("./sound/addcounter.{}"_sv)},
+		// {COUNTER_REMOVE, EPRO_TEXT("./sound/removecounter.{}"_sv)},
+		// {COIN, EPRO_TEXT("./sound/coinflip.{}"_sv)},
+		// {DICE, EPRO_TEXT("./sound/diceroll.{}"_sv)},
+		// {NEXT_TURN, EPRO_TEXT("./sound/nextturn.{}"_sv)},
+		// {PHASE, EPRO_TEXT("./sound/phase.{}"_sv)},
+		// {PLAYER_ENTER, EPRO_TEXT("./sound/playerenter.{}"_sv)},
+		// {CHAT, EPRO_TEXT("./sound/chatmessage.{}"_sv)}
+		{SUMMON, EPRO_TEXT("./sound/summon"_sv)},
+        {SUMMON_DARK, EPRO_TEXT("./sound/summon/ATTRIBUTE_DARK"_sv)},
+        {SUMMON_DIVINE, EPRO_TEXT("./sound/summon/ATTRIBUTE_DIVINE"_sv)},
+        {SUMMON_EARTH, EPRO_TEXT("./sound/summon/ATTRIBUTE_EARTH"_sv)},
+        {SUMMON_FIRE, EPRO_TEXT("./sound/summon/ATTRIBUTE_FIRE"_sv)},
+        {SUMMON_LIGHT, EPRO_TEXT("./sound/summon/ATTRIBUTE_LIGHT"_sv)},
+        {SUMMON_WATER, EPRO_TEXT("./sound/summon/ATTRIBUTE_WATER"_sv)},
+        {SUMMON_WIND, EPRO_TEXT("./sound/summon/ATTRIBUTE_WIND"_sv)},
+		{SPECIAL_SUMMON, EPRO_TEXT("./sound/specialsummon"_sv)},
+        {SPECIAL_SUMMON_DARK, EPRO_TEXT("./sound/specialsummon/ATTRIBUTE_DARK"_sv)},
+        {SPECIAL_SUMMON_DIVINE, EPRO_TEXT("./sound/specialsummon/ATTRIBUTE_DIVINE"_sv)},
+        {SPECIAL_SUMMON_EARTH, EPRO_TEXT("./sound/specialsummon/ATTRIBUTE_EARTH"_sv)},
+        {SPECIAL_SUMMON_FIRE, EPRO_TEXT("./sound/specialsummon/ATTRIBUTE_FIRE"_sv)},
+        {SPECIAL_SUMMON_LIGHT, EPRO_TEXT("./sound/specialsummon/ATTRIBUTE_LIGHT"_sv)},
+        {SPECIAL_SUMMON_WATER, EPRO_TEXT("./sound/specialsummon/ATTRIBUTE_WATER"_sv)},
+        {SPECIAL_SUMMON_WIND, EPRO_TEXT("./sound/specialsummon/ATTRIBUTE_WIND"_sv)},
+		{FUSION_SUMMON, EPRO_TEXT("./sound/specialsummon/fusion"_sv)},
+		{SYNCHRO_SUMMON, EPRO_TEXT("./sound/specialsummon/synchro"_sv)},
+		{XYZ_SUMMON, EPRO_TEXT("./sound/specialsummon/xyz"_sv)},
+		{PENDULUM_SUMMON, EPRO_TEXT("./sound/specialsummon/pendulum"_sv)},
+		{LINK_SUMMON, EPRO_TEXT("./sound/specialsummon/link"_sv)},
+		{NEGATE, EPRO_TEXT("./sound/negate"_sv)},
+        {OVERLAY, EPRO_TEXT("./sound/overlay"_sv)},
+		{ACTIVATE, EPRO_TEXT("./sound/activate"_sv)},
+		{SET, EPRO_TEXT("./sound/set"_sv)},
+		{FLIP, EPRO_TEXT("./sound/flip"_sv)},
+		{REVEAL, EPRO_TEXT("./sound/reveal"_sv)},
+		{EQUIP, EPRO_TEXT("./sound/equip"_sv)},
+		{DESTROYED, EPRO_TEXT("./sound/destroyed"_sv)},
+		{TOKEN, EPRO_TEXT("./sound/token"_sv)},
+		{ATTACK, EPRO_TEXT("./sound/attack"_sv)},
+		{DIRECT_ATTACK, EPRO_TEXT("./sound/directattack"_sv)},
+		{ATTACK_DISABLED, EPRO_TEXT("./sound/attackdisabled"_sv)},
+		{DRAW, EPRO_TEXT("./sound/draw"_sv)},
+		{SHUFFLE, EPRO_TEXT("./sound/shuffle"_sv)},
+		{DAMAGE, EPRO_TEXT("./sound/damage"_sv)},
+		{RECOVER, EPRO_TEXT("./sound/gainlp"_sv)},
+		{COUNTER_ADD, EPRO_TEXT("./sound/addcounter"_sv)},
+		{COUNTER_REMOVE, EPRO_TEXT("./sound/removecounter"_sv)},
+		{COIN, EPRO_TEXT("./sound/coinflip"_sv)},
+		{DICE, EPRO_TEXT("./sound/diceroll"_sv)},
+		{NEXT_TURN, EPRO_TEXT("./sound/nextturn"_sv)},
+		{PHASE, EPRO_TEXT("./sound/phase"_sv)},
+		{PLAYER_ENTER, EPRO_TEXT("./sound/playerenter"_sv)},
+		{CHAT, EPRO_TEXT("./sound/chatmessage"_sv)}
+        /////kdiy///////
 	};
 	const auto extensions = mixer->GetSupportedSoundExtensions();
 	for(const auto& sound : fx) {
-		for(const auto& ext : extensions) {
-			const auto filename = epro::format(sound.second, ext);
-			if(Utils::FileExists(filename)) {
-				SFXList[sound.first] = Utils::ToUTF8IfNeeded(filename);
-				break;
-			}
+        /////kdiy///////
+		// for(const auto& ext : extensions) {
+		// 	const auto filename = epro::format(sound.second, ext);
+		// 	if(Utils::FileExists(filename)) {
+		// 		SFXList[sound.first] = Utils::ToUTF8IfNeeded(filename);
+		// 		break;
+		// 	}
+		// }
+        for (auto& file : Utils::FindFiles(sound.second, mixer->GetSupportedSoundExtensions())) {
+			auto files = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/{}/{}"), Utils::ToPathString(working_dir), sound.second, file));
+			SFXList[sound.first].push_back(files);
 		}
+        /////kdiy///////
 	}
 #endif
 }
@@ -336,9 +389,28 @@ void SoundManager::PlaySoundEffect(SFX sound) {
 #ifdef BACKEND
 	if(!soundsEnabled) return;
 	if(sound >= SFX::SFX_TOTAL_SIZE) return;
-	const auto& soundfile = SFXList[sound];
-	if(soundfile.empty()) return;
-	mixer->PlaySound(soundfile);
+    /////kdiy/////
+	// const auto& soundfile = SFXList[sound];
+	// if(soundfile.empty()) return;
+    //mixer->PlaySound(soundfile);
+    int count = SFXList[sound].size();
+	if(count > 0) {
+		int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+		mixer->PlaySound(SFXList[sound][soundno]);
+    } else if(sound == SFX::SUMMON_DARK || sound == SFX::SUMMON_DIVINE || sound == SFX::SUMMON_EARTH || sound == SFX::SUMMON_FIRE || sound == SFX::SUMMON_LIGHT || sound == SFX::SUMMON_WATER || sound == SFX::SUMMON_WIND) {
+        int count = SFXList[SFX::SUMMON].size();
+        if(count > 0) {
+            int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+            mixer->PlaySound(SFXList[SFX::SUMMON][soundno]);
+        }
+    } else if(sound == SFX::SPECIAL_SUMMON_DARK || sound == SFX::SPECIAL_SUMMON_DIVINE || sound == SFX::SPECIAL_SUMMON_EARTH || sound == SFX::SPECIAL_SUMMON_FIRE || sound == SFX::SPECIAL_SUMMON_LIGHT || sound == SFX::SPECIAL_SUMMON_WATER || sound == SFX::SPECIAL_SUMMON_WIND) {
+        int count = SFXList[SFX::SPECIAL_SUMMON].size();
+        if(count > 0) {
+            int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+            mixer->PlaySound(SFXList[SFX::SPECIAL_SUMMON][soundno]);
+        }
+    }
+    /////kdiy/////
 #endif
 }
 void SoundManager::PlayBGM(BGM scene, bool loop) {
@@ -435,8 +507,8 @@ bool SoundManager::PlayCardBGM(uint32_t code, uint32_t code2) {
 		}
 		return true;
 	}
-	return false;
 #endif
+    return false;
 }
 void SoundManager::PlayCustomMusic(std::string num) {
 #ifdef BACKEND
@@ -466,6 +538,23 @@ void SoundManager::PlayCustomBGM(std::string num) {
 		 }
 	}
 #endif
+}
+bool SoundManager::PlayFieldSound() {
+#ifdef BACKEND
+	if (soundsEnabled) {
+        std::vector<std::string> list;
+        for (auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("{}/sound/field"), Utils::ToPathString(working_dir)), mixer->GetSupportedSoundExtensions()))
+			list.push_back(Utils::ToUTF8IfNeeded(file));
+		int count = list.size();
+		if(count > 0) {
+			int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+			if(mixer->PlaySound(epro::format("{}/sound/field/{}", working_dir, list[soundno])))
+				return true;
+			else return false;
+        }
+    }
+#endif
+    return false;
 }
 //bool SoundManager::PlayChant(CHANT chant, uint32_t code) {
 bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t player, uint8_t extra) {

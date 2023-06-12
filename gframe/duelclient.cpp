@@ -1274,7 +1274,9 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		break;
 	}
 	case STOC_HS_PLAYER_ENTER: {
+        /////kdiy/////
 		if(!mainGame->mode->isMode)
+        /////kdiy/////
 		gSoundManager->PlaySoundEffect(SoundManager::SFX::PLAYER_ENTER);
 		auto pkt = BufferIO::getStruct<STOC_HS_PlayerEnter>(pdata, len);
 		if(pkt.pos > 5)
@@ -3783,6 +3785,19 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			else if (current.location & LOCATION_REMOVED)				
 				Play(SoundManager::SFX::BANISHED);
 		}
+        //////kdiy///
+        auto cd = gDataManager->GetCardData(code);
+        if(previous.controler == current.controler && (current.location & LOCATION_MZONE) && (reason & REASON_SPSUMMON) && (current.position & POS_FACEUP)) {
+            if(((cd->type & (TYPE_LINK | TYPE_XYZ | TYPE_SYNCHRO | TYPE_FUSION)) && (previous.location & LOCATION_EXTRA)) 
+            || (((cd->type & TYPE_PENDULUM) && (((previous.location & LOCATION_EXTRA) && (previous.position & POS_FACEUP)) || (previous.location & LOCATION_HAND))))) {
+                if(cd->type & TYPE_PENDULUM) Play(SoundManager::SFX::PENDULUM_SUMMON);
+                else if(cd->type & TYPE_LINK) Play(SoundManager::SFX::LINK_SUMMON);
+                else if(cd->type & TYPE_XYZ) Play(SoundManager::SFX::XYZ_SUMMON);
+                else if(cd->type & TYPE_SYNCHRO) Play(SoundManager::SFX::SYNCHRO_SUMMON);
+                else if(cd->type & TYPE_FUSION) Play(SoundManager::SFX::FUSION_SUMMON);
+            }
+        }
+        //////kdiy///
 		auto lock = LockIf();
 		if (previous.location == 0) {
 			ClientCard* pcard = new ClientCard{};
@@ -3883,6 +3898,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					}
 				}
 			} else if (!(previous.location & LOCATION_OVERLAY)) {
+                //////kdiy///
+                Play(SoundManager::SFX::OVERLAY);
+                //////kdiy///
 				ClientCard* pcard = mainGame->dField.GetCard(previous.controler, previous.location, previous.sequence);
 				if (code != 0 && pcard->code != code)
 					pcard->SetCode(code);
@@ -3907,6 +3925,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				if(!mainGame->dInfo.isCatchingUp)
 					mainGame->WaitFrameSignal(5, lock);
 			} else if (!(current.location & LOCATION_OVERLAY)) {
+                //////kdiy///
+                Play(SoundManager::SFX::OVERLAY);
+                //////kdiy///
 				ClientCard* olcard = mainGame->dField.GetCard(previous.controler, previous.location & (~LOCATION_OVERLAY) & 0xff, previous.sequence);
 				ClientCard* pcard = olcard->overlayed[previous.position];
 				olcard->overlayed.erase(olcard->overlayed.begin() + pcard->sequence);
@@ -4013,8 +4034,28 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
 		/////kdiy//////
         //if(!PlayChant(SoundManager::CHANT::SUMMON, code))
-		/////kdiy//////			
-		/*CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);*/			
+		/////kdiy//////
+		/*CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);*/		
+        /////kdiy//////
+        auto cd = gDataManager->GetCardData(code);
+        if(cd->type & TYPE_TOKEN)
+			Play(SoundManager::SFX::TOKEN);
+        else if(cd->attribute & ATTRIBUTE_DARK)
+			Play(SoundManager::SFX::SUMMON_DARK);
+        else if(cd->attribute & ATTRIBUTE_DIVINE)
+			Play(SoundManager::SFX::SUMMON_DIVINE);
+        else if(cd->attribute & ATTRIBUTE_EARTH)
+			Play(SoundManager::SFX::SUMMON_EARTH);
+        else if(cd->attribute & ATTRIBUTE_FIRE)
+			Play(SoundManager::SFX::SUMMON_FIRE);
+        else if(cd->attribute & ATTRIBUTE_LIGHT)
+			Play(SoundManager::SFX::SUMMON_LIGHT);
+        else if(cd->attribute & ATTRIBUTE_WATER)
+			Play(SoundManager::SFX::SUMMON_WATER);
+        else if(cd->attribute & ATTRIBUTE_WIND)
+			Play(SoundManager::SFX::SUMMON_WIND);
+        else
+        /////kdiy//////
 			Play(SoundManager::SFX::SUMMON);
 		if(!mainGame->dInfo.isCatchingUp) {
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
@@ -4046,6 +4087,26 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		//if(!PlayChant(SoundManager::CHANT::SUMMON, code))
 		/////kdiy//////
 		/*CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);*/
+        /////kdiy//////
+        auto cd = gDataManager->GetCardData(code);
+        if(cd->type & TYPE_TOKEN)
+			Play(SoundManager::SFX::TOKEN);
+        else if(cd->attribute & ATTRIBUTE_DARK)
+			Play(SoundManager::SFX::SPECIAL_SUMMON_DARK);
+        else if(cd->attribute & ATTRIBUTE_DIVINE)
+			Play(SoundManager::SFX::SPECIAL_SUMMON_DIVINE);
+        else if(cd->attribute & ATTRIBUTE_EARTH)
+			Play(SoundManager::SFX::SPECIAL_SUMMON_EARTH);
+        else if(cd->attribute & ATTRIBUTE_FIRE)
+			Play(SoundManager::SFX::SPECIAL_SUMMON_FIRE);
+        else if(cd->attribute & ATTRIBUTE_LIGHT)
+			Play(SoundManager::SFX::SPECIAL_SUMMON_LIGHT);
+        else if(cd->attribute & ATTRIBUTE_WATER)
+			Play(SoundManager::SFX::SPECIAL_SUMMON_WATER);
+        else if(cd->attribute & ATTRIBUTE_WIND)
+			Play(SoundManager::SFX::SPECIAL_SUMMON_WIND);
+        else
+        /////kdiy//////
 			Play(SoundManager::SFX::SPECIAL_SUMMON);			
 		if(!mainGame->dInfo.isCatchingUp) {
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
@@ -4109,10 +4170,15 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 	case MSG_CHAINING: {
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
 		/////kdiy//////
-		//if (!PlayChant(SoundManager::CHANT::ACTIVATE, code))
+		//if (!PlayChant(SoundManager::CHANT::ACTIVATE, code))      
+            //Play(SoundManager::SFX::ACTIVATE);
+		//CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);	
+        CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);	 
+        if(info.location == LOCATION_SZONE && info.sequence == 5 && (info.position == POS_FACEUP))
+            gSoundManager->PlayFieldSound();
+        else
+            Play(SoundManager::SFX::ACTIVATE);
         /////kdiy//////
-			Play(SoundManager::SFX::ACTIVATE);
-		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);	
 		const auto cc = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		const auto cl = BufferIO::Read<uint8_t>(pbuf);
 		const auto cs = CompatRead<uint8_t, uint32_t>(pbuf);
@@ -4219,6 +4285,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 	}
 	case MSG_CHAIN_NEGATED:
 	case MSG_CHAIN_DISABLED: {
+        ///kdiy////////
+        Play(SoundManager::SFX::NEGATE);
+        ///kdiy////////
 		const auto ct = BufferIO::Read<uint8_t>(pbuf);
 		if(!mainGame->dInfo.isCatchingUp) {
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
@@ -4581,12 +4650,19 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		mainGame->dField.attacker = mainGame->dField.GetCard(info1.controler, info1.location, info1.sequence);
 		/////kdiy//////
 		//if(!PlayChant(SoundManager::CHANT::ATTACK, mainGame->dField.attacker->code))
+        CoreUtils::loc_info info2 = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+		const bool is_direct = info2.location == 0;
+        if(is_direct)
+            Play(SoundManager::SFX::DIRECT_ATTACK);		
+        else
 		/////kdiy//////			
 			Play(SoundManager::SFX::ATTACK);			
 		if(mainGame->dInfo.isCatchingUp)
 			return true;
-		CoreUtils::loc_info info2 = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
-		const bool is_direct = info2.location == 0;
+        /////kdiy//////
+		//CoreUtils::loc_info info2 = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+		//const bool is_direct = info2.location == 0;
+        /////kdiy//////
 		info2.controler = mainGame->LocalPlayer(info2.controler);
 		std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 		float sy;
@@ -4660,6 +4736,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 	}
 	case MSG_ATTACK_DISABLED: {
 		////kdiy///////////
+        Play(SoundManager::SFX::ATTACK_DISABLED);
 		//event_string = epro::sprintf(gDataManager->GetSysString(1621), gDataManager->GetName(mainGame->dField.attacker->code));
 		event_string = epro::sprintf(gDataManager->GetSysString(1621), gDataManager->GetVirtualName(mainGame->dField.attacker));
 		////kdiy///////////
