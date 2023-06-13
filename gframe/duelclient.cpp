@@ -3139,6 +3139,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		return false;
 	}
 	case MSG_CONFIRM_DECKTOP: {
+        //////kdiy///
+        Play(SoundManager::SFX::REVEAL);
+        //////kdiy///
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		const auto count = CompatRead<uint8_t, uint32_t>(pbuf);
 		uint32_t code;
@@ -3177,6 +3180,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		return true;
 	}
 	case MSG_CONFIRM_EXTRATOP: {
+        //////kdiy///
+        Play(SoundManager::SFX::REVEAL);
+        //////kdiy///
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		const auto count = CompatRead<uint8_t, uint32_t>(pbuf);
 		uint32_t code;
@@ -3214,6 +3220,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		return true;
 	}
 	case MSG_CONFIRM_CARDS: {
+        //////kdiy///
+        Play(SoundManager::SFX::REVEAL);
+        //////kdiy///
 		/*const auto player = */mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		const auto count = CompatRead<uint8_t, uint32_t>(pbuf);
 		uint32_t code, l, s;
