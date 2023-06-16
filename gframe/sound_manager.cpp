@@ -238,7 +238,7 @@ void SoundManager::RefreshChantsList() {
 	for(auto list : ChantsList)
 		list.clear();
 	int i = -1;
-	for(int i = 0; i < 10; i++) {
+	for(int i = 0; i < 13; i++) {
 		for(int j = 0; j < CHARACTER_VOICE + CHARACTER_STORY_ONLY; j++)
 			ChantSPList[i][j].clear();
 	}
@@ -286,10 +286,7 @@ void SoundManager::RefreshChantsList() {
 			try {
 				uint32_t code = static_cast<uint32_t>(std::stoul(scode));
 				if (code && !ChantsBGMList.count(code)) {
-					auto extension = Utils::GetFileExtension(file);
-					auto chop = 4;
-					if (extension == EPRO_TEXT("flac")) chop = 5;
-					ChantsBGMList[code] = epro::format("{}/{}", working_dir, Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("./sound/BGM/card/{}"), file.substr(0, file.size() - chop))));
+					ChantsBGMList[code] = epro::format("{}/{}", working_dir, Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("./sound/BGM/card/{}"), scode)));
 				}
 			}
 			catch (...) {
@@ -308,13 +305,25 @@ void SoundManager::RefreshChantsList() {
 			if(chantType.first == CHANT::STARTUP) i = 7;
 			if(chantType.first == CHANT::BORED) i = 8;
 			if(chantType.first == CHANT::SUMMON) i = 9;
+			if(chantType.first == CHANT::ATTACK) i = 10;
+			if(chantType.first == CHANT::ACTIVATE) i = 11;
+			if(chantType.first == CHANT::PENDULUM) i = 12;
 			if(i == -1) continue;
 			for(int x = 0 ; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
 				for (auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
-					auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
 					std::string files = Utils::ToUTF8IfNeeded(file);
-					if((i == 9 && (files.find("fusion") != std::string::npos || files.find("synchro") != std::string::npos || files.find("xyz") != std::string::npos || files.find("link") != std::string::npos || files.find("ritual") != std::string::npos || files.find("pendulum") != std::string::npos)) || i != 9)
+					auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
+					if((i == 9 && (files.find("fusion") != std::string::npos || files.find("synchro") != std::string::npos || files.find("xyz") != std::string::npos || files.find("link") != std::string::npos || files.find("ritual") != std::string::npos || files.find("pendulum") != std::string::npos))
 					    ChantSPList[i][x].push_back(conv);
+					else if(i >= 0 && !(files.find("fusion") != std::string::npos || files.find("synchro") != std::string::npos || files.find("xyz") != std::string::npos || files.find("link") != std::string::npos || files.find("ritual") != std::string::npos || files.find("pendulum") != std::string::npos))) {
+						auto scode = Utils::GetFileName(file);
+						try {
+							continue;
+						}
+						catch (...) {
+							ChantSPList[i][x].push_back(conv);
+						}
+					}
 				}
 			}
 		}
@@ -330,10 +339,7 @@ void SoundManager::RefreshChantsList() {
 					// if (code && !ChantsList.count(key))	
 					// 	ChantsList[key] = epro::format("{}/{}", working_dir, Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/{}"), searchPath, file)));
 					if (code && !ChantsList[x].count(key)) {
-						auto extension = Utils::GetFileExtension(file);
-						auto chop = 4;
-						if (extension == EPRO_TEXT("flac")) chop = 5;
-						ChantsList[x][key] = epro::format("{}/{}", working_dir, Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/{}"), searchPath[x], file.substr(0, file.size() - chop))));
+						ChantsList[x][key] = epro::format("{}/{}", working_dir, Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/{}"), searchPath[x], scode)));
 					}
 				}
 				catch (...) {
@@ -613,6 +619,9 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 				if(extra != 0) {
 					int i = -1;
 					if(chant == CHANT::SUMMON) i = 9;
+					if(chant == CHANT::ATTACK) i = 10;
+					if(chant == CHANT::ACTIVATE) i = 11;
+					if(chant == CHANT::PENDULUM) i = 12;
 					if(i == -1) return false;
 					std::vector<std::string> list;
 					list = ChantSPList[i][character[player]];
