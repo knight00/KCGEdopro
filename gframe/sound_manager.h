@@ -23,6 +23,7 @@ public:
         XYZ_SUMMON,
         PENDULUM_SUMMON,
         LINK_SUMMON,
+        RITUAL_SUMMON,
         SUMMON_DARK,
         SUMMON_DIVINE,
         SUMMON_EARTH,
@@ -104,7 +105,7 @@ public:
 	void PlayCustomBGM(std::string num);
     bool PlayFieldSound();
 	//bool PlayChant(CHANT chant, uint32_t code);
-	bool PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t player, uint8_t extra = 0);
+	bool PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t player, uint16_t extra = 0);
 	uint8_t character[6] = {0,0,0,0,0,0}; //0: empty, 1: muto, 2: atem, 3: kaiba, 4: joey, 5: marik, 6: dartz, 7:bakura, 8: aigami, 9: judai, 10: manjome, 11: kaisa, 12: phoenix, 13: john, 14: yubel, 15: yusei, 16: jack, 17: arki, 18: yuma, 19: shark, 20: kaito, 21: DonThousand, 22: yuya, 23: declan, 24: shay, 25: playmaker, 26: soulburner, 27: blueangel, 28: darksiner
     std::vector<std::string> soundcount;
     std::vector<std::string> soundcount2;

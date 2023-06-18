@@ -161,6 +161,7 @@ void SoundManager::RefreshSoundsList() {
 		{XYZ_SUMMON, EPRO_TEXT("./sound/specialsummon/xyz"_sv)},
 		{PENDULUM_SUMMON, EPRO_TEXT("./sound/specialsummon/pendulum"_sv)},
 		{LINK_SUMMON, EPRO_TEXT("./sound/specialsummon/link"_sv)},
+		{RITUAL_SUMMON, EPRO_TEXT("./sound/specialsummon/ritual"_sv)},
 		{NEGATE, EPRO_TEXT("./sound/negate"_sv)},
         {OVERLAY, EPRO_TEXT("./sound/overlay"_sv)},
 		{ACTIVATE, EPRO_TEXT("./sound/activate"_sv)},
@@ -294,37 +295,137 @@ void SoundManager::RefreshChantsList() {
 			}
 		}
 		
-		if(chantType.first != CHANT::ATTACK && chantType.first != CHANT::ACTIVATE && chantType.first != CHANT::PENDULUM) {
-			if(chantType.first == CHANT::SET) i = 0;
-			if(chantType.first == CHANT::EQUIP) i = 1;
-			if(chantType.first == CHANT::DESTROY) i = 2;
-			if(chantType.first == CHANT::DRAW) i = 3;
-			if(chantType.first == CHANT::DAMAGE) i = 4;
-			if(chantType.first == CHANT::RECOVER) i = 5;
-			if(chantType.first == CHANT::NEXTTURN) i = 6;
-			if(chantType.first == CHANT::STARTUP) i = 7;
-			if(chantType.first == CHANT::BORED) i = 8;
-			if(chantType.first == CHANT::SUMMON) i = 9;
-			if(chantType.first == CHANT::ATTACK) i = 10;
-			if(chantType.first == CHANT::ACTIVATE) i = 11;
-			if(chantType.first == CHANT::PENDULUM) i = 12;
-			if(i == -1) continue;
-			for(int x = 0 ; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
-				for (auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
-					std::string files = Utils::ToUTF8IfNeeded(file);
-					auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
-					if((i == 9 && (files.find("fusion") != std::string::npos || files.find("synchro") != std::string::npos || files.find("xyz") != std::string::npos || files.find("link") != std::string::npos || files.find("ritual") != std::string::npos || files.find("pendulum") != std::string::npos))
-					    ChantSPList[i][x].push_back(conv);
-					else if(i >= 0 && !(files.find("fusion") != std::string::npos || files.find("synchro") != std::string::npos || files.find("xyz") != std::string::npos || files.find("link") != std::string::npos || files.find("ritual") != std::string::npos || files.find("pendulum") != std::string::npos))) {
-						auto scode = Utils::GetFileName(file);
-						try {
-							continue;
-						}
-						catch (...) {
-							ChantSPList[i][x].push_back(conv);
-						}
-					}
-				}
+		if(chantType.first == CHANT::SET) i = 0;
+		if(chantType.first == CHANT::EQUIP) i = 1;
+		if(chantType.first == CHANT::DESTROY) i = 2;
+		if(chantType.first == CHANT::DRAW) i = 3;
+		if(chantType.first == CHANT::DAMAGE) i = 4;
+		if(chantType.first == CHANT::RECOVER) i = 5;
+		if(chantType.first == CHANT::NEXTTURN) i = 6;
+		if(chantType.first == CHANT::STARTUP) i = 7;
+		if(chantType.first == CHANT::BORED) i = 8;
+		if(chantType.first == CHANT::SUMMON) i = 9;
+		if(chantType.first == CHANT::ATTACK) i = 10;
+		if(chantType.first == CHANT::ACTIVATE) i = 11;
+		if(chantType.first == CHANT::PENDULUM) i = 12;
+		if(i == -1) continue;
+		for(int x = 0 ; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
+            if(i == 9) {
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/fusion"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/fusion/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/synchro"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/synchro/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/xyz"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/xyz/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/link"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/link/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/ritual"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/ritual/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/pendulum"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/pendulum/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/summon"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/summon/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/spsummon"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/spsummon/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/attack"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/attack/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/defense"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/defense/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/advance"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/advance/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+            } else if(i == 10) {
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/attack"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/attack/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/monster"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/monster/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/directattack"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/directattack/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+            } else if(i == 11) {
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/activate"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/activate/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/fromhand"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/fromhand/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/monster"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/activate/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/normalspell"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/normalspell/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/quickspell"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/quickspell/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/continuousspell"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/continuousspell/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/equip"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/equip/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/ritual"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/ritual/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/normaltrap"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/normaltrap/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/continuoustrap"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/continuoustrap/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/countertrap"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/countertrap/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/field"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/field/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/pendulum"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/pendulum/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+            } else {
+                for (auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
 			}
 		}
 		if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM) {
@@ -563,7 +664,7 @@ bool SoundManager::PlayFieldSound() {
     return false;
 }
 //bool SoundManager::PlayChant(CHANT chant, uint32_t code) {
-bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t player, uint8_t extra) {
+bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t player, uint16_t extra) {
 ///////kdiy//////
 #ifdef BACKEND
 	if(!soundsEnabled) return false;
@@ -610,6 +711,13 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
             }
 		}
 	} else {
+		int i = -1;
+		if(chant == CHANT::SUMMON) i = 9;
+		if(chant == CHANT::ATTACK) i = 10;
+		if(chant == CHANT::ACTIVATE) i = 11;
+		if(chant == CHANT::PENDULUM) i = 12;
+		if(i == -1) return false;
+        std::vector<std::string> list;
 		auto key = std::make_pair(chant, code);
 		auto chant_it = ChantsList[character[player]].find(key);
 		auto key2 = std::make_pair(chant, code2);
@@ -617,113 +725,57 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 		if(chant_it2 == ChantsList[character[player]].end()) {
 			if(chant_it == ChantsList[character[player]].end()) {
 				if(extra != 0) {
-					int i = -1;
-					if(chant == CHANT::SUMMON) i = 9;
-					if(chant == CHANT::ATTACK) i = 10;
-					if(chant == CHANT::ACTIVATE) i = 11;
-					if(chant == CHANT::PENDULUM) i = 12;
-					if(i == -1) return false;
-					std::vector<std::string> list;
-					list = ChantSPList[i][character[player]];
-					int count = list.size();
+					std::vector<std::string> list2 = ChantSPList[i][character[player]];
+					int count = list2.size();
 					if(count < 1) return false;
-                    std::vector<std::string> list_fusion, list_synchro, list_xyz, list_link, list_ritual, list_pendulum;
-					uint8_t extrasound = 0;
-					std::string esound = "";
-					for(int i = 0; i < count; i++) {
-						std::string sound = list[i];
-						if((extra & 0x1) && sound.find("fusion") != std::string::npos) {
-							extrasound = 1;
-							list_fusion.push_back(sound);
-						}
-						if((extra & 0x2) && sound.find("synchro") != std::string::npos) {
-							extrasound = 2;
-							list_synchro.push_back(sound);
-						}
-						if((extra & 0x4) && sound.find("xyz") != std::string::npos) {
-							extrasound = 3;
-							list_xyz.push_back(sound);
-						}
-						if((extra & 0x8) && sound.find("link") != std::string::npos) {
-							extrasound = 4;
-							list_link.push_back(sound);
-						}
-						if ((extra & 0x10) && sound.find("ritual") != std::string::npos) {
-							extrasound = 5;
-							list_ritual.push_back(sound);
-						}
-						if((extra & 0x20) && sound.find("pendulum") != std::string::npos) {
-							extrasound = 6;
-							list_pendulum.push_back(sound);
-						}
-					}
-					if (extrasound == 1) {
-						for (int i = 1; i < 6; i++) {
-							int count = list_fusion.size();
-							if (count > 0) {
-								int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-								esound = list_fusion[soundno];
-							}
-						}
-					} else if(extrasound == 2) {
-						for (int i = 1; i < 6; i++) {
-							int count = list_synchro.size();
-							if (count > 0) {
-								int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-								esound = list_synchro[soundno];
-							}
-						}
-					} else if (extrasound == 3) {
-						for (int i = 1; i < 6; i++) {
-							int count = list_xyz.size();
-							if (count > 0) {
-								int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-								esound = list_xyz[soundno];
-							}
-						}
-					} else if (extrasound == 4) {
-						for (int i = 1; i < 6; i++) {
-							int count = list_link.size();
-							if (count > 0) {
-								int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-								esound = list_link[soundno];
-							}
-						}
-					} else if (extrasound == 5) {
-						for (int i = 1; i < 6; i++) {
-							int count = list_ritual.size();
-							if (count > 0) {
-								int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-								esound = list_ritual[soundno];
-							}
-						}
-					} else if (extrasound == 6) {
-						for (int i = 1; i < 6; i++) {
-							int count = list_pendulum.size();
-							if (count > 0) {
-								int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-								esound = list_pendulum[soundno];
-							}
-						}
-					} else
-						return false;
-                    if(std::find(gSoundManager->soundcount.begin(), gSoundManager->soundcount.end(), esound) != gSoundManager->soundcount.end())
-                        return false;
-                    gSoundManager->soundcount.push_back(esound);
-					StopSounds();
-					if(mixer->PlaySound(esound)) {
-                        mainGame->isEvent = true;
-                        if(gGameConfig->pauseduel) {
-                            std::unique_lock<epro::mutex> lck(*mainGame->lck);
-                            mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(esound)));
-                            lck.unlock();
+                    if(i == 9) {
+                        for(int i = 0; i < count; i++) {
+                            std::string sound = list2[i];
+                            if((extra & 0x1) && sound.find("summon/fusion/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x2) && sound.find("summon/synchro/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x4) && sound.find("summon/xyz/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x8) && sound.find("summon/link/") != std::string::npos)
+                                list.push_back(sound);
+                            if ((extra & 0x10) && sound.find("summon/ritual/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x20) && sound.find("summon/pendulum/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x80) && sound.find("summon/summon/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x40) && sound.find("summon/spsummon/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x100) && sound.find("summon/attack/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x200) && sound.find("summon/defense/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x400) && sound.find("summon/advance/") != std::string::npos)
+                                list.push_back(sound);
                         }
-						return true;
-					} else return false;
-				}
-				return false;
+                    } else if(i == 10) {
+                        for(int i = 0; i < count; i++) {
+                            std::string sound = list2[i];
+                            if((extra & 0x1) && sound.find("attack/attack/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x2) && sound.find("attack/monster/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x4) && sound.find("attack/directattack/") != std::string::npos)
+                                list.push_back(sound);
+                        }
+                    }
+                } else {
+                    std::vector<std::string> list2 = ChantSPList[i][character[player]];
+					int count = list2.size();
+					if(count < 1) return false;
+                    for(int i = 0; i < count; i++) {
+                        std::string sound = list2[i];
+                        if(sound.find("/") == std::string::npos)
+                            list.push_back(sound);
+                    }
+                }
 			} else {
-				std::vector<std::string> list;
 				const auto extensions = mixer->GetSupportedSoundExtensions();
 				for(const auto& ext : extensions) {
 					const auto filename = epro::format("{}.{}", chant_it->second, Utils::ToUTF8IfNeeded(ext));
@@ -735,29 +787,8 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 							list.push_back(filename2);
 					}
 				}
-				for(auto file : gSoundManager->soundcount)
-					list.erase(std::remove(list.begin(), list.end(), file), list.end());
-				int count = list.size();
-				if(count > 0) {
-					int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-                    if(std::find(gSoundManager->soundcount.begin(), gSoundManager->soundcount.end(), list[soundno]) != gSoundManager->soundcount.end())
-                        return false;
-                    gSoundManager->soundcount.push_back(list[soundno]);
-					StopSounds();
-					if(mixer->PlaySound(list[soundno])) {
-                        mainGame->isEvent = true;
-                        if(gGameConfig->pauseduel) {
-                            std::unique_lock<epro::mutex> lck(*mainGame->lck);
-                            mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list[soundno])));
-                            lck.unlock();
-                        }
-						return true;
-					} else return false;
-				} else
-					return false;
 			}
 		} else {
-			std::vector<std::string> list;
 			const auto extensions = mixer->GetSupportedSoundExtensions();
 			for(const auto& ext : extensions) {
 				const auto filename = epro::format("{}.{}", chant_it2->second, Utils::ToUTF8IfNeeded(ext));
@@ -769,28 +800,27 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 						list.push_back(filename2);
 				}
 			}
-			for(auto file : gSoundManager->soundcount)
-				list.erase(std::remove(list.begin(), list.end(), file), list.end());
-			int count = list.size();
-			if(count > 0) {
-				int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-                if(std::find(gSoundManager->soundcount.begin(), gSoundManager->soundcount.end(), list[soundno]) != gSoundManager->soundcount.end())
-                    return false;
-                gSoundManager->soundcount.push_back(list[soundno]);
-				StopSounds();
-				if(mixer->PlaySound(list[soundno])) {
-                    mainGame->isEvent = true;
-                    if(gGameConfig->pauseduel) {
-                        std::unique_lock<epro::mutex> lck(*mainGame->lck);
-                        mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list[soundno])));
-                        lck.unlock();
-                    }
-					return true;
-				} else return false;
-			} else
-				return false;
 		}
-		return true;
+        for(auto file : gSoundManager->soundcount)
+			list.erase(std::remove(list.begin(), list.end(), file), list.end());
+		int count = list.size();
+		if(count > 0) {
+			int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+            if(std::find(gSoundManager->soundcount.begin(), gSoundManager->soundcount.end(), list[soundno]) != gSoundManager->soundcount.end())
+                return false;
+            gSoundManager->soundcount.push_back(list[soundno]);
+			StopSounds();
+			if(mixer->PlaySound(list[soundno])) {
+                mainGame->isEvent = true;
+                if(gGameConfig->pauseduel) {
+                    std::unique_lock<epro::mutex> lck(*mainGame->lck);
+                    mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list[soundno])));
+                    lck.unlock();
+                }
+				return true;
+			} else return false;
+		} else
+			return false;
 	}
 	return false;
 ///////kdiy//////
