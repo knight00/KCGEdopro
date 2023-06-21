@@ -35,7 +35,7 @@ V0101_11_08_00_0    summon/xyz
 V0101_11_09_00_0    summon/pendulum
 V0101_11_10_00_0    summon/link
 V0101_13                     summon/卡号 (卡号不要"0"在前面)
-V0101_14                     phase/battle
+V0101_14                     battlephase
 V0101_15                     attack/attack
 V0101_16                    attack/attack
 V0101_17                    attack/monster

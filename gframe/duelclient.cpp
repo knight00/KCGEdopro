@@ -1653,7 +1653,17 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         }
 		PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, player);
 		break;
-    } 
+    }
+	case MSG_NEW_PHASE: {
+		const auto phase = BufferIO::Read<uint16_t>(pbuf);
+		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
+		switch (phase) {
+			case PHASE_BATTLE_START:
+			PlayChant(SoundManager::CHANT::BATTLEPHASE, nullptr, player);
+			break;
+		}
+		break;
+	}
     case MSG_MOVE: {
         const auto code = BufferIO::Read<uint32_t>(pbuf);
 		CoreUtils::loc_info previous = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
@@ -1689,6 +1699,8 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         }
 		if(previous.location != current.location && (reason & REASON_DESTROY))
 			PlayChant(SoundManager::CHANT::DESTROY, nullptr, previous.controler);
+		if(previous.location != current.location && (reason & REASON_RELEASE))
+			PlayChant(SoundManager::CHANT::RELEASE, nullptr, previous.controler);
 		break;
     }
     case MSG_SET: {
@@ -1761,6 +1773,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 	case MSG_CHAINING: {
         const auto code = BufferIO::Read<uint32_t>(pbuf);
         CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+        CoreUtils::loc_info previous = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
         ClientCard* pcard = mainGame->dField.GetCard(mainGame->LocalPlayer(info.controler), info.location, info.sequence, info.position);
 		const auto cc = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		auto cd = gDataManager->GetCardData(code);
@@ -1813,21 +1826,55 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
             }
         }
 		if(!PlayAnimecode(code, code2, 1) && !mode) {
+			uint16_t extra = 0x1;
+			if(previous.location & LOCATION_HAND) extra |= 0x2;
+			if(pcard->type & TYPE_SPELL) {
+				if(!(pcard->type & (TYPE_FIELD | TYPE_EQUIP | TYPE_CONTINUOUS | TYPE_RITUAL | TYPE_QUICKPLAY | TYPE_PENDULUM))) extra |= 0x4;
+				if(pcard->type & TYPE_QUICKPLAY) extra |= 0x8;
+				if(pcard->type & TYPE_CONTINUOUS) extra |= 0x10;
+				if(pcard->type & TYPE_EQUIP) extra |= 0x20;
+				if(pcard->type & TYPE_RITUAL) extra |= 0x40;
+				if(pcard->type & TYPE_FIELD) extra |= 0x1000;
+			}
+			if(pcard->type & TYPE_TRAP) {
+				if(!(pcard->type & (TYPE_COUNTER | TYPE_CONTINUOUS))) extra |= 0x80;
+				if(pcard->type & TYPE_CONTINUOUS) extra |= 0x100;
+				if(pcard->type & TYPE_COUNTER) extra |= 0x200;
+			}
+			if(pcard->type & TYPE_MONSTER) extra |= 0x800;
+			if(pcard->type & TYPE_PENDULUM) extra |= 0x2000;
+			if(previous.controler == info.controler && previous.location == info.location & (previous.position & POS_FACEDOWN) & (info.position & POS_FACEUP)) extra |= 0x400;
 			if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && (info.position == POS_FACEUP) && info.location == LOCATION_SZONE && (info.sequence == 0 || info.sequence == 4 || info.sequence == 6 || info.sequence == 7))
-				PlayChantcode(SoundManager::CHANT::PENDULUM, code, code2, cc);
+				PlayChantcode(SoundManager::CHANT::PENDULUM, code, code2, cc, extra);
 			else
-				PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, cc);
+				PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, cc, extra);
         }
         break;
     }
+	case MSG_CHAIN_NEGATED: {
+		const auto ct = BufferIO::Read<uint8_t>(pbuf);
+		const auto cc = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
+		const auto pc = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
+		if(pc != cc) PlayChant(SoundManager::CHANT::OPPCOUNTER, nullptr, pc);
+		break;
+	}
     case MSG_DRAW: {
+		uint16_t extra = 0;
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
-		PlayChant(SoundManager::CHANT::DRAW, nullptr, player);
+		if(mainGame->dInfo.lp[player] > 0 && mainGame->dInfo.lp[player] <= mainGame->dInfo.lp[1 - player] / 2) extra = 0x1;
+		if(mainGame->dInfo.lp[player] > 0 && mainGame->dInfo.lp[player] >= mainGame->dInfo.lp[1 - player] * 2) extra = 0x2;
+		PlayChant(SoundManager::CHANT::DRAW, nullptr, player, extra);
         break;
 	}
     case MSG_DAMAGE: {
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
-		PlayChant(SoundManager::CHANT::DAMAGE, nullptr, player);
+		const auto val = BufferIO::Read<uint32_t>(pbuf);
+		const auto reason = BufferIO::Read<uint32_t>(pbuf);
+		uint16_t extra = 0;
+		if(reason & REASON_COST) extra = 0x1;
+		else if((mainGame->dInfo.lp[player] > 0 && mainGame->dInfo.lp[player] >= mainGame->dInfo.lp[1 - player] * 2) || val >= 4000) extra = 0x4;
+		else extra = 0x2;
+		PlayChant(SoundManager::CHANT::DAMAGE, nullptr, player, extra);
         break;
     }
     case MSG_RECOVER: {
@@ -1843,7 +1890,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
     }
     case MSG_PAY_LPCOST: {
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
-		PlayChant(SoundManager::CHANT::DAMAGE, nullptr, player);
+		PlayChant(SoundManager::CHANT::DAMAGE, nullptr, player, 0x1);
         break;
     }
 	case MSG_ATTACK: {
@@ -1877,6 +1924,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
                 break;
             }
         }
+		if(player < 2) PlayChant(SoundManager::CHANT::LOSE, nullptr, player);
         break;
     }
     }
@@ -2053,8 +2101,24 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			uint32_t code2 = 0;
 			if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
             mainGame->showcardalias = code2;
+			uint16_t extra = 0x1;
+			if(cd->type & TYPE_SPELL) {
+				if(!(cd->type & (TYPE_FIELD | TYPE_EQUIP | TYPE_CONTINUOUS | TYPE_RITUAL | TYPE_QUICKPLAY | TYPE_PENDULUM))) extra |= 0x4;
+				if(cd->type & TYPE_QUICKPLAY) extra |= 0x8;
+				if(cd->type & TYPE_CONTINUOUS) extra |= 0x10;
+				if(cd->type & TYPE_EQUIP) extra |= 0x20;
+				if(cd->type & TYPE_RITUAL) extra |= 0x40;
+				if(cd->type & TYPE_FIELD) extra |= 0x1000;
+			}
+			if(cd->type & TYPE_TRAP) {
+				if(!(cd->type & (TYPE_COUNTER | TYPE_CONTINUOUS))) extra |= 0x80;
+				if(cd->type & TYPE_CONTINUOUS) extra |= 0x100;
+				if(cd->type & TYPE_COUNTER) extra |= 0x200;
+			}
+			if(cd->type & TYPE_MONSTER) extra |= 0x800;
+			if(cd->type & TYPE_PENDULUM) extra |= 0x2000;
 			if(!PlayAnimecode(cd->code, code2, 1))
-				PlayChantcode(SoundManager::CHANT::ACTIVATE, cd->code, code2, player);
+				PlayChantcode(SoundManager::CHANT::ACTIVATE, cd->code, code2, player, extra);
 			/////kdiy//////	
 			Play(SoundManager::SFX::ACTIVATE);			
 			mainGame->WaitFrameSignal(30, lock);
@@ -2129,15 +2193,15 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				    mainGame->imageManager.SetAvatar(mainGame->dInfo.current_player[0], text);
 				else
 					mainGame->imageManager.SetAvatar(mainGame->dInfo.current_player[1] + mainGame->dInfo.team1, text);
-			} else {	
+			} else {
 				if(player == 0)
 					mainGame->imageManager.SetAvatar(mainGame->dInfo.current_player[0] + mainGame->dInfo.team1, text);
 				else
 					mainGame->imageManager.SetAvatar(mainGame->dInfo.current_player[1], text);
-			}	
-			break;			
-		}		
-		//////kdiy////////			
+			}
+			break;
+		}
+		//////kdiy////////
 		case HINT_SKILL: {
 			auto lock = LockIf();
 			auto& pcard = mainGame->dField.skills[player];

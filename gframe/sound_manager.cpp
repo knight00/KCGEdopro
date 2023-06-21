@@ -229,6 +229,10 @@ void SoundManager::RefreshChantsList() {
 		{CHANT::STARTUP,  EPRO_TEXT("startup"_sv)},
 		{CHANT::BORED,  EPRO_TEXT("bored"_sv)},
 		{CHANT::PENDULUM,  EPRO_TEXT("pendulum"_sv)},
+		{CHANT::OPPCOUNTER,  EPRO_TEXT("oppcounter"_sv)},
+		{CHANT::RELEASE,  EPRO_TEXT("release"_sv)},
+		{CHANT::BATTLEPHASE,  EPRO_TEXT("battlephase"_sv)},
+		{CHANT::LOSE,  EPRO_TEXT("lose"_sv)},
 		/////kdiy///////
 		{CHANT::SUMMON,    EPRO_TEXT("summon"_sv)},
 		{CHANT::ATTACK,    EPRO_TEXT("attack"_sv)},
@@ -239,7 +243,7 @@ void SoundManager::RefreshChantsList() {
 	for(auto list : ChantsList)
 		list.clear();
 	int i = -1;
-	for(int i = 0; i < 13; i++) {
+	for(int i = 0; i < 17; i++) {
 		for(int j = 0; j < CHARACTER_VOICE + CHARACTER_STORY_ONLY; j++)
 			ChantSPList[i][j].clear();
 	}
@@ -308,6 +312,10 @@ void SoundManager::RefreshChantsList() {
 		if(chantType.first == CHANT::ATTACK) i = 10;
 		if(chantType.first == CHANT::ACTIVATE) i = 11;
 		if(chantType.first == CHANT::PENDULUM) i = 12;
+		if(chantType.first == CHANT::OPPCOUNTER) i = 13;
+		if(chantType.first == CHANT::RELEASE) i = 14;
+		if(chantType.first == CHANT::BATTLEPHASE) i = 15;
+		if(chantType.first == CHANT::LOSE) i = 16;
 		if(i == -1) continue;
 		for(int x = 0 ; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
             if(i == 9) {
@@ -675,32 +683,40 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 // 		return false;
 // 	return mixer->PlaySound(chant_it->second);
 	if(player < 0) return false;
+	int i = -1;
+	if(chant == CHANT::SET) i = 0;
+	if(chant == CHANT::EQUIP) i = 1;
+	if(chant == CHANT::DESTROY) i = 2;
+	if(chant == CHANT::DRAW) i = 3;
+	if(chant == CHANT::DAMAGE) i = 4;
+	if(chant == CHANT::RECOVER) i = 5;
+	if(chant == CHANT::NEXTTURN) i = 6;
+	if(chant == CHANT::STARTUP) i = 7;
+	if(chant == CHANT::BORED) i = 8;
+	if(chant == CHANT::SUMMON) i = 9;
+	if(chant == CHANT::ATTACK) i = 10;
+	if(chant == CHANT::ACTIVATE) i = 11;
+	if(chant == CHANT::PENDULUM) i = 12;
+	if(chant == CHANT::OPPCOUNTER) i = 13;
+	if(chant == CHANT::RELEASE) i = 14;
+	if(chant == CHANT::BATTLEPHASE) i = 15;
+	if(chant == CHANT::LOSE) i = 16;
+	if(i == -1) return false;
+	std::vector<std::string> list;
 	if(code == 0) {
-		int i = -1;
-		if(chant == CHANT::SET) i = 0;
-		if(chant == CHANT::EQUIP) i = 1;
-		if(chant == CHANT::DESTROY) i = 2;
-		if(chant == CHANT::DRAW) i = 3;
-		if(chant == CHANT::DAMAGE) i = 4;
-		if(chant == CHANT::RECOVER) i = 5;
-		if(chant == CHANT::NEXTTURN) i = 6;
-		if(chant == CHANT::STARTUP) i = 7;
-		if(chant == CHANT::BORED) i = 8;
-		if(i == -1) return false;
-		std::vector<std::string> list;
 		list = ChantSPList[i][character[player]];
 		int count = list.size();
 		if(count > 0) {
 			int bgm = (std::uniform_int_distribution<>(0, count - 1))(rnd);
 			std::string BGMName = list[bgm];
-            if(i < 3) {
+            if(i < 3 || i > 12) {
                 if(std::find(gSoundManager->soundcount2.begin(), gSoundManager->soundcount2.end(), BGMName) != gSoundManager->soundcount2.end())
-                return false;
+                    return false;
                 gSoundManager->soundcount2.push_back(BGMName);
             }
 			StopSounds();
 			if(mixer->PlaySound(BGMName)) {
-                if(i >= 7) return true;
+                if(i >= 7 && i <= 12) return true;
                 mainGame->isEvent = true;
                 if(gGameConfig->pauseduel) {
                     std::unique_lock<epro::mutex> lck(*mainGame->lck);
@@ -711,13 +727,6 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
             }
 		}
 	} else {
-		int i = -1;
-		if(chant == CHANT::SUMMON) i = 9;
-		if(chant == CHANT::ATTACK) i = 10;
-		if(chant == CHANT::ACTIVATE) i = 11;
-		if(chant == CHANT::PENDULUM) i = 12;
-		if(i == -1) return false;
-        std::vector<std::string> list;
 		auto key = std::make_pair(chant, code);
 		auto chant_it = ChantsList[character[player]].find(key);
 		auto key2 = std::make_pair(chant, code2);
@@ -764,6 +773,60 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
                             if((extra & 0x4) && sound.find("attack/directattack/") != std::string::npos)
                                 list.push_back(sound);
                         }
+                    } else if(i == 11) {
+                        for(int i = 0; i < count; i++) {
+                            std::string sound = list2[i];
+                            if((extra & 0x1) && sound.find("activate/activate/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x2) && sound.find("activate/fromhand/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x4) && sound.find("activate/normalspell/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x8) && sound.find("activate/quickspell/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x10) && sound.find("activate/continuousspell/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x20) && sound.find("activate/equip/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x40) && sound.find("activate/ritual/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x80) && sound.find("activate/normaltrap/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x100) && sound.find("activate/continuoustrap/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x200) && sound.find("activate/countertrap/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x400) && sound.find("activate/flip/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x800) && sound.find("activate/monster/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x1000) && sound.find("activate/field/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x2000) && sound.find("activate/pendulum/") != std::string::npos)
+                                list.push_back(sound);
+                        }
+					} else if(i == 3) {
+                        for(int i = 0; i < count; i++) {
+                            std::string sound = list2[i];
+                            if((extra & 0x1) && sound.find("draw/disadvantage/") != std::string::npos)
+                                list.push_back(sound);
+                            else if((extra & 0x2) && sound.find("draw/advantage/") != std::string::npos)
+                                list.push_back(sound);
+							else if(sound.find("draw/") != std::string::npos && sound.find("draw/disadvantage/") == std::string::npos && sound.find("draw/advantage/") == std::string::npos)
+                                list.push_back(sound);
+						}
+                    } else if(i == 4) {
+                        for(int i = 0; i < count; i++) {
+                            std::string sound = list2[i];
+                            if((extra & 0x1) && sound.find("damage/cost/") != std::string::npos)
+                                list.push_back(sound);
+                            else if((extra & 0x2) && sound.find("damage/minor/") != std::string::npos)
+                                list.push_back(sound);
+                            else if((extra & 0x4) && sound.find("damage/major/") != std::string::npos)
+                                list.push_back(sound);
+							else if(sound.find("damage/") != std::string::npos && sound.find("damage/cost/") == std::string::npos && sound.find("damage/minor/") == std::string::npos&& sound.find("damage/major/") == std::string::npos)
+                                list.push_back(sound);
+						}
                     }
                 } else {
                     std::vector<std::string> list2 = ChantSPList[i][character[player]];
@@ -771,8 +834,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 					if(count < 1) return false;
                     for(int i = 0; i < count; i++) {
                         std::string sound = list2[i];
-                        if(sound.find("/") == std::string::npos)
-                            list.push_back(sound);
+                        list.push_back(sound);
                     }
                 }
 			} else {
