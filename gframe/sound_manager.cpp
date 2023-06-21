@@ -437,6 +437,11 @@ void SoundManager::RefreshChantsList() {
                     auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/action/") + file);
                     ChantSPList[i][x].push_back(conv);
                 }
+			} else if(i == 12) {
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/activate"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/activate/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
             } else {
                 for (auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
                     auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
@@ -813,6 +818,12 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
                             if((extra & 0x2000) && sound.find("activate/pendulum/") != std::string::npos)
                                 list.push_back(sound);
                             if((extra & 0x4000) && sound.find("activate/action/") != std::string::npos)
+                                list.push_back(sound);
+                        }
+					} else if(i == 12) {
+                        for(int i = 0; i < count; i++) {
+                            std::string sound = list2[i];
+                            if((extra & 0x1) && sound.find("pendulum/activate/") != std::string::npos)
                                 list.push_back(sound);
                         }
 					} else if(i == 3) {
