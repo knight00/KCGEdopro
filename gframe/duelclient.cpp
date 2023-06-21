@@ -1835,6 +1835,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 				if(pcard->type & TYPE_EQUIP) extra |= 0x20;
 				if(pcard->type & TYPE_RITUAL) extra |= 0x40;
 				if(pcard->type & TYPE_FIELD) extra |= 0x1000;
+				if(pcard->type & TYPE_ACTION) extra |= 0x4000;
 			}
 			if(pcard->type & TYPE_TRAP) {
 				if(!(pcard->type & (TYPE_COUNTER | TYPE_CONTINUOUS))) extra |= 0x80;
@@ -2109,6 +2110,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				if(cd->type & TYPE_EQUIP) extra |= 0x20;
 				if(cd->type & TYPE_RITUAL) extra |= 0x40;
 				if(cd->type & TYPE_FIELD) extra |= 0x1000;
+				if(cd->type & TYPE_ACTION) extra |= 0x4000;
 			}
 			if(cd->type & TYPE_TRAP) {
 				if(!(cd->type & (TYPE_COUNTER | TYPE_CONTINUOUS))) extra |= 0x80;

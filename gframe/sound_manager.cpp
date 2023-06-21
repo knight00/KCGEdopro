@@ -421,12 +421,20 @@ void SoundManager::RefreshChantsList() {
                     auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/countertrap/") + file);
                     ChantSPList[i][x].push_back(conv);
                 }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/flip"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/flip/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
                 for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/field"), mixer->GetSupportedSoundExtensions())) {
                     auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/field/") + file);
                     ChantSPList[i][x].push_back(conv);
                 }
                 for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/pendulum"), mixer->GetSupportedSoundExtensions())) {
                     auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/pendulum/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/action"), mixer->GetSupportedSoundExtensions())) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/action/") + file);
                     ChantSPList[i][x].push_back(conv);
                 }
             } else {
@@ -803,6 +811,8 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
                             if((extra & 0x1000) && sound.find("activate/field/") != std::string::npos)
                                 list.push_back(sound);
                             if((extra & 0x2000) && sound.find("activate/pendulum/") != std::string::npos)
+                                list.push_back(sound);
+                            if((extra & 0x4000) && sound.find("activate/action/") != std::string::npos)
                                 list.push_back(sound);
                         }
 					} else if(i == 3) {
