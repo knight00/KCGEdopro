@@ -2234,8 +2234,8 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 #endif
 				if(gGameConfig->enablessound) {
 					bool filechk = false;
-					for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/")), { EPRO_TEXT("mp3") })) {
-						if(Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/") + file)) {
+					for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/card/")), { EPRO_TEXT("mp3") })) {
+						if(Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/card/") + file)) {
 							filechk = true;
 							break;
 						}
@@ -2262,8 +2262,8 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 #endif
 				if(gGameConfig->enablecsound) {
 					bool filechk = false;
-					for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/")), { EPRO_TEXT("mp3") })) {
-						if(Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/") + file)) {
+					for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/card/")), { EPRO_TEXT("mp3") })) {
+						if(Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/card/") + file)) {
 							filechk = true;
 							break;
 						}
@@ -2290,8 +2290,8 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 #endif
 				if(gGameConfig->enableasound) {
 					bool filechk = false;
-					for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/")), { EPRO_TEXT("mp3") })) {
-						if(Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/") + file)) {
+					for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./sound/character/atem/summon/card/")), { EPRO_TEXT("mp3") })) {
+						if(Utils::FileExists(EPRO_TEXT("./sound/character/atem/summon/card/") + file)) {
 							filechk = true;
 							break;
 						}
