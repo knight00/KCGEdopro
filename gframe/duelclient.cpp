@@ -1707,7 +1707,10 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
         CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
         const auto player = mainGame->LocalPlayer(info.controler);
-        PlayChant(SoundManager::CHANT::SET, nullptr, player);
+		uint16_t extra = 0;
+		auto cd = gDataManager->GetCardData(code);
+		if(info.location & LOCATION_MZONE) extra |= 0x1;
+        PlayChant(SoundManager::CHANT::SET, nullptr, player, extra);
 		break;
     }
     case MSG_SUMMONING: {

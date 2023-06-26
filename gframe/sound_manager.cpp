@@ -464,15 +464,17 @@ void SoundManager::RefreshChantsList() {
             if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM) {
                 for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/card"), mixer->GetSupportedSoundExtensions())) {
                     auto scode = Utils::GetFileName(file);
-                    try {
-                        uint32_t code = static_cast<uint32_t>(std::stoul(scode));
-                        auto key = std::make_pair(chantType.first, code);
-                        if (code && !ChantsList[x].count(key)) {
-                            ChantsList[x][key] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/card/{}"), searchPath[x], scode));
-                        }
-                    }
-                    catch (...) {
-                        continue;
+					if(scode.find(L"+") == std::wstring::npos || scode.find(L"-") == std::wstring::npos || scode.find(L"_") == std::wstring::npos || scode.find(L".") == std::wstring::npos) {
+						try {
+							uint32_t code = static_cast<uint32_t>(std::stoul(scode));
+							auto key = std::make_pair(chantType.first, code);
+							if (code && !ChantsList[x].count(key)) {
+                                ChantsList[x][key] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/card/{}"), searchPath[x], scode));
+							}
+						}
+						catch (...) {
+							continue;
+						}
                     }
                 }
             }
@@ -844,6 +846,14 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
                             else if((extra & 0x2) && sound.find("draw/advantage/") != std::string::npos)
                                 list.push_back(sound);
 							else if(sound.find("draw/") != std::string::npos && sound.find("draw/disadvantage/") == std::string::npos && sound.find("draw/advantage/") == std::string::npos)
+                                list.push_back(sound);
+						}
+					} else if(chant == CHANT::SET) {
+                        for(int i = 0; i < count; i++) {
+                            std::string sound = list[i];
+                            if((extra & 0x1) && sound.find("set/monster/") != std::string::npos)
+                                list.push_back(sound);
+							else if(sound.find("set/") != std::string::npos && sound.find("set/monster/") == std::string::npos)
                                 list.push_back(sound);
 						}
                     } else if(chant == CHANT::DAMAGE) {
