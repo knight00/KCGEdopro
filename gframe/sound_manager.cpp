@@ -78,9 +78,13 @@ void SoundManager::RefreshBGMList() {
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yusei"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/jack"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/arki"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/crow"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/kiryu"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/zone"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yuma"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/shark"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/kaito"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/iv"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/DonThousand"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yuya"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/declan"));
@@ -283,9 +287,13 @@ void SoundManager::RefreshChantsList() {
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/yusei/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/jack/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/arki/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/crow/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/kiryu/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/zone/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/yuma/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/shark/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/kaito/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/iv/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/DonThousand/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/yuya/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/declan/{}"), chantType.second));
@@ -464,17 +472,17 @@ void SoundManager::RefreshChantsList() {
             if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM) {
                 for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/card"), mixer->GetSupportedSoundExtensions())) {
                     auto scode = Utils::GetFileName(file);
-					if(scode.find(L"+") == std::wstring::npos || scode.find(L"-") == std::wstring::npos || scode.find(L"_") == std::wstring::npos || scode.find(L".") == std::wstring::npos) {
-						try {
-							uint32_t code = static_cast<uint32_t>(std::stoul(scode));
-							auto key = std::make_pair(chantType.first, code);
-							if (code && !ChantsList[x].count(key)) {
-                                ChantsList[x][key] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/card/{}"), searchPath[x], scode));
-							}
+					if(scode.find(L"+") != std::wstring::npos || scode.find(L"-") != std::wstring::npos || scode.find(L"_") != std::wstring::npos || scode.find(L".") != std::wstring::npos)
+                        continue;
+					try {
+						uint32_t code = static_cast<uint32_t>(std::stoul(scode));
+						auto key = std::make_pair(chantType.first, code);
+						if (code && !ChantsList[x].count(key)) {
+                            ChantsList[x][key] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/card/{}"), searchPath[x], scode));
 						}
-						catch (...) {
-							continue;
-						}
+					}
+					catch (...) {
+						continue;
                     }
                 }
             }
@@ -511,15 +519,13 @@ int SoundManager::PlayModeSound(bool lock) {
 }
 void SoundManager::PlayMode(bool lock) {
     if(!lock) {
-        std::unique_lock<epro::mutex> lck(*mainGame->lck);
+        std::unique_lock<epro::mutex> lck(mainGame->gMutex);
         mainGame->cv->wait_for(lck, std::chrono::milliseconds(2500));
-        lck.unlock();
         return;
     }
     std::string file = epro::format("./mode/story/story{}/soundDialog/{}.mp3", mainGame->mode->chapter, mainGame->mode->plotIndex);
-    std::unique_lock<epro::mutex> lck(*mainGame->lck);
+    std::unique_lock<epro::mutex> lck(mainGame->gMutex);
     mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(file)));
-	lck.unlock();
 }
 /////kdiy/////
 void SoundManager::PlaySoundEffect(SFX sound) {
@@ -731,19 +737,19 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 		if(count > 0) {
 			int bgm = (std::uniform_int_distribution<>(0, count - 1))(rnd);
 			std::string BGMName = list[bgm];
-            if(i < 3 || i > 12) {
+            //not play again for same sound
+            if(i < 3 || i == 14) {
                 if(std::find(gSoundManager->soundcount2.begin(), gSoundManager->soundcount2.end(), BGMName) != gSoundManager->soundcount2.end())
                     return false;
                 gSoundManager->soundcount2.push_back(BGMName);
             }
 			StopSounds();
 			if(mixer->PlaySound(BGMName)) {
-                if(i >= 7 && i <= 12) return true;
+                if(i < 9 || i > 14) return true;
                 mainGame->isEvent = true;
                 if(gGameConfig->pauseduel) {
-                    std::unique_lock<epro::mutex> lck(*mainGame->lck);
+                    std::unique_lock<epro::mutex> lck(mainGame->gMutex);
                     mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(BGMName)));
-                    lck.unlock();
                 }
                 mainGame->isEvent = false;
                 return true;
@@ -940,9 +946,8 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 			if(mixer->PlaySound(list[soundno])) {
                 mainGame->isEvent = true;
                 if(gGameConfig->pauseduel) {
-                    std::unique_lock<epro::mutex> lck(*mainGame->lck);
+                    std::unique_lock<epro::mutex> lck(mainGame->gMutex);
                     mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list[soundno])));
-                    lck.unlock();
                 }
                 int count2 = list2.size();
                 if(count2 > 0) {
@@ -952,9 +957,8 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
                             StopSounds();
                             mixer->PlaySound(list2[k]);
                             if(gGameConfig->pauseduel) {
-                                std::unique_lock<epro::mutex> lck(*mainGame->lck);
+                                std::unique_lock<epro::mutex> lck(mainGame->gMutex);
                                 mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list2[k])));
-                                lck.unlock();
                             }
                         }
                     }

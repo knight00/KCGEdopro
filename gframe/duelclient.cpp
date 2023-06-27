@@ -1776,9 +1776,13 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 	case MSG_CHAINING: {
         const auto code = BufferIO::Read<uint32_t>(pbuf);
         CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+        const auto cc = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
+		const auto cl = BufferIO::Read<uint8_t>(pbuf);
+		const auto cs = CompatRead<uint8_t, uint32_t>(pbuf);
+		const auto desc = CompatRead<uint32_t, uint64_t>(pbuf);
+		/*const auto ct = */CompatRead<uint8_t, uint32_t>(pbuf);
         CoreUtils::loc_info previous = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
         ClientCard* pcard = mainGame->dField.GetCard(mainGame->LocalPlayer(info.controler), info.location, info.sequence, info.position);
-		const auto cc = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		auto cd = gDataManager->GetCardData(code);
 		uint32_t code2 = 0;
 		if(cd->alias && cd->alias > 0) code2 = cd->alias;
@@ -1811,7 +1815,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
             if(!(info.position & POS_FACEUP)) return;
             for(uint8_t index = 1; index < mainGame->mode->modePloats[chapter - 1]->size(); index++) {
                 auto controler = mainGame->mode->modePloats[chapter - 1]->at(index).control;
-                if(info.controler != controler) continue;
+                if(cc != controler) continue;
                 uint32_t mcode = mainGame->mode->modePloats[chapter - 1]->at(index).code;
                 if(mcode < 1) continue;
                 bool activate = mainGame->mode->modePloats[chapter - 1]->at(index).activate;
@@ -1847,8 +1851,8 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 			}
 			if(pcard->type & TYPE_MONSTER) extra |= 0x800;
 			if(pcard->type & TYPE_PENDULUM) extra |= 0x2000;
-			if(previous.controler == info.controler && previous.location == info.location & (previous.position & POS_FACEDOWN) & (info.position & POS_FACEUP)) extra |= 0x400;
-			if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && (info.position == POS_FACEUP) && info.location == LOCATION_SZONE && (info.sequence == 0 || info.sequence == 4 || info.sequence == 6 || info.sequence == 7))
+			if(previous.controler == cc && previous.location == cl & (previous.position & POS_FACEDOWN) & (info.position & POS_FACEUP)) extra |= 0x400;
+			if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && (info.position == POS_FACEUP) && cl == LOCATION_SZONE && (cs == 0 || cs == 4 || cs == 6 || cs == 7))
 				PlayChantcode(SoundManager::CHANT::PENDULUM, code, code2, cc, extra);
 			else
 				PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, cc, extra);
@@ -1971,7 +1975,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 	/////kdiy/////
     // if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
     mainGame->cv = &cv;
-    mainGame->lck = &to_analyze_mutex;
     ModeClientAnalyze(mainGame->mode->chapter, pbuf, mainGame->dInfo.curMsg);
     // }
 	/////kdiy////
@@ -4271,18 +4274,19 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		/////kdiy//////
 		//if (!PlayChant(SoundManager::CHANT::ACTIVATE, code))      
             //Play(SoundManager::SFX::ACTIVATE);
-		//CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);	
-        CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);	 
-        if(info.location == LOCATION_SZONE && info.sequence == 5 && (info.position == POS_FACEUP))
-            gSoundManager->PlayFieldSound();
-        else
-            Play(SoundManager::SFX::ACTIVATE);
         /////kdiy//////
+        CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		const auto cc = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		const auto cl = BufferIO::Read<uint8_t>(pbuf);
 		const auto cs = CompatRead<uint8_t, uint32_t>(pbuf);
 		const auto desc = CompatRead<uint32_t, uint64_t>(pbuf);
 		/*const auto ct = */CompatRead<uint8_t, uint32_t>(pbuf);
+        /////kdiy//////
+        if(cl == LOCATION_SZONE && cs == 5 && (info.position == POS_FACEUP))
+            gSoundManager->PlayFieldSound();
+        else
+            Play(SoundManager::SFX::ACTIVATE);
+        /////kdiy//////
 		ClientCard* pcard = mainGame->dField.GetCard(mainGame->LocalPlayer(info.controler), info.location, info.sequence, info.position);
 		auto lock = LockIf();
 		if(pcard->code != code || (!pcard->is_public && !mainGame->dInfo.compat_mode)) {

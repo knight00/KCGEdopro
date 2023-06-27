@@ -96,7 +96,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				    break;
 #endif
 				int character = mainGame->dInfo.current_player[1];
-				if(!mainGame->dInfo.isTeam1) character = mainGame->dInfo.current_player[1];
+				if(mainGame->dInfo.isTeam1) character = mainGame->dInfo.current_player[1] + mainGame->dInfo.team1;
 				gSoundManager->PlayChant(SoundManager::CHANT::BORED, 0, 0, character);
 				break;
 			}

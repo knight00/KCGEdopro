@@ -374,7 +374,6 @@ public:
     bool chklast = true;
 	bool isEvent;//locking flow, allow left mouse click notify_one() to skip
 	epro::condition_variable* cv;//should lock thread when play mode-story sound,this cv is in duelclient.cpp
-	epro::mutex * lck;//should lock thread when play mode-story sound,this lck is in duelclient.cpp
     ////kdiy//////
 	float showcarddif;
 	float showcardp;

@@ -529,7 +529,6 @@ char * calculate_file_md5(const char *filename) {
 void Game::Initialize() {
     //kdiy//////
 	cv = nullptr;
-	lck = nullptr;
 	isEvent = false;
     if(Utils::FileExists(EPRO_TEXT("./config/user_configs.json"))) {
 		mainGame->mode->LoadJsonInfo();
