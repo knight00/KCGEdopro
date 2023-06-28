@@ -80,6 +80,7 @@ void SoundManager::RefreshBGMList() {
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/arki"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/crow"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/kiryu"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/paradox"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/zone"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yuma"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/shark"));
@@ -288,6 +289,7 @@ void SoundManager::RefreshChantsList() {
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/arki/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/crow/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/kiryu/{}"), chantType.second));
+		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/paradox/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/zone/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/yuma/{}"), chantType.second));
 		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/shark/{}"), chantType.second));
@@ -471,7 +473,8 @@ void SoundManager::RefreshChantsList() {
             if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM || chantType.first == CHANT::WIN) {
                 for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/card"), mixer->GetSupportedSoundExtensions())) {
                     auto scode = Utils::GetFileName(file);
-					if(scode.find(L"+") != std::wstring::npos || scode.find(L"-") != std::wstring::npos || scode.find(L"_") != std::wstring::npos || scode.find(L".") != std::wstring::npos)
+					auto files = Utils::ToUTF8IfNeeded(file);
+					if(files.find("+") != std::string::npos || files.find("-") != std::string::npos || files.find("_") != std::string::npos || files.find(".") != std::string::npos)
                         continue;
 					try {
 						uint32_t code = static_cast<uint32_t>(std::stoul(scode));
