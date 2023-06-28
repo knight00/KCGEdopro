@@ -172,7 +172,6 @@ void SoundManager::RefreshSoundsList() {
 		{SET, EPRO_TEXT("./sound/set"_sv)},
 		{FLIP, EPRO_TEXT("./sound/flip"_sv)},
 		{REVEAL, EPRO_TEXT("./sound/reveal"_sv)},
-		{EQUIP, EPRO_TEXT("./sound/equip"_sv)},
 		{DESTROYED, EPRO_TEXT("./sound/destroyed"_sv)},
 		{TOKEN, EPRO_TEXT("./sound/token"_sv)},
 		{ATTACK, EPRO_TEXT("./sound/attack"_sv)},
@@ -224,7 +223,6 @@ void SoundManager::RefreshChantsList() {
 	static constexpr std::pair<CHANT, epro::path_stringview> types[]{
 		/////kdiy///////
 		{CHANT::SET,       EPRO_TEXT("set"_sv)},
-		{CHANT::EQUIP,     EPRO_TEXT("equip"_sv)},
 		{CHANT::DESTROY,   EPRO_TEXT("destroyed"_sv)},
 		{CHANT::DRAW,      EPRO_TEXT("draw"_sv)},
 		{CHANT::DAMAGE,    EPRO_TEXT("damage"_sv)},
@@ -236,6 +234,7 @@ void SoundManager::RefreshChantsList() {
 		{CHANT::OPPCOUNTER,  EPRO_TEXT("oppcounter"_sv)},
 		{CHANT::RELEASE,  EPRO_TEXT("release"_sv)},
 		{CHANT::BATTLEPHASE,  EPRO_TEXT("battlephase"_sv)},
+		{CHANT::WIN,  EPRO_TEXT("cardwin"_sv)},
 		{CHANT::LOSE,  EPRO_TEXT("lose"_sv)},
 		/////kdiy///////
 		{CHANT::SUMMON,    EPRO_TEXT("summon"_sv)},
@@ -247,7 +246,7 @@ void SoundManager::RefreshChantsList() {
 	for(auto list : ChantsList)
 		list.clear();
 	int i = -1;
-	for(int i = 0; i < 17; i++) {
+	for(int i = 0; i < 16; i++) {
 		for(int j = 0; j < CHARACTER_VOICE + CHARACTER_STORY_ONLY; j++)
 			ChantSPList[i][j].clear();
 	}
@@ -320,21 +319,21 @@ void SoundManager::RefreshChantsList() {
 		}
 		
 		if(chantType.first == CHANT::SET) i = 0;
-		if(chantType.first == CHANT::EQUIP) i = 1;
-		if(chantType.first == CHANT::DESTROY) i = 2;
-		if(chantType.first == CHANT::DRAW) i = 3;
-		if(chantType.first == CHANT::DAMAGE) i = 4;
-		if(chantType.first == CHANT::RECOVER) i = 5;
-		if(chantType.first == CHANT::NEXTTURN) i = 6;
-		if(chantType.first == CHANT::STARTUP) i = 7;
-		if(chantType.first == CHANT::BORED) i = 8;
-		if(chantType.first == CHANT::SUMMON) i = 9;
-		if(chantType.first == CHANT::ATTACK) i = 10;
-		if(chantType.first == CHANT::ACTIVATE) i = 11;
-		if(chantType.first == CHANT::PENDULUM) i = 12;
-		if(chantType.first == CHANT::OPPCOUNTER) i = 13;
-		if(chantType.first == CHANT::RELEASE) i = 14;
-		if(chantType.first == CHANT::BATTLEPHASE) i = 15;
+		if(chantType.first == CHANT::DESTROY) i = 1;
+		if(chantType.first == CHANT::DRAW) i = 2;
+		if(chantType.first == CHANT::DAMAGE) i = 3;
+		if(chantType.first == CHANT::RECOVER) i = 4;
+		if(chantType.first == CHANT::NEXTTURN) i = 5;
+		if(chantType.first == CHANT::STARTUP) i = 6;
+		if(chantType.first == CHANT::BORED) i = 7;
+		if(chantType.first == CHANT::SUMMON) i = 8;
+		if(chantType.first == CHANT::ATTACK) i = 9;
+		if(chantType.first == CHANT::ACTIVATE) i = 10;
+		if(chantType.first == CHANT::PENDULUM) i = 11;
+		if(chantType.first == CHANT::OPPCOUNTER) i = 12;
+		if(chantType.first == CHANT::RELEASE) i = 13;
+		if(chantType.first == CHANT::BATTLEPHASE) i = 14;
+		if(chantType.first == CHANT::WIN) i = 15;
 		if(chantType.first == CHANT::LOSE) i = 16;
 		if(i == -1) continue;
 		for(int x = 0 ; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
@@ -462,14 +461,14 @@ void SoundManager::RefreshChantsList() {
                     auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/activate/") + file);
                     ChantSPList[i][x].push_back(conv);
                 }
-            } else {
+            } else if(chantType.first != CHANT::WIN){
                 for (auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
                     auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
                     ChantSPList[i][x].push_back(conv);
                 }
 			}
 
-            if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM) {
+            if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM || chantType.first == CHANT::WIN) {
                 for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/card"), mixer->GetSupportedSoundExtensions())) {
                     auto scode = Utils::GetFileName(file);
 					if(scode.find(L"+") != std::wstring::npos || scode.find(L"-") != std::wstring::npos || scode.find(L"_") != std::wstring::npos || scode.find(L".") != std::wstring::npos)
@@ -478,7 +477,10 @@ void SoundManager::RefreshChantsList() {
 						uint32_t code = static_cast<uint32_t>(std::stoul(scode));
 						auto key = std::make_pair(chantType.first, code);
 						if (code && !ChantsList[x].count(key)) {
-                            ChantsList[x][key] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/card/{}"), searchPath[x], scode));
+							if(chantType.first != CHANT::WIN)
+                                ChantsList[x][key] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/card/{}"), searchPath[x], scode));
+							else
+                                ChantsList[x][key] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/{}"), searchPath[x], scode));
 						}
 					}
 					catch (...) {
@@ -713,22 +715,21 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 	if(player < 0) return false;
 	int i = -1;
 	if(chant == CHANT::SET) i = 0;
-	if(chant == CHANT::EQUIP) i = 1;
-	if(chant == CHANT::DESTROY) i = 2;
-	if(chant == CHANT::DRAW) i = 3;
-	if(chant == CHANT::DAMAGE) i = 4;
-	if(chant == CHANT::RECOVER) i = 5;
-	if(chant == CHANT::NEXTTURN) i = 6;
-	if(chant == CHANT::STARTUP) i = 7;
-	if(chant == CHANT::BORED) i = 8;
-	if(chant == CHANT::SUMMON) i = 9;
-	if(chant == CHANT::ATTACK) i = 10;
-	if(chant == CHANT::ACTIVATE) i = 11;
-	if(chant == CHANT::PENDULUM) i = 12;
-	if(chant == CHANT::OPPCOUNTER) i = 13;
-	if(chant == CHANT::RELEASE) i = 14;
-	if(chant == CHANT::BATTLEPHASE) i = 15;
-	if(chant == CHANT::LOSE) i = 16;
+	if(chant == CHANT::DESTROY) i = 1;
+	if(chant == CHANT::DRAW) i = 2;
+	if(chant == CHANT::DAMAGE) i = 3;
+	if(chant == CHANT::RECOVER) i = 4;
+	if(chant == CHANT::NEXTTURN) i = 5;
+	if(chant == CHANT::STARTUP) i = 6;
+	if(chant == CHANT::BORED) i = 7;
+	if(chant == CHANT::SUMMON) i = 8;
+	if(chant == CHANT::ATTACK) i = 9;
+	if(chant == CHANT::ACTIVATE) i = 10;
+	if(chant == CHANT::PENDULUM) i = 11;
+	if(chant == CHANT::OPPCOUNTER) i = 12;
+	if(chant == CHANT::RELEASE) i = 13;
+	if(chant == CHANT::BATTLEPHASE) i = 14;
+	if(chant == CHANT::LOSE) i = 15;
 	if(i == -1) return false;
     std::vector<std::string> list;
 	if(code == 0) {

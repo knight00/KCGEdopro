@@ -560,15 +560,15 @@ void Game::DrawMisc() {
 	driver->draw2DRectangleOutline(lpframe_pos, skin::DUELFIELD_TURNPLAYER_OUTLINE_COLOR_VAL);
 	/////kdiy/////////
 	if(dInfo.isTeam1) {
-		avatarbutton[0]->setImage(imageManager.scharacter[dInfo.current_player[0]]);
-		avatarbutton[1]->setImage(imageManager.scharacter[dInfo.current_player[1] + dInfo.team1]);
+		avatarbutton[0]->setImage(imageManager.scharacter[dInfo.current_player[0]][0]);
+		avatarbutton[1]->setImage(imageManager.scharacter[dInfo.current_player[1] + dInfo.team1][0]);
         btnHead[0]->setImage(imageManager.modeHead[dInfo.current_player[0]]);
 		btnHead[1]->setImage(imageManager.modeHead[dInfo.current_player[1] + dInfo.team1]);
         btnChBody[0]->setImage(imageManager.modeHead[dInfo.current_player[0]]);
 		btnChBody[1]->setImage(imageManager.modeHead[dInfo.current_player[1] + dInfo.team1]);
 	} else {
-		avatarbutton[0]->setImage(imageManager.scharacter[dInfo.current_player[0] + dInfo.team1]);
-		avatarbutton[1]->setImage(imageManager.scharacter[dInfo.current_player[1]]);
+		avatarbutton[0]->setImage(imageManager.scharacter[dInfo.current_player[0] + dInfo.team1][0]);
+		avatarbutton[1]->setImage(imageManager.scharacter[dInfo.current_player[1]][0]);
 		btnHead[0]->setImage(imageManager.modeHead[dInfo.current_player[0] + dInfo.team1]);
 		btnHead[1]->setImage(imageManager.modeHead[dInfo.current_player[1]]);
         btnChBody[0]->setImage(imageManager.modeHead[dInfo.current_player[0]]);

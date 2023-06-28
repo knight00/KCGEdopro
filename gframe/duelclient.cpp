@@ -1189,7 +1189,8 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->wAvatar[0]->setVisible(false);
 			mainGame->wAvatar[1]->setVisible(false);
 			for(int i = 0; i < 6; ++i) {
-				mainGame->imageManager.scharacter[i] = mainGame->imageManager.character[0];
+				mainGame->imageManager.scharacter[i][0] = mainGame->imageManager.character[0];
+				mainGame->imageManager.scharacter[i][1] = mainGame->imageManager.characterd[0];
 				mainGame->imageManager.modeHead[i] = mainGame->imageManager.head[0];
 			}
             gSoundManager->soundcount.clear();
@@ -1630,6 +1631,13 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 	switch(msg) {
     case MSG_NEW_TURN: {
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
+		if(mainGame->dInfo.isTeam1) {
+			mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0]][0]);
+			mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1][0]);
+		} else {
+			mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1][0]);
+			mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1]][0]);
+		}
 		int character = mainGame->dInfo.current_player[player];
 		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
         int character2 = mainGame->dInfo.current_player[1-player] + mainGame->dInfo.team1;
@@ -1878,6 +1886,17 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		const auto val = BufferIO::Read<uint32_t>(pbuf);
 		const auto reason = BufferIO::Read<uint32_t>(pbuf);
+		if(mainGame->dInfo.isTeam1) {
+			if(player == 0)
+			    mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0]][1]);
+			if(player == 1)
+			    mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1][1]);
+		} else {
+			if(player == 0)
+			    mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1][1]);
+			if(player == 1)
+			    mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1]][1]);
+		}
 		uint16_t extra = 0;
 		if(reason & REASON_COST) extra = 0x1;
 		else if((mainGame->dInfo.lp[player] > 0 && mainGame->dInfo.lp[player] >= mainGame->dInfo.lp[1 - player] * 2) || val >= 4000) extra = 0x4;
@@ -1887,13 +1906,18 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
     }
     case MSG_RECOVER: {
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
+		if(mainGame->dInfo.isTeam1) {
+			if(player == 0)
+			    mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0]][1]);
+			if(player == 1)
+			    mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1][1]);
+		} else {
+			if(player == 0)
+			    mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1][1]);
+			if(player == 1)
+			    mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1]][1]);
+		}
 		PlayChant(SoundManager::CHANT::RECOVER, nullptr, player);
-        break;
-    }
-    case MSG_EQUIP: {
-		CoreUtils::loc_info info1 = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
-		const auto player = mainGame->LocalPlayer(info1.controler);
-		PlayChant(SoundManager::CHANT::EQUIP, nullptr, player);
         break;
     }
     case MSG_PAY_LPCOST: {
@@ -1932,7 +1956,15 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
                 break;
             }
         }
-		if(player < 2) PlayChant(SoundManager::CHANT::LOSE, nullptr, player);
+		if(player < 2) {
+			if(match_kill) {
+				auto cd = gDataManager->GetCardData(match_kill);
+				uint32_t match_kill2 = 0;
+				if(cd->alias && cd->alias > 0) match_kill2 = cd->alias;
+				PlayChantcode(SoundManager::CHANT::LOSE, match_kill, match_kill2, player);
+			}
+			PlayChant(SoundManager::CHANT::LOSE, nullptr, 1 - player);
+		}
         break;
     }
     }
@@ -2362,7 +2394,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		for(int i = 0; i < 6; ++i) {
 			if(gSoundManager->character[i] > CHARACTER_VOICE - 1)
 			    mainGame->imageManager.character[gSoundManager->character[i]] = 0;
-			mainGame->imageManager.scharacter[i] = mainGame->imageManager.character[gSoundManager->character[i]];
+			mainGame->imageManager.scharacter[i][0] = mainGame->imageManager.character[gSoundManager->character[i]];
+			mainGame->imageManager.scharacter[i][1] = mainGame->imageManager.characterd[gSoundManager->character[i]];
 		}
 		///////////kdiy///////////
 		mainGame->dInfo.lp[mainGame->LocalPlayer(0)] = BufferIO::Read<uint32_t>(pbuf);
@@ -2378,7 +2411,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         } else
 		///////////kdiy///////////
 			mainGame->dInfo.strLP[0] = fmt::to_wstring(mainGame->dInfo.lp[0]);
-		///////////kdiy///////////		
+		///////////kdiy///////////
 		if (mainGame->dInfo.lp[1] >= 8888888) {
             mainGame->dInfo.lp[1] = 8888888;
 			mainGame->dInfo.strLP[1] = L"\u221E";
@@ -5199,36 +5232,16 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		mainGame->dInfo.current_player[player] = (mainGame->dInfo.current_player[player] + 1) % ((player == 0 && mainGame->dInfo.isFirst) ? mainGame->dInfo.team1 : mainGame->dInfo.team2);
 		//kdiy/////////
 		if(mainGame->dInfo.isTeam1) {
-			mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0]]);
-			mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1]);
+			mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0]][0]);
+			mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1][0]);
 			mainGame->btnHead[0]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[0]]);
 			mainGame->btnHead[1]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1]);
 		} else {
-			mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1]);
-			mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1]]);
+			mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1][0]);
+			mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1]][0]);
 			mainGame->btnHead[0]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1]);
 			mainGame->btnHead[1]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[1]]);
 		}
-        int character = mainGame->dInfo.current_player[player];
-		if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1)) character = mainGame->dInfo.current_player[player] + mainGame->dInfo.team1;
-        int character2 = mainGame->dInfo.current_player[1-player] + mainGame->dInfo.team1;
-		if((1-player == 0 && mainGame->dInfo.isTeam1) || (1-player == 1 && !mainGame->dInfo.isTeam1)) character2 = mainGame->dInfo.current_player[1-player];
-        if(!mainGame->dInfo.isSingleMode && !mainGame->mode->isMode) {
-#ifdef VIP
-            if(gSoundManager->character[character] > 0)
-                mainGame->wAvatar[player]->setVisible(true);
-            else
-                mainGame->wAvatar[player]->setVisible(false);
-            if(gSoundManager->character[character2] > 0)
-                mainGame->wAvatar[1-player]->setVisible(true);
-            else
-                mainGame->wAvatar[1-player]->setVisible(false);
-#endif
-        }
-        if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
-            mainGame->wHead[0]->setVisible(true);
-            mainGame->wHead[1]->setVisible(true);
-        }
         ////kdiy////////
 		break;
 	}

@@ -56,6 +56,7 @@ namespace ygo {
 #define TEXTURE_LIM                 37
 #define TEXTURE_OT                  38
 #define TEXTURE_SETTING             39
+
 #define TEXTURE_MUTO                40
 #define TEXTURE_ATEM                41
 #define TEXTURE_KAIBA               42
@@ -196,7 +197,7 @@ bool ImageManager::Initial() {
 	for (auto path : searchPath) {
 		Utils::MakeDirectory(path);
 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/icon"), path));
-		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/body"), path));
+		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/damage"), path));
 	}
 	RefreshRandomImageList();
 	/////kdiy/////
@@ -368,8 +369,10 @@ bool ImageManager::Initial() {
     ASSERT_TEXTURE_LOADED(QQ, "QQ");
     icon[0] = driver->getTexture(EPRO_TEXT("./textures/character/player/mini_icon.png"));
 	character[0] = driver->getTexture(0);
+	characterd[0] = driver->getTexture(0);
 	for(uint8_t i = 0; i < 6; i++) {
-        scharacter[i] = driver->getTexture(0);
+        scharacter[i][0] = driver->getTexture(0);
+        scharacter[i][1] = driver->getTexture(0);
         modeHead[i] = driver->getTexture(0);
     }
     head[0] = driver->getTexture(0);
@@ -387,6 +390,7 @@ bool ImageManager::Initial() {
     for(uint8_t playno = 1; playno < CHARACTER_VOICE; playno++) {
 		icon[playno] = driver->getTexture(0);
 	    character[playno] = driver->getTexture(0);
+	    characterd[playno] = driver->getTexture(0);
 	}
 #endif
     tcharacterselect = driver->getTexture(EPRO_TEXT("./textures/character/left.png"));
@@ -706,7 +710,8 @@ bool ImageManager::Initial() {
 //////kdiy//////
 void ImageManager::SetAvatar(int seq, const wchar_t *avatar) {
 	auto string = EPRO_TEXT("./textures/character/custom/") + Utils::ToPathString(avatar) + EPRO_TEXT(".png");
-	scharacter[seq] = driver->getTexture(string.c_str());
+	scharacter[seq][0] = driver->getTexture(string.c_str());
+	scharacter[seq][1] = driver->getTexture(string.c_str());
 }
 void ImageManager::RefreshRandomImageList() {
 	if(!gGameConfig->randomtexture)
@@ -782,8 +787,40 @@ void ImageManager::RefreshRandomImageList() {
 	RefreshImageDir(EPRO_TEXT("character/playmaker/icon"), TEXTURE_PLAYMAKER);
 	RefreshImageDir(EPRO_TEXT("character/soulburner/icon"), TEXTURE_SOULBURNER);
 	RefreshImageDir(EPRO_TEXT("character/blueangel/icon"), TEXTURE_BLUEANGEL);
+	
+    RefreshImageDir(EPRO_TEXT("character/muto/damage"), TEXTURE_MUTO + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/atem/damage"), TEXTURE_ATEM + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/kaiba/damage"), TEXTURE_KAIBA + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/joey/damage"), TEXTURE_JOEY + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/marik/damage"), TEXTURE_MARIK + CHARACTER_VOICE);
+    RefreshImageDir(EPRO_TEXT("character/dartz/damage"), TEXTURE_DARTZ + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/bakura/damage"), TEXTURE_BAKURA + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/aigami/damage"), TEXTURE_AIGAMI + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/judai/damage"), TEXTURE_JUDAI + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/manjome/damage"), TEXTURE_MANJOME + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/kaisa/damage"), TEXTURE_KAISA + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/phoenix/damage"), TEXTURE_PHORNIX + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/john/damage"), TEXTURE_JOHN + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/yubel/damage"), TEXTURE_YUBEL + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/yusei/damage"), TEXTURE_YUSEI + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/jack/damage"), TEXTURE_JACK + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/arki/damage"), TEXTURE_ARKI + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/crow/damage"), TEXTURE_CROW + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/kiryu/damage"), TEXTURE_KIRYU + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/zone/damage"), TEXTURE_ZONE + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/yuma/damage"), TEXTURE_YUMA + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/shark/damage"), TEXTURE_SHARK + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/kaito/damage"), TEXTURE_KAITO + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/iv/damage"), TEXTURE_IV + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/Donthousand/damage"), TEXTURE_DONTHOUSAND + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/yuya/damage"), TEXTURE_YUYA + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/declan/damage"), TEXTURE_DECLAN + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/shay/damage"), TEXTURE_SHAY + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/playmaker/damage"), TEXTURE_PLAYMAKER + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/soulburner/damage"), TEXTURE_SOULBURNER + CHARACTER_VOICE);
+	RefreshImageDir(EPRO_TEXT("character/blueangel/damage"), TEXTURE_BLUEANGEL + CHARACTER_VOICE);
 
-	for(int i = 0; i < 39 + CHARACTER_VOICE; ++i)
+	for(int i = 0; i < 39 + CHARACTER_VOICE + CHARACTER_VOICE; ++i)
 		saved_image_id[i] = -1;
 }
 void ImageManager::RefreshImageDir(epro::path_string path, int image_type) {
@@ -832,6 +869,7 @@ void ImageManager::RefreshKCGImage() {
     for(uint8_t playno = 1; playno < CHARACTER_VOICE; playno++) {
         icon[playno] = driver->getTexture((EPRO_TEXT("./textures/character/") + Utils::ToPathString(textcharacter[playno-1]) + EPRO_TEXT("/mini_icon.png")).c_str());
         GetRandomImage(character[playno], imgcharacter[playno-1], true);
+        GetRandomImage(characterd[playno], imgcharacter[playno-1] + CHARACTER_VOICE, true);
     }
 }
 //////kdiy//////
