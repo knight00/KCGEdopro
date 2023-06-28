@@ -1631,6 +1631,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 	switch(msg) {
     case MSG_NEW_TURN: {
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
+		mainGame->imageManager.RefreshKCGImage();
 		if(mainGame->dInfo.isTeam1) {
 			mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0]][0]);
 			mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1][0]);
@@ -1886,6 +1887,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		const auto val = BufferIO::Read<uint32_t>(pbuf);
 		const auto reason = BufferIO::Read<uint32_t>(pbuf);
+		mainGame->imageManager.RefreshKCGImage();
 		if(mainGame->dInfo.isTeam1) {
 			if(player == 0)
 			    mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0]][1]);
@@ -1906,6 +1908,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
     }
     case MSG_RECOVER: {
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
+		mainGame->imageManager.RefreshKCGImage();
 		if(mainGame->dInfo.isTeam1) {
 			if(player == 0)
 			    mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0]][1]);
