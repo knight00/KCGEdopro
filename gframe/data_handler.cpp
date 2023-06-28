@@ -149,7 +149,7 @@ void DataHandler::LoadKZipArchives() {
 }
 ////////kdiy////////
 DataHandler::DataHandler() {
-	configs = std::unique_ptr<GameConfig>(new GameConfig());
+	configs = std::make_unique<GameConfig>();
 	gGameConfig = configs.get();
 	tmp_device = nullptr;
 #if EDOPRO_IOS
@@ -172,16 +172,16 @@ DataHandler::DataHandler() {
 		configs->ssl_certificate_path = epro::format("{}/cacert.pem", Utils::ToUTF8IfNeeded(Utils::GetWorkingDirectory()));
 #endif
 	filesystem = new irr::io::CFileSystem();
-	dataManager = std::unique_ptr<DataManager>(new DataManager());
+	dataManager = std::make_unique<DataManager>();
 	auto strings_loaded = dataManager->LoadStrings(EPRO_TEXT("./config/strings.conf"));
 	strings_loaded = dataManager->LoadStrings(EPRO_TEXT("./expansions/strings.conf")) || strings_loaded;
 	if(!strings_loaded)
 		throw std::runtime_error("Failed to load strings!");
 	Utils::filesystem = filesystem;
 	LoadZipArchives();
-	deckManager = std::unique_ptr<DeckManager>(new DeckManager());
-	gitManager = std::unique_ptr<RepoManager>(new RepoManager());
-	sounds = std::unique_ptr<SoundManager>(new SoundManager(configs->soundVolume / 100.0, configs->musicVolume / 100.0, configs->enablesound, configs->enablemusic));
+	deckManager = std::make_unique<DeckManager>();
+	gitManager = std::make_unique<RepoManager>();
+	sounds = std::make_unique<SoundManager>(configs->soundVolume / 100.0, configs->musicVolume / 100.0, configs->enablesound, configs->enablemusic);
 	gitManager->LoadRepositoriesFromJson(configs->user_configs);
 	////kdiy//////////
 	if(!Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
@@ -191,8 +191,8 @@ DataHandler::DataHandler() {
 		deckManager->StopDummyLoading();
 	////kdiy//////////
 	LoadKZipArchives();
-	////kdiy//////////	
-	imageDownloader = std::unique_ptr<ImageDownloader>(new ImageDownloader());
+	////kdiy//////////
+	imageDownloader = std::make_unique<ImageDownloader>();
 	LoadDatabases();
 	LoadPicUrls();
 	deckManager->LoadLFList();

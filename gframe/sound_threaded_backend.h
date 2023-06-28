@@ -32,7 +32,7 @@ public:
 protected:
 	explicit SoundThreadedBackend(std::unique_ptr<SoundBackend>&&);
 private:
-	enum class ActionType {
+	enum class ActionType : uint8_t {
 		SET_SOUND_VOLUME,
 		SET_MUSIC_VOLUME,
 		PLAY_MUSIC,
@@ -85,7 +85,7 @@ private:
 template<typename T>
 class SoundThreadedBackendHelper final : public SoundThreadedBackend {
 public:
-	SoundThreadedBackendHelper() : SoundThreadedBackend(std::unique_ptr<SoundBackend>(new T())) {}
+	SoundThreadedBackendHelper() : SoundThreadedBackend(std::make_unique<T>()) {}
 	virtual ~SoundThreadedBackendHelper() override = default;
 };
 

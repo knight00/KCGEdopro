@@ -135,21 +135,22 @@ private:
 	std::vector<std::string> BGMList[8];
 	////////kdiy////
 	//std::string SFXList[SFX::SFX_TOTAL_SIZE];
+	//std::map<std::pair<CHANT, uint32_t>, std::string> ChantsList;
     std::vector<std::string> SFXList[SFX::SFX_TOTAL_SIZE];
 	std::map<uint32_t, std::string> ChantsBGMList;
 	std::map<std::pair<CHANT, uint32_t>, std::string> ChantsList[CHARACTER_VOICE + CHARACTER_STORY_ONLY];
 	std::vector<std::string> ChantSPList[16][CHARACTER_VOICE + CHARACTER_STORY_ONLY];
 	std::string bgm_now = "";
 	////////kdiy////
-	int bgm_scene = -1;
+	int bgm_scene{ -1 };
 	RNG::mt19937 rnd;
-	std::unique_ptr<SoundBackend> mixer;
+	std::unique_ptr<SoundBackend> mixer{ nullptr };
 	void RefreshSoundsList();
 	void RefreshBGMDir(epro::path_stringview path, BGM scene);
-	bool soundsEnabled = false;
-	bool musicEnabled = false;
-	std::string working_dir;
-	bool succesfully_initied = false;
+	bool soundsEnabled{ false };
+	bool musicEnabled{ false };
+	std::string working_dir{ "./" };
+	bool succesfully_initied{ false };
 };
 
 extern SoundManager* gSoundManager;
