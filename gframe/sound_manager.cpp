@@ -173,6 +173,7 @@ void SoundManager::RefreshSoundsList() {
 		{SET, EPRO_TEXT("./sound/set"_sv)},
 		{FLIP, EPRO_TEXT("./sound/flip"_sv)},
 		{REVEAL, EPRO_TEXT("./sound/reveal"_sv)},
+		{EQUIP, EPRO_TEXT("./sound/equip.{}"_sv)},
 		{DESTROYED, EPRO_TEXT("./sound/destroyed"_sv)},
 		{TOKEN, EPRO_TEXT("./sound/token"_sv)},
 		{ATTACK, EPRO_TEXT("./sound/attack"_sv)},
@@ -247,7 +248,7 @@ void SoundManager::RefreshChantsList() {
 	for(auto list : ChantsList)
 		list.clear();
 	int i = -1;
-	for(int i = 0; i < 16; i++) {
+	for(int i = 0; i < 17; i++) {
 		for(int j = 0; j < CHARACTER_VOICE + CHARACTER_STORY_ONLY; j++)
 			ChantSPList[i][j].clear();
 	}

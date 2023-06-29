@@ -89,8 +89,8 @@ public:
 	bool Initial();
 	/////kdiy/////
 	void SetAvatar(int seq, const wchar_t *avatar);
-	std::vector<epro::path_string> ImageList[39+CHARACTER_VOICE];
-	int saved_image_id[39+CHARACTER_VOICE];
+	std::vector<epro::path_string> ImageList[39+CHARACTER_VOICE+CHARACTER_VOICE];
+	int saved_image_id[39+CHARACTER_VOICE+CHARACTER_VOICE];
 	//random image
 	void GetRandomImage(irr::video::ITexture*& src, int image_type, bool force_random=false);
 	void GetRandomImage(irr::video::ITexture*& src, int image_type, int width, int height, bool force_random = false);
