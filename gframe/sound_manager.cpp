@@ -591,13 +591,13 @@ void SoundManager::PlayBGM(BGM scene, bool loop) {
 bool SoundManager::PlayCardBGM(uint32_t code, uint32_t code2) {
 #ifdef BACKEND
 	if (musicEnabled) {
+		std::vector<std::string> list;
 		auto chant_it = ChantsBGMList.find(code);
 		auto chant_it2 = ChantsBGMList.find(code2);
 		if(chant_it2 == ChantsBGMList.end()) {
 			if(chant_it == ChantsBGMList.end())
 				return false;
 			else {
-				std::vector<std::string> list;
 				const auto extensions = mixer->GetSupportedSoundExtensions();
 				for(const auto& ext : extensions) {
 					const auto filename = epro::format("{}.{}", chant_it->second, Utils::ToUTF8IfNeeded(ext));
@@ -609,24 +609,8 @@ bool SoundManager::PlayCardBGM(uint32_t code, uint32_t code2) {
 							list.push_back(filename2);
 					}
 				}
-				for(auto file : gSoundManager->soundcount)
-					list.erase(std::remove(list.begin(), list.end(), file), list.end());
-				int count = list.size();
-				if(count > 0) {
-					int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-                    if(std::find(gSoundManager->soundcount.begin(), gSoundManager->soundcount.end(), list[soundno]) != gSoundManager->soundcount.end())
-                        return false;
-                    gSoundManager->soundcount.push_back(list[soundno]);
-					if(mixer->MusicPlaying())
-		 	            mixer->StopMusic();
-					if(mixer->PlayMusic(list[soundno], gGameConfig->loopMusic))
-						return true;
-					else return false;
-				} else
-					return false;
 			}
 		} else {
-			std::vector<std::string> list;
 			const auto extensions = mixer->GetSupportedSoundExtensions();
 			for(const auto& ext : extensions) {
 				const auto filename = epro::format("{}.{}", chant_it2->second, Utils::ToUTF8IfNeeded(ext));
@@ -638,22 +622,22 @@ bool SoundManager::PlayCardBGM(uint32_t code, uint32_t code2) {
 						list.push_back(filename2);
 				}
 			}
-			for(auto file : gSoundManager->soundcount)
-				list.erase(std::remove(list.begin(), list.end(), file), list.end());
-			int count = list.size();
-			if(count > 0) {
-				int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-                if(std::find(gSoundManager->soundcount.begin(), gSoundManager->soundcount.end(), list[soundno]) != gSoundManager->soundcount.end())
-                    return false;
-                gSoundManager->soundcount.push_back(list[soundno]);
-				if(mixer->MusicPlaying())
-		 	        mixer->StopMusic();
-				if(mixer->PlayMusic(list[soundno], gGameConfig->loopMusic))
-					return true;
-				else return false;
-			} else
-				return false;
 		}
+        for(auto file : gSoundManager->soundcount)
+			list.erase(std::remove(list.begin(), list.end(), file), list.end());
+		int count = list.size();
+		if(count > 0) {
+			int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+            if(std::find(gSoundManager->soundcount.begin(), gSoundManager->soundcount.end(), list[soundno]) != gSoundManager->soundcount.end())
+                return false;
+            gSoundManager->soundcount.push_back(list[soundno]);
+			if(mixer->MusicPlaying())
+		 	    mixer->StopMusic();
+			if(mixer->PlayMusic(list[soundno], gGameConfig->loopMusic))
+				return true;
+			else return false;
+		} else
+			return false;
 		return true;
 	}
 #endif
@@ -716,7 +700,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 // 	if(chant_it == ChantsList.end())
 // 		return false;
 // 	return mixer->PlaySound(chant_it->second);
-	if(player < 0) return false;
+	if(player < 0 || character[player] < 1) return false;
 	int i = -1;
 	if(chant == CHANT::SET) i = 0;
 	if(chant == CHANT::DESTROY) i = 1;
@@ -743,20 +727,22 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 			int bgm = (std::uniform_int_distribution<>(0, count - 1))(rnd);
 			std::string BGMName = list[bgm];
             //not play again for same sound
-            if(i < 3 || i == 14) {
+            if(i != 2 || i != 7) {
                 if(std::find(gSoundManager->soundcount2.begin(), gSoundManager->soundcount2.end(), BGMName) != gSoundManager->soundcount2.end())
                     return false;
                 gSoundManager->soundcount2.push_back(BGMName);
             }
 			StopSounds();
 			if(mixer->PlaySound(BGMName)) {
-                if(i < 9 || i > 14) return true;
-                mainGame->isEvent = true;
-                if(gGameConfig->pauseduel) {
-                    std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-                    mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(BGMName)));
+                //wait until chant finished
+                if(i != 1 || i != 3 || i != 4 || i != 6 || i != 7 || i != 15) {
+                    mainGame->isEvent = true;
+                    if(gGameConfig->pauseduel) {
+                        std::unique_lock<epro::mutex> lck(mainGame->gMutex);
+                        mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(BGMName)));
+                    }
+                    mainGame->isEvent = false;
                 }
-                mainGame->isEvent = false;
                 return true;
             }
 		}

@@ -1631,7 +1631,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 	switch(msg) {
     case MSG_NEW_TURN: {
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
-		mainGame->imageManager.RefreshKCGImage();
+        //mainGame->imageManager.RefreshKCGImage();
 		if(mainGame->dInfo.isTeam1) {
 			mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0]][0]);
 			mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1][0]);
@@ -1655,18 +1655,19 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
                 mainGame->wAvatar[1-player]->setVisible(false);
 #endif
         }
-        gSoundManager->soundcount2.clear();
         if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
             mainGame->wHead[0]->setVisible(true);
             mainGame->wHead[1]->setVisible(true);
         }
-		PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, player);
 		break;
     }
 	case MSG_NEW_PHASE: {
 		const auto phase = BufferIO::Read<uint16_t>(pbuf);
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		switch (phase) {
+            case PHASE_DRAW: 
+            PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, player);
+            break;
 			case PHASE_BATTLE_START:
 			PlayChant(SoundManager::CHANT::BATTLEPHASE, nullptr, player);
 			break;
@@ -1887,18 +1888,17 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		const auto val = BufferIO::Read<uint32_t>(pbuf);
 		const auto reason = BufferIO::Read<uint32_t>(pbuf);
-		mainGame->imageManager.RefreshKCGImage();
-		if(mainGame->dInfo.isTeam1) {
-			if(player == 0)
-			    mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0]][1]);
-			if(player == 1)
-			    mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1][1]);
-		} else {
-			if(player == 0)
-			    mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1][1]);
-			if(player == 1)
-			    mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1]][1]);
-		}
+		// if(mainGame->dInfo.isTeam1) {
+		// 	if(player == 0)
+		// 	    mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0]][1]);
+		// 	if(player == 1)
+		// 	    mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1][1]);
+		// } else {
+		// 	if(player == 0)
+		// 	    mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1][1]);
+		// 	if(player == 1)
+		// 	    mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1]][1]);
+		// }
 		uint16_t extra = 0;
 		if(reason & REASON_COST) extra = 0x1;
 		else if((mainGame->dInfo.lp[player] > 0 && mainGame->dInfo.lp[player] >= mainGame->dInfo.lp[1 - player] * 2) || val >= 4000) extra = 0x4;
@@ -1908,18 +1908,17 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
     }
     case MSG_RECOVER: {
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
-		mainGame->imageManager.RefreshKCGImage();
-		if(mainGame->dInfo.isTeam1) {
-			if(player == 0)
-			    mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0]][1]);
-			if(player == 1)
-			    mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1][1]);
-		} else {
-			if(player == 0)
-			    mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1][1]);
-			if(player == 1)
-			    mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1]][1]);
-		}
+		// if(mainGame->dInfo.isTeam1) {
+		// 	if(player == 0)
+		// 	    mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0]][0]);
+		// 	if(player == 1)
+		// 	    mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1][0]);
+		// } else {
+		// 	if(player == 0)
+		// 	    mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1][0]);
+		// 	if(player == 1)
+		// 	    mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1]][0]);
+		// }
 		PlayChant(SoundManager::CHANT::RECOVER, nullptr, player);
         break;
     }
@@ -2232,15 +2231,21 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		case HINT_AVATAR: {
 			auto text = gDataManager->GetDesc(data, mainGame->dInfo.compat_mode).data();
 			if(mainGame->dInfo.isTeam1) {
-				if(player == 0)
+				if(player == 0) {
 				    mainGame->imageManager.SetAvatar(mainGame->dInfo.current_player[0], text);
-				else
+                    mainGame->avatarbutton[0]->setImage(mainGame->imageManager.avcharacter[0]);
+                } else {
 					mainGame->imageManager.SetAvatar(mainGame->dInfo.current_player[1] + mainGame->dInfo.team1, text);
+                    //mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1][0]);
+                }
 			} else {
-				if(player == 0)
+				if(player == 0) {
 					mainGame->imageManager.SetAvatar(mainGame->dInfo.current_player[0] + mainGame->dInfo.team1, text);
-				else
+                    //mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1][0]);
+                } else {
 					mainGame->imageManager.SetAvatar(mainGame->dInfo.current_player[1], text);
+                    //mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1]][0]);
+                }
 			}
 			break;
 		}

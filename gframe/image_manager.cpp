@@ -710,10 +710,14 @@ bool ImageManager::Initial() {
 	return true;
 }
 //////kdiy//////
-void ImageManager::SetAvatar(int seq, const wchar_t *avatar) {
+void ImageManager::SetAvatar(int player, const wchar_t *avatar) {
 	auto string = EPRO_TEXT("./textures/character/custom/") + Utils::ToPathString(avatar) + EPRO_TEXT(".png");
-	scharacter[seq][0] = driver->getTexture(string.c_str());
-	scharacter[seq][1] = driver->getTexture(string.c_str());
+    // if (scharacter[player][0])
+    //     driver->removeTexture(scharacter[player][0]);
+    avcharacter[0] = driver->getTexture(string.c_str());
+    // if (scharacter[player][1])
+    //     driver->removeTexture(scharacter[player][1]);
+	// scharacter[player][1] = driver->getTexture(string.c_str());
 }
 void ImageManager::RefreshRandomImageList() {
 	if(!gGameConfig->randomtexture)
