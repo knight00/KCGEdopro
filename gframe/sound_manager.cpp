@@ -15,6 +15,12 @@
 /////kdiy/////////
 #include "game_config.h"
 #include "game.h"
+#include "windbot_panel.h"
+#if IRRLICHT_VERSION_MAJOR==1 && IRRLICHT_VERSION_MINOR==9
+#include "IrrlichtCommonIncludes1.9/CFileSystem.h"
+#else
+#include "IrrlichtCommonIncludes/CFileSystem.h"
+#endif
 /////kdiy/////
 namespace ygo {
 SoundManager::SoundManager(double sounds_volume, double music_volume, bool sounds_enabled, bool music_enabled) {
@@ -464,7 +470,12 @@ void SoundManager::RefreshChantsList() {
                     auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/activate/") + file);
                     ChantSPList[i][x].push_back(conv);
                 }
-            } else if(chantType.first != CHANT::WIN){
+            // } else if(chantType.first == CHANT::STARTUP) {
+            //     for (auto& file : Utils::FindFiles(searchPath[x], { EPRO_TEXT("zip") })) {
+            //         auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
+            //         ChantSPList[i][x].push_back(conv);
+            //     }
+            } else if(chantType.first != CHANT::WIN) {
                 for (auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
                     auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
                     ChantSPList[i][x].push_back(conv);
@@ -717,37 +728,66 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 	if(chant == CHANT::OPPCOUNTER) i = 12;
 	if(chant == CHANT::RELEASE) i = 13;
 	if(chant == CHANT::BATTLEPHASE) i = 14;
-	if(chant == CHANT::LOSE) i = 15;
+	if(chant == CHANT::WIN) i = 15;
+	if(chant == CHANT::LOSE) i = 16;
 	if(i == -1) return false;
     std::vector<std::string> list;
 	if(code == 0) {
 		list = ChantSPList[i][character[player]];
+        //not play again for same sound
+        if(i != 2) {
+            for(auto file : gSoundManager->soundcount2)
+                list.erase(std::remove(list.begin(), list.end(), file), list.end());
+        }
 		int count = list.size();
-		if(count > 0) {
-			int bgm = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-			std::string BGMName = list[bgm];
-            //not play again for same sound
-            if(i != 2 || i != 7) {
-                if(std::find(gSoundManager->soundcount2.begin(), gSoundManager->soundcount2.end(), BGMName) != gSoundManager->soundcount2.end())
-                    return false;
-                gSoundManager->soundcount2.push_back(BGMName);
-            }
-			StopSounds();
-			if(mixer->PlaySound(BGMName)) {
-                //wait until chant finished
-                if(i != 1 || i != 3 || i != 4 || i != 6 || i != 7 || i != 15) {
-                    mainGame->isEvent = true;
-                    if(gGameConfig->pauseduel) {
-                        std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-                        mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(BGMName)));
-                    }
-                    mainGame->isEvent = false;
+        if(count < 1) return false;
+		int bgm = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+		std::string BGMName = list[bgm];
+        //not play again for same sound
+        if(i != 2) {
+            if(std::find(gSoundManager->soundcount2.begin(), gSoundManager->soundcount2.end(), BGMName) != gSoundManager->soundcount2.end())
+                return false;
+            gSoundManager->soundcount2.push_back(BGMName);
+        }
+		StopSounds();
+// 			irr::io::IFileArchive* tmp_archive = nullptr;
+// #if defined(Zip)
+// 			mainGame->filesystem->addFileArchive(epro::format("{}", BGMName).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
+// #else
+// 			filesystem->addFileArchive(epro::format(EPRO_TEXT("{}"), BGMName).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive);
+// #endif
+// 			if(tmp_archive)
+// 			{
+// 				Utils::archives.emplace_back(tmp_archive);
+// 			}
+// 			for(auto& archive : Utils::archives)
+// 			{
+// 				std::lock_guard<epro::mutex> guard(*archive.mutex);
+// 				auto files = Utils::FindFiles(archive.archive, EPRO_TEXT(""), { EPRO_TEXT("ogg"), EPRO_TEXT("mp3") }, 0);
+// 				for(auto& index : files)
+// 				{
+// 					auto reader = archive.archive->createAndOpenFile(index);
+// 					if(reader == nullptr)
+// 						continue;
+// 					const auto& name = reader->getFileName();
+// 					epro::path_string file = { name.c_str(), name.size() };
+// 					mixer->PlaySound(Utils::ToUTF8IfNeeded(file));
+// 					reader->drop();
+// 				}
+// 			}
+		if(mixer->PlaySound(BGMName)) {
+            //wait until chant finished
+            if(i != 1 && i != 3 && i != 4 && i != 6 && i != 7 && i != 15) {
+                mainGame->isEvent = true;
+                if(gGameConfig->pauseduel) {
+                    std::unique_lock<epro::mutex> lck(mainGame->gMutex);
+                    mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(BGMName)));
                 }
-                return true;
+                mainGame->isEvent = false;
             }
-		}
+            return true;
+        }
 	} else {
-        if(i < 9 || i > 12) return false;
         std::vector<std::string> list2;
 		auto key = std::make_pair(chant, code);
 		auto chant_it = ChantsList[character[player]].find(key);
@@ -756,7 +796,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 		if(chant_it2 == ChantsList[character[player]].end()) {
 			if(chant_it == ChantsList[character[player]].end()) {
 				if(extra != 0) {
-					std::vector<std::string> list = ChantSPList[i][character[player]];
+					list = ChantSPList[i][character[player]];
 					int count = list.size();
 					if(count < 1) return false;
                     if(chant == CHANT::SUMMON) {
@@ -867,7 +907,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 						}
                     }
                 } else {
-                    std::vector<std::string> list = ChantSPList[i][character[player]];
+                    list = ChantSPList[i][character[player]];
 					int count = list.size();
 					if(count < 1) return false;
                     for(int i = 0; i < count; i++) {
