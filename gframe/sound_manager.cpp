@@ -253,10 +253,21 @@ void SoundManager::RefreshChantsList() {
 	ChantsBGMList.clear();
 	for(auto list : ChantsList)
 		list.clear();
-	int i = -1;
 	for(int i = 0; i < 17; i++) {
-		for(int j = 0; j < CHARACTER_VOICE + CHARACTER_STORY_ONLY; j++)
-			ChantSPList[i][j].clear();
+		for(int x = 0; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++)
+			ChantSPList[i][x].clear();
+	}
+	for (auto& file : Utils::FindFiles(EPRO_TEXT("./sound/BGM/card"), mixer->GetSupportedSoundExtensions())) {
+		auto scode = Utils::GetFileName(file);
+		try {
+			uint32_t code = static_cast<uint32_t>(std::stoul(scode));
+			if (code && !ChantsBGMList.count(code)) {
+				ChantsBGMList[code] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("./sound/BGM/card/{}"), scode));
+			}
+		}
+		catch (...) {
+			continue;
+		}
 	}
 	/////kdiy///////
 	for (const auto& chantType : types) {
@@ -314,19 +325,7 @@ void SoundManager::RefreshChantsList() {
 		for (auto path : searchPath)
 			Utils::MakeDirectory(path);
 		
-		for (auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("{}/sound/BGM/card"), Utils::ToPathString(working_dir)), mixer->GetSupportedSoundExtensions())) {
-			auto scode = Utils::GetFileName(file);
-			try {
-				uint32_t code = static_cast<uint32_t>(std::stoul(scode));
-				if (code && !ChantsBGMList.count(code)) {
-					ChantsBGMList[code] = epro::format("{}/{}", working_dir, Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("./sound/BGM/card/{}"), scode)));
-				}
-			}
-			catch (...) {
-				continue;
-			}
-		}
-		
+		int i = -1;
 		if(chantType.first == CHANT::SET) i = 0;
 		if(chantType.first == CHANT::DESTROY) i = 1;
 		if(chantType.first == CHANT::DRAW) i = 2;
@@ -482,7 +481,7 @@ void SoundManager::RefreshChantsList() {
                 }
 			}
 
-            if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM || chantType.first == CHANT::WIN) {
+            if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM) {
                 for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/card"), mixer->GetSupportedSoundExtensions())) {
                     auto scode = Utils::GetFileName(file);
 					auto files = Utils::ToUTF8IfNeeded(file);
@@ -491,12 +490,25 @@ void SoundManager::RefreshChantsList() {
 					try {
 						uint32_t code = static_cast<uint32_t>(std::stoul(scode));
 						auto key = std::make_pair(chantType.first, code);
-						if (code && !ChantsList[x].count(key)) {
-							if(chantType.first != CHANT::WIN)
-                                ChantsList[x][key] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/card/{}"), searchPath[x], scode));
-							else
-                                ChantsList[x][key] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/{}"), searchPath[x], scode));
-						}
+						if (code && !ChantsList[x].count(key))
+							ChantsList[x][key] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/card/{}"), searchPath[x], scode));
+					}
+					catch (...) {
+						continue;
+                    }
+                }
+            }
+			if(chantType.first == CHANT::WIN) {
+                for (auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
+                    auto scode = Utils::GetFileName(file);
+					auto files = Utils::ToUTF8IfNeeded(file);
+					if(files.find("+") != std::string::npos || files.find("-") != std::string::npos || files.find("_") != std::string::npos || files.find(".") != std::string::npos)
+                        continue;
+					try {
+						uint32_t code = static_cast<uint32_t>(std::stoul(scode));
+						auto key = std::make_pair(chantType.first, code);
+						if (code && !ChantsList[x].count(key))
+							ChantsList[x][key] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/{}"), searchPath[x], scode));
 					}
 					catch (...) {
 						continue;
@@ -731,30 +743,28 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 	if(chant == CHANT::WIN) i = 15;
 	if(chant == CHANT::LOSE) i = 16;
 	if(i == -1) return false;
-    std::vector<std::string> list;
 	if(code == 0) {
-		list = ChantSPList[i][character[player]];
-        //not play again for same sound
-        if(i != 2) {
+        //not play again for same chant
+        if(chant != CHANT::DRAW) {
             for(auto file : gSoundManager->soundcount2)
-                list.erase(std::remove(list.begin(), list.end(), file), list.end());
+                ChantSPList[i][character[player]].erase(std::remove(ChantSPList[i][character[player]].begin(), ChantSPList[i][character[player]].end(), file), ChantSPList[i][character[player]].end());
         }
-		int count = list.size();
+		int count = ChantSPList[i][character[player]].size();
         if(count < 1) return false;
-		int bgm = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-		std::string BGMName = list[bgm];
-        //not play again for same sound
-        if(i != 2) {
-            if(std::find(gSoundManager->soundcount2.begin(), gSoundManager->soundcount2.end(), BGMName) != gSoundManager->soundcount2.end())
+		int chantno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+		std::string chantName = ChantSPList[i][character[player]][chantno];
+        //record this chant as played
+        if(chant != CHANT::DRAW) {
+            if(std::find(gSoundManager->soundcount2.begin(), gSoundManager->soundcount2.end(), chantName) != gSoundManager->soundcount2.end())
                 return false;
-            gSoundManager->soundcount2.push_back(BGMName);
+            gSoundManager->soundcount2.push_back(chantName);
         }
 		StopSounds();
 // 			irr::io::IFileArchive* tmp_archive = nullptr;
 // #if defined(Zip)
-// 			mainGame->filesystem->addFileArchive(epro::format("{}", BGMName).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
+// 			mainGame->filesystem->addFileArchive(epro::format("{}", chantName).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
 // #else
-// 			filesystem->addFileArchive(epro::format(EPRO_TEXT("{}"), BGMName).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive);
+// 			filesystem->addFileArchive(epro::format(EPRO_TEXT("{}"), chantName).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive);
 // #endif
 // 			if(tmp_archive)
 // 			{
@@ -775,19 +785,20 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 // 					reader->drop();
 // 				}
 // 			}
-		if(mixer->PlaySound(BGMName)) {
+		if(mixer->PlaySound(chantName)) {
             //wait until chant finished
-            if(i != 1 && i != 3 && i != 4 && i != 6 && i != 7 && i != 15) {
+            if(chant != CHANT::DESTROY && chant != CHANT::DAMAGE && chant != CHANT::RECOVER && chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN) {
                 mainGame->isEvent = true;
                 if(gGameConfig->pauseduel) {
                     std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-                    mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(BGMName)));
+                    mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(chantName)));
                 }
                 mainGame->isEvent = false;
             }
             return true;
         }
 	} else {
+		std::vector<std::string> list;
         std::vector<std::string> list2;
 		auto key = std::make_pair(chant, code);
 		auto chant_it = ChantsList[character[player]].find(key);
@@ -796,12 +807,11 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 		if(chant_it2 == ChantsList[character[player]].end()) {
 			if(chant_it == ChantsList[character[player]].end()) {
 				if(extra != 0) {
-					list = ChantSPList[i][character[player]];
-					int count = list.size();
+					int count = ChantSPList[i][character[player]].size();
 					if(count < 1) return false;
-                    if(chant == CHANT::SUMMON) {
-                        for(int i = 0; i < count; i++) {
-                            std::string sound = list[i];
+					for(int i = 0; i < count; i++) {
+                        std::string sound = ChantSPList[i][character[player]][i];
+                        if(chant == CHANT::SUMMON) {
                             if((extra & 0x1) && sound.find("summon/fusion/") != std::string::npos)
                                 list.push_back(sound);
                             if((extra & 0x2) && sound.find("summon/synchro/") != std::string::npos)
@@ -824,20 +834,14 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
                                 list.push_back(sound);
                             if((extra & 0x400) && sound.find("summon/advance/") != std::string::npos)
                                 list.push_back(sound);
-                        }
-                    } else if(chant == CHANT::ATTACK) {
-                        for(int i = 0; i < count; i++) {
-                            std::string sound = list[i];
+                        } else if(chant == CHANT::ATTACK) {
                             if((extra & 0x1) && sound.find("attack/attack/") != std::string::npos)
                                 list.push_back(sound);
                             if((extra & 0x2) && sound.find("attack/monster/") != std::string::npos)
                                 list.push_back(sound);
                             if((extra & 0x4) && sound.find("attack/directattack/") != std::string::npos)
                                 list.push_back(sound);
-                        }
-                    } else if(chant == CHANT::ACTIVATE) {
-                        for(int i = 0; i < count; i++) {
-                            std::string sound = list[i];
+                        } else if(chant == CHANT::ACTIVATE) {
                             if((extra & 0x1) && sound.find("activate/activate/") != std::string::npos)
                                 list.push_back(sound);
                             if((extra & 0x2) && sound.find("activate/fromhand/") != std::string::npos)
@@ -868,34 +872,22 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
                                 list.push_back(sound);
                             if((extra & 0x4000) && sound.find("activate/action/") != std::string::npos)
                                 list.push_back(sound);
-                        }
-					} else if(chant == CHANT::PENDULUM) {
-                        for(int i = 0; i < count; i++) {
-                            std::string sound = list[i];
+                        } else if(chant == CHANT::PENDULUM) {
                             if((extra & 0x1) && sound.find("pendulum/activate/") != std::string::npos)
                                 list.push_back(sound);
-                        }
-					} else if(chant == CHANT::DRAW) {
-                        for(int i = 0; i < count; i++) {
-                            std::string sound = list[i];
+                        } else if(chant == CHANT::DRAW) {
                             if((extra & 0x1) && sound.find("draw/disadvantage/") != std::string::npos)
                                 list.push_back(sound);
                             else if((extra & 0x2) && sound.find("draw/advantage/") != std::string::npos)
                                 list.push_back(sound);
 							else if(sound.find("draw/") != std::string::npos && sound.find("draw/disadvantage/") == std::string::npos && sound.find("draw/advantage/") == std::string::npos)
                                 list.push_back(sound);
-						}
-					} else if(chant == CHANT::SET) {
-                        for(int i = 0; i < count; i++) {
-                            std::string sound = list[i];
+						} else if(chant == CHANT::SET) {
                             if((extra & 0x1) && sound.find("set/monster/") != std::string::npos)
                                 list.push_back(sound);
 							else if(sound.find("set/") != std::string::npos && sound.find("set/monster/") == std::string::npos)
                                 list.push_back(sound);
-						}
-                    } else if(chant == CHANT::DAMAGE) {
-                        for(int i = 0; i < count; i++) {
-                            std::string sound = list[i];
+						} else if(chant == CHANT::DAMAGE) {
                             if((extra & 0x1) && sound.find("damage/cost/") != std::string::npos)
                                 list.push_back(sound);
                             else if((extra & 0x2) && sound.find("damage/minor/") != std::string::npos)
@@ -908,12 +900,6 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
                     }
                 } else {
                     list = ChantSPList[i][character[player]];
-					int count = list.size();
-					if(count < 1) return false;
-                    for(int i = 0; i < count; i++) {
-                        std::string sound = list[i];
-                        list.push_back(sound);
-                    }
                 }
 			} else {
 				const auto extensions = mixer->GetSupportedSoundExtensions();
@@ -968,37 +954,35 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
         for(auto file : gSoundManager->soundcount)
 			list.erase(std::remove(list.begin(), list.end(), file), list.end());
 		int count = list.size();
-		if(count > 0) {
-			int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-            if(std::find(gSoundManager->soundcount.begin(), gSoundManager->soundcount.end(), list[soundno]) != gSoundManager->soundcount.end())
-                return false;
-            gSoundManager->soundcount.push_back(list[soundno]);
-			StopSounds();
-			if(mixer->PlaySound(list[soundno])) {
-                mainGame->isEvent = true;
-                if(gGameConfig->pauseduel) {
-                    std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-                    mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list[soundno])));
-                }
-                int count2 = list2.size();
-                if(count2 > 0) {
-                    for(int k = 0; k < count2; k++) {
-                        const auto filename = Utils::GetFileName(list2[k]).substr(0, Utils::GetFileName(list2[k]).size() - 2);
-                        if(filename == Utils::GetFileName(list[soundno])) {
-                            StopSounds();
-                            mixer->PlaySound(list2[k]);
-                            if(gGameConfig->pauseduel) {
-                                std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-                                mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list2[k])));
-                            }
+		if(count < 1) return false;
+		int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+        if(std::find(gSoundManager->soundcount.begin(), gSoundManager->soundcount.end(), list[soundno]) != gSoundManager->soundcount.end())
+            return false;
+        gSoundManager->soundcount.push_back(list[soundno]);
+		StopSounds();
+		if(mixer->PlaySound(list[soundno])) {
+            mainGame->isEvent = true;
+            if(gGameConfig->pauseduel) {
+                std::unique_lock<epro::mutex> lck(mainGame->gMutex);
+                mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list[soundno])));
+            }
+            int count2 = list2.size();
+            if(count2 > 0) {
+                for(int k = 0; k < count2; k++) {
+                    const auto filename = Utils::GetFileName(list2[k]).substr(0, Utils::GetFileName(list2[k]).size() - 2);
+                    if(filename == Utils::GetFileName(list[soundno])) {
+                        StopSounds();
+                        mixer->PlaySound(list2[k]);
+                        if(gGameConfig->pauseduel) {
+                            std::unique_lock<epro::mutex> lck(mainGame->gMutex);
+                            mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list2[k])));
                         }
                     }
                 }
-                mainGame->isEvent = false;
-				return true;
-			} else return false;
-		} else
-			return false;
+			}
+            mainGame->isEvent = false;
+			return true;
+		} else return false;
 	}
 	return false;
 ///////kdiy//////

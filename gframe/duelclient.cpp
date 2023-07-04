@@ -1484,7 +1484,7 @@ inline bool PlayCardBGM(ClientCard* card) {
 //    return true;
 //}
 inline bool PlayChantcode(SoundManager::CHANT sound, uint32_t code, uint32_t code2, const uint8_t player, uint16_t extra = 0) {
-	if(sound == SoundManager::CHANT::ACTIVATE && !gGameConfig->enablecsound) return false;
+	if((sound == SoundManager::CHANT::ACTIVATE || sound == SoundManager::CHANT::PENDULUM) && !gGameConfig->enablecsound) return false;
 	if(sound == SoundManager::CHANT::SUMMON && !gGameConfig->enablessound) return false;
 	if(sound == SoundManager::CHANT::ATTACK && !gGameConfig->enableasound) return false;
 	uint8_t character = mainGame->dInfo.current_player[player];
@@ -1664,7 +1664,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto phase = BufferIO::Read<uint16_t>(pbuf);
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		switch (phase) {
-            case PHASE_DRAW: 
+            case PHASE_DRAW:
             PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, player);
             break;
 			case PHASE_BATTLE_START:
