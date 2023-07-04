@@ -1670,6 +1670,9 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 			case PHASE_BATTLE_START:
 			PlayChant(SoundManager::CHANT::BATTLEPHASE, nullptr, player);
 			break;
+            case PHASE_END:
+            PlayChant(SoundManager::CHANT::TURNEND, nullptr, player);
+            break;
 		}
 		break;
 	}

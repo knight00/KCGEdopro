@@ -98,6 +98,7 @@ public:
 		OPPCOUNTER,
 		RELEASE,
 		BATTLEPHASE,
+        TURNEND,
 		WIN,
 		LOSE,
 		//////kdiy/////
@@ -147,7 +148,7 @@ private:
     std::vector<std::string> SFXList[SFX::SFX_TOTAL_SIZE];
 	std::map<uint32_t, std::string> ChantsBGMList;
 	std::map<std::pair<CHANT, uint32_t>, std::string> ChantsList[CHARACTER_VOICE + CHARACTER_STORY_ONLY];
-	std::vector<std::string> ChantSPList[17][CHARACTER_VOICE + CHARACTER_STORY_ONLY];
+	std::vector<std::string> ChantSPList[18][CHARACTER_VOICE + CHARACTER_STORY_ONLY];
 	std::string bgm_now = "";
 	////////kdiy////
 	int bgm_scene{ -1 };

@@ -242,6 +242,7 @@ void SoundManager::RefreshChantsList() {
 		{CHANT::OPPCOUNTER,  EPRO_TEXT("oppcounter"_sv)},
 		{CHANT::RELEASE,  EPRO_TEXT("release"_sv)},
 		{CHANT::BATTLEPHASE,  EPRO_TEXT("battlephase"_sv)},
+		{CHANT::TURNEND,  EPRO_TEXT("turnend"_sv)},
 		{CHANT::WIN,  EPRO_TEXT("cardwin"_sv)},
 		{CHANT::LOSE,  EPRO_TEXT("lose"_sv)},
 		/////kdiy///////
@@ -253,7 +254,7 @@ void SoundManager::RefreshChantsList() {
 	ChantsBGMList.clear();
 	for(auto list : ChantsList)
 		list.clear();
-	for(int i = 0; i < 17; i++) {
+	for(int i = 0; i < 18; i++) {
 		for(int x = 0; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++)
 			ChantSPList[i][x].clear();
 	}
@@ -341,8 +342,9 @@ void SoundManager::RefreshChantsList() {
 		if(chantType.first == CHANT::OPPCOUNTER) i = 12;
 		if(chantType.first == CHANT::RELEASE) i = 13;
 		if(chantType.first == CHANT::BATTLEPHASE) i = 14;
-		if(chantType.first == CHANT::WIN) i = 15;
-		if(chantType.first == CHANT::LOSE) i = 16;
+		if(chantType.first == CHANT::TURNEND) i = 15;
+		if(chantType.first == CHANT::WIN) i = 16;
+		if(chantType.first == CHANT::LOSE) i = 17;
 		if(i == -1) continue;
 		for(int x = 0 ; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
             if(chantType.first == CHANT::SUMMON) {
@@ -469,11 +471,11 @@ void SoundManager::RefreshChantsList() {
                     auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/activate/") + file);
                     ChantSPList[i][x].push_back(conv);
                 }
-            // } else if(chantType.first == CHANT::STARTUP) {
-            //     for (auto& file : Utils::FindFiles(searchPath[x], { EPRO_TEXT("zip") })) {
-            //         auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
-            //         ChantSPList[i][x].push_back(conv);
-            //     }
+            } else if(chantType.first == CHANT::STARTUP) {
+                for (auto& file : Utils::FindFiles(searchPath[x], { EPRO_TEXT("zip") })) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
             } else if(chantType.first != CHANT::WIN) {
                 for (auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
                     auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
@@ -484,7 +486,7 @@ void SoundManager::RefreshChantsList() {
             if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM) {
                 for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/card"), mixer->GetSupportedSoundExtensions())) {
                     auto scode = Utils::GetFileName(file);
-					auto files = Utils::ToUTF8IfNeeded(file);
+					auto files = Utils::ToUTF8IfNeeded(scode);
 					if(files.find("+") != std::string::npos || files.find("-") != std::string::npos || files.find("_") != std::string::npos || files.find(".") != std::string::npos)
                         continue;
 					try {
@@ -501,7 +503,7 @@ void SoundManager::RefreshChantsList() {
 			if(chantType.first == CHANT::WIN) {
                 for (auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
                     auto scode = Utils::GetFileName(file);
-					auto files = Utils::ToUTF8IfNeeded(file);
+					auto files = Utils::ToUTF8IfNeeded(scode);
 					if(files.find("+") != std::string::npos || files.find("-") != std::string::npos || files.find("_") != std::string::npos || files.find(".") != std::string::npos)
                         continue;
 					try {
@@ -740,8 +742,9 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 	if(chant == CHANT::OPPCOUNTER) i = 12;
 	if(chant == CHANT::RELEASE) i = 13;
 	if(chant == CHANT::BATTLEPHASE) i = 14;
-	if(chant == CHANT::WIN) i = 15;
-	if(chant == CHANT::LOSE) i = 16;
+	if(chant == CHANT::TURNEND) i = 15;
+	if(chant == CHANT::WIN) i = 16;
+	if(chant == CHANT::LOSE) i = 17;
 	if(i == -1) return false;
 	if(code == 0) {
         //not play again for same chant
@@ -760,31 +763,27 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
             gSoundManager->soundcount2.push_back(chantName);
         }
 		StopSounds();
-// 			irr::io::IFileArchive* tmp_archive = nullptr;
-// #if defined(Zip)
-// 			mainGame->filesystem->addFileArchive(epro::format("{}", chantName).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
-// #else
-// 			filesystem->addFileArchive(epro::format(EPRO_TEXT("{}"), chantName).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive);
-// #endif
-// 			if(tmp_archive)
-// 			{
-// 				Utils::archives.emplace_back(tmp_archive);
-// 			}
-// 			for(auto& archive : Utils::archives)
-// 			{
-// 				std::lock_guard<epro::mutex> guard(*archive.mutex);
-// 				auto files = Utils::FindFiles(archive.archive, EPRO_TEXT(""), { EPRO_TEXT("ogg"), EPRO_TEXT("mp3") }, 0);
-// 				for(auto& index : files)
-// 				{
-// 					auto reader = archive.archive->createAndOpenFile(index);
-// 					if(reader == nullptr)
-// 						continue;
-// 					const auto& name = reader->getFileName();
-// 					epro::path_string file = { name.c_str(), name.size() };
-// 					mixer->PlaySound(Utils::ToUTF8IfNeeded(file));
-// 					reader->drop();
-// 				}
-// 			}
+		irr::io::IFileArchive* tmp_archive = nullptr;
+#if defined(Zip)
+		mainGame->filesystem->addFileArchive(epro::format("{}", chantName).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
+#else
+		filesystem->addFileArchive(epro::format(EPRO_TEXT("{}"), chantName).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive);
+#endif
+		if(tmp_archive)
+			Utils::archives.emplace_back(tmp_archive);
+		for(auto& archive : Utils::archives) {
+			std::lock_guard<epro::mutex> guard(*archive.mutex);
+			auto files = Utils::FindFiles(archive.archive, EPRO_TEXT(""), { EPRO_TEXT("ogg"), EPRO_TEXT("mp3") }, 0);
+			for(auto& index : files) {
+				auto reader = archive.archive->createAndOpenFile(index);
+				if(reader == nullptr)
+					continue;
+				const auto& name = reader->getFileName();
+				epro::path_string file = { name.c_str(), name.size() };
+				mixer->PlaySound(epro::format("./sound/character/atem/startup/{}", Utils::ToUTF8IfNeeded(file)));
+				reader->drop();
+			}
+		}
 		if(mixer->PlaySound(chantName)) {
             //wait until chant finished
             if(chant != CHANT::DESTROY && chant != CHANT::DAMAGE && chant != CHANT::RECOVER && chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN) {
@@ -809,8 +808,8 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 				if(extra != 0) {
 					int count = ChantSPList[i][character[player]].size();
 					if(count < 1) return false;
-					for(int i = 0; i < count; i++) {
-                        std::string sound = ChantSPList[i][character[player]][i];
+					for(int j = 0; j < count; j++) {
+                        std::string sound = ChantSPList[i][character[player]][j];
                         if(chant == CHANT::SUMMON) {
                             if((extra & 0x1) && sound.find("summon/fusion/") != std::string::npos)
                                 list.push_back(sound);
@@ -907,18 +906,18 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 					const auto filename = epro::format("{}.{}", chant_it->second, Utils::ToUTF8IfNeeded(ext));
 					if(Utils::FileExists(Utils::ToPathString(filename))) {
 						list.push_back(filename);
-                        for(int i = 1; i < 6; i++) {
-                            const auto filename2 = epro::format("{}+{}.{}", chant_it->second, i, Utils::ToUTF8IfNeeded(ext));
+                        for(int j = 1; j < 6; j++) {
+                            const auto filename2 = epro::format("{}+{}.{}", chant_it->second, j, Utils::ToUTF8IfNeeded(ext));
                             if(Utils::FileExists(Utils::ToPathString(filename2)))
                                 list2.push_back(filename2);
                         }
                     }
-                    for(int i = 1; i < 6; i++) {
+                    for(int j = 1; j < 6; j++) {
 						const auto filename = epro::format("{}_{}.{}", chant_it->second, i, Utils::ToUTF8IfNeeded(ext));
 						if (Utils::FileExists(Utils::ToPathString(filename))) {
 							list.push_back(filename);
-                            for(int j = 1; j < 6; j++) {
-                                const auto filename2 = epro::format("{}_{}+{}.{}", chant_it->second, i, j, Utils::ToUTF8IfNeeded(ext));
+                            for(int k = 1; k < 6; k++) {
+                                const auto filename2 = epro::format("{}_{}+{}.{}", chant_it->second, j, k, Utils::ToUTF8IfNeeded(ext));
                                 if(Utils::FileExists(Utils::ToPathString(filename2)))
                                     list2.push_back(filename2);
                             }
@@ -932,18 +931,18 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 				const auto filename = epro::format("{}.{}", chant_it2->second, Utils::ToUTF8IfNeeded(ext));
 				if(Utils::FileExists(Utils::ToPathString(filename))) {
 					list.push_back(filename);
-                    for(int i = 1; i < 6; i++) {
-                        const auto filename2 = epro::format("{}+{}.{}", chant_it2->second, i, Utils::ToUTF8IfNeeded(ext));
+                    for(int j = 1; j < 6; j++) {
+                        const auto filename2 = epro::format("{}+{}.{}", chant_it2->second, j, Utils::ToUTF8IfNeeded(ext));
                         if(Utils::FileExists(Utils::ToPathString(filename2)))
                             list2.push_back(filename2);
                     }
                 }
-                for(int i = 1; i < 6; i++) {
-					const auto filename = epro::format("{}_{}.{}", chant_it2->second, i, Utils::ToUTF8IfNeeded(ext));
+                for(int j = 1; j < 6; j++) {
+					const auto filename = epro::format("{}_{}.{}", chant_it2->second, j, Utils::ToUTF8IfNeeded(ext));
 					if (Utils::FileExists(Utils::ToPathString(filename))) {
 						list.push_back(filename);
-                        for(int j = 1; j < 6; j++) {
-                            const auto filename2 = epro::format("{}_{}+{}.{}", chant_it2->second, i, j, Utils::ToUTF8IfNeeded(ext));
+                        for(int k = 1; k < 6; k++) {
+                            const auto filename2 = epro::format("{}_{}+{}.{}", chant_it2->second, j, k, Utils::ToUTF8IfNeeded(ext));
                             if(Utils::FileExists(Utils::ToPathString(filename2)))
                                 list2.push_back(filename2);
                         }
