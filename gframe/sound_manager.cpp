@@ -16,11 +16,6 @@
 #include "game_config.h"
 #include "game.h"
 #include "windbot_panel.h"
-#if IRRLICHT_VERSION_MAJOR==1 && IRRLICHT_VERSION_MINOR==9
-#include "IrrlichtCommonIncludes1.9/CFileSystem.h"
-#else
-#include "IrrlichtCommonIncludes/CFileSystem.h"
-#endif
 /////kdiy/////
 namespace ygo {
 SoundManager::SoundManager(double sounds_volume, double music_volume, bool sounds_enabled, bool music_enabled) {
@@ -471,11 +466,6 @@ void SoundManager::RefreshChantsList() {
                     auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/activate/") + file);
                     ChantSPList[i][x].push_back(conv);
                 }
-            } else if(chantType.first == CHANT::STARTUP) {
-                for (auto& file : Utils::FindFiles(searchPath[x], { EPRO_TEXT("zip") })) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
             } else if(chantType.first != CHANT::WIN) {
                 for (auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
                     auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
@@ -674,8 +664,10 @@ void SoundManager::PlayCustomMusic(std::string num) {
 		const auto extensions = mixer->GetSupportedSoundExtensions();
 		for(const auto& ext : extensions) {
 			const auto filename = epro::format("./sound/custom/{}.{}", num, Utils::ToUTF8IfNeeded(ext));
-			if (mixer->PlaySound(filename))
-				break;
+			if(Utils::FileExists(Utils::ToPathString(filename))) {
+				if(mixer->PlaySound(filename))
+				    break;
+			}
 		}
 	}
 #endif
@@ -763,38 +755,19 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
             gSoundManager->soundcount2.push_back(chantName);
         }
 		StopSounds();
-		irr::io::IFileArchive* tmp_archive = nullptr;
-#if defined(Zip)
-		mainGame->filesystem->addFileArchive(epro::format("{}", chantName).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
-#else
-		filesystem->addFileArchive(epro::format(EPRO_TEXT("{}"), chantName).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive);
-#endif
-		if(tmp_archive)
-			Utils::archives.emplace_back(tmp_archive);
-		for(auto& archive : Utils::archives) {
-			std::lock_guard<epro::mutex> guard(*archive.mutex);
-			auto files = Utils::FindFiles(archive.archive, EPRO_TEXT(""), { EPRO_TEXT("ogg"), EPRO_TEXT("mp3") }, 0);
-			for(auto& index : files) {
-				auto reader = archive.archive->createAndOpenFile(index);
-				if(reader == nullptr)
-					continue;
-				const auto& name = reader->getFileName();
-				epro::path_string file = { name.c_str(), name.size() };
-				mixer->PlaySound(epro::format("./sound/character/atem/startup/{}", Utils::ToUTF8IfNeeded(file)));
-				reader->drop();
-			}
-		}
-		if(mixer->PlaySound(chantName)) {
-            //wait until chant finished
-            if(chant != CHANT::DESTROY && chant != CHANT::DAMAGE && chant != CHANT::RECOVER && chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN) {
-                mainGame->isEvent = true;
-                if(gGameConfig->pauseduel) {
-                    std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-                    mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(chantName)));
+		if(Utils::FileExists(Utils::ToPathString(chantName))) { 
+            if(mixer->PlaySound(chantName)) {
+                //wait until chant finished
+                if(chant != CHANT::DESTROY && chant != CHANT::DAMAGE && chant != CHANT::RECOVER && chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN) {
+                    mainGame->isEvent = true;
+                    if(gGameConfig->pauseduel) {
+                        std::unique_lock<epro::mutex> lck(mainGame->gMutex);
+                        mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(chantName)));
+                    }
+                    mainGame->isEvent = false;
                 }
-                mainGame->isEvent = false;
+				return true;
             }
-            return true;
         }
 	} else {
 		std::vector<std::string> list;
@@ -959,29 +932,33 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
             return false;
         gSoundManager->soundcount.push_back(list[soundno]);
 		StopSounds();
-		if(mixer->PlaySound(list[soundno])) {
-            mainGame->isEvent = true;
-            if(gGameConfig->pauseduel) {
-                std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-                mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list[soundno])));
-            }
-            int count2 = list2.size();
-            if(count2 > 0) {
-                for(int k = 0; k < count2; k++) {
-                    const auto filename = Utils::GetFileName(list2[k]).substr(0, Utils::GetFileName(list2[k]).size() - 2);
-                    if(filename == Utils::GetFileName(list[soundno])) {
-                        StopSounds();
-                        mixer->PlaySound(list2[k]);
-                        if(gGameConfig->pauseduel) {
-                            std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-                            mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list2[k])));
-                        }
-                    }
-                }
+		if(Utils::FileExists(Utils::ToPathString(list[soundno]))) {
+			if(mixer->PlaySound(list[soundno])) {
+				mainGame->isEvent = true;
+				if(gGameConfig->pauseduel) {
+					std::unique_lock<epro::mutex> lck(mainGame->gMutex);
+					mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list[soundno])));
+				}
+				int count2 = list2.size();
+				if(count2 > 0) {
+					for(int k = 0; k < count2; k++) {
+						const auto filename = Utils::GetFileName(list2[k]).substr(0, Utils::GetFileName(list2[k]).size() - 2);
+						if(filename == Utils::GetFileName(list[soundno])) {
+							StopSounds();
+							if(Utils::FileExists(Utils::ToPathString(list2[k]))) {
+								mixer->PlaySound(list2[k]);
+								if(gGameConfig->pauseduel) {
+									std::unique_lock<epro::mutex> lck(mainGame->gMutex);
+									mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list2[k])));
+								}
+							}
+						}
+					}
+				}
+				mainGame->isEvent = false;
+				return true;
 			}
-            mainGame->isEvent = false;
-			return true;
-		} else return false;
+		}
 	}
 	return false;
 ///////kdiy//////

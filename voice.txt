@@ -51,9 +51,9 @@ V0101_25                    damage/major
 V0101_26                    damage
 V0101_27                    damage
 V0101_28                    gainlp
-V0101_29                    destroyed
+V0101_29                    lose
 V0101_30                    destroyed
-V0101_31                    destroyed
+V0101_31                    oppcounter
 V0101_32                    DL DELETE
 V0101_33                    startup
 V0101_34                    bored

@@ -2217,7 +2217,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		//////kdiy////////
 		case HINT_MUSIC: {
 			auto text = gDataManager->GetDesc(data, mainGame->dInfo.compat_mode).data();
-			gSoundManager->PlayCustomMusic(Utils::ToUTF8IfNeeded(Utils::ToPathString(text)));
+			gSoundManager->PlayCustomMusic(Utils::ToUTF8IfNeeded(text));
 			break;
 		}
 		case HINT_ANIME: {
@@ -2227,7 +2227,32 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		}
 		case HINT_BGM: {
 			auto text = gDataManager->GetDesc(data, mainGame->dInfo.compat_mode).data();
-			gSoundManager->PlayCustomBGM(Utils::ToUTF8IfNeeded(Utils::ToPathString(text)));
+			gSoundManager->PlayCustomBGM(Utils::ToUTF8IfNeeded(text));
+			break;
+		}
+		case HINT_AVATAR: {
+			auto text = gDataManager->GetDesc(data, mainGame->dInfo.compat_mode).data();
+			if(mainGame->dInfo.isTeam1) {
+				if(player == 0) {
+				    mainGame->imageManager.SetAvatar(mainGame->dInfo.current_player[0], text);
+                } else {
+					mainGame->imageManager.SetAvatar(mainGame->dInfo.current_player[1] + mainGame->dInfo.team1, text);
+                }
+			} else {
+				if(player == 0) {
+					mainGame->imageManager.SetAvatar(mainGame->dInfo.current_player[0] + mainGame->dInfo.team1, text);
+                } else {
+					mainGame->imageManager.SetAvatar(mainGame->dInfo.current_player[1], text);
+                }
+			}
+
+            if(mainGame->dInfo.isTeam1) {
+                mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0]][0]);
+                mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1][0]);
+            } else {
+                mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1][0]);
+                mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1]][0]);
+            }
 			break;
 		}
 		//////kdiy////////

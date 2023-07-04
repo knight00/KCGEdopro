@@ -88,6 +88,7 @@ public:
 	~ImageManager();
 	bool Initial();
 	/////kdiy/////
+    void SetAvatar(int player, const wchar_t *avatar);
 	std::vector<epro::path_string> ImageList[39+CHARACTER_VOICE+CHARACTER_VOICE];
 	int saved_image_id[39+CHARACTER_VOICE+CHARACTER_VOICE];
 	//random image
