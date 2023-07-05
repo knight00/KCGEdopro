@@ -26,6 +26,7 @@ public:
 	virtual bool MusicPlaying() override;
 	virtual void Tick() override;
 	/////kdiy///////
+	//virtual bool PlaySound(const std::string& name) override;
 	virtual int32_t GetSoundDuration(const std::string& name) override;
 	/////kdiy///////
 private:

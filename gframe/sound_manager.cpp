@@ -16,6 +16,11 @@
 #include "game_config.h"
 #include "game.h"
 #include "windbot_panel.h"
+#if IRRLICHT_VERSION_MAJOR==1 && IRRLICHT_VERSION_MINOR==9
+#include "IrrlichtCommonIncludes1.9/CFileSystem.h"
+#else
+#include "IrrlichtCommonIncludes/CFileSystem.h"
+#endif
 /////kdiy/////
 namespace ygo {
 SoundManager::SoundManager(double sounds_volume, double music_volume, bool sounds_enabled, bool music_enabled) {
@@ -466,6 +471,11 @@ void SoundManager::RefreshChantsList() {
                     auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/activate/") + file);
                     ChantSPList[i][x].push_back(conv);
                 }
+            //  } else if(chantType.first == CHANT::STARTUP) {
+            //     for (auto& file : Utils::FindFiles(searchPath[x], { EPRO_TEXT("zip") })) {
+            //         auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
+            //         ChantSPList[i][x].push_back(conv);
+            //     }
             } else if(chantType.first != CHANT::WIN) {
                 for (auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
                     auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
@@ -755,6 +765,39 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
             gSoundManager->soundcount2.push_back(chantName);
         }
 		StopSounds();
+//         irr::io::IFileArchive* tmp_archive = nullptr;
+// #if defined(Zip)
+// 		mainGame->filesystem->addFileArchive(epro::format("{}", chantName).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
+// #else
+// 		filesystem->addFileArchive(epro::format(EPRO_TEXT("{}"), chantName).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive);
+// #endif
+// 		if(tmp_archive)
+// 			Utils::archives.emplace_back(tmp_archive);
+// 		for(auto& archive : Utils::archives) {
+// 			std::lock_guard<epro::mutex> guard(*archive.mutex);
+// 			auto files = Utils::FindFiles(archive.archive, EPRO_TEXT(""), { EPRO_TEXT("ogg"), EPRO_TEXT("mp3") }, 0);
+// 			for(auto& index : files) {
+// 				auto reader = archive.archive->createAndOpenFile(index);
+// 				if(reader == nullptr)
+// 					continue;
+//                 long length = reader->getSize();
+// 				if(length == 0) {
+// 					reader->drop();
+// 					continue;
+// 				}
+// 				char* buf = new char[length + 1]; // (When reading  ascii-files instead of binary files you would use length+1 and add a 0 at the end)
+// 				reader->read(buf, length);
+// 				sf::Music* nMusic = new sf::Music();
+// 				nMusic->openFromMemory(buf, length);
+// 				nMusic->setRelativeToListener(true);
+// 				nMusic->play();
+// 				reader->drop();
+// 				delete[] buf;
+// 				delete[] nMusic;
+// 				break;
+// 			}
+// 			return true;
+// 		}
 		if(Utils::FileExists(Utils::ToPathString(chantName))) { 
             if(mixer->PlaySound(chantName)) {
                 //wait until chant finished
@@ -933,6 +976,40 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
         gSoundManager->soundcount.push_back(list[soundno]);
 		StopSounds();
 		if(Utils::FileExists(Utils::ToPathString(list[soundno]))) {
+// 			mainGame->isEvent = true;
+//             irr::io::IFileArchive* tmp_archive = nullptr;
+// #if defined(Zip)
+// 		    mainGame->filesystem->addFileArchive(epro::format("{}", list[soundno]).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
+// #else
+// 		    filesystem->addFileArchive(epro::format(EPRO_TEXT("{}"), chantName).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive);
+// #endif
+// 		    if(tmp_archive)
+// 			    Utils::archives.emplace_back(tmp_archive);
+// 		    for(auto& archive : Utils::archives) {
+// 			//std::lock_guard<epro::mutex> guard(*archive.mutex);
+// 			std::unique_lock<epro::mutex> lck(mainGame->gMutex);
+// 			auto files = Utils::FindFiles(archive.archive, EPRO_TEXT(""), { EPRO_TEXT("ogg"), EPRO_TEXT("mp3") }, 0);
+// 			for(auto& index : files) {
+// 				auto reader = archive.archive->createAndOpenFile(index);
+// 				if(reader == nullptr)
+// 					continue;
+// 				long length = reader->getSize();
+// 				if(length == 0) {
+// 					reader->drop();
+// 					continue;
+// 				}
+// 				char* buf = new char[length + 1]; // (When reading  ascii-files instead of binary files you would use length+1 and add a 0 at the end)
+// 				reader->read(buf, length);
+// 				sf::Music* nMusic = new sf::Music();
+// 				nMusic->openFromMemory(buf, length);
+// 				nMusic->setRelativeToListener(true);
+// 				nMusic->play();
+// 				mainGame->cv->wait_for(lck, std::chrono::milliseconds(nMusic->getDuration()));
+// 				reader->drop();
+// 				delete[] buf;
+// 				delete[] nMusic;
+// 				break;
+// 			}
 			if(mixer->PlaySound(list[soundno])) {
 				mainGame->isEvent = true;
 				if(gGameConfig->pauseduel) {

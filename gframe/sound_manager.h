@@ -8,6 +8,14 @@
 #include "sound_backend.h"
 ///kdiy////////
 #include "common.h"
+namespace irr
+{
+	class IrrlichtDevice;
+	namespace io
+	{
+		class IFileSystem;
+	}
+}
 ///kdiy////////
 
 namespace ygo {
