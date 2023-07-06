@@ -24,6 +24,8 @@ public:
 	};
 	//kdiy//////////
 	virtual int32_t GetSoundDuration(const std::string& name) = 0;
+	virtual bool PlaySound(char* buff, const std::string& filename, long length) = 0;
+	virtual int32_t GetSoundDuration(char* buff, const std::string& filename, long length) = 0;
 	//kdiy//////////
 };
 

@@ -123,6 +123,7 @@ public:
     std::vector<std::string> soundcount;
     std::vector<std::string> soundcount2;
 	int32_t GetSoundDuration(std::string name);
+	int32_t GetSoundDuration(char* buff, const std::string& filename, long length);
 	int PlayModeSound(bool lock=false);
     void PlayMode(bool lock=false);
 	////////kdiy////////

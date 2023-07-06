@@ -25,8 +25,12 @@ public:
 		return m_BaseBackend->GetSupportedMusicExtensions();
 	}
 	//kdiy//////////
+	virtual bool PlaySound(char* buff, const std::string& filename, long length) override;
 	virtual int32_t GetSoundDuration(const std::string& name) override {
 		return m_BaseBackend->GetSoundDuration(name);
+	}
+	virtual int32_t GetSoundDuration(char* buff, const std::string& filename, long length) override {
+		return m_BaseBackend->GetSoundDuration(buff, filename, length);
 	}
 	//kdiy//////////
 protected:

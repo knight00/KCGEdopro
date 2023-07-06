@@ -405,6 +405,20 @@ void SoundManager::RefreshChantsList() {
                     auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/directattack/") + file);
                     ChantSPList[i][x].push_back(conv);
                 }
+			//ktestsound//////////
+            // } else if(chantType.first == CHANT::ATTACK) {
+            //     for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/attack"), { EPRO_TEXT("zip"))) {
+            //         auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/attack/") + file);
+            //         ChantSPList[i][x].push_back(conv);
+            //     }
+            //     for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/monster"), { EPRO_TEXT("zip"))) {
+            //         auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/monster/") + file);
+            //         ChantSPList[i][x].push_back(conv);
+            //     }
+            //     for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/directattack"), { EPRO_TEXT("zip"))) {
+            //         auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/directattack/") + file);
+            //         ChantSPList[i][x].push_back(conv);
+            //     }
             } else if(chantType.first == CHANT::ACTIVATE) {
                 for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/activate"), mixer->GetSupportedSoundExtensions())) {
                     auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/activate/") + file);
@@ -471,6 +485,7 @@ void SoundManager::RefreshChantsList() {
                     auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/activate/") + file);
                     ChantSPList[i][x].push_back(conv);
                 }
+			//ktestsound//////////
             //  } else if(chantType.first == CHANT::STARTUP) {
             //     for (auto& file : Utils::FindFiles(searchPath[x], { EPRO_TEXT("zip") })) {
             //         auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
@@ -527,6 +542,15 @@ int32_t SoundManager::GetSoundDuration(std::string name) {
 #ifdef BACKEND
     if(mixer && soundsEnabled)
 		return mixer->GetSoundDuration(name);
+	else return 1000;
+#else
+	return 1000;
+#endif
+}
+int32_t SoundManager::GetSoundDuration(char* buff, const std::string& filename, long length) {
+#ifdef BACKEND
+	if (mixer && soundsEnabled)
+		return mixer->GetSoundDuration(buff, filename, length);
 	else return 1000;
 #else
 	return 1000;
@@ -765,6 +789,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
             gSoundManager->soundcount2.push_back(chantName);
         }
 		StopSounds();
+		//ktestsound//////////
 //         irr::io::IFileArchive* tmp_archive = nullptr;
 // #if defined(Zip)
 // 		mainGame->filesystem->addFileArchive(epro::format("{}", chantName).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
@@ -794,9 +819,9 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 // 				reader->drop();
 // 				delete[] buf;
 // 				delete[] nMusic;
+//              return true;
 // 				break;
 // 			}
-// 			return true;
 // 		}
 		if(Utils::FileExists(Utils::ToPathString(chantName))) { 
             if(mixer->PlaySound(chantName)) {
@@ -976,6 +1001,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
         gSoundManager->soundcount.push_back(list[soundno]);
 		StopSounds();
 		if(Utils::FileExists(Utils::ToPathString(list[soundno]))) {
+			//ktestsound//////////
 // 			mainGame->isEvent = true;
 //             irr::io::IFileArchive* tmp_archive = nullptr;
 // #if defined(Zip)
@@ -985,30 +1011,30 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 // #endif
 // 		    if(tmp_archive)
 // 			    Utils::archives.emplace_back(tmp_archive);
-// 		    for(auto& archive : Utils::archives) {
-// 			//std::lock_guard<epro::mutex> guard(*archive.mutex);
-// 			std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-// 			auto files = Utils::FindFiles(archive.archive, EPRO_TEXT(""), { EPRO_TEXT("ogg"), EPRO_TEXT("mp3") }, 0);
-// 			for(auto& index : files) {
-// 				auto reader = archive.archive->createAndOpenFile(index);
-// 				if(reader == nullptr)
-// 					continue;
-// 				long length = reader->getSize();
-// 				if(length == 0) {
+// 			for (auto& archive : Utils::archives) {
+// 				//std::lock_guard<epro::mutex> guard(*archive.mutex);
+// 				std::unique_lock<epro::mutex> lck(mainGame->gMutex);
+// 				auto files = Utils::FindFiles(archive.archive, EPRO_TEXT(""), { EPRO_TEXT("ogg"), EPRO_TEXT("mp3") }, 0);
+// 				for (auto& index : files) {
+// 					auto reader = archive.archive->createAndOpenFile(index);
+// 					if (reader == nullptr)
+// 						continue;
+// 					long length = reader->getSize();
+// 					if (length == 0) {
+// 						reader->drop();
+// 						continue;
+// 					}
+// 					char* buf = new char[length + 1]; // (When reading  ascii-files instead of binary files you would use length+1 and add a 0 at the end)
+// 					const auto& name = reader->getFileName();
+// 					const std::string& filename = Utils::ToUTF8IfNeeded({ name.c_str(), name.size() });
+// 					reader->read(buf, length);
+// 					mixer->PlaySound(buf, filename, length);
+// 					mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(buf, filename, length)));
 // 					reader->drop();
-// 					continue;
+// 					delete[] buf;
+// 					return true;
+// 					break;
 // 				}
-// 				char* buf = new char[length + 1]; // (When reading  ascii-files instead of binary files you would use length+1 and add a 0 at the end)
-// 				reader->read(buf, length);
-// 				sf::Music* nMusic = new sf::Music();
-// 				nMusic->openFromMemory(buf, length);
-// 				nMusic->setRelativeToListener(true);
-// 				nMusic->play();
-// 				mainGame->cv->wait_for(lck, std::chrono::milliseconds(nMusic->getDuration()));
-// 				reader->drop();
-// 				delete[] buf;
-// 				delete[] nMusic;
-// 				break;
 // 			}
 			if(mixer->PlaySound(list[soundno])) {
 				mainGame->isEvent = true;
