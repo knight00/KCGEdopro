@@ -41,6 +41,17 @@ void SoundThreadedBackend::BaseLoop() {
 			m_ResponseCondVar.notify_all();
 			break;
 		}
+		///kdiy//////
+		case ActionType::PLAY_SOUNDZ: {
+			auto& argument = action.arg.play_sound;
+			auto& response = *argument.response;
+			response.answer = m_BaseBackend->PlaySound(argument.buff, *argument.filename, argument.length);
+			std::lock_guard<epro::mutex> lckres(m_ResponseMutex);
+			response.answered = true;
+			m_ResponseCondVar.notify_all();
+			break;
+		}
+		///kdiy//////
 		case ActionType::STOP_SOUNDS: {
 			m_BaseBackend->StopSounds();
 			break;
@@ -132,9 +143,11 @@ bool SoundThreadedBackend::PlaySound(const std::string& name) {
 ///kdiy/////////
 bool SoundThreadedBackend::PlaySound(char* buff, const std::string& filename, long length) {
 	Response res{};
-	Action action{ ActionType::PLAY_SOUND };
-	action.arg.play_sound.name = &filename;
-	action.arg.play_sound.response = &res;
+	Action action{ ActionType::PLAY_SOUNDZ };
+	action.arg.play_sound.buff = buff;
+	action.arg.play_sound.filename = &filename;
+	action.arg.play_sound.buff = buff;
+	action.arg.play_sound.length = length;
 	std::unique_lock<epro::mutex> lck(m_ActionMutex);
 	std::unique_lock<epro::mutex> lckres(m_ResponseMutex);
 	m_Actions.push(action);

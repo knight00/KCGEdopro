@@ -406,19 +406,19 @@ void SoundManager::RefreshChantsList() {
                     ChantSPList[i][x].push_back(conv);
                 }
 			//ktestsound//////////
-            // } else if(chantType.first == CHANT::ATTACK) {
-            //     for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/attack"), { EPRO_TEXT("zip"))) {
-            //         auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/attack/") + file);
-            //         ChantSPList[i][x].push_back(conv);
-            //     }
-            //     for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/monster"), { EPRO_TEXT("zip"))) {
-            //         auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/monster/") + file);
-            //         ChantSPList[i][x].push_back(conv);
-            //     }
-            //     for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/directattack"), { EPRO_TEXT("zip"))) {
-            //         auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/directattack/") + file);
-            //         ChantSPList[i][x].push_back(conv);
-            //     }
+            } else if(chantType.first == CHANT::ATTACK) {
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/attack"), { EPRO_TEXT("zip") })) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/attack/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/monster"), { EPRO_TEXT("zip") })) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/monster/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
+                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/directattack"), { EPRO_TEXT("zip") })) {
+                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/directattack/") + file);
+                    ChantSPList[i][x].push_back(conv);
+                }
             } else if(chantType.first == CHANT::ACTIVATE) {
                 for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/activate"), mixer->GetSupportedSoundExtensions())) {
                     auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/activate/") + file);
@@ -1002,65 +1002,65 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 		StopSounds();
 		if(Utils::FileExists(Utils::ToPathString(list[soundno]))) {
 			//ktestsound//////////
-// 			mainGame->isEvent = true;
-//             irr::io::IFileArchive* tmp_archive = nullptr;
-// #if defined(Zip)
-// 		    mainGame->filesystem->addFileArchive(epro::format("{}", list[soundno]).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
-// #else
-// 		    filesystem->addFileArchive(epro::format(EPRO_TEXT("{}"), chantName).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive);
-// #endif
-// 		    if(tmp_archive)
-// 			    Utils::archives.emplace_back(tmp_archive);
-// 			for (auto& archive : Utils::archives) {
-// 				//std::lock_guard<epro::mutex> guard(*archive.mutex);
-// 				std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-// 				auto files = Utils::FindFiles(archive.archive, EPRO_TEXT(""), { EPRO_TEXT("ogg"), EPRO_TEXT("mp3") }, 0);
-// 				for (auto& index : files) {
-// 					auto reader = archive.archive->createAndOpenFile(index);
-// 					if (reader == nullptr)
-// 						continue;
-// 					long length = reader->getSize();
-// 					if (length == 0) {
-// 						reader->drop();
-// 						continue;
-// 					}
-// 					char* buf = new char[length + 1]; // (When reading  ascii-files instead of binary files you would use length+1 and add a 0 at the end)
-// 					const auto& name = reader->getFileName();
-// 					const std::string& filename = Utils::ToUTF8IfNeeded({ name.c_str(), name.size() });
-// 					reader->read(buf, length);
-// 					mixer->PlaySound(buf, filename, length);
-// 					mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(buf, filename, length)));
-// 					reader->drop();
-// 					delete[] buf;
-// 					return true;
-// 					break;
-// 				}
-// 			}
-			if(mixer->PlaySound(list[soundno])) {
-				mainGame->isEvent = true;
-				if(gGameConfig->pauseduel) {
-					std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-					mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list[soundno])));
-				}
-				int count2 = list2.size();
-				if(count2 > 0) {
-					for(int k = 0; k < count2; k++) {
-						const auto filename = Utils::GetFileName(list2[k]).substr(0, Utils::GetFileName(list2[k]).size() - 2);
-						if(filename == Utils::GetFileName(list[soundno])) {
-							StopSounds();
-							if(Utils::FileExists(Utils::ToPathString(list2[k]))) {
-								mixer->PlaySound(list2[k]);
-								if(gGameConfig->pauseduel) {
-									std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-									mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list2[k])));
-								}
-							}
-						}
+			mainGame->isEvent = true;
+            irr::io::IFileArchive* tmp_archive = nullptr;
+#if defined(Zip)
+		    mainGame->filesystem->addFileArchive(epro::format("{}", list[soundno]).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
+#else
+		    filesystem->addFileArchive(epro::format(EPRO_TEXT("{}"), list[soundno]).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive);
+#endif
+		    if(tmp_archive)
+			    Utils::archives.emplace_back(tmp_archive);
+			for (auto& archive : Utils::archives) {
+				std::lock_guard<epro::mutex> guard(*archive.mutex);
+				auto files = Utils::FindFiles(archive.archive, EPRO_TEXT(""), { EPRO_TEXT("ogg"), EPRO_TEXT("mp3") }, 0);
+				for (auto& index : files) {
+					auto reader = archive.archive->createAndOpenFile(index);
+					if (reader == nullptr)
+						continue;
+					long length = reader->getSize();
+					if (length == 0) {
+						reader->drop();
+						continue;
 					}
+					char* buf = new char[length + 1]; // (When reading  ascii-files instead of binary files you would use length+1 and add a 0 at the end)
+					const auto& name = reader->getFileName();
+					const std::string& filename = Utils::ToUnicodeIfNeeded(name);
+					reader->read(buf, length);
+					mixer->PlaySound(buf, filename, length);
+					std::unique_lock<epro::mutex> lck(mainGame->gMutex);
+					mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(buf, filename, length)));
+					reader->drop();
+					delete[] buf;
+					return true;
+					break;
 				}
-				mainGame->isEvent = false;
-				return true;
 			}
+			// if(mixer->PlaySound(list[soundno])) {
+			// 	mainGame->isEvent = true;
+			// 	if(gGameConfig->pauseduel) {
+			// 		std::unique_lock<epro::mutex> lck(mainGame->gMutex);
+			// 		mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list[soundno])));
+			// 	}
+			// 	int count2 = list2.size();
+			// 	if(count2 > 0) {
+			// 		for(int k = 0; k < count2; k++) {
+			// 			const auto filename = Utils::GetFileName(list2[k]).substr(0, Utils::GetFileName(list2[k]).size() - 2);
+			// 			if(filename == Utils::GetFileName(list[soundno])) {
+			// 				StopSounds();
+			// 				if(Utils::FileExists(Utils::ToPathString(list2[k]))) {
+			// 					mixer->PlaySound(list2[k]);
+			// 					if(gGameConfig->pauseduel) {
+			// 						std::unique_lock<epro::mutex> lck(mainGame->gMutex);
+			// 						mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list2[k])));
+			// 					}
+			// 				}
+			// 			}
+			// 		}
+			// 	}
+			// 	mainGame->isEvent = false;
+			// 	return true;
+			// }
 		}
 	}
 	return false;

@@ -41,6 +41,9 @@ private:
 		SET_MUSIC_VOLUME,
 		PLAY_MUSIC,
 		PLAY_SOUND,
+		///kdiy/////////
+		PLAY_SOUNDZ,
+		///kdiy/////////
 		STOP_SOUNDS,
 		STOP_MUSIC,
 		PAUSE_MUSIC,
@@ -61,6 +64,11 @@ private:
 		struct {
 			Response* response;
 			const std::string* name;
+			///kdiy//////
+			char* buff;
+			const std::string* filename;
+			long length;
+			///kdiy//////
 		} play_sound;
 		struct {
 			Response* response;
