@@ -16,11 +16,6 @@
 #include "game_config.h"
 #include "game.h"
 #include "windbot_panel.h"
-#if IRRLICHT_VERSION_MAJOR==1 && IRRLICHT_VERSION_MINOR==9
-#include "IrrlichtCommonIncludes1.9/CFileSystem.h"
-#else
-#include "IrrlichtCommonIncludes/CFileSystem.h"
-#endif
 /////kdiy/////
 namespace ygo {
 SoundManager::SoundManager(double sounds_volume, double music_volume, bool sounds_enabled, bool music_enabled) {
@@ -65,42 +60,6 @@ bool SoundManager::IsUsable() {
 }
 void SoundManager::RefreshBGMList() {
 #ifdef BACKEND
-    ////////kdiy////
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/muto"));
-    Utils::MakeDirectory(EPRO_TEXT("./sound/character/atem"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/kaiba"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/joey"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/marik"));
-    Utils::MakeDirectory(EPRO_TEXT("./sound/character/dartz"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/bakura"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/aigami"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/judai"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/manjome"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/kaisa"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/phoenix"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/john"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yubel"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yusei"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/jack"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/arki"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/crow"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/kiryu"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/paradox"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/zone"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yuma"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/shark"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/kaito"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/iv"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/DonThousand"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yuya"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/declan"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/shay"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/playmaker"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/soulburner"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/blueangel"));
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character/darksiner"));
-	////////kdiy////
 	Utils::MakeDirectory(EPRO_TEXT("./sound/BGM/"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/BGM/duel"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/BGM/menu"));
@@ -226,8 +185,66 @@ void SoundManager::RefreshBGMDir(epro::path_stringview path, BGM scene) {
 	}
 #endif
 }
+/////kdiy///////
+//ktestsound//////////
+void SoundManager::RefreshZipChants(irr::io::IFileArchive* archive, epro::path_stringview folder, std::vector<std::string> &list) {
+#ifdef BACKEND
+	auto files = Utils::FindFiles(archive, folder, mixer->GetSupportedSoundExtensions(), 5);
+	for(auto& index : files) {
+		auto reader = archive->createAndOpenFile(index);
+		if(reader == nullptr)
+			continue;
+		long length = reader->getSize();
+		if(length == 0) {
+			reader->drop();
+			continue;
+		}
+		char* buff = new char[length + 1]; //When reading  ascii-files instead of binary files you would use length+1 and add a 0 at the end
+		reader->read(buff, length);
+		const auto& name = reader->getFileName();
+		epro::path_string filename = { name.c_str(), name.size() };
+		auto conv = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}"), filename));
+		list.push_back(conv);
+        reader->drop();
+		delete[] buff;
+	}
+#endif
+}
+void SoundManager::RefreshZipChants2(epro::path_stringview folder, std::vector<std::string> &list) {
+#ifdef BACKEND
+	for(auto& file : Utils::FindFiles(folder, mixer->GetSupportedMusicExtensions())) {
+        auto conv = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/{}"), folder, file));
+        list.push_back(conv);
+    }
+#endif
+}
+void SoundManager::RefreshZipCards(irr::io::IFileArchive* archive, epro::path_stringview folder, std::string &list) {
+#ifdef BACKEND
+	auto files = Utils::FindFiles(archive, folder, mixer->GetSupportedSoundExtensions(), 5);
+	for(auto& index : files) {
+		auto reader = archive->createAndOpenFile(index);
+		if(reader == nullptr)
+			continue;
+		long length = reader->getSize();
+		if(length == 0) {
+			reader->drop();
+			continue;
+		}
+		char* buff = new char[length + 1];
+		reader->read(buff, length);
+		const auto& name = reader->getFileName();
+		epro::path_string filename = { name.c_str(), name.size() };
+		auto conv = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}"), filename));
+		list = conv;
+        reader->drop();
+		delete[] buff;
+	}
+#endif
+}
+/////kdiy///////
 void SoundManager::RefreshChantsList() {
 #ifdef BACKEND
+
 	static constexpr std::pair<CHANT, epro::path_stringview> types[]{
 		/////kdiy///////
 		{CHANT::SET,       EPRO_TEXT("set"_sv)},
@@ -251,28 +268,7 @@ void SoundManager::RefreshChantsList() {
 		{CHANT::ACTIVATE,  EPRO_TEXT("activate"_sv)}
 	};
 	/////kdiy//////
-	ChantsBGMList.clear();
-	for(auto list : ChantsList)
-		list.clear();
-	for(int i = 0; i < 18; i++) {
-		for(int x = 0; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++)
-			ChantSPList[i][x].clear();
-	}
-	for (auto& file : Utils::FindFiles(EPRO_TEXT("./sound/BGM/card"), mixer->GetSupportedSoundExtensions())) {
-		auto scode = Utils::GetFileName(file);
-		try {
-			uint32_t code = static_cast<uint32_t>(std::stoul(scode));
-			if (code && !ChantsBGMList.count(code)) {
-				ChantsBGMList[code] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("./sound/BGM/card/{}"), scode));
-			}
-		}
-		catch (...) {
-			continue;
-		}
-	}
-	/////kdiy///////
-	for (const auto& chantType : types) {
-		/////kdiy///////
+	//for (const auto& chantType : types) {
 		// const epro::path_string searchPath = epro::format(EPRO_TEXT("./sound/{}"), chantType.second);
 		// Utils::MakeDirectory(searchPath);
 		//for (auto& file : Utils::FindFiles(searchPath, mixer->GetSupportedSoundExtensions())) {
@@ -287,45 +283,255 @@ void SoundManager::RefreshChantsList() {
         //         continue;
         //     }
         // }
-		std::vector<epro::path_string> searchPath;
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/muto/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/atem/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/kaiba/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/joey/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/marik/{}"), chantType.second));
-        searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/dartz/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/bakura/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/aigami/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/judai/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/manjome/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/kaisa/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/phoenix/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/john/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/yubel/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/yusei/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/jack/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/arki/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/crow/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/kiryu/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/paradox/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/zone/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/yuma/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/shark/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/kaito/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/iv/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/DonThousand/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/yuya/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/declan/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/shay/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/playmaker/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/soulburner/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/blueangel/{}"), chantType.second));
-		searchPath.push_back(epro::format(EPRO_TEXT("./sound/character/darksiner/{}"), chantType.second));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/muto"));
+    Utils::MakeDirectory(EPRO_TEXT("./sound/character/atem"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/kaiba"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/joey"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/marik"));
+    Utils::MakeDirectory(EPRO_TEXT("./sound/character/dartz"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/bakura"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/aigami"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/judai"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/manjome"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/kaisa"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/phoenix"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/john"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yubel"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yusei"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/jack"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/arki"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/crow"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/kiryu"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/paradox"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/zone"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yuma"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/shark"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/kaito"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/iv"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/DonThousand"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/yuya"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/declan"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/shay"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/playmaker"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/soulburner"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/blueangel"));
+	Utils::MakeDirectory(EPRO_TEXT("./sound/character/darksiner"));
+	ChantsBGMList.clear();
+	for(auto list : ChantsList)
+		list.clear();
+	for(int i = 0; i < 18; i++) {
+		for(int x = 0; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++)
+			ChantSPList[i][x].clear();
+	}
+    for(auto list : ChantsList2)
+		list.clear();
+	for(int i = 0; i < 18; i++) {
+		for(int x = 0; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++)
+			ChantSPList2[i][x].clear();
+	}
 
-		for (auto path : searchPath)
+	for (auto& file : Utils::FindFiles(EPRO_TEXT("./sound/BGM/card"), mixer->GetSupportedSoundExtensions())) {
+		auto scode = Utils::GetFileName(file);
+		try {
+			uint32_t code = static_cast<uint32_t>(std::stoul(scode));
+			if (code && !ChantsBGMList.count(code)) {
+				ChantsBGMList[code] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("./sound/BGM/card/{}"), scode));
+			}
+		}
+		catch (...) {
+			continue;
+		}
+	}
+
+// 	irr::io::IFileSystem* filesystem = new irr::io::CFileSystem();
+// 	irr::io::IFileArchive* tmp_archive = nullptr;
+// #if defined(Zip)
+// 	filesystem->addFileArchive(epro::format(EPRO_TEXT("./expansions/kcgchant.zip")).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
+// #else
+// 	filesystem->addFileArchive(epro::format(EPRO_TEXT("./expansions/kcgchant.zip")).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive);
+// #endif
+// 	if(tmp_archive)
+// 	{
+// 		Utils::archives.emplace_back(tmp_archive);
+// 	}
+    for(auto& archive : Utils::archives) {
+		if(Utils::ToUTF8IfNeeded({ archive.archive->getArchiveName().c_str(), archive.archive->getArchiveName().size() }).find("/expansions/kcgchant.zip") == std::string::npos)
+			continue;
+		std::lock_guard<epro::mutex> guard(*archive.mutex);
+		for(const auto& chantType : types) {
+			std::vector<epro::path_string> searchPath;
+			searchPath.push_back(epro::format(EPRO_TEXT("{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/muto/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/atem/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/kaiba/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/joey/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/marik/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/dartz/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/bakura/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/aigami/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/judai/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/manjome/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/kaisa/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/phoenix/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/john/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/yubel/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/yusei/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/jack/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/arki/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/crow/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/kiryu/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/paradox/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/zone/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/yuma/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/shark/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/kaito/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/iv/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/DonThousand/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/yuya/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/declan/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/shay/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/playmaker/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/soulburner/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/blueangel/{}"), chantType.second));
+			searchPath.push_back(epro::format(EPRO_TEXT("character/darksiner/{}"), chantType.second));
+
+			int i = -1;
+			if(chantType.first == CHANT::SET) i = 0;
+			if(chantType.first == CHANT::DESTROY) i = 1;
+			if(chantType.first == CHANT::DRAW) i = 2;
+			if(chantType.first == CHANT::DAMAGE) i = 3;
+			if(chantType.first == CHANT::RECOVER) i = 4;
+			if(chantType.first == CHANT::NEXTTURN) i = 5;
+			if(chantType.first == CHANT::STARTUP) i = 6;
+			if(chantType.first == CHANT::BORED) i = 7;
+			if(chantType.first == CHANT::SUMMON) i = 8;
+			if(chantType.first == CHANT::ATTACK) i = 9;
+			if(chantType.first == CHANT::ACTIVATE) i = 10;
+			if(chantType.first == CHANT::PENDULUM) i = 11;
+			if(chantType.first == CHANT::OPPCOUNTER) i = 12;
+			if(chantType.first == CHANT::RELEASE) i = 13;
+			if(chantType.first == CHANT::BATTLEPHASE) i = 14;
+			if(chantType.first == CHANT::TURNEND) i = 15;
+			if(chantType.first == CHANT::WIN) i = 16;
+			if(chantType.first == CHANT::LOSE) i = 17;
+			if(i == -1) continue;
+			for(int x = 0; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
+                //ktestsound//////////
+				if(chantType.first == CHANT::SUMMON) {
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/fusion"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/synchro"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/xyz"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/link"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/ritual"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/pendulum"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/summon"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/spsummon"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/attack"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/defense"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/advance"), ChantSPList[i][x]);
+				} else if(chantType.first == CHANT::ATTACK) {
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/attack"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/monster"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/directattack"), ChantSPList[i][x]);
+				} else if(chantType.first == CHANT::ACTIVATE) {
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/activate"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/fromhand"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/monster"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/quickspell"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/continuousspell"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/equip"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/ritual"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/normaltrap"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/continuoustrap"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/countertrap"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/flip"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/field"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/pendulum"), ChantSPList[i][x]);
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/action"), ChantSPList[i][x]);
+				} else if(chantType.first == CHANT::PENDULUM) {
+					RefreshZipChants(archive.archive, searchPath[x] + EPRO_TEXT("/activate"), ChantSPList[i][x]);
+				} else if(chantType.first != CHANT::WIN)
+					RefreshZipChants(archive.archive, searchPath[x], ChantSPList[i][x]);
+
+				if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM) {
+					for(auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/card"), mixer->GetSupportedSoundExtensions())) {
+						auto scode = Utils::GetFileName(file);
+						auto files = Utils::ToUTF8IfNeeded(scode);
+						if(files.find("+") != std::string::npos || files.find("-") != std::string::npos || files.find("_") != std::string::npos || files.find(".") != std::string::npos)
+							continue;
+						try {
+							uint32_t code = static_cast<uint32_t>(std::stoul(scode));
+							auto key = std::make_pair(chantType.first, code);
+							if(code && !ChantsList[x].count(key))
+								RefreshZipCards(archive.archive, epro::format(EPRO_TEXT("{}/card/{}"), searchPath[x], scode), ChantsList[x][key]);
+						}
+						catch(...) {
+							continue;
+						}
+					}
+				}
+				if(chantType.first == CHANT::WIN) {
+					for(auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
+						auto scode = Utils::GetFileName(file);
+						auto files = Utils::ToUTF8IfNeeded(scode);
+						if(files.find("+") != std::string::npos || files.find("-") != std::string::npos || files.find("_") != std::string::npos || files.find(".") != std::string::npos)
+							continue;
+						try {
+							uint32_t code = static_cast<uint32_t>(std::stoul(scode));
+							auto key = std::make_pair(chantType.first, code);
+							if(code && !ChantsList[x].count(key))
+								RefreshZipCards(archive.archive, epro::format(EPRO_TEXT("{}/{}"), searchPath[x], scode), ChantsList[x][key]);
+						}
+						catch(...) {
+							continue;
+						}
+					}
+				}
+			}
+		}
+		break;
+	}
+
+	for(const auto& chantType : types) {
+		std::vector<epro::path_string> searchPath2;
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/muto/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/atem/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/kaiba/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/joey/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/marik/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/dartz/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/bakura/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/aigami/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/judai/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/manjome/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/kaisa/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/phoenix/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/john/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/yubel/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/yusei/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/jack/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/arki/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/crow/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/kiryu/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/paradox/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/zone/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/yuma/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/shark/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/kaito/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/iv/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/DonThousand/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/yuya/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/declan/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/shay/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/playmaker/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/soulburner/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/blueangel/{}"), chantType.second));
+		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/darksiner/{}"), chantType.second));
+		for(auto path : searchPath2)
 			Utils::MakeDirectory(path);
-		
+
 		int i = -1;
 		if(chantType.first == CHANT::SET) i = 0;
 		if(chantType.first == CHANT::DESTROY) i = 1;
@@ -346,195 +552,81 @@ void SoundManager::RefreshChantsList() {
 		if(chantType.first == CHANT::WIN) i = 16;
 		if(chantType.first == CHANT::LOSE) i = 17;
 		if(i == -1) continue;
-		for(int x = 0 ; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
-            if(chantType.first == CHANT::SUMMON) {
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/fusion"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/fusion/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/synchro"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/synchro/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/xyz"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/xyz/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/link"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/link/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/ritual"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/ritual/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/pendulum"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/pendulum/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/summon"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/summon/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/spsummon"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/spsummon/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/attack"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/attack/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/defense"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/defense/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/advance"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/advance/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-            } else if(chantType.first == CHANT::ATTACK) {
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/attack"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/attack/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/monster"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/monster/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/directattack"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/directattack/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-			//ktestsound//////////
-            } else if(chantType.first == CHANT::ATTACK) {
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/attack"), { EPRO_TEXT("zip") })) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/attack/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/monster"), { EPRO_TEXT("zip") })) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/monster/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/directattack"), { EPRO_TEXT("zip") })) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/directattack/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-            } else if(chantType.first == CHANT::ACTIVATE) {
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/activate"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/activate/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/fromhand"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/fromhand/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/monster"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/activate/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/normalspell"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/normalspell/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/quickspell"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/quickspell/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/continuousspell"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/continuousspell/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/equip"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/equip/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/ritual"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/ritual/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/normaltrap"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/normaltrap/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/continuoustrap"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/continuoustrap/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/countertrap"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/countertrap/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/flip"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/flip/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/field"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/field/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/pendulum"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/pendulum/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/action"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/action/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-			} else if(chantType.first == CHANT::PENDULUM) {
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/activate"), mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/activate/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-			//ktestsound//////////
-            //  } else if(chantType.first == CHANT::STARTUP) {
-            //     for (auto& file : Utils::FindFiles(searchPath[x], { EPRO_TEXT("zip") })) {
-            //         auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
-            //         ChantSPList[i][x].push_back(conv);
-            //     }
-            } else if(chantType.first != CHANT::WIN) {
-                for (auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
-                    auto conv = Utils::ToUTF8IfNeeded(searchPath[x] + EPRO_TEXT("/") + file);
-                    ChantSPList[i][x].push_back(conv);
-                }
-			}
 
-            if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM) {
-                for (auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/card"), mixer->GetSupportedSoundExtensions())) {
-                    auto scode = Utils::GetFileName(file);
+		for(int x = 0; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
+			if(chantType.first == CHANT::SUMMON) {
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/fusion"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/synchro"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/xyz"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/link"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/ritual"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/pendulum"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/summon"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/spsummon"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/attack"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/defense"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/advance"), ChantSPList2[i][x]);
+			} else if(chantType.first == CHANT::ATTACK) {
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/attack"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/monster"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/directattack"), ChantSPList2[i][x]);
+			} else if(chantType.first == CHANT::ACTIVATE) {
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/activate"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/fromhand"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/monster"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/quickspell"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/continuousspell"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/equip"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/ritual"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/normaltrap"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/continuoustrap"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/countertrap"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/flip"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/field"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/pendulum"), ChantSPList2[i][x]);
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/action"), ChantSPList2[i][x]);
+			} else if(chantType.first == CHANT::PENDULUM) {
+				RefreshZipChants2(searchPath2[x] + EPRO_TEXT("/activate"), ChantSPList2[i][x]);
+			} else if(chantType.first != CHANT::WIN)
+				RefreshZipChants2(searchPath2[x], ChantSPList2[i][x]);
+
+			if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM) {
+				for(auto& file : Utils::FindFiles(searchPath2[x] + EPRO_TEXT("/card"), mixer->GetSupportedSoundExtensions())) {
+					auto scode = Utils::GetFileName(file);
 					auto files = Utils::ToUTF8IfNeeded(scode);
 					if(files.find("+") != std::string::npos || files.find("-") != std::string::npos || files.find("_") != std::string::npos || files.find(".") != std::string::npos)
-                        continue;
+						continue;
 					try {
 						uint32_t code = static_cast<uint32_t>(std::stoul(scode));
 						auto key = std::make_pair(chantType.first, code);
-						if (code && !ChantsList[x].count(key))
-							ChantsList[x][key] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/card/{}"), searchPath[x], scode));
+						if(code && !ChantsList2[x].count(key))
+							ChantsList2[x][key] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/card/{}"), searchPath2[x], scode));
 					}
-					catch (...) {
+					catch(...) {
 						continue;
-                    }
-                }
-            }
+					}
+				}
+			}
 			if(chantType.first == CHANT::WIN) {
-                for (auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
-                    auto scode = Utils::GetFileName(file);
+				for(auto& file : Utils::FindFiles(searchPath2[x], mixer->GetSupportedSoundExtensions())) {
+					auto scode = Utils::GetFileName(file);
 					auto files = Utils::ToUTF8IfNeeded(scode);
 					if(files.find("+") != std::string::npos || files.find("-") != std::string::npos || files.find("_") != std::string::npos || files.find(".") != std::string::npos)
-                        continue;
+						continue;
 					try {
 						uint32_t code = static_cast<uint32_t>(std::stoul(scode));
 						auto key = std::make_pair(chantType.first, code);
-						if (code && !ChantsList[x].count(key))
-							ChantsList[x][key] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/{}"), searchPath[x], scode));
+						if(code && !ChantsList2[x].count(key))
+							ChantsList2[x][key] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/{}"), searchPath2[x], scode));
 					}
-					catch (...) {
+					catch(...) {
 						continue;
-                    }
-                }
-            }
+					}
+				}
+			}
 		}
-		/////kdiy///////
 	}
+	/////kdiy///////
 #endif	
 }
 /////kdiy/////
@@ -775,68 +867,85 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 	if(code == 0) {
         //not play again for same chant
         if(chant != CHANT::DRAW) {
-            for(auto file : gSoundManager->soundcount2)
+            for(auto file : gSoundManager->soundcount2) {
                 ChantSPList[i][character[player]].erase(std::remove(ChantSPList[i][character[player]].begin(), ChantSPList[i][character[player]].end(), file), ChantSPList[i][character[player]].end());
-        }
-		int count = ChantSPList[i][character[player]].size();
-        if(count < 1) return false;
-		int chantno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-		std::string chantName = ChantSPList[i][character[player]][chantno];
-        //record this chant as played
-        if(chant != CHANT::DRAW) {
-            if(std::find(gSoundManager->soundcount2.begin(), gSoundManager->soundcount2.end(), chantName) != gSoundManager->soundcount2.end())
-                return false;
-            gSoundManager->soundcount2.push_back(chantName);
-        }
-		StopSounds();
-		//ktestsound//////////
-//         irr::io::IFileArchive* tmp_archive = nullptr;
-// #if defined(Zip)
-// 		mainGame->filesystem->addFileArchive(epro::format("{}", chantName).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
-// #else
-// 		filesystem->addFileArchive(epro::format(EPRO_TEXT("{}"), chantName).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive);
-// #endif
-// 		if(tmp_archive)
-// 			Utils::archives.emplace_back(tmp_archive);
-// 		for(auto& archive : Utils::archives) {
-// 			std::lock_guard<epro::mutex> guard(*archive.mutex);
-// 			auto files = Utils::FindFiles(archive.archive, EPRO_TEXT(""), { EPRO_TEXT("ogg"), EPRO_TEXT("mp3") }, 0);
-// 			for(auto& index : files) {
-// 				auto reader = archive.archive->createAndOpenFile(index);
-// 				if(reader == nullptr)
-// 					continue;
-//                 long length = reader->getSize();
-// 				if(length == 0) {
-// 					reader->drop();
-// 					continue;
-// 				}
-// 				char* buf = new char[length + 1]; // (When reading  ascii-files instead of binary files you would use length+1 and add a 0 at the end)
-// 				reader->read(buf, length);
-// 				sf::Music* nMusic = new sf::Music();
-// 				nMusic->openFromMemory(buf, length);
-// 				nMusic->setRelativeToListener(true);
-// 				nMusic->play();
-// 				reader->drop();
-// 				delete[] buf;
-// 				delete[] nMusic;
-//              return true;
-// 				break;
-// 			}
-// 		}
-		if(Utils::FileExists(Utils::ToPathString(chantName))) { 
-            if(mixer->PlaySound(chantName)) {
-                //wait until chant finished
-                if(chant != CHANT::DESTROY && chant != CHANT::DAMAGE && chant != CHANT::RECOVER && chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN) {
-                    mainGame->isEvent = true;
-                    if(gGameConfig->pauseduel) {
-                        std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-                        mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(chantName)));
-                    }
-                    mainGame->isEvent = false;
-                }
-				return true;
+                ChantSPList2[i][character[player]].erase(std::remove(ChantSPList2[i][character[player]].begin(), ChantSPList2[i][character[player]].end(), file), ChantSPList2[i][character[player]].end());
             }
         }
+		int count = ChantSPList[i][character[player]].size();
+		int count2 = ChantSPList2[i][character[player]].size();
+		if(count > 0) {
+			int chantno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
+			std::string chantName = ChantSPList[i][character[player]][chantno];
+			//ktestsound//////////
+			for(auto& archive : Utils::archives) {
+				if(Utils::ToUTF8IfNeeded({ archive.archive->getArchiveName().c_str(), archive.archive->getArchiveName().size() }).find("/expansions/kcgchant.zip") == std::string::npos)
+					continue;
+				std::lock_guard<epro::mutex> guard(*archive.mutex);
+				auto files = Utils::FindFiles(archive.archive, Utils::ToPathString(chantName), mixer->GetSupportedSoundExtensions(), 5);
+				for(auto& index : files) {
+					auto reader = archive.archive->createAndOpenFile(index);
+					if(reader == nullptr)
+						continue;
+					long length = reader->getSize();
+					if(length == 0) {
+						reader->drop();
+						continue;
+					}
+					char* buff = new char[length + 1];
+					reader->read(buff, length);
+					const auto& name = reader->getFileName();
+					const std::string filename = Utils::ToUTF8IfNeeded({ name.c_str(), name.size() });
+					if(filename == chantName) {
+						StopSounds();
+                        //record this chant as played
+                        if(chant != CHANT::DRAW) {
+                            if(std::find(gSoundManager->soundcount2.begin(), gSoundManager->soundcount2.end(), chantName) != gSoundManager->soundcount2.end()) {
+                                reader->drop();
+                                delete[] buff;
+                                return false;
+                            }
+                            gSoundManager->soundcount2.push_back(chantName);
+                        }
+						mixer->PlaySound(buff, filename, length);
+						if(chant != CHANT::DESTROY && chant != CHANT::DAMAGE && chant != CHANT::RECOVER && chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN) {
+							mainGame->isEvent = true;
+							if(gGameConfig->pauseduel) {
+								std::unique_lock<epro::mutex> lck(mainGame->gMutex);
+								mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(buff, filename, length)));
+							}
+							mainGame->isEvent = false;
+						}
+					}
+					reader->drop();
+					delete[] buff;
+					return true;
+					break;
+				}
+				break;
+			}
+		} else if(count2 > 0) {
+			int chantno = (std::uniform_int_distribution<>(0, count2 - 1))(rnd);
+			std::string chantName = ChantSPList2[i][character[player]][chantno];
+			if(Utils::FileExists(Utils::ToPathString(chantName))) {
+                if(chant != CHANT::DRAW) {
+                    if(std::find(gSoundManager->soundcount2.begin(), gSoundManager->soundcount2.end(), chantName) != gSoundManager->soundcount2.end())
+                        return false;
+                    gSoundManager->soundcount2.push_back(chantName);
+                }
+				if(mixer->PlaySound(chantName)) {
+					if(chant != CHANT::DESTROY && chant != CHANT::DAMAGE && chant != CHANT::RECOVER && chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN) {
+						mainGame->isEvent = true;
+						if(gGameConfig->pauseduel) {
+							std::unique_lock<epro::mutex> lck(mainGame->gMutex);
+							mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(chantName)));
+						}
+						mainGame->isEvent = false;
+					}
+					return true;
+				}
+			}
+		}
 	} else {
 		std::vector<std::string> list;
         std::vector<std::string> list2;
@@ -996,71 +1105,36 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 		int count = list.size();
 		if(count < 1) return false;
 		int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-        if(std::find(gSoundManager->soundcount.begin(), gSoundManager->soundcount.end(), list[soundno]) != gSoundManager->soundcount.end())
-            return false;
-        gSoundManager->soundcount.push_back(list[soundno]);
 		StopSounds();
 		if(Utils::FileExists(Utils::ToPathString(list[soundno]))) {
-			//ktestsound//////////
-			mainGame->isEvent = true;
-            irr::io::IFileArchive* tmp_archive = nullptr;
-#if defined(Zip)
-		    mainGame->filesystem->addFileArchive(epro::format("{}", list[soundno]).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
-#else
-		    filesystem->addFileArchive(epro::format(EPRO_TEXT("{}"), list[soundno]).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive);
-#endif
-		    if(tmp_archive)
-			    Utils::archives.emplace_back(tmp_archive);
-			for (auto& archive : Utils::archives) {
-				std::lock_guard<epro::mutex> guard(*archive.mutex);
-				auto files = Utils::FindFiles(archive.archive, EPRO_TEXT(""), { EPRO_TEXT("ogg"), EPRO_TEXT("mp3") }, 0);
-				for (auto& index : files) {
-					auto reader = archive.archive->createAndOpenFile(index);
-					if (reader == nullptr)
-						continue;
-					long length = reader->getSize();
-					if (length == 0) {
-						reader->drop();
-						continue;
-					}
-					char* buf = new char[length + 1]; // (When reading  ascii-files instead of binary files you would use length+1 and add a 0 at the end)
-					const auto& name = reader->getFileName();
-					const std::string& filename = Utils::ToUnicodeIfNeeded(name);
-					reader->read(buf, length);
-					mixer->PlaySound(buf, filename, length);
+            if(std::find(gSoundManager->soundcount.begin(), gSoundManager->soundcount.end(), list[soundno]) != gSoundManager->soundcount.end())
+                return false;
+            gSoundManager->soundcount.push_back(list[soundno]);
+			if(mixer->PlaySound(list[soundno])) {
+				mainGame->isEvent = true;
+				if(gGameConfig->pauseduel) {
 					std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-					mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(buf, filename, length)));
-					reader->drop();
-					delete[] buf;
-					return true;
-					break;
+					mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list[soundno])));
 				}
+				int count2 = list2.size();
+				if(count2 > 0) {
+					for(int k = 0; k < count2; k++) {
+						const auto filename = Utils::GetFileName(list2[k]).substr(0, Utils::GetFileName(list2[k]).size() - 2);
+						if(filename == Utils::GetFileName(list[soundno])) {
+							StopSounds();
+							if(Utils::FileExists(Utils::ToPathString(list2[k]))) {
+								mixer->PlaySound(list2[k]);
+								if(gGameConfig->pauseduel) {
+									std::unique_lock<epro::mutex> lck(mainGame->gMutex);
+									mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list2[k])));
+								}
+							}
+						}
+					}
+				}
+				mainGame->isEvent = false;
+				return true;
 			}
-			// if(mixer->PlaySound(list[soundno])) {
-			// 	mainGame->isEvent = true;
-			// 	if(gGameConfig->pauseduel) {
-			// 		std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-			// 		mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list[soundno])));
-			// 	}
-			// 	int count2 = list2.size();
-			// 	if(count2 > 0) {
-			// 		for(int k = 0; k < count2; k++) {
-			// 			const auto filename = Utils::GetFileName(list2[k]).substr(0, Utils::GetFileName(list2[k]).size() - 2);
-			// 			if(filename == Utils::GetFileName(list[soundno])) {
-			// 				StopSounds();
-			// 				if(Utils::FileExists(Utils::ToPathString(list2[k]))) {
-			// 					mixer->PlaySound(list2[k]);
-			// 					if(gGameConfig->pauseduel) {
-			// 						std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-			// 						mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(list2[k])));
-			// 					}
-			// 				}
-			// 			}
-			// 		}
-			// 	}
-			// 	mainGame->isEvent = false;
-			// 	return true;
-			// }
 		}
 	}
 	return false;

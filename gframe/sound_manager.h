@@ -8,14 +8,11 @@
 #include "sound_backend.h"
 ///kdiy////////
 #include "common.h"
-namespace irr
-{
-	class IrrlichtDevice;
-	namespace io
-	{
-		class IFileSystem;
-	}
-}
+#if IRRLICHT_VERSION_MAJOR==1 && IRRLICHT_VERSION_MINOR==9
+#include "IrrlichtCommonIncludes1.9/CFileSystem.h"
+#else
+#include "IrrlichtCommonIncludes/CFileSystem.h"
+#endif
 ///kdiy////////
 
 namespace ygo {
@@ -109,7 +106,10 @@ public:
 	SoundManager(double sounds_volume, double music_volume, bool sounds_enabled, bool music_enabled);
 	bool IsUsable();
 	void RefreshBGMList();
+	void RefreshZipChants(irr::io::IFileArchive* archive, epro::path_stringview folder, std::vector<std::string> &list);
+	void RefreshZipChants2(epro::path_stringview folder, std::vector<std::string> &list);
 	void RefreshChantsList();
+	void RefreshZipCards(irr::io::IFileArchive* archive, epro::path_stringview folder, std::string& list);
 	void PlaySoundEffect(SFX sound);
 	void PlayBGM(BGM scene, bool loop = true);
 	////////kdiy////////
@@ -149,7 +149,9 @@ private:
     std::vector<std::string> SFXList[SFX::SFX_TOTAL_SIZE];
 	std::map<uint32_t, std::string> ChantsBGMList;
 	std::map<std::pair<CHANT, uint32_t>, std::string> ChantsList[CHARACTER_VOICE + CHARACTER_STORY_ONLY];
+	std::map<std::pair<CHANT, uint32_t>, std::string> ChantsList2[CHARACTER_VOICE + CHARACTER_STORY_ONLY];
 	std::vector<std::string> ChantSPList[18][CHARACTER_VOICE + CHARACTER_STORY_ONLY];
+	std::vector<std::string> ChantSPList2[18][CHARACTER_VOICE + CHARACTER_STORY_ONLY];
 	std::string bgm_now = "";
 	////////kdiy////
 	int bgm_scene{ -1 };
