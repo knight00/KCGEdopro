@@ -146,8 +146,8 @@ bool SoundThreadedBackend::PlaySound(char* buff, const std::string& filename, lo
 	Action action{ ActionType::PLAY_SOUNDZ };
 	action.arg.play_sound.buff = buff;
 	action.arg.play_sound.filename = &filename;
-	action.arg.play_sound.buff = buff;
 	action.arg.play_sound.length = length;
+	action.arg.play_sound.response = &res;
 	std::unique_lock<epro::mutex> lck(m_ActionMutex);
 	std::unique_lock<epro::mutex> lckres(m_ResponseMutex);
 	m_Actions.push(action);
