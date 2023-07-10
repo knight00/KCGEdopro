@@ -3124,7 +3124,7 @@ bool Game::MainLoop() {
                 mainGame->mode->LoadJsonInfo();
                 git_update = true;
             }
-            if(first_play) {
+            if(first_play && git_update && !git_error) {
                 try {
 					gGameConfig->dpi_scale = static_cast<uint32_t>(std::stol(mainGame->gSettings.ebDpiScale->getText())) / 100.0;
 					mainGame->restart = true;
