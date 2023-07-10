@@ -96,6 +96,7 @@ public:
 	void GetRandomImage(irr::video::ITexture*& src, int image_type, int width, int height, bool force_random = false);
 	void RefreshRandomImageList();
 	void RefreshImageDir(epro::path_string path, int image_type);
+	void RefreshImageDirf(epro::path_string path);
     void RefreshKCGImage();
 	/////kdiy/////
 

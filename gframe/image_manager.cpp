@@ -736,9 +736,7 @@ void ImageManager::RefreshRandomImageList() {
 	RefreshImageDir(EPRO_TEXT("equip"), TEXTURE_EQUIP);
 	RefreshImageDir(EPRO_TEXT("target"), TEXTURE_TARGET);
 	RefreshImageDir(EPRO_TEXT("chaintarget"), TEXTURE_CHAINTARGET);
-	RefreshImageDir(EPRO_TEXT("f1"), TEXTURE_F1);
-	RefreshImageDir(EPRO_TEXT("f2"), TEXTURE_F2);
-	RefreshImageDir(EPRO_TEXT("f3"), TEXTURE_F3);
+	RefreshImageDirf(EPRO_TEXT("morra"));
 	RefreshImageDir(EPRO_TEXT("bg"), TEXTURE_BACKGROUND);
 	RefreshImageDir(EPRO_TEXT("bg_menu"), TEXTURE_BACKGROUND_MENU);
 	RefreshImageDir(EPRO_TEXT("bg_deck"), TEXTURE_BACKGROUND_DECK);
@@ -835,8 +833,23 @@ void ImageManager::RefreshImageDir(epro::path_string path, int image_type) {
 	if(!gGameConfig->randomtexture)
 	    return;
 	for (auto file : Utils::FindFiles(BASE_PATH + path, { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
-		auto folder = BASE_PATH + path + EPRO_TEXT("/") + file;
-		ImageList[image_type].push_back(Utils::ToPathString(folder));
+		auto folderfile = BASE_PATH + path + EPRO_TEXT("/") + file;
+		ImageList[image_type].push_back(Utils::ToPathString(folderfile));
+	}
+}
+void ImageManager::RefreshImageDirf(epro::path_string path) {
+	if(!gGameConfig->randomtexture)
+	    return;
+	for(auto& _folder : Utils::FindSubfolders(epro::format(EPRO_TEXT("{}/texture/morra/"), BASE_PATH), 1, false)) {
+		for(auto file : Utils::FindFiles(epro::format(EPRO_TEXT("{}/texture/morra/{}/"), BASE_PATH, _folder), { EPRO_TEXT("jpg"), EPRO_TEXT("png") }, 0)) {
+			auto folderfile = epro::format(EPRO_TEXT("{}/texture/morra/{}/{}"), BASE_PATH, _folder, file);
+			if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f1"))
+				ImageList[TEXTURE_F1].push_back(Utils::ToPathString(folderfile));
+			if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f2"))
+				ImageList[TEXTURE_F2].push_back(Utils::ToPathString(folderfile));
+			if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f3"))
+				ImageList[TEXTURE_F3].push_back(Utils::ToPathString(folderfile));
+		}
 	}
 }
 void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, bool force_random) {
