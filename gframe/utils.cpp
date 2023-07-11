@@ -498,6 +498,25 @@ namespace ygo {
 		}
 		return res;
 	}
+	///kdiy///////////
+	std::vector<epro::path_stringview> Utils::FindFileNames(irr::io::IFileArchive* archive, epro::path_stringview path, const std::vector<epro::path_stringview>& extensions, int subdirectorylayers) {
+	std::vector<epro::path_stringview> res;
+	auto list = archive->getFileList();
+	for (irr::u32 i = 0; i < list->getFileCount(); i++) {
+		if (list->isDirectory(i))
+			continue;
+		const auto name = list->getFullFileName(i);
+		const epro::path_stringview filename = { name.c_str(), name.size() };
+		if (std::count(name.data(), name.data() + name.size(), EPRO_TEXT('/')) > subdirectorylayers)
+			continue;
+		if (Utils::ToUTF8IfNeeded({ name.c_str(), name.size() }).find(Utils::ToUTF8IfNeeded(path)) == std::string::npos)
+			continue;
+		if (extensions.empty() || std::find(extensions.begin(), extensions.end(), Utils::GetFileExtension(name)) != extensions.end())
+			res.push_back(filename);
+	}
+	return res;
+	}
+	///kdiy///////////
 	irr::io::IReadFile* Utils::FindFileInArchives(epro::path_stringview path, epro::path_stringview name) {
 		for(auto& archive : archives) {
 			auto list = archive.archive->getFileList();

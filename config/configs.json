@@ -53,6 +53,10 @@
 		{
 			"url": "default",
 			"type": "pic"
+		},		
+		{
+			"url": "https://code.mycard.moe/perfectdicky/Rush-HD-Pictures/-/raw/pics/{}.png",
+			"type": "pic"
 		},
 		{
 			"url": "default",
@@ -64,6 +68,10 @@
 		},
 		{
 			"url": "https://storage.googleapis.com/ygoprodeck.com/pics_artgame/{}.jpg",
+			"type": "field"
+		},
+		{
+			"url": "https://code.mycard.moe/perfectdicky/Rush-HD-Pictures/-/raw/pics/field/{}.png",
 			"type": "field"
 		},
 		{

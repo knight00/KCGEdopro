@@ -107,7 +107,7 @@ public:
 	bool IsUsable();
 	void RefreshBGMList();
 	void RefreshZipChants(irr::io::IFileArchive* archive, epro::path_stringview folder, std::vector<std::string> &list);
-	void RefreshZipChants2(epro::path_stringview folder, std::vector<std::string> &list);
+	void RefreshChants(epro::path_stringview folder, std::vector<std::string> &list);
 	void RefreshChantsList();
 	void RefreshZipCards(irr::io::IFileArchive* archive, epro::path_stringview folder, std::string& list);
 	void PlaySoundEffect(SFX sound);
@@ -118,6 +118,11 @@ public:
 	void PlayCustomBGM(std::string num);
     bool PlayFieldSound();
 	//bool PlayChant(CHANT chant, uint32_t code);
+	void AddtoChantSPList(CHANT chant, uint16_t extra, std::vector<std::string>& chantlist, std::vector<std::string>& list);
+	void AddtoZipChantList(std::string file, int i, std::vector<std::string>& list, std::vector<std::string>& list2);
+	void AddtoChantList(std::string file, int i, std::vector<std::string>& list, std::vector<std::string>& list2);
+	bool PlayZipChants(CHANT chant, std::string file, std::vector<std::string>& sound);
+	bool PlayChants(CHANT chant, std::string file, std::vector<std::string>& sound);
 	bool PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t player, uint16_t extra = 0);
 	uint8_t character[6] = {0,0,0,0,0,0}; //0: empty, 1: muto, 2: atem, 3: kaiba, 4: joey, 5: marik, 6: dartz, 7:bakura, 8: aigami, 9: judai, 10: manjome, 11: kaisa, 12: phoenix, 13: john, 14: yubel, 15: yusei, 16: jack, 17: arki, 18: crow, 19: kiryu, 20: paradox, 21:zone, 22: yuma, 23: shark, 24: kaito, 25: iv, 26: DonThousand, 27: yuya, 28: declan, 29: shay, 30: playmaker, 31: soulburner, 32: blueangel, 33: darksiner
     std::vector<std::string> soundcount;
