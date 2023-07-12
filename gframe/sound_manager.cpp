@@ -47,7 +47,7 @@ SoundManager::SoundManager(double sounds_volume, double music_volume, bool sound
 	bgm_scene = -1;
 	RefreshBGMList();
 	RefreshSoundsList();
-	RefreshChantsList();
+	//RefreshChantsList();
 	succesfully_initied = true;
 #else
 	epro::print("No audio backend available.\nAudio will be disabled.\n");

@@ -89,14 +89,15 @@ public:
 	bool Initial();
 	/////kdiy/////
     void SetAvatar(int player, const wchar_t *avatar);
-	std::vector<epro::path_string> ImageList[39+CHARACTER_VOICE+CHARACTER_VOICE];
-	int saved_image_id[39+CHARACTER_VOICE+CHARACTER_VOICE];
+	std::vector<epro::path_string> ImageList[40+CHARACTER_VOICE+CHARACTER_VOICE-2];
+	int saved_image_id[40+CHARACTER_VOICE+CHARACTER_VOICE-2];
 	//random image
 	void GetRandomImage(irr::video::ITexture*& src, int image_type, bool force_random=false);
 	void GetRandomImage(irr::video::ITexture*& src, int image_type, int width, int height, bool force_random = false);
+	void GetRandomImagef(int width, int height);
 	void RefreshRandomImageList();
 	void RefreshImageDir(epro::path_string path, int image_type);
-	void RefreshImageDirf(epro::path_string path);
+	void RefreshImageDirf();
     void RefreshKCGImage();
 	/////kdiy/////
 

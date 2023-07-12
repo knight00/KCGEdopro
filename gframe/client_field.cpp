@@ -637,19 +637,6 @@ void ClientField::ReplaySwap() {
 		for(const auto& pcard : zone)
 			reset(pcard);
 	};
-	//kdiy/////////
-	if(mainGame->dInfo.isTeam1) {
-		mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0]][0]);
-		mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1][0]);
-		mainGame->btnHead[0]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[0]]);
-		mainGame->btnHead[1]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1]);
-	} else {
-		mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1][0]);
-		mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1]][0]);
-		mainGame->btnHead[0]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1]);
-		mainGame->btnHead[1]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[1]]);
-	}
-    ////kdiy////////
 	std::swap(deck[0], deck[1]);
 	std::swap(hand[0], hand[1]);
 	std::swap(mzone[0], mzone[1]);
@@ -682,6 +669,19 @@ void ClientField::ReplaySwap() {
 		chit.UpdateDrawCoordinates();
 	}
 	disabled_field = (disabled_field >> 16) | (disabled_field << 16);
+	//kdiy/////////
+	// if(mainGame->dInfo.isTeam1) {
+	// 	mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0]][0]);
+	// 	mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1][0]);
+	// 	mainGame->btnHead[0]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[0]]);
+	// 	mainGame->btnHead[1]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1]);
+	// } else {
+	// 	mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1][0]);
+	// 	mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1]][0]);
+	// 	mainGame->btnHead[0]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1]);
+	// 	mainGame->btnHead[1]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[1]]);
+	// }
+    ////kdiy////////
 }
 void ClientField::RefreshAllCards() {
 	auto refresh = [](ClientCard* const& pcard) {

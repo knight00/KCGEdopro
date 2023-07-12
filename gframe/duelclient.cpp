@@ -2338,9 +2338,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		uint8_t player = BufferIO::Read<uint8_t>(pbuf);
 		uint8_t type = BufferIO::Read<uint8_t>(pbuf);
 		std::unique_lock<epro::mutex> lock(mainGame->gMutex);
-		//////kdiy////////
-		mainGame->should_reload_skin = true;
-		//////kdiy////////
 		mainGame->showcarddif = 110;
 		mainGame->showcardp = 0;
 		mainGame->dInfo.vic_string = L"";
@@ -5785,6 +5782,9 @@ void DuelClient::ReplayPrompt(bool local_stream) {
 	auto now = std::time(nullptr);
 	mainGame->PopupSaveWindow(gDataManager->GetSysString(1340), epro::format(L"{:%Y-%m-%d %H-%M-%S}", fmt::localtime(now)), gDataManager->GetSysString(1342));
 	mainGame->replaySignal.Wait(lock);
+     ////kdiy////////
+    mainGame->should_reload_skin = true;
+     ////kdiy////////
 	if(mainGame->saveReplay || !is_local_host) {
 		if(mainGame->saveReplay)
 			last_replay.SaveReplay(Utils::ToPathString(mainGame->ebFileSaveName->getText()));
