@@ -1683,7 +1683,6 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		current.controler = mainGame->LocalPlayer(current.controler);
 		const auto reason = BufferIO::Read<uint32_t>(pbuf);
-        //ClientCard* pcard = mainGame->dField.GetCard(previous.controler, previous.location, previous.sequence);
         auto cd = gDataManager->GetCardData(code);
         uint32_t code2 = 0;
         if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
@@ -1713,7 +1712,9 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 			PlayChant(SoundManager::CHANT::DESTROY, nullptr, previous.controler);
 		if(previous.location != current.location && (reason & REASON_RELEASE))
 			PlayChant(SoundManager::CHANT::RELEASE, nullptr, previous.controler);
-		if(previous.controler == current.controler && (previous.location & (LOCATION_HAND | LOCATION_DECK)) && (cd->type & TYPE_PENDULUM) && (cd->type & TYPE_MONSTER) && current.position == POS_FACEUP && current.location == LOCATION_SZONE && (current.sequence == 0 || current.sequence == 4 || current.sequence == 6 || current.sequence == 7))
+		if(cd && (cd->type & TYPE_PENDULUM) && (cd->type & TYPE_MONSTER) 
+        && previous.controler == current.controler && (previous.location & (LOCATION_HAND | LOCATION_DECK)) 
+        && current.position == POS_FACEUP && current.location == LOCATION_SZONE && (current.sequence == 0 || current.sequence == 4 || current.sequence == 6 || current.sequence == 7))
 			PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, current.controler, 0x2000);
 		break;
     }
@@ -1722,7 +1723,6 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
         const auto player = mainGame->LocalPlayer(info.controler);
 		uint16_t extra = 0;
-		auto cd = gDataManager->GetCardData(code);
 		if(info.location & LOCATION_MZONE) extra |= 0x1;
         PlayChant(SoundManager::CHANT::SET, nullptr, player, extra);
 		break;
@@ -1800,7 +1800,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         ClientCard* pcard = mainGame->dField.GetCard(mainGame->LocalPlayer(info.controler), info.location, info.sequence, info.position);
 		auto cd = gDataManager->GetCardData(code);
 		uint32_t code2 = 0;
-		if(cd->alias && cd->alias > 0) code2 = cd->alias;
+		if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
 		//////ktest///////
 		//默认摄像头
 			// cv::VideoCapture cap("./movies/c28649820.mp4");
@@ -1972,7 +1972,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 			if(match_kill) {
 				auto cd = gDataManager->GetCardData(match_kill);
 				uint32_t match_kill2 = 0;
-				if(cd->alias && cd->alias > 0) match_kill2 = cd->alias;
+				if(cd && cd->alias && cd->alias > 0) match_kill2 = cd->alias;
 				PlayChantcode(SoundManager::CHANT::LOSE, match_kill, match_kill2, player);
 			}
 			PlayChant(SoundManager::CHANT::LOSE, nullptr, 1 - player);
@@ -4178,21 +4178,21 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		/*CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);*/		
         /////kdiy//////
         auto cd = gDataManager->GetCardData(code);
-        if(cd->type & TYPE_TOKEN)
+        if(cd && cd->type & TYPE_TOKEN)
 			Play(SoundManager::SFX::TOKEN);
-        else if(cd->attribute & ATTRIBUTE_DARK)
+        else if(cd && cd->attribute & ATTRIBUTE_DARK)
 			Play(SoundManager::SFX::SUMMON_DARK);
-        else if(cd->attribute & ATTRIBUTE_DIVINE)
+        else if(cd && cd->attribute & ATTRIBUTE_DIVINE)
 			Play(SoundManager::SFX::SUMMON_DIVINE);
-        else if(cd->attribute & ATTRIBUTE_EARTH)
+        else if(cd && cd->attribute & ATTRIBUTE_EARTH)
 			Play(SoundManager::SFX::SUMMON_EARTH);
-        else if(cd->attribute & ATTRIBUTE_FIRE)
+        else if(cd && cd->attribute & ATTRIBUTE_FIRE)
 			Play(SoundManager::SFX::SUMMON_FIRE);
-        else if(cd->attribute & ATTRIBUTE_LIGHT)
+        else if(cd && cd->attribute & ATTRIBUTE_LIGHT)
 			Play(SoundManager::SFX::SUMMON_LIGHT);
-        else if(cd->attribute & ATTRIBUTE_WATER)
+        else if(cd && cd->attribute & ATTRIBUTE_WATER)
 			Play(SoundManager::SFX::SUMMON_WATER);
-        else if(cd->attribute & ATTRIBUTE_WIND)
+        else if(cd && cd->attribute & ATTRIBUTE_WIND)
 			Play(SoundManager::SFX::SUMMON_WIND);
         else
         /////kdiy//////
@@ -4231,7 +4231,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         CoreUtils::loc_info previous = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
         const auto reason = BufferIO::Read<uint32_t>(pbuf);
         auto cd = gDataManager->GetCardData(code);
-        if(cd->type & TYPE_TOKEN)
+        if(cd && cd->type & TYPE_TOKEN)
 			Play(SoundManager::SFX::TOKEN);
         else if(previous.controler == current.controler && (current.location & LOCATION_MZONE) && (reason & REASON_SPSUMMON) && (current.position & POS_FACEUP)) {
             if(((cd->type & (TYPE_LINK | TYPE_XYZ | TYPE_SYNCHRO | TYPE_FUSION)) && (previous.location & LOCATION_EXTRA)) 

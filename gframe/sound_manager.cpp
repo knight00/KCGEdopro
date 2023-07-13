@@ -328,7 +328,6 @@ void SoundManager::RefreshChantsList() {
     for(auto& archive : Utils::archives) {
 		if(Utils::ToUTF8IfNeeded({ archive.archive->getArchiveName().c_str(), archive.archive->getArchiveName().size() }).find("/expansions/kcgchant.zip") == std::string::npos)
 			continue;
-		std::lock_guard<epro::mutex> guard(*archive.mutex);
 		for(const auto& chantType : types) {
 			std::vector<epro::path_string> searchPath;
 			searchPath.push_back(epro::format(EPRO_TEXT("{}"), chantType.second));
@@ -802,7 +801,8 @@ bool SoundManager::PlayFieldSound() {
 #endif
     return false;
 }
-void SoundManager::AddtoChantSPList(CHANT chant, uint16_t extra, std::vector<std::string> &chantlist, std::vector<std::string> &list) {
+//ktestsound//////////
+void SoundManager::AddtoChantSPList(CHANT chant, uint16_t extra, std::vector<std::string> chantlist, std::vector<std::string> &list) {
 	for(int j = 0; j < chantlist.size(); j++) {
 		std::string sound = chantlist[j];
 		if(chant == CHANT::SUMMON) {
@@ -1078,28 +1078,27 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 			return PlayChants(chant, ChantSPList2[i][character[player]][chantno], gSoundManager->soundcount2);
 		}
 	} else {
-		std::vector<std::string> list;
-        std::vector<std::string> list2;
 		auto key = std::make_pair(chant, code);
-		auto chant_it = ChantsList[character[player]].find(key);
 		auto key2 = std::make_pair(chant, code2);
+
+		std::vector<std::string> list;
+        std::vector<std::string> list2;;
+		auto chant_it = ChantsList[character[player]].find(key);
 		auto chant_it2 = ChantsList[character[player]].find(key2);
 
 		std::vector<std::string> _list;
         std::vector<std::string> _list2;
-		auto _key = std::make_pair(chant, code);
-		auto _chant_it = ChantsList2[character[player]].find(_key);
-		auto _key2 = std::make_pair(chant, code2);
-		auto _chant_it2 = ChantsList2[character[player]].find(_key2);
+		auto _chant_it = ChantsList2[character[player]].find(key);
+		auto _chant_it2 = ChantsList2[character[player]].find(key2);
 
-		int count = ChantSPList[i][character[player]].size();
-		int _count = ChantSPList2[i][character[player]].size();
 		if(chant_it2 == ChantsList[character[player]].end() && _chant_it2 == ChantsList2[character[player]].end()) {
 			if(chant_it == ChantsList[character[player]].end() && _chant_it == ChantsList2[character[player]].end()) {
-				for (auto file : gSoundManager->soundcount) {
+				for(auto file : gSoundManager->soundcount) {
 					ChantSPList[i][character[player]].erase(std::remove(ChantSPList[i][character[player]].begin(), ChantSPList[i][character[player]].end(), file), ChantSPList[i][character[player]].end());
 					ChantSPList2[i][character[player]].erase(std::remove(ChantSPList2[i][character[player]].begin(), ChantSPList2[i][character[player]].end(), file), ChantSPList2[i][character[player]].end());
 				}
+                int count = ChantSPList[i][character[player]].size();
+                int _count = ChantSPList2[i][character[player]].size();
 				if(extra != 0) {
 					if(count > 0)
 					    AddtoChantSPList(chant, extra, ChantSPList[i][character[player]], list);
@@ -1138,13 +1137,11 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 					for(int k = 0; k < count22; k++) {
 						const auto filename = Utils::GetFileName(list2[k]).substr(0, Utils::GetFileName(list2[k]).size() - 2);
 						if(filename == Utils::GetFileName(list[soundno]))
-							PlayChants(chant, list2[k], gSoundManager->soundcount);
+							PlayZipChants(chant, list2[k], gSoundManager->soundcount);
 					}
 				}
 				return true;
 			}
-			else
-				return false;
 		} else if(_count2 > 0) {
 			int soundno = (std::uniform_int_distribution<>(0, _count2 - 1))(rnd);
 			if(PlayChants(chant, _list[soundno], gSoundManager->soundcount)) {
@@ -1157,8 +1154,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 					}
 				}
 				return true;
-			} else
-				return false;
+			}
 		}
 	}
 	return false;

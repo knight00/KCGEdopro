@@ -118,7 +118,7 @@ public:
 	void PlayCustomBGM(std::string num);
     bool PlayFieldSound();
 	//bool PlayChant(CHANT chant, uint32_t code);
-	void AddtoChantSPList(CHANT chant, uint16_t extra, std::vector<std::string>& chantlist, std::vector<std::string>& list);
+	void AddtoChantSPList(CHANT chant, uint16_t extra, std::vector<std::string> chantlist, std::vector<std::string>& list);
 	void AddtoZipChantList(std::string file, int i, std::vector<std::string>& list, std::vector<std::string>& list2);
 	void AddtoChantList(std::string file, int i, std::vector<std::string>& list, std::vector<std::string>& list2);
 	bool PlayZipChants(CHANT chant, std::string file, std::vector<std::string>& sound);
