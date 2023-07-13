@@ -865,9 +865,10 @@ void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, bo
     auto* tmp = driver->getTexture(name.c_str());
     if(tmp == nullptr)
         return;
-    if(src)
-        driver->removeTexture(src);
-	src = tmp;
+	if(src != tmp) {
+		driver->removeTexture(src);
+		src = tmp;
+	}
 }
 void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, int width, int height, bool force_random) {
 	int count = ImageList[image_type].size();
@@ -882,9 +883,10 @@ void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, in
     auto* tmp = GetTextureFromFile(name.c_str(), width, height);
     if(tmp == nullptr)
         return;
-    if(src)
-        driver->removeTexture(src);
-	src = tmp;
+	if(src != tmp) {
+		driver->removeTexture(src);
+		src = tmp;
+	}
 }
 void ImageManager::GetRandomImagef(int width, int height) {
 	int count = ImageList[TEXTURE_F1].size();
@@ -900,19 +902,22 @@ void ImageManager::GetRandomImagef(int width, int height) {
 	for(auto file : Utils::FindFiles(ImageList[TEXTURE_F1][image_id], { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
         auto* tmp = GetTextureFromFile((ImageList[TEXTURE_F1][image_id] + file).c_str(), width, height);
         if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f1")) {
-            if(tHand[0])
-                driver->removeTexture(tHand[0]);
-            tHand[0] = tmp;
+			if(tHand[0] != tmp) {
+				driver->removeTexture(tHand[0]);
+				tHand[0] = tmp;
+			}
         }
         if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f2")) {
-            if(tHand[1])
-                driver->removeTexture(tHand[1]);
-            tHand[1] = tmp;
+			if(tHand[1] != tmp) {
+				driver->removeTexture(tHand[1]);
+				tHand[1] = tmp;
+			}
         }
         if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f3")) {
-            if(tHand[2])
-                driver->removeTexture(tHand[2]);
-            tHand[2] = tmp;
+			if(tHand[2] != tmp) {
+				driver->removeTexture(tHand[2]);
+				tHand[2] = tmp;
+			}
         }
 	}
 }

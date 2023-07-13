@@ -1713,6 +1713,8 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 			PlayChant(SoundManager::CHANT::DESTROY, nullptr, previous.controler);
 		if(previous.location != current.location && (reason & REASON_RELEASE))
 			PlayChant(SoundManager::CHANT::RELEASE, nullptr, previous.controler);
+		if(previous.controler == current.controler && (previous.location & (LOCATION_HAND | LOCATION_DECK)) && (cd->type & TYPE_PENDULUM) && (cd->type & TYPE_MONSTER) && current.position == POS_FACEUP && current.location == LOCATION_SZONE && (current.sequence == 0 || current.sequence == 4 || current.sequence == 6 || current.sequence == 7))
+			PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, current.controler, 0x2000);
 		break;
     }
     case MSG_SET: {
@@ -1732,9 +1734,11 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 	    ClientCard* pcard = mainGame->dField.GetCard(player, info.location, info.sequence);
 		if(!PlayAnime(pcard, 0)) {
             uint16_t extra = 0x80;
-            if(info.position & POS_ATTACK) extra |= 0x100;
-            if(info.position & POS_DEFENSE) extra |= 0x200;
             if(pcard->level >= 5) extra |= 0x400;
+            else {
+				if(info.position & POS_ATTACK) extra |= 0x100;
+				if(info.position & POS_DEFENSE) extra |= 0x200;
+			}
 			PlayChant(SoundManager::CHANT::SUMMON, pcard, player, extra);
 			PlayCardBGM(pcard);
 		}
@@ -1747,6 +1751,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		ClientCard* pcard = mainGame->dField.GetCard(player, current.location, current.sequence);
         CoreUtils::loc_info previous = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
         const auto reason = BufferIO::Read<uint32_t>(pbuf);
+        const auto sumtype = BufferIO::Read<uint32_t>(pbuf);
 		// bool chklast = true;
 		// if(code == 0) {
 		//     const auto code = BufferIO::Read<uint32_t>(pbuf);
@@ -1755,20 +1760,18 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		// }
 		// if(!chklast) return true;
 		if(!PlayAnime(pcard, 0)) {
-            uint16_t extra = 0x40;
+            uint16_t extra = 0;
             if(previous.controler == current.controler && (current.location & LOCATION_MZONE) && (reason & REASON_SPSUMMON) && (current.position & POS_FACEUP)) {
-                if(((pcard->type & (TYPE_LINK | TYPE_XYZ | TYPE_SYNCHRO | TYPE_FUSION)) && (previous.location & LOCATION_EXTRA))
-                || ((pcard->type & TYPE_PENDULUM) && (((previous.location & LOCATION_EXTRA) && (previous.position & POS_FACEUP)) || (previous.location & LOCATION_HAND)))) {
-                    if(pcard->type & TYPE_PENDULUM) extra |= 0x20;
-                    if(pcard->type & TYPE_LINK) extra |= 0x8;
-                    if(pcard->type & TYPE_XYZ) extra |= 0x4;
-                    if(pcard->type & TYPE_SYNCHRO) extra |= 0x2;
-                    if(pcard->type & TYPE_FUSION) extra |= 0x1;
-                    if(pcard->type & TYPE_RITUAL) extra |= 0x10;
-                }
+                if(sumtype & SUMMON_TYPE_FUSION) extra |= 0x1;
+                if(sumtype & SUMMON_TYPE_SYNCHRO) extra |= 0x2;
+                if(sumtype & SUMMON_TYPE_XYZ) extra |= 0x4;
+                if(sumtype & SUMMON_TYPE_RITUAL) extra |= 0x10;
+                if(sumtype & SUMMON_TYPE_PENDULUM) extra |= 0x20;
+                if(sumtype & SUMMON_TYPE_LINK) extra |= 0x8;
             } else {
+				extra |= 0x40;
                 if(current.position & POS_ATTACK) extra |= 0x100;
-                else if(current.position & POS_DEFENSE) extra |= 0x200;
+                if(current.position & POS_DEFENSE) extra |= 0x200;
             }
             PlayChant(SoundManager::CHANT::SUMMON, pcard, player, extra);
             PlayCardBGM(pcard);
@@ -1845,29 +1848,34 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
             }
         }
 		if(!PlayAnimecode(code, code2, 1) && !mode) {
-			uint16_t extra = 0x1;
-			if(previous.location & LOCATION_HAND) extra |= 0x2;
-			if(pcard->type & TYPE_SPELL) {
-				if(!(pcard->type & (TYPE_FIELD | TYPE_EQUIP | TYPE_CONTINUOUS | TYPE_RITUAL | TYPE_QUICKPLAY | TYPE_PENDULUM))) extra |= 0x4;
-				if(pcard->type & TYPE_QUICKPLAY) extra |= 0x8;
-				if(pcard->type & TYPE_CONTINUOUS) extra |= 0x10;
-				if(pcard->type & TYPE_EQUIP) extra |= 0x20;
-				if(pcard->type & TYPE_RITUAL) extra |= 0x40;
-				if(pcard->type & TYPE_FIELD) extra |= 0x1000;
-				if(pcard->type & TYPE_ACTION) extra |= 0x4000;
+			uint16_t extra = 0;
+			if((info.location & (LOCATION_HAND | LOCATION_DECK)) && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_MONSTER))
+			    break;
+			else if(info.location & LOCATION_HAND)
+			    extra |= 0x2;
+			else {
+				extra |= 0x1;
+				if(pcard->type & TYPE_SPELL) {
+					if(!(pcard->type & (TYPE_FIELD | TYPE_EQUIP | TYPE_CONTINUOUS | TYPE_RITUAL | TYPE_QUICKPLAY | TYPE_PENDULUM))) extra |= 0x4;
+					if(pcard->type & TYPE_QUICKPLAY) extra |= 0x8;
+					if(pcard->type & TYPE_CONTINUOUS) extra |= 0x10;
+					if(pcard->type & TYPE_EQUIP) extra |= 0x20;
+					if(pcard->type & TYPE_RITUAL) extra |= 0x40;
+					if(pcard->type & TYPE_FIELD) extra |= 0x1000;
+					if(pcard->type & TYPE_ACTION) extra |= 0x4000;
+				}
+				if(pcard->type & TYPE_TRAP) {
+					if(!(pcard->type & (TYPE_COUNTER | TYPE_CONTINUOUS))) extra |= 0x80;
+					if(pcard->type & TYPE_CONTINUOUS) extra |= 0x100;
+					if(pcard->type & TYPE_COUNTER) extra |= 0x200;
+				}
+				if(pcard->type & TYPE_MONSTER) extra |= 0x800;
+				if(previous.controler == cc && previous.location == cl & (previous.position & POS_FACEDOWN) & (info.position & POS_FACEUP)) extra |= 0x400;
+				if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && (info.position == POS_FACEUP) && cl == LOCATION_SZONE && (cs == 0 || cs == 4 || cs == 6 || cs == 7))
+				    PlayChantcode(SoundManager::CHANT::PENDULUM, code, code2, cc, extra);
+			    else
+				    PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, cc, extra);
 			}
-			if(pcard->type & TYPE_TRAP) {
-				if(!(pcard->type & (TYPE_COUNTER | TYPE_CONTINUOUS))) extra |= 0x80;
-				if(pcard->type & TYPE_CONTINUOUS) extra |= 0x100;
-				if(pcard->type & TYPE_COUNTER) extra |= 0x200;
-			}
-			if(pcard->type & TYPE_MONSTER) extra |= 0x800;
-			if(pcard->type & TYPE_PENDULUM) extra |= 0x2000;
-			if(previous.controler == cc && previous.location == cl & (previous.position & POS_FACEDOWN) & (info.position & POS_FACEUP)) extra |= 0x400;
-			if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && (info.position == POS_FACEUP) && cl == LOCATION_SZONE && (cs == 0 || cs == 4 || cs == 6 || cs == 7))
-				PlayChantcode(SoundManager::CHANT::PENDULUM, code, code2, cc, extra);
-			else
-				PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, cc, extra);
         }
         break;
     }

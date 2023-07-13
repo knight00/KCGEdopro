@@ -47,7 +47,7 @@ SoundManager::SoundManager(double sounds_volume, double music_volume, bool sound
 	bgm_scene = -1;
 	RefreshBGMList();
 	RefreshSoundsList();
-	//RefreshChantsList();
+	RefreshChantsList();
 	succesfully_initied = true;
 #else
 	epro::print("No audio backend available.\nAudio will be disabled.\n");
@@ -1072,13 +1072,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 		int count2 = ChantSPList2[i][character[player]].size();
 		if(count > 0) {
 			int chantno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-			for(auto& archive : Utils::archives) {
-				if(Utils::ToUTF8IfNeeded({ archive.archive->getArchiveName().c_str(), archive.archive->getArchiveName().size() }).find("/expansions/kcgchant.zip") == std::string::npos)
-					continue;
-				std::lock_guard<epro::mutex> guard(*archive.mutex);
-				return PlayZipChants(chant, ChantSPList[i][character[player]][chantno], gSoundManager->soundcount2);
-				break;
-			}
+			return PlayZipChants(chant, ChantSPList[i][character[player]][chantno], gSoundManager->soundcount2);
 		} else if(count2 > 0) {
 			int chantno = (std::uniform_int_distribution<>(0, count2 - 1))(rnd);
 			return PlayChants(chant, ChantSPList2[i][character[player]][chantno], gSoundManager->soundcount2);
