@@ -109,7 +109,7 @@ public:
 	void RefreshZipChants(irr::io::IFileArchive* archive, epro::path_stringview folder, std::vector<std::string> &list);
 	void RefreshChants(epro::path_stringview folder, std::vector<std::string> &list);
 	void RefreshChantsList();
-	void RefreshZipCards(irr::io::IFileArchive* archive, epro::path_stringview folder, std::string& list);
+	void RefreshZipCards(irr::io::IFileArchive* archive, epro::path_stringview folder, std::map<std::pair<CHANT, uint32_t>, std::string>& list, CHANT);
 	void PlaySoundEffect(SFX sound);
 	void PlayBGM(BGM scene, bool loop = true);
 	////////kdiy////////
@@ -118,7 +118,7 @@ public:
 	void PlayCustomBGM(std::string num);
     bool PlayFieldSound();
 	//bool PlayChant(CHANT chant, uint32_t code);
-	void AddtoChantSPList(CHANT chant, uint16_t extra, std::vector<std::string> chantlist, std::vector<std::string>& list);
+	void AddtoChantSPList(CHANT chant, uint16_t extra, std::vector<std::string>& chantlist, std::vector<std::string>& list);
 	void AddtoZipChantList(std::string file, int i, std::vector<std::string>& list, std::vector<std::string>& list2);
 	void AddtoChantList(std::string file, int i, std::vector<std::string>& list, std::vector<std::string>& list2);
 	bool PlayZipChants(CHANT chant, std::string file, std::vector<std::string>& sound);

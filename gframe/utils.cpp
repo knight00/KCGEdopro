@@ -509,7 +509,7 @@ namespace ygo {
 		const epro::path_stringview filename = { name.c_str(), name.size() };
 		if (std::count(name.data(), name.data() + name.size(), EPRO_TEXT('/')) > subdirectorylayers)
 			continue;
-		if (Utils::ToUTF8IfNeeded({ name.c_str(), name.size() }).find(Utils::ToUTF8IfNeeded(path)) == std::string::npos)
+		if (Utils::ToUTF8IfNeeded(filename).find(Utils::ToUTF8IfNeeded(path)) == std::string::npos)
 			continue;
 		if (extensions.empty() || std::find(extensions.begin(), extensions.end(), Utils::GetFileExtension(name)) != extensions.end())
 			res.push_back(filename);

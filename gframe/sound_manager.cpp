@@ -187,27 +187,36 @@ void SoundManager::RefreshBGMDir(epro::path_stringview path, BGM scene) {
 }
 /////kdiy///////
 //ktestsound//////////
-void SoundManager::RefreshZipChants(irr::io::IFileArchive* archive, epro::path_stringview folder, std::vector<std::string> &list) {
+void SoundManager::RefreshZipChants(irr::io::IFileArchive* archive, epro::path_stringview folder, std::vector<std::string>& list) {
 #ifdef BACKEND
-	auto files = Utils::FindFileNames(archive, folder, mixer->GetSupportedSoundExtensions(), 5);
-	for(auto& file : files)
+	for(auto& file : Utils::FindFileNames(archive, folder, mixer->GetSupportedSoundExtensions(), 5))
 		list.push_back(Utils::ToUTF8IfNeeded(file));
 #endif
 }
-void SoundManager::RefreshChants(epro::path_stringview folder, std::vector<std::string> &list) {
+void SoundManager::RefreshChants(epro::path_stringview folder, std::vector<std::string>& list) {
 #ifdef BACKEND
-	for(auto& file : Utils::FindFiles(folder, mixer->GetSupportedMusicExtensions())) {
-        auto conv = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/{}"), folder, file));
-        list.push_back(conv);
-    }
+	for(auto& file : Utils::FindFiles(folder, mixer->GetSupportedMusicExtensions()))
+        list.push_back(Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/{}"), folder, file)));
 #endif
 }
-void SoundManager::RefreshZipCards(irr::io::IFileArchive* archive, epro::path_stringview folder, std::string &list) {
+void SoundManager::RefreshZipCards(irr::io::IFileArchive* archive, epro::path_stringview folder, std::map<std::pair<CHANT, uint32_t>, std::string>& list, CHANT chant) {
 #ifdef BACKEND
-	auto files = Utils::FindFileNames(archive, folder, mixer->GetSupportedSoundExtensions(), 5);
-	for(auto& file : files) {
-		list = Utils::ToUTF8IfNeeded(file);
-		break;
+	for(auto& file : Utils::FindFileNames(archive, folder, mixer->GetSupportedSoundExtensions(), 5)) {
+		auto scode = Utils::GetFileName(file);
+		auto files = Utils::ToUTF8IfNeeded(scode);
+		if(files.find("+") != std::string::npos || files.find("-") != std::string::npos || files.find("_") != std::string::npos || files.find(".") != std::string::npos)
+		    continue;
+		try {
+			uint32_t code = static_cast<uint32_t>(std::stoul(scode));
+			auto key = std::make_pair(chant, code);
+			if(code && !list.count(key)) {
+				list[key] = Utils::ToUTF8IfNeeded(files);
+				break;
+			}
+		}
+		catch(...) {
+			continue;
+		}
 	}
 #endif
 }
@@ -423,40 +432,10 @@ void SoundManager::RefreshChantsList() {
 				} else if(chantType.first != CHANT::WIN)
 					RefreshZipChants(archive.archive, searchPath[x], ChantSPList[i][x]);
 
-				if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM) {
-					for(auto& file : Utils::FindFiles(searchPath[x] + EPRO_TEXT("/card"), mixer->GetSupportedSoundExtensions())) {
-						auto scode = Utils::GetFileName(file);
-						auto files = Utils::ToUTF8IfNeeded(scode);
-						if(files.find("+") != std::string::npos || files.find("-") != std::string::npos || files.find("_") != std::string::npos || files.find(".") != std::string::npos)
-							continue;
-						try {
-							uint32_t code = static_cast<uint32_t>(std::stoul(scode));
-							auto key = std::make_pair(chantType.first, code);
-							if(code && !ChantsList[x].count(key))
-								RefreshZipCards(archive.archive, epro::format(EPRO_TEXT("{}/card/{}"), searchPath[x], scode), ChantsList[x][key]);
-						}
-						catch(...) {
-							continue;
-						}
-					}
-				}
-				if(chantType.first == CHANT::WIN) {
-					for(auto& file : Utils::FindFiles(searchPath[x], mixer->GetSupportedSoundExtensions())) {
-						auto scode = Utils::GetFileName(file);
-						auto files = Utils::ToUTF8IfNeeded(scode);
-						if(files.find("+") != std::string::npos || files.find("-") != std::string::npos || files.find("_") != std::string::npos || files.find(".") != std::string::npos)
-							continue;
-						try {
-							uint32_t code = static_cast<uint32_t>(std::stoul(scode));
-							auto key = std::make_pair(chantType.first, code);
-							if(code && !ChantsList[x].count(key))
-								RefreshZipCards(archive.archive, epro::format(EPRO_TEXT("{}/{}"), searchPath[x], scode), ChantsList[x][key]);
-						}
-						catch(...) {
-							continue;
-						}
-					}
-				}
+				if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM)
+				    RefreshZipCards(archive.archive, epro::format(EPRO_TEXT("{}/card"), searchPath[x]), ChantsList[x], chantType.first);
+				if(chantType.first == CHANT::WIN)
+				    RefreshZipCards(archive.archive, epro::format(EPRO_TEXT("{}"), searchPath[x]), ChantsList[x], chantType.first);
 			}
 		}
 		break;
@@ -802,7 +781,7 @@ bool SoundManager::PlayFieldSound() {
     return false;
 }
 //ktestsound//////////
-void SoundManager::AddtoChantSPList(CHANT chant, uint16_t extra, std::vector<std::string> chantlist, std::vector<std::string> &list) {
+void SoundManager::AddtoChantSPList(CHANT chant, uint16_t extra, std::vector<std::string>& chantlist, std::vector<std::string>& list) {
 	for(int j = 0; j < chantlist.size(); j++) {
 		std::string sound = chantlist[j];
 		if(chant == CHANT::SUMMON) {
@@ -1069,12 +1048,12 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
             }
         }
 		int count = ChantSPList[i][character[player]].size();
-		int count2 = ChantSPList2[i][character[player]].size();
+		int _count = ChantSPList2[i][character[player]].size();
 		if(count > 0) {
 			int chantno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
 			return PlayZipChants(chant, ChantSPList[i][character[player]][chantno], gSoundManager->soundcount2);
-		} else if(count2 > 0) {
-			int chantno = (std::uniform_int_distribution<>(0, count2 - 1))(rnd);
+		} else if(_count > 0) {
+			int chantno = (std::uniform_int_distribution<>(0, _count - 1))(rnd);
 			return PlayChants(chant, ChantSPList2[i][character[player]][chantno], gSoundManager->soundcount2);
 		}
 	} else {
