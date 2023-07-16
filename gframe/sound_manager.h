@@ -8,11 +8,6 @@
 #include "sound_backend.h"
 ///kdiy////////
 #include "common.h"
-#if IRRLICHT_VERSION_MAJOR==1 && IRRLICHT_VERSION_MINOR==9
-#include "IrrlichtCommonIncludes1.9/CFileSystem.h"
-#else
-#include "IrrlichtCommonIncludes/CFileSystem.h"
-#endif
 ///kdiy////////
 
 namespace ygo {
@@ -106,10 +101,10 @@ public:
 	SoundManager(double sounds_volume, double music_volume, bool sounds_enabled, bool music_enabled);
 	bool IsUsable();
 	void RefreshBGMList();
-	void RefreshZipChants(irr::io::IFileArchive* archive, epro::path_stringview folder, std::vector<std::string> &list);
+	void RefreshZipChants(epro::path_stringview folder, std::vector<std::string> &list);
 	void RefreshChants(epro::path_stringview folder, std::vector<std::string> &list);
 	void RefreshChantsList();
-	void RefreshZipCards(irr::io::IFileArchive* archive, epro::path_stringview folder, std::map<std::pair<CHANT, uint32_t>, std::string>& list, CHANT);
+	void RefreshZipCards(epro::path_stringview folder, std::map<std::pair<CHANT, uint32_t>, std::string>& list, CHANT);
 	void PlaySoundEffect(SFX sound);
 	void PlayBGM(BGM scene, bool loop = true);
 	////////kdiy////////

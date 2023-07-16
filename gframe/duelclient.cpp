@@ -1722,26 +1722,27 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
         CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
         const auto player = mainGame->LocalPlayer(info.controler);
+        const auto setplayer = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		uint16_t extra = 0;
 		if(info.location & LOCATION_MZONE) extra |= 0x1;
-        PlayChant(SoundManager::CHANT::SET, nullptr, player, extra);
+        PlayChant(SoundManager::CHANT::SET, nullptr, setplayer, extra);
 		break;
     }
     case MSG_SUMMONING: {
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
 		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
-		const auto player = mainGame->LocalPlayer(info.controler);	
+		const auto player = mainGame->LocalPlayer(info.controler);
+        const auto sumplayer = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 	    ClientCard* pcard = mainGame->dField.GetCard(player, info.location, info.sequence);
-		if(!PlayAnime(pcard, 0)) {
-            uint16_t extra = 0x80;
-            if(pcard->level >= 5) extra |= 0x400;
-            else {
-				if(info.position & POS_ATTACK) extra |= 0x100;
-				if(info.position & POS_DEFENSE) extra |= 0x200;
-			}
-			PlayChant(SoundManager::CHANT::SUMMON, pcard, player, extra);
-			PlayCardBGM(pcard);
+        uint16_t extra = 0x80;
+        if(pcard->level >= 5) extra |= 0x400;
+        else {
+			if(info.position & POS_ATTACK) extra |= 0x100;
+			if(info.position & POS_DEFENSE) extra |= 0x200;
 		}
+		PlayChant(SoundManager::CHANT::SUMMON, pcard, sumplayer, extra);
+        PlayAnime(pcard, 0);
+		PlayCardBGM(pcard);
 		break;
     }
     case MSG_SPSUMMONING: {
@@ -1749,19 +1750,11 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		const auto player = mainGame->LocalPlayer(current.controler);
 		ClientCard* pcard = mainGame->dField.GetCard(player, current.location, current.sequence);
-        CoreUtils::loc_info previous = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
-        const auto reason = BufferIO::Read<uint32_t>(pbuf);
         const auto sumtype = BufferIO::Read<uint32_t>(pbuf);
-		// bool chklast = true;
-		// if(code == 0) {
-		//     const auto code = BufferIO::Read<uint32_t>(pbuf);
-		// 	chklast = false;
-        //     mainGame->chklast = false;
-		// }
-		// if(!chklast) return true;
-		if(!PlayAnime(pcard, 0)) {
+        const auto sumplayer = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
+        if((current.location & LOCATION_MZONE) && (current.position & POS_FACEUP)) {
             uint16_t extra = 0;
-            if(previous.controler == current.controler && (current.location & LOCATION_MZONE) && (reason & REASON_SPSUMMON) && (current.position & POS_FACEUP)) {
+            if((sumtype & SUMMON_TYPE_SPECIAL) != SUMMON_TYPE_SPECIAL) {
                 if(sumtype & SUMMON_TYPE_FUSION) extra |= 0x1;
                 if(sumtype & SUMMON_TYPE_SYNCHRO) extra |= 0x2;
                 if(sumtype & SUMMON_TYPE_XYZ) extra |= 0x4;
@@ -1769,11 +1762,12 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
                 if(sumtype & SUMMON_TYPE_PENDULUM) extra |= 0x20;
                 if(sumtype & SUMMON_TYPE_LINK) extra |= 0x8;
             } else {
-				extra |= 0x40;
+                extra = 0x40;
                 if(current.position & POS_ATTACK) extra |= 0x100;
                 if(current.position & POS_DEFENSE) extra |= 0x200;
             }
-            PlayChant(SoundManager::CHANT::SUMMON, pcard, player, extra);
+            PlayChant(SoundManager::CHANT::SUMMON, pcard, sumplayer, extra);
+            PlayAnime(pcard, 0);
             PlayCardBGM(pcard);
 		}
 		break;
@@ -1781,11 +1775,11 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
     case MSG_FLIPSUMMONING: {
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
 		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
-		info.controler = mainGame->LocalPlayer(info.controler);		
+		info.controler = mainGame->LocalPlayer(info.controler);
+        const auto sumplayer = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		ClientCard* pcard = mainGame->dField.GetCard(info.controler, info.location, info.sequence);
-		if(!PlayAnime(pcard, 0)) {
-			PlayChant(SoundManager::CHANT::SUMMON, pcard, info.controler, 0x80);
-		}
+		PlayChant(SoundManager::CHANT::SUMMON, pcard, sumplayer, 0x80);
+		PlayAnime(pcard, 0);
 		break;
     }
 	case MSG_CHAINING: {
@@ -1944,12 +1938,11 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         CoreUtils::loc_info info2 = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		const bool is_direct = info2.location == 0;
         uint32_t code = mainGame->dField.attacker->code;
-        if(!PlayAnime(mainGame->dField.attacker, 2)) {
-            uint16_t extra = 0x1;
-            if(is_direct) extra |= 0x4;
-            else extra |= 0x2;
-		    PlayChant(SoundManager::CHANT::ATTACK, mainGame->dField.attacker, info1.controler, extra);
-        }
+        uint16_t extra = 0x1;
+        if(is_direct) extra |= 0x4;
+        else extra |= 0x2;
+		PlayChant(SoundManager::CHANT::ATTACK, mainGame->dField.attacker, info1.controler, extra);
+        PlayAnime(mainGame->dField.attacker, 2);
 		break;
     }
     case MSG_WIN: {

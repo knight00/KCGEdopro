@@ -80,7 +80,7 @@ namespace ygo {
 		static std::vector<epro::path_string> FindSubfolders(epro::path_stringview path, int subdirectorylayers = 1, bool addparentpath = true);
 		static std::vector<uint32_t> FindFiles(irr::io::IFileArchive* archive, epro::path_stringview path, const std::vector<epro::path_stringview>& extensions, int subdirectorylayers = 0);
 		/////kdiy//////
-		static std::vector<epro::path_stringview> FindFileNames(irr::io::IFileArchive* archive, epro::path_stringview path, const std::vector<epro::path_stringview>& extensions, int subdirectorylayers = 0);
+		static std::vector<epro::path_string> FindFileNames(irr::io::IFileArchive* archive, epro::path_stringview path, const std::vector<epro::path_stringview>& extensions, int subdirectorylayers = 0);
 		/////kdiy//////
 		static irr::io::IReadFile* FindFileInArchives(epro::path_stringview path, epro::path_stringview name);
 
