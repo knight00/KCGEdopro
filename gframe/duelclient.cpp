@@ -1754,13 +1754,13 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         const auto sumplayer = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
         if((current.location & LOCATION_MZONE) && (current.position & POS_FACEUP)) {
             uint16_t extra = 0;
-            if((sumtype & SUMMON_TYPE_SPECIAL) != SUMMON_TYPE_SPECIAL) {
-                if(sumtype & SUMMON_TYPE_FUSION) extra |= 0x1;
-                if(sumtype & SUMMON_TYPE_SYNCHRO) extra |= 0x2;
-                if(sumtype & SUMMON_TYPE_XYZ) extra |= 0x4;
-                if(sumtype & SUMMON_TYPE_RITUAL) extra |= 0x10;
-                if(sumtype & SUMMON_TYPE_PENDULUM) extra |= 0x20;
-                if(sumtype & SUMMON_TYPE_LINK) extra |= 0x8;
+            if(sumtype != SUMMON_TYPE_SPECIAL) {
+                if(sumtype == SUMMON_TYPE_PENDULUM) extra |= 0x20;
+                else if(sumtype == SUMMON_TYPE_LINK) extra |= 0x8;
+                else if(sumtype == SUMMON_TYPE_XYZ) extra |= 0x4;
+                else if(sumtype == SUMMON_TYPE_SYNCHRO) extra |= 0x2;
+                else if(sumtype == SUMMON_TYPE_FUSION) extra |= 0x1;
+                else if(sumtype == SUMMON_TYPE_RITUAL) extra |= 0x10;
             } else {
                 extra = 0x40;
                 if(current.position & POS_ATTACK) extra |= 0x100;
@@ -4221,23 +4221,17 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		///*CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);*/
 		    //Play(SoundManager::SFX::SPECIAL_SUMMON);
         CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
-        CoreUtils::loc_info previous = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
-        const auto reason = BufferIO::Read<uint32_t>(pbuf);
         auto cd = gDataManager->GetCardData(code);
         if(cd && cd->type & TYPE_TOKEN)
 			Play(SoundManager::SFX::TOKEN);
-        else if(previous.controler == current.controler && (current.location & LOCATION_MZONE) && (reason & REASON_SPSUMMON) && (current.position & POS_FACEUP)) {
-            if(((cd->type & (TYPE_LINK | TYPE_XYZ | TYPE_SYNCHRO | TYPE_FUSION)) && (previous.location & LOCATION_EXTRA)) 
-            || (((cd->type & TYPE_PENDULUM) && (((previous.location & LOCATION_EXTRA) && (previous.position & POS_FACEUP)) || (previous.location & LOCATION_HAND))))) {
-                if(cd->type & TYPE_PENDULUM) Play(SoundManager::SFX::PENDULUM_SUMMON);
-                else if(cd->type & TYPE_LINK) Play(SoundManager::SFX::LINK_SUMMON);
-                else if(cd->type & TYPE_XYZ) Play(SoundManager::SFX::XYZ_SUMMON);
-                else if(cd->type & TYPE_SYNCHRO) Play(SoundManager::SFX::SYNCHRO_SUMMON);
-                else if(cd->type & TYPE_FUSION) Play(SoundManager::SFX::FUSION_SUMMON);
-                else if(cd->type & TYPE_RITUAL) Play(SoundManager::SFX::RITUAL_SUMMON);
-            }
-		} else
-		{
+        else if((current.location & LOCATION_MZONE) && (current.position & POS_FACEUP)) {
+            if(cd->type & TYPE_PENDULUM) Play(SoundManager::SFX::PENDULUM_SUMMON);
+            else if(cd->type & TYPE_LINK) Play(SoundManager::SFX::LINK_SUMMON);
+            else if(cd->type & TYPE_XYZ) Play(SoundManager::SFX::XYZ_SUMMON);
+            else if(cd->type & TYPE_SYNCHRO) Play(SoundManager::SFX::SYNCHRO_SUMMON);
+            else if(cd->type & TYPE_FUSION) Play(SoundManager::SFX::FUSION_SUMMON);
+            else if(cd->type & TYPE_RITUAL) Play(SoundManager::SFX::RITUAL_SUMMON);
+		} else {
 			if(cd->attribute & ATTRIBUTE_DARK)
 				Play(SoundManager::SFX::SPECIAL_SUMMON_DARK);
 			else if(cd->attribute & ATTRIBUTE_DIVINE)
