@@ -254,7 +254,7 @@ void ClientUpdater::CheckUpdate() {
 				const auto& name = asset.at("name").get_ref<const std::string&>();
 				const auto& md5 = asset.at("md5").get_ref<const std::string&>();
                 ////kupdate/////////
-                if(asset.at("version").get<int>() > 10)
+                if(asset.at("version").get<int>() > 11)
                 ////kupdate/////////
 				update_urls.emplace_back(DownloadInfo{ name, url, md5 });
 			} catch(...) {}

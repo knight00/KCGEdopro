@@ -187,7 +187,7 @@ public:
 	~Mode();
 private:
 	void SetCurrentDeck();
-	void LoadJson(epro::path_string path, uint8_t index, uint8_t chapter = 0);
+	bool LoadJson(epro::path_string path, uint8_t index, uint8_t chapter = 0);
 };
 /////kdiy/////
 

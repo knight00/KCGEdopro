@@ -347,8 +347,8 @@ void Mode::ModePlayerReady(bool isAi) {
 	if(isAi)
 		mainGame->btnEntertainmentStartGame->setEnabled(true);
 }
-void Mode::LoadJson(epro::path_string path, uint8_t index, uint8_t chapter) {
-    if(!Utils::FileExists(path)) return;
+bool Mode::LoadJson(epro::path_string path, uint8_t index, uint8_t chapter) {
+    if(!Utils::FileExists(path)) return false;
 	std::ifstream jsonInfo(path);
 	if (jsonInfo.good()) {
 		nlohmann::json j;
@@ -357,6 +357,7 @@ void Mode::LoadJson(epro::path_string path, uint8_t index, uint8_t chapter) {
 		}
 		catch (const std::exception& e) {
 			ErrorLog("Failed to load Mode json: {}", e.what());
+			return false;
 		}
 		if (j.is_array()) {
 			if(index == 0) {
@@ -450,27 +451,26 @@ void Mode::LoadJson(epro::path_string path, uint8_t index, uint8_t chapter) {
 			}
 
 		}
-	}
-	else {
+	} else {
 		ErrorLog("Failed to load Mode json!");
+		return false;
 	}
+	return true;
 }
 void Mode::LoadJsonInfo() {
     if(gGameConfig->locale == EPRO_TEXT("Chs")) {
         LoadJson(EPRO_TEXT("./config/languages/Chs/mode.json"), 0);
         LoadJson(EPRO_TEXT("./mode/languages/Chs/mode.json"), 0);
         for(uint8_t chapter = 1; chapter <= modeTexts->size() - PLAY_MODE; chapter++) {
-            LoadJson(epro::format(EPRO_TEXT("./mode/languages/Chs/ploat{}.json"), chapter), 1, chapter);
-            LoadJson(epro::format(EPRO_TEXT("./config/languages/Chs/ploat{}.json"), chapter), 1, chapter);
-            if(!Utils::FileExists(epro::format(EPRO_TEXT("./config/languages/Chs/ploat{}.json"), chapter)) && !Utils::FileExists(epro::format(EPRO_TEXT("./config/languages/Chs/ploat{}.json"), chapter))) break;
+            if(!LoadJson(epro::format(EPRO_TEXT("./mode/languages/Chs/ploat{}.json"), chapter), 1, chapter) && !LoadJson(epro::format(EPRO_TEXT("./config/languages/Chs/ploat{}.json"), chapter), 1, chapter))
+			    break;
         }
     } else {
         LoadJson(EPRO_TEXT("./config/languages/Cht/mode.json"), 0);
         LoadJson(EPRO_TEXT("./mode/languages/Cht/mode.json"), 0);
         for(uint8_t chapter = 1; chapter <= modeTexts->size() - PLAY_MODE; chapter++) {
-            LoadJson(epro::format(EPRO_TEXT("./mode/languages/Cht/ploat{}.json"), chapter), 1, chapter);
-            LoadJson(epro::format(EPRO_TEXT("./config/languages/Cht/ploat{}.json"), chapter), 1, chapter);
-			if(!Utils::FileExists(epro::format(EPRO_TEXT("./config/languages/Cht/ploat{}.json"), chapter)) && !Utils::FileExists(epro::format(EPRO_TEXT("./config/languages/Cht/ploat{}.json"), chapter))) break;
+			if(!LoadJson(epro::format(EPRO_TEXT("./mode/languages/Cht/ploat{}.json"), chapter), 1, chapter) && !LoadJson(epro::format(EPRO_TEXT("./config/languages/Cht/ploat{}.json"), chapter), 1, chapter))
+			    break;
         }
     }
 }

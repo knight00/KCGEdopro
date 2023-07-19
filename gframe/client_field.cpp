@@ -673,13 +673,9 @@ void ClientField::ReplaySwap() {
 	if(mainGame->dInfo.isTeam1) {
 		mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0]][0]);
 		mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1][0]);
-		mainGame->btnHead[0]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[0]]);
-		mainGame->btnHead[1]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1]);
 	} else {
 		mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1][0]);
 		mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1]][0]);
-		mainGame->btnHead[0]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1]);
-		mainGame->btnHead[1]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[1]]);
 	}
     ////kdiy////////
 }

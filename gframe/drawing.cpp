@@ -559,6 +559,17 @@ void Game::DrawMisc() {
 	driver->draw2DRectangle(skin::DUELFIELD_TURNPLAYER_COLOR_VAL, lpframe_pos);
 	driver->draw2DRectangleOutline(lpframe_pos, skin::DUELFIELD_TURNPLAYER_OUTLINE_COLOR_VAL);
 	/////kdiy/////////
+	if(dInfo.isTeam1) {
+        btnHead[0]->setImage(imageManager.modeHead[dInfo.current_player[0]]);
+		btnHead[1]->setImage(imageManager.modeHead[dInfo.current_player[1] + dInfo.team1]);
+        btnChBody[0]->setImage(imageManager.modeHead[dInfo.current_player[0]]);
+		btnChBody[1]->setImage(imageManager.modeHead[dInfo.current_player[1] + dInfo.team1]);
+	} else {
+		btnHead[0]->setImage(imageManager.modeHead[dInfo.current_player[0] + dInfo.team1]);
+		btnHead[1]->setImage(imageManager.modeHead[dInfo.current_player[1]]);
+        btnChBody[0]->setImage(imageManager.modeHead[dInfo.current_player[0]]);
+		btnChBody[1]->setImage(imageManager.modeHead[dInfo.current_player[1] + dInfo.team1]);
+	}
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(330, 10, 629, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(691, 10, 990, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
 	driver->draw2DImage(imageManager.tLPFrame, Resize(430, 10, 629, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);

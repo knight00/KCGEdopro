@@ -722,8 +722,15 @@ void SoundManager::PlayCustomMusic(std::string num) {
 		for(const auto& ext : extensions) {
 			const auto filename = epro::format("./sound/custom/{}.{}", num, Utils::ToUTF8IfNeeded(ext));
 			if(Utils::FileExists(Utils::ToPathString(filename))) {
-				if(mixer->PlaySound(filename))
+				if(mixer->PlaySound(filename)) {
+					mainGame->isEvent = true;
+					if(gGameConfig->pauseduel) {
+						std::unique_lock<epro::mutex> lck(mainGame->gMutex);
+						mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(filename)));
+					}
+					mainGame->isEvent = false;
 				    break;
+				}
 			}
 		}
 	}
@@ -948,7 +955,7 @@ bool SoundManager::PlayZipChants(CHANT chant, std::string file, std::vector<std:
 					sound.push_back(file);
 				}
 				mixer->PlaySound(buff, filename, length);
-				if(chant != CHANT::DESTROY && chant != CHANT::DAMAGE && chant != CHANT::RECOVER && chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN) {
+				if(chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN) {
 					mainGame->isEvent = true;
 					if(gGameConfig->pauseduel) {
 						std::unique_lock<epro::mutex> lck(mainGame->gMutex);
@@ -976,7 +983,7 @@ bool SoundManager::PlayChants(CHANT chant, std::string file, std::vector<std::st
 		}
 		StopSounds();
 		if(mixer->PlaySound(file)) {
-			if(chant != CHANT::DESTROY && chant != CHANT::DAMAGE && chant != CHANT::RECOVER && chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN) {
+			if(chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN) {
 				mainGame->isEvent = true;
 				if(gGameConfig->pauseduel) {
 					std::unique_lock<epro::mutex> lck(mainGame->gMutex);
