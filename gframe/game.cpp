@@ -3124,11 +3124,8 @@ bool Game::MainLoop() {
                 mainGame->mode->LoadJsonInfo();
                 git_update = true;
             }
-            if(first_play && git_update && !git_error) {
-                try {
-					gGameConfig->dpi_scale = static_cast<uint32_t>(std::stol(mainGame->gSettings.ebDpiScale->getText())) / 100.0;
-					mainGame->restart = true;
-				} catch(...){}
+            if(first_play && git_update) {
+                mainGame->ApplyLocale(mainGame->gSettings.cbCurrentLocale->getSelected());
             }
             //kdiy///////
 		}

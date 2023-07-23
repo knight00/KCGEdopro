@@ -191,7 +191,6 @@ void SoundManager::RefreshBGMDir(epro::path_stringview path, BGM scene) {
 #endif
 }
 /////kdiy///////
-//ktestsound//////////
 void SoundManager::RefreshZipChants(epro::path_stringview folder, std::vector<std::string>& list) {
 #ifdef BACKEND
     for(auto& archive : Utils::archives) {
@@ -443,7 +442,6 @@ void SoundManager::RefreshChantsList() {
 		if(chantType.first == CHANT::LOSE) i = 17;
 		if(i == -1) continue;
 		for(int x = 0; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
-			//ktestsound//////////
 			if(chantType.first == CHANT::SUMMON) {
 				RefreshZipChants(searchPath[x] + EPRO_TEXT("/fusion"), ChantSPList[i][x]);
 				RefreshZipChants(searchPath[x] + EPRO_TEXT("/synchro"), ChantSPList[i][x]);
@@ -923,7 +921,6 @@ void SoundManager::AddtoChantList(std::string file, int i, std::vector<std::stri
 	}
 #endif
 }
-//ktestsound//////////
 bool SoundManager::PlayZipChants(CHANT chant, std::string file, std::vector<std::string>& sound) {
 #ifdef BACKEND
 	for(auto& archive : Utils::archives) {
@@ -1060,8 +1057,8 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 		auto _chant_it = ChantsList2[character[player]].find(key);
 		auto _chant_it2 = ChantsList2[character[player]].find(key2);
 
-		if(chant_it2 == ChantsList[character[player]].end() && _chant_it2 == ChantsList2[character[player]].end()) {
-			if(chant_it == ChantsList[character[player]].end() && _chant_it == ChantsList2[character[player]].end()) {
+		if((chant_it2 == ChantsList[character[player]].end() && _chant_it2 == ChantsList2[character[player]].end()) || (extra & 0x2000)) {
+			if((chant_it == ChantsList[character[player]].end() && _chant_it == ChantsList2[character[player]].end()) || (extra & 0x2000)) {
 				for(auto file : gSoundManager->soundcount) {
 					ChantSPList[i][character[player]].erase(std::remove(ChantSPList[i][character[player]].begin(), ChantSPList[i][character[player]].end(), file), ChantSPList[i][character[player]].end());
 					ChantSPList2[i][character[player]].erase(std::remove(ChantSPList2[i][character[player]].begin(), ChantSPList2[i][character[player]].end(), file), ChantSPList2[i][character[player]].end());
@@ -1082,13 +1079,13 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 			} else {
 				if(chant_it != ChantsList[character[player]].end())
 					AddtoZipChantList(chant_it->second, i, list, list2);
-				else
+				else if(_chant_it != ChantsList2[character[player]].end())
 					AddtoChantList(_chant_it->second, i, _list, _list2);
 			}
 		} else {
 			if(chant_it2 != ChantsList[character[player]].end())
 				AddtoZipChantList(chant_it2->second, i, list, list2);
-			else
+			else if(_chant_it2 != ChantsList2[character[player]].end())
 				AddtoChantList(_chant_it2->second, i, _list, _list2);
 		}
 

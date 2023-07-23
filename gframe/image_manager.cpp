@@ -862,7 +862,7 @@ void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, bo
 		saved_image_id[image_type] = rand() % count;
 	int image_id = saved_image_id[image_type];
 	auto name = ImageList[image_type][image_id];
-    auto* tmp = driver->getTexture(name.c_str());
+    irr::video::ITexture* tmp = driver->getTexture(name.c_str());
     if(tmp == nullptr)
         return;
 	if(src != tmp) {
@@ -880,7 +880,7 @@ void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, in
 		saved_image_id[image_type] = rand() % count;
 	int image_id = saved_image_id[image_type];
 	auto name = ImageList[image_type][image_id];
-    auto* tmp = GetTextureFromFile(name.c_str(), width, height);
+    irr::video::ITexture* tmp = GetTextureFromFile(name.c_str(), width, height);
     if(tmp == nullptr)
         return;
 	if(src != tmp) {
@@ -900,7 +900,7 @@ void ImageManager::GetRandomImagef(int width, int height) {
 		saved_image_id[TEXTURE_F1] = rand() % count;
 	int image_id = saved_image_id[TEXTURE_F1];
 	for(auto file : Utils::FindFiles(ImageList[TEXTURE_F1][image_id], { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
-        auto* tmp = GetTextureFromFile((ImageList[TEXTURE_F1][image_id] + file).c_str(), width, height);
+        irr::video::ITexture* tmp = GetTextureFromFile((ImageList[TEXTURE_F1][image_id] + file).c_str(), width, height);
         if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f1")) {
 			if(tHand[0] != tmp) {
 				driver->removeTexture(tHand[0]);

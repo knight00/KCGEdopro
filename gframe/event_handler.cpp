@@ -2234,7 +2234,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 #endif
 				if(gGameConfig->enablessound) {
 					bool filechk = false;
-					//if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")))
+					if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
 						filechk = true;
 					if(!filechk) {
 						gGameConfig->enablessound = false;
@@ -2258,7 +2258,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 #endif
 				if(gGameConfig->enablecsound) {
 					bool filechk = false;
-					//if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")))
+					if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
 						filechk = true;
 					if(!filechk) {
 						gGameConfig->enablecsound = false;
@@ -2282,7 +2282,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 #endif
 				if(gGameConfig->enableasound) {
 					bool filechk = false;
-					//if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")))
+					if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
 						filechk = true;
 					if(!filechk) {
 						gGameConfig->enableasound = false;

@@ -491,7 +491,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				    break;
 #endif
 				bool filechk = false;
-				//if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")))
+				if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
 					filechk = true;
 				if(!filechk) {
 					gGameConfig->enablessound = false;
@@ -518,7 +518,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				    break;
 #endif
 				bool filechk = false;
-				//if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")))
+				if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
 					filechk = true;
 				if(!filechk) {
 					gGameConfig->enablessound = false;
@@ -547,7 +547,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				    break;
 #endif
 				bool filechk = false;
-				//if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")))
+				if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
 					filechk = true;
 				if(!filechk) {
 					gGameConfig->enablessound = false;
@@ -576,7 +576,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				    break;
 #endif
 				bool filechk = false;
-				//if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")))
+				if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
 					filechk = true;
 				if(!filechk) {
 					gGameConfig->enablessound = false;
@@ -605,7 +605,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				    break;
 #endif
 				bool filechk = false;
-				//if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")))
+				if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
 					filechk = true;
 				if(!filechk) {
 					gGameConfig->enablessound = false;
@@ -634,7 +634,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				    break;
 #endif
 				bool filechk = false;
-				//if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")))
+				if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
 					filechk = true;
 				if(!filechk) {
 					gGameConfig->enablessound = false;
@@ -1777,7 +1777,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				    break;
 #endif
 				bool filechk = false;
-				//if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")))
+				if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
 					filechk = true;
 				if(!filechk) {
 					gGameConfig->enablessound = false;

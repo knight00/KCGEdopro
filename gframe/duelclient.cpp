@@ -1683,6 +1683,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		current.controler = mainGame->LocalPlayer(current.controler);
 		const auto reason = BufferIO::Read<uint32_t>(pbuf);
+		const auto pzone = BufferIO::Read<bool>(pbuf);
         auto cd = gDataManager->GetCardData(code);
         uint32_t code2 = 0;
         if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
@@ -1712,9 +1713,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 			PlayChant(SoundManager::CHANT::DESTROY, nullptr, previous.controler);
 		if(previous.location != current.location && (reason & REASON_RELEASE))
 			PlayChant(SoundManager::CHANT::RELEASE, nullptr, previous.controler);
-		if(cd && (cd->type & TYPE_PENDULUM) && (cd->type & TYPE_MONSTER) 
-        && previous.controler == current.controler && (previous.location & (LOCATION_HAND | LOCATION_DECK)) 
-        && current.position == POS_FACEUP && current.location == LOCATION_SZONE && (current.sequence == 0 || current.sequence == 4 || current.sequence == 6 || current.sequence == 7))
+		if(cd && (cd->type & TYPE_PENDULUM) && (cd->type & TYPE_MONSTER) && pzone)
 			PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, current.controler, 0x2000);
 		break;
     }
@@ -1791,6 +1790,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto desc = CompatRead<uint32_t, uint64_t>(pbuf);
 		/*const auto ct = */CompatRead<uint8_t, uint32_t>(pbuf);
         CoreUtils::loc_info previous = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+		const auto pzone = BufferIO::Read<bool>(pbuf);
         ClientCard* pcard = mainGame->dField.GetCard(mainGame->LocalPlayer(info.controler), info.location, info.sequence, info.position);
 		auto cd = gDataManager->GetCardData(code);
 		uint32_t code2 = 0;
@@ -1841,11 +1841,9 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
                 }
             }
         }
-		if(!PlayAnimecode(code, code2, 1) && !mode) {
+		if(!mode && desc != 1160) {
 			uint16_t extra = 0;
-			if((info.location & (LOCATION_HAND | LOCATION_DECK)) && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_MONSTER))
-			    break;
-			else if(info.location & LOCATION_HAND)
+			if((info.location & LOCATION_HAND) || (previous.location & LOCATION_HAND))
 			    extra |= 0x2;
 			else {
 				extra |= 0x1;
@@ -1865,12 +1863,13 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 				}
 				if(pcard->type & TYPE_MONSTER) extra |= 0x800;
 				if(previous.controler == cc && previous.location == cl & (previous.position & POS_FACEDOWN) & (info.position & POS_FACEUP)) extra |= 0x400;
-				if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && (info.position == POS_FACEUP) && cl == LOCATION_SZONE && (cs == 0 || cs == 4 || cs == 6 || cs == 7))
-				    PlayChantcode(SoundManager::CHANT::PENDULUM, code, code2, cc, extra);
-			    else
-				    PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, cc, extra);
-			}
+            }
+			if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && (info.position == POS_FACEUP) && cl == LOCATION_SZONE && (cs == 0 || cs == 4 || cs == 6 || cs == 7))
+				PlayChantcode(SoundManager::CHANT::PENDULUM, code, code2, cc, extra);
+			else
+				PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, cc, extra);
         }
+        PlayAnimecode(code, code2, 1);
         break;
     }
 	case MSG_CHAIN_NEGATED: {
@@ -2161,9 +2160,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				if(cd->type & TYPE_COUNTER) extra |= 0x200;
 			}
 			if(cd->type & TYPE_MONSTER) extra |= 0x800;
-			if(cd->type & TYPE_PENDULUM) extra |= 0x2000;
-			if(!PlayAnimecode(cd->code, code2, 1))
-				PlayChantcode(SoundManager::CHANT::ACTIVATE, cd->code, code2, player, extra);
+			PlayChantcode(SoundManager::CHANT::ACTIVATE, cd->code, code2, player, extra);
+            PlayAnimecode(cd->code, code2, 1);
 			/////kdiy//////	
 			Play(SoundManager::SFX::ACTIVATE);			
 			mainGame->WaitFrameSignal(30, lock);
@@ -5776,10 +5774,10 @@ void DuelClient::ReplayPrompt(bool local_stream) {
     ////kdiy////////
 	auto now = std::time(nullptr);
 	mainGame->PopupSaveWindow(gDataManager->GetSysString(1340), epro::format(L"{:%Y-%m-%d %H-%M-%S}", fmt::localtime(now)), gDataManager->GetSysString(1342));
-	mainGame->replaySignal.Wait(lock);
      ////kdiy////////
     mainGame->should_reload_skin = true;
      ////kdiy////////
+	mainGame->replaySignal.Wait(lock);
 	if(mainGame->saveReplay || !is_local_host) {
 		if(mainGame->saveReplay)
 			last_replay.SaveReplay(Utils::ToPathString(mainGame->ebFileSaveName->getText()));
