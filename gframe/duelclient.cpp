@@ -1403,7 +1403,6 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->HideElement(mainGame->wANCard);
         /////kdiy//////
         gSoundManager->soundcount.clear();
-        gSoundManager->soundcount2.clear();
         //not send rematch for stroy mode
 		if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
             mainGame->dInfo.checkRematch = false;
@@ -1714,8 +1713,8 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 			PlayChant(SoundManager::CHANT::DESTROY, nullptr, previous.controler);
 		if(previous.location != current.location && (reason & REASON_RELEASE))
 			PlayChant(SoundManager::CHANT::RELEASE, nullptr, previous.controler);
-		if(cd && (cd->type & TYPE_PENDULUM) && (cd->type & TYPE_MONSTER) && !ppzone && cpzone)
-			PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, current.controler, 0x2000);
+        if(cpzone && !ppzone)
+            PlayChantcode(SoundManager::CHANT::PSCALE, 0, 0, current.controler, 0);
 		break;
     }
     case MSG_SET: {
@@ -1791,7 +1790,6 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto desc = CompatRead<uint32_t, uint64_t>(pbuf);
 		/*const auto ct = */CompatRead<uint8_t, uint32_t>(pbuf);
         CoreUtils::loc_info previous = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
-		const auto ppzone = BufferIO::Read<bool>(pbuf);
 		const auto cpzone = BufferIO::Read<bool>(pbuf);
         ClientCard* pcard = mainGame->dField.GetCard(mainGame->LocalPlayer(info.controler), info.location, info.sequence, info.position);
 		auto cd = gDataManager->GetCardData(code);
@@ -1843,12 +1841,12 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
                 }
             }
         }
-		if(!mode && desc != 1160 && cpzone != ppzone) {
+		if(!mode) {
 			uint16_t extra = 0;
-			if((info.location & LOCATION_HAND) || (previous.location & LOCATION_HAND))
-			    extra |= 0x2;
-			else {
-				extra |= 0x1;
+            if(desc != 1160) {
+                extra |= 0x1;
+                if((info.location & LOCATION_HAND) || (previous.location & LOCATION_HAND))
+			        extra |= 0x2;
 				if(pcard->type & TYPE_SPELL) {
 					if(!(pcard->type & (TYPE_FIELD | TYPE_EQUIP | TYPE_CONTINUOUS | TYPE_RITUAL | TYPE_QUICKPLAY | TYPE_PENDULUM))) extra |= 0x4;
 					if(pcard->type & TYPE_QUICKPLAY) extra |= 0x8;
@@ -1865,11 +1863,11 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 				}
 				if(pcard->type & TYPE_MONSTER) extra |= 0x800;
 				if(previous.controler == cc && previous.location == cl & (previous.position & POS_FACEDOWN) & (info.position & POS_FACEUP)) extra |= 0x400;
+                if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && cpzone)
+                    PlayChantcode(SoundManager::CHANT::PENDULUM, code, code2, cc, extra);
+			    else
+				    PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, cc, extra);
             }
-			if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && (info.position == POS_FACEUP) && cl == LOCATION_SZONE && (cs == 0 || cs == 4 || cs == 6 || cs == 7))
-				PlayChantcode(SoundManager::CHANT::PENDULUM, code, code2, cc, extra);
-			else
-				PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, cc, extra);
         }
         PlayAnimecode(code, code2, 1);
         break;

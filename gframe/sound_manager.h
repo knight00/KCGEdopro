@@ -87,6 +87,7 @@ public:
 		STARTUP,
 		BORED,
 		PENDULUM,
+        PSCALE,
 		OPPCOUNTER,
 		RELEASE,
 		BATTLEPHASE,
@@ -121,7 +122,6 @@ public:
 	bool PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t player, uint16_t extra = 0);
 	uint8_t character[6] = {0,0,0,0,0,0}; //0: empty, 1: muto, 2: atem, 3: kaiba, 4: joey, 5: marik, 6: dartz, 7:bakura, 8: aigami, 9: judai, 10: manjome, 11: kaisa, 12: phoenix, 13: john, 14: yubel, 15: yusei, 16: jack, 17: arki, 18: crow, 19: kiryu, 20: paradox, 21:zone, 22: yuma, 23: shark, 24: kaito, 25: iv, 26: DonThousand, 27: yuya, 28: declan, 29: shay, 30: playmaker, 31: soulburner, 32: blueangel, 33: darksiner
     std::vector<std::string> soundcount;
-    std::vector<std::string> soundcount2;
 	int32_t GetSoundDuration(std::string name);
 	int32_t GetSoundDuration(char* buff, const std::string& filename, long length);
 	int PlayModeSound(bool lock=false);
@@ -150,8 +150,8 @@ private:
 	std::map<uint32_t, std::string> ChantsBGMList;
 	std::map<std::pair<CHANT, uint32_t>, std::string> ChantsList[CHARACTER_VOICE + CHARACTER_STORY_ONLY];
 	std::map<std::pair<CHANT, uint32_t>, std::string> ChantsList2[CHARACTER_VOICE + CHARACTER_STORY_ONLY];
-	std::vector<std::string> ChantSPList[18][CHARACTER_VOICE + CHARACTER_STORY_ONLY];
-	std::vector<std::string> ChantSPList2[18][CHARACTER_VOICE + CHARACTER_STORY_ONLY];
+	std::vector<std::string> ChantSPList[19][CHARACTER_VOICE + CHARACTER_STORY_ONLY];
+	std::vector<std::string> ChantSPList2[19][CHARACTER_VOICE + CHARACTER_STORY_ONLY];
 	std::string bgm_now = "";
 	////////kdiy////
 	int bgm_scene{ -1 };
