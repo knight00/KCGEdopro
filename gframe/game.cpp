@@ -4116,11 +4116,14 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 	///kdiy/////////
     stName->setText(gDataManager->GetName(tmp_code).data());
     ///kdiy/////////
+    //stPasscodeScope->setText(epro::format(L"[{:08}] {}", tmp_code, gDataManager->FormatScope(cd->ot)).data());
+    auto tmp_code2 = 0;
+    if(cd->alias) tmp_code2 = cd->alias;
     if(pcard && pcard->is_real)
-    stPasscodeScope->setText(epro::format(L"[{:08}] {}", tmp_code, gDataManager->FormatScope(0x4)).data());
+        stPasscodeScope->setText(epro::format(L"[{:08}] {}{}", tmp_code, tmp_code2 > 0 ? epro::format(L"[{:08}] ", tmp_code2) : L"", gDataManager->FormatScope(0x4)).data());
     else
+        stPasscodeScope->setText(epro::format(L"[{:08}] {}{}", tmp_code, tmp_code2 > 0 ? epro::format(L"[{:08}] ", tmp_code2) : L"", gDataManager->FormatScope(cd->ot)).data());
     ///kdiy/////////
-    stPasscodeScope->setText(epro::format(L"[{:08}] {}", tmp_code, gDataManager->FormatScope(cd->ot)).data());
 	stSetName->setText(L"");
 	auto setcodes = cd->setcodes;
 	///kdiy/////////

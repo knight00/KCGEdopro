@@ -719,8 +719,6 @@ void ImageManager::SetAvatar(int player, const wchar_t *avatar) {
     }
 }
 void ImageManager::RefreshRandomImageList() {
-	if(!gGameConfig->randomtexture)
-	    return;
 	RefreshImageDir(EPRO_TEXT("bg_deck"), TEXTURE_DECK);
 	RefreshImageDir(EPRO_TEXT("bg_menu"), TEXTURE_MENU);
 	RefreshImageDir(EPRO_TEXT("cover"), TEXTURE_COVERS);
@@ -829,14 +827,10 @@ void ImageManager::RefreshRandomImageList() {
 		saved_image_id[i] = -1;
 }
 void ImageManager::RefreshImageDir(epro::path_string path, int image_type) {
-	if(!gGameConfig->randomtexture)
-	    return;
 	for(auto file : Utils::FindFiles(BASE_PATH + path, { EPRO_TEXT("jpg"), EPRO_TEXT("png") }))
 		ImageList[image_type].push_back(epro::format(EPRO_TEXT("{}{}/{}"), BASE_PATH, path, file));
 }
 void ImageManager::RefreshImageDirf() {
-	if(!gGameConfig->randomtexture)
-	    return;
 	for(auto& _folder : Utils::FindSubfolders(epro::format(EPRO_TEXT("{}morra/"), BASE_PATH), 1, false)) {
         bool f1 = false; bool f2 = false; bool f3 = false;
 		auto folder = epro::format(EPRO_TEXT("{}morra/{}/"), BASE_PATH, _folder);

@@ -2880,7 +2880,14 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				if(path.size() && path != EPRO_TEXT("archives"))
 					Utils::SystemOpen(path, Utils::OPEN_FILE);
 			} else if(elem == mainGame->stPasscodeScope) {
-				Utils::OSOperator->copyToClipboard(epro::format(L"{}", mainGame->showingcard).data());
+                ///kdiy///////
+				//Utils::OSOperator->copyToClipboard(epro::format(L"{}", mainGame->showingcard).data());
+                auto cd = gDataManager->GetCardData(mainGame->showingcard);
+                if(cd && (cd->IsInArtworkOffsetRange() || (cd->alias && cd->alias > 0)))
+                    Utils::OSOperator->copyToClipboard(epro::format(L"{}", cd->alias).data());
+                else
+                    Utils::OSOperator->copyToClipboard(epro::format(L"{}", mainGame->showingcard).data());
+                ///kdiy///////
 			}
 		}
 		break;
