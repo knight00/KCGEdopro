@@ -3342,11 +3342,9 @@ bool Game::MainLoop() {
 			}
 		}
 #if EDOPRO_MACOS
-		// Recent versions of macOS break OpenGL vsync while offscreen, resulting in
-		// astronomical FPS and CPU usage. As a workaround, while the game window is
-		// fully occluded, the game is restricted to 30 FPS.
-		int fpsLimit = device->isWindowActive() ? gGameConfig->maxFPS : 30;
-		if (!device->isWindowActive() || (gGameConfig->maxFPS > 0 && !gGameConfig->vsync)) {
+		// Vsync is a lost cause on MacOS, emulate it by hadrcoding to 60 fps
+		int fpsLimit = gGameConfig->vsync ? 60 / gGameConfig->vsync : gGameConfig->maxFPS;
+		if(fpsLimit > 0) {
 #else
 		int fpsLimit = gGameConfig->maxFPS;
 		if(gGameConfig->maxFPS > 0 && !gGameConfig->vsync) {
@@ -4019,7 +4017,7 @@ void Game::LoadServers() {
 		if(it != config.end() && it->is_array()) {
 			for(auto& obj : *it) {
 				try {
-					ServerInfo tmp_server;
+					ServerInfo tmp_server{};
 					tmp_server.name = BufferIO::DecodeUTF8(obj.at("name").get_ref<std::string&>());
 					tmp_server.address = obj.at("address").get<std::string>();
 					tmp_server.roomaddress = obj.at("roomaddress").get<std::string>();
@@ -5451,28 +5449,31 @@ epro::path_string Game::FindScript(epro::path_stringview name, irr::io::IReadFil
 		return name.data();
 	return EPRO_TEXT("");
 }
-std::vector<char> Game::LoadScript(epro::stringview _name) {
-	irr::io::IReadFile* tmp;
-	auto path = FindScript(Utils::ToPathString(_name), &tmp);
-	if(path.size()) {
-		std::vector<char> buffer;
-		if(path == EPRO_TEXT("archives")) {
-			if(tmp) {
-				buffer.resize(tmp->getSize());
-				if(tmp->read(buffer.data(), buffer.size()) == buffer.size()) {
-					tmp->drop();
-					return buffer;
-				}
-				tmp->drop();
-			}
-		} else {
-			FileStream script{ path, FileStream::in | FileStream::binary };
-			if(!script.fail()) {
-				buffer.insert(buffer.begin(), std::istreambuf_iterator<char>(script), std::istreambuf_iterator<char>());
-				return buffer;
-			}
-		}
+static inline void seek(irr::io::IReadFile& file) { file.seek(0); }
+static inline void seek(FileStream& file) { file.seekg(0); }
+std::vector<char> Game::LoadScript(epro::stringview name) {
+	auto SkipBom = [](auto& stream) -> auto& {
+		char bom[3];
+		stream.read(bom, 3);
+		if(bom[0] != '\xEF' || bom[1] != '\xBB' || bom[2] != '\xBF')
+			seek(stream);
+		return stream;
+	};
+	irr::io::IReadFile* tmp{ nullptr };
+	auto path = FindScript(Utils::ToPathString(name), &tmp);
+	if(tmp) {
+		SkipBom(*tmp);
+		std::vector<char> buffer(tmp->getSize() - tmp->getPos());
+		if(tmp->read(buffer.data(), buffer.size()) != buffer.size())
+			buffer.clear();
+		tmp->drop();
+		return buffer;
 	}
+	if(path.empty())
+		return {};
+	FileStream script{ path, FileStream::in | FileStream::binary };
+	if(!script.fail())
+		return { std::istreambuf_iterator<char>(SkipBom(script)), std::istreambuf_iterator<char>() };
 	return {};
 }
 bool Game::LoadScript(OCG_Duel pduel, epro::stringview script_name) {
