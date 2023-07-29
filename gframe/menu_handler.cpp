@@ -486,7 +486,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->ShowElement(mainGame->wLanWindow);
 				break;
 			}
-			case BUTTON_ICON0: {
+			case BUTTON_ICON: {
 #ifndef VIP
 				    break;
 #endif
@@ -1792,15 +1792,169 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					}
 					break;
 				}
-                for(int i = 0; i < 6; i++) {
-                    int sel = mainGame->ebCharacter[i]->getSelected();
-                    if(sel >= 0) {
-                        mainGame->choose_player = i;
-                        gSoundManager->character[mainGame->choose_player] = sel;
-                        int player = gSoundManager->character[mainGame->choose_player];
-                        mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
-                        mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
-                    }
+                int sel = mainGame->ebCharacter[0]->getSelected();
+                if(sel >= 0) {
+                    mainGame->choose_player = 0;
+                    gSoundManager->character[mainGame->choose_player] = sel;
+                    int player = gSoundManager->character[mainGame->choose_player];
+                    mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                    mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                    gSoundManager->PlayChant(SoundManager::CHANT::STARTUP, 0, 0, mainGame->choose_player);
+				}
+				break;
+			}
+            case COMBOBOX_CHARACTER1: {
+#ifndef VIP
+				    break;
+#endif
+				bool filechk = false;
+				if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
+					filechk = true;
+				if(!filechk) {
+					gGameConfig->enablessound = false;
+					gGameConfig->enablessound = false;
+                    gGameConfig->enablecsound = false;
+                    gGameConfig->enableasound = false;
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
+                    mainGame->PopupElement(mainGame->wACMessage, 20);
+					for(int i = 0; i < 6; ++i) {
+						mainGame->ebCharacter[i]->setSelected(0);
+					    mainGame->ebCharacter[i]->setEnabled(false);
+					}
+					break;
+				}
+                int sel = mainGame->ebCharacter[1]->getSelected();
+                if(sel >= 0) {
+                    mainGame->choose_player = 1;
+                    gSoundManager->character[mainGame->choose_player] = sel;
+                    int player = gSoundManager->character[mainGame->choose_player];
+                    mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                    mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                    gSoundManager->PlayChant(SoundManager::CHANT::STARTUP, 0, 0, mainGame->choose_player);
+				}
+				break;
+			}
+            case COMBOBOX_CHARACTER2: {
+#ifndef VIP
+				    break;
+#endif
+				bool filechk = false;
+				if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
+					filechk = true;
+				if(!filechk) {
+					gGameConfig->enablessound = false;
+					gGameConfig->enablessound = false;
+                    gGameConfig->enablecsound = false;
+                    gGameConfig->enableasound = false;
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
+                    mainGame->PopupElement(mainGame->wACMessage, 20);
+					for(int i = 0; i < 6; ++i) {
+						mainGame->ebCharacter[i]->setSelected(0);
+					    mainGame->ebCharacter[i]->setEnabled(false);
+					}
+					break;
+				}
+                int sel = mainGame->ebCharacter[2]->getSelected();
+                if(sel >= 0) {
+                    mainGame->choose_player = 2;
+                    gSoundManager->character[mainGame->choose_player] = sel;
+                    int player = gSoundManager->character[mainGame->choose_player];
+                    mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                    mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                    gSoundManager->PlayChant(SoundManager::CHANT::STARTUP, 0, 0, mainGame->choose_player);
+				}
+				break;
+			}
+            case COMBOBOX_CHARACTER3: {
+#ifndef VIP
+				    break;
+#endif
+				bool filechk = false;
+				if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
+					filechk = true;
+				if(!filechk) {
+					gGameConfig->enablessound = false;
+					gGameConfig->enablessound = false;
+                    gGameConfig->enablecsound = false;
+                    gGameConfig->enableasound = false;
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
+                    mainGame->PopupElement(mainGame->wACMessage, 20);
+					for(int i = 0; i < 6; ++i) {
+						mainGame->ebCharacter[i]->setSelected(0);
+					    mainGame->ebCharacter[i]->setEnabled(false);
+					}
+					break;
+				}
+                int sel = mainGame->ebCharacter[3]->getSelected();
+                if(sel >= 0) {
+                    mainGame->choose_player = 3;
+                    gSoundManager->character[mainGame->choose_player] = sel;
+                    int player = gSoundManager->character[mainGame->choose_player];
+                    mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                    mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                    gSoundManager->PlayChant(SoundManager::CHANT::STARTUP, 0, 0, mainGame->choose_player);
+				}
+				break;
+			}
+            case COMBOBOX_CHARACTER4: {
+#ifndef VIP
+				    break;
+#endif
+				bool filechk = false;
+				if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
+					filechk = true;
+				if(!filechk) {
+					gGameConfig->enablessound = false;
+					gGameConfig->enablessound = false;
+                    gGameConfig->enablecsound = false;
+                    gGameConfig->enableasound = false;
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
+                    mainGame->PopupElement(mainGame->wACMessage, 20);
+					for(int i = 0; i < 6; ++i) {
+						mainGame->ebCharacter[i]->setSelected(0);
+					    mainGame->ebCharacter[i]->setEnabled(false);
+					}
+					break;
+				}
+                int sel = mainGame->ebCharacter[4]->getSelected();
+                if(sel >= 0) {
+                    mainGame->choose_player = 4;
+                    gSoundManager->character[mainGame->choose_player] = sel;
+                    int player = gSoundManager->character[mainGame->choose_player];
+                    mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                    mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                    gSoundManager->PlayChant(SoundManager::CHANT::STARTUP, 0, 0, mainGame->choose_player);
+				}
+				break;
+			}
+            case COMBOBOX_CHARACTER5: {
+#ifndef VIP
+				    break;
+#endif
+				bool filechk = false;
+				if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
+					filechk = true;
+				if(!filechk) {
+					gGameConfig->enablessound = false;
+					gGameConfig->enablessound = false;
+                    gGameConfig->enablecsound = false;
+                    gGameConfig->enableasound = false;
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
+                    mainGame->PopupElement(mainGame->wACMessage, 20);
+					for(int i = 0; i < 6; ++i) {
+						mainGame->ebCharacter[i]->setSelected(0);
+					    mainGame->ebCharacter[i]->setEnabled(false);
+					}
+					break;
+				}
+                int sel = mainGame->ebCharacter[5]->getSelected();
+                if(sel >= 0) {
+                    mainGame->choose_player = 5;
+                    gSoundManager->character[mainGame->choose_player] = sel;
+                    int player = gSoundManager->character[mainGame->choose_player];
+                    mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                    mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                    gSoundManager->PlayChant(SoundManager::CHANT::STARTUP, 0, 0, mainGame->choose_player);
 				}
 				break;
 			}

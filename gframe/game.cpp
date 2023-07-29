@@ -870,7 +870,7 @@ void Game::Initialize() {
 	wAvatar[0]->getCloseButton()->setVisible(false);
 	wAvatar[0]->setDraggable(false);
 	wAvatar[0]->setDrawTitlebar(false);
-	wAvatar[0]->setDrawBackground(true);
+	wAvatar[0]->setDrawBackground(false);
 	wAvatar[0]->setVisible(false);
 	avatarbutton[0] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 140, 198), wAvatar[0], BUTTON_AVATAR_BORED0);
 	avatarbutton[0]->setImageSize(Scale(0, 0, 135, 198).getSize());
@@ -879,7 +879,7 @@ void Game::Initialize() {
 	wAvatar[1]->getCloseButton()->setVisible(false);
 	wAvatar[1]->setDraggable(false);
 	wAvatar[1]->setDrawTitlebar(false);
-	wAvatar[1]->setDrawBackground(true);
+	wAvatar[1]->setDrawBackground(false);
 	wAvatar[1]->setVisible(false);
 	avatarbutton[1] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 140, 198), wAvatar[1], BUTTON_AVATAR_BORED1);
 	avatarbutton[1]->setImageSize(Scale(0, 0, 135, 198).getSize());
@@ -929,10 +929,7 @@ void Game::Initialize() {
 	wBtnSettings->getCloseButton()->setVisible(false);
 	wBtnSettings->setDraggable(false);
 	wBtnSettings->setDrawTitlebar(false);
-    //////kdiy//////
-    //wBtnSettings->setDrawBackground(false);
-    wBtnSettings->setDrawBackground(true);
-    //////kdiy//////
+    wBtnSettings->setDrawBackground(false);
 	auto dimBtnSettings = Scale(0, 0, 50, 50);
 	btnSettings = irr::gui::CGUIImageButton::addImageButton(env, dimBtnSettings, wBtnSettings, BUTTON_SHOW_SETTINGS);
 	btnSettings->setDrawBorder(false);
@@ -1414,17 +1411,17 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(btnCharacterSelect_replayclose, 1211);
     for(int i = 0; i < 6; ++i) {
 		if (i==0)
-		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON0);
+		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON);
 		else if (i==1)
-		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON1);
+		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON + 1);
 		else if (i==2)
-		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON2);
+		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON + 2);
 		else if (i==3)
-		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON3);
+		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON + 3);
 		else if (i==4)
-		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON4);
+		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON + 4);
 		else if (i==5)
-		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON5);
+		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON + 5);
 		icon2[i]->setDrawBorder(false);
 		icon2[i]->setImageSize(Scale(0, 0, 20, 20).getSize());
 		icon2[i]->setImage(0);
@@ -2144,7 +2141,7 @@ void Game::PopulateGameHostWindows() {
 		///////kdiy/////////
 		//stHostPrepDuelist[i] = env->addStaticText(L"", Scale(40, 65 + i * 25, 240, 85 + i * 25), true, false, wHostPrepare);
 		stHostPrepDuelist[i] = env->addStaticText(L"", Scale(65, 65 + i * 25, 130, 85 + i * 25), true, false, wHostPrepare);
-        ebCharacter[i] = AddComboBox(env, Scale(140, 65 + i * 25, 240, 85 + i * 25), wHostPrepare, COMBOBOX_CHARACTER);
+        ebCharacter[i] = AddComboBox(env, Scale(140, 65 + i * 25, 240, 85 + i * 25), wHostPrepare, COMBOBOX_CHARACTER + i);
         ebCharacter[i]->clear();
 #ifdef VIP
         ebCharacter[i]->addItem(gDataManager->GetSysString(8047).data());
@@ -2161,17 +2158,17 @@ void Game::PopulateGameHostWindows() {
 		chkHostPrepReady[i]->setEnabled(false);
 		///////kdiy/////////
 		if (i==0)
-		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON0);
+		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON);
 		else if (i==1)
-		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON1);
+		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON + 1);
 		else if (i==2)
-		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON2);
+		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON + 2);
 		else if (i==3)
-		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON3);
+		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON + 3);
 		else if (i==4)
-		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON4);
+		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON + 4);
 		else if (i==5)
-		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON5);
+		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON + 5);
 		icon[i]->setDrawBorder(false);
 		icon[i]->setImageSize(Scale(0, 0, 20, 20).getSize());
 		icon[i]->setImage(0);
