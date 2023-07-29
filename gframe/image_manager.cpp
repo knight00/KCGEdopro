@@ -918,6 +918,7 @@ void ImageManager::GetRandomImagef(int width, int height) {
 void ImageManager::RefreshKCGImage() {
 	const wchar_t* textcharacter[] = {L"muto",L"atem",L"kaiba",L"joey",L"marik",L"dartz",L"bakura",L"aigami",L"judai",L"manjome",L"kaisa",L"phoenix",L"john",L"yubel",L"yusei",L"jack",L"arki",L"crow",L"kiryu",L"paradox",L"zone",L"yuma",L"shark",L"kaito",L"iv",L"DonThousand",L"yuya",L"declan",L"shay",L"playmaker",L"soulburner",L"blueangel"};
 	int imgcharacter[] = {TEXTURE_MUTO,TEXTURE_ATEM,TEXTURE_KAIBA,TEXTURE_JOEY,TEXTURE_MARIK,TEXTURE_DARTZ,TEXTURE_BAKURA,TEXTURE_AIGAMI,TEXTURE_JUDAI,TEXTURE_MANJOME,TEXTURE_KAISA,TEXTURE_PHORNIX,TEXTURE_JOHN,TEXTURE_YUBEL,TEXTURE_YUSEI,TEXTURE_JACK,TEXTURE_ARKI,TEXTURE_CROW,TEXTURE_KIRYU,TEXTURE_PARADOX,TEXTURE_ZONE,TEXTURE_YUMA,TEXTURE_SHARK,TEXTURE_KAITO,TEXTURE_IV,TEXTURE_DONTHOUSAND,TEXTURE_YUYA,TEXTURE_DECLAN,TEXTURE_SHAY,TEXTURE_PLAYMAKER,TEXTURE_SOULBURNER,TEXTURE_BLUEANGEL};
+    //if(!avatar_only) {
     for(uint8_t playno = 1; playno < CHARACTER_VOICE; playno++) {
         icon[playno] = driver->getTexture((EPRO_TEXT("./textures/character/") + Utils::ToPathString(textcharacter[playno-1]) + EPRO_TEXT("/mini_icon.png")).c_str());
         GetRandomImage(character[playno], imgcharacter[playno-1], true);
@@ -931,6 +932,25 @@ void ImageManager::RefreshKCGImage() {
                 characterd[playno] = character[playno];
         }
     }
+    //} 
+    // else if(gGameConfig->randomtexture && avataricon1 > 0 && avataricon2 > 0) {
+    //     for(int i = 1; i < 3; i++) {
+    //         int playno = avataricon1;
+    //         if(i == 2) playno = avataricon2;
+    //         GetRandomImage(character[playno], imgcharacter[playno-1], true);
+    //         saved_image_id[imgcharacter[playno-1]] = -1;
+    //         if(!character[playno])
+    //             character[playno] = driver->getTexture(0);
+    //         GetRandomImage(characterd[playno], imgcharacter[playno-1] + CHARACTER_VOICE - 1, true);
+    //         saved_image_id[imgcharacter[playno-1] + CHARACTER_VOICE - 1] = -1;
+    //         if(!characterd[playno]) {
+    //             if(!character[playno])
+    //                 characterd[playno] = driver->getTexture(0);
+    //             else
+    //                 characterd[playno] = character[playno];
+    //         }
+    //     }
+    // }
 }
 //////kdiy//////
 void ImageManager::replaceTextureLoadingFixedSize(irr::video::ITexture*& texture, irr::video::ITexture* fallback, epro::path_stringview texture_name, int width, int height) {
@@ -1005,7 +1025,6 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 	// REPLACE_TEXTURE_ANY_SIZE(tField[1][3], "fieldSP4");
 	// REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][3], "field-transparentSP4");
 	// REPLACE_TEXTURE_ANY_SIZE(tSettings, "settings");
-    RefreshRandomImageList();
 #ifdef VIP
     RefreshKCGImage();
 #endif
