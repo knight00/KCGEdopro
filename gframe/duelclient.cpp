@@ -1687,6 +1687,8 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto ppzone = BufferIO::Read<bool>(pbuf);
 		const auto cpzone = BufferIO::Read<bool>(pbuf);
 		const auto firstone = BufferIO::Read<bool>(pbuf);
+		const auto isorica = BufferIO::Read<bool>(pbuf);
+		const auto issanct = BufferIO::Read<bool>(pbuf);
         auto cd = gDataManager->GetCardData(code);
         uint32_t code2 = 0;
         if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
@@ -3915,6 +3917,13 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		current.controler = mainGame->LocalPlayer(current.controler);
 		const auto reason = BufferIO::Read<uint32_t>(pbuf);
+        //////kdiy///
+		const auto ppzone = BufferIO::Read<bool>(pbuf);
+		const auto cpzone = BufferIO::Read<bool>(pbuf);
+		const auto firstone = BufferIO::Read<bool>(pbuf);
+		const auto is_orica = BufferIO::Read<bool>(pbuf);
+		const auto is_sanct = BufferIO::Read<bool>(pbuf);
+        //////kdiy///
 		if (previous.location != current.location) {
 			if (reason & REASON_DESTROY)					
 				Play(SoundManager::SFX::DESTROYED);
@@ -3924,6 +3933,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		auto lock = LockIf();
 		if (previous.location == 0) {
 			ClientCard* pcard = new ClientCard{};
+			//////kdiy///
+			pcard->is_pzone = cpzone;
+			pcard->is_orica = is_orica;
+			pcard->is_sanct = is_sanct;
+			//////kdiy///
 			pcard->position = current.position;
 			pcard->SetCode(code);
 			mainGame->dField.AddCard(pcard, current.controler, current.location, current.sequence);
@@ -3967,6 +3981,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		} else {
 			if (!(previous.location & LOCATION_OVERLAY) && !(current.location & LOCATION_OVERLAY)) {
 				ClientCard* pcard = mainGame->dField.GetCard(previous.controler, previous.location, previous.sequence);
+				//////kdiy///
+                pcard->is_pzone = cpzone;
+				pcard->is_orica = is_orica;
+				pcard->is_sanct = is_sanct;
+				//////kdiy///
 				if (pcard->code != code && (code != 0 || current.location == LOCATION_EXTRA))
 					pcard->SetCode(code);
 				pcard->cHint = 0;
@@ -4053,6 +4072,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                 //////kdiy///
 				ClientCard* olcard = mainGame->dField.GetCard(previous.controler, previous.location & (~LOCATION_OVERLAY) & 0xff, previous.sequence);
 				ClientCard* pcard = olcard->overlayed[previous.position];
+				//////kdiy///
+                pcard->is_pzone = cpzone;
+				pcard->is_orica = is_orica;
+				pcard->is_sanct = is_sanct;
+				//////kdiy///
 				olcard->overlayed.erase(olcard->overlayed.begin() + pcard->sequence);
 				pcard->overlayTarget = 0;
 				pcard->position = current.position;

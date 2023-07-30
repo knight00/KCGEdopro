@@ -61,6 +61,9 @@ public:
 	uint16_t realsetcode = 0;
 	uint32_t realname = 0;
 	uint32_t effcode = 0;
+	bool is_pzone = false;
+	bool is_orica = false;
+	bool is_sanct = false;
     /////////kdiy/////////
 	uint32_t attribute;
 	uint64_t race;
