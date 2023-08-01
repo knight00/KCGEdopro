@@ -1750,7 +1750,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		break;
     }
     case MSG_SPSUMMONING: {
-		const auto code = BufferIO::Read<uint32_t>(pbuf);	
+		const auto code = BufferIO::Read<uint32_t>(pbuf);
 		CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		const auto player = mainGame->LocalPlayer(current.controler);
 		ClientCard* pcard = mainGame->dField.GetCard(player, current.location, current.sequence);

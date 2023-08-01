@@ -1729,10 +1729,9 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						if(mcard->location & (0xe|0x400)) {
 							///////kdiy/////////
 							//std::wstring str(gDataManager->GetName(mcard->code));
-							//if(mcard->type & TYPE_MONSTER) {
 							std::wstring str(gDataManager->GetVirtualName(mcard, mcard->code));
-							if((!(mcard->type & (TYPE_SPELL | TYPE_TRAP)) || (mcard->type & TYPE_TRAPMONSTER)) && !mcard->equipTarget) {
 							///////kdiy/////////
+							if(mcard->type & TYPE_MONSTER) {
 								if(mcard->alias && (mcard->alias < mcard->code - 10 || mcard->alias > mcard->code + 10)
 										&& wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
 									///////kdiy/////////

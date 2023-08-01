@@ -431,7 +431,7 @@ void Game::DrawCard(ClientCard* pcard) {
 		driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
 	}
 	////kidy/////////
-	if((pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && pcard->is_pzone && !pcard->equipTarget) {
+	if((pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && (pcard->type & TYPE_SPELL) && pcard->is_pzone && !pcard->equipTarget) {
 		int scale = pcard->lscale;
 		if(scale >= 0 && scale <= 13 && imageManager.tLScale[scale]) {
 			matManager.mTexture.setTexture(0, imageManager.tLScale[scale]);
@@ -439,7 +439,7 @@ void Game::DrawCard(ClientCard* pcard) {
 			driver->drawVertexPrimitiveList(matManager.vPScale, 4, matManager.iRectangle, 2);
 		}
 	}
-	if((pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 4 || pcard->sequence == 7)) && pcard->is_pzone && !pcard->equipTarget) {
+	if((pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 4 || pcard->sequence == 7)) && (pcard->type & TYPE_SPELL) && pcard->is_pzone && !pcard->equipTarget) {
 		int scale2 = pcard->rscale;
 		if(scale2 >= 0 && scale2 <= 13 && imageManager.tRScale[scale2]) {
 			matManager.mTexture.setTexture(0, imageManager.tRScale[scale2]);
@@ -706,7 +706,7 @@ void Game::DrawMisc() {
 			pcard = dField.szone[p][pzone];
 			/////////kdiy////////////
 			//if (pcard && (pcard->type & TYPE_PENDULUM) && !pcard->equipTarget)
-			if (pcard && (pcard->type & TYPE_PENDULUM) && pcard->is_pzone && !pcard->equipTarget)
+			if (pcard && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && pcard->is_pzone && !pcard->equipTarget)
 			/////////kdiy////////////
 				DrawPendScale(pcard);
 		}
