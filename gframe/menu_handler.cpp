@@ -163,11 +163,11 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			switch(id) {
 			////////kdiy///////
 			case BUTTON_QQ: {
-				Utils::SystemOpen(EPRO_TEXT("https://jq.qq.com/?_wv=1027&k=S1vfY66P"));
+				Utils::SystemOpen(EPRO_TEXT("https://jq.qq.com/?_wv=1027&k=S1vfY66P"), Utils::OPEN_URL);
 				break;
 			}
 			case BUTTON_QQ2: {
-				Utils::SystemOpen(EPRO_TEXT("https://qm.qq.com/cgi-bin/qm/qr?k=0BcdVu6E2gUjyc_WmL25uLNYib2mTPoV"));
+				Utils::SystemOpen(EPRO_TEXT("https://qm.qq.com/cgi-bin/qm/qr?k=0BcdVu6E2gUjyc_WmL25uLNYib2mTPoV"), Utils::OPEN_URL);
 				break;
 			}
 			////////kdiy///////
@@ -1150,7 +1150,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					// gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame);
 					// mainGame->HideElement(mainGame->wMainMenu);
 					// mainGame->PopupElement(mainGame->updateWindow);
-					Utils::SystemOpen(EPRO_TEXT("https://jq.qq.com/?_wv=1027&k=S1vfY66P"));
+					Utils::SystemOpen(EPRO_TEXT("https://jq.qq.com/?_wv=1027&k=S1vfY66P"), Utils::OPEN_URL);
 #if defined(Update_PW)
 					mainGame->PopupElement(mainGame->pwupdateWindow);
 #else
@@ -1163,7 +1163,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					break;
 				}
 				case ACTION_SHOW_CHANGELOG: {
-					Utils::SystemOpen(EPRO_TEXT("https://afdian.net/p/7676acb6c0af11ed898652540025c377/"));
+					Utils::SystemOpen(EPRO_TEXT("https://afdian.net/p/7676acb6c0af11ed898652540025c377/"), Utils::OPEN_URL);
 					break;
 				}
 				case ACTION_ACKNOWLEDGE_HOST: {

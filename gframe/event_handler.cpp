@@ -2087,15 +2087,15 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				break;
 			}
 			case BUTTON_HOME: {
-                Utils::SystemOpen(EPRO_TEXT("https://afdian.net/a/Edokcg/"));
+                Utils::SystemOpen(EPRO_TEXT("https://afdian.net/a/Edokcg/"), Utils::OPEN_URL);
 				break;
 			}
 			case BUTTON_FOLDER: {
-                Utils::SystemOpen(EPRO_TEXT("https://afdian.net/p/4a2966dcbb0d11edaaa052540025c377/"));
+                Utils::SystemOpen(EPRO_TEXT("https://afdian.net/p/4a2966dcbb0d11edaaa052540025c377/"), Utils::OPEN_URL);
 				break;
 			}
             case BUTTON_SOUND: {
-                Utils::SystemOpen(EPRO_TEXT("https://www.bilibili.com/video/BV1Gu411z7C1/"));
+                Utils::SystemOpen(EPRO_TEXT("https://www.bilibili.com/video/BV1Gu411z7C1/"), Utils::OPEN_URL);
 				break;
 			}	
 			case BUTTON_CLEAR: {
@@ -2122,15 +2122,15 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				break;
 			}
 			case BUTTON_INTRO: {
-                Utils::SystemOpen(EPRO_TEXT("https://www.bilibili.com/read/cv8171279/"));
+                Utils::SystemOpen(EPRO_TEXT("https://www.bilibili.com/read/cv8171279/"), Utils::OPEN_URL);
 				break;
-			}	
+			}
 			case BUTTON_TUT: {
-                Utils::SystemOpen(EPRO_TEXT("https://www.bilibili.com/video/BV1Ey4y1q7pr/"));
+                Utils::SystemOpen(EPRO_TEXT("https://www.bilibili.com/video/BV1Ey4y1q7pr/"), Utils::OPEN_URL);
 				break;
 			}
 			case BUTTON_TUT2: {
-                Utils::SystemOpen(EPRO_TEXT("https://www.bilibili.com/video/BV1a54y127Xx?p=2"));
+                Utils::SystemOpen(EPRO_TEXT("https://www.bilibili.com/video/BV1a54y127Xx?p=2"), Utils::OPEN_URL);
 				break;
 			}
 			//////kremove///////
