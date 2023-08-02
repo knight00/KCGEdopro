@@ -2145,12 +2145,16 @@ void Game::PopulateGameHostWindows() {
         ebCharacter[i]->clear();
 #ifdef VIP
         ebCharacter[i]->addItem(gDataManager->GetSysString(8047).data());
+        defaultStrings.emplace_back(ebCharacter[i], 8047);
 #else
         ebCharacter[i]->addItem(gDataManager->GetSysString(8048).data());
+        defaultStrings.emplace_back(ebCharacter[i], 8048);
         ebCharacter[i]->setEnabled(false);
 #endif
-        for (auto j = 9000; j <= 9000 + CHARACTER_VOICE - 2; ++j)
+        for (auto j = 9000; j <= 9000 + CHARACTER_VOICE - 2; ++j) {
             ebCharacter[i]->addItem(gDataManager->GetSysString(j).data());
+            defaultStrings.emplace_back(ebCharacter[i], j);
+        }
         ebCharacter[i]->setSelected(0);
         ebCharacter[i]->setMaxSelectionRows(10);
 		///////kdiy/////////
