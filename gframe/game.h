@@ -323,10 +323,11 @@ public:
 	irr::core::recti ResizeWin(irr::s32 x, irr::s32 y, irr::s32 x2, irr::s32 y2, bool chat = false) const;
 	void SetCentered(irr::gui::IGUIElement* elem, bool use_offset = true) const;
 	void ValidateName(irr::gui::IGUIElement* box);
-	
+
 	OCG_Duel SetupDuel(OCG_DuelOptions opts);
 	epro::path_string FindScript(epro::path_stringview script_name, irr::io::IReadFile** retarchive = nullptr);
-	std::vector<char> LoadScript(epro::stringview script_name);
+	std::vector<char> FindAndReadScript(epro::stringview script_name);
+	std::vector<char> ReadScript(epro::path_stringview script_name, irr::io::IReadFile* archive = nullptr);
 	bool LoadScript(OCG_Duel pduel, epro::stringview script_name);
 	static int ScriptReader(void* payload, OCG_Duel duel, const char* name);
 	static void MessageHandler(void* payload, const char* string, int type);
@@ -423,6 +424,7 @@ public:
 	std::vector<epro::path_string> closeup_dirs;
 	///kdiy////////
 	std::vector<epro::path_string> script_dirs;
+	std::vector<epro::path_string> init_scripts;
 	std::vector<epro::path_string> cores_to_load;
 	void PopulateLocales();
 	void ApplyLocale(size_t index, bool forced = false);
@@ -435,6 +437,7 @@ public:
 	bool should_refresh_hands;
 	bool current_topdown;
 	bool current_keep_aspect_ratio;
+	bool needs_to_acknowledge_discord_host{ false };
 	//GUI
 	irr::gui::IGUIEnvironment* env;
 	irr::gui::CGUITTFont* guiFont;

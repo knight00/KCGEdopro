@@ -1123,43 +1123,53 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_YES: {
 				mainGame->HideElement(mainGame->wQuery);
+				switch(prev_operation) {
 #if EDOPRO_LINUX && (IRRLICHT_VERSION_MAJOR==1 && IRRLICHT_VERSION_MINOR==9)
-				if(prev_operation == ACTION_TRY_WAYLAND) {
+				case ACTION_TRY_WAYLAND: {
 					gGameConfig->useWayland = 1;
 					mainGame->SaveConfig();
 					Utils::Reboot();
 				}
 #endif
-				if(prev_operation == BUTTON_DELETE_REPLAY) {
+				case BUTTON_DELETE_REPLAY: {
 					if(Replay::DeleteReplay(Utils::ToPathString(mainGame->lstReplayList->getListItem(prev_sel, true)))) {
 						mainGame->stReplayInfo->setText(L"");
 						mainGame->lstReplayList->refreshList();
 					}
-				} else if(prev_operation == BUTTON_DELETE_SINGLEPLAY) {
+					break;
+				}
+				case BUTTON_DELETE_SINGLEPLAY: {
 					if(Utils::FileDelete(Utils::ToPathString(mainGame->lstSinglePlayList->getListItem(prev_sel, true)))) {
 						mainGame->stSinglePlayInfo->setText(L"");
 						mainGame->lstSinglePlayList->refreshList();
 					}
-				} else if(prev_operation == ACTION_UPDATE_PROMPT) {
+					break;
+				}
+				case ACTION_UPDATE_PROMPT: {
 					///kdiy//////////
 					// gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame);
-					// mainGame->PopupElement(mainGame->updateWindow);					
+					// mainGame->HideElement(mainGame->wMainMenu);
+					// mainGame->PopupElement(mainGame->updateWindow);
 					Utils::SystemOpen(EPRO_TEXT("https://jq.qq.com/?_wv=1027&k=S1vfY66P"));
-					#if defined(Update_PW)
+#if defined(Update_PW)
 					mainGame->PopupElement(mainGame->pwupdateWindow);
-					#else
+#else
 					gClientUpdater->StartUpdate(Game::UpdateDownloadBar, mainGame);
 					mainGame->HideElement(mainGame->wMainMenu);
 					mainGame->PopupElement(mainGame->updateWindow);
-					#endif
+#endif
 					mainGame->btnNo->setEnabled(true);
 					///kdiy//////////
-				} else if (prev_operation == ACTION_SHOW_CHANGELOG) {
-					///kdiy//////////
-					// Utils::SystemOpen(EPRO_TEXT("https://github.com/edo9300/edopro/releases?referrer=") EDOPRO_USERAGENT);
+					break;
+				}
+				case ACTION_SHOW_CHANGELOG: {
 					Utils::SystemOpen(EPRO_TEXT("https://afdian.net/p/7676acb6c0af11ed898652540025c377/"));
-					mainGame->btnNo->setEnabled(true);
-					///kdiy//////////
+					break;
+				}
+				case ACTION_ACKNOWLEDGE_HOST: {
+					DuelClient::JoinFromDiscord();
+					break;
+				}
 				}
 				prev_operation = 0;
 				prev_sel = -1;

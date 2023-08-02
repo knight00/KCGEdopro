@@ -155,7 +155,7 @@ namespace ygo {
 			SHARE_FILE,
 		};
 
-		static void SystemOpen(epro::path_stringview arg, OpenType type = OPEN_URL);
+		static void SystemOpen(epro::path_stringview arg, OpenType type);
 
 		static void Reboot();
 

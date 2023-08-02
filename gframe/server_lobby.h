@@ -55,6 +55,7 @@ public:
 	///kdiy////////
 	static std::vector<ServerInfo> serversVector2;
 	///kdiy////////
+	static bool IsKnownHost(epro::Host host);
 	static void RefreshRooms();
 	static bool HasRefreshedRooms();
 	static void GetRoomsThread();
