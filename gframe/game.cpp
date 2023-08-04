@@ -3299,6 +3299,13 @@ bool Game::MainLoop() {
 				stQMessage->setText(epro::format(L"{}\n{}", gDataManager->GetSysString(1460), gDataManager->GetSysString(1461)).data());
 				SetCentered(wQuery);
 				PopupElement(wQuery);
+				/////kdiy/////
+#ifdef VIP
+                HideElement(mainGame->wMainMenu);
+				btnNo->setVisible(false);
+				btnNo->setEnabled(false);
+#endif
+				/////kdiy/////
 				update_prompted = true;
 			} else if (show_changelog) {
 				std::lock_guard<epro::mutex> lock(gMutex);
@@ -3307,6 +3314,7 @@ bool Game::MainLoop() {
 				SetCentered(wQuery);
 				PopupElement(wQuery);
 				//kdiy////////
+				btnNo->setVisible(false);
 				btnNo->setEnabled(false);
 				//kdiy////////
 				show_changelog = false;

@@ -694,7 +694,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			case BUTTON_PW: {
-				#ifdef Update_PW
+#ifdef Update_PW
 				auto pw = mainGame->ebPw->getText();
 				std::string t(Update_PW);
 				std::wstring a(t.begin(), t.end());
@@ -713,10 +713,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					}
 					mainGame->HideElement(mainGame->pwupdateWindow);
 				}
-				#endif
-#ifdef VIP
-				    mainGame->btnNo->setVisible(false);
-                    mainGame->btnNo->setEnabled(false);
 #endif
 				break;
 			}
@@ -1158,12 +1154,13 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					mainGame->HideElement(mainGame->wMainMenu);
 					mainGame->PopupElement(mainGame->updateWindow);
 #endif
-					mainGame->btnNo->setEnabled(true);
 					///kdiy//////////
 					break;
 				}
 				case ACTION_SHOW_CHANGELOG: {
 					Utils::SystemOpen(EPRO_TEXT("https://afdian.net/p/7676acb6c0af11ed898652540025c377/"), Utils::OPEN_URL);
+					mainGame->btnNo->setVisible(true);
+					mainGame->btnNo->setEnabled(true);
 					break;
 				}
 				case ACTION_ACKNOWLEDGE_HOST: {
@@ -1192,6 +1189,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				case ACTION_SHOW_CHANGELOG:
                     /////kdiy///////
 				    gGameConfig->system_engine = true;
+					mainGame->btnNo->setVisible(true);
+					mainGame->btnNo->setEnabled(true);
                     /////kdiy///////
 					mainGame->wQuery->setRelativePosition(mainGame->ResizeWin(490, 200, 840, 340)); // from Game::OnResize
 				default:
@@ -1590,7 +1589,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 		case irr::gui::EGET_EDITBOX_ENTER: {
 			switch(id) {
 				case EDITBOX_PASSWORD: {
-					#ifdef Update_PW
+#ifdef Update_PW
 					auto pw = mainGame->ebPw->getText();
 					std::string t(Update_PW);
 					std::wstring a(t.begin(), t.end());
@@ -1610,7 +1609,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 						}
 						mainGame->HideElement(mainGame->pwupdateWindow);
 					}
-					#endif
+#endif
 					break;
 				}
 			}
