@@ -1782,7 +1782,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         const auto sumplayer = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
         if((current.location & LOCATION_MZONE) && (current.position & POS_FACEUP)) {
             uint16_t extra = 0;
-            if(sumtype != SUMMON_TYPE_SPECIAL) {
+            if(sumtype == SUMMON_TYPE_PENDULUM || sumtype == SUMMON_TYPE_LINK || sumtype == SUMMON_TYPE_XYZ || sumtype == SUMMON_TYPE_SYNCHRO || sumtype == SUMMON_TYPE_FUSION || sumtype == SUMMON_TYPE_RITUAL) {
                 if(sumtype == SUMMON_TYPE_PENDULUM) extra |= 0x20;
                 else if(sumtype == SUMMON_TYPE_LINK) extra |= 0x8;
                 else if(sumtype == SUMMON_TYPE_XYZ) extra |= 0x4;

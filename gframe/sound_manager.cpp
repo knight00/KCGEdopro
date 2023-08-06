@@ -919,7 +919,7 @@ void SoundManager::AddtoChantList(std::string file, int i, std::vector<std::stri
 	}
 #endif
 }
-bool SoundManager::PlayZipChants(CHANT chant, std::string file, std::vector<std::string>& sound) {
+bool SoundManager::PlayZipChants(CHANT chant, std::string file, std::vector<std::string>& sound, uint8_t player) {
 #ifdef BACKEND
 	for(auto& archive : Utils::archives) {
 		if(Utils::ToUTF8IfNeeded({ archive.archive->getArchiveName().c_str(), archive.archive->getArchiveName().size() }).find("/expansions/kcgchant.zip") == std::string::npos)
@@ -952,7 +952,7 @@ bool SoundManager::PlayZipChants(CHANT chant, std::string file, std::vector<std:
 				mixer->PlaySound(buff, filename, length);
 				if(chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN) {
 					mainGame->isEvent = true;
-					if(gGameConfig->pauseduel) {
+					if(gGameConfig->pauseduel && character[player] > 0) {
 						std::unique_lock<epro::mutex> lck(mainGame->gMutex);
 						mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(buff, filename, length)));
 					}
@@ -968,7 +968,7 @@ bool SoundManager::PlayZipChants(CHANT chant, std::string file, std::vector<std:
 #endif
 	return false;
 }
-bool SoundManager::PlayChants(CHANT chant, std::string file, std::vector<std::string>& sound) {
+bool SoundManager::PlayChants(CHANT chant, std::string file, std::vector<std::string>& sound, uint8_t player) {
 #ifdef BACKEND
 	if(Utils::FileExists(Utils::ToPathString(file))) {
 		if(chant != CHANT::DRAW && chant != CHANT::STARTUP && chant != CHANT::WIN && chant != CHANT::LOSE) {
@@ -980,7 +980,7 @@ bool SoundManager::PlayChants(CHANT chant, std::string file, std::vector<std::st
 		if(mixer->PlaySound(file)) {
 			if(chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN) {
 				mainGame->isEvent = true;
-				if(gGameConfig->pauseduel) {
+				if(gGameConfig->pauseduel && character[player] > 0) {
 					std::unique_lock<epro::mutex> lck(mainGame->gMutex);
 					mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(file)));
 				}
@@ -1003,7 +1003,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 // 	if(chant_it == ChantsList.end())
 // 		return false;
 // 	return mixer->PlaySound(chant_it->second);
-	if(player < 0 || character[player] < 1) return false;
+	if(player < 0) return false;
 	int i = -1;
 	if(chant == CHANT::SET) i = 0;
 	if(chant == CHANT::DESTROY) i = 1;
@@ -1037,10 +1037,10 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 		int _count = ChantSPList2[i][character[player]].size();
 		if(count > 0) {
 			int chantno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-			return PlayZipChants(chant, ChantSPList[i][character[player]][chantno], gSoundManager->soundcount);
+			return PlayZipChants(chant, ChantSPList[i][character[player]][chantno], gSoundManager->soundcount, player);
 		} else if(_count > 0) {
 			int chantno = (std::uniform_int_distribution<>(0, _count - 1))(rnd);
-			return PlayChants(chant, ChantSPList2[i][character[player]][chantno], gSoundManager->soundcount);
+			return PlayChants(chant, ChantSPList2[i][character[player]][chantno], gSoundManager->soundcount, player);
 		}
 	} else {
 		auto key = std::make_pair(chant, code);
@@ -1096,26 +1096,26 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 		int _count2 = _list.size();
 		if(count2 > 0) {
 			int soundno = (std::uniform_int_distribution<>(0, count2 - 1))(rnd);
-			if(PlayZipChants(chant, list[soundno], gSoundManager->soundcount)) {
+			if(PlayZipChants(chant, list[soundno], gSoundManager->soundcount, player)) {
 				int count22 = list2.size();
 				if(count22 > 0) {
 					for(int k = 0; k < count22; k++) {
 						const auto filename = Utils::GetFileName(list2[k]).substr(0, Utils::GetFileName(list2[k]).size() - 2);
 						if(filename == Utils::GetFileName(list[soundno]))
-							PlayZipChants(chant, list2[k], gSoundManager->soundcount);
+							PlayZipChants(chant, list2[k], gSoundManager->soundcount, player);
 					}
 				}
 				return true;
 			}
 		} else if(_count2 > 0) {
 			int soundno = (std::uniform_int_distribution<>(0, _count2 - 1))(rnd);
-			if(PlayChants(chant, _list[soundno], gSoundManager->soundcount)) {
+			if(PlayChants(chant, _list[soundno], gSoundManager->soundcount, player)) {
 				int _count22 = _list2.size();
 				if(_count22 > 0) {
 					for(int k = 0; k < count2; k++) {
 						const auto filename = Utils::GetFileName(_list2[k]).substr(0, Utils::GetFileName(_list2[k]).size() - 2);
 						if(filename == Utils::GetFileName(_list[soundno]))
-							PlayChants(chant, _list2[k], gSoundManager->soundcount);
+							PlayChants(chant, _list2[k], gSoundManager->soundcount, player);
 					}
 				}
 				return true;
