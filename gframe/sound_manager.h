@@ -89,6 +89,7 @@ public:
 		PENDULUM,
         PSCALE,
 		OPPCOUNTER,
+		SELFCOUNTER,
 		RELEASE,
 		BATTLEPHASE,
         TURNEND,
@@ -150,8 +151,8 @@ private:
 	std::map<uint32_t, std::string> ChantsBGMList;
 	std::map<std::pair<CHANT, uint32_t>, std::string> ChantsList[CHARACTER_VOICE + CHARACTER_STORY_ONLY];
 	std::map<std::pair<CHANT, uint32_t>, std::string> ChantsList2[CHARACTER_VOICE + CHARACTER_STORY_ONLY];
-	std::vector<std::string> ChantSPList[19][CHARACTER_VOICE + CHARACTER_STORY_ONLY];
-	std::vector<std::string> ChantSPList2[19][CHARACTER_VOICE + CHARACTER_STORY_ONLY];
+	std::vector<std::string> ChantSPList[20][CHARACTER_VOICE + CHARACTER_STORY_ONLY];
+	std::vector<std::string> ChantSPList2[20][CHARACTER_VOICE + CHARACTER_STORY_ONLY];
 	std::string bgm_now = "";
 	////////kdiy////
 	int bgm_scene{ -1 };

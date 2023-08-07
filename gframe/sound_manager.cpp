@@ -249,6 +249,7 @@ void SoundManager::RefreshChantsList() {
 		{CHANT::PENDULUM,  EPRO_TEXT("pendulum"_sv)},
 		{CHANT::PSCALE,  EPRO_TEXT("activate/pendulum"_sv)},
 		{CHANT::OPPCOUNTER,  EPRO_TEXT("oppcounter"_sv)},
+		{CHANT::SELFCOUNTER,  EPRO_TEXT("selfcounter"_sv)},
 		{CHANT::RELEASE,  EPRO_TEXT("release"_sv)},
 		{CHANT::BATTLEPHASE,  EPRO_TEXT("battlephase"_sv)},
 		{CHANT::TURNEND,  EPRO_TEXT("turnend"_sv)},
@@ -312,13 +313,13 @@ void SoundManager::RefreshChantsList() {
 	ChantsBGMList.clear();
 	for(auto list : ChantsList)
 		list.clear();
-	for(int i = 0; i < 19; i++) {
+	for(int i = 0; i < 20; i++) {
 		for(int x = 0; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++)
 			ChantSPList[i][x].clear();
 	}
     for(auto list : ChantsList2)
 		list.clear();
-	for(int i = 0; i < 19; i++) {
+	for(int i = 0; i < 20; i++) {
 		for(int x = 0; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++)
 			ChantSPList2[i][x].clear();
 	}
@@ -437,11 +438,12 @@ void SoundManager::RefreshChantsList() {
 		if(chantType.first == CHANT::PENDULUM) i = 11;
 		if(chantType.first == CHANT::PSCALE) i = 12;
 		if(chantType.first == CHANT::OPPCOUNTER) i = 13;
-		if(chantType.first == CHANT::RELEASE) i = 14;
-		if(chantType.first == CHANT::BATTLEPHASE) i = 15;
-		if(chantType.first == CHANT::TURNEND) i = 16;
-		if(chantType.first == CHANT::WIN) i = 17;
-		if(chantType.first == CHANT::LOSE) i = 18;
+		if(chantType.first == CHANT::SELFCOUNTER) i = 14;
+		if(chantType.first == CHANT::RELEASE) i = 15;
+		if(chantType.first == CHANT::BATTLEPHASE) i = 16;
+		if(chantType.first == CHANT::TURNEND) i = 17;
+		if(chantType.first == CHANT::WIN) i = 18;
+		if(chantType.first == CHANT::LOSE) i = 19;
 		if(i == -1) continue;
 		for(int x = 0; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
 			if(chantType.first == CHANT::SUMMON) {
@@ -1019,11 +1021,12 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 	if(chant == CHANT::PENDULUM) i = 11;
 	if(chant == CHANT::PSCALE) i = 12;
 	if(chant == CHANT::OPPCOUNTER) i = 13;
-	if(chant == CHANT::RELEASE) i = 14;
-	if(chant == CHANT::BATTLEPHASE) i = 15;
-	if(chant == CHANT::TURNEND) i = 16;
-	if(chant == CHANT::WIN) i = 17;
-	if(chant == CHANT::LOSE) i = 18;
+	if(chant == CHANT::SELFCOUNTER) i = 14;
+	if(chant == CHANT::RELEASE) i = 15;
+	if(chant == CHANT::BATTLEPHASE) i = 16;
+	if(chant == CHANT::TURNEND) i = 17;
+	if(chant == CHANT::WIN) i = 18;
+	if(chant == CHANT::LOSE) i = 19;
 	if(i == -1) return false;
 	if(code == 0) {
         //not play again for same chant

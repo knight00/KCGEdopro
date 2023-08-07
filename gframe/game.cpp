@@ -1403,25 +1403,30 @@ void Game::Initialize() {
     btnCharacterSelect_replay->setEnabled(false);
     defaultStrings.emplace_back(btnCharacterSelect_replay, 8025);
 #endif
-    wCharacterReplay = env->addWindow(Scale(220, 100, 360, 310), false, gDataManager->GetSysString(8015).data());
+    wCharacterReplay = env->addWindow(Scale(220, 100, 460, 330), false, gDataManager->GetSysString(8015).data());
 	defaultStrings.emplace_back(wCharacterReplay, 8015);
     wCharacterReplay->getCloseButton()->setVisible(false);
 	wCharacterReplay->setVisible(false);
-    btnCharacterSelect_replayclose = env->addButton(Scale(70, 45, 120, 70), wCharacterReplay, BUTTON_CHARACTEROK_REPLAY, gDataManager->GetSysString(1211).data());
+    btnCharacterSelect_replayclose = env->addButton(Scale(170, 45, 220, 70), wCharacterReplay, BUTTON_CHARACTEROK_REPLAY, gDataManager->GetSysString(1211).data());
 	defaultStrings.emplace_back(btnCharacterSelect_replayclose, 1211);
     for(int i = 0; i < 6; ++i) {
-		if (i==0)
-		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON);
-		else if (i==1)
-		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON + 1);
-		else if (i==2)
-		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON + 2);
-		else if (i==3)
-		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON + 3);
-		else if (i==4)
-		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON + 4);
-		else if (i==5)
-		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON + 5);
+        ebCharacter2[i] = AddComboBox(env, Scale(65, 45 + i * 25, 165, 65 + i * 25), wCharacterReplay, COMBOBOX2_CHARACTER + i);
+        ebCharacter2[i]->clear();
+#ifdef VIP
+        ebCharacter2[i]->addItem(gDataManager->GetSysString(8047).data());
+        defaultStrings.emplace_back(ebCharacter2[i], 8047);
+#else
+        ebCharacter2[i]->addItem(gDataManager->GetSysString(8048).data());
+        defaultStrings.emplace_back(ebCharacter2[i], 8048);
+        ebCharacter2[i]->setEnabled(false);
+#endif
+        for (auto j = 9000; j <= 9000 + CHARACTER_VOICE - 2; ++j) {
+            ebCharacter2[i]->addItem(gDataManager->GetSysString(j).data());
+            defaultStrings.emplace_back(ebCharacter2[i], j);
+        }
+        ebCharacter2[i]->setSelected(0);
+        ebCharacter2[i]->setMaxSelectionRows(10);
+		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON + i);
 		icon2[i]->setDrawBorder(false);
 		icon2[i]->setImageSize(Scale(0, 0, 20, 20).getSize());
 		icon2[i]->setImage(0);
@@ -2161,18 +2166,7 @@ void Game::PopulateGameHostWindows() {
 		chkHostPrepReady[i] = env->addCheckBox(false, Scale(250, 65 + i * 25, 270, 85 + i * 25), wHostPrepare, CHECKBOX_HP_READY, L"");
 		chkHostPrepReady[i]->setEnabled(false);
 		///////kdiy/////////
-		if (i==0)
-		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON);
-		else if (i==1)
-		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON + 1);
-		else if (i==2)
-		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON + 2);
-		else if (i==3)
-		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON + 3);
-		else if (i==4)
-		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON + 4);
-		else if (i==5)
-		    icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON + 5);
+		icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON + i);
 		icon[i]->setDrawBorder(false);
 		icon[i]->setImageSize(Scale(0, 0, 20, 20).getSize());
 		icon[i]->setImage(0);
@@ -5268,7 +5262,7 @@ void Game::OnResize() {
     ////kdiy////////////
     wAvatar[0]->setRelativePosition(ResizeWin(297, 10, 427, 210));
     wAvatar[1]->setRelativePosition(ResizeWin(890, 10, 1020, 210));
-    wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 360, 310));
+    wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 460, 330));
     wHead[0]->setRelativePosition(ResizeWin(365, 5, 417, 57));
 	wHead[1]->setRelativePosition(ResizeWin(900, 5, 952, 57));
     wBody->setRelativePosition(ResizeWin(370, 175, 570, 475));
