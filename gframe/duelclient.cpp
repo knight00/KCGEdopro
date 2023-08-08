@@ -1712,8 +1712,6 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto ppzone = BufferIO::Read<bool>(pbuf);
 		const auto cpzone = BufferIO::Read<bool>(pbuf);
 		const auto firstone = BufferIO::Read<bool>(pbuf);
-		const auto isorica = BufferIO::Read<bool>(pbuf);
-		const auto issanct = BufferIO::Read<bool>(pbuf);
         auto cd = gDataManager->GetCardData(code);
         uint32_t code2 = 0;
         if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
@@ -1892,7 +1890,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 					if(pcard->type & TYPE_COUNTER) extra |= 0x200;
 				}
 				if(pcard->type & TYPE_MONSTER) extra |= 0x800;
-				if(previous.controler == info.controler && previous.location == info.location & (previous.position & POS_FACEDOWN) & (info.position & POS_FACEUP)) extra |= 0x400;
+				if(mainGame->LocalPlayer(previous.controler) == mainGame->LocalPlayer(info.controler) && previous.location == info.location & (previous.position & POS_FACEDOWN) & (info.position & POS_FACEUP)) extra |= 0x400;
                 if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && cpzone)
                     PlayChantcode(SoundManager::CHANT::PENDULUM, code, code2, cc, extra);
 			    else
@@ -1907,8 +1905,8 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto cc = mainGame->dField.chains[ct - 1].controler;
 		const auto pc = mainGame->dField.chains[ct - 2].controler;
 		if(cc != pc) {
-            PlayChant(SoundManager::CHANT::SELFCOUNTER, nullptr, mainGame->LocalPlayer(cc));
-            PlayChant(SoundManager::CHANT::OPPCOUNTER, nullptr, mainGame->LocalPlayer(pc));
+            PlayChant(SoundManager::CHANT::SELFCOUNTER, nullptr, cc);
+            PlayChant(SoundManager::CHANT::OPPCOUNTER, nullptr, pc);
         }
 		break;
 	}
@@ -3946,6 +3944,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		current.controler = mainGame->LocalPlayer(current.controler);
 		const auto reason = BufferIO::Read<uint32_t>(pbuf);
         //////kdiy///
+		const auto rp = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		const auto ppzone = BufferIO::Read<bool>(pbuf);
 		const auto cpzone = BufferIO::Read<bool>(pbuf);
 		const auto firstone = BufferIO::Read<bool>(pbuf);
