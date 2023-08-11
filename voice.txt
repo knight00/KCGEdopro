@@ -5,7 +5,7 @@ V0101_02  startup
 V0101_03  nextturn
 V0101_04  draw/advantage
 V0101_05  draw/disadvantage
-V0101_06  oppcounter
+V0101_06  selfcounter
 V0101_07_00_00_0  activate/fromhand
 V0101_07_01_00_0   activate/normalspell
 V0101_07_02_00_0   activate/quickspell
@@ -59,7 +59,7 @@ V0101_33                    startup
 V0101_34                    bored
 V0101_35                    startup
 V0101_36                    DELETE
-V0101_37                    bored
+V0101_37                    summon/卡号 (卡号不要"0"在前面)
 V0101_38                    DELETE
 V0101_41                    startup
 V0101_42                    startup

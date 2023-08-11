@@ -897,6 +897,29 @@ void Game::Initialize() {
 	imgCard->setImage(imageManager.tCover[0]);
 	imgCard->setScaleImage(true);
 	imgCard->setUseAlphaChannel(true);
+	
+	///////kdiy///////
+	cardbutton[0] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(10 + CARD_IMG_WIDTH - 65, 9 + CARD_IMG_HEIGHT - 15, 10 + CARD_IMG_WIDTH - 50, 9 + CARD_IMG_HEIGHT), wCardImg, BUTTON_CARD_CHANT0));
+	cardbutton[0]->setImage(mainGame->imageManager.cardchant0);
+	cardbutton[0]->setImageSize(Scale(0, 0, 15, 15).getSize());
+	cardbutton[0]->setDrawBorder(false);
+	cardbutton[0]->setToolTipText(gDataManager->GetSysString(8010).data());
+	defaultStrings.emplace_back(cardbutton[0], 8010);
+
+	cardbutton[1] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(10 + CARD_IMG_WIDTH - 40, 9 + CARD_IMG_HEIGHT - 15, 10 + CARD_IMG_WIDTH - 10, 9 + CARD_IMG_HEIGHT), wCardImg, BUTTON_CARD_CHANT1));
+	cardbutton[1]->setImage(mainGame->imageManager.cardchant1);
+	cardbutton[1]->setImageSize(Scale(0, 0, 15, 15).getSize());
+	cardbutton[1]->setDrawBorder(false);
+	cardbutton[1]->setToolTipText(gDataManager->GetSysString(8012).data());
+	defaultStrings.emplace_back(cardbutton[1], 8012);
+
+	cardbutton[2] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(10 + CARD_IMG_WIDTH - 15, 9 + CARD_IMG_HEIGHT - 15, 10 + CARD_IMG_WIDTH, 9 + CARD_IMG_HEIGHT), wCardImg, BUTTON_CARD_CHANT2));
+	cardbutton[2]->setImage(mainGame->imageManager.cardchant2);
+	cardbutton[2]->setImageSize(Scale(0, 0, 15, 15).getSize());
+	cardbutton[2]->setDrawBorder(false);
+	cardbutton[2]->setToolTipText(gDataManager->GetSysString(8014).data());
+	defaultStrings.emplace_back(cardbutton[2], 8014);
+	///////kdiy///////
 	//phase
 	wPhase = env->addStaticText(L"", Scale(480, 310, 855, 330));
 	wPhase->setVisible(false);
@@ -1182,11 +1205,23 @@ void Game::Initialize() {
 	btnShuffleDeck = AlignElementWithParent(env->addButton(Scale(5, 95, 75, 120), wDeckEdit, BUTTON_SHUFFLE_DECK, gDataManager->GetSysString(1307).data()));
 	defaultStrings.emplace_back(btnShuffleDeck, 1307);
 	btnSortDeck = AlignElementWithParent(env->addButton(Scale(80, 95, 145, 120), wDeckEdit, BUTTON_SORT_DECK, gDataManager->GetSysString(1305).data()));
-	defaultStrings.emplace_back(btnSortDeck, 1305);
+	defaultStrings.emplace_back(btnSortDeck, 1305); cardbutton
 	btnClearDeck = AlignElementWithParent(env->addButton(Scale(155, 95, 220, 120), wDeckEdit, BUTTON_CLEAR_DECK, gDataManager->GetSysString(1304).data()));
 	defaultStrings.emplace_back(btnClearDeck, 1304);
 	btnDeleteDeck = AlignElementWithParent(env->addButton(Scale(225, 95, 290, 120), wDeckEdit, BUTTON_DELETE_DECK, gDataManager->GetSysString(1308).data()));
 	defaultStrings.emplace_back(btnDeleteDeck, 1308);
+	//////kdiy//////
+	ebCharacterDeck = AlignElementWithParent(AddComboBox(env, Scale(295, 95, 395, 115), wDeckEdit, COMBOBOX_CHARACTER));
+	ebCharacterDeck->clear();
+	ebCharacterDeck->addItem(gDataManager->GetSysString(8047).data());
+    defaultStrings.emplace_back(ebCharacterDeck, 8047);
+	 for (auto j = 9000; j <= 9000 + CHARACTER_VOICE - 2; ++j) {
+        ebCharacterDeck->addItem(gDataManager->GetSysString(j).data());
+        defaultStrings.emplace_back(ebCharacterDeck, j);
+    }
+    ebCharacterDeck->setSelected(0);
+    ebCharacterDeck->setMaxSelectionRows(10);
+	//////kdiy//////
 	btnSideOK = AlignElementWithParent(env->addButton(Scale(510, 40, 820, 80), nullptr, BUTTON_SIDE_OK, gDataManager->GetSysString(1334).data()));
 	defaultStrings.emplace_back(btnSideOK, 1334);
 	btnSideOK->setVisible(false);

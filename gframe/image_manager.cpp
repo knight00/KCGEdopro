@@ -369,7 +369,7 @@ bool ImageManager::Initial() {
 	// ASSIGN_DEFAULT(tSettings);
     QQ = driver->getTexture(EPRO_TEXT("./textures/QQ.jpg"));
     ASSERT_TEXTURE_LOADED(QQ, "QQ");
-    icon[0] = driver->getTexture(EPRO_TEXT("./textures/character/player/mini_icon.png"));
+    icon[0] = loadTextureAnySize(EPRO_TEXT("character/player/mini_icon"_sv));
 	character[0] = driver->getTexture(0);
 	characterd[0] = driver->getTexture(0);
 	for(uint8_t i = 0; i < 6; i++) {
@@ -395,8 +395,11 @@ bool ImageManager::Initial() {
 	    characterd[playno] = driver->getTexture(0);
 	}
 #endif
-    tcharacterselect = driver->getTexture(EPRO_TEXT("./textures/character/left.png"));
-	tcharacterselect2 = driver->getTexture(EPRO_TEXT("./textures/character/right.png"));
+    cardchant0 = loadTextureFixedSize(EPRO_TEXT("summon_chant"_sv), 10, 10);
+    cardchant1 = loadTextureFixedSize(EPRO_TEXT("attack_chant"_sv), 10, 10);
+    cardchant2 = loadTextureFixedSize(EPRO_TEXT("activate_chant"_sv), 10, 10);
+    tcharacterselect = loadTextureFixedSize(EPRO_TEXT("character/left"_sv), 25, 25);
+	tcharacterselect2 = loadTextureFixedSize(EPRO_TEXT("character/right"_sv), 25, 25);
     GetRandomImage(tCover[0], TEXTURE_COVERS, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
     GetRandomImage(tCover[1], TEXTURE_COVERO, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
     if (!tCover[0])
@@ -707,8 +710,7 @@ bool ImageManager::Initial() {
 }
 //////kdiy//////
 void ImageManager::SetAvatar(int player, const wchar_t *avatar) {
-	auto string = EPRO_TEXT("./textures/character/custom/") + Utils::ToPathString(avatar) + EPRO_TEXT(".png");
-    auto* tmp = driver->getTexture(string.c_str());
+    auto* tmp = loadTextureFixedSize(epro::format(EPRO_TEXT("character/custom/{}"_sv), avatar), 135, 198);
     if(tmp != nullptr) {
         if (scharacter[player][0])
             driver->removeTexture(scharacter[player][0]);
@@ -916,12 +918,12 @@ void ImageManager::GetRandomImagef(int width, int height) {
 	}
 }
 void ImageManager::RefreshKCGImage() {
-	const wchar_t* textcharacter[] = {L"muto",L"atem",L"kaiba",L"joey",L"marik",L"dartz",L"bakura",L"aigami",L"judai",L"manjome",L"kaisa",L"phoenix",L"john",L"yubel",L"yusei",L"jack",L"arki",L"crow",L"kiryu",L"paradox",L"zone",L"yuma",L"shark",L"kaito",L"iv",L"DonThousand",L"yuya",L"declan",L"shay",L"playmaker",L"soulburner",L"blueangel"};
+	const wchar_t *textcharacter[] = {L"muto",L"atem",L"kaiba",L"joey",L"marik",L"dartz",L"bakura",L"aigami",L"judai",L"manjome",L"kaisa",L"phoenix",L"john",L"yubel",L"yusei",L"jack",L"arki",L"crow",L"kiryu",L"paradox",L"zone",L"yuma",L"shark",L"kaito",L"iv",L"DonThousand",L"yuya",L"declan",L"shay",L"playmaker",L"soulburner",L"blueangel"};
 	int imgcharacter[] = {TEXTURE_MUTO,TEXTURE_ATEM,TEXTURE_KAIBA,TEXTURE_JOEY,TEXTURE_MARIK,TEXTURE_DARTZ,TEXTURE_BAKURA,TEXTURE_AIGAMI,TEXTURE_JUDAI,TEXTURE_MANJOME,TEXTURE_KAISA,TEXTURE_PHORNIX,TEXTURE_JOHN,TEXTURE_YUBEL,TEXTURE_YUSEI,TEXTURE_JACK,TEXTURE_ARKI,TEXTURE_CROW,TEXTURE_KIRYU,TEXTURE_PARADOX,TEXTURE_ZONE,TEXTURE_YUMA,TEXTURE_SHARK,TEXTURE_KAITO,TEXTURE_IV,TEXTURE_DONTHOUSAND,TEXTURE_YUYA,TEXTURE_DECLAN,TEXTURE_SHAY,TEXTURE_PLAYMAKER,TEXTURE_SOULBURNER,TEXTURE_BLUEANGEL};
     //if(!avatar_only) {
     for(uint8_t playno = 1; playno < CHARACTER_VOICE; playno++) {
-        icon[playno] = driver->getTexture((EPRO_TEXT("./textures/character/") + Utils::ToPathString(textcharacter[playno-1]) + EPRO_TEXT("/mini_icon.png")).c_str());
-        GetRandomImage(character[playno], imgcharacter[playno-1], true);
+        icon[playno] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/mini_icon"_sv), textcharacter[playno-1]));
+        GetRandomImage(character[playno], imgcharacter[playno-1], 135, 198, true);
         if(!character[playno])
             character[playno] = driver->getTexture(0);
         GetRandomImage(characterd[playno], imgcharacter[playno-1] + CHARACTER_VOICE - 1, true);
