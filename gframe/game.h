@@ -625,7 +625,7 @@ public:
     irr::gui::IGUIButton* btnCharacterSelect_replayclose;
 	irr::gui::IGUIWindow* wAvatar[2];
 	irr::gui::CGUIImageButton* avatarbutton[2];
-	irr::gui::CGUIImageButton* cardbutton[3];
+	irr::gui::IGUIButton* cardbutton[3];
 	///////kdiy//////////
 
 	//deck options

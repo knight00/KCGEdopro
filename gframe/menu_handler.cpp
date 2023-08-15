@@ -1783,6 +1783,36 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			///////kdiy//////////
+            case COMBOBOX_CHARACTER_DECK: {
+				bool filechk = false;
+				if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
+					filechk = true;
+				if(!filechk) {
+					gGameConfig->enablessound = false;
+					gGameConfig->enablessound = false;
+                    gGameConfig->enablecsound = false;
+                    gGameConfig->enableasound = false;
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
+                    mainGame->PopupElement(mainGame->wACMessage, 20);
+					for(int i = 0; i < 6; ++i) {
+						mainGame->ebCharacter[i]->setSelected(0);
+					    mainGame->ebCharacter[i]->setEnabled(false);
+					}
+					mainGame->ebCharacterDeck->setSelected(0);
+					mainGame->ebCharacterDeck->setEnabled(false);
+					break;
+				}
+                int sel = mainGame->ebCharacterDeck->getSelected();
+                if(sel > 0) {
+                    mainGame->choose_player = 0;
+                    gSoundManager->character[mainGame->choose_player] = sel;
+                    int player = gSoundManager->character[mainGame->choose_player];
+                    mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                    mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                    gSoundManager->PlayChant(SoundManager::CHANT::STARTUP, 0, 0, mainGame->choose_player);
+				}
+				break;
+			}
             case COMBOBOX_CHARACTER: {
 #ifndef VIP
 				    break;
@@ -1801,6 +1831,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 						mainGame->ebCharacter[i]->setSelected(0);
 					    mainGame->ebCharacter[i]->setEnabled(false);
 					}
+					mainGame->ebCharacterDeck->setSelected(0);
+					mainGame->ebCharacterDeck->setEnabled(false);
 					break;
 				}
                 int sel = mainGame->ebCharacter[0]->getSelected();

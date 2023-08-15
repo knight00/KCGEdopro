@@ -36,7 +36,7 @@
 // #include <opencv2/highgui.hpp>
 // #include <stdio.h>
 // #include <iostream>
-//////kdiy///////
+//////ktest///////
 
 #define DEFAULT_DUEL_RULE 5
 namespace ygo {
@@ -1662,21 +1662,18 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 			avataricon1 = mainGame->dInfo.current_player[0] + mainGame->dInfo.team1;
 			avataricon2 = mainGame->dInfo.current_player[1];
 		}
-        // mainGame->imageManager.RefreshKCGImage(true, gSoundManager->character[avataricon1], gSoundManager->character[avataricon2]);
-        // mainGame->imageManager.scharacter[avataricon1][0] = mainGame->imageManager.character[gSoundManager->character[avataricon1]];
-        // mainGame->imageManager.scharacter[avataricon2][0] = mainGame->imageManager.character[gSoundManager->character[avataricon2]];
         mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[avataricon1][0]);
 		mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[avataricon2][0]);
         if(!mainGame->dInfo.isSingleMode && !mainGame->mode->isMode) {
 #ifdef VIP
             if(gSoundManager->character[avataricon1] > 0)
-                mainGame->wAvatar[player]->setVisible(true);
+                mainGame->wAvatar[0]->setVisible(true);
             else
-                mainGame->wAvatar[player]->setVisible(false);
+                mainGame->wAvatar[0]->setVisible(false);
             if(gSoundManager->character[avataricon2] > 0)
-                mainGame->wAvatar[1-player]->setVisible(true);
+                mainGame->wAvatar[1]->setVisible(true);
             else
-                mainGame->wAvatar[1-player]->setVisible(false);
+                mainGame->wAvatar[1]->setVisible(false);
 #endif
         }
         if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {

@@ -395,9 +395,12 @@ bool ImageManager::Initial() {
 	    characterd[playno] = driver->getTexture(0);
 	}
 #endif
-    cardchant0 = loadTextureFixedSize(EPRO_TEXT("summon_chant"_sv), 10, 10);
-    cardchant1 = loadTextureFixedSize(EPRO_TEXT("attack_chant"_sv), 10, 10);
-    cardchant2 = loadTextureFixedSize(EPRO_TEXT("activate_chant"_sv), 10, 10);
+    cardchant0 = loadTextureFixedSize(EPRO_TEXT("summon_chant"_sv), 15, 15);
+    cardchant1 = loadTextureFixedSize(EPRO_TEXT("attack_chant"_sv), 15, 15);
+    cardchant2 = loadTextureFixedSize(EPRO_TEXT("activate_chant"_sv), 15, 15);
+    cardchant00 = loadTextureFixedSize(EPRO_TEXT("summon_chant0"_sv), 15, 15);
+    cardchant01 = loadTextureFixedSize(EPRO_TEXT("attack_chant0"_sv), 15, 15);
+    cardchant02 = loadTextureFixedSize(EPRO_TEXT("activate_chant0"_sv), 15, 15);
     tcharacterselect = loadTextureFixedSize(EPRO_TEXT("character/left"_sv), 25, 25);
 	tcharacterselect2 = loadTextureFixedSize(EPRO_TEXT("character/right"_sv), 25, 25);
     GetRandomImage(tCover[0], TEXTURE_COVERS, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
@@ -710,7 +713,7 @@ bool ImageManager::Initial() {
 }
 //////kdiy//////
 void ImageManager::SetAvatar(int player, const wchar_t *avatar) {
-    auto* tmp = loadTextureFixedSize(epro::format(EPRO_TEXT("character/custom/{}"_sv), avatar), 135, 198);
+    auto* tmp = loadTextureAnySize(epro::format(EPRO_TEXT("character/custom/{}"_sv), avatar));
     if(tmp != nullptr) {
         if (scharacter[player][0])
             driver->removeTexture(scharacter[player][0]);
@@ -923,7 +926,7 @@ void ImageManager::RefreshKCGImage() {
     //if(!avatar_only) {
     for(uint8_t playno = 1; playno < CHARACTER_VOICE; playno++) {
         icon[playno] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/mini_icon"_sv), textcharacter[playno-1]));
-        GetRandomImage(character[playno], imgcharacter[playno-1], 135, 198, true);
+        GetRandomImage(character[playno], imgcharacter[playno-1], true);
         if(!character[playno])
             character[playno] = driver->getTexture(0);
         GetRandomImage(characterd[playno], imgcharacter[playno-1] + CHARACTER_VOICE - 1, true);
@@ -934,25 +937,6 @@ void ImageManager::RefreshKCGImage() {
                 characterd[playno] = character[playno];
         }
     }
-    //} 
-    // else if(gGameConfig->randomtexture && avataricon1 > 0 && avataricon2 > 0) {
-    //     for(int i = 1; i < 3; i++) {
-    //         int playno = avataricon1;
-    //         if(i == 2) playno = avataricon2;
-    //         GetRandomImage(character[playno], imgcharacter[playno-1], true);
-    //         saved_image_id[imgcharacter[playno-1]] = -1;
-    //         if(!character[playno])
-    //             character[playno] = driver->getTexture(0);
-    //         GetRandomImage(characterd[playno], imgcharacter[playno-1] + CHARACTER_VOICE - 1, true);
-    //         saved_image_id[imgcharacter[playno-1] + CHARACTER_VOICE - 1] = -1;
-    //         if(!characterd[playno]) {
-    //             if(!character[playno])
-    //                 characterd[playno] = driver->getTexture(0);
-    //             else
-    //                 characterd[playno] = character[playno];
-    //         }
-    //     }
-    // }
 }
 //////kdiy//////
 void ImageManager::replaceTextureLoadingFixedSize(irr::video::ITexture*& texture, irr::video::ITexture* fallback, epro::path_stringview texture_name, int width, int height) {

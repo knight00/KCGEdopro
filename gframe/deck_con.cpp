@@ -14,6 +14,9 @@
 #include "duelclient.h"
 #include "single_mode.h"
 #include "client_card.h"
+/////kdiy/////
+#include "sound_manager.h"
+/////kdiy/////
 
 namespace ygo {
 
@@ -737,6 +740,31 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 		bool isroot = mainGame->env->getRootGUIElement()->getElementFromPoint(mouse_pos) == mainGame->env->getRootGUIElement();
 		const bool forceInput = gGameConfig->ignoreDeckContents || event.MouseInput.Shift;
 		switch(event.MouseInput.Event) {
+		/////kdiy/////
+		case irr::EMIE_LMOUSE_DOUBLE_CLICK: {
+			if(!hovered_code)
+				break;
+			auto pointer = gDataManager->GetCardData(hovered_code);
+			if(!pointer)
+				break;
+			uint32_t code2 = pointer->alias ? pointer->alias : 0;
+			uint16_t extra = 0;
+			uint32_t type = pointer->type;
+			if(type & TYPE_PENDULUM) extra |= 0x20;
+            if(type & TYPE_LINK) extra |= 0x8;
+            if(type & TYPE_XYZ) extra |= 0x4;
+            if(type & TYPE_SYNCHRO) extra |= 0x2;
+            if(type & TYPE_FUSION) extra |= 0x1;
+            if(type & TYPE_RITUAL) extra |= 0x10;
+			if(mainGame->cardbutton[0]->isPressed())
+				gSoundManager->PlayChant(SoundManager::CHANT::SUMMON, hovered_code, code2, 0, extra);
+			else if(mainGame->cardbutton[1]->isPressed())
+				gSoundManager->PlayChant(SoundManager::CHANT::ATTACK, hovered_code, code2, 0, extra);
+			else if(mainGame->cardbutton[2]->isPressed())
+				gSoundManager->PlayChant(SoundManager::CHANT::ACTIVATE, hovered_code, code2, 0, extra);
+			break;
+		}
+		/////kdiy/////
 		case irr::EMIE_LMOUSE_PRESSED_DOWN: {
 			if(is_draging)
 				break;

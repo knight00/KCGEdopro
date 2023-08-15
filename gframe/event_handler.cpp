@@ -100,6 +100,24 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				gSoundManager->PlayChant(SoundManager::CHANT::BORED, 0, 0, character);
 				break;
 			}
+			case BUTTON_AVATAR_CARD0: {
+				mainGame->cardbutton[0]->setImage(mainGame->imageManager.cardchant00);
+				mainGame->cardbutton[1]->setImage(mainGame->imageManager.cardchant01);
+				mainGame->cardbutton[2]->setImage(mainGame->imageManager.cardchant02);
+				break;
+			}
+			case BUTTON_AVATAR_CARD1: {
+				mainGame->cardbutton[0]->setImage(mainGame->imageManager.cardchant00);
+				mainGame->cardbutton[1]->setImage(mainGame->imageManager.cardchant1);
+				mainGame->cardbutton[2]->setImage(mainGame->imageManager.cardchant02);
+				break;
+			}
+			case BUTTON_AVATAR_CARD2: {
+				mainGame->cardbutton[0]->setImage(mainGame->imageManager.cardchant00);
+				mainGame->cardbutton[1]->setImage(mainGame->imageManager.cardchant01);
+				mainGame->cardbutton[2]->setImage(mainGame->imageManager.cardchant2);
+				break;
+			}
 			case BUTTON_ENTERTAUNMENT_PLOAT_CLOSE: { //story start after click ok
 				mainGame->mode->NextPlot(); //ploatstep 0->1
 				break;

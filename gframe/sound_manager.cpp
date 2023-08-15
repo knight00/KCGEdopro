@@ -926,7 +926,7 @@ bool SoundManager::PlayZipChants(CHANT chant, std::string file, std::vector<std:
 	for(auto& archive : Utils::archives) {
 		if(Utils::ToUTF8IfNeeded({ archive.archive->getArchiveName().c_str(), archive.archive->getArchiveName().size() }).find("/expansions/kcgchant.zip") == std::string::npos)
 			continue;
-		std::lock_guard<epro::mutex> guard(*archive.mutex);
+		//std::lock_guard<epro::mutex> guard(*archive.mutex);
 		for(auto& index : Utils::FindFiles(archive.archive, Utils::ToPathString(file), mixer->GetSupportedSoundExtensions(), 1)) {
 			auto reader = archive.archive->createAndOpenFile(index);
 			if(reader == nullptr)

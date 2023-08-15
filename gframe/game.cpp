@@ -899,25 +899,25 @@ void Game::Initialize() {
 	imgCard->setUseAlphaChannel(true);
 	
 	///////kdiy///////
-	cardbutton[0] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(10 + CARD_IMG_WIDTH - 65, 9 + CARD_IMG_HEIGHT - 15, 10 + CARD_IMG_WIDTH - 50, 9 + CARD_IMG_HEIGHT), wCardImg, BUTTON_CARD_CHANT0));
-	cardbutton[0]->setImage(mainGame->imageManager.cardchant0);
-	cardbutton[0]->setImageSize(Scale(0, 0, 15, 15).getSize());
+	cardbutton[0] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(10, 9 + CARD_IMG_HEIGHT - 20, 30, 9 + CARD_IMG_HEIGHT), wCardImg, BUTTON_AVATAR_CARD0));
+	cardbutton[0]->setImage(imageManager.cardchant00);
 	cardbutton[0]->setDrawBorder(false);
 	cardbutton[0]->setToolTipText(gDataManager->GetSysString(8010).data());
+	cardbutton[0]->setPressed();
 	defaultStrings.emplace_back(cardbutton[0], 8010);
 
-	cardbutton[1] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(10 + CARD_IMG_WIDTH - 40, 9 + CARD_IMG_HEIGHT - 15, 10 + CARD_IMG_WIDTH - 10, 9 + CARD_IMG_HEIGHT), wCardImg, BUTTON_CARD_CHANT1));
-	cardbutton[1]->setImage(mainGame->imageManager.cardchant1);
-	cardbutton[1]->setImageSize(Scale(0, 0, 15, 15).getSize());
+	cardbutton[1] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(35, 9 + CARD_IMG_HEIGHT - 20, 55, 9 + CARD_IMG_HEIGHT), wCardImg, BUTTON_AVATAR_CARD1));
+	cardbutton[1]->setImage(imageManager.cardchant1);
 	cardbutton[1]->setDrawBorder(false);
 	cardbutton[1]->setToolTipText(gDataManager->GetSysString(8012).data());
+	cardbutton[1]->setPressed(false);
 	defaultStrings.emplace_back(cardbutton[1], 8012);
 
-	cardbutton[2] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(10 + CARD_IMG_WIDTH - 15, 9 + CARD_IMG_HEIGHT - 15, 10 + CARD_IMG_WIDTH, 9 + CARD_IMG_HEIGHT), wCardImg, BUTTON_CARD_CHANT2));
-	cardbutton[2]->setImage(mainGame->imageManager.cardchant2);
-	cardbutton[2]->setImageSize(Scale(0, 0, 15, 15).getSize());
+	cardbutton[2] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(60, 9 + CARD_IMG_HEIGHT - 20, 80, 9 + CARD_IMG_HEIGHT), wCardImg, BUTTON_AVATAR_CARD2));
+	cardbutton[2]->setImage(imageManager.cardchant2);
 	cardbutton[2]->setDrawBorder(false);
 	cardbutton[2]->setToolTipText(gDataManager->GetSysString(8014).data());
+	cardbutton[2]->setPressed(false);
 	defaultStrings.emplace_back(cardbutton[2], 8014);
 	///////kdiy///////
 	//phase
@@ -1205,13 +1205,13 @@ void Game::Initialize() {
 	btnShuffleDeck = AlignElementWithParent(env->addButton(Scale(5, 95, 75, 120), wDeckEdit, BUTTON_SHUFFLE_DECK, gDataManager->GetSysString(1307).data()));
 	defaultStrings.emplace_back(btnShuffleDeck, 1307);
 	btnSortDeck = AlignElementWithParent(env->addButton(Scale(80, 95, 145, 120), wDeckEdit, BUTTON_SORT_DECK, gDataManager->GetSysString(1305).data()));
-	defaultStrings.emplace_back(btnSortDeck, 1305); cardbutton
+	defaultStrings.emplace_back(btnSortDeck, 1305);
 	btnClearDeck = AlignElementWithParent(env->addButton(Scale(155, 95, 220, 120), wDeckEdit, BUTTON_CLEAR_DECK, gDataManager->GetSysString(1304).data()));
 	defaultStrings.emplace_back(btnClearDeck, 1304);
 	btnDeleteDeck = AlignElementWithParent(env->addButton(Scale(225, 95, 290, 120), wDeckEdit, BUTTON_DELETE_DECK, gDataManager->GetSysString(1308).data()));
 	defaultStrings.emplace_back(btnDeleteDeck, 1308);
 	//////kdiy//////
-	ebCharacterDeck = AlignElementWithParent(AddComboBox(env, Scale(295, 95, 395, 115), wDeckEdit, COMBOBOX_CHARACTER));
+	ebCharacterDeck = AlignElementWithParent(AddComboBox(env, Scale(295, 95, 395, 115), wDeckEdit, COMBOBOX_CHARACTER_DECK));
 	ebCharacterDeck->clear();
 	ebCharacterDeck->addItem(gDataManager->GetSysString(8047).data());
     defaultStrings.emplace_back(ebCharacterDeck, 8047);
