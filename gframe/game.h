@@ -202,6 +202,11 @@ public:
 	//void RefreshDeck(irr::gui::IGUIComboBox* cbDeck);
     void RefreshDeck();
 	void RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder=false);
+	void* ReadCardDataToCore();
+	void ReloadCBpic();
+	bool moviecheck();
+	bool chantcheck();
+	void charactselect(uint8_t player, int sel);
 	////////kdiy////////
 	void RefreshLFLists();
 	void RefreshAiDecks();
@@ -225,13 +230,7 @@ public:
 	void WaitFrameSignal(int frame, std::unique_lock<epro::mutex>& _lck);
 	void DrawThumb(const CardDataC* cp, irr::core::position2di pos, LFList* lflist, bool drag = false, const irr::core::recti* cliprect = nullptr, bool loadimage = true);
 	void DrawDeckBd();
-	////kremove////////
 	void SaveConfig();
-	//void SaveConfig(bool backup=false);
-	////kremove////////
-	/////kdiy/////
-	void* ReadCardDataToCore();
-	/////kdiy/////
 	struct RepoGui {
 		std::string path;
 		IProgressBar* progress1;
@@ -281,9 +280,6 @@ public:
 	void RefreshUICoreVersion();
 	std::wstring GetLocalizedExpectedCore();
 	std::wstring GetLocalizedCompatVersion();
-	/////kdiy//////////
-	void ReloadCBpic();
-	/////kdiy//////////
 	void ReloadCBSortType();
 	void ReloadCBCardType();
 	void ReloadCBCardType2();

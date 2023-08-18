@@ -1461,7 +1461,7 @@ void Game::Initialize() {
         }
         ebCharacter2[i]->setSelected(0);
         ebCharacter2[i]->setMaxSelectionRows(10);
-		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON_ICON + i);
+		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON2_ICON + i);
 		icon2[i]->setDrawBorder(false);
 		icon2[i]->setImageSize(Scale(0, 0, 20, 20).getSize());
 		icon2[i]->setImage(0);
@@ -2582,15 +2582,6 @@ void Game::PopulateSettingsWindow() {
 		gSettings.chkIgnoreDeckContents = env->addCheckBox(gGameConfig->ignoreDeckContents, GetNextRect(), sPanel, CHECKBOX_IGNORE_DECK_CONTENTS, gDataManager->GetSysString(12119).data());
 		menuHandler.MakeElementSynchronized(gSettings.chkIgnoreDeckContents);
 		defaultStrings.emplace_back(gSettings.chkIgnoreDeckContents, 12119);
-        ////kremove////////
-        // {
-		// 	gSettings.btnSaveSetting = env->addButton(GetCurrentRectWithXOffset(15, 160), sPanel, BUTTON_SAVE_SETTING, gDataManager->GetSysString(8024).data());
-		// 	defaultStrings.emplace_back(gSettings.btnSaveSetting, 8024);
-		// 	gSettings.btnRestoreSetting = env->addButton(GetCurrentRectWithXOffset(175, 320), sPanel, BUTTON_RESTORE_SETTING, gDataManager->GetSysString(8027).data());
-		// 	defaultStrings.emplace_back(gSettings.btnRestoreSetting, 8027);
-		// 	IncrementXorY();
-		// }
-        ////kremove////////
 	}
 
 	{
@@ -3841,10 +3832,7 @@ inline void TrySaveInt(T& dest, const irr::gui::IGUIElement* src) {
 	}
 	catch (...) {}
 }
-/////kremove/////
 void Game::SaveConfig() {
-//void Game::SaveConfig(bool backup) {
-/////kremove/////
 	gGameConfig->nickname = ebNickName->getText();
 	gGameConfig->lastallowedcards = cbRule->getSelected();
 	gGameConfig->lastDuelParam = duel_param;
@@ -3914,11 +3902,6 @@ void Game::SaveConfig() {
 		return;
 	}
 #endif
-    ////kremove////////
-	// if(backup)
-	// gGameConfig->Save(EPRO_TEXT("./config/system_backup.conf"));
-	// else
-	////kremove////////
 	gGameConfig->Save(EPRO_TEXT("./config/system.conf"));
 }
 Game::RepoGui* Game::AddGithubRepositoryStatusWindow(const GitRepo* repo) {
@@ -5556,6 +5539,62 @@ void* Game::ReadCardDataToCore() {
 		++index;
 	}
 	return cards_data;
+}
+bool Game::moviecheck() {
+	bool filechk = false;
+	for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./movies/")), { EPRO_TEXT("mp4") })) {
+		if(Utils::FileExists(EPRO_TEXT("./movies/") + file)) {
+			filechk = true;
+			break;
+		}
+	}
+	if(!filechk) {
+		gGameConfig->enableanime = false;
+		gGameConfig->enablesanime = false;
+		gGameConfig->enablecanime = false;
+		gGameConfig->enableaanime = false;
+		mainGame->stACMessage->setText(gDataManager->GetSysString(8051).data());
+		mainGame->PopupElement(mainGame->wACMessage, 20);
+	}
+	return filechk;
+}
+bool Game::chantcheck() {
+	bool filechk = false;
+	if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
+		filechk = true;
+	if(!filechk) {
+		gGameConfig->enablessound = false;
+		gGameConfig->enablessound = false;
+		gGameConfig->enablecsound = false;
+		gGameConfig->enableasound = false;
+		mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
+		mainGame->PopupElement(mainGame->wACMessage, 20);
+		for(int i = 0; i < 6; ++i) {
+			mainGame->icon[i]->setEnabled(false);
+			mainGame->icon2[i]->setEnabled(false);
+			mainGame->ebCharacter[i]->setSelected(0);
+			mainGame->ebCharacter[i]->setEnabled(false);
+			mainGame->ebCharacter2[i]->setSelected(0);
+			mainGame->ebCharacter2[i]->setEnabled(false);
+		}
+		mainGame->ebCharacterDeck->setSelected(0);
+		mainGame->ebCharacterDeck->setEnabled(false);
+	}
+	return filechk;
+}
+void Game::charactselect(uint8_t player, int sel) {
+	if(sel >= 0) {
+		mainGame->choose_player = player;
+		gSoundManager->character[mainGame->choose_player] = sel;
+		int player = gSoundManager->character[mainGame->choose_player];
+		mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+		mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+		mainGame->ebCharacter[mainGame->choose_player]->setSelected(player);
+		mainGame->ebCharacter2[mainGame->choose_player]->setSelected(player);
+		if(mainGame->choose_player == 0)
+            mainGame->ebCharacterDeck->setSelected(player);
+		gSoundManager->PlayChant(SoundManager::CHANT::STARTUP, 0, 0, mainGame->choose_player);
+	}
 }
 /////kdiy/////
 OCG_Duel Game::SetupDuel(OCG_DuelOptions opts) {

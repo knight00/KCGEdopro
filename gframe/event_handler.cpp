@@ -100,24 +100,6 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				gSoundManager->PlayChant(SoundManager::CHANT::BORED, 0, 0, character);
 				break;
 			}
-			case BUTTON_AVATAR_CARD0: {
-				mainGame->cardbutton[0]->setImage(mainGame->imageManager.cardchant00);
-				mainGame->cardbutton[1]->setImage(mainGame->imageManager.cardchant01);
-				mainGame->cardbutton[2]->setImage(mainGame->imageManager.cardchant02);
-				break;
-			}
-			case BUTTON_AVATAR_CARD1: {
-				mainGame->cardbutton[0]->setImage(mainGame->imageManager.cardchant00);
-				mainGame->cardbutton[1]->setImage(mainGame->imageManager.cardchant1);
-				mainGame->cardbutton[2]->setImage(mainGame->imageManager.cardchant02);
-				break;
-			}
-			case BUTTON_AVATAR_CARD2: {
-				mainGame->cardbutton[0]->setImage(mainGame->imageManager.cardchant00);
-				mainGame->cardbutton[1]->setImage(mainGame->imageManager.cardchant01);
-				mainGame->cardbutton[2]->setImage(mainGame->imageManager.cardchant2);
-				break;
-			}
 			case BUTTON_ENTERTAUNMENT_PLOAT_CLOSE: { //story start after click ok
 				mainGame->mode->NextPlot(); //ploatstep 0->1
 				break;
@@ -2151,22 +2133,6 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
                 Utils::SystemOpen(EPRO_TEXT("https://www.bilibili.com/video/BV1a54y127Xx?p=2"), Utils::OPEN_URL);
 				break;
 			}
-			//////kremove///////
-            // case BUTTON_SAVE_SETTING: {
-			// 	mainGame->SaveConfig(true);
-            //     mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8024)).data());
-            //     mainGame->PopupElement(mainGame->wACMessage, 20);
-			// 	break;
-			// }
-            // case BUTTON_RESTORE_SETTING: {
-            //     if(Utils::FileExists(EPRO_TEXT("./config/system_backup.conf"))) {
-            //         Utils::FileCopy(EPRO_TEXT("./config/system_backup.conf"), EPRO_TEXT("./config/system.conf"));
-            //         exit(0);
-            //     } else
-            //         ygo::GUIUtils::ShowErrorWindow("Missing file", "No backup setting");
-			// 	break;
-			// }
-			//////kremove///////
 			//////kdiy///////
 			case BUTTON_APPLY_RESTART: {
 				try {
@@ -2250,16 +2216,9 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
                 gGameConfig->enableasound = false;
 #endif
 				if(gGameConfig->enablessound) {
-					bool filechk = false;
-					if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
-						filechk = true;
-					if(!filechk) {
-						gGameConfig->enablessound = false;
-                        gGameConfig->enablecsound = false;
-                        gGameConfig->enableasound = false;
-                        mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
-                        mainGame->PopupElement(mainGame->wACMessage, 20);
-					}
+					bool filechk = mainGame->chantcheck();
+					if(!filechk)
+				        break;
 				}
                 mainGame->gSettings.chkEnableSummonSound->setChecked(gGameConfig->enablessound);
                 mainGame->gSettings.chkEnableActivateSound->setChecked(gGameConfig->enablecsound);
@@ -2274,16 +2233,9 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
                 gGameConfig->enableasound = false;
 #endif
 				if(gGameConfig->enablecsound) {
-					bool filechk = false;
-					if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
-						filechk = true;
-					if(!filechk) {
-						gGameConfig->enablecsound = false;
-                        gGameConfig->enablecsound = false;
-                        gGameConfig->enableasound = false;
-                        mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
-                        mainGame->PopupElement(mainGame->wACMessage, 20);
-					}
+					bool filechk = mainGame->chantcheck();
+					if(!filechk)
+				        break;
 				}
                 mainGame->gSettings.chkEnableSummonSound->setChecked(gGameConfig->enablessound);
                 mainGame->gSettings.chkEnableActivateSound->setChecked(gGameConfig->enablecsound);
@@ -2298,16 +2250,9 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
                 gGameConfig->enableasound = false;
 #endif
 				if(gGameConfig->enableasound) {
-					bool filechk = false;
-					if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
-						filechk = true;
-					if(!filechk) {
-						gGameConfig->enableasound = false;
-                        gGameConfig->enablecsound = false;
-                        gGameConfig->enableasound = false;
-                        mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
-                        mainGame->PopupElement(mainGame->wACMessage, 20);
-					}
+					bool filechk = mainGame->chantcheck();
+					if(!filechk)
+				        break;
 				}
                 mainGame->gSettings.chkEnableSummonSound->setChecked(gGameConfig->enablessound);
                 mainGame->gSettings.chkEnableActivateSound->setChecked(gGameConfig->enablecsound);
@@ -2329,18 +2274,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 					gGameConfig->enableanime = false;
 #endif
 					if(gGameConfig->enableanime) {
-						bool filechk = false;
-						for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./movies/")), { EPRO_TEXT("mp4") })) {
-							if(Utils::FileExists(EPRO_TEXT("./movies/") + file)) {
-								filechk = true;
-								break;
-							}
-						}
-						if(!filechk) {
-							gGameConfig->enableanime = false;
-                            mainGame->stACMessage->setText(gDataManager->GetSysString(8051).data());
-                            mainGame->PopupElement(mainGame->wACMessage, 20);
-						}
+						mainGame->moviecheck();
 						if(gGameConfig->enableanime) {
 							gGameConfig->enablesanime = true;
 							mainGame->gSettings.chkEnableSummonAnime->setChecked(true);
@@ -2381,18 +2315,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 					gGameConfig->enableanime = false;
 #endif
                     if(gGameConfig->enablesanime) {
-                        bool filechk = false;
-						for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./movies/")), { EPRO_TEXT("mp4") })) {
-							if(Utils::FileExists(EPRO_TEXT("./movies/") + file)) {
-								filechk = true;
-								break;
-							}
-						}
-						if(!filechk) {
-							gGameConfig->enableanime = false;
-                            mainGame->stACMessage->setText(gDataManager->GetSysString(8051).data());
-                            mainGame->PopupElement(mainGame->wACMessage, 20);
-						}
+                        mainGame->moviecheck();
                         if(gGameConfig->enablesanime) {
                             gGameConfig->enableanime = true;
                             mainGame->tabSettings.chkEnableAnime->setChecked(true);
@@ -2427,18 +2350,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 					gGameConfig->enableanime = false;
 #endif
                     if(gGameConfig->enablecanime) {
-                        bool filechk = false;
-						for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./movies/")), { EPRO_TEXT("mp4") })) {
-							if(Utils::FileExists(EPRO_TEXT("./movies/") + file)) {
-								filechk = true;
-								break;
-							}
-						}
-						if(!filechk) {
-							gGameConfig->enableanime = false;
-                            mainGame->stACMessage->setText(gDataManager->GetSysString(8051).data());
-                            mainGame->PopupElement(mainGame->wACMessage, 20);
-						}
+                        mainGame->moviecheck();
                         if(gGameConfig->enablecanime) {
                             gGameConfig->enableanime = true;
                             mainGame->tabSettings.chkEnableAnime->setChecked(true);
@@ -2473,18 +2385,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 					gGameConfig->enableanime = false;
 #endif
                     if(gGameConfig->enableaanime) {
-                        bool filechk = false;
-						for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./movies/")), { EPRO_TEXT("mp4") })) {
-							if(Utils::FileExists(EPRO_TEXT("./movies/") + file)) {
-								filechk = true;
-								break;
-							}
-						}
-						if(!filechk) {
-							gGameConfig->enableanime = false;
-                            mainGame->stACMessage->setText(gDataManager->GetSysString(8051).data());
-                            mainGame->PopupElement(mainGame->wACMessage, 20);
-						}
+                        mainGame->moviecheck();
                         if(gGameConfig->enableaanime) {
                             gGameConfig->enableanime = true;
                             mainGame->tabSettings.chkEnableAnime->setChecked(true);

@@ -407,6 +407,26 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 				}
 				break;
 			}
+			/////////kdiy/////
+			case BUTTON_AVATAR_CARD0: {
+				mainGame->cardbutton[0]->setImage(mainGame->imageManager.cardchant0);
+				mainGame->cardbutton[1]->setImage(mainGame->imageManager.cardchant01);
+				mainGame->cardbutton[2]->setImage(mainGame->imageManager.cardchant02);
+				break;
+			}
+			case BUTTON_AVATAR_CARD1: {
+				mainGame->cardbutton[0]->setImage(mainGame->imageManager.cardchant00);
+				mainGame->cardbutton[1]->setImage(mainGame->imageManager.cardchant1);
+				mainGame->cardbutton[2]->setImage(mainGame->imageManager.cardchant02);
+				break;
+			}
+			case BUTTON_AVATAR_CARD2: {
+				mainGame->cardbutton[0]->setImage(mainGame->imageManager.cardchant00);
+				mainGame->cardbutton[1]->setImage(mainGame->imageManager.cardchant01);
+				mainGame->cardbutton[2]->setImage(mainGame->imageManager.cardchant2);
+				break;
+			}
+			/////////kdiy/////
 			case BUTTON_LEAVE_GAME: {
 				Terminate();
 				break;
@@ -612,13 +632,21 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			///////kdiy//////////
+            case COMBOBOX_CHARACTER_DECK: {
+				bool filechk = mainGame->chantcheck();
+				if(!filechk)
+					break;
+                int sel = mainGame->ebCharacterDeck->getSelected();
+				mainGame->charactselect(0, sel);
+				break;
+			}
 			case COMBOBOX_DBDECKS2: {
 				int sel = mainGame->cbDBDecks->getSelected();
 				int sel2 = mainGame->cbDBDecks2->getSelected();
                 mainGame->cbDBDecks22->setSelected(sel2);
 				if(sel2 >= 0)
 				    mainGame->RefreshDeck(mainGame->cbDBDecks);
-				else 
+				else
                     break;
 			}
 			///////kdiy/////

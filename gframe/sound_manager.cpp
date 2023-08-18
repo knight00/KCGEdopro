@@ -603,7 +603,8 @@ void SoundManager::PlayMode(bool lock) {
     }
     std::string file = epro::format("./mode/story/story{}/soundDialog/{}.mp3", mainGame->mode->chapter, mainGame->mode->plotIndex);
     std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-    mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(file)));
+	auto wait = std::max(std::chrono::milliseconds(GetSoundDuration(file)), std::chrono::milliseconds(2500));
+    mainGame->cv->wait_for(lck, wait);
 }
 /////kdiy/////
 void SoundManager::PlaySoundEffect(SFX sound) {
@@ -726,7 +727,8 @@ void SoundManager::PlayCustomMusic(std::string num) {
 					mainGame->isEvent = true;
 					if(gGameConfig->pauseduel) {
 						std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-						mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(filename)));
+						auto wait = std::max(std::chrono::milliseconds(GetSoundDuration(filename)), std::chrono::milliseconds(2500));
+						mainGame->cv->wait_for(lck, wait);
 					}
 					mainGame->isEvent = false;
 				    break;
@@ -956,7 +958,8 @@ bool SoundManager::PlayZipChants(CHANT chant, std::string file, std::vector<std:
 					mainGame->isEvent = true;
 					if(gGameConfig->pauseduel && character[player] > 0) {
 						std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-						mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(buff, filename, length)));
+						auto wait = std::max(std::chrono::milliseconds(GetSoundDuration(buff, filename, length)), std::chrono::milliseconds(2500));
+						mainGame->cv->wait_for(lck, wait);
 					}
 					mainGame->isEvent = false;
 				}
@@ -984,7 +987,8 @@ bool SoundManager::PlayChants(CHANT chant, std::string file, std::vector<std::st
 				mainGame->isEvent = true;
 				if(gGameConfig->pauseduel && character[player] > 0) {
 					std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-					mainGame->cv->wait_for(lck, std::chrono::milliseconds(GetSoundDuration(file)));
+					auto wait = std::max(std::chrono::milliseconds(GetSoundDuration(file)), std::chrono::milliseconds(2500));
+					mainGame->cv->wait_for(lck, wait);
 				}
 				mainGame->isEvent = false;
 			}
