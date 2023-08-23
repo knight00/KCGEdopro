@@ -1726,26 +1726,25 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
                     if(mcard->code && (mcard->type || mainGame->dInfo.isSingleMode)) {
 						mainGame->ShowCardInfo(mcard->code, false, imgType::ART, mcard);
                     ///////kdiy/////////
-						if(mcard->location & (0xe|0x400)) {
+						if(mcard->location & (LOCATION_HAND | LOCATION_MZONE | LOCATION_SZONE | LOCATION_SKILL)) {
 							///////kdiy/////////
 							//std::wstring str(gDataManager->GetName(mcard->code));
 							std::wstring str(gDataManager->GetVirtualName(mcard, mcard->code));
 							///////kdiy/////////
+							if(!CardDataC::IsInArtworkOffsetRange(mcard) && str != gDataManager->GetName(mcard->alias)) {
+								///////kdiy/////////
+                                std::wstring str2(gDataManager->GetName(mcard->alias));
+                                auto index = str2.find(L"(");
+                                auto index_2 = str2.find(65288);
+                                auto index_3 = str2.find(L" (");
+                                if(index_3 != std::wstring::npos) str2 = str2.substr(0,index_3);
+                                else if(index != std::wstring::npos) str2 = str2.substr(0,index);
+                                else if(index_2 != std::wstring::npos) str2 = str2.substr(0,index_2);
+								if(!mcard->is_real && wcscmp(str2.data(), str.data()))
+								///////kdiy/////////
+								str.append(epro::format(L"\n({})", gDataManager->GetName(mcard->alias)));
+							}
 							if(mcard->type & TYPE_MONSTER) {
-								if(mcard->alias && (mcard->alias < mcard->code - 10 || mcard->alias > mcard->code + 10)
-										&& wcscmp(gDataManager->GetName(mcard->code).data(), gDataManager->GetName(mcard->alias).data())) {
-									///////kdiy/////////
-                                    std::wstring str2(gDataManager->GetName(mcard->alias));
-                                    auto index = str2.find(L"(");
-                                    auto index_2 = str2.find(65288);
-                                    auto index_3 = str2.find(L" (");
-                                    if(index_3 != std::wstring::npos) str2 = str2.substr(0,index_3);
-                                    else if(index != std::wstring::npos) str2 = str2.substr(0,index);
-                                    else if(index_2 != std::wstring::npos) str2 = str2.substr(0,index_2);
-									if(!mcard->is_real && wcscmp(str2.data(), str.data()))
-									///////kdiy/////////
-									str.append(epro::format(L"\n({})",gDataManager->GetName(mcard->alias)));
-								}
 								//////kdiy/////
 								//if (mcard->type & TYPE_LINK) {
 								// 	str.append(epro::format(L"\n{}/Link {}\n{}/{}", mcard->atkstring, mcard->link, gDataManager->FormatRace(mcard->race),
@@ -1777,26 +1776,9 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 								} else if (mcard->link != 0 || (mcard->type & TYPE_LINK))
 								    str.append(epro::format(L"\n{}/Link {}\n{}/{}", mcard->atkstring, mcard->link, gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
 								///////kdiy/////////
-								if(mcard->location == LOCATION_HAND && (mcard->type & TYPE_PENDULUM)) {
-									str.append(epro::format(L"\n{}/{}", mcard->lscale, mcard->rscale));
-								}
-							} else {
-								if(mcard->alias && (mcard->alias < mcard->code - 10 || mcard->alias > mcard->code + 10)) {
-									///////kdiy/////////
-                                    std::wstring str2(gDataManager->GetName(mcard->alias));
-                                    auto index = str2.find(L"(");
-                                    auto index_2 = str2.find(65288);
-                                    auto index_3 = str2.find(L" (");
-                                    if(index_3 != std::wstring::npos) str2 = str2.substr(0,index_3);
-                                    else if(index != std::wstring::npos) str2 = str2.substr(0,index);
-                                    else if(index_2 != std::wstring::npos) str2 = str2.substr(0,index_2);
-									if(!mcard->is_real && wcscmp(str2.data(), str.data()))
-									///////kdiy/////////
-									str.append(epro::format(L"\n({})", gDataManager->GetName(mcard->alias)));
-								}
-								if(mcard->location == LOCATION_SZONE && (mcard->type & TYPE_PENDULUM)) {
-									str.append(epro::format(L"\n{}/{}", mcard->lscale, mcard->rscale));
-								}
+							}
+							if((mcard->location & (LOCATION_HAND | LOCATION_SZONE)) != 0 && (mcard->type & TYPE_PENDULUM)) {
+								str.append(epro::format(L"\n{}/{}", mcard->lscale, mcard->rscale));
 							}
 							for(auto ctit = mcard->counters.begin(); ctit != mcard->counters.end(); ++ctit) {
 								str.append(epro::format(L"\n[{}]: {}", gDataManager->GetCounterName(ctit->first), ctit->second));

@@ -557,7 +557,7 @@ void Game::Initialize() {
 					return true;
 				return false;
 			}
-			irr::core::position2di convpos = mainGame->Resize(pos.X, pos.Y, true);
+			irr::core::vector2di convpos = mainGame->Resize(pos.X, pos.Y, true);
 			auto x = convpos.X;
 			auto y = convpos.Y;
 			if(mainGame->is_building && !mainGame->is_siding) {
@@ -3342,7 +3342,7 @@ bool Game::MainLoop() {
 			else if(needs_to_acknowledge_discord_host) {
 				std::lock_guard<epro::mutex> lock(gMutex);
 				menuHandler.prev_operation = ACTION_ACKNOWLEDGE_HOST;
-				stQMessage->setText(epro::format(L"Unkonwn host {}:{}", dInfo.secret.host.address, dInfo.secret.host.port).data());
+				stQMessage->setText(epro::format(gDataManager->GetSysString(1468), dInfo.secret.host.address, dInfo.secret.host.port).data());
 				SetCentered(wQuery);
 				PopupElement(wQuery);
 				needs_to_acknowledge_discord_host = false;
@@ -5291,7 +5291,8 @@ void Game::OnResize() {
     wChBody[1]->setRelativePosition(ResizeWin(475, 48, 527, 100));
     ////kdiy/////////
 	wSinglePlay->setRelativePosition(ResizeWin(220, 100, 800, 520));
-	gBot.window->setRelativePosition(irr::core::position2di(wHostPrepare->getAbsolutePosition().LowerRightCorner.X-290, wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
+	gBot.window->setRelativePosition(irr::core::vector2di(wHostPrepare->getAbsolutePosition().LowerRightCorner.X, wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
+
 	wHand->setRelativePosition(ResizeWin(500, 450, 825, 605));
 	wFTSelect->setRelativePosition(ResizeWin(550, 240, 780, 340));
 	SetMessageWindow();
