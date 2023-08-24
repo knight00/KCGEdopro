@@ -4368,6 +4368,10 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 		//has lk
 		} else if (cd->type & TYPE_LINK)
 			text.append(ltext);
+		else {
+		    text.append(epro::format(L"[{}{}] ", L"\u2605", cd->level));
+			text.append(ltext);
+		}
 		///////////kdiy//////////
 		if(cd->type & TYPE_PENDULUM) {
 			text.append(epro::format(L"   {}/{}", cd->lscale, cd->rscale));
