@@ -900,23 +900,26 @@ void Game::Initialize() {
 	
 	///////kdiy///////
 	cardbutton[0] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(10, 9 + CARD_IMG_HEIGHT - 20, 30, 9 + CARD_IMG_HEIGHT), wCardImg, BUTTON_AVATAR_CARD0));
-	cardbutton[0]->setImage(imageManager.cardchant00);
+	cardbutton[0]->setImage(imageManager.cardchant0);
 	cardbutton[0]->setDrawBorder(false);
 	cardbutton[0]->setToolTipText(gDataManager->GetSysString(8010).data());
+	cardbutton[0]->setIsPushButton();
 	cardbutton[0]->setPressed();
 	defaultStrings.emplace_back(cardbutton[0], 8010);
 
 	cardbutton[1] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(35, 9 + CARD_IMG_HEIGHT - 20, 55, 9 + CARD_IMG_HEIGHT), wCardImg, BUTTON_AVATAR_CARD1));
-	cardbutton[1]->setImage(imageManager.cardchant1);
+	cardbutton[1]->setImage(imageManager.cardchant01);
 	cardbutton[1]->setDrawBorder(false);
 	cardbutton[1]->setToolTipText(gDataManager->GetSysString(8012).data());
+	cardbutton[1]->setIsPushButton();
 	cardbutton[1]->setPressed(false);
 	defaultStrings.emplace_back(cardbutton[1], 8012);
 
 	cardbutton[2] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(60, 9 + CARD_IMG_HEIGHT - 20, 80, 9 + CARD_IMG_HEIGHT), wCardImg, BUTTON_AVATAR_CARD2));
-	cardbutton[2]->setImage(imageManager.cardchant2);
+	cardbutton[2]->setImage(imageManager.cardchant02);
 	cardbutton[2]->setDrawBorder(false);
 	cardbutton[2]->setToolTipText(gDataManager->GetSysString(8014).data());
+	cardbutton[2]->setIsPushButton();
 	cardbutton[2]->setPressed(false);
 	defaultStrings.emplace_back(cardbutton[2], 8014);
 	///////kdiy///////
