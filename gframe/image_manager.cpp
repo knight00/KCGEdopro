@@ -11,85 +11,13 @@
 #include "image_downloader.h"
 #include "game.h"
 #include "config.h"
+/////kdiy///////
+#include "sound_manager.h"
+/////kdiy///////
 
 #define BASE_PATH EPRO_TEXT("./textures/")
 
 namespace ygo {
-////////kdiy/////
-#define TEXTURE_DECK				0
-#define TEXTURE_MENU				1
-#define TEXTURE_COVERS				2
-#define TEXTURE_COVERO				3
-#define TEXTURE_ATTACK				4
-#define TEXTURE_ACTIVATE			5
-#define TEXTURE_CHAIN			    6
-#define TEXTURE_NEGATED			    7
-#define TEXTURE_LP		            8
-#define TEXTURE_LPf		            9
-#define TEXTURE_MASK		        10
-#define TEXTURE_EQUIP		        11
-#define TEXTURE_TARGET		        12
-#define TEXTURE_CHAINTARGET		    13
-#define TEXTURE_F1		            14
-#define TEXTURE_F2		            15
-#define TEXTURE_F3		            16
-#define TEXTURE_BACKGROUND		    17
-#define TEXTURE_BACKGROUND_MENU		18
-#define TEXTURE_BACKGROUND_DECK		19
-#define TEXTURE_field2		        20
-#define TEXTURE_field_transparent2	21
-#define TEXTURE_field3		        22
-#define TEXTURE_field_transparent3	23
-#define TEXTURE_field		        24
-#define TEXTURE_field_transparent	25
-#define TEXTURE_field4		        26
-#define TEXTURE_field_transparent4	27
-#define TEXTURE_field_fieldSP2	    28
-#define TEXTURE_field_transparentSP2 29
-#define TEXTURE_fieldSP3            30
-#define TEXTURE_field_transparentSP3 31
-#define TEXTURE_fieldSP             32
-#define TEXTURE_field_transparentSP 33
-#define TEXTURE_fieldSP4            34
-#define TEXTURE_field_transparentSP4 35
-#define TEXTURE_UNKNOWN             36
-#define TEXTURE_LIM                 37
-#define TEXTURE_OT                  38
-#define TEXTURE_SETTING             39
-
-#define TEXTURE_MUTO                40
-#define TEXTURE_ATEM                41
-#define TEXTURE_KAIBA               42
-#define TEXTURE_JOEY                43
-#define TEXTURE_MARIK               44
-#define TEXTURE_DARTZ               45
-#define TEXTURE_BAKURA              46
-#define TEXTURE_AIGAMI              47
-#define TEXTURE_JUDAI               48
-#define TEXTURE_MANJOME             49
-#define TEXTURE_KAISA               50
-#define TEXTURE_PHORNIX             51
-#define TEXTURE_JOHN                52
-#define TEXTURE_YUBEL               53
-#define TEXTURE_YUSEI               54
-#define TEXTURE_JACK                55
-#define TEXTURE_ARKI                56
-#define TEXTURE_CROW                57
-#define TEXTURE_KIRYU               58
-#define TEXTURE_PARADOX             59
-#define TEXTURE_ZONE                60
-#define TEXTURE_YUMA                61
-#define TEXTURE_SHARK               62
-#define TEXTURE_KAITO               63
-#define TEXTURE_IV                  64
-#define TEXTURE_DONTHOUSAND         65
-#define TEXTURE_YUYA                66
-#define TEXTURE_DECLAN              67
-#define TEXTURE_SHAY                68
-#define TEXTURE_PLAYMAKER           69
-#define TEXTURE_SOULBURNER          70
-#define TEXTURE_BLUEANGEL           71
-////////kdiy/////
 
 #define ASSERT_TEXTURE_LOADED(what, name) do { if(!what) { throw std::runtime_error("Couldn't load texture: " name); }} while(0)
 #define ASSIGN_DEFAULT(obj) do { def_##obj=obj; } while(0)
@@ -164,38 +92,8 @@ bool ImageManager::Initial() {
 	/////kdiy/////
 	Utils::MakeDirectory(EPRO_TEXT("./textures/character"));
 	std::vector<epro::path_string> searchPath;
-	searchPath.push_back(EPRO_TEXT("./textures/character/muto"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/atem"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/kaiba"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/joey"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/marik"));
-    searchPath.push_back(EPRO_TEXT("./textures/character/dartz"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/bakura"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/aigami"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/judai"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/manjome"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/kaisa"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/phoenix"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/john"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/yubel"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/yusei"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/jack"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/arki"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/crow"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/kiryu"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/paradox"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/zone"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/yuma"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/shark"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/kaito"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/iv"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/DonThousand"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/yuya"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/declan"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/shay"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/playmaker"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/soulburner"));
-	searchPath.push_back(EPRO_TEXT("./textures/character/blueangel"));
+	for(uint8_t playno = 0; playno < gSoundManager->textcharacter.size(); playno++)
+		searchPath.push_back(epro::format(EPRO_TEXT("./textures/character/{}"), gSoundManager->textcharacter[playno]));
 	for (auto path : searchPath) {
 		Utils::MakeDirectory(path);
 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/icon"), path));
@@ -389,7 +287,7 @@ bool ImageManager::Initial() {
 #ifdef VIP
     RefreshKCGImage();
 #else
-    for(uint8_t playno = 1; playno < CHARACTER_VOICE; playno++) {
+    for(uint8_t playno = 0; playno < CHARACTER_VOICE; playno++) {
 		icon[playno] = driver->getTexture(0);
 	    character[playno] = driver->getTexture(0);
 	    characterd[playno] = driver->getTexture(0);
@@ -713,7 +611,7 @@ bool ImageManager::Initial() {
 }
 //////kdiy//////
 void ImageManager::SetAvatar(int player, const wchar_t *avatar) {
-    auto* tmp = loadTextureAnySize(epro::format(EPRO_TEXT("character/custom/{}"_sv), avatar));
+    auto* tmp = loadTextureAnySize(epro::format(EPRO_TEXT("character/custom/{}"_sv), Utils::ToPathString(avatar)));
     if(tmp != nullptr) {
         if (scharacter[player][0])
             driver->removeTexture(scharacter[player][0]);
@@ -762,71 +660,10 @@ void ImageManager::RefreshRandomImageList() {
 	RefreshImageDir(EPRO_TEXT("ot"), TEXTURE_OT);
 	RefreshImageDir(EPRO_TEXT("settings"), TEXTURE_SETTING);
 
-    RefreshImageDir(EPRO_TEXT("character/muto/icon"), TEXTURE_MUTO);
-	RefreshImageDir(EPRO_TEXT("character/atem/icon"), TEXTURE_ATEM);
-	RefreshImageDir(EPRO_TEXT("character/kaiba/icon"), TEXTURE_KAIBA);
-	RefreshImageDir(EPRO_TEXT("character/joey/icon"), TEXTURE_JOEY);
-	RefreshImageDir(EPRO_TEXT("character/marik/icon"), TEXTURE_MARIK);
-    RefreshImageDir(EPRO_TEXT("character/dartz/icon"), TEXTURE_DARTZ);
-	RefreshImageDir(EPRO_TEXT("character/bakura/icon"), TEXTURE_BAKURA);
-	RefreshImageDir(EPRO_TEXT("character/aigami/icon"), TEXTURE_AIGAMI);
-	RefreshImageDir(EPRO_TEXT("character/judai/icon"), TEXTURE_JUDAI);
-	RefreshImageDir(EPRO_TEXT("character/manjome/icon"), TEXTURE_MANJOME);
-	RefreshImageDir(EPRO_TEXT("character/kaisa/icon"), TEXTURE_KAISA);
-	RefreshImageDir(EPRO_TEXT("character/phoenix/icon"), TEXTURE_PHORNIX);
-	RefreshImageDir(EPRO_TEXT("character/john/icon"), TEXTURE_JOHN);
-	RefreshImageDir(EPRO_TEXT("character/yubel/icon"), TEXTURE_YUBEL);
-	RefreshImageDir(EPRO_TEXT("character/yusei/icon"), TEXTURE_YUSEI);
-	RefreshImageDir(EPRO_TEXT("character/jack/icon"), TEXTURE_JACK);
-	RefreshImageDir(EPRO_TEXT("character/arki/icon"), TEXTURE_ARKI);
-	RefreshImageDir(EPRO_TEXT("character/crow/icon"), TEXTURE_CROW);
-	RefreshImageDir(EPRO_TEXT("character/kiryu/icon"), TEXTURE_KIRYU);
-	RefreshImageDir(EPRO_TEXT("character/paradox/icon"), TEXTURE_PARADOX);
-	RefreshImageDir(EPRO_TEXT("character/zone/icon"), TEXTURE_ZONE);
-	RefreshImageDir(EPRO_TEXT("character/yuma/icon"), TEXTURE_YUMA);
-	RefreshImageDir(EPRO_TEXT("character/shark/icon"), TEXTURE_SHARK);
-	RefreshImageDir(EPRO_TEXT("character/kaito/icon"), TEXTURE_KAITO);
-	RefreshImageDir(EPRO_TEXT("character/iv/icon"), TEXTURE_IV);
-	RefreshImageDir(EPRO_TEXT("character/Donthousand/icon"), TEXTURE_DONTHOUSAND);
-	RefreshImageDir(EPRO_TEXT("character/yuya/icon"), TEXTURE_YUYA);
-	RefreshImageDir(EPRO_TEXT("character/declan/icon"), TEXTURE_DECLAN);
-	RefreshImageDir(EPRO_TEXT("character/shay/icon"), TEXTURE_SHAY);
-	RefreshImageDir(EPRO_TEXT("character/playmaker/icon"), TEXTURE_PLAYMAKER);
-	RefreshImageDir(EPRO_TEXT("character/soulburner/icon"), TEXTURE_SOULBURNER);
-	RefreshImageDir(EPRO_TEXT("character/blueangel/icon"), TEXTURE_BLUEANGEL);
-	
-    RefreshImageDir(EPRO_TEXT("character/muto/damage"), TEXTURE_MUTO + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/atem/damage"), TEXTURE_ATEM + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/kaiba/damage"), TEXTURE_KAIBA + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/joey/damage"), TEXTURE_JOEY + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/marik/damage"), TEXTURE_MARIK + CHARACTER_VOICE - 1);
-    RefreshImageDir(EPRO_TEXT("character/dartz/damage"), TEXTURE_DARTZ + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/bakura/damage"), TEXTURE_BAKURA + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/aigami/damage"), TEXTURE_AIGAMI + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/judai/damage"), TEXTURE_JUDAI + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/manjome/damage"), TEXTURE_MANJOME + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/kaisa/damage"), TEXTURE_KAISA + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/phoenix/damage"), TEXTURE_PHORNIX + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/john/damage"), TEXTURE_JOHN + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/yubel/damage"), TEXTURE_YUBEL + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/yusei/damage"), TEXTURE_YUSEI + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/jack/damage"), TEXTURE_JACK + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/arki/damage"), TEXTURE_ARKI + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/crow/damage"), TEXTURE_CROW + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/kiryu/damage"), TEXTURE_KIRYU + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/paradox/damage"), TEXTURE_PARADOX + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/zone/damage"), TEXTURE_ZONE + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/yuma/damage"), TEXTURE_YUMA + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/shark/damage"), TEXTURE_SHARK + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/kaito/damage"), TEXTURE_KAITO + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/iv/damage"), TEXTURE_IV + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/Donthousand/damage"), TEXTURE_DONTHOUSAND + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/yuya/damage"), TEXTURE_YUYA + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/declan/damage"), TEXTURE_DECLAN + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/shay/damage"), TEXTURE_SHAY + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/playmaker/damage"), TEXTURE_PLAYMAKER + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/soulburner/damage"), TEXTURE_SOULBURNER + CHARACTER_VOICE - 1);
-	RefreshImageDir(EPRO_TEXT("character/blueangel/damage"), TEXTURE_BLUEANGEL + CHARACTER_VOICE - 1);
+	for(uint8_t playno = 0; playno < gSoundManager->textcharacter.size(); playno++) {
+		RefreshImageDir(epro::format(EPRO_TEXT("character/{}/icon"), gSoundManager->textcharacter[playno]), imgcharacter[playno]);
+		RefreshImageDir(epro::format(EPRO_TEXT("character/{}/damage"), gSoundManager->textcharacter[playno]), imgcharacter[playno] + CHARACTER_VOICE - 1);
+	}
 
 	for(int i = 0; i < 40 + CHARACTER_VOICE + CHARACTER_VOICE -2; ++i)
 		saved_image_id[i] = -1;
@@ -921,11 +758,8 @@ void ImageManager::GetRandomImagef(int width, int height) {
 	}
 }
 void ImageManager::RefreshKCGImage() {
-	const wchar_t *textcharacter[] = {L"muto",L"atem",L"kaiba",L"joey",L"marik",L"dartz",L"bakura",L"aigami",L"judai",L"manjome",L"kaisa",L"phoenix",L"john",L"yubel",L"yusei",L"jack",L"arki",L"crow",L"kiryu",L"paradox",L"zone",L"yuma",L"shark",L"kaito",L"iv",L"DonThousand",L"yuya",L"declan",L"shay",L"playmaker",L"soulburner",L"blueangel"};
-	int imgcharacter[] = {TEXTURE_MUTO,TEXTURE_ATEM,TEXTURE_KAIBA,TEXTURE_JOEY,TEXTURE_MARIK,TEXTURE_DARTZ,TEXTURE_BAKURA,TEXTURE_AIGAMI,TEXTURE_JUDAI,TEXTURE_MANJOME,TEXTURE_KAISA,TEXTURE_PHORNIX,TEXTURE_JOHN,TEXTURE_YUBEL,TEXTURE_YUSEI,TEXTURE_JACK,TEXTURE_ARKI,TEXTURE_CROW,TEXTURE_KIRYU,TEXTURE_PARADOX,TEXTURE_ZONE,TEXTURE_YUMA,TEXTURE_SHARK,TEXTURE_KAITO,TEXTURE_IV,TEXTURE_DONTHOUSAND,TEXTURE_YUYA,TEXTURE_DECLAN,TEXTURE_SHAY,TEXTURE_PLAYMAKER,TEXTURE_SOULBURNER,TEXTURE_BLUEANGEL};
-    //if(!avatar_only) {
-    for(uint8_t playno = 1; playno < CHARACTER_VOICE; playno++) {
-        icon[playno] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/mini_icon"_sv), textcharacter[playno-1]));
+	for(uint8_t playno = 1; playno < CHARACTER_VOICE; playno++) {
+        icon[playno] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/mini_icon"_sv), gSoundManager->textcharacter[playno-1]));
         GetRandomImage(character[playno], imgcharacter[playno-1], true);
         if(!character[playno])
             character[playno] = driver->getTexture(0);

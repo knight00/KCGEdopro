@@ -121,8 +121,9 @@ public:
 	bool PlayZipChants(CHANT chant, std::string file, std::vector<std::string>& sound, uint8_t player);
 	bool PlayChants(CHANT chant, std::string file, std::vector<std::string>& sound, uint8_t player);
 	bool PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t player, uint16_t extra = 0);
-	uint8_t character[6] = {0,0,0,0,0,0}; //0: empty, 1: muto, 2: atem, 3: kaiba, 4: joey, 5: marik, 6: dartz, 7:bakura, 8: aigami, 9: judai, 10: manjome, 11: kaisa, 12: phoenix, 13: john, 14: yubel, 15: yusei, 16: jack, 17: arki, 18: crow, 19: kiryu, 20: paradox, 21:zone, 22: yuma, 23: shark, 24: kaito, 25: iv, 26: DonThousand, 27: yuya, 28: declan, 29: shay, 30: playmaker, 31: soulburner, 32: blueangel, 33: darksiner
-    std::vector<std::string> soundcount;
+	uint8_t character[6] = {0,0,0,0,0,0}; //0: empty, 1: muto, 2: atem,...
+	std::vector<const wchar_t*> textcharacter = { EPRO_TEXT("muto"),EPRO_TEXT("atem"),EPRO_TEXT("kaiba"),EPRO_TEXT("joey"),EPRO_TEXT("marik"),EPRO_TEXT("dartz"),EPRO_TEXT("bakura"),EPRO_TEXT("aigami"),EPRO_TEXT("judai"),EPRO_TEXT("manjome"),EPRO_TEXT("kaisa"),EPRO_TEXT("phoenix"),EPRO_TEXT("john"),EPRO_TEXT("yubel"),EPRO_TEXT("yusei"),EPRO_TEXT("jack"),EPRO_TEXT("arki"),EPRO_TEXT("crow"),EPRO_TEXT("kiryu"),EPRO_TEXT("paradox"),EPRO_TEXT("zone"),EPRO_TEXT("yuma"),EPRO_TEXT("shark"),EPRO_TEXT("kaito"),EPRO_TEXT("iv"),EPRO_TEXT("DonThousand"),EPRO_TEXT("yuya"),EPRO_TEXT("declan"),EPRO_TEXT("shay"),EPRO_TEXT("playmaker"),EPRO_TEXT("soulburner"),EPRO_TEXT("blueangel") };
+	std::vector<std::string> soundcount;
 	int32_t GetSoundDuration(std::string name);
 	int32_t GetSoundDuration(char* buff, const std::string& filename, long length);
 	int PlayModeSound(bool lock=false);
