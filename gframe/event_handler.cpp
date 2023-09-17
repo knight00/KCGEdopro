@@ -2790,6 +2790,15 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
                 ///kdiy///////
 			}
 		}
+        ///kdiy///////
+        if(event.MouseInput.Event == irr::EMIE_LMOUSE_DOUBLE_CLICK && mainGame->showingcard) {
+			irr::gui::IGUIElement* root = mainGame->env->getRootGUIElement();
+			irr::gui::IGUIElement* elem = root->getElementFromPoint({ event.MouseInput.X, event.MouseInput.Y });
+            if(elem == mainGame->stPasscodeScope) {
+                Utils::OSOperator->copyToClipboard(epro::format(L"{}", mainGame->showingcard).data());
+			}
+        }
+        ///kdiy///////
 		break;
 	}
 	case irr::EET_JOYSTICK_INPUT_EVENT: {
