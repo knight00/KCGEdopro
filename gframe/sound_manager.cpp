@@ -305,17 +305,6 @@ void SoundManager::RefreshChantsList() {
 		}
 	}
 
-// 	irr::io::IFileSystem* filesystem = new irr::io::CFileSystem();
-// 	irr::io::IFileArchive* tmp_archive = nullptr;
-// #if defined(Zip)
-// 	filesystem->addFileArchive(epro::format(EPRO_TEXT("./expansions/kcgchant.zip")).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
-// #else
-// 	filesystem->addFileArchive(epro::format(EPRO_TEXT("./expansions/kcgchant.zip")).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive);
-// #endif
-// 	if(tmp_archive)
-// 	{
-// 		Utils::archives.emplace_back(tmp_archive);
-// 	}
 	for(const auto& chantType : types) {
 		std::vector<epro::path_string> searchPath;
 		searchPath.push_back(epro::format(EPRO_TEXT("{}"), chantType.second));
@@ -352,117 +341,117 @@ void SoundManager::RefreshChantsList() {
 		if(chantType.first == CHANT::WIN) i = 18;
 		if(chantType.first == CHANT::LOSE) i = 19;
 		if(i == -1) continue;
-		// for(int x = 0; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
-		// 	if(chantType.first == CHANT::SUMMON) {
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/fusion"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/synchro"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/xyz"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/link"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/ritual"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/pendulum"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/summon"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/spsummon"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/attack"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/defense"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/advance"), ChantSPList[i][x]);
-		// 	} else if(chantType.first == CHANT::ATTACK) {
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/attack"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/monster"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/directattack"), ChantSPList[i][x]);
-		// 	} else if(chantType.first == CHANT::ACTIVATE) {
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/activate"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/fromhand"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/monster"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/quickspell"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/continuousspell"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/equip"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/ritual"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/normaltrap"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/continuoustrap"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/countertrap"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/flip"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/field"), ChantSPList[i][x]);
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/action"), ChantSPList[i][x]);
-		// 	} else if(chantType.first == CHANT::PENDULUM) {
-		// 		RefreshZipChants(searchPath[x] + EPRO_TEXT("/activate"), ChantSPList[i][x]);
-		// 	} else if(chantType.first != CHANT::WIN)
-		// 		RefreshZipChants(searchPath[x], ChantSPList[i][x]);
+		for(int x = 0; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
+		if(chantType.first == CHANT::SUMMON) {
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/fusion"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/synchro"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/xyz"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/link"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/ritual"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/pendulum"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/summon"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/spsummon"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/attack"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/defense"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/advance"), ChantSPList[i][x]);
+			} else if(chantType.first == CHANT::ATTACK) {
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/attack"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/monster"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/directattack"), ChantSPList[i][x]);
+			} else if(chantType.first == CHANT::ACTIVATE) {
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/activate"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/fromhand"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/monster"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/quickspell"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/continuousspell"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/equip"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/ritual"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/normaltrap"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/continuoustrap"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/countertrap"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/flip"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/field"), ChantSPList[i][x]);
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/action"), ChantSPList[i][x]);
+			} else if(chantType.first == CHANT::PENDULUM) {
+				RefreshZipChants(searchPath[x] + EPRO_TEXT("/activate"), ChantSPList[i][x]);
+			} else if(chantType.first != CHANT::WIN)
+				RefreshZipChants(searchPath[x], ChantSPList[i][x]);
 
-		// 	if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM)
-		// 		RefreshZipCards(epro::format(EPRO_TEXT("{}/card"), searchPath[x]), ChantsList[x], chantType.first);
-		// 	if(chantType.first == CHANT::WIN)
-		// 		RefreshZipCards(epro::format(EPRO_TEXT("{}"), searchPath[x]), ChantsList[x], chantType.first);
+			if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM)
+				RefreshZipCards(epro::format(EPRO_TEXT("{}/card"), searchPath[x]), ChantsList[x], chantType.first);
+			if(chantType.first == CHANT::WIN)
+				RefreshZipCards(epro::format(EPRO_TEXT("{}"), searchPath[x]), ChantsList[x], chantType.first);
 
-		// 	if(chantType.first == CHANT::SUMMON) {
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/fusion"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/synchro"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/xyz"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/link"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/ritual"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/pendulum"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/summon"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/spsummon"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/attack"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/defense"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/advance"), ChantSPList2[i][x]);
-		// 	} else if(chantType.first == CHANT::ATTACK) {
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/attack"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/monster"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/directattack"), ChantSPList2[i][x]);
-		// 	} else if(chantType.first == CHANT::ACTIVATE) {
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/activate"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/fromhand"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/monster"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/quickspell"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/continuousspell"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/equip"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/ritual"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/normaltrap"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/continuoustrap"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/countertrap"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/flip"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/field"), ChantSPList2[i][x]);
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/action"), ChantSPList2[i][x]);
-		// 	} else if(chantType.first == CHANT::PENDULUM) {
-		// 		RefreshChants(searchPath2[x] + EPRO_TEXT("/activate"), ChantSPList2[i][x]);
-		// 	} else if(chantType.first != CHANT::WIN)
-		// 		RefreshChants(searchPath2[x], ChantSPList2[i][x]);
+			if(chantType.first == CHANT::SUMMON) {
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/fusion"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/synchro"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/xyz"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/link"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/ritual"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/pendulum"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/summon"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/spsummon"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/attack"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/defense"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/advance"), ChantSPList2[i][x]);
+			} else if(chantType.first == CHANT::ATTACK) {
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/attack"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/monster"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/directattack"), ChantSPList2[i][x]);
+			} else if(chantType.first == CHANT::ACTIVATE) {
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/activate"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/fromhand"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/monster"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/quickspell"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/continuousspell"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/equip"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/ritual"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/normaltrap"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/continuoustrap"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/countertrap"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/flip"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/field"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/action"), ChantSPList2[i][x]);
+			} else if(chantType.first == CHANT::PENDULUM) {
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/activate"), ChantSPList2[i][x]);
+			} else if(chantType.first != CHANT::WIN)
+				RefreshChants(searchPath2[x], ChantSPList2[i][x]);
 
-		// 	if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM) {
-		// 		for(auto& file : Utils::FindFiles(searchPath2[x] + EPRO_TEXT("/card"), mixer->GetSupportedSoundExtensions())) {
-		// 			auto scode = Utils::GetFileName(file);
-		// 			auto filename = Utils::ToUTF8IfNeeded(scode);
-        //             if(filename.find("+") != std::string::npos || filename.find("-") != std::string::npos || filename.find("_") != std::string::npos || filename.find(".") != std::string::npos)
-		// 				continue;
-		// 			try {
-		// 				uint32_t code = static_cast<uint32_t>(std::stoul(scode));
-		// 				auto key = std::make_pair(chantType.first, code);
-		// 				if(code && !ChantsList2[x].count(key))
-		// 					ChantsList2[x][key] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/card/{}"), searchPath2[x], scode));
-		// 			}
-		// 			catch(...) {
-		// 				continue;
-		// 			}
-		// 		}
-		// 	}
-		// 	if(chantType.first == CHANT::WIN) {
-		// 		for(auto& file : Utils::FindFiles(searchPath2[x], mixer->GetSupportedSoundExtensions())) {
-		// 			auto scode = Utils::GetFileName(file);
-		// 			auto filename = Utils::ToUTF8IfNeeded(scode);
-        //             if(filename.find("+") != std::string::npos || filename.find("-") != std::string::npos || filename.find("_") != std::string::npos || filename.find(".") != std::string::npos)
-		// 				continue;
-		// 			try {
-		// 				uint32_t code = static_cast<uint32_t>(std::stoul(scode));
-		// 				auto key = std::make_pair(chantType.first, code);
-		// 				if(code && !ChantsList2[x].count(key))
-		// 					ChantsList2[x][key] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/{}"), searchPath2[x], scode));
-		// 			}
-		// 			catch(...) {
-		// 				continue;
-		// 			}
-		// 		}
-		// 	}
-		// }
+			if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM) {
+				for(auto& file : Utils::FindFiles(searchPath2[x] + EPRO_TEXT("/card"), mixer->GetSupportedSoundExtensions())) {
+					auto scode = Utils::GetFileName(file);
+					auto filename = Utils::ToUTF8IfNeeded(scode);
+                    if(filename.find("+") != std::string::npos || filename.find("-") != std::string::npos || filename.find("_") != std::string::npos || filename.find(".") != std::string::npos)
+						continue;
+					try {
+						uint32_t code = static_cast<uint32_t>(std::stoul(scode));
+						auto key = std::make_pair(chantType.first, code);
+						if(code && !ChantsList2[x].count(key))
+							ChantsList2[x][key] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/card/{}"), searchPath2[x], scode));
+					}
+					catch(...) {
+						continue;
+					}
+				}
+			}
+			if(chantType.first == CHANT::WIN) {
+				for(auto& file : Utils::FindFiles(searchPath2[x], mixer->GetSupportedSoundExtensions())) {
+					auto scode = Utils::GetFileName(file);
+					auto filename = Utils::ToUTF8IfNeeded(scode);
+                    if(filename.find("+") != std::string::npos || filename.find("-") != std::string::npos || filename.find("_") != std::string::npos || filename.find(".") != std::string::npos)
+						continue;
+					try {
+						uint32_t code = static_cast<uint32_t>(std::stoul(scode));
+						auto key = std::make_pair(chantType.first, code);
+						if(code && !ChantsList2[x].count(key))
+							ChantsList2[x][key] = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/{}"), searchPath2[x], scode));
+					}
+					catch(...) {
+						continue;
+					}
+				}
+			}
+		}
 	}
 	/////kdiy///////
 #endif	
@@ -852,7 +841,7 @@ bool SoundManager::PlayZipChants(CHANT chant, std::string file, std::vector<std:
 			if(filename == file) {
 				StopSounds();
 				//record this chant as played
-				if(chant != CHANT::DRAW && chant != CHANT::STARTUP && chant != CHANT::WIN && chant != CHANT::LOSE) {
+				if(mainGame->dInfo.isInDuel && chant != CHANT::DRAW && chant != CHANT::STARTUP && chant != CHANT::WIN && chant != CHANT::LOSE) {
 					if(std::find(sound.begin(), sound.end(), file) != sound.end()) {
 						reader->drop();
 						delete[] buff;
@@ -883,7 +872,7 @@ bool SoundManager::PlayZipChants(CHANT chant, std::string file, std::vector<std:
 bool SoundManager::PlayChants(CHANT chant, std::string file, std::vector<std::string>& sound, uint8_t player) {
 #ifdef BACKEND
 	if(Utils::FileExists(Utils::ToPathString(file))) {
-		if(chant != CHANT::DRAW && chant != CHANT::STARTUP && chant != CHANT::WIN && chant != CHANT::LOSE) {
+		if(mainGame->dInfo.isInDuel && chant != CHANT::DRAW && chant != CHANT::STARTUP && chant != CHANT::WIN && chant != CHANT::LOSE) {
 			if(std::find(sound.begin(), sound.end(), file) != sound.end())
 				return false;
 			sound.push_back(file);
@@ -941,7 +930,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 	if(i == -1) return false;
 	if(code == 0) {
         //not play again for same chant
-        if(chant != CHANT::DRAW && chant != CHANT::STARTUP && chant != CHANT::WIN && chant != CHANT::LOSE) {
+        if(mainGame->dInfo.isInDuel && chant != CHANT::DRAW && chant != CHANT::STARTUP && chant != CHANT::WIN && chant != CHANT::LOSE) {
             for(auto file : gSoundManager->soundcount) {
                 ChantSPList[i][character[player]].erase(std::remove(ChantSPList[i][character[player]].begin(), ChantSPList[i][character[player]].end(), file), ChantSPList[i][character[player]].end());
                 ChantSPList2[i][character[player]].erase(std::remove(ChantSPList2[i][character[player]].begin(), ChantSPList2[i][character[player]].end(), file), ChantSPList2[i][character[player]].end());
@@ -972,10 +961,12 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 
 		if(chant_it2 == ChantsList[character[player]].end() && _chant_it2 == ChantsList2[character[player]].end()) {
 			if(chant_it == ChantsList[character[player]].end() && _chant_it == ChantsList2[character[player]].end()) {
-				for(auto file : gSoundManager->soundcount) {
-					ChantSPList[i][character[player]].erase(std::remove(ChantSPList[i][character[player]].begin(), ChantSPList[i][character[player]].end(), file), ChantSPList[i][character[player]].end());
-					ChantSPList2[i][character[player]].erase(std::remove(ChantSPList2[i][character[player]].begin(), ChantSPList2[i][character[player]].end(), file), ChantSPList2[i][character[player]].end());
-				}
+                if(mainGame->dInfo.isInDuel) {
+                    for(auto file : gSoundManager->soundcount) {
+                        ChantSPList[i][character[player]].erase(std::remove(ChantSPList[i][character[player]].begin(), ChantSPList[i][character[player]].end(), file), ChantSPList[i][character[player]].end());
+                        ChantSPList2[i][character[player]].erase(std::remove(ChantSPList2[i][character[player]].begin(), ChantSPList2[i][character[player]].end(), file), ChantSPList2[i][character[player]].end());
+                    }
+                }
                 int count = ChantSPList[i][character[player]].size();
                 int _count = ChantSPList2[i][character[player]].size();
 				if(count > 0)
@@ -995,9 +986,11 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 				AddtoChantList(_chant_it2->second, i, _list, _list2);
 		}
 
-		for(auto file : gSoundManager->soundcount) {
-			list.erase(std::remove(list.begin(), list.end(), file), list.end());
-			_list.erase(std::remove(_list.begin(), _list.end(), file), _list.end());
+		if(mainGame->dInfo.isInDuel) {
+            for(auto file : gSoundManager->soundcount) {
+                list.erase(std::remove(list.begin(), list.end(), file), list.end());
+                _list.erase(std::remove(_list.begin(), _list.end(), file), _list.end());
+            }
 		}
 		int count2 = list.size();
 		int _count2 = _list.size();
