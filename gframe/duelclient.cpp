@@ -3857,6 +3857,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         const auto realchange = BufferIO::Read<uint8_t>(pbuf);
         const auto realsetcode = BufferIO::Read<uint16_t>(pbuf);
         const auto realname = BufferIO::Read<uint32_t>(pbuf);
+		auto lock = LockIf();
 		CoreUtils::loc_info current2 = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
         ClientCard* ocard = mainGame->dField.GetCard(current2.controler, current2.location, current2.sequence);
         if(current2.location & LOCATION_OVERLAY)
@@ -3927,9 +3928,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			} else
 				pcard->is_real = false;
 		}
-		// if(!mainGame->dInfo.isCatchingUp) {
-		// 	mainGame->WaitFrameSignal(5, lock);
-		// }
+		if(!mainGame->dInfo.isCatchingUp) {
+			mainGame->WaitFrameSignal(5, lock);
+		}
 		return true;
 	}
 	//////kdiy///
