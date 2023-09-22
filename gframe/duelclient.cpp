@@ -1507,6 +1507,7 @@ inline bool PlayCardBGM(ClientCard* card) {
 //    return true;
 //}
 inline bool PlayChantcode(SoundManager::CHANT sound, uint32_t code, uint32_t code2, const uint8_t player, uint16_t extra = 0) {
+#ifdef VIP
 	if((sound == SoundManager::CHANT::ACTIVATE || sound == SoundManager::CHANT::PENDULUM) && !gGameConfig->enablecsound) return false;
 	if(sound == SoundManager::CHANT::SUMMON && !gGameConfig->enablessound) return false;
 	if(sound == SoundManager::CHANT::ATTACK && !gGameConfig->enableasound) return false;
@@ -1516,6 +1517,9 @@ inline bool PlayChantcode(SoundManager::CHANT sound, uint32_t code, uint32_t cod
 	if(!mainGame->dInfo.isCatchingUp)
 		return gSoundManager->PlayChant(sound, code, code2, character, extra);
 	return true;
+#elif
+    return false;
+#endif
 }
 inline bool PlayChant(SoundManager::CHANT sound, ClientCard* card, const uint8_t player, uint16_t extra = 0) {
 	uint32_t code = 0;
