@@ -1517,7 +1517,7 @@ inline bool PlayChantcode(SoundManager::CHANT sound, uint32_t code, uint32_t cod
 	if(!mainGame->dInfo.isCatchingUp)
 		return gSoundManager->PlayChant(sound, code, code2, character, extra);
 	return true;
-#elif
+#else
     return false;
 #endif
 }
