@@ -572,7 +572,7 @@ bool SoundManager::PlayCardBGM(uint32_t code, uint32_t code2) {
 					const auto filename = epro::format("{}.{}", chant_it->second, Utils::ToUTF8IfNeeded(ext));
 					if(Utils::FileExists(Utils::ToPathString(filename)))
 						list.push_back(filename);
-					for(int i = 1; i < 6; i++) {
+					for(int i = 1; i < 9; i++) {
 						const auto filename2 = epro::format("{}_{}.{}", chant_it->second, i, Utils::ToUTF8IfNeeded(ext));
 						if (Utils::FileExists(Utils::ToPathString(filename2)))
 							list.push_back(filename2);
@@ -585,7 +585,7 @@ bool SoundManager::PlayCardBGM(uint32_t code, uint32_t code2) {
 				const auto filename = epro::format("{}.{}", chant_it2->second, Utils::ToUTF8IfNeeded(ext));
 				if(Utils::FileExists(Utils::ToPathString(filename)))
 					list.push_back(filename);
-				for(int i = 1; i < 6; i++) {
+				for(int i = 1; i < 9; i++) {
 					const auto filename2 = epro::format("{}_{}.{}", chant_it2->second, i, Utils::ToUTF8IfNeeded(ext));
 					if(Utils::FileExists(Utils::ToPathString(filename2)))
 						list.push_back(filename2);
@@ -772,7 +772,7 @@ void SoundManager::AddtoZipChantList(std::string file, int i, std::vector<std::s
 			else if(!(filename.find("-") != std::string::npos || filename.find("_") != std::string::npos || filename.find(".") != std::string::npos))
 				list2.push_back(Utils::ToUTF8IfNeeded(file));
 		}
-		for(int j = 1; j < 6; j++) {
+		for(int j = 1; j < 9; j++) {
 			auto files = Utils::FindFileNames(archive.archive, epro::format(EPRO_TEXT("{}_{}"), Utils::ToPathString(file), j), mixer->GetSupportedSoundExtensions(), 1);
 			bool chkexist = false;
 			for(auto& file : files) {
@@ -783,7 +783,7 @@ void SoundManager::AddtoZipChantList(std::string file, int i, std::vector<std::s
 					list.push_back(Utils::ToUTF8IfNeeded(file));
 				}
 				if(chkexist) {
-					for(int k = 1; k < 6; k++) {
+					for(int k = 1; k < 9; k++) {
 						if(filename.find(epro::format("_{}+{}", j, k)) != std::string::npos && filename.find("-") == std::string::npos && filename.find(".") == std::string::npos)
 							list2.push_back(Utils::ToUTF8IfNeeded(file));
 					}
@@ -805,11 +805,11 @@ void SoundManager::AddtoChantList(std::string file, int i, std::vector<std::stri
 					list2.push_back(filename2);
 			}
 		}
-		for(int j = 1; j < 6; j++) {
+		for(int j = 1; j < 9; j++) {
 			const auto filename = epro::format("{}_{}.{}", file, i, Utils::ToUTF8IfNeeded(ext));
 			if(Utils::FileExists(Utils::ToPathString(filename))) {
 				list.push_back(filename);
-				for(int k = 1; k < 6; k++) {
+				for(int k = 1; k < 9; k++) {
 					const auto filename2 = epro::format("{}_{}+{}.{}", file, j, k, Utils::ToUTF8IfNeeded(ext));
 					if(Utils::FileExists(Utils::ToPathString(filename2)))
 						list2.push_back(filename2);
