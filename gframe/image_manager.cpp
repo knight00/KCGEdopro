@@ -90,6 +90,9 @@ irr::video::ITexture* ImageManager::loadTextureAnySize(epro::path_stringview tex
 }
 bool ImageManager::Initial() {
 	/////kdiy/////
+	int imgcharacter[CHARACTER_VOICE-1];
+    for(uint8_t playno = 0; playno < gSoundManager->textcharacter.size(); playno++)
+		imgcharacter.push_back(TEXTURE_SETTING + playno + 1);
 	Utils::MakeDirectory(EPRO_TEXT("./textures/character"));
 	std::vector<epro::path_string> searchPath;
 	for(uint8_t playno = 0; playno < gSoundManager->textcharacter.size(); playno++)

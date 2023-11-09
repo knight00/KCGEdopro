@@ -170,40 +170,7 @@ private:
 #define TEXTURE_OT                  38
 #define TEXTURE_SETTING             39
 
-#define TEXTURE_MUTO                40
-#define TEXTURE_ATEM                41
-#define TEXTURE_KAIBA               42
-#define TEXTURE_JOEY                43
-#define TEXTURE_MARIK               44
-#define TEXTURE_DARTZ               45
-#define TEXTURE_BAKURA              46
-#define TEXTURE_AIGAMI              47
-#define TEXTURE_JUDAI               48
-#define TEXTURE_MANJOME             49
-#define TEXTURE_KAISA               50
-#define TEXTURE_PHORNIX             51
-#define TEXTURE_JOHN                52
-#define TEXTURE_YUBEL               53
-#define TEXTURE_YUSEI               54
-#define TEXTURE_JACK                55
-#define TEXTURE_ARKI                56
-#define TEXTURE_CROW                57
-#define TEXTURE_KIRYU               58
-#define TEXTURE_PARADOX             59
-#define TEXTURE_ZONE                60
-#define TEXTURE_YUMA                61
-#define TEXTURE_SHARK               62
-#define TEXTURE_KAITO               63
-#define TEXTURE_IV                  64
-#define TEXTURE_DONTHOUSAND         65
-#define TEXTURE_YUYA                66
-#define TEXTURE_DECLAN              67
-#define TEXTURE_SHAY                68
-#define TEXTURE_PLAYMAKER           69
-#define TEXTURE_SOULBURNER          70
-#define TEXTURE_BLUEANGEL           71
 	std::unordered_map<uint32_t, irr::video::ITexture*> tCloseup;
-	int imgcharacter[CHARACTER_VOICE-1] = {TEXTURE_MUTO,TEXTURE_ATEM,TEXTURE_KAIBA,TEXTURE_JOEY,TEXTURE_MARIK,TEXTURE_DARTZ,TEXTURE_BAKURA,TEXTURE_AIGAMI,TEXTURE_JUDAI,TEXTURE_MANJOME,TEXTURE_KAISA,TEXTURE_PHORNIX,TEXTURE_JOHN,TEXTURE_YUBEL,TEXTURE_YUSEI,TEXTURE_JACK,TEXTURE_ARKI,TEXTURE_CROW,TEXTURE_KIRYU,TEXTURE_PARADOX,TEXTURE_ZONE,TEXTURE_YUMA,TEXTURE_SHARK,TEXTURE_KAITO,TEXTURE_IV,TEXTURE_DONTHOUSAND,TEXTURE_YUYA,TEXTURE_DECLAN,TEXTURE_SHAY,TEXTURE_PLAYMAKER,TEXTURE_SOULBURNER,TEXTURE_BLUEANGEL};
 	/////////kdiy////
 	irr::IrrlichtDevice* device;
 	irr::video::IVideoDriver* driver;
