@@ -90,7 +90,6 @@ irr::video::ITexture* ImageManager::loadTextureAnySize(epro::path_stringview tex
 }
 bool ImageManager::Initial() {
 	/////kdiy/////
-	int imgcharacter[CHARACTER_VOICE-1];
     for(uint8_t playno = 0; playno < gSoundManager->textcharacter.size(); playno++)
 		imgcharacter.push_back(TEXTURE_SETTING + playno + 1);
 	Utils::MakeDirectory(EPRO_TEXT("./textures/character"));
@@ -290,7 +289,7 @@ bool ImageManager::Initial() {
 #ifdef VIP
     RefreshKCGImage();
 #else
-    for(uint8_t playno = 0; playno < CHARACTER_VOICE; playno++) {
+    for(uint8_t playno = 0; playno < gSoundManager->textcharacter.size() + 1; playno++) {
 		icon[playno] = driver->getTexture(0);
 	    character[playno] = driver->getTexture(0);
 	    characterd[playno] = driver->getTexture(0);
@@ -665,10 +664,10 @@ void ImageManager::RefreshRandomImageList() {
 
 	for(uint8_t playno = 0; playno < gSoundManager->textcharacter.size(); playno++) {
 		RefreshImageDir(epro::format(EPRO_TEXT("character/{}/icon"), gSoundManager->textcharacter[playno]), imgcharacter[playno]);
-		RefreshImageDir(epro::format(EPRO_TEXT("character/{}/damage"), gSoundManager->textcharacter[playno]), imgcharacter[playno] + CHARACTER_VOICE - 1);
+		RefreshImageDir(epro::format(EPRO_TEXT("character/{}/damage"), gSoundManager->textcharacter[playno]), imgcharacter[playno] + gSoundManager->textcharacter.size());
 	}
 
-	for(int i = 0; i < 40 + CHARACTER_VOICE + CHARACTER_VOICE -2; ++i)
+	for(int i = 0; i < 40 + gSoundManager->textcharacter.size() + gSoundManager->textcharacter.size(); ++i)
 		saved_image_id[i] = -1;
 }
 void ImageManager::RefreshImageDir(epro::path_string path, int image_type) {
@@ -761,12 +760,12 @@ void ImageManager::GetRandomImagef(int width, int height) {
 	}
 }
 void ImageManager::RefreshKCGImage() {
-	for(uint8_t playno = 1; playno < CHARACTER_VOICE; playno++) {
+	for(uint8_t playno = 1; playno < gSoundManager->textcharacter.size() + 1; playno++) {
         icon[playno] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/mini_icon"_sv), gSoundManager->textcharacter[playno-1]));
         GetRandomImage(character[playno], imgcharacter[playno-1], true);
         if(!character[playno])
             character[playno] = driver->getTexture(0);
-        GetRandomImage(characterd[playno], imgcharacter[playno-1] + CHARACTER_VOICE - 1, true);
+        GetRandomImage(characterd[playno], imgcharacter[playno-1] + gSoundManager->textcharacter.size(), true);
         if(!characterd[playno]) {
             if(!character[playno])
                 characterd[playno] = driver->getTexture(0);

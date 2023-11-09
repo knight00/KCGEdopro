@@ -286,7 +286,7 @@ void SoundManager::RefreshChantsList() {
     for(auto list : ChantsList2)
 		list.clear();
 	for(int i = 0; i < 20; i++) {
-		for(uint8_t playno = 0; playno < CHARACTER_VOICE + CHARACTER_STORY_ONLY; playno++) {
+		for(uint8_t playno = 0; playno < textcharacter.size() + 1 + CHARACTER_STORY_ONLY; playno++) {
 			ChantSPList[i][playno].clear();
 			ChantSPList2[i][playno].clear();
 		}
@@ -341,7 +341,7 @@ void SoundManager::RefreshChantsList() {
 		if(chantType.first == CHANT::WIN) i = 18;
 		if(chantType.first == CHANT::LOSE) i = 19;
 		if(i == -1) continue;
-		for(int x = 0; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
+		for(int x = 0; x < textcharacter.size() + 1 + CHARACTER_STORY_ONLY; x++) {
 		if(chantType.first == CHANT::SUMMON) {
 				RefreshZipChants(searchPath[x] + EPRO_TEXT("/fusion"), ChantSPList[i][x]);
 				RefreshZipChants(searchPath[x] + EPRO_TEXT("/synchro"), ChantSPList[i][x]);

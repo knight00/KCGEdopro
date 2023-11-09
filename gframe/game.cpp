@@ -146,10 +146,10 @@ void Mode::NextPlot(uint8_t step, uint32_t code) {
             character[i] = 0;
         if(chapter == 1) {
             gSoundManager->character[0] = 15; //Player 1 voice: Yusei
-            gSoundManager->character[1] = CHARACTER_VOICE; //Player 2 voice: Dark Siner
+            gSoundManager->character[1] = gSoundManager->textcharacter.size() + 1; //Player 2 voice: Dark Siner
         } else {
             gSoundManager->character[0] = 15; //Player 1 voice: Yusei
-            gSoundManager->character[1] = CHARACTER_VOICE; //Player 2 voice: Dark Siner
+            gSoundManager->character[1] = gSoundManager->textcharacter.size() + 1; //Player 2 voice: Dark Siner
         }
         mainGame->btnBody->setImage(mainGame->imageManager.modeBody[chapter]);
 		mainGame->ShowElement(mainGame->wBody);
@@ -1218,7 +1218,7 @@ void Game::Initialize() {
 	ebCharacterDeck->clear();
 	ebCharacterDeck->addItem(gDataManager->GetSysString(8047).data());
     defaultStrings.emplace_back(ebCharacterDeck, 8047);
-	 for (auto j = 9000; j <= 9000 + CHARACTER_VOICE - 2; ++j) {
+	 for (auto j = 9000; j <= 9000 + gSoundManager->textcharacter.size() - 1; ++j) {
         ebCharacterDeck->addItem(gDataManager->GetSysString(j).data());
         defaultStrings.emplace_back(ebCharacterDeck, j);
     }
@@ -1458,7 +1458,7 @@ void Game::Initialize() {
         defaultStrings.emplace_back(ebCharacter2[i], 8048);
         ebCharacter2[i]->setEnabled(false);
 #endif
-        for (auto j = 9000; j <= 9000 + CHARACTER_VOICE - 2; ++j) {
+        for (auto j = 9000; j <= 9000 + gSoundManager->textcharacter.size() - 1; ++j) {
             ebCharacter2[i]->addItem(gDataManager->GetSysString(j).data());
             defaultStrings.emplace_back(ebCharacter2[i], j);
         }
@@ -2194,7 +2194,7 @@ void Game::PopulateGameHostWindows() {
         defaultStrings.emplace_back(ebCharacter[i], 8048);
         ebCharacter[i]->setEnabled(false);
 #endif
-        for (auto j = 9000; j <= 9000 + CHARACTER_VOICE - 2; ++j) {
+        for (auto j = 9000; j <= 9000 + gSoundManager->textcharacter.size() - 1; ++j) {
             ebCharacter[i]->addItem(gDataManager->GetSysString(j).data());
             defaultStrings.emplace_back(ebCharacter[i], j);
         }

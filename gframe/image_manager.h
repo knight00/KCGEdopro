@@ -170,6 +170,7 @@ private:
 #define TEXTURE_OT                  38
 #define TEXTURE_SETTING             39
 
+	std::vector<uint8_t> imgcharacter;
 	std::unordered_map<uint32_t, irr::video::ITexture*> tCloseup;
 	/////////kdiy////
 	irr::IrrlichtDevice* device;

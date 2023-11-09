@@ -2421,7 +2421,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		}
 		///////////kdiy///////////
 		for(int i = 0; i < 6; ++i) {
-			if(gSoundManager->character[i] > CHARACTER_VOICE - 1) {
+			if(gSoundManager->character[i] > gSoundManager->textcharacter.size()) {
 			    mainGame->imageManager.character[gSoundManager->character[i]] = 0;
 			    mainGame->imageManager.characterd[gSoundManager->character[i]] = 0;
             }

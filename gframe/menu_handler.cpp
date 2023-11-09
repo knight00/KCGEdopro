@@ -347,7 +347,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				/////kdiy/////
 				mainGame->mode->isMode = false;
 				for(int i = 0; i < 6; ++i) {
-					if(gSoundManager->character[i] > CHARACTER_VOICE - 1)
+					if(gSoundManager->character[i] > gSoundManager->textcharacter.size())
 					    gSoundManager->character[i] = 0;
 					mainGame->ebCharacter[i]->setSelected(gSoundManager->character[i]);
 				    mainGame->icon[i]->setImage(mainGame->imageManager.icon[gSoundManager->character[i]]);
@@ -605,7 +605,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 #ifndef VIP
 				    break;
 #endif
-				if(gSoundManager->character[mainGame->choose_player] == CHARACTER_VOICE - 1) gSoundManager->character[mainGame->choose_player] = 0;
+				if(gSoundManager->character[mainGame->choose_player] == gSoundManager->textcharacter.size()) gSoundManager->character[mainGame->choose_player] = 0;
 				else gSoundManager->character[mainGame->choose_player] ++;
 				int player = gSoundManager->character[mainGame->choose_player];
 				mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
@@ -621,7 +621,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 #ifndef VIP
 				    break;
 #endif
-				if(gSoundManager->character[mainGame->choose_player] == 0) gSoundManager->character[mainGame->choose_player] = CHARACTER_VOICE - 1;
+				if(gSoundManager->character[mainGame->choose_player] == 0) gSoundManager->character[mainGame->choose_player] = gSoundManager->textcharacter.size();
 				else gSoundManager->character[mainGame->choose_player] --;
 				int player = gSoundManager->character[mainGame->choose_player];
 				mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
@@ -910,7 +910,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
             case BUTTON_CHARACTER_REPLAY: {
 				mainGame->PopupElement(mainGame->wCharacterReplay);
                 for(int i = 0; i < 6; ++i) {
-					if(gSoundManager->character[i] > CHARACTER_VOICE - 1)
+					if(gSoundManager->character[i] > gSoundManager->textcharacter.size())
 					    mainGame->imageManager.icon[gSoundManager->character[i]] = 0;
 				    mainGame->icon2[i]->setImage(mainGame->imageManager.icon[gSoundManager->character[i]]);
 				}
