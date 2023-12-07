@@ -422,15 +422,41 @@ void Game::DrawCard(ClientCard* pcard) {
 	if(pcard->is_moving)
 		return;
 	if(pcard->cmdFlag & COMMAND_ATTACK) {
-		matManager.mTexture.setTexture(0, imageManager.tAttack);
+    ////kidy/////////
+        //matManager.mTexture.setTexture(0, imageManager.tAttack);
+        //driver->setMaterial(matManager.mTexture);
+		//irr::core::matrix4 atk;
+		//atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? -1 : 1) * (atkdy / 4.0f + 0.35f), 0.05f));
+		//atk.setRotationRadians(irr::core::vector3df(0, 0, pcard->controler == 0 ? 0 : irr::core::PI));
+		//driver->setTransform(irr::video::ETS_WORLD, atk);
+		//driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
+    //}
+		auto cardcloseup = imageManager.GetTextureCloseup(pcard->code);
+        if(cardcloseup)
+            matManager.mTexture.setTexture(0, cardcloseup);
+        else
+            matManager.mTexture.setTexture(0, imageManager.tAttack);
 		driver->setMaterial(matManager.mTexture);
 		irr::core::matrix4 atk;
 		atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? -1 : 1) * (atkdy / 4.0f + 0.35f), 0.05f));
 		atk.setRotationRadians(irr::core::vector3df(0, 0, pcard->controler == 0 ? 0 : irr::core::PI));
 		driver->setTransform(irr::video::ETS_WORLD, atk);
-		driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
+        if(cardcloseup)
+		    driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
+        else
+		    driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
+	} else if(((pcard->type & TYPE_MONSTER) && pcard->location & (LOCATION_MZONE | LOCATION_SZONE)) && (pcard->position & POS_FACEUP) && !pcard->is_sanct && !pcard->equipTarget)  {
+        auto cardcloseup = imageManager.GetTextureCloseup(pcard->code);
+        if(cardcloseup) {
+            matManager.mTexture.setTexture(0, cardcloseup);
+            driver->setMaterial(matManager.mTexture);
+            irr::core::matrix4 atk;
+            atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? -0.5f : 0.5f), 0.01f));
+            atk.setRotationRadians(irr::core::vector3df(0, 0, pcard->controler == 0 ? 0 : irr::core::PI));
+            driver->setTransform(irr::video::ETS_WORLD, atk);
+            driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
+        }
 	}
-	////kidy/////////
 	if((pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && (pcard->type & TYPE_SPELL) && pcard->is_pzone && !pcard->equipTarget) {
 		int scale = pcard->lscale;
 		if(scale >= 0 && scale <= 13 && imageManager.tLScale[scale]) {

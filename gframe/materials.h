@@ -22,6 +22,7 @@ public:
 	////kdiy////////
 	QuadVertex vPScale;
     QuadVertex vCloseup;
+	QuadVertex vAttack;
 	////kdiy////////
 	QuadVertex vSymbol;
 	QuadVertex vNegate;
