@@ -438,8 +438,8 @@ void Game::DrawCard(ClientCard* pcard) {
             matManager.mTexture.setTexture(0, imageManager.tAttack);
 		driver->setMaterial(matManager.mTexture);
 		irr::core::matrix4 atk;
-		atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? -1 : 1) * (atkdy / 4.0f + 0.35f), 0.05f));
-		atk.setRotationRadians(irr::core::vector3df(0, 0, pcard->controler == 0 ? 0 : irr::core::PI));
+		atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? cardcloseup ? -0.4f : -1 : cardcloseup ? 0.4f : 1) * (atkdy / 4.0f + 0.35f), 0.05f));
+		atk.setRotationRadians(irr::core::vector3df(0, 0, (pcard->controler == 0 || cardcloseup) ? 0 : irr::core::PI));
 		driver->setTransform(irr::video::ETS_WORLD, atk);
         if(cardcloseup)
 		    driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
@@ -451,8 +451,8 @@ void Game::DrawCard(ClientCard* pcard) {
             matManager.mTexture.setTexture(0, cardcloseup);
             driver->setMaterial(matManager.mTexture);
             irr::core::matrix4 atk;
-            atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? -0.5f : 0.5f), 0.01f));
-            atk.setRotationRadians(irr::core::vector3df(0, 0, pcard->controler == 0 ? 0 : irr::core::PI));
+            atk.setTranslation(pcard->curPos);
+            atk.setRotationRadians(irr::core::vector3df(0, 0, (pcard->controler == 0 || cardcloseup) ? 0 : irr::core::PI));
             driver->setTransform(irr::video::ETS_WORLD, atk);
             driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
         }
@@ -713,14 +713,14 @@ void Game::DrawMisc() {
 			pcard = dField.mzone[p][i];
 			/////////kdiy////////////
 			//if (pcard && pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)))
-			if(pcard && pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && !pcard->is_sanct && !pcard->equipTarget)
+			if(pcard && pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && !pcard->is_sanct && !pcard->equipTarget && !pcard->is_attack)
 			/////////kdiy////////////
 				DrawStatus(pcard);
 		}
 		/////////kdiy////////////
 		for (int i = 0; i < 5; ++i) {
 			pcard = dField.szone[p][i];
-			if(pcard && pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && pcard->is_orica && !pcard->equipTarget)
+			if(pcard && pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && pcard->is_orica && !pcard->equipTarget && !pcard->is_attack)
 				DrawStatus(pcard);
 		}
 		/////////kdiy////////////

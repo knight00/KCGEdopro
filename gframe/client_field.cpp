@@ -841,9 +841,10 @@ void ClientField::GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df
 		t->Z = 0.01f;
 		////////kdiy///////////
 		//if(location == LOCATION_MZONE) {
+			// if(controler == 0)
 		if(((location == LOCATION_MZONE && !pcard->is_sanct) || (location == LOCATION_SZONE && pcard->is_orica)) && !pcard->equipTarget) {
+            if((controler == 0 || pcard->is_attack) && !pcard->attack_me)
 		////////kdiy///////////
-			if(controler == 0)
 				*r = (pcard->position & POS_DEFENSE) ? selfDEF : selfATK;
 			else
 				*r = (pcard->position & POS_DEFENSE) ? oppoDEF : oppoATK;
@@ -966,7 +967,7 @@ void ClientField::MoveCard(ClientCard* pcard, float frame) {
 	float milliseconds = frame * 1000.0f / 60.0f;
 	irr::core::vector3df trans = pcard->curPos;
 	irr::core::vector3df rot = pcard->curRot;
-	GetCardDrawCoordinates(pcard, &trans, &rot);
+    GetCardDrawCoordinates(pcard, &trans, &rot);
 	pcard->dPos = (trans - pcard->curPos) / milliseconds;
 	float diff = rot.X - pcard->curRot.X;
 	while (diff < 0) diff += irr::core::PI * 2;
@@ -991,6 +992,9 @@ void ClientField::MoveCard(ClientCard* pcard, float frame) {
 	else
 		pcard->dRot.Z = -(irr::core::PI * 2 - diff) / milliseconds;
 	pcard->is_moving = true;
+    ////kdiy///////////
+    if(!pcard->is_attack)
+    ////kdiy///////////
 	pcard->refresh_on_stop = true;
 	pcard->aniFrame = milliseconds;
 }

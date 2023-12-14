@@ -4876,11 +4876,36 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		mainGame->atk_r.set(0, 0, -std::atan((xd - xa) / (yd - ya)));
 		if(ya <= yd)
 			mainGame->atk_r.Z += irr::core::PI;
-		matManager.GenArrow(sy);
-		mainGame->attack_sv = 0.0f;
-		mainGame->is_attacking = true;
-		mainGame->WaitFrameSignal(40, lock);
-		mainGame->is_attacking = false;
+        ////kdiy///////////
+		// matManager.GenArrow(sy);
+		// mainGame->attack_sv = 0.0f;
+		// mainGame->is_attacking = true;
+        // mainGame->WaitFrameSignal(40, lock);
+		// mainGame->is_attacking = false;
+        auto acontroler = mainGame->dField.attacker->controler;
+        auto asequence = mainGame->dField.attacker->sequence;
+        auto alocation = mainGame->dField.attacker->location;
+        mainGame->dField.attacker->is_attack = true;
+        if(!is_direct) {
+            mainGame->dField.attacker->controler = info2.controler;
+            mainGame->dField.attacker->sequence = mainGame->dField.attack_target->sequence;
+            mainGame->dField.attacker->location = mainGame->dField.attack_target->location;
+        } else {
+            mainGame->dField.attacker->controler = 1 - mainGame->dField.attacker->controler;
+            mainGame->dField.attacker->sequence = 2;
+            mainGame->dField.attacker->location = LOCATION_MZONE;
+        }
+        if(acontroler == 1)
+			mainGame->dField.attacker->attack_me = true;
+        mainGame->dField.MoveCard(mainGame->dField.attacker, 8);
+        mainGame->WaitFrameSignal(20, lock);
+        mainGame->dField.attacker->controler = acontroler;
+        mainGame->dField.attacker->sequence = asequence;
+        mainGame->dField.attacker->location = alocation;
+        mainGame->dField.MoveCard(mainGame->dField.attacker, 8);
+        mainGame->WaitFrameSignal(20, lock);
+        mainGame->dField.attacker->is_attack = false;
+        ////kdiy///////////
 		return true;
 	}
 	case MSG_BATTLE: {

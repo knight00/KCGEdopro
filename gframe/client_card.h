@@ -64,6 +64,8 @@ public:
 	bool is_pzone = false;
 	bool is_orica = false;
 	bool is_sanct = false;
+	bool is_attack = false;
+	bool attack_me = false;
     /////////kdiy/////////
 	uint32_t attribute;
 	uint64_t race;
