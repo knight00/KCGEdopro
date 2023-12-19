@@ -1688,6 +1688,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
     }
 	case MSG_NEW_PHASE: {
 		const auto phase = BufferIO::Read<uint16_t>(pbuf);
+		//extra parameter
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		switch (phase) {
             case PHASE_DRAW:
@@ -1709,6 +1710,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		current.controler = mainGame->LocalPlayer(current.controler);
 		const auto reason = BufferIO::Read<uint32_t>(pbuf);
+		//extra parameter
 		const auto rp = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		const auto ppzone = BufferIO::Read<bool>(pbuf);
 		const auto cpzone = BufferIO::Read<bool>(pbuf);
@@ -1750,6 +1752,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
         CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
         const auto player = mainGame->LocalPlayer(info.controler);
+		//extra parameter
         const auto setplayer = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		uint16_t extra = 0;
 		if(info.location & LOCATION_MZONE) extra |= 0x1;
@@ -1760,6 +1763,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
 		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		const auto player = mainGame->LocalPlayer(info.controler);
+		//extra parameter
         const auto sumplayer = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 	    ClientCard* pcard = mainGame->dField.GetCard(player, info.location, info.sequence);
         uint16_t extra = 0x80;
@@ -1778,6 +1782,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		const auto player = mainGame->LocalPlayer(current.controler);
 		ClientCard* pcard = mainGame->dField.GetCard(player, current.location, current.sequence);
+		//extra parameter
         const auto sumtype = BufferIO::Read<uint32_t>(pbuf);
         const auto sumplayer = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
         if((current.location & LOCATION_MZONE) && (current.position & POS_FACEUP)) {
@@ -1804,6 +1809,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
 		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		info.controler = mainGame->LocalPlayer(info.controler);
+		//extra parameter
         const auto sumplayer = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		ClientCard* pcard = mainGame->dField.GetCard(info.controler, info.location, info.sequence);
 		PlayChant(SoundManager::CHANT::SUMMON, pcard, sumplayer, 0x80);
@@ -1818,6 +1824,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto cs = CompatRead<uint8_t, uint32_t>(pbuf);
 		const auto desc = CompatRead<uint32_t, uint64_t>(pbuf);
 		/*const auto ct = */CompatRead<uint8_t, uint32_t>(pbuf);
+		//extra parameter
         CoreUtils::loc_info previous = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		const auto cpzone = BufferIO::Read<bool>(pbuf);
         ClientCard* pcard = mainGame->dField.GetCard(mainGame->LocalPlayer(info.controler), info.location, info.sequence, info.position);
@@ -1922,6 +1929,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
     case MSG_DAMAGE: {
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		const auto val = BufferIO::Read<uint32_t>(pbuf);
+		//extra parameter
 		const auto reason = BufferIO::Read<uint32_t>(pbuf);
         int avataricon1 = 0; int avataricon2 = 0;
 		if(mainGame->dInfo.isTeam1) {
@@ -3867,7 +3875,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         if(current2.location & LOCATION_OVERLAY)
             ocard = mainGame->dField.GetCard(current2.controler, current2.location & (~LOCATION_OVERLAY) & 0xff, current2.sequence);
 		current.controler = mainGame->LocalPlayer(current.controler);
-		//auto lock = LockIf();
 		if(!(current.location & LOCATION_OVERLAY)) {
 			ClientCard* pcard = mainGame->dField.GetCard(current.controler, current.location, current.sequence);
 			pcard->code = code;
@@ -3946,6 +3953,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		current.controler = mainGame->LocalPlayer(current.controler);
 		const auto reason = BufferIO::Read<uint32_t>(pbuf);
         //////kdiy///
+		//extra parameter
 		const auto rp = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		const auto ppzone = BufferIO::Read<bool>(pbuf);
 		const auto cpzone = BufferIO::Read<bool>(pbuf);
