@@ -451,7 +451,7 @@ void Game::DrawCard(ClientCard* pcard) {
             matManager.mTexture.setTexture(0, cardcloseup);
             driver->setMaterial(matManager.mTexture);
             irr::core::matrix4 atk;
-            atk.setTranslation(pcard->curPos);
+            atk.setTranslation(pcard->curPos + irr::core::vector3df(0.3f, pcard->controler == 0 ? 0 : 0.2f, 0.2f));
             atk.setRotationRadians(irr::core::vector3df(0, 0, (pcard->controler == 0 || cardcloseup) ? 0 : irr::core::PI));
             driver->setTransform(irr::video::ETS_WORLD, atk);
             driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
@@ -1035,8 +1035,8 @@ void Game::DrawSpec() {
 			driver->draw2DImage(imageManager.tMask, ResizeWin(574, 150, 574 + (showcarddif > CARD_IMG_WIDTH ? CARD_IMG_WIDTH : showcarddif), 404),
 								Scale<irr::s32>(CARD_IMG_HEIGHT - showcarddif, 0, CARD_IMG_HEIGHT - (showcarddif > CARD_IMG_WIDTH ? showcarddif - CARD_IMG_WIDTH : 0), CARD_IMG_HEIGHT), 0, 0, true);
             //////kdiy//////////
-			auto cardcloseup = imageManager.GetTextureCloseup(showcardcode);
-            auto cardcloseup2 = imageManager.GetTextureCloseup(showcardalias);
+			auto cardcloseup = imageManager.GetTextureCloseup(showcardcode, true);
+            auto cardcloseup2 = imageManager.GetTextureCloseup(showcardalias, true);
             if(cardcloseup)
                 DrawTextureRect(matManager.vCloseup, cardcloseup);
             else if(cardcloseup2)
@@ -1092,8 +1092,8 @@ void Game::DrawSpec() {
 			driver->draw2DImage(cardtxt, rect, cardrect, 0, matManager.c2d, true);
             //////kdiy//////////
             if(chklast) {
-                auto cardcloseup = imageManager.GetTextureCloseup(showcardcode);
-                auto cardcloseup2 = imageManager.GetTextureCloseup(showcardalias);
+                auto cardcloseup = imageManager.GetTextureCloseup(showcardcode, true);
+                auto cardcloseup2 = imageManager.GetTextureCloseup(showcardalias, true);
                 if(cardcloseup)
                     DrawTextureRect(matManager.vCloseup, cardcloseup);
                 else if(cardcloseup2)
@@ -1130,8 +1130,8 @@ void Game::DrawSpec() {
 			corner[3] = b.LowerRightCorner;
 			irr::gui::Draw2DImageQuad(driver, cardtxt, cardrect, corner);
             //////kdiy//////////
-			auto cardcloseup = imageManager.GetTextureCloseup(showcardcode);
-            auto cardcloseup2 = imageManager.GetTextureCloseup(showcardalias);
+			auto cardcloseup = imageManager.GetTextureCloseup(showcardcode, true);
+            auto cardcloseup2 = imageManager.GetTextureCloseup(showcardalias, true);
             if(cardcloseup)
                 DrawTextureRect(matManager.vCloseup, cardcloseup);
             else if(cardcloseup2)

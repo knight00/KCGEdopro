@@ -114,7 +114,7 @@ public:
 	irr::video::ITexture* GetTextureCard(uint32_t code, imgType type, bool wait = false, bool fit = false, int* chk = nullptr);
 	irr::video::ITexture* GetTextureField(uint32_t code);
 	////////kdiy////
-	irr::video::ITexture* GetTextureCloseup(uint32_t code);
+	irr::video::ITexture* GetTextureCloseup(uint32_t code, bool is_closeup=false);
 	////////kdiy////
 	irr::video::ITexture* GetCheckboxScaledTexture(float scale);
 	irr::video::ITexture* guiScalingResizeCached(irr::video::ITexture* src, const irr::core::rect<irr::s32>& srcrect,

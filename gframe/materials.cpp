@@ -32,10 +32,12 @@ Materials::Materials() {
 	///////kdiy//////
 	SetS3DVertex(vPScale, -0.35f, -0.5, 0.35, 0.5f, 0, 1, 0, 0, 1, 1);
     SetS3DVertex(vCloseup, 2.3f, -4.0f, 6.7f, 4.0f, 0.01f, 1, 0, 0, 1, 1);
-	SetS3DVertex(vAttack, -0.8f, -0.8f, 0.8f, 0.8f, 0.01f, 1, 0, 0, 1, 1);
+	SetS3DVertex(vAttack, -0.6f, -0.8f, 0.6f, 0.8f, 0.01f, 1, 0, 0, 1, 1);
+	//SetS3DVertex(vSymbol, -0.35f, -0.35f, 0.35f, 0.35f, 0.01f, 1, 0, 0, 1, 1);
+	//SetS3DVertex(vNegate, -0.25f, -0.28f, 0.25f, 0.22f, 0.01f, 1, 0, 0, 1, 1);
+    SetS3DVertex(vSymbol, -0.5f, -0.5f, 0.5f, 0.5f, 0.01f, 1, 0, 0, 1, 1);
+    SetS3DVertex(vNegate, -0.5f, -0.53f, 0.5f, 0.47f, 0.01f, 1, 0, 0, 1, 1);
 	///////kdiy//////
-	SetS3DVertex(vSymbol, -0.35f, -0.35f, 0.35f, 0.35f, 0.01f, 1, 0, 0, 1, 1);
-	SetS3DVertex(vNegate, -0.25f, -0.28f, 0.25f, 0.22f, 0.01f, 1, 0, 0, 1, 1);
 	SetS3DVertex(vChainNum, -0.35f, -0.35f, 0.35f, 0.35f, 0, 1, 0, 0, 0.19375f, 0.2421875f);
 	SetS3DVertex(vActivate, -0.5f, -0.5f, 0.5f, 0.5f, 0, 1, 0, 0, 1, 1);
 	SetS3DVertex(vField, -1.0f, -4.0f, 9.0f, 4.0f, 0, 1, 0, 0, 1, 1);
