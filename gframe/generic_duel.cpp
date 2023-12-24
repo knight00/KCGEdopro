@@ -1087,9 +1087,6 @@ void GenericDuel::Sending(CoreUtils::Packet& packet, int& return_value, bool& re
 		packets_cache.push_back(packet);
 		break;
 	}
-	////kdiy/////////
-	case MSG_CHANGE:
-	////kdiy/////////
 	case MSG_MOVE: {
 		pbufw = pbuf;
 		pbuf += 4;
