@@ -196,7 +196,10 @@ static DeckError CheckCards(const Deck::Vector& cards, LFList const* curlist,
 		uint32_t code = cit->alias ? cit->alias : cit->code;
 		ccount[code]++;
 		int dc = ccount[code];
-		if (dc > 3)
+        // ///////kdiy///////////////
+		// //if (dc > 3)
+        if (dc > 3 && !(code == 102 || code == 213))
+        // ///////kdiy///////////////
 			return ret.type = DeckError::CARDCOUNT, ret;
 		auto it = curlist->GetLimitationIterator(cit);
 		auto is_end = it == curlist->content.end();

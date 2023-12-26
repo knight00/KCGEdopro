@@ -113,6 +113,9 @@ struct DeckError {
 		OCGONLY,
 		TCGONLY,
 		UNKNOWNCARD,
+        ///kdiy/////
+		KCGCARD,
+        ///kdiy/////
 		CARDCOUNT,
 		MAINCOUNT,
 		EXTRACOUNT,

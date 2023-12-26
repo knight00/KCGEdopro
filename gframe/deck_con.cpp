@@ -1824,6 +1824,9 @@ bool DeckBuilder::check_limit(const CardDataC* pointer) {
 					limit = std::min(limit, it->second);
 				else if((it = filterList->content.find(pcard->alias)) != endit)
 					limit = std::min(limit, it->second);
+                ///////kdiy///////////////
+                if(pcard->code != 102 && pcard->code != 213)
+                ///////kdiy///////////////
 				found++;
 			}
 			if(limit <= found)

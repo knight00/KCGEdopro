@@ -393,7 +393,7 @@ void GenericDuel::PlayerReady(DuelPlayer* dp, bool is_ready, bool ai) {
 		}
         if(kcgwarn) {
 			DeckError deck_error = DeckManager::CheckDeckSize(dueler.pdeck, host_info.sizes);
-			deck_error.type = DeckError::UNKNOWNCARD;
+			deck_error.type = DeckError::KCGCARD;
 			deck_error.code = dueler.deck_error;
         }
 #endif

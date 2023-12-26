@@ -574,6 +574,12 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 				text = epro::sprintf(gDataManager->GetSysString(1415), gDataManager->GetName(code), code);
 				break;
 			}
+            ///kdiy/////
+			case DeckError::KCGCARD: {
+				text = epro::sprintf(gDataManager->GetSysString(8057), gDataManager->GetName(code), code);
+				break;
+			}
+            ///kdiy/////
 			case DeckError::CARDCOUNT: {
 				text = epro::sprintf(gDataManager->GetSysString(1416), gDataManager->GetName(code));
 				break;
