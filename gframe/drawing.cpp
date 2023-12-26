@@ -444,14 +444,14 @@ void Game::DrawCard(ClientCard* pcard) {
         if(cardcloseup)
 		    driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
         else
-		    driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
+		    driver->drawVertexPrimitiveList(matManager.vAttack2, 4, matManager.iRectangle, 2);
 	} else if(((pcard->type & TYPE_MONSTER) && pcard->location & (LOCATION_MZONE | LOCATION_SZONE)) && (pcard->position & POS_FACEUP) && !pcard->is_sanct && !pcard->equipTarget)  {
         auto cardcloseup = imageManager.GetTextureCloseup(pcard->code);
         if(cardcloseup) {
             matManager.mTexture.setTexture(0, cardcloseup);
             driver->setMaterial(matManager.mTexture);
             irr::core::matrix4 atk;
-            atk.setTranslation(pcard->curPos + irr::core::vector3df(0.3f, pcard->controler == 0 ? 0 : 0.2f, 0.2f));
+            atk.setTranslation(pcard->curPos + irr::core::vector3df(0, pcard->controler == 0 ? 0 : 0.2f, 0.2f));
             atk.setRotationRadians(irr::core::vector3df(0, 0, (pcard->controler == 0 || cardcloseup) ? 0 : irr::core::PI));
             driver->setTransform(irr::video::ETS_WORLD, atk);
             driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
