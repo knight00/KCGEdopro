@@ -3701,28 +3701,30 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		//kdiy////////
 		std::vector<ClientCard> extra_real;
 		for(const auto& pcard : mainGame->dField.extra[player]) {
-			if(pcard->is_change) {
-				ClientCard rcard = *pcard;
-				extra_real.push_back(rcard);
+			if(!(pcard->position & POS_FACEUP)) {
+				if(pcard->is_change) {
+					ClientCard rcard = *pcard;
+					extra_real.push_back(rcard);
+				}
+				pcard->is_change = false;
+				pcard->rsetnames = 0;
+				pcard->rtype = 0;
+				pcard->rlevel = 0;
+				pcard->rattribute = 0;
+				pcard->rrace = 0;
+				pcard->rattack = 0;
+				pcard->rdefense = 0;
+				pcard->rlscale = 0;
+				pcard->rrscale = 0;
+				pcard->rlink_marker = 0;
+				pcard->is_real = false;
+				pcard->realchange = 0;
+				pcard->realsetcode = 0;
+				pcard->realname = 0;
+				pcard->effcode = 0;
+				pcard->desc_hints.clear();
+				pcard->text_hints.clear();
 			}
-			pcard->is_change = false;
-			pcard->rsetnames = 0;
-			pcard->rtype = 0;
-			pcard->rlevel = 0;
-			pcard->rattribute = 0;
-			pcard->rrace = 0;
-			pcard->rattack = 0;
-			pcard->rdefense = 0;
-			pcard->rlscale = 0;
-			pcard->rrscale = 0;
-			pcard->rlink_marker = 0;
-			pcard->is_real = false;
-			pcard->realchange = 0;
-			pcard->realsetcode = 0;
-			pcard->realname = 0;
-			pcard->effcode = 0;
-			pcard->desc_hints.clear();
-			pcard->text_hints.clear();
 		}
 		//kdiy////////
 		if(!mainGame->dInfo.isCatchingUp) {
@@ -3754,7 +3756,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			//kdiy////////
 			for(int i = 0; i < extra_real.size(); i++) {
 				ClientCard rcard = extra_real[i];
-				if (pcard->code == rcard.code) {
+				if(pcard->code == rcard.code && !(pcard->position & POS_FACEUP)) {
 					pcard->is_change = rcard.is_change;
 					pcard->rsetnames = rcard.rsetnames;
 					pcard->rtype = rcard.rtype;
@@ -3864,10 +3866,65 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			lst = mainGame->dField.szone;
 		ClientCard* mc[7];
 		auto lock = LockIf();
+		//kdiy////////
+		std::vector<ClientCard> real;
+		//kdiy////////
 		for (int i = 0; i < count; ++i) {
 			CoreUtils::loc_info previous = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 			previous.controler = mainGame->LocalPlayer(previous.controler);
 			mc[i] = lst[previous.controler][previous.sequence];
+		//kdiy////////
+			if(mc[i]->is_change) {
+				ClientCard rcard = *mc[i];
+				real.push_back(rcard);
+			}
+			mc[i]->is_change = false;
+			mc[i]->rsetnames = 0;
+			mc[i]->rtype = 0;
+			mc[i]->rlevel = 0;
+			mc[i]->rattribute = 0;
+			mc[i]->rrace = 0;
+			mc[i]->rattack = 0;
+			mc[i]->rdefense = 0;
+			mc[i]->rlscale = 0;
+			mc[i]->rrscale = 0;
+			mc[i]->rlink_marker = 0;
+			mc[i]->is_real = false;
+			mc[i]->realchange = 0;
+			mc[i]->realsetcode = 0;
+			mc[i]->realname = 0;
+			mc[i]->effcode = 0;
+			mc[i]->desc_hints.clear();
+			mc[i]->text_hints.clear();
+		}
+		//kdiy////////
+		for (int i = 0; i < count; ++i) {
+		//kdiy////////
+			for(int j = 0; j < real.size(); j++) {
+				ClientCard rcard = real[i];
+				if(mc[i]->code == rcard.code) {
+					mc[i]->is_change = rcard.is_change;
+					mc[i]->rsetnames = rcard.rsetnames;
+					mc[i]->rtype = rcard.rtype;
+					mc[i]->rlevel = rcard.rlevel;
+					mc[i]->rattribute = rcard.rattribute;
+					mc[i]->rrace = rcard.rrace;
+					mc[i]->rattack = rcard.rattack;
+					mc[i]->rdefense = rcard.rdefense;
+					mc[i]->rlscale = rcard.rlscale;
+					mc[i]->rrscale = rcard.rrscale;
+					mc[i]->rlink_marker = rcard.rlink_marker;
+					mc[i]->is_real = rcard.is_real;
+					mc[i]->realchange = rcard.realchange;
+					mc[i]->realsetcode = rcard.realsetcode;
+					mc[i]->realname = rcard.realname;
+					mc[i]->effcode = rcard.effcode;
+					mc[i]->text_hints = rcard.text_hints;
+					real.erase(real.begin() + i);
+					break;
+				}
+			}
+		//kdiy////////
 			mc[i]->SetCode(0);
 			if(!mainGame->dInfo.isCatchingUp) {
 				constexpr float milliseconds = 10.0f * 1000.0f / 60.0f;
@@ -5016,9 +5073,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         CoreUtils::loc_info info2 = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		const bool is_direct = info2.location == 0;
         if(is_direct)
-            Play(SoundManager::SFX::DIRECT_ATTACK);		
+            Play(SoundManager::SFX::DIRECT_ATTACK);
         else
-		/////kdiy//////			
+		/////kdiy//////
 			Play(SoundManager::SFX::ATTACK);			
 		if(mainGame->dInfo.isCatchingUp)
 			return true;
