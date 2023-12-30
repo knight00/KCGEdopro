@@ -27,6 +27,9 @@ inline void SetS3DVertex(Materials::QuadVertex v, irr::f32 x1, irr::f32 y1, irr:
 Materials::Materials() {
 	SetS3DVertex(vCardFront, -0.35f, -0.5f, 0.35f, 0.5f, 0, 1, 0, 0, 1, 1);
 	SetS3DVertex(vCardOutline, -0.375f, -0.54f, 0.37f, 0.54f, 0, 1, 0, 0, 1, 1);
+    ///////kdiy//////
+    SetS3DVertex(vCardOutline2, -0.55f, -0.7f, 0.57f, 0.7f, 0, 1, 0, 0, 1, 1);
+    ///////kdiy//////
 	SetS3DVertex(vCardOutliner, 0.37f, -0.54f, -0.375f, 0.54f, 0, 1, 0, 0, 1, 1);
 	SetS3DVertex(vCardBack, 0.35f, -0.5f, -0.35f, 0.5f, 0, -1, 0, 0, 1, 1);
 	///////kdiy//////
@@ -38,6 +41,7 @@ Materials::Materials() {
 	//SetS3DVertex(vNegate, -0.25f, -0.28f, 0.25f, 0.22f, 0.01f, 1, 0, 0, 1, 1);
     SetS3DVertex(vSymbol, -0.7f, -0.7f, 0.7f, 0.7f, 0.01f, 1, 0, 0, 1, 1);
     SetS3DVertex(vNegate, -0.7f, -0.73f, 0.7f, 0.77f, 0.01f, 1, 0, 0, 1, 1);
+	//SetS3DVertex(vXyz, -0.15f, -0.15f, 0.15f, 0.15f, 0, 1, 0, 0, 1, 1);
 	///////kdiy//////
 	SetS3DVertex(vChainNum, -0.35f, -0.35f, 0.35f, 0.35f, 0, 1, 0, 0, 0.19375f, 0.2421875f);
 	SetS3DVertex(vActivate, -0.5f, -0.5f, 0.5f, 0.5f, 0, 1, 0, 0, 1, 1);

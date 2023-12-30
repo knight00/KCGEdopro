@@ -1422,7 +1422,17 @@ irr::video::ITexture* ImageManager::GetTextureField(uint32_t code) {
 	return nullptr;
 }
 /////////kdiy////
-irr::video::ITexture* ImageManager::GetTextureCloseup(uint32_t code, bool is_closeup) {
+irr::video::ITexture* ImageManager::GetTextureCloseup(uint32_t code, uint32_t alias, bool is_closeup) {
+	if(code == 0 || (is_closeup && !gGameConfig->closeup))
+		return nullptr;
+    auto chk1 = GetTextureCloseupCode(code, is_closeup);
+    auto chk2 = GetTextureCloseupCode(alias, is_closeup);
+    if(chk1)
+        return chk1;
+    else
+        return chk2;
+}
+irr::video::ITexture* ImageManager::GetTextureCloseupCode(uint32_t code, bool is_closeup) {
 	if(code == 0 || (is_closeup && !gGameConfig->closeup))
 		return nullptr;
 	auto tit = tCloseup.find(code);
