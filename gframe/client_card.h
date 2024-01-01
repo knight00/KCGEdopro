@@ -15,6 +15,10 @@ class ClientCard {
 public:
 	irr::core::matrix4 mTransform;
 	irr::core::vector3df curPos;
+    /////////kdiy/////////
+	irr::core::vector3df attPos;
+	uint32_t attsequence;
+    /////////kdiy/////////
 	irr::core::vector3df curRot;
 	irr::core::vector3df dPos;
 	irr::core::vector3df dRot;

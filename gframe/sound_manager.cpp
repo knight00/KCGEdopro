@@ -277,7 +277,7 @@ void SoundManager::RefreshChantsList() {
         //     }
         // }
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character"));
-	for(uint8_t playno = 0; playno < textcharacter.size(); playno++)
+	for(uint8_t playno = 0; playno < CHARACTER_VOICE - 1; playno++)
 		Utils::MakeDirectory(epro::format(EPRO_TEXT("./sound/character/{}"), textcharacter[playno]));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/darksiner"));
 	ChantsBGMList.clear();
@@ -286,7 +286,7 @@ void SoundManager::RefreshChantsList() {
     for(auto list : ChantsList2)
 		list.clear();
 	for(int i = 0; i < 20; i++) {
-		for(uint8_t playno = 0; playno < textcharacter.size() + 1 + CHARACTER_STORY_ONLY; playno++) {
+		for(uint8_t playno = 0; playno < CHARACTER_VOICE + CHARACTER_STORY_ONLY; playno++) {
 			ChantSPList[i][playno].clear();
 			ChantSPList2[i][playno].clear();
 		}
@@ -310,7 +310,7 @@ void SoundManager::RefreshChantsList() {
 		searchPath.push_back(epro::format(EPRO_TEXT("{}"), chantType.second));
 		std::vector<epro::path_string> searchPath2;
 		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/{}"), chantType.second));
-		for(uint8_t playno = 0; playno < textcharacter.size(); playno++) {
+		for(uint8_t playno = 0; playno < CHARACTER_VOICE - 1; playno++) {
 			searchPath.push_back(epro::format(EPRO_TEXT("character/{}/{}"), textcharacter[playno], chantType.second));
 			searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/{}/{}"), textcharacter[playno], chantType.second));
 		}
@@ -341,7 +341,7 @@ void SoundManager::RefreshChantsList() {
 		if(chantType.first == CHANT::WIN) i = 18;
 		if(chantType.first == CHANT::LOSE) i = 19;
 		if(i == -1) continue;
-		for(int x = 0; x < textcharacter.size() + 1 + CHARACTER_STORY_ONLY; x++) {
+		for(int x = 0; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
 		if(chantType.first == CHANT::SUMMON) {
 				RefreshZipChants(searchPath[x] + EPRO_TEXT("/fusion"), ChantSPList[i][x]);
 				RefreshZipChants(searchPath[x] + EPRO_TEXT("/synchro"), ChantSPList[i][x]);

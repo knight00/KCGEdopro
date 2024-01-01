@@ -90,11 +90,11 @@ irr::video::ITexture* ImageManager::loadTextureAnySize(epro::path_stringview tex
 }
 bool ImageManager::Initial() {
 	/////kdiy/////
-    for(uint8_t playno = 0; playno < gSoundManager->textcharacter.size(); playno++)
+    for(uint8_t playno = 0; playno < CHARACTER_VOICE - 1; playno++)
 		imgcharacter.push_back(TEXTURE_SETTING + playno + 1);
 	Utils::MakeDirectory(EPRO_TEXT("./textures/character"));
 	std::vector<epro::path_string> searchPath;
-	for(uint8_t playno = 0; playno < gSoundManager->textcharacter.size(); playno++)
+	for(uint8_t playno = 0; playno < CHARACTER_VOICE - 1; playno++)
 		searchPath.push_back(epro::format(EPRO_TEXT("./textures/character/{}"), gSoundManager->textcharacter[playno]));
 	for (auto path : searchPath) {
 		Utils::MakeDirectory(path);
@@ -289,7 +289,7 @@ bool ImageManager::Initial() {
 #ifdef VIP
     RefreshKCGImage();
 #else
-    for(uint8_t playno = 0; playno < gSoundManager->textcharacter.size() + 1; playno++) {
+    for(uint8_t playno = 0; playno < CHARACTER_VOICE; playno++) {
 		icon[playno] = driver->getTexture(0);
 	    character[playno] = driver->getTexture(0);
 	    characterd[playno] = driver->getTexture(0);
@@ -662,12 +662,12 @@ void ImageManager::RefreshRandomImageList() {
 	RefreshImageDir(EPRO_TEXT("ot"), TEXTURE_OT);
 	RefreshImageDir(EPRO_TEXT("settings"), TEXTURE_SETTING);
 
-	for(uint8_t playno = 0; playno < gSoundManager->textcharacter.size(); playno++) {
+	for(uint8_t playno = 0; playno < CHARACTER_VOICE - 1; playno++) {
 		RefreshImageDir(epro::format(EPRO_TEXT("character/{}/icon"), gSoundManager->textcharacter[playno]), imgcharacter[playno]);
-		RefreshImageDir(epro::format(EPRO_TEXT("character/{}/damage"), gSoundManager->textcharacter[playno]), imgcharacter[playno] + gSoundManager->textcharacter.size());
+		RefreshImageDir(epro::format(EPRO_TEXT("character/{}/damage"), gSoundManager->textcharacter[playno]), imgcharacter[playno] + CHARACTER_VOICE - 1);
 	}
 
-	for(int i = 0; i < 40 + gSoundManager->textcharacter.size() + gSoundManager->textcharacter.size(); ++i)
+	for(int i = 0; i < 40 + CHARACTER_VOICE + CHARACTER_VOICE - 2; ++i)
 		saved_image_id[i] = -1;
 }
 void ImageManager::RefreshImageDir(epro::path_string path, int image_type) {
@@ -760,18 +760,12 @@ void ImageManager::GetRandomImagef(int width, int height) {
 	}
 }
 void ImageManager::RefreshKCGImage() {
-	for(uint8_t playno = 1; playno < gSoundManager->textcharacter.size() + 1; playno++) {
+	for(uint8_t playno = 1; playno < CHARACTER_VOICE; playno++) {
         icon[playno] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/mini_icon"_sv), gSoundManager->textcharacter[playno-1]));
         GetRandomImage(character[playno], imgcharacter[playno-1], true);
-        if(!character[playno])
-            character[playno] = driver->getTexture(0);
-        GetRandomImage(characterd[playno], imgcharacter[playno-1] + gSoundManager->textcharacter.size(), true);
-        if(!characterd[playno]) {
-            if(!character[playno])
-                characterd[playno] = driver->getTexture(0);
-            else
-                characterd[playno] = character[playno];
-        }
+        GetRandomImage(characterd[playno], imgcharacter[playno-1] + CHARACTER_VOICE, true);
+        if(!characterd[playno])
+            characterd[playno] = character[playno];
     }
 }
 //////kdiy//////

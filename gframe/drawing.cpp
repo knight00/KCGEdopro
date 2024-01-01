@@ -381,6 +381,20 @@ void Game::DrawCard(ClientCard* pcard) {
             matManager.mCard.AmbientColor = irr::video::SColor(255, 128, 128, 180);
         else
             matManager.mCard.AmbientColor = 0xffffffff;
+        if(pcard->is_attack) {
+            float sy;
+            float xa = mainGame->dField.attacker->attPos.X;
+            float ya = mainGame->dField.attacker->attPos.Y;
+            float xd, yd;
+            xd = pcard->curPos.X;
+			yd = pcard->curPos.Y;
+            sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
+            irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
+            if(ya <= yd)
+                atkr.Z += irr::core::PI;
+            pcard->mTransform.setRotationRadians(atkr);
+        } else
+            pcard->mTransform.setRotationRadians(pcard->curRot);
         ///kdiy////////
 		matManager.mCard.setTexture(0, imageManager.GetTextureCard(pcard->code, imgType::ART));
 		driver->setMaterial(matManager.mCard);
@@ -455,18 +469,42 @@ void Game::DrawCard(ClientCard* pcard) {
             driver->setMaterial(matManager.mTexture);
             irr::core::matrix4 atk;
             atk.setTranslation(pcard->curPos + irr::core::vector3df(0, pcard->controler == 0 ? 0 : 0.2f, 0.2f));
+            if(pcard->is_attack) {
+                float sy;
+                float xa = mainGame->dField.attacker->attPos.X;
+                float ya = mainGame->dField.attacker->attPos.Y;
+                float xd, yd;
+                xd = pcard->curPos.X;
+                yd = pcard->curPos.Y;
+                sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
+                irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
+                if(ya <= yd)
+                    atkr.Z += irr::core::PI;
+                atk.setRotationRadians(atkr);
+            } else
+                atk.setRotationRadians(irr::core::vector3df(0, 0, 0));
             driver->setTransform(irr::video::ETS_WORLD, atk);
             driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
-            // if((pcard->type & TYPE_XYZ)) {
-			// 	for(int i = 0; i < pcard->overlayed.size(); i++) {
-			// 		matManager.mTexture.setTexture(0, cardcloseup);
-			// 		driver->setMaterial(matManager.mTexture);
-			// 		irr::core::matrix4 atk;
-			// 		atk.setTranslation(pcard->curPos + irr::core::vector3df(0.75f*atkdy*pow(-1, i)*i/pcard->overlayed.size(), 0.85f*atkdy + pow(-1, i)*0.25f*i/pcard->overlayed.size(), 0.25f*atkdy));
-			// 		driver->setTransform(irr::video::ETS_WORLD, atk);
-			// 		driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
-			// 	}
-            // }
+            if((pcard->type & TYPE_XYZ)) {
+				int extra = 1;
+                int power2 = 1;
+				for(int i = 0; i < pcard->overlayed.size(); i++) {
+                    if(i > 7) break;
+					matManager.mTexture.setTexture(0, cardcloseup);
+					driver->setMaterial(matManager.mTexture);
+					irr::core::matrix4 atk;
+                    int neg = 1;
+                    if(i > 0 && i % 2 == 0) neg = -1;
+                    float power, powery = 0;
+                    if(pcard->overlayed.size() > 2) power = 0.15f;
+                    if(pcard->overlayed.size() > 2) powery = 0.1f;
+                    if(pcard->overlayed.size() > 4 && i > 0 && i % 2 == 0) power2 += 1;
+                    if(pcard->overlayed.size() > 4 && i > 0 && i % 2 == 0) extra += 1;
+					atk.setTranslation(pcard->curPos + irr::core::vector3df((0.65f * pow(-1, i) + power * neg / extra * power2) * atkdy, (0.75f + power * neg) * atkdy, 0.25f * atk2dy));
+					driver->setTransform(irr::video::ETS_WORLD, atk);
+					driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
+				}
+            }
         }
     ///kdiy////////
 	}

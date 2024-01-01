@@ -25,7 +25,7 @@ public:
     QuadVertex vCloseup;
 	QuadVertex vAttack;
 	QuadVertex vAttack2;
-	//QuadVertex vXyz;
+	QuadVertex vXyz;
 	////kdiy////////
 	QuadVertex vSymbol;
 	QuadVertex vNegate;
