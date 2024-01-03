@@ -224,6 +224,8 @@ public:
 	A(modeBody[CHAPTER])
     A(head[CHARACTER_STORY])
 	A(modeHead[6])
+	A(tXyz)
+	A(tCXyz)
 	/////kdiy/////
 	A(tSettings)
 	A(tCheckBox[3])

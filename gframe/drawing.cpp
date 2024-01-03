@@ -460,7 +460,7 @@ void Game::DrawCard(ClientCard* pcard) {
 		// driver->drawVertexPrimitiveList(matManager.vNegate, 4, matManager.iRectangle, 2);
     }
     if((pcard->location & LOCATION_ONFIELD) && (pcard->position & POS_FACEUP)) {
-        if((pcard->type & TYPE_MONSTER) && cardcloseup && !(pcard->cmdFlag & COMMAND_ATTACK)) {
+        if((pcard->type & TYPE_MONSTER) && cardcloseup) {
             if((pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
                 matManager.mTexture.AmbientColor = irr::video::SColor(255, 128, 128, 180);
             else
@@ -468,7 +468,10 @@ void Game::DrawCard(ClientCard* pcard) {
             matManager.mTexture.setTexture(0, cardcloseup);
             driver->setMaterial(matManager.mTexture);
             irr::core::matrix4 atk;
-            atk.setTranslation(pcard->curPos + irr::core::vector3df(0, pcard->controler == 0 ? 0 : 0.2f, 0.2f));
+            if(!(pcard->cmdFlag & COMMAND_ATTACK))
+                atk.setTranslation(pcard->curPos + irr::core::vector3df(0, pcard->controler == 0 ? 0 : 0.2f, 0.2f));
+            else
+                atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? -0.4f : 0.4f) * (atkdy / 4.0f + 0.35f), 0.05f));
             if(pcard->is_attack) {
                 float sy;
                 float xa = mainGame->dField.attacker->attPos.X;
@@ -485,57 +488,73 @@ void Game::DrawCard(ClientCard* pcard) {
                 atk.setRotationRadians(irr::core::vector3df(0, 0, 0));
             driver->setTransform(irr::video::ETS_WORLD, atk);
             driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
-            if((pcard->type & TYPE_XYZ)) {
-                int incre = 0;
-                int incre2 = 0;
-				for(int i = 0; i < pcard->overlayed.size(); i++) {
-					matManager.mTexture.setTexture(0, cardcloseup);
-					driver->setMaterial(matManager.mTexture);
-					irr::core::matrix4 atk;
-                    int neg = 1;
-                    if(pcard->overlayed.size() > 2 && i >= pcard->overlayed.size()/2) neg = -1;
-                    int power = 1;
-                    if(pcard->overlayed.size()/4 > 0) power = pcard->overlayed.size()/4;
-                    if(pcard->overlayed.size() > 2 && i % 2 == 0 && i < pcard->overlayed.size()/2) incre += 1;
-                    if(pcard->overlayed.size() > 2 && i % 2 == 0 && i >= pcard->overlayed.size()/2) incre2 += 1;
-					atk.setTranslation(pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.12f * neg / power * (i < pcard->overlayed.size() /2 ? incre : incre2))) * atkdy, (((0.82f + 0.12f * neg / power * (i < pcard->overlayed.size()/2 ? incre : incre2)))) * atkdy, 0.2f * atk2dy));
-					driver->setTransform(irr::video::ETS_WORLD, atk);
-					driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
+			if ((pcard->type & TYPE_XYZ)) {
+				auto cd = gDataManager->GetCardData(pcard->code);
+				if (cd) {
+					auto setcodes = cd->setcodes;
+					if (cd->alias && setcodes.empty()) {
+						auto data = gDataManager->GetCardData(cd->alias);
+						if (data)
+							setcodes = data->setcodes;
+					}
+					if (pcard && pcard->is_change && pcard->rsetnames && pcard->rsetnames > 0) {
+						setcodes.clear();
+						for (int i = 0; i < 4; i++) {
+							uint16_t setcode = (pcard->rsetnames >> (i * 16)) & 0xffff;
+							if (setcode)
+								setcodes.push_back(setcode);
+						}
+					}
+					if (std::find(setcodes.begin(), setcodes.end(), 0x1073) != setcodes.end() || std::find(setcodes.begin(), setcodes.end(), 0x1048) != setcodes.end()) {
+						for (int i = 0; i < pcard->overlayed.size(); i++) {
+                            if(i>7) break;
+							matManager.mTexture.setTexture(0, imageManager.tCXyz);
+							driver->setMaterial(matManager.mTexture);
+							irr::core::matrix4 atk;
+							atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.6f + 0.4f*(i%4), i<4 ? 0.58f : 0.78f, 0.3f));
+							driver->setTransform(irr::video::ETS_WORLD, atk);
+							driver->drawVertexPrimitiveList(matManager.vCXyz, 4, matManager.iRectangle, 2);
+						}
+					}
+					else {
+						int incre = 0;
+						int incre2 = 0;
+						for (int i = 0; i < pcard->overlayed.size(); i++) {
+                            if(i>7) break;
+							matManager.mTexture.setTexture(0, imageManager.tXyz);
+							driver->setMaterial(matManager.mTexture);
+							irr::core::matrix4 atk;
+							int neg = 1;
+							if (pcard->overlayed.size() > 2 && i >= pcard->overlayed.size() / 2) neg = -1;
+							int power = 1;
+							if (pcard->overlayed.size() / 4 > 0) power = pcard->overlayed.size() / 4;
+							if (pcard->overlayed.size() > 2 && i % 2 == 0 && i < pcard->overlayed.size() / 2) incre += 1;
+							if (pcard->overlayed.size() > 2 && i % 2 == 0 && i >= pcard->overlayed.size() / 2) incre2 += 1;
+							atk.setTranslation(pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.2f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2))) * atkdy, (((0.82f + 0.2f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2)))) * atkdy, 0.25f * atk2dy));
+							driver->setTransform(irr::video::ETS_WORLD, atk);
+							driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
+						}
+					}
 				}
-            }
+			}
         }
     ///kdiy////////
 	}
 	if(pcard->is_moving)
 		return;
-	if(pcard->cmdFlag & COMMAND_ATTACK) {
     ////kidy/////////
-        //matManager.mTexture.setTexture(0, imageManager.tAttack);
-        //driver->setMaterial(matManager.mTexture);
-		//irr::core::matrix4 atk;
-		//atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? -1 : 1) * (atkdy / 4.0f + 0.35f), 0.05f));
-		//atk.setRotationRadians(irr::core::vector3df(0, 0, pcard->controler == 0 ? 0 : irr::core::PI));
-		//driver->setTransform(irr::video::ETS_WORLD, atk);
-		//driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
-    //}
-        if(cardcloseup) {
-            if((pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
-                matManager.mTexture.AmbientColor = irr::video::SColor(255, 128, 128, 180);
-            else
-                matManager.mTexture.AmbientColor = 0xffffffff;
-            matManager.mTexture.setTexture(0, cardcloseup);
-        } else
-            matManager.mTexture.setTexture(0, imageManager.tAttack);
-		driver->setMaterial(matManager.mTexture);
+    //if(pcard->cmdFlag & COMMAND_ATTACK) {
+	if((pcard->cmdFlag & COMMAND_ATTACK) && !cardcloseup) {
+    ////kidy/////////
+        matManager.mTexture.setTexture(0, imageManager.tAttack);
+        driver->setMaterial(matManager.mTexture);
 		irr::core::matrix4 atk;
-		atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? cardcloseup ? -0.4f : -1 : cardcloseup ? 0.4f : 1) * (atkdy / 4.0f + 0.35f), 0.05f));
-		atk.setRotationRadians(irr::core::vector3df(0, 0, (pcard->controler == 0 || cardcloseup) ? 0 : irr::core::PI));
+		atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? -1 : 1) * (atkdy / 4.0f + 0.35f), 0.05f));
+		atk.setRotationRadians(irr::core::vector3df(0, 0, pcard->controler == 0 ? 0 : irr::core::PI));
 		driver->setTransform(irr::video::ETS_WORLD, atk);
-        if(cardcloseup)
-		    driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
-        else
-		    driver->drawVertexPrimitiveList(matManager.vAttack2, 4, matManager.iRectangle, 2);
+		driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
 	}
+    ////kidy/////////
 	if((pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && (pcard->type & TYPE_SPELL) && pcard->is_pzone && !pcard->equipTarget) {
 		int scale = pcard->lscale;
 		if(scale >= 0 && scale <= 13 && imageManager.tLScale[scale]) {

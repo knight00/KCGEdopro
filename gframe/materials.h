@@ -26,6 +26,7 @@ public:
 	QuadVertex vAttack;
 	QuadVertex vAttack2;
 	QuadVertex vXyz;
+	QuadVertex vCXyz;
 	////kdiy////////
 	QuadVertex vSymbol;
 	QuadVertex vNegate;

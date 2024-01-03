@@ -592,6 +592,10 @@ bool ImageManager::Initial() {
 		        modeBody[i] = driver->getTexture(buff);
         }
 	}
+    tXyz = loadTextureAnySize(EPRO_TEXT("xyz"_sv));
+	ASSIGN_DEFAULT(tXyz);
+    tCXyz = loadTextureAnySize(EPRO_TEXT("cxyz"_sv));
+	ASSIGN_DEFAULT(tCXyz);
     ///kdiy/////
 
 	// Not required to be present
