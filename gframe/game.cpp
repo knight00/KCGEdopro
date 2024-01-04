@@ -3164,7 +3164,11 @@ bool Game::MainLoop() {
 		}
 		atkframe += 0.1f * (float)delta_time * 60.0f / 1000.0f;
 		atkdy = (float)sin(atkframe);
+        //kdiy///////
 		atk2dy = (float)cos(atkframe);
+		atkdy2 = (float)sin(atkframe*0.8f);
+		atk2dy2 = (float)cos(atkframe*0.8f);
+        //kdiy///////
 		driver->beginScene(true, true, irr::video::SColor(0, 0, 0, 0));
 		gMutex.lock();
 		if(dInfo.isInDuel) {

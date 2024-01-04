@@ -596,6 +596,8 @@ bool ImageManager::Initial() {
 	ASSIGN_DEFAULT(tXyz);
     tCXyz = loadTextureAnySize(EPRO_TEXT("cxyz"_sv));
 	ASSIGN_DEFAULT(tCXyz);
+    tCrack = loadTextureAnySize(EPRO_TEXT("crack"_sv));
+	ASSIGN_DEFAULT(tCrack);
     ///kdiy/////
 
 	// Not required to be present

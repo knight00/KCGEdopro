@@ -379,7 +379,11 @@ public:
 	irr::core::vector3df atk_r;
 	irr::core::vector3df atk_t;
 	float atkdy;
+    ////kdiy//////
 	float atk2dy;
+	float atkdy2;
+	float atk2dy2;
+    ////kdiy//////
 	int lpframe;
 	float lpd;
 	int lpplayer;

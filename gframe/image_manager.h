@@ -226,6 +226,7 @@ public:
 	A(modeHead[6])
 	A(tXyz)
 	A(tCXyz)
+	A(tCrack)
 	/////kdiy/////
 	A(tSettings)
 	A(tCheckBox[3])
