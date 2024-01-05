@@ -5102,6 +5102,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		} else {
 			////kdiy///////////
 			//event_string = epro::format(gDataManager->GetSysString(1620), gDataManager->GetName(mainGame->dField.attacker->code));
+			mainGame->dField.directattack = true;
 			event_string = epro::format(gDataManager->GetSysString(1620), gDataManager->GetVirtualName(mainGame->dField.attacker));
 			////kdiy///////////
 			xd = 3.95f;
@@ -5142,6 +5143,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
             mainGame->dField.MoveCard(pcard, 8);
         }
         mainGame->WaitFrameSignal(20, lock);
+		if(!is_direct)
+			mainGame->dField.directattack = false;
+		else
+			mainGame->dField.directattack = true;
         mainGame->dField.attacker->controler = acontroler;
         mainGame->dField.attacker->sequence = mainGame->dField.attacker->attsequence;
         mainGame->dField.attacker->location = alocation;

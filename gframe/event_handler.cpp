@@ -2417,6 +2417,10 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				gGameConfig->closeup = mainGame->gSettings.chkCloseup->isChecked();
 				return true;
 			}
+            case CHECKBOX_PAINTING:{
+				gGameConfig->painting = mainGame->gSettings.chkPainting->isChecked();
+				return true;
+			}
             case CHECKBOX_PAUSE_DUEL: {
 				gGameConfig->pauseduel = mainGame->gSettings.chkPauseduel->isChecked();
 				break;

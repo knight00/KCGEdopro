@@ -498,26 +498,26 @@ void Game::DrawCard(ClientCard* pcard) {
 			// atk2.setTranslation(pcard->curPos + irr::core::vector3df(0, pcard->controler == 0 ? 0 : 0.2f, 0.25f));
             // driver->setTransform(irr::video::ETS_WORLD, atk2);
             // driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
-			if ((pcard->type & TYPE_XYZ)) {
+			if(pcard->type & TYPE_XYZ) {
 				auto cd = gDataManager->GetCardData(pcard->code);
-				if (cd) {
+				if(cd) {
 					auto setcodes = cd->setcodes;
-					if (cd->alias && setcodes.empty()) {
+					if(cd->alias && setcodes.empty()) {
 						auto data = gDataManager->GetCardData(cd->alias);
-						if (data)
+						if(data)
 							setcodes = data->setcodes;
 					}
-					if (pcard && pcard->is_change && pcard->rsetnames && pcard->rsetnames > 0) {
+					if(pcard && pcard->is_change && pcard->rsetnames && pcard->rsetnames > 0) {
 						setcodes.clear();
-						for (int i = 0; i < 4; i++) {
+						for(int i = 0; i < 4; i++) {
 							uint16_t setcode = (pcard->rsetnames >> (i * 16)) & 0xffff;
-							if (setcode)
+							if(setcode)
 								setcodes.push_back(setcode);
 						}
 					}
-					if (std::find(setcodes.begin(), setcodes.end(), 0x1073) != setcodes.end() || std::find(setcodes.begin(), setcodes.end(), 0x1048) != setcodes.end()) {
-						for (int i = 0; i < pcard->overlayed.size(); i++) {
-                            if(i>7) break;
+					if(std::find(setcodes.begin(), setcodes.end(), 0x1073) != setcodes.end() || std::find(setcodes.begin(), setcodes.end(), 0x1048) != setcodes.end()) {
+						for(int i = 0; i < pcard->overlayed.size(); i++) {
+                            if(i>9) break;
 							matManager.mTexture.setTexture(0, imageManager.tCXyz);
 							driver->setMaterial(matManager.mTexture);
 							irr::core::matrix4 atk;
@@ -529,17 +529,17 @@ void Game::DrawCard(ClientCard* pcard) {
 					else {
 						int incre = 0;
 						int incre2 = 0;
-						for (int i = 0; i < pcard->overlayed.size(); i++) {
-                            if(i>7) break;
+						for(int i = 0; i < pcard->overlayed.size(); i++) {
+                            if(i>9) break;
 							matManager.mTexture.setTexture(0, imageManager.tXyz);
 							driver->setMaterial(matManager.mTexture);
 							irr::core::matrix4 atk;
 							int neg = 1;
-							if (pcard->overlayed.size() > 2 && i >= pcard->overlayed.size() / 2) neg = -1;
+							if(pcard->overlayed.size() > 2 && i >= pcard->overlayed.size() / 2) neg = -1;
 							int power = 1;
-							if (pcard->overlayed.size() / 4 > 0) power = pcard->overlayed.size() / 4;
-							if (pcard->overlayed.size() > 2 && i % 2 == 0 && i < pcard->overlayed.size() / 2) incre += 1;
-							if (pcard->overlayed.size() > 2 && i % 2 == 0 && i >= pcard->overlayed.size() / 2) incre2 += 1;
+							if(pcard->overlayed.size() / 4 > 0) power = pcard->overlayed.size() / 4;
+							if(pcard->overlayed.size() > 2 && i % 2 == 0 && i < pcard->overlayed.size() / 2) incre += 1;
+							if(pcard->overlayed.size() > 2 && i % 2 == 0 && i >= pcard->overlayed.size() / 2) incre2 += 1;
 							atk.setTranslation(pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2)))) * atkdy2, 0.25f * atk2dy2));
 							driver->setTransform(irr::video::ETS_WORLD, atk);
 							driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);

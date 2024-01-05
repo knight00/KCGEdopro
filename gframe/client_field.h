@@ -53,6 +53,9 @@ public:
 	size_t selected_option;
 	ClientCard* attacker;
 	ClientCard* attack_target;
+	////kdiy////////
+	bool directattack;
+	////kdiy////////
 	uint32_t disabled_field;
 	uint32_t selectable_field;
 	uint32_t selected_field;

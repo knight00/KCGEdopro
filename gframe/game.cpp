@@ -2924,6 +2924,9 @@ void Game::PopulateSettingsWindow() {
 
 		gSettings.chkCloseup = env->addCheckBox(gGameConfig->closeup, GetNextRect(), sPanel, CHECKBOX_CLOSEUP, gDataManager->GetSysString(8043).data());
 		defaultStrings.emplace_back(gSettings.chkCloseup, 8043);
+
+		gSettings.chkCloseup = env->addCheckBox(gGameConfig->painting, GetNextRect(), sPanel, CHECKBOX_PAINTING, gDataManager->GetSysString(8058).data());
+		defaultStrings.emplace_back(gSettings.chkPainting, 8058);
         IncrementXorY();
     }
     /////kdiy////////////
@@ -3877,6 +3880,7 @@ void Game::SaveConfig() {
 	gGameConfig->duelrule = cbDuelRule2->getSelected();
 	gGameConfig->randomtexture = gSettings.chkRandomtexture->isChecked();
 	gGameConfig->closeup = gSettings.chkCloseup->isChecked();
+	gGameConfig->painting = gSettings.chkPainting->isChecked();
 	/////kdiy//////
 	gGameConfig->hdpic = cbpics->getSelected();
 	auto lastServerIndex = serverChoice->getSelected();

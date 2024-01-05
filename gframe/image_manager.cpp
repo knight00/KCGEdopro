@@ -1423,7 +1423,7 @@ irr::video::ITexture* ImageManager::GetTextureField(uint32_t code) {
 }
 /////////kdiy////
 irr::video::ITexture* ImageManager::GetTextureCloseup(uint32_t code, uint32_t alias, bool is_closeup) {
-	if(code == 0 || (is_closeup && !gGameConfig->closeup))
+	if(code == 0 || (is_closeup && !gGameConfig->closeup) || (!is_closeup && !gGameConfig->painting))
 		return nullptr;
     auto chk1 = GetTextureCloseupCode(code, is_closeup);
     auto chk2 = GetTextureCloseupCode(alias, is_closeup);
