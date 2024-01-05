@@ -69,6 +69,7 @@ public:
 	bool is_orica = false;
 	bool is_sanct = false;
 	bool is_attack = false;
+	bool is_attacked = false;
 	bool attack_me = false;
     /////////kdiy/////////
 	uint32_t attribute;

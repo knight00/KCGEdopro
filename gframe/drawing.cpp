@@ -467,7 +467,9 @@ void Game::DrawCard(ClientCard* pcard) {
         if((pcard->type & TYPE_MONSTER) && cardcloseup) {
             if((pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
                 matManager.mTexture.AmbientColor = irr::video::SColor(255, 128, 128, 180);
-            else
+            else if(pcard->attack > pcard->base_attack)
+			    matManager.mTexture.AmbientColor = irr::video::SColor(255, 255, 255, 0);
+			else
                 matManager.mTexture.AmbientColor = 0xffffffff;
             matManager.mTexture.setTexture(0, cardcloseup);
             driver->setMaterial(matManager.mTexture);
@@ -491,13 +493,20 @@ void Game::DrawCard(ClientCard* pcard) {
             } else
                 atk.setRotationRadians(irr::core::vector3df(0, 0, 0));
             driver->setTransform(irr::video::ETS_WORLD, atk);
-            driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
-            // matManager.mTexture.setTexture(0, imageManager.tCrack);
-            // driver->setMaterial(matManager.mTexture);
-            // irr::core::matrix4 atk2;
-			// atk2.setTranslation(pcard->curPos + irr::core::vector3df(0, pcard->controler == 0 ? 0 : 0.2f, 0.25f));
-            // driver->setTransform(irr::video::ETS_WORLD, atk2);
-            // driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
+			if(pcard->attack >= 5000)
+				driver->drawVertexPrimitiveList(matManager.vAttack3, 4, matManager.iRectangle, 2);
+			else if(pcard->attack < 1000 && ((pcard->type & TYPE_LINK) && pcard->link < 2) || ((pcard->type & TYPE_XYZ) && pcard->rank < 4) || (!(pcard->type & (TYPE_LINK | TYPE_XYZ)) && pcard->level < 4))
+				driver->drawVertexPrimitiveList(matManager.vAttack2, 4, matManager.iRectangle, 2);
+			else
+				driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
+			if(pcard->is_attacked) {
+				matManager.mTexture.setTexture(0, imageManager.tCrack);
+				driver->setMaterial(matManager.mTexture);
+				irr::core::matrix4 atk2;
+				atk2.setTranslation(mainGame->dField.attack_target->curPos);
+				driver->setTransform(irr::video::ETS_WORLD, atk2);
+				driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
+			}
 			if(pcard->type & TYPE_XYZ) {
 				auto cd = gDataManager->GetCardData(pcard->code);
 				if(cd) {
@@ -878,6 +887,10 @@ void Game::DrawStatus(ClientCard* pcard) {
 	}
 
 	auto GetAtkColor = [&pcard] {
+		////kdiy//////////
+		if(!(pcard->position & POS_ATTACK))
+			return irr::video::SColor(255, 128, 128, 128);
+		////kdiy//////////
 		if(pcard->attack > pcard->base_attack)
 			return skin::DUELFIELD_HIGHER_CARD_ATK_VAL;
 		if(pcard->attack < pcard->base_attack)
@@ -886,6 +899,10 @@ void Game::DrawStatus(ClientCard* pcard) {
 	};
 
 	auto GetDefColor = [&pcard] {
+		////kdiy//////////
+		if(!(pcard->position & POS_DEFENSE))
+			return irr::video::SColor(255, 128, 128, 128);
+		////kdiy//////////
 		if(pcard->defense > pcard->base_defense)
 			return skin::DUELFIELD_HIGHER_CARD_DEF_VAL;
 		if(pcard->defense < pcard->base_defense)
@@ -916,9 +933,15 @@ void Game::DrawStatus(ClientCard* pcard) {
 					   padding_1111, GetAtkColor(), 0xff000000, true);
 	} else {
 		DrawShadowText(adFont, L"/", irr::core::recti(x1 - half_slash_width, y1, x1 + half_slash_width, y1 + 1), padding_1111, 0xffffffff, 0xff000000, true);
-		DrawShadowText(adFont, pcard->atkstring, irr::core::recti(x1 - half_slash_width - atk.Width - slash.Width, y1, x1 - half_slash_width, y1 + 1),
+		////kdiy//////////
+		//DrawShadowText(adFont, pcard->atkstring, irr::core::recti(x1 - half_slash_width - atk.Width - slash.Width, y1, x1 - half_slash_width, y1 + 1),
+		DrawShadowText(adFont, pcard->atkstring, irr::core::recti(x1 - half_slash_width - atk.Width - slash.Width, y1, x1 - half_slash_width, (pcard->position & POS_ATTACK) ? y1 + 1 : y1 + 0.3f),
+		////kdiy//////////
 					   padding_1111, GetAtkColor(), 0xff000000);
-		DrawShadowText(adFont, pcard->defstring, irr::core::recti(x1 + half_slash_width + slash.Width, y1, x1 - half_slash_width, y1 + 1),
+		////kdiy//////////
+		//DrawShadowText(adFont, pcard->defstring, irr::core::recti(x1 + half_slash_width + slash.Width, y1, x1 - half_slash_width, y1 + 1),
+		DrawShadowText(adFont, pcard->defstring, irr::core::recti(x1 + half_slash_width + slash.Width, y1, x1 - half_slash_width, (pcard->position & POS_DEFENSE) ? y1 + 1 : y1 + 0.3f),
+		////kdiy//////////
 					   padding_1111, GetDefColor(), 0xff000000);
 	}
 	////kdiy//////////
