@@ -463,12 +463,10 @@ void Game::DrawCard(ClientCard* pcard) {
 		// driver->setMaterial(matManager.mTexture);
 		// driver->drawVertexPrimitiveList(matManager.vNegate, 4, matManager.iRectangle, 2);
     }
-    if((pcard->location & LOCATION_ONFIELD) && (pcard->position & POS_FACEUP)) {
-        if((pcard->type & TYPE_MONSTER) && cardcloseup) {
+    if((pcard->location & LOCATION_ONFIELD)) {
+        if((pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup) {
             if((pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
                 matManager.mTexture.AmbientColor = irr::video::SColor(255, 128, 128, 180);
-            else if(pcard->attack > pcard->base_attack)
-			    matManager.mTexture.AmbientColor = irr::video::SColor(255, 255, 255, 0);
 			else
                 matManager.mTexture.AmbientColor = 0xffffffff;
             matManager.mTexture.setTexture(0, cardcloseup);
@@ -499,14 +497,7 @@ void Game::DrawCard(ClientCard* pcard) {
 				driver->drawVertexPrimitiveList(matManager.vAttack2, 4, matManager.iRectangle, 2);
 			else
 				driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
-			if(pcard->is_attacked) {
-				matManager.mTexture.setTexture(0, imageManager.tCrack);
-				driver->setMaterial(matManager.mTexture);
-				irr::core::matrix4 atk2;
-				atk2.setTranslation(mainGame->dField.attack_target->curPos);
-				driver->setTransform(irr::video::ETS_WORLD, atk2);
-				driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
-			}
+            matManager.mTexture.AmbientColor = 0xffffffff;
 			if(pcard->type & TYPE_XYZ) {
 				auto cd = gDataManager->GetCardData(pcard->code);
 				if(cd) {
@@ -526,7 +517,7 @@ void Game::DrawCard(ClientCard* pcard) {
 					}
 					if(std::find(setcodes.begin(), setcodes.end(), 0x1073) != setcodes.end() || std::find(setcodes.begin(), setcodes.end(), 0x1048) != setcodes.end()) {
 						for(int i = 0; i < pcard->overlayed.size(); i++) {
-                            if(i>9) break;
+                            if(i>7) break;
 							matManager.mTexture.setTexture(0, imageManager.tCXyz);
 							driver->setMaterial(matManager.mTexture);
 							irr::core::matrix4 atk;
@@ -539,7 +530,7 @@ void Game::DrawCard(ClientCard* pcard) {
 						int incre = 0;
 						int incre2 = 0;
 						for(int i = 0; i < pcard->overlayed.size(); i++) {
-                            if(i>9) break;
+                            if(i>7) break;
 							matManager.mTexture.setTexture(0, imageManager.tXyz);
 							driver->setMaterial(matManager.mTexture);
 							irr::core::matrix4 atk;
@@ -699,6 +690,10 @@ void Game::DrawMisc() {
 	driver->draw2DRectangle(skin::DUELFIELD_TURNPLAYER_COLOR_VAL, lpframe_pos);
 	driver->draw2DRectangleOutline(lpframe_pos, skin::DUELFIELD_TURNPLAYER_OUTLINE_COLOR_VAL);
 	/////kdiy/////////
+	//driver->draw2DImage(imageManager.tLPFrame, Resize(330, 10, 629, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
+	//driver->draw2DImage(imageManager.tLPFrame, Resize(691, 10, 990, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
+	driver->draw2DImage(imageManager.tLPFrame, Resize(430, 10, 629, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
+	driver->draw2DImage(imageManager.tLPFrame, Resize(691, 10, 890, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
 	if(dInfo.isTeam1) {
         btnHead[0]->setImage(imageManager.modeHead[dInfo.current_player[0]]);
 		btnHead[1]->setImage(imageManager.modeHead[dInfo.current_player[1] + dInfo.team1]);
@@ -710,10 +705,6 @@ void Game::DrawMisc() {
         btnChBody[0]->setImage(imageManager.modeHead[dInfo.current_player[0]]);
 		btnChBody[1]->setImage(imageManager.modeHead[dInfo.current_player[1] + dInfo.team1]);
 	}
-	//driver->draw2DImage(imageManager.tLPFrame, Resize(330, 10, 629, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
-	//driver->draw2DImage(imageManager.tLPFrame, Resize(691, 10, 990, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
-	driver->draw2DImage(imageManager.tLPFrame, Resize(430, 10, 629, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
-	driver->draw2DImage(imageManager.tLPFrame, Resize(691, 10, 890, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
 	/////kdiy/////////
 
 #define SKCOLOR(what) skin::LPBAR_##what##_VAL
@@ -933,15 +924,9 @@ void Game::DrawStatus(ClientCard* pcard) {
 					   padding_1111, GetAtkColor(), 0xff000000, true);
 	} else {
 		DrawShadowText(adFont, L"/", irr::core::recti(x1 - half_slash_width, y1, x1 + half_slash_width, y1 + 1), padding_1111, 0xffffffff, 0xff000000, true);
-		////kdiy//////////
-		//DrawShadowText(adFont, pcard->atkstring, irr::core::recti(x1 - half_slash_width - atk.Width - slash.Width, y1, x1 - half_slash_width, y1 + 1),
-		DrawShadowText(adFont, pcard->atkstring, irr::core::recti(x1 - half_slash_width - atk.Width - slash.Width, y1, x1 - half_slash_width, (pcard->position & POS_ATTACK) ? y1 + 1 : y1 + 0.3f),
-		////kdiy//////////
+		DrawShadowText(adFont, pcard->atkstring, irr::core::recti(x1 - half_slash_width - atk.Width - slash.Width, y1, x1 - half_slash_width, y1 + 1),
 					   padding_1111, GetAtkColor(), 0xff000000);
-		////kdiy//////////
-		//DrawShadowText(adFont, pcard->defstring, irr::core::recti(x1 + half_slash_width + slash.Width, y1, x1 - half_slash_width, y1 + 1),
-		DrawShadowText(adFont, pcard->defstring, irr::core::recti(x1 + half_slash_width + slash.Width, y1, x1 - half_slash_width, (pcard->position & POS_DEFENSE) ? y1 + 1 : y1 + 0.3f),
-		////kdiy//////////
+		DrawShadowText(adFont, pcard->defstring, irr::core::recti(x1 + half_slash_width + slash.Width, y1, x1 - half_slash_width, y1 + 1),
 					   padding_1111, GetDefColor(), 0xff000000);
 	}
 	////kdiy//////////
@@ -1220,12 +1205,9 @@ void Game::DrawSpec() {
 			driver->draw2DImage(cardtxt, rect, cardrect, 0, matManager.c2d, true);
             //////kdiy//////////
             if(chklast) {
-                auto cardcloseup = imageManager.GetTextureCloseup(showcardcode, true);
-                auto cardcloseup2 = imageManager.GetTextureCloseup(showcardalias, true);
+                auto cardcloseup = imageManager.GetTextureCloseup(showcardcode, showcardalias, true);
                 if(cardcloseup)
                     DrawTextureRect(matManager.vCloseup, cardcloseup);
-                else if(cardcloseup2)
-                    DrawTextureRect(matManager.vCloseup, cardcloseup2);
             }
             //////kdiy//////////
 			if(showcarddif < 127.0f) {

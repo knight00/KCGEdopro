@@ -5133,29 +5133,26 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         }
         if(acontroler == 1)
 			mainGame->dField.attacker->attack_me = true;
-        mainGame->dField.MoveCard(mainGame->dField.attacker, 8);
+        mainGame->dField.MoveCard(mainGame->dField.attacker, 10);
 		for(auto& pcard : mainGame->dField.attacker->overlayed) {
             pcard->controler = mainGame->dField.attacker->controler;
 			pcard->attsequence = pcard->sequence;
             pcard->sequence = mainGame->dField.attacker->sequence;
             pcard->location = mainGame->dField.attacker->location;
-            mainGame->dField.MoveCard(pcard, 8);
+            mainGame->dField.MoveCard(pcard, 10);
         }
-        mainGame->WaitFrameSignal(25, lock);
-		mainGame->dField.attack_target->is_attacked = true;
+        mainGame->WaitFrameSignal(10, lock);
         mainGame->dField.attacker->controler = acontroler;
         mainGame->dField.attacker->sequence = mainGame->dField.attacker->attsequence;
         mainGame->dField.attacker->location = alocation;
-        mainGame->dField.MoveCard(mainGame->dField.attacker, 8);
+        mainGame->dField.MoveCard(mainGame->dField.attacker, 10);
         for(auto& pcard : mainGame->dField.attacker->overlayed) {
             pcard->controler = mainGame->dField.attacker->controler;
 			pcard->sequence = pcard->attsequence;
             pcard->location = LOCATION_OVERLAY;
-            mainGame->dField.MoveCard(pcard, 8);
+            mainGame->dField.MoveCard(pcard, 10);
         }
-		mainGame->WaitFrameSignal(2, lock);
-		mainGame->dField.attack_target->is_attacked = false;
-        mainGame->WaitFrameSignal(23, lock);
+        mainGame->WaitFrameSignal(10, lock);
         mainGame->dField.attacker->is_attack = false;
         ////kdiy///////////
 		return true;
