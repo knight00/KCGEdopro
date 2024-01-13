@@ -78,7 +78,10 @@ int SingleMode::SinglePlayThread(DuelOptions&& duelOptions) {
 		last_replay.Flush();
 		new_replay.Write<uint64_t>(opt);
 	};
-	mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 45));
+	////kdiy////////
+	//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 45));
+	mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(315, 5, 405, 45));
+	////kdiy////////
 	is_continuing = false;
 	is_restarting = false;
 	auto rnd = Utils::GetRandomNumberGenerator();
@@ -196,8 +199,8 @@ restart:
 			}
 			////kdiy////////
 			//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
-			mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 45));
-			////kdiy////////	
+			mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(315, 5, 405, 45));
+			////kdiy////////
 			if(!hand_test) {
 				mainGame->ShowElement(mainGame->wSinglePlay);
 				mainGame->stTip->setVisible(false);
@@ -222,7 +225,7 @@ restart:
 		} else
 			////kdiy////////
 			//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
-			mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 45));
+			mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(315, 5, 405, 45));
 			////kdiy////////
 		is_restarting = false;
 		return 0;
@@ -234,8 +237,10 @@ restart:
 	}
 	is_restarting = false;
 	mainGame->mTopMenu->setVisible(false);
-	mainGame->wCardImg->setVisible(true);
-	mainGame->wInfos->setVisible(true);
+	/////kdiy/////
+	//mainGame->wCardImg->setVisible(true);
+	//mainGame->wInfos->setVisible(true);
+	/////kdiy/////
 	mainGame->btnLeaveGame->setVisible(true);
 	mainGame->btnLeaveGame->setText(gDataManager->GetSysString(1210).data());
 	mainGame->btnRestartSingle->setVisible(true);
@@ -283,7 +288,7 @@ restart:
 		mainGame->gMutex.lock();
 		////kdiy////////
 		//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
-		mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 45));
+		mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(315, 5, 405, 45));
 		////kdiy////////
 		mainGame->gMutex.unlock();
 		return 0;
@@ -338,7 +343,7 @@ restart:
 		////kdiy////////
 		//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
 		mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 137, 295, 187));
-		////kdiy////////		
+		////kdiy////////
 		if(!hand_test) {
 			mainGame->ShowElement(mainGame->wSinglePlay);
 			mainGame->stTip->setVisible(false);

@@ -598,6 +598,8 @@ bool ImageManager::Initial() {
 	ASSIGN_DEFAULT(tCXyz);
     tCrack = loadTextureAnySize(EPRO_TEXT("crack"_sv));
 	ASSIGN_DEFAULT(tCrack);
+	tCard = loadTextureAnySize(EPRO_TEXT("showcard"_sv));
+    ASSIGN_DEFAULT(tCard);
     ///kdiy/////
 
 	// Not required to be present
@@ -769,7 +771,7 @@ void ImageManager::RefreshKCGImage() {
 	for(uint8_t playno = 1; playno < CHARACTER_VOICE; playno++) {
         icon[playno] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/mini_icon"_sv), gSoundManager->textcharacter[playno-1]));
         GetRandomImage(character[playno], imgcharacter[playno-1], true);
-        GetRandomImage(characterd[playno], imgcharacter[playno-1] + CHARACTER_VOICE, true);
+        GetRandomImage(characterd[playno], imgcharacter[playno-1] + CHARACTER_VOICE - 1, true);
         if(!characterd[playno])
             characterd[playno] = character[playno];
     }

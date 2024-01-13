@@ -1123,8 +1123,10 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		mainGame->dInfo.isReplaySwapped = false;
 		mainGame->is_building = false;
 		mainGame->mTopMenu->setVisible(false);
-		mainGame->wCardImg->setVisible(true);
-		mainGame->wInfos->setVisible(true);
+		/////kdiy/////
+		//mainGame->wCardImg->setVisible(true);
+		//mainGame->wInfos->setVisible(true);
+		/////kdiy/////
 		mainGame->wPhase->setVisible(true);
 		mainGame->btnSideOK->setVisible(false);
 		mainGame->btnDP->setVisible(false);
@@ -1945,7 +1947,8 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 			avataricon1 = mainGame->dInfo.current_player[0] + mainGame->dInfo.team1;
 			avataricon2 = mainGame->dInfo.current_player[1];
 		}
-        mainGame->avatarbutton[player]->setImage(mainGame->imageManager.scharacter[player == 0 ? avataricon1 : avataricon2][1]);
+		if(!(reason & REASON_COST))
+            mainGame->avatarbutton[player]->setImage(mainGame->imageManager.scharacter[player == 0 ? avataricon1 : avataricon2][1]);
 		uint16_t extra = 0;
 		if(reason & REASON_COST) extra = 0x1;
 		else if((mainGame->dInfo.lp[player] > 0 && mainGame->dInfo.lp[player] >= mainGame->dInfo.lp[1 - player] * 2) || val >= 4000) extra = 0x4;
@@ -4846,7 +4849,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         mainGame->dInfo.lp[player] = 8888888;
 		mainGame->dInfo.strLP[player] = L"\u221E";
         } else
-		///////////kdiy///////////		
+		///////////kdiy///////////
 		mainGame->dInfo.strLP[player] = fmt::to_wstring(mainGame->dInfo.lp[player]);
 		return true;
 	}

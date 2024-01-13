@@ -229,6 +229,9 @@ public:
 	void PopupElement(irr::gui::IGUIElement* element, int hideframe = 0);
 	void WaitFrameSignal(int frame, std::unique_lock<epro::mutex>& _lck);
 	void DrawThumb(const CardDataC* cp, irr::core::vector2di pos, LFList* lflist, bool drag = false, const irr::core::recti* cliprect = nullptr, bool loadimage = true);
+	//kidy///////
+	void DrawThumb2(uint32_t code, irr::core::vector2di pos);
+	//kidy///////
 	void DrawDeckBd();
 	void SaveConfig();
 	struct RepoGui {
@@ -493,6 +496,8 @@ public:
 	irr::gui::IGUIStaticText* updateSubprogressText;
 	IProgressBar* updateProgressBottom;
     /////kdiy/////////
+	irr::gui::CGUIImageButton* btnShowCard;
+	irr::gui::IGUIWindow* wBtnShowCard;
 	irr::gui::IGUIWindow* pwupdateWindow;
 	irr::gui::IGUIStaticText* updatePwText;
 	irr::gui::IGUIEditBox* ebPw;
@@ -892,7 +897,10 @@ public:
 	irr::gui::IGUIButton* btnFileSaveYes;
 	irr::gui::IGUIButton* btnFileSaveNo;
 	//replay control
-	irr::gui::IGUIStaticText* wReplayControl;
+	/////kdiy///////
+	//irr::gui::IGUIStaticText* wReplayControl;
+	irr::gui::IGUIWindow* wReplayControl;
+	/////kdiy///////
 	irr::gui::IGUIButton* btnReplayStart;
 	irr::gui::IGUIButton* btnReplayPause;
 	irr::gui::IGUIButton* btnReplayStep;

@@ -86,8 +86,10 @@ static void LoadReplay() {
 	replay.Rewind();
 	mainGame->ClearCardInfo();
 	mainGame->mTopMenu->setVisible(false);
-	mainGame->wCardImg->setVisible(true);
-	mainGame->wInfos->setVisible(true);
+	/////kdiy/////
+	//mainGame->wCardImg->setVisible(true);
+	//mainGame->wInfos->setVisible(true);
+	/////kdiy/////
 	mainGame->wReplay->setVisible(true);
 	mainGame->wReplayControl->setVisible(true);
 	mainGame->btnReplayStart->setVisible(false);
@@ -683,7 +685,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				//if(selected == -1)
 					//break;
 				//if(!mainGame->deckBuilder.SetCurrentDeckFromFile(Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected))))
-				mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 45));
+				mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(315, 5, 405, 45));
 				auto folder = Utils::ToPathString(mainGame->cbDeck2Select->getItem(mainGame->cbDeck2Select->getSelected()));
 				if(mainGame->cbDeck2Select->getSelected() == -1 || selected == -1 || !mainGame->deckBuilder.SetCurrentDeckFromFile(folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected))))
 				//////kdiy/////
@@ -1338,7 +1340,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
 			case CHECKBOX_ENTERTAUNMENT_READY:{
 				if(mainGame->chkEntertainmentPrepReady->isChecked()) {
-                    mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 45));
+                    mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(315, 5, 405, 45));
 					mainGame->lstEntertainmentPlayList->setEnabled(false);
 					mainGame->chkEntertainmentMode_1Check->setEnabled(false);
 					mainGame->cbEntertainmentMode_1Bot->setEnabled(false);
@@ -1434,7 +1436,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					mainGame->cbDeckSelect->setEnabled(false);
 					///////kdiy////
 					mainGame->cbDeck2Select->setEnabled(false);
-					mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 45));
+					mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(315, 5, 405, 45));
 					///////kdiy////
 					if(mainGame->dInfo.team1 + mainGame->dInfo.team2 > 2)
 						mainGame->btnHostPrepDuelist->setEnabled(false);

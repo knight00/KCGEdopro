@@ -227,6 +227,7 @@ public:
 	A(tXyz)
 	A(tCXyz)
 	A(tCrack)
+	A(tCard)
 	/////kdiy/////
 	A(tSettings)
 	A(tCheckBox[3])

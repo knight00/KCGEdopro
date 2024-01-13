@@ -866,7 +866,7 @@ void Game::Initialize() {
 	btnCharacterSelect2->setImage(imageManager.tcharacterselect2);
 	irr::core::dimension2di avatarsize = { Scale<irr::s32>(CARD_IMG_WIDTH * 0.5f), Scale<irr::s32>(CARD_IMG_HEIGHT * 0.5f) };
 	
-	wAvatar[0] = env->addWindow(Scale(287, 10, 427, 210));
+	wAvatar[0] = env->addWindow(Scale(220, 435, 360, 635));
 	wAvatar[0]->getCloseButton()->setVisible(false);
 	wAvatar[0]->setDraggable(false);
 	wAvatar[0]->setDrawTitlebar(false);
@@ -875,7 +875,7 @@ void Game::Initialize() {
 	avatarbutton[0] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 140, 198), wAvatar[0], BUTTON_AVATAR_BORED0);
 	avatarbutton[0]->setImageSize(Scale(0, 0, 135, 198).getSize());
 	avatarbutton[0]->setDrawBorder(false);
-	wAvatar[1] = env->addWindow(Scale(890, 10, 1030, 210));
+	wAvatar[1] = env->addWindow(Scale(880, 20, 1020, 220));
 	wAvatar[1]->getCloseButton()->setVisible(false);
 	wAvatar[1]->setDraggable(false);
 	wAvatar[1]->setDrawTitlebar(false);
@@ -948,9 +948,19 @@ void Game::Initialize() {
 	PopulateTabSettingsWindow();
 	PopulateSettingsWindow();
     
-    //////kdiy//////
+	//////kdiy//////
     //wBtnSettings = env->addWindow(Scale(0, 610, 30, 640));
     wBtnSettings = env->addWindow(Scale(0, 590, 30, 620));
+	wBtnShowCard = env->addWindow(Scale(430, 10, 460, 40));
+	wBtnShowCard->getCloseButton()->setVisible(false);
+	wBtnShowCard->setDraggable(false);
+	wBtnShowCard->setDrawTitlebar(false);
+    wBtnShowCard->setDrawBackground(false);
+	auto dimBtnSettings2 = Scale(0, 0, 50, 50);
+	btnShowCard = irr::gui::CGUIImageButton::addImageButton(env, dimBtnSettings2, wBtnShowCard, BUTTON_SHOW_CARD);
+	btnShowCard->setDrawBorder(false);
+	btnShowCard->setImageSize(dimBtnSettings2.getSize());
+	btnShowCard->setImage(imageManager.tCard);
     //////kdiy//////
 	wBtnSettings->getCloseButton()->setVisible(false);
 	wBtnSettings->setDraggable(false);
@@ -960,7 +970,7 @@ void Game::Initialize() {
 	btnSettings = irr::gui::CGUIImageButton::addImageButton(env, dimBtnSettings, wBtnSettings, BUTTON_SHOW_SETTINGS);
 	btnSettings->setDrawBorder(false);
 	btnSettings->setImageSize(dimBtnSettings.getSize());
-	btnSettings->setImage(imageManager.tSettings);
+	btnSettings->setImage(imageManager.tCard);
 	//
 	wHand = env->addWindow(Scale(500, 450, 825, 605), false, L"");
 	wHand->getCloseButton()->setVisible(false);
@@ -1243,7 +1253,7 @@ void Game::Initialize() {
 	//////kdiy//////
 	defaultStrings.emplace_back(btnHandTest, 1297);
 	btnHandTest->setVisible(false);
-    //////kdiy//////	
+    //////kdiy//////
 	btnHandTest->setEnabled(coreloaded);
     //////kdiy//////
 	//btnHandTestSettings = AlignElementWithParent(env->addButton(Scale(205, 140, 295, 180), 0, BUTTON_HAND_TEST_SETTINGS, L""));
@@ -1642,7 +1652,10 @@ void Game::Initialize() {
 	btnFileSaveNo = env->addButton(Scale(170, 80, 240, 105), wFileSave, BUTTON_FILE_CANCEL, gDataManager->GetSysString(1212).data());
 	defaultStrings.emplace_back(btnFileSaveNo, 1212);
 	//replay control
-	wReplayControl = AlignElementWithParent(env->addStaticText(L"", Scale(205, 143, 295, 273), true, false, 0, -1, true));
+	////kdiy////////
+	//wReplayControl = AlignElementWithParent(env->addStaticText(L"", Scale(205, 143, 295, 273), true, false, 0, -1, true));
+	wReplayControl = AlignElementWithParent(env->addWindow(Scale(315, 143, 405, 273), false, L""));
+	////kdiy////////
 	wReplayControl->setVisible(false);
 	btnReplayStart = AlignElementWithParent(env->addButton(Scale(5, 5, 85, 25), wReplayControl, BUTTON_REPLAY_START, gDataManager->GetSysString(1343).data()));
 	defaultStrings.emplace_back(btnReplayStart, 1343);
@@ -1657,7 +1670,10 @@ void Game::Initialize() {
 	btnReplayExit = AlignElementWithParent(env->addButton(Scale(5, 105, 85, 125), wReplayControl, BUTTON_REPLAY_EXIT, gDataManager->GetSysString(1347).data()));
 	defaultStrings.emplace_back(btnReplayExit, 1347);
 	//chat
-	wChat = AlignElementWithParent(env->addWindow(Scale(305, 615, 1020, 640), false, L""));
+	////kdiy////////
+	//wChat = AlignElementWithParent(env->addWindow(Scale(305, 615, 1020, 640), false, L""));
+	wChat = AlignElementWithParent(env->addWindow(Scale(365, 615, 1020, 640), false, L""));
+	////kdiy////////
 	wChat->getCloseButton()->setVisible(false);
 	wChat->setDraggable(false);
 	wChat->setDrawTitlebar(false);
@@ -1665,15 +1681,27 @@ void Game::Initialize() {
 	ebChatInput = env->addEditBox(L"", Scale(3, 2, 710, 22), true, wChat, EDITBOX_CHAT);
 	ebChatInput->setAlignment(irr::gui::EGUIA_UPPERLEFT, irr::gui::EGUIA_LOWERRIGHT, irr::gui::EGUIA_UPPERLEFT, irr::gui::EGUIA_LOWERRIGHT);
 	//swap
-	btnSpectatorSwap = AlignElementWithParent(env->addButton(Scale(205, 100, 295, 135), 0, BUTTON_REPLAY_SWAP, gDataManager->GetSysString(1346).data()));
+	////kdiy////////
+	//btnSpectatorSwap = AlignElementWithParent(env->addButton(Scale(205, 100, 295, 135), 0, BUTTON_REPLAY_SWAP, gDataManager->GetSysString(1346).data()));
+	btnSpectatorSwap = AlignElementWithParent(env->addButton(Scale(315, 100, 405, 135), 0, BUTTON_REPLAY_SWAP, gDataManager->GetSysString(1346).data()));
+	////kdiy////////
 	defaultStrings.emplace_back(btnSpectatorSwap, 1346);
 	btnSpectatorSwap->setVisible(false);
 	//chain buttons
-	btnChainIgnore = AlignElementWithParent(env->addButton(Scale(205, 100, 295, 135), 0, BUTTON_CHAIN_IGNORE, gDataManager->GetSysString(1292).data()));
+	////kdiy////////
+	//btnChainIgnore = AlignElementWithParent(env->addButton(Scale(205, 100, 295, 135), 0, BUTTON_CHAIN_IGNORE, gDataManager->GetSysString(1292).data()));
+	btnChainIgnore = AlignElementWithParent(env->addButton(Scale(315, 100, 405, 135), 0, BUTTON_CHAIN_IGNORE, gDataManager->GetSysString(1292).data()));
+	////kdiy////////
 	defaultStrings.emplace_back(btnChainIgnore, 1292);
-	btnChainAlways = AlignElementWithParent(env->addButton(Scale(205, 140, 295, 175), 0, BUTTON_CHAIN_ALWAYS, gDataManager->GetSysString(1293).data()));
+	////kdiy////////
+	//btnChainAlways = AlignElementWithParent(env->addButton(Scale(205, 140, 295, 175), 0, BUTTON_CHAIN_ALWAYS, gDataManager->GetSysString(1293).data()));
+	btnChainAlways = AlignElementWithParent(env->addButton(Scale(315, 140, 405, 175), 0, BUTTON_CHAIN_ALWAYS, gDataManager->GetSysString(1293).data()));
+	////kdiy////////
 	defaultStrings.emplace_back(btnChainAlways, 1293);
-	btnChainWhenAvail = AlignElementWithParent(env->addButton(Scale(205, 180, 295, 215), 0, BUTTON_CHAIN_WHENAVAIL, gDataManager->GetSysString(1294).data()));
+	////kdiy////////
+	//btnChainWhenAvail = AlignElementWithParent(env->addButton(Scale(205, 180, 295, 215), 0, BUTTON_CHAIN_WHENAVAIL, gDataManager->GetSysString(1294).data()));
+	btnChainWhenAvail = AlignElementWithParent(env->addButton(Scale(315, 180, 405, 215), 0, BUTTON_CHAIN_WHENAVAIL, gDataManager->GetSysString(1294).data()));
+	////kdiy////////
 	defaultStrings.emplace_back(btnChainWhenAvail, 1294);
 	btnChainIgnore->setIsPushButton(true);
 	btnChainAlways->setIsPushButton(true);
@@ -1686,17 +1714,23 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(btnShuffle, 1307);
 	btnShuffle->setVisible(false);
 	//cancel or finish
-	btnCancelOrFinish = AlignElementWithParent(env->addButton(Scale(205, 230, 295, 265), 0, BUTTON_CANCEL_OR_FINISH, gDataManager->GetSysString(1295).data()));
+	////kdiy////////
+	//btnCancelOrFinish = AlignElementWithParent(env->addButton(Scale(205, 230, 295, 265), 0, BUTTON_CANCEL_OR_FINISH, gDataManager->GetSysString(1295).data()));
+	btnCancelOrFinish = AlignElementWithParent(env->addButton(Scale(315, 230, 405, 265), 0, BUTTON_CANCEL_OR_FINISH, gDataManager->GetSysString(1295).data()));
+	////kdiy////////
 	defaultStrings.emplace_back(btnCancelOrFinish, 1295);
 	btnCancelOrFinish->setVisible(false);
 	//leave/surrender/exit
 	////kdiy////////
-	//btnLeaveGame = AlignElementWithParent(env->addButton(Scale(205, 5, 295, 80), 0, BUTTON_LEAVE_GAME, L""));
-	btnLeaveGame = AlignElementWithParent(env->addButton(Scale(205, 5, 295, 45), 0, BUTTON_LEAVE_GAME, L""));
+	//btnLeaveGame = AlignElementWithParent(env->addButton(Scale(205, 5, 295, 45), 0, BUTTON_LEAVE_GAME, L""));
+	btnLeaveGame = AlignElementWithParent(env->addButton(Scale(315, 5, 405, 45), 0, BUTTON_LEAVE_GAME, L""));
 	////kdiy////////
 	btnLeaveGame->setVisible(false);
 	//restart single
-	btnRestartSingle = AlignElementWithParent(env->addButton(Scale(205, 50, 295, 90), 0, BUTTON_RESTART_SINGLE, gDataManager->GetSysString(1366).data()));
+	////kdiy////////
+	//btnRestartSingle = AlignElementWithParent(env->addButton(Scale(205, 50, 295, 90), 0, BUTTON_RESTART_SINGLE, gDataManager->GetSysString(1366).data()));
+	btnRestartSingle = AlignElementWithParent(env->addButton(Scale(315, 50, 405, 90), 0, BUTTON_RESTART_SINGLE, gDataManager->GetSysString(1366).data()));
+	////kdiy////////
 	defaultStrings.emplace_back(btnRestartSingle, 1366);
 	btnRestartSingle->setVisible(false);
 	//tip
@@ -2295,7 +2329,10 @@ void Game::PopulateAIBotWindow() {
 void Game::PopulateTabSettingsWindow() {
 	//tab
 	infosExpanded = 0;
-	wInfos = AlignElementWithParent(irr::gui::CGUICustomTabControl::addCustomTabControl(env, Scale(1, 275, 301, 639), 0, true));
+	///////kdiy/////////
+	//wInfos = AlignElementWithParent(irr::gui::CGUICustomTabControl::addCustomTabControl(env, Scale(1, 275, 301, 639), 0, true));
+	wInfos = AlignElementWithParent(irr::gui::CGUICustomTabControl::addCustomTabControl(env, Scale(1, 275, 301, 580), 0, true));
+	///////kdiy/////////
 	wInfos->setVisible(false);
 	//info
 	{
@@ -2392,9 +2429,11 @@ void Game::PopulateTabSettingsWindow() {
 		tabSettings.chkKeepFieldRatio = env->addCheckBox(gGameConfig->keep_aspect_ratio, GetNextRect(), tabPanel, CHECKBOX_KEEP_FIELD_ASPECT_RATIO, gDataManager->GetSysString(2094).data());
 		menuHandler.MakeElementSynchronized(tabSettings.chkKeepFieldRatio);
 		defaultStrings.emplace_back(tabSettings.chkKeepFieldRatio, 2094);
-		tabSettings.chkAlternativePhaseLayout = env->addCheckBox(gGameConfig->alternative_phase_layout, GetNextRect(), tabPanel, CHECKBOX_ALTERNATIVE_PHASE_LAYOUT, gDataManager->GetSysString(1298).data());
-		menuHandler.MakeElementSynchronized(tabSettings.chkAlternativePhaseLayout);
-		defaultStrings.emplace_back(tabSettings.chkAlternativePhaseLayout, 1298);
+		////kdiy///////
+		//tabSettings.chkAlternativePhaseLayout = env->addCheckBox(gGameConfig->alternative_phase_layout, GetNextRect(), tabPanel, CHECKBOX_ALTERNATIVE_PHASE_LAYOUT, gDataManager->GetSysString(1298).data());
+		//menuHandler.MakeElementSynchronized(tabSettings.chkAlternativePhaseLayout);
+		//defaultStrings.emplace_back(tabSettings.chkAlternativePhaseLayout, 1298);
+		////kdiy///////
 		tabSettings.chkHideChainButtons = env->addCheckBox(gGameConfig->chkHideHintButton, GetNextRect(), tabPanel, CHECKBOX_CHAIN_BUTTONS, gDataManager->GetSysString(1355).data());
 		menuHandler.MakeElementSynchronized(tabSettings.chkHideChainButtons);
 		defaultStrings.emplace_back(tabSettings.chkHideChainButtons, 1355);
@@ -2612,9 +2651,11 @@ void Game::PopulateSettingsWindow() {
 		gSettings.chkKeepCardRatio = env->addCheckBox(gGameConfig->keep_cardinfo_aspect_ratio, GetNextRect(), sPanel, CHECKBOX_KEEP_CARD_ASPECT_RATIO, gDataManager->GetSysString(2095).data());
 		defaultStrings.emplace_back(gSettings.chkKeepCardRatio, 2095);
 
-		gSettings.chkAlternativePhaseLayout = env->addCheckBox(gGameConfig->alternative_phase_layout, GetNextRect(), sPanel, CHECKBOX_ALTERNATIVE_PHASE_LAYOUT, gDataManager->GetSysString(1298).data());
-		menuHandler.MakeElementSynchronized(gSettings.chkAlternativePhaseLayout);
-		defaultStrings.emplace_back(gSettings.chkAlternativePhaseLayout, 1298);
+		////kdiy///////
+		//gSettings.chkAlternativePhaseLayout = env->addCheckBox(gGameConfig->alternative_phase_layout, GetNextRect(), sPanel, CHECKBOX_ALTERNATIVE_PHASE_LAYOUT, gDataManager->GetSysString(1298).data());
+		//menuHandler.MakeElementSynchronized(gSettings.chkAlternativePhaseLayout);
+		//defaultStrings.emplace_back(gSettings.chkAlternativePhaseLayout, 1298);
+		////kdiy///////
 		gSettings.chkHideChainButtons = env->addCheckBox(gGameConfig->chkHideHintButton, GetNextRect(), sPanel, CHECKBOX_CHAIN_BUTTONS, gDataManager->GetSysString(1355).data());
 		menuHandler.MakeElementSynchronized(gSettings.chkHideChainButtons);
 		defaultStrings.emplace_back(gSettings.chkHideChainButtons, 1355);
@@ -2646,6 +2687,7 @@ void Game::PopulateSettingsWindow() {
 		menuHandler.MakeElementSynchronized(gSettings.chkNoChainDelay);
 		defaultStrings.emplace_back(gSettings.chkNoChainDelay, 1277);
 		//////kdiy///////////
+		IncrementXorY();
 		gSettings.chkEnableAnime = env->addCheckBox(gGameConfig->enableanime, GetNextRect(), sPanel, CHECKBOX_ENABLE_ANIME, gDataManager->GetSysString(8008).data());
 		defaultStrings.emplace_back(gSettings.chkEnableAnime, 8008);
 #if !EDOPRO_WINDOWS
@@ -3205,6 +3247,9 @@ bool Game::MainLoop() {
 			DrawBackGround();
 			DrawCards();
 			DrawMisc();
+			///kdiy///////
+			DrawDeckBd();
+			///kdiy///////
 			smgr->drawAll();
 			driver->setMaterial(irr::video::IdentityMaterial);
 			ClearZBuffer(driver);//Without this, "animations" are drawn behind everything
@@ -3257,6 +3302,9 @@ bool Game::MainLoop() {
 			fpsCounter->setRelativePosition(Resize(1024 - fpsCounterWidth, 620, 1024, 640));
 		}
 		wBtnSettings->setVisible(!(is_building || is_siding || dInfo.isInDuel || open_file));
+		/////kdiy//////////
+		wBtnShowCard->setVisible(dInfo.isInDuel);
+		/////kdiy//////////
 		EnableMaterial2D(true);
 		DrawGUI();
 		DrawSpec();
@@ -5248,14 +5296,15 @@ void Game::OnResize() {
 	wRoomListPlaceholder->setRelativePosition(irr::core::recti(0, 0, window_size.Width, window_size.Height));
 	////////kdiy///////
 	// wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 450));
-    // wBtnSettings->setRelativePosition(ResizeWin(0, 610, 30, 640));
+	// wBtnSettings->setRelativePosition(ResizeWin(0, 610, 30, 640));
 	#ifdef EK
 	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 520));
 	#else
 	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 535));
 	#endif
 	wQQ->setRelativePosition(ResizeWin(mainMenuRightX+10, 200, mainMenuRightX+150, 450));
-    wBtnSettings->setRelativePosition(ResizeWin(0, 590, 30, 620));
+	wBtnSettings->setRelativePosition(ResizeWin(0, 590, 30, 620));
+	wBtnShowCard->setRelativePosition(ResizeWin(430, 10, 460, 40));
 	////////kdiy///////
 	SetCentered(wCommitsLog);
 	SetCentered(updateWindow, false);
@@ -5294,8 +5343,8 @@ void Game::OnResize() {
 	wRules->setRelativePosition(ResizeWin(630, 100, 1000, 310));
 	wReplay->setRelativePosition(ResizeWin(220, 100, 800, 520));
     ////kdiy////////////
-    wAvatar[0]->setRelativePosition(ResizeWin(297, 10, 427, 210));
-    wAvatar[1]->setRelativePosition(ResizeWin(890, 10, 1020, 210));
+    wAvatar[0]->setRelativePosition(ResizeWin(220, 435, 360, 635));
+    wAvatar[1]->setRelativePosition(ResizeWin(880, 20, 1020, 220));
     wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 460, 330));
     wHead[0]->setRelativePosition(ResizeWin(365, 5, 417, 57));
 	wHead[1]->setRelativePosition(ResizeWin(900, 5, 952, 57));

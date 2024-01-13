@@ -1653,10 +1653,12 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			irr::core::vector2di mousepos(event.MouseInput.X, event.MouseInput.Y);
 			irr::s32 x = pos.X;
 			irr::s32 y = pos.Y;
-			if(x < 300) {
-				mainGame->stTip->setVisible(should_show_tip);
-				break;
-			}
+			/////kdiy/////
+			// if(x < 300) {
+			// 	mainGame->stTip->setVisible(should_show_tip);
+			// 	break;
+			// }
+			/////kdiy/////
 			hovered_location = 0;
 			ClientCard* mcard = 0;
 			uint8_t mplayer = 2;
@@ -1683,9 +1685,15 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				} else {
 					const auto& self = mainGame->dInfo.isTeam1 ? mainGame->dInfo.selfnames : mainGame->dInfo.opponames;
 					const auto& oppo = mainGame->dInfo.isTeam1 ? mainGame->dInfo.opponames : mainGame->dInfo.selfnames;
-					if(mainGame->Resize(327, 8, 630, 51 + static_cast<irr::s32>(23 * (self.size() - 1))).isPointInside(mousepos))
+					/////kdiy/////////
+					//if(mainGame->Resize(327, 8, 630, 51 + static_cast<irr::s32>(23 * (self.size() - 1))).isPointInside(mousepos))
+					if(mainGame->Resize(15, 551, 218, 594 + static_cast<irr::s32>(23 * (self.size() - 1))).isPointInside(mousepos))
+					/////kdiy/////////
 						mplayer = 0;
-					else if(mainGame->Resize(689, 8, 991, 51 + static_cast<irr::s32>(23 * (oppo.size() - 1))).isPointInside(mousepos))
+					/////kdiy/////////
+					//else if(mainGame->Resize(689, 8, 991, 51 + static_cast<irr::s32>(23 * (oppo.size() - 1))).isPointInside(mousepos))
+					else if(mainGame->Resize(689, 8, 891, 51 + static_cast<irr::s32>(23 * (oppo.size() - 1))).isPointInside(mousepos))
+					/////kdiy/////////
 						mplayer = 1;
 				}
 			}
@@ -1827,7 +1835,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					}
 					should_show_tip = true;
 					auto dtip = mainGame->textFont->getDimensionustring(player_name) + mainGame->Scale(irr::core::dimension2d<uint32_t>(10, 10));
-					mainGame->stTip->setRelativePosition(irr::core::recti(mousepos.X - mainGame->Scale(10) - dtip.Width, mousepos.Y + mainGame->Scale(10), mousepos.X - mainGame->Scale(10), mousepos.Y + mainGame->Scale(10) + dtip.Height));
+					//////kdiy//////
+					//mainGame->stTip->setRelativePosition(irr::core::recti(mousepos.X - mainGame->Scale(10) - dtip.Width, mousepos.Y + mainGame->Scale(10), mousepos.X - mainGame->Scale(10), mousepos.Y + mainGame->Scale(10) + dtip.Height));
+					mainGame->stTip->setRelativePosition(irr::core::recti(mousepos.X - mainGame->Scale(10) - dtip.Width, x < 300 ? mousepos.Y - mainGame->Scale(390) : mousepos.Y + mainGame->Scale(10), mousepos.X - mainGame->Scale(10), x < 300 ? mousepos.Y - mainGame->Scale(390) + dtip.Height : mousepos.Y + mainGame->Scale(10) + dtip.Height));
+					//////kdiy//////
 					mainGame->stTip->setText(player_name.data());
 				}
 				hovered_player = mplayer;
@@ -2056,6 +2067,19 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				break;
 			}
 			//////kdiy///////
+			case BUTTON_SHOW_CARD: {
+				if(!mainGame->wInfos->isVisible())
+					mainGame->PopupElement(mainGame->wInfos);
+				else
+					mainGame->HideElement(mainGame->wInfos);
+				if(!mainGame->wCardImg->isVisible())
+					mainGame->PopupElement(mainGame->wCardImg);
+				else
+					mainGame->HideElement(mainGame->wCardImg);
+				mainGame->env->setFocus(mainGame->wInfos);
+				mainGame->env->setFocus(mainGame->wCardImg);
+				break;
+			}
             case BUTTON_REPO_DELETE:	{
                 mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8049)).data());
                 mainGame->PopupElement(mainGame->wACMessage, 90);
