@@ -470,7 +470,9 @@ void Game::DrawCard(ClientCard* pcard) {
     if((pcard->location & LOCATION_ONFIELD)) {
         if((pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup) {
             if((pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
-                matManager.mTexture.AmbientColor = irr::video::SColor(255, 128, 128, 180);
+                matManager.mTexture.AmbientColor = irr::video::SColor(255, 128, 128, 128);
+            else if(pcard->position & POS_DEFENSE)
+                matManager.mTexture.AmbientColor = irr::video::SColor(255, 180, 180, 255);
 			else
                 matManager.mTexture.AmbientColor = 0xffffffff;
             matManager.mTexture.setTexture(0, cardcloseup);
