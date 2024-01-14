@@ -83,6 +83,10 @@ void ClientField::Clear() {
 	player_desc_hints[0].clear();
 	player_desc_hints[1].clear();
 	chains.clear();
+	/////////kdiy/////////
+    for(auto& pcard : mainGame->dField.activatable_cards)
+		pcard->is_activatable = false;
+    /////////kdiy/////////
 	activatable_cards.clear();
 	summonable_cards.clear();
 	spsummonable_cards.clear();
@@ -350,6 +354,9 @@ void ClientField::ClearChainSelect() {
 		pcard->chain_code = 0;
 		pcard->is_selectable = false;
 		pcard->is_selected = false;
+		///kdiy///////
+		pcard->is_activatable = false;
+        ///kdiy///////
 	}
 	conti_cards.clear();
 	deck_act[0] = deck_act[1] = false;

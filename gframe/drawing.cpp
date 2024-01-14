@@ -414,6 +414,16 @@ void Game::DrawCard(ClientCard* pcard) {
 		driver->setMaterial(matManager.mCard);
 		driver->drawVertexPrimitiveList(matManager.vCardBack, 4, matManager.iRectangle, 2);
 	}
+	///kdiy////////
+	if(pcard->is_activatable) {
+		irr::core::matrix4 atk;
+		atk.setTranslation(pcard->curPos + irr::core::vector3df(0, 0.65f, 0));
+		driver->setTransform(irr::video::ETS_WORLD, atk);
+		matManager.mTexture.setTexture(0, imageManager.tXyz);
+		driver->setMaterial(matManager.mTexture);
+		driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
+    }
+	///kdiy////////
 	if(pcard->is_selectable && (pcard->location & 0xe)) {
 		irr::video::SColor outline_color = skin::DUELFIELD_SELECTABLE_CARD_OUTLINE_VAL;
 		if((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP)))
