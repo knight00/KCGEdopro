@@ -592,6 +592,8 @@ bool ImageManager::Initial() {
 		        modeBody[i] = driver->getTexture(buff);
         }
 	}
+    tActivable = loadTextureAnySize(EPRO_TEXT("activable"_sv));
+	ASSIGN_DEFAULT(tActivable);
     tXyz = loadTextureAnySize(EPRO_TEXT("xyz"_sv));
 	ASSIGN_DEFAULT(tXyz);
     tCXyz = loadTextureAnySize(EPRO_TEXT("cxyz"_sv));

@@ -393,12 +393,16 @@ void Game::DrawCard(ClientCard* pcard) {
             if(ya <= yd)
                 atkr.Z += irr::core::PI;
             pcard->mTransform.setRotationRadians(atkr);
-        } else if((pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && (pcard->type & TYPE_SPELL) && pcard->is_pzone && !pcard->equipTarget)
-            pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(0, irr::core::PI/3, 0));
-        else if((pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 4 || pcard->sequence == 7)) && (pcard->type & TYPE_SPELL) && pcard->is_pzone && !pcard->equipTarget)
-            pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(0, irr::core::PI/3*5, 0));
-        else
+        } else if((pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && (pcard->type & TYPE_SPELL) && pcard->is_pzone && !pcard->equipTarget) {
+            pcard->mTransform.setTranslation(pcard->curPos - irr::core::vector3df(0.32f, 0, 0));
+            pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(-irr::core::PI/3, 0, -irr::core::PI/5));
+        } else if((pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 4 || pcard->sequence == 7)) && (pcard->type & TYPE_SPELL) && pcard->is_pzone && !pcard->equipTarget) {
+            pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(0.32f, 0, 0));
+            pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(-irr::core::PI/3, 0, irr::core::PI/5));
+        } else {
+            pcard->mTransform.setTranslation(pcard->curPos);
             pcard->mTransform.setRotationRadians(pcard->curRot);
+        }
         ///kdiy////////
 		matManager.mCard.setTexture(0, imageManager.GetTextureCard(pcard->code, imgType::ART));
 		driver->setMaterial(matManager.mCard);
@@ -414,16 +418,6 @@ void Game::DrawCard(ClientCard* pcard) {
 		driver->setMaterial(matManager.mCard);
 		driver->drawVertexPrimitiveList(matManager.vCardBack, 4, matManager.iRectangle, 2);
 	}
-	///kdiy////////
-	if(pcard->is_activatable) {
-		irr::core::matrix4 atk;
-		atk.setTranslation(pcard->curPos + irr::core::vector3df(0, 0.65f, 0));
-		driver->setTransform(irr::video::ETS_WORLD, atk);
-		matManager.mTexture.setTexture(0, imageManager.tXyz);
-		driver->setMaterial(matManager.mTexture);
-		driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
-    }
-	///kdiy////////
 	if(pcard->is_selectable && (pcard->location & 0xe)) {
 		irr::video::SColor outline_color = skin::DUELFIELD_SELECTABLE_CARD_OUTLINE_VAL;
 		if((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP)))
@@ -591,6 +585,15 @@ void Game::DrawCard(ClientCard* pcard) {
 			driver->drawVertexPrimitiveList(matManager.vPScale, 4, matManager.iRectangle, 2);
 		}
 	}
+	if(pcard->is_activatable) {
+		matManager.mTexture.setTexture(0, imageManager.tActivable);
+		driver->setMaterial(matManager.mTexture);
+		irr::core::matrix4 atk;
+		atk.setTranslation(pcard->curPos + irr::core::vector3df(0, ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup) ? 1 : 0.65f, 0.2f));
+        atk.setRotationRadians(pcard->curRot);
+		driver->setTransform(irr::video::ETS_WORLD, atk);
+		driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
+    }
 	////kidy/////////
 }
 template<typename T>
@@ -728,7 +731,7 @@ void Game::DrawMisc() {
 		if(dInfo.lp[0] < dInfo.startlp) {
 			/////kdiy/////////
 			//auto cliprect = Resize(335, 12, 335 + 290 * (dInfo.lp[0] / static_cast<double>(dInfo.startlp)), 28);
-			auto cliprect = Resize(23, 555, 153 + (215-23) * (dInfo.lp[0] / static_cast<double>(dInfo.startlp)), 571);
+			auto cliprect = Resize(23, 555, 23 + (215-23) * (dInfo.lp[0] / static_cast<double>(dInfo.startlp)), 571);
 			/////kdiy/////////
 			DRAWRECT(lpbar_pos, 1, &cliprect);
 		} else {
@@ -1590,10 +1593,26 @@ void Game::DrawDeckBd() {
 		auto main_deck_size_str = fmt::to_wstring(decksize);;
 		DrawShadowText(numFont, main_deck_size_str, Resize(79, 5, 139, 20), Resize(1, 1, 1, 1), 0xffffffff, 0xff000000, false, true);
 
+        int monster_count = deckBuilder.main_monster_count;
+        int spell_count = deckBuilder.main_spell_count;
+        int trap_count = deckBuilder.main_trap_count;
+        if(dInfo.isReplay || dInfo.isSingleMode) {
+            monster_count = 0;
+            spell_count = 0;
+            trap_count = 0;
+            for(const auto& card : show_deck2) {
+                if(card->type & TYPE_MONSTER)
+                    monster_count++;
+                else if(card->type & TYPE_SPELL)
+                    spell_count++;
+                else if(card->type & TYPE_TRAP)
+                    trap_count++;
+            }
+        }
 		auto main_types_count_str = epro::format(L"{} {} {} {} {} {}",
-													  gDataManager->GetSysString(1312), deckBuilder.main_monster_count,
-													  gDataManager->GetSysString(1313), deckBuilder.main_spell_count,
-													  gDataManager->GetSysString(1314), deckBuilder.main_trap_count);
+													  gDataManager->GetSysString(1312), monster_count,
+													  gDataManager->GetSysString(1313), spell_count,
+													  gDataManager->GetSysString(1314), trap_count);
 
 		auto mainpos = Resize(10, 5, 297, 20);
 		auto mainDeckTypeSize = textFont->getDimensionustring(main_types_count_str);

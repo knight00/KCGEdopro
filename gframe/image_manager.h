@@ -224,6 +224,7 @@ public:
 	A(modeBody[CHAPTER])
     A(head[CHARACTER_STORY])
 	A(modeHead[6])
+	A(tActivable)
 	A(tXyz)
 	A(tCXyz)
 	A(tCrack)

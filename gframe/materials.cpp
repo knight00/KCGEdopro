@@ -35,13 +35,13 @@ Materials::Materials() {
 	///////kdiy//////
 	SetS3DVertex(vPScale, -0.25f, -0.5, 0.25, 0.5f, 0.01f, 1, 0, 0, 1, 1);
     SetS3DVertex(vCloseup, 2.3f, -4.0f, 6.7f, 4.0f, 0.01f, 1, 0, 0, 1, 1);
-	SetS3DVertex(vAttack, -0.7f, -0.8f, 0.7f, 0.8f, 0.01f, 1, 0, 0, 1, 1);
-	SetS3DVertex(vAttack2, -0.35f, -0.4f, 0.35f, 0.4f, 0.01f, 1, 0, 0, 1, 1);
-	SetS3DVertex(vAttack3, -0.9f, -1, 0.9f, 1, 0.01f, 1, 0, 0, 1, 1);
+	SetS3DVertex(vAttack, -0.68f, -0.8f, 0.68f, 0.8f, 0.01f, 1, 0, 0, 1, 1);
+	SetS3DVertex(vAttack2, -0.34f, -0.4f, 0.34f, 0.4f, 0.01f, 1, 0, 0, 1, 1);
+	SetS3DVertex(vAttack3, -0.85f, -1, 0.85f, 1, 0.01f, 1, 0, 0, 1, 1);
 	//SetS3DVertex(vSymbol, -0.35f, -0.35f, 0.35f, 0.35f, 0.01f, 1, 0, 0, 1, 1);
 	//SetS3DVertex(vNegate, -0.25f, -0.28f, 0.25f, 0.22f, 0.01f, 1, 0, 0, 1, 1);
-    SetS3DVertex(vSymbol, -0.7f, -0.7f, 0.7f, 0.7f, 0.01f, 1, 0, 0, 1, 1);
-    SetS3DVertex(vNegate, -0.7f, -0.73f, 0.7f, 0.77f, 0.01f, 1, 0, 0, 1, 1);
+    SetS3DVertex(vSymbol, -0.75f, -0.75f, 0.75f, 0.75f, 0.08f, 1, 0, 0, 1, 1);
+    SetS3DVertex(vNegate, -0.7f, -0.73f, 0.7f, 0.77f, 0.08f, 1, 0, 0, 1, 1);
 	SetS3DVertex(vXyz, -0.1f, -0.1f, 0.1f, 0.1f, 0, 1, 0, 0, 1, 1);
 	SetS3DVertex(vCXyz, -0.2f, -0.2f, 0.2f, 0.2f, 0, 1, 0, 0, 1, 1);
 	///////kdiy//////

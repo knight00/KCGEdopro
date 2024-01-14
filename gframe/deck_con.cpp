@@ -93,6 +93,9 @@ void DeckBuilder::Initialize(bool refresh) {
 		mainGame->ClearCardInfo();
 	mainGame->mTopMenu->setVisible(false);
 	mainGame->wInfos->setVisible(true);
+    ////kdiy////
+    mainGame->wInfos->setRelativePosition(mainGame->Resize(1, 275, 301, 639));
+    ////kdiy////
 	mainGame->wCardImg->setVisible(true);
 	mainGame->wDeckEdit->setVisible(true);
 	mainGame->wFilter->setVisible(true);
@@ -155,6 +158,10 @@ void DeckBuilder::Terminate(bool showmenu) {
 		mainGame->ClearCardInfo(0);
 		gdeckManager->ClearDummies();
 	}
+    ////kdiy////////
+    mainGame->wCardImg->setVisible(false);
+	mainGame->wInfos->setVisible(false);
+    ////kdiy////////
 	mainGame->btnHandTest->setVisible(false);
 	mainGame->btnHandTestSettings->setVisible(false);
 	mainGame->btnYdkeManage->setVisible(false);

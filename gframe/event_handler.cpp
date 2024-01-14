@@ -1835,10 +1835,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					}
 					should_show_tip = true;
 					auto dtip = mainGame->textFont->getDimensionustring(player_name) + mainGame->Scale(irr::core::dimension2d<uint32_t>(10, 10));
-					//////kdiy//////
-					//mainGame->stTip->setRelativePosition(irr::core::recti(mousepos.X - mainGame->Scale(10) - dtip.Width, mousepos.Y + mainGame->Scale(10), mousepos.X - mainGame->Scale(10), mousepos.Y + mainGame->Scale(10) + dtip.Height));
-					mainGame->stTip->setRelativePosition(irr::core::recti(mousepos.X - mainGame->Scale(10) - dtip.Width, x < 300 ? mousepos.Y - mainGame->Scale(390) : mousepos.Y + mainGame->Scale(10), mousepos.X - mainGame->Scale(10), x < 300 ? mousepos.Y - mainGame->Scale(390) + dtip.Height : mousepos.Y + mainGame->Scale(10) + dtip.Height));
-					//////kdiy//////
+					mainGame->stTip->setRelativePosition(irr::core::recti(mousepos.X - mainGame->Scale(10) - dtip.Width, mousepos.Y + mainGame->Scale(10), mousepos.X - mainGame->Scale(10), mousepos.Y + mainGame->Scale(10) + dtip.Height));
 					mainGame->stTip->setText(player_name.data());
 				}
 				hovered_player = mplayer;
@@ -2068,9 +2065,10 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			}
 			//////kdiy///////
 			case BUTTON_SHOW_CARD: {
-				if(!mainGame->wInfos->isVisible())
+				if(!mainGame->wInfos->isVisible()) {
+                    mainGame->wInfos->setRelativePosition(mainGame->Resize(1, 275, 301, 580));
 					mainGame->PopupElement(mainGame->wInfos);
-				else
+                } else
 					mainGame->HideElement(mainGame->wInfos);
 				if(!mainGame->wCardImg->isVisible())
 					mainGame->PopupElement(mainGame->wCardImg);
