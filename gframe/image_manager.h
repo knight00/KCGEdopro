@@ -229,6 +229,11 @@ public:
 	A(tCXyz)
 	A(tCrack)
 	A(tCard)
+	A(tMain)
+	A(tDeck)
+	A(tGrave)
+	A(tRemoved)
+	A(tExtra)
 	/////kdiy/////
 	A(tSettings)
 	A(tCheckBox[3])

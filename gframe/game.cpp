@@ -961,6 +961,31 @@ void Game::Initialize() {
 	btnShowCard->setDrawBorder(false);
 	btnShowCard->setImageSize(dimBtnSettings2.getSize());
 	btnShowCard->setImage(imageManager.tCard);
+	wLocation = env->addWindow(Scale(22, 510, 297, 540), false, L"");
+	wLocation->getCloseButton()->setVisible(false);
+	// wLocation->setDrawTitlebar(false);
+	// wLocation->setDrawBackground(false);
+	wLocation->setVisible(false);
+	for(int i = 0; i < 5; ++i) {
+		btnLocation[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(35 * i, 0, 30 + 35 * i, 30), wLocation, BUTTON_LOCATION_0 + i);
+		btnLocation[i]->setIsPushButton(true);
+		btnLocation[i]->setDrawBorder(false);
+	}
+	btnLocation[0]->setImage(imageManager.tMain);
+	btnLocation[0]->setToolTipText(gDataManager->GetSysString(8059).data());
+	defaultStrings.emplace_back(btnLocation[0], 8059);
+	btnLocation[1]->setImage(imageManager.tDeck);
+	btnLocation[1]->setToolTipText(gDataManager->GetSysString(1000).data());
+	defaultStrings.emplace_back(btnLocation[1], 1000);
+	btnLocation[2]->setImage(imageManager.tGrave);
+	btnLocation[2]->setToolTipText(gDataManager->GetSysString(1004).data());
+	defaultStrings.emplace_back(btnLocation[2], 1004);
+	btnLocation[3]->setImage(imageManager.tRemoved);
+	btnLocation[3]->setToolTipText(gDataManager->GetSysString(1005).data());
+	defaultStrings.emplace_back(btnLocation[3], 1005);
+	btnLocation[4]->setImage(imageManager.tExtra);
+	btnLocation[4]->setToolTipText(gDataManager->GetSysString(1006).data());
+	defaultStrings.emplace_back(btnLocation[4], 1006);
     //////kdiy//////
 	wBtnSettings->getCloseButton()->setVisible(false);
 	wBtnSettings->setDraggable(false);
@@ -5305,6 +5330,7 @@ void Game::OnResize() {
 	wQQ->setRelativePosition(ResizeWin(mainMenuRightX+10, 200, mainMenuRightX+150, 450));
 	wBtnSettings->setRelativePosition(ResizeWin(0, 590, 30, 620));
 	wBtnShowCard->setRelativePosition(ResizeWin(430, 10, 470, 50));
+	wLocation->setRelativePosition(ResizeWin(22, 510, 297, 540));
 	////////kdiy///////
 	SetCentered(wCommitsLog);
 	SetCentered(updateWindow, false);

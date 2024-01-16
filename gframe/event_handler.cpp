@@ -2078,6 +2078,44 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				mainGame->env->setFocus(mainGame->wCardImg);
 				break;
 			}
+			case BUTTON_LOCATION_0: {
+				mainGame->btnLocation[0]->setPressed();
+				for(int i = 1; i < 5; ++i)
+					mainGame->btnLocation[i]->setPressed(false);
+				break;
+			}
+			case BUTTON_LOCATION_1: {
+				mainGame->btnLocation[1]->setPressed();
+				for(int i = 0; i < 5; ++i) {
+					if(i == 1) continue;
+					mainGame->btnLocation[i]->setPressed(false);
+				}
+				break;
+			}
+			case BUTTON_LOCATION_2: {
+				mainGame->btnLocation[2]->setPressed();
+				for(int i = 0; i < 5; ++i) {
+					if(i == 2) continue;
+					mainGame->btnLocation[i]->setPressed(false);
+				}
+				break;
+			}
+			case BUTTON_LOCATION_3: {
+				mainGame->btnLocation[3]->setPressed();
+				for(int i = 0; i < 5; ++i) {
+					if(i == 3) continue;
+					mainGame->btnLocation[i]->setPressed(false);
+				}
+				break;
+			}
+			case BUTTON_LOCATION_4: {
+				mainGame->btnLocation[4]->setPressed();
+				for(int i = 0; i < 5; ++i) {
+					if(i == 4) continue;
+					mainGame->btnLocation[i]->setPressed(false);
+				}
+				break;
+			}
             case BUTTON_REPO_DELETE:	{
                 mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8049)).data());
                 mainGame->PopupElement(mainGame->wACMessage, 90);

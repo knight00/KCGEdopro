@@ -1581,6 +1581,7 @@ void Game::DrawDeckBd() {
 	///kdiy///////
 	if(dInfo.isInDuel) {
 	{
+		mainGame->wLocation->setVisible(true);
 		auto decksize = deckBuilder.GetCurrentDeck().main.size();
 		if(dInfo.isReplay || dInfo.isSingleMode) decksize = dField.deck[0].size();
 		auto show_deck = deckBuilder.GetCurrentDeck().main;
@@ -1590,7 +1591,7 @@ void Game::DrawDeckBd() {
 		DRAWRECT(MAIN_INFO, 10, 5, 297, 20);
 		DRAWOUTLINE(MAIN_INFO, 9, 4, 297, 20);
 
-		DrawShadowText(textFont, gDataManager->GetSysString(1330), Resize(14, 4, 109, 19), Resize(1, 1, 1, 1), 0xffffffff, 0xff000000, false, true);
+		DrawShadowText(textFont, gDataManager->GetSysString(mainGame->btnLocation[1]->isPressed() ? 1000 : mainGame->btnLocation[2]->isPressed() ? 1004 : mainGame->btnLocation[3]->isPressed() ? 1005 : mainGame->btnLocation[4]->isPressed() ? 1006 : 8059), Resize(14, 4, 109, 19), Resize(1, 1, 1, 1), 0xffffffff, 0xff000000, false, true);
 
 		auto main_deck_size_str = fmt::to_wstring(decksize);;
 		DrawShadowText(numFont, main_deck_size_str, Resize(79, 5, 139, 20), Resize(1, 1, 1, 1), 0xffffffff, 0xff000000, false, true);
@@ -1624,7 +1625,7 @@ void Game::DrawDeckBd() {
 		DrawShadowText(textFont, main_types_count_str, pos, irr::core::recti{ 1, 1, 1, 1 }, 0xffffffff, 0xff000000, false, true);
 
 		DRAWRECT(MAIN, 10, 24, 297, 505);
-		DRAWOUTLINE(MAIN, 309, 22, 297, 505);
+		DRAWOUTLINE(MAIN, 9, 22, 297, 505);
 
 		int cards_per_row = (decksize > 40) ? static_cast<int>((decksize - 41) / 4 + 6) : 8;
 		float dx = (297.0f-14.0f-47.0f) / (cards_per_row - 1);
@@ -1637,6 +1638,7 @@ void Game::DrawDeckBd() {
 	}
 	    return;
 	}
+	mainGame->wLocation->setVisible(false);
 	///kdiy///////
 	//main deck
 	{

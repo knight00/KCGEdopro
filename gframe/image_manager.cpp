@@ -602,6 +602,16 @@ bool ImageManager::Initial() {
 	ASSIGN_DEFAULT(tCrack);
 	tCard = loadTextureAnySize(EPRO_TEXT("showcard"_sv));
     ASSIGN_DEFAULT(tCard);
+	tMain = loadTextureFixedSize(EPRO_TEXT("maindeck"_sv), 30, 30);
+    ASSIGN_DEFAULT(tMain);
+	tDeck = loadTextureFixedSize(EPRO_TEXT("deck"_sv), 30, 30);
+    ASSIGN_DEFAULT(tDeck);
+	tGrave = loadTextureFixedSize(EPRO_TEXT("grave"_sv), 30, 30);
+    ASSIGN_DEFAULT(tGrave);
+	tRemoved = loadTextureFixedSize(EPRO_TEXT("removed"_sv), 30, 30);
+    ASSIGN_DEFAULT(tRemoved);
+	tExtra = loadTextureFixedSize(EPRO_TEXT("extra"_sv), 30, 30);
+    ASSIGN_DEFAULT(tExtra);
     ///kdiy/////
 
 	// Not required to be present
