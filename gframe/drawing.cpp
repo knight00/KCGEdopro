@@ -1582,10 +1582,36 @@ void Game::DrawDeckBd() {
 	if(dInfo.isInDuel) {
 	{
 		mainGame->wLocation->setVisible(true);
+        if(dInfo.isSingleMode && !dInfo.isHandTest) {
+            mainGame->btnLocation[0]->setVisible(false);
+            mainGame->btnLocation[1]->setVisible(true);
+            mainGame->btnLocation[2]->setVisible(true);
+            mainGame->btnLocation[3]->setVisible(true);
+            mainGame->btnLocation[4]->setVisible(true);
+            if(mainGame->btnLocation[0]->isPressed()) {
+                mainGame->btnLocation[1]->setPressed(true);
+                mainGame->btnLocation[2]->setPressed(false);
+                mainGame->btnLocation[3]->setPressed(false);
+                mainGame->btnLocation[4]->setPressed(false);
+            }
+        } else {
+            mainGame->btnLocation[0]->setVisible(true);
+            mainGame->btnLocation[1]->setVisible(true);
+            mainGame->btnLocation[2]->setVisible(true);
+            mainGame->btnLocation[3]->setVisible(true);
+            mainGame->btnLocation[4]->setVisible(true);
+        }
+
 		auto decksize = deckBuilder.GetCurrentDeck().main.size();
-		if(dInfo.isReplay || dInfo.isSingleMode) decksize = dField.deck[0].size();
+		if(mainGame->btnLocation[1]->isPressed()) decksize = dField.deck[0].size();
+		if(mainGame->btnLocation[2]->isPressed()) decksize = dField.grave[0].size();
+		if(mainGame->btnLocation[3]->isPressed()) decksize = dField.remove[0].size();
+		if(mainGame->btnLocation[4]->isPressed()) decksize = dField.extra[0].size();
 		auto show_deck = deckBuilder.GetCurrentDeck().main;
 		auto show_deck2 = dField.deck[0];
+		if(mainGame->btnLocation[2]->isPressed()) show_deck2 = dField.grave[0];
+		if(mainGame->btnLocation[3]->isPressed()) show_deck2 = dField.remove[0];
+		if(mainGame->btnLocation[4]->isPressed()) show_deck2 = dField.extra[0];
 		std::sort(show_deck2.begin(), show_deck2.end());
 
 		DRAWRECT(MAIN_INFO, 10, 5, 297, 20);
@@ -1599,7 +1625,7 @@ void Game::DrawDeckBd() {
         int monster_count = deckBuilder.main_monster_count;
         int spell_count = deckBuilder.main_spell_count;
         int trap_count = deckBuilder.main_trap_count;
-        if(dInfo.isReplay || dInfo.isSingleMode) {
+        if(!mainGame->btnLocation[0]->isPressed()) {
             monster_count = 0;
             spell_count = 0;
             trap_count = 0;
@@ -1624,14 +1650,14 @@ void Game::DrawDeckBd() {
 
 		DrawShadowText(textFont, main_types_count_str, pos, irr::core::recti{ 1, 1, 1, 1 }, 0xffffffff, 0xff000000, false, true);
 
-		DRAWRECT(MAIN, 10, 24, 297, 505);
-		DRAWOUTLINE(MAIN, 9, 22, 297, 505);
+		DRAWRECT(MAIN, 10, 24, 297, (mainGame->btnLocation[0]->isPressed() || mainGame->btnLocation[1]->isPressed()) ? 505 : 264);
+		DRAWOUTLINE(MAIN, 9, 22, 297, (mainGame->btnLocation[0]->isPressed() || mainGame->btnLocation[1]->isPressed()) ? 505 : 264);
 
-		int cards_per_row = (decksize > 40) ? static_cast<int>((decksize - 41) / 4 + 6) : 8;
+		int cards_per_row = (decksize > 40) ? static_cast<int>((decksize - 41) / 4 + 7) : 8;
 		float dx = (297.0f-14.0f-47.0f) / (cards_per_row - 1);
 
 		for(int i = 0; i < static_cast<int>(decksize); ++i) {
-			DrawThumb2((dInfo.isReplay || dInfo.isSingleMode) ? show_deck2[i]->code : show_deck[i]->code, irr::core::vector2di(14 + (i % cards_per_row) * dx, 33 + (i / cards_per_row) * 68));
+			DrawThumb2(!mainGame->btnLocation[0]->isPressed() ? show_deck2[i]->code : show_deck[i]->code, irr::core::vector2di(14 + (i % cards_per_row) * dx, 33 + (i / cards_per_row) * 68));
 			if(deckBuilder.hovered_pos == 1 && deckBuilder.hovered_seq == i)
 				driver->draw2DRectangleOutline(Resize(13 + (i % cards_per_row) * dx, 32 + (i / cards_per_row) * 68, 59 + (i % cards_per_row) * dx, 228 + (i / cards_per_row) * 68), skin::DECK_WINDOW_HOVERED_CARD_OUTLINE_VAL);
 		}

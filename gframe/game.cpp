@@ -961,10 +961,11 @@ void Game::Initialize() {
 	btnShowCard->setDrawBorder(false);
 	btnShowCard->setImageSize(dimBtnSettings2.getSize());
 	btnShowCard->setImage(imageManager.tCard);
-	wLocation = env->addWindow(Scale(22, 510, 297, 540), false, L"");
+	wLocation = AlignElementWithParent(env->addWindow(Scale(9, 505, 300, 535)));
 	wLocation->getCloseButton()->setVisible(false);
-	// wLocation->setDrawTitlebar(false);
-	// wLocation->setDrawBackground(false);
+	wLocation->setDraggable(false);
+	wLocation->setDrawTitlebar(false);
+	wLocation->setDrawBackground(false);
 	wLocation->setVisible(false);
 	for(int i = 0; i < 5; ++i) {
 		btnLocation[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(35 * i, 0, 30 + 35 * i, 30), wLocation, BUTTON_LOCATION_0 + i);
@@ -5330,7 +5331,6 @@ void Game::OnResize() {
 	wQQ->setRelativePosition(ResizeWin(mainMenuRightX+10, 200, mainMenuRightX+150, 450));
 	wBtnSettings->setRelativePosition(ResizeWin(0, 590, 30, 620));
 	wBtnShowCard->setRelativePosition(ResizeWin(430, 10, 470, 50));
-	wLocation->setRelativePosition(ResizeWin(22, 510, 297, 540));
 	////////kdiy///////
 	SetCentered(wCommitsLog);
 	SetCentered(updateWindow, false);

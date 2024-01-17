@@ -1653,12 +1653,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			irr::core::vector2di mousepos(event.MouseInput.X, event.MouseInput.Y);
 			irr::s32 x = pos.X;
 			irr::s32 y = pos.Y;
-			/////kdiy/////
-			// if(x < 300) {
-			// 	mainGame->stTip->setVisible(should_show_tip);
-			// 	break;
-			// }
-			/////kdiy/////
+			if(x < 300) {
+				mainGame->stTip->setVisible(should_show_tip);
+				break;
+			}
 			hovered_location = 0;
 			ClientCard* mcard = 0;
 			uint8_t mplayer = 2;
@@ -1833,7 +1831,9 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					for(const auto& hint : player_desc_hints[mplayer]) {
 						player_name.append(epro::format(L"\n*{}", gDataManager->GetDesc(hint.first, mainGame->dInfo.compat_mode)));
 					}
-					should_show_tip = true;
+                    /////kdiy/////
+					// should_show_tip = true;
+                    /////kdiy/////
 					auto dtip = mainGame->textFont->getDimensionustring(player_name) + mainGame->Scale(irr::core::dimension2d<uint32_t>(10, 10));
 					mainGame->stTip->setRelativePosition(irr::core::recti(mousepos.X - mainGame->Scale(10) - dtip.Width, mousepos.Y + mainGame->Scale(10), mousepos.X - mainGame->Scale(10), mousepos.Y + mainGame->Scale(10) + dtip.Height));
 					mainGame->stTip->setText(player_name.data());
