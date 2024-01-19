@@ -231,8 +231,10 @@ public:
 	A(tCard)
 	A(tMain)
 	A(tDeck)
+	A(tOpponentDeck)
 	A(tGrave)
 	A(tRemoved)
+	A(tOnHand)
 	A(tExtra)
 	/////kdiy/////
 	A(tSettings)

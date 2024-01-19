@@ -499,7 +499,7 @@ public:
 	irr::gui::CGUIImageButton* btnShowCard;
 	irr::gui::IGUIWindow* wBtnShowCard;
 	irr::gui::IGUIWindow* wLocation;
-	irr::gui::IGUIButton* btnLocation[5];
+	irr::gui::IGUIButton* btnLocation[7];
 	irr::gui::IGUIWindow* pwupdateWindow;
 	irr::gui::IGUIStaticText* updatePwText;
 	irr::gui::IGUIEditBox* ebPw;

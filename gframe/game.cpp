@@ -951,13 +951,13 @@ void Game::Initialize() {
 	//////kdiy//////
     //wBtnSettings = env->addWindow(Scale(0, 610, 30, 640));
     wBtnSettings = env->addWindow(Scale(0, 590, 30, 620));
-	wBtnShowCard = env->addWindow(Scale(430, 10, 470, 50));
+	wBtnShowCard = AlignElementWithParent(env->addWindow(Scale(430, 10, 470, 50)));
 	wBtnShowCard->getCloseButton()->setVisible(false);
 	wBtnShowCard->setDraggable(false);
 	wBtnShowCard->setDrawTitlebar(false);
     wBtnShowCard->setDrawBackground(false);
 	auto dimBtnSettings2 = Scale(0, 0, 50, 50);
-	btnShowCard = irr::gui::CGUIImageButton::addImageButton(env, dimBtnSettings2, wBtnShowCard, BUTTON_SHOW_CARD);
+	btnShowCard = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, dimBtnSettings2, wBtnShowCard, BUTTON_SHOW_CARD));
 	btnShowCard->setDrawBorder(false);
 	btnShowCard->setImageSize(dimBtnSettings2.getSize());
 	btnShowCard->setImage(imageManager.tCard);
@@ -967,26 +967,32 @@ void Game::Initialize() {
 	wLocation->setDrawTitlebar(false);
 	wLocation->setDrawBackground(false);
 	wLocation->setVisible(false);
-	for(int i = 0; i < 5; ++i) {
-		btnLocation[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(35 * i, 0, 30 + 35 * i, 30), wLocation, BUTTON_LOCATION_0 + i);
+	for(int i = 0; i < 7; ++i) {
+		btnLocation[i] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(35 * i, 0, 30 + 35 * i, 30), wLocation, BUTTON_LOCATION_0 + i));
 		btnLocation[i]->setIsPushButton(true);
 		btnLocation[i]->setDrawBorder(false);
 	}
 	btnLocation[0]->setImage(imageManager.tMain);
 	btnLocation[0]->setToolTipText(gDataManager->GetSysString(8059).data());
 	defaultStrings.emplace_back(btnLocation[0], 8059);
-	btnLocation[1]->setImage(imageManager.tDeck);
-	btnLocation[1]->setToolTipText(gDataManager->GetSysString(1000).data());
-	defaultStrings.emplace_back(btnLocation[1], 1000);
-	btnLocation[2]->setImage(imageManager.tGrave);
-	btnLocation[2]->setToolTipText(gDataManager->GetSysString(1004).data());
-	defaultStrings.emplace_back(btnLocation[2], 1004);
-	btnLocation[3]->setImage(imageManager.tRemoved);
-	btnLocation[3]->setToolTipText(gDataManager->GetSysString(1005).data());
-	defaultStrings.emplace_back(btnLocation[3], 1005);
-	btnLocation[4]->setImage(imageManager.tExtra);
-	btnLocation[4]->setToolTipText(gDataManager->GetSysString(1006).data());
-	defaultStrings.emplace_back(btnLocation[4], 1006);
+	btnLocation[1]->setImage(imageManager.tOpponentDeck);
+	btnLocation[1]->setToolTipText(gDataManager->GetSysString(8060).data());
+	defaultStrings.emplace_back(btnLocation[1], 8060);
+	btnLocation[2]->setImage(imageManager.tDeck);
+	btnLocation[2]->setToolTipText(gDataManager->GetSysString(1000).data());
+	defaultStrings.emplace_back(btnLocation[2], 1000);
+	btnLocation[3]->setImage(imageManager.tGrave);
+	btnLocation[3]->setToolTipText(gDataManager->GetSysString(1004).data());
+	defaultStrings.emplace_back(btnLocation[3], 1004);
+	btnLocation[4]->setImage(imageManager.tRemoved);
+	btnLocation[4]->setToolTipText(gDataManager->GetSysString(1005).data());
+	defaultStrings.emplace_back(btnLocation[4], 1005);
+	btnLocation[5]->setImage(imageManager.tOnHand);
+	btnLocation[5]->setToolTipText(gDataManager->GetSysString(1001).data());
+	defaultStrings.emplace_back(btnLocation[5], 1001);
+	btnLocation[6]->setImage(imageManager.tExtra);
+	btnLocation[6]->setToolTipText(gDataManager->GetSysString(1006).data());
+	defaultStrings.emplace_back(btnLocation[6], 1006);
     //////kdiy//////
 	wBtnSettings->getCloseButton()->setVisible(false);
 	wBtnSettings->setDraggable(false);
