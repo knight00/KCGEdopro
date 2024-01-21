@@ -967,32 +967,32 @@ void Game::Initialize() {
 	wLocation->setDrawTitlebar(false);
 	wLocation->setDrawBackground(false);
 	wLocation->setVisible(false);
-	for(int i = 0; i < 7; ++i) {
+	for(int i = 0; i < 8; ++i) {
 		btnLocation[i] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(35 * i, 0, 30 + 35 * i, 30), wLocation, BUTTON_LOCATION_0 + i));
 		btnLocation[i]->setIsPushButton(true);
 		btnLocation[i]->setDrawBorder(false);
+        btnLocation[i]->setVisible(false);
+        btnLocation[i]->setPressed(false);
 	}
+    btnLocation[0]->setPressed();
 	btnLocation[0]->setImage(imageManager.tMain);
 	btnLocation[0]->setToolTipText(gDataManager->GetSysString(8059).data());
 	defaultStrings.emplace_back(btnLocation[0], 8059);
-	btnLocation[1]->setImage(imageManager.tOpponentDeck);
-	btnLocation[1]->setToolTipText(gDataManager->GetSysString(8060).data());
-	defaultStrings.emplace_back(btnLocation[1], 8060);
-	btnLocation[2]->setImage(imageManager.tDeck);
-	btnLocation[2]->setToolTipText(gDataManager->GetSysString(1000).data());
-	defaultStrings.emplace_back(btnLocation[2], 1000);
-	btnLocation[3]->setImage(imageManager.tGrave);
-	btnLocation[3]->setToolTipText(gDataManager->GetSysString(1004).data());
-	defaultStrings.emplace_back(btnLocation[3], 1004);
-	btnLocation[4]->setImage(imageManager.tRemoved);
-	btnLocation[4]->setToolTipText(gDataManager->GetSysString(1005).data());
-	defaultStrings.emplace_back(btnLocation[4], 1005);
-	btnLocation[5]->setImage(imageManager.tOnHand);
-	btnLocation[5]->setToolTipText(gDataManager->GetSysString(1001).data());
-	defaultStrings.emplace_back(btnLocation[5], 1001);
-	btnLocation[6]->setImage(imageManager.tExtra);
-	btnLocation[6]->setToolTipText(gDataManager->GetSysString(1006).data());
-	defaultStrings.emplace_back(btnLocation[6], 1006);
+	btnLocation[1]->setImage(imageManager.tDeck);
+	btnLocation[1]->setToolTipText(gDataManager->GetSysString(1000).data());
+	defaultStrings.emplace_back(btnLocation[1], 1000);
+	btnLocation[2]->setImage(imageManager.tGrave);
+	btnLocation[2]->setToolTipText(gDataManager->GetSysString(1004).data());
+	defaultStrings.emplace_back(btnLocation[2], 1004);
+	btnLocation[3]->setImage(imageManager.tRemoved);
+	btnLocation[3]->setToolTipText(gDataManager->GetSysString(1005).data());
+	defaultStrings.emplace_back(btnLocation[3], 1005);
+	btnLocation[4]->setImage(imageManager.tOnHand);
+	btnLocation[4]->setToolTipText(gDataManager->GetSysString(1001).data());
+	defaultStrings.emplace_back(btnLocation[4], 1001);
+	btnLocation[5]->setImage(imageManager.tExtra);
+	btnLocation[5]->setToolTipText(gDataManager->GetSysString(1006).data());
+	defaultStrings.emplace_back(btnLocation[5], 1006);
     //////kdiy//////
 	wBtnSettings->getCloseButton()->setVisible(false);
 	wBtnSettings->setDraggable(false);
@@ -3336,6 +3336,7 @@ bool Game::MainLoop() {
 		wBtnSettings->setVisible(!(is_building || is_siding || dInfo.isInDuel || open_file));
 		/////kdiy//////////
 		wBtnShowCard->setVisible(dInfo.isInDuel);
+        wLocation->setVisible(dInfo.isInDuel);
 		/////kdiy//////////
 		EnableMaterial2D(true);
 		DrawGUI();

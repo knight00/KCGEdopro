@@ -929,31 +929,33 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 	if(chant == CHANT::LOSE) i = 19;
 	if(i == -1) return false;
 	if(code == 0) {
+        std::vector<std::string> chantlist = ChantSPList[i][character[player]];
+        std::vector<std::string> chantlist2 = ChantSPList2[i][character[player]];
         //not play again for same chant
         if(mainGame->dInfo.isInDuel && chant != CHANT::DRAW && chant != CHANT::STARTUP && chant != CHANT::WIN && chant != CHANT::LOSE) {
             for(auto file : gSoundManager->soundcount) {
-                ChantSPList[i][character[player]].erase(std::remove(ChantSPList[i][character[player]].begin(), ChantSPList[i][character[player]].end(), file), ChantSPList[i][character[player]].end());
-                ChantSPList2[i][character[player]].erase(std::remove(ChantSPList2[i][character[player]].begin(), ChantSPList2[i][character[player]].end(), file), ChantSPList2[i][character[player]].end());
+                chantlist.erase(std::remove(chantlist.begin(), chantlist.end(), file), chantlist.end());
+                chantlist2.erase(std::remove(chantlist2.begin(), chantlist2.end(), file), chantlist2.end());
             }
         }
-		int count = ChantSPList[i][character[player]].size();
-		int _count = ChantSPList2[i][character[player]].size();
+		int count = chantlist.size();
+		int _count = chantlist2.size();
 		if(count > 0) {
 			int chantno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-			return PlayZipChants(chant, ChantSPList[i][character[player]][chantno], gSoundManager->soundcount, player);
+			return PlayZipChants(chant, chantlist[chantno], gSoundManager->soundcount, player);
 		} else if(_count > 0) {
 			int chantno = (std::uniform_int_distribution<>(0, _count - 1))(rnd);
-			return PlayChants(chant, ChantSPList2[i][character[player]][chantno], gSoundManager->soundcount, player);
+			return PlayChants(chant, chantlist2[chantno], gSoundManager->soundcount, player);
 		}
 	} else {
 		auto key = std::make_pair(chant, code);
 		auto key2 = std::make_pair(chant, code2);
-
+        std::vector<std::string> chantlist = ChantSPList[i][character[player]];
+        std::vector<std::string> chantlist2 = ChantSPList2[i][character[player]];
 		std::vector<std::string> list;
         std::vector<std::string> list2;
 		auto chant_it = ChantsList[character[player]].find(key);
 		auto chant_it2 = ChantsList[character[player]].find(key2);
-
 		std::vector<std::string> _list;
         std::vector<std::string> _list2;
 		auto _chant_it = ChantsList2[character[player]].find(key);
@@ -963,16 +965,16 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 			if(chant_it == ChantsList[character[player]].end() && _chant_it == ChantsList2[character[player]].end()) {
                 if(mainGame->dInfo.isInDuel) {
                     for(auto file : gSoundManager->soundcount) {
-                        ChantSPList[i][character[player]].erase(std::remove(ChantSPList[i][character[player]].begin(), ChantSPList[i][character[player]].end(), file), ChantSPList[i][character[player]].end());
-                        ChantSPList2[i][character[player]].erase(std::remove(ChantSPList2[i][character[player]].begin(), ChantSPList2[i][character[player]].end(), file), ChantSPList2[i][character[player]].end());
+                        chantlist.erase(std::remove(chantlist.begin(), chantlist.end(), file), chantlist.end());
+                        chantlist2.erase(std::remove(chantlist2.begin(), chantlist2.end(), file), chantlist2.end());
                     }
                 }
-                int count = ChantSPList[i][character[player]].size();
-                int _count = ChantSPList2[i][character[player]].size();
+                int count = chantlist.size();
+                int _count = chantlist2.size();
 				if(count > 0)
-					AddtoChantSPList(chant, extra, ChantSPList[i][character[player]], list);
+					AddtoChantSPList(chant, extra, chantlist, list);
 				else if(_count > 0)
-					AddtoChantSPList(chant, extra, ChantSPList2[i][character[player]], _list);
+					AddtoChantSPList(chant, extra, chantlist2, _list);
 			} else {
 				if(chant_it != ChantsList[character[player]].end())
 					AddtoZipChantList(chant_it->second, i, list, list2);

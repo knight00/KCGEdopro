@@ -488,6 +488,9 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 				mainGame->dInfo.isStarted = false;
 				mainGame->dField.Clear();
 				mainGame->is_building = false;
+                ////kdiy////////
+                gSoundManager->soundcount.clear();
+                ////kdiy////////
 				mainGame->device->setEventReceiver(&mainGame->menuHandler);
 				if(mainGame->isHostingOnline) {
 					mainGame->ShowElement(mainGame->wRoomListPlaceholder);

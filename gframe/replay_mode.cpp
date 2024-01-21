@@ -167,6 +167,9 @@ void ReplayMode::EndDuel() {
 		mainGame->dInfo.isHandTest = false;
 		mainGame->dInfo.isOldReplay = false;
 		mainGame->closeDuelWindow = true;
+        ////kdiy////////
+        gSoundManager->soundcount.clear();
+		////kdiy////////
 		mainGame->closeDoneSignal.Wait(lock);
 		mainGame->ShowElement(mainGame->wReplay);
 		mainGame->SetMessageWindow();
@@ -188,6 +191,9 @@ void ReplayMode::Restart(bool refresh) {
 	mainGame->dField.Clear();
 	mainGame->dInfo.current_player[0] = 0;
 	mainGame->dInfo.current_player[1] = 0;
+    ////kdiy////////
+    gSoundManager->soundcount.clear();
+	////kdiy////////
 	if(!mainGame->dInfo.isRelay) {
 		if(mainGame->dInfo.isFirst)
 			mainGame->dInfo.current_player[1] = mainGame->dInfo.team2 - 1;

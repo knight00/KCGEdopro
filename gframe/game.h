@@ -60,6 +60,8 @@ namespace irr {
 	namespace scene {
 		class ISceneManager;
 		class ICameraSceneNode;
+		class ILightSceneNode;
+		class ISceneNode;
 	}
 }
 namespace ygo {
@@ -425,6 +427,8 @@ public:
 	std::vector<epro::path_string> pic_dirs;
 	std::vector<epro::path_string> cover_dirs;
 	///kdiy////////
+    irr::scene::ILightSceneNode* lightNode;
+    irr::scene::ISceneNode* haloNode;
 	std::vector<epro::path_string> closeup_dirs;
 	///kdiy////////
 	std::vector<epro::path_string> script_dirs;
@@ -499,7 +503,7 @@ public:
 	irr::gui::CGUIImageButton* btnShowCard;
 	irr::gui::IGUIWindow* wBtnShowCard;
 	irr::gui::IGUIWindow* wLocation;
-	irr::gui::IGUIButton* btnLocation[7];
+	irr::gui::IGUIButton* btnLocation[8];
 	irr::gui::IGUIWindow* pwupdateWindow;
 	irr::gui::IGUIStaticText* updatePwText;
 	irr::gui::IGUIEditBox* ebPw;

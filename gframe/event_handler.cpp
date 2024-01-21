@@ -1168,6 +1168,13 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 		}();
 		switch(event.MouseInput.Event) {
 		case irr::EMIE_LMOUSE_DOUBLE_CLICK: {
+            /////kdiy/////
+            if(mainGame->isEvent) {
+				mainGame->isEvent = false;
+				mainGame->cv->notify_one();
+				gSoundManager->StopSounds();
+            }
+            /////kdiy/////
 			if(mainGame->dInfo.isReplay)
 				break;
 			if(mainGame->dInfo.player_type == 7)
@@ -1217,11 +1224,6 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
                     mainGame->mode->NextPlot();
 				break;
 			}
-            if(mainGame->isEvent) {
-				mainGame->isEvent = false;
-				mainGame->cv->notify_one();
-				gSoundManager->StopSounds();
-            }
 			/////kdiy/////
 			hovered_location = 0;
 			irr::core::vector2di pos = mainGame->Resize(event.MouseInput.X, event.MouseInput.Y, true);
@@ -2080,13 +2082,13 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			}
 			case BUTTON_LOCATION_0: {
 				mainGame->btnLocation[0]->setPressed();
-				for(int i = 1; i < 7; ++i)
+				for(int i = 1; i < 8; ++i)
 					mainGame->btnLocation[i]->setPressed(false);
 				break;
 			}
 			case BUTTON_LOCATION_1: {
 				mainGame->btnLocation[1]->setPressed();
-				for(int i = 0; i < 7; ++i) {
+				for(int i = 0; i < 8; ++i) {
 					if(i == 1) continue;
 					mainGame->btnLocation[i]->setPressed(false);
 				}
@@ -2094,7 +2096,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			}
 			case BUTTON_LOCATION_2: {
 				mainGame->btnLocation[2]->setPressed();
-				for(int i = 0; i < 7; ++i) {
+				for(int i = 0; i < 8; ++i) {
 					if(i == 2) continue;
 					mainGame->btnLocation[i]->setPressed(false);
 				}
@@ -2102,7 +2104,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			}
 			case BUTTON_LOCATION_3: {
 				mainGame->btnLocation[3]->setPressed();
-				for(int i = 0; i < 7; ++i) {
+				for(int i = 0; i < 8; ++i) {
 					if(i == 3) continue;
 					mainGame->btnLocation[i]->setPressed(false);
 				}
@@ -2110,7 +2112,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			}
 			case BUTTON_LOCATION_4: {
 				mainGame->btnLocation[4]->setPressed();
-				for(int i = 0; i < 7; ++i) {
+				for(int i = 0; i < 8; ++i) {
 					if(i == 4) continue;
 					mainGame->btnLocation[i]->setPressed(false);
 				}
@@ -2118,7 +2120,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			}
 			case BUTTON_LOCATION_5: {
 				mainGame->btnLocation[5]->setPressed();
-				for(int i = 0; i < 7; ++i) {
+				for(int i = 0; i < 8; ++i) {
 					if(i == 5) continue;
 					mainGame->btnLocation[i]->setPressed(false);
 				}
@@ -2126,8 +2128,16 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			}
 			case BUTTON_LOCATION_6: {
 				mainGame->btnLocation[6]->setPressed();
-				for(int i = 0; i < 7; ++i) {
+				for(int i = 0; i < 8; ++i) {
 					if(i == 6) continue;
+					mainGame->btnLocation[i]->setPressed(false);
+				}
+				break;
+			}
+			case BUTTON_LOCATION_7: {
+				mainGame->btnLocation[7]->setPressed();
+				for(int i = 0; i < 8; ++i) {
+					if(i == 7) continue;
 					mainGame->btnLocation[i]->setPressed(false);
 				}
 				break;

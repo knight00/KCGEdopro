@@ -200,6 +200,7 @@ restart:
 			////kdiy////////
 			//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
 			mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(315, 5, 405, 45));
+            gSoundManager->soundcount.clear();
 			////kdiy////////
 			if(!hand_test) {
 				mainGame->ShowElement(mainGame->wSinglePlay);
@@ -343,6 +344,7 @@ restart:
 		////kdiy////////
 		//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
 		mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 137, 295, 187));
+        gSoundManager->soundcount.clear();
 		////kdiy////////
 		if(!hand_test) {
 			mainGame->ShowElement(mainGame->wSinglePlay);

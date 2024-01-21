@@ -233,6 +233,7 @@ public:
 	A(tDeck)
 	A(tOpponentDeck)
 	A(tGrave)
+	A(tOpponentGrave)
 	A(tRemoved)
 	A(tOnHand)
 	A(tExtra)
