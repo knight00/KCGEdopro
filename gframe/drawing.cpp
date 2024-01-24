@@ -328,6 +328,30 @@ void Game::DrawCards() {
 	for(auto& pcard : dField.overlay_cards)
 		DrawCard(pcard);
 	for(int p = 0; p < 2; ++p) {
+		//////kdiy/////////
+		for(int i = 0; i < 7; i++) {
+			for(int j = 0; j < 10; j++) {
+				if(!dField.mzone[p][i] && haloNodeexist[p][i][j]) {
+				    haloNodeexist[p][i][j] = false;
+					for(int k = 0; k < haloNode[p][i][j].size(); k++) {
+				        haloNode[p][i][j][k]->remove();
+						haloNode[p][i][j].pop_back();
+					}
+				}
+			}
+		}
+		for(int i = 0; i < 5; i++) {
+			for(int j = 0; j < 10; j++) {
+				if(!dField.szone[p][i] && haloNodeexist[p][i+7][j]) {
+				    haloNodeexist[p][i][j] = false;
+					for(int k = 0; k < haloNode[p][i][j].size(); k++) {
+				        haloNode[p][i][j][k]->remove();
+						haloNode[p][i][j].pop_back();
+					}
+				}
+			}
+		}
+		//////kdiy/////////
 		for(auto& pcard : dField.mzone[p])
 			if(pcard)
 				DrawCard(pcard);
@@ -538,22 +562,35 @@ void Game::DrawCard(ClientCard* pcard) {
 						int incre = 0;
 						int incre2 = 0;
 						for(int i = 0; i < pcard->overlayed.size(); i++) {
-							lightNode = smgr->addLightSceneNode();
-							haloNode = smgr->addBillboardSceneNode(lightNode, irr::core::dimension2d<irr::f32>(0.1f, 0.1f));
-							haloNode->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
-							haloNode->setMaterialTexture(0, imageManager.tXyz);
-							// const irr::u32 currentTime = device->getTimer()->getTime();
-							const irr::f32 rotationSpeed = 0.1f;
-							// irr::core::vector3df relativePosition = lightNode->getPosition() - pcard->curPos;
-							// relativePosition.rotateXYBy(rotationSpeed * currentTime, irr::core::vector3df(0, 0, 0));
-                            // lightNode->setPosition( pcard->curPos + relativePosition);
                             int neg = 1;
 							if(pcard->overlayed.size() > 2 && i >= pcard->overlayed.size() / 2) neg = -1;
 							int power = 1;
 							if(pcard->overlayed.size() / 4 > 0) power = pcard->overlayed.size() / 4;
 							if(pcard->overlayed.size() > 2 && i % 2 == 0 && i < pcard->overlayed.size() / 2) incre += 1;
 							if(pcard->overlayed.size() > 2 && i % 2 == 0 && i >= pcard->overlayed.size() / 2) incre2 += 1;
-                            lightNode->setPosition(pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2));
+							int sequence = (pcard->location & LOCATION_SZONE) ? pcard->sequence + 7 : pcard->sequence;
+							if(haloNodeexist[pcard->controler][sequence][i] && haloNode[pcard->controler][sequence][i].size() > 10) {
+								for(int k = 10; k < haloNode[pcard->controler][sequence][i].size(); k++) {
+									haloNode[pcard->controler][sequence][i][k]->remove();
+									haloNode[pcard->controler][sequence][i].pop_back();
+								}
+							}
+							irr::scene::ISceneNode* halo = smgr->addSphereSceneNode(0.05f);
+							halo->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
+							halo->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+							if(!haloNodeexist[pcard->controler][sequence][i])
+							    haloNodeexist[pcard->controler][sequence][i] = true;
+                            halo->setPosition(pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2));
+							haloNode[pcard->controler][sequence][i].insert(haloNode[pcard->controler][sequence][i].begin(), halo);
+							if(i+1 == pcard->overlayed.size() && haloNodeexist[pcard->controler][sequence][i+1]) {
+								for(int j = i + 1; ; j++) {
+									haloNodeexist[pcard->controler][sequence][j] = false;
+									for(int k = 0; k < haloNode[pcard->controler][sequence][j].size(); k++) {
+										haloNode[pcard->controler][sequence][j][k]->remove();
+										haloNode[pcard->controler][sequence][j].pop_back();
+									}
+								}
+							}
                             // if(i>9) break;
 							// matManager.mTexture.setTexture(0, imageManager.tXyz);
 							// driver->setMaterial(matManager.mTexture);

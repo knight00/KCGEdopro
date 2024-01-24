@@ -60,8 +60,9 @@ namespace irr {
 	namespace scene {
 		class ISceneManager;
 		class ICameraSceneNode;
-		class ILightSceneNode;
+		////kdiy//////
 		class ISceneNode;
+		////kdiy//////
 	}
 }
 namespace ygo {
@@ -388,6 +389,7 @@ public:
 	float atk2dy;
 	float atkdy2;
 	float atk2dy2;
+	double angle = 0.0f;
     ////kdiy//////
 	int lpframe;
 	float lpd;
@@ -427,8 +429,8 @@ public:
 	std::vector<epro::path_string> pic_dirs;
 	std::vector<epro::path_string> cover_dirs;
 	///kdiy////////
-    irr::scene::ILightSceneNode* lightNode;
-    irr::scene::ISceneNode* haloNode;
+	bool haloNodeexist[2][12][10];
+    std::vector<irr::scene::ISceneNode*> haloNode[2][12][10];
 	std::vector<epro::path_string> closeup_dirs;
 	///kdiy////////
 	std::vector<epro::path_string> script_dirs;

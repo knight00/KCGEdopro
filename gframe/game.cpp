@@ -3287,6 +3287,15 @@ bool Game::MainLoop() {
 			ClearZBuffer(driver);//Without this, "animations" are drawn behind everything
 			EnableMaterial2D(false);
 		} else if(is_building) {
+			/////////kdiy/////////
+			for(int p = 0; p < 2; p++) {
+				for(int i = 0; i < 12; i++) {
+					for(int j = 0; j < 10; j++) {
+					    haloNodeexist[p][i][j] = false;
+					}
+				}
+			}
+			/////////kdiy/////////
 			if(is_siding)
 				discord.UpdatePresence(DiscordWrapper::DECK_SIDING);
 			else
@@ -3297,6 +3306,15 @@ bool Game::MainLoop() {
 			DrawDeckBd();
 			EnableMaterial2D(false);
 		} else {
+			/////////kdiy/////////
+			for(int p = 0; p < 2; p++) {
+				for(int i = 0; i < 12; i++) {
+					for(int j = 0; j < 10; j++) {
+					    haloNodeexist[p][i][j] = false;
+					}
+				}
+			}
+			/////////kdiy/////////
 			if(dInfo.isInLobby)
 				discord.UpdatePresence(DiscordWrapper::IN_LOBBY);
 			else
