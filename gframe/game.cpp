@@ -3090,6 +3090,14 @@ bool Game::MainLoop() {
 		bool currentlyFullscreen = false;
 		GUIUtils::ToggleFullscreen(device, currentlyFullscreen);
 	}
+    /////////ktestxyzlight/////////
+	for(int p = 0; p < 2; p++) {
+		for(int i = 0; i < 12; i++) {
+			for(int j = 0; j < 10; j++)
+				haloNodeexist[p][i][j] = false;
+		}
+    }
+	/////////ktestxyzlight/////////
 	while(!restart && device->run()) {
 		DispatchQueue();
 		if(should_reload_skin) {
@@ -3243,8 +3251,8 @@ bool Game::MainLoop() {
 		atkdy = (float)sin(atkframe);
         //kdiy///////
 		atk2dy = (float)cos(atkframe);
-		atkdy2 = (float)sin(atkframe*0.8f);
-		atk2dy2 = (float)cos(atkframe*0.8f);
+		atkdy2 = (float)sin(atkframe*0.65f);
+		atk2dy2 = (float)cos(atkframe*0.65f);
         //kdiy///////
 		driver->beginScene(true, true, irr::video::SColor(0, 0, 0, 0));
 		gMutex.lock();
@@ -3287,15 +3295,23 @@ bool Game::MainLoop() {
 			ClearZBuffer(driver);//Without this, "animations" are drawn behind everything
 			EnableMaterial2D(false);
 		} else if(is_building) {
-			/////////kdiy/////////
-			for(int p = 0; p < 2; p++) {
-				for(int i = 0; i < 12; i++) {
-					for(int j = 0; j < 10; j++) {
-					    haloNodeexist[p][i][j] = false;
-					}
-				}
-			}
-			/////////kdiy/////////
+			/////////ktestxyzlight/////////
+			// for(int p = 0; p < 2; p++) {
+			// 	for(int i = 0; i < 12; i++) {
+			// 		for(int j = 0; j < 10; j++) {
+            //             if(haloNodeexist[p][i][j]) {
+            //                 for(int k = 0; k < haloNode[p][i][j].size(); k++) {
+            //                     if(haloNode[p][i][j][k] != nullptr) {
+            //                         haloNode[p][i][j][k]->remove();
+            //                         haloNode[p][i][j].pop_back();
+            //                     }
+            //                 }
+            //             }
+			// 		    haloNodeexist[p][i][j] = false;
+			// 		}
+			// 	}
+			// }
+			/////////ktestxyzlight/////////
 			if(is_siding)
 				discord.UpdatePresence(DiscordWrapper::DECK_SIDING);
 			else
@@ -3306,15 +3322,23 @@ bool Game::MainLoop() {
 			DrawDeckBd();
 			EnableMaterial2D(false);
 		} else {
-			/////////kdiy/////////
-			for(int p = 0; p < 2; p++) {
-				for(int i = 0; i < 12; i++) {
-					for(int j = 0; j < 10; j++) {
-					    haloNodeexist[p][i][j] = false;
-					}
-				}
-			}
-			/////////kdiy/////////
+			/////////ktestxyzlight/////////
+			// for(int p = 0; p < 2; p++) {
+			// 	for(int i = 0; i < 12; i++) {
+			// 		for(int j = 0; j < 10; j++) {
+            //             if(haloNodeexist[p][i][j]) {
+            //                 for(int k = 0; k < haloNode[p][i][j].size(); k++) {
+            //                     if(haloNode[p][i][j][k] != nullptr) {
+            //                         haloNode[p][i][j][k]->remove();
+            //                         haloNode[p][i][j].pop_back();
+            //                     }
+            //                 }
+            //             }
+			// 		    haloNodeexist[p][i][j] = false;
+			// 		}
+			// 	}
+			// }
+			/////////ktestxyzlight/////////
 			if(dInfo.isInLobby)
 				discord.UpdatePresence(DiscordWrapper::IN_LOBBY);
 			else
