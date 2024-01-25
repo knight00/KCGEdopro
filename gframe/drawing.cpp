@@ -372,7 +372,7 @@ void Game::DrawCards() {
 				    haloNodeexist[p][i+7][j] = false;
 				}
 			}
-		}        
+		}
 		//////ktestxyzlight/////////
 		for(auto& pcard : dField.mzone[p])
 			if(pcard)
@@ -416,6 +416,7 @@ void Game::DrawCard(ClientCard* pcard) {
 	}
     ///kdiy////////
 	auto cardcloseup = imageManager.GetTextureCloseup(pcard->code, pcard->alias);
+	matManager.mTexture.AmbientColor = 0xffffffff;
     ///kdiy////////
 	matManager.mCard.AmbientColor = 0xffffffff;
 	matManager.mCard.DiffuseColor = ((int)std::round(pcard->curAlpha) << 24) | 0xffffff;
@@ -551,7 +552,6 @@ void Game::DrawCard(ClientCard* pcard) {
 				driver->drawVertexPrimitiveList(matManager.vAttack2, 4, matManager.iRectangle, 2);
 			else
 				driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
-            matManager.mTexture.AmbientColor = 0xffffffff;
 			if(pcard->type & TYPE_XYZ) {
 				auto cd = gDataManager->GetCardData(pcard->code);
 				if(cd) {
@@ -581,9 +581,32 @@ void Game::DrawCard(ClientCard* pcard) {
 						}
 					}
 					else {
+						const auto& image = driver->createImage(cardcloseup, irr::core::position2d<irr::s32>(0, 0), cardcloseup->getSize());
+						unsigned long long r = 0, g = 0, b = 0;
+						unsigned long long totalAlpha = 0;
+						unsigned count = 0;
+						// scan through each pixel in the image data and accumulate the total color
+						for(auto y = 0; y < image->getDimension().Height; y++) {
+							for(auto x = 0; x < image->getDimension().Width; x++) {
+								irr::video::SColor color = image->getPixel(x, y);
+								if(color.getAlpha() > 200) {
+									r += color.getRed();
+									g += color.getGreen();
+									b += color.getBlue();
+									count++;
+								}
+							}
+						}
+						image->drop();
+						// calculate the average color
+						r /= count;
+						g /= count;
+						b /= count;
+
 						int incre = 0;
 						int incre2 = 0;
 						for(int i = 0; i < pcard->overlayed.size(); i++) {
+                            if(i>9) break;
                             int neg = 1;
 							if(pcard->overlayed.size() > 2 && i >= pcard->overlayed.size() / 2) neg = -1;
 							int power = 1;
@@ -617,28 +640,9 @@ void Game::DrawCard(ClientCard* pcard) {
 							// 		haloNodeexist[pcard->controler][sequence][j] = false;
 							// 	}
 							// }
-                            // if(i>9) break;
-                            // A map to store the count of pixel colors
-                            // void* pixels = cardcloseup->lock(irr::video::ETLM_READ_ONLY);
-                            // std::map<irr::video::SColor, int, irr::video::SColor> colorCount;
-                            // int height = cardcloseup->getSize().Height;
-                            // int width = cardcloseup->getSize().Width;
-                            // for (int x = 0; x < width; x++) {
-                            //     for (int y = 0; y < height; y++) {
-                            //         irr::video::SColor pixelColor(((irr::u32*)pixels)[x + y*width]);
-                            //         colorCount[pixelColor]++;
-                            //     }
-                            // }
-                            // cardcloseup->unlock();
-                            // irr::video::SColor dominantColor;
-                            // int maxCount = 0;
-                            // for (auto const &pair: colorCount) {
-                            //     if (pair.second > maxCount) {
-                            //         maxCount = pair.second;
-                            //         dominantColor = pair.first;
-                            //     }
-                            // }
+
 							matManager.mTexture.setTexture(0, imageManager.tXyz);
+							matManager.mTexture.AmbientColor = irr::video::SColor(255, r > 120 ? 255 : r, g > 120 ? 255 : g, b > 120 ? 255 : b);
 							driver->setMaterial(matManager.mTexture);
 							irr::core::matrix4 atk;
 							atk.setTranslation(pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2));
@@ -646,27 +650,24 @@ void Game::DrawCard(ClientCard* pcard) {
 							driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
                             if(!haloNodeexist[pcard->controler][sequence][i])
 							    haloNodeexist[pcard->controler][sequence][i] = true;
-                            // for(irr::core::vector3df pt : points[pcard->controler][sequence][i]) {
-                            //     matManager.mTexture.setTexture(0, imageManager.tXyz);
-                            //     driver->setMaterial(matManager.mTexture);
-                            //     irr::core::matrix4 atk;
-                            //     atk.setTranslation(pt);
-                            //     driver->setTransform(irr::video::ETS_WORLD, atk);
-                            //     driver->drawVertexPrimitiveList(matManager.vXyztrail, 4, matManager.iRectangle, 2);
-                            // }
-                            irr::f32 thickness = 0.5f;
-                            for(auto it = points[pcard->controler][sequence][i].begin(); it != points[pcard->controler][sequence][i].end() && std::next(it) != points[pcard->controler][sequence][i].end(); ++it) {
-                                irr::core::vector3df& a = *it;
-                                irr::core::vector3df& b = *(std::next(it));
-                                irr::core::vector3df dir = a - b;
-                                irr::core::vector3df normal = dir.crossProduct(pcard->curPos).normalize();
-								irr::core::array<irr::video::S3DVertex> vertices;
-                                irr::u16 indices[] = { 0, 1, 2, 2, 3, 0 };
-                                vertices.push_back(irr::video::S3DVertex(a + normal * thickness/2, normal, irr::video::SColor(255, 255, 0, 0), irr::core::vector2df(0, 0)));
-                                vertices.push_back(irr::video::S3DVertex(a - normal * thickness/2, normal, irr::video::SColor(255, 255, 0, 0), irr::core::vector2df(0, 1)));
-                                vertices.push_back(irr::video::S3DVertex(b - normal * thickness/2, normal, irr::video::SColor(255, 255, 0, 0), irr::core::vector2df(1, 1)));
-                                vertices.push_back(irr::video::S3DVertex(b + normal * thickness/2, normal, irr::video::SColor(255, 255, 0, 0), irr::core::vector2df(1, 0)));
-                                driver->drawIndexedTriangleList(&vertices[0], 4, &indices[0], 2);
+                            for(int k = 0; k < points[pcard->controler][sequence][i].size(); k++) {
+								irr::core::vector3df pt = points[pcard->controler][sequence][i][k];
+                                matManager.mTexture.setTexture(0, imageManager.tXyz);
+								matManager.mTexture.AmbientColor = irr::video::SColor(255, r > 120 ? 255 : r, g > 120 ? 255 : g, b > 120 ? 255 : b);
+                                irr::core::matrix4 atk;
+								// float scale = 1.0f - (k * 2 / 80);
+								// if(scale < 0.0f)
+								// 	scale = 0.0f;
+								// int alpha = 255 - (k * 250 / 80);
+								// if(alpha < 0)
+								// 	alpha = 0;
+                                atk.setTranslation(pt);
+                                driver->setTransform(irr::video::ETS_WORLD, atk);
+								// atk.setScale(irr::core::vector3df(scale, scale, scale));
+								// irr::video::SColor color(alpha, 255, 255, 255);
+								// matManager.mTexture.DiffuseColor = color;
+                                driver->setMaterial(matManager.mTexture);
+                                driver->drawVertexPrimitiveList(matManager.vXyztrail, 4, matManager.iRectangle, 2);
                             }
                             points[pcard->controler][sequence][i].insert(points[pcard->controler][sequence][i].begin(), pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2));
                             while(points[pcard->controler][sequence][i].size() > 80)
