@@ -1442,31 +1442,64 @@ irr::video::ITexture* ImageManager::GetTextureField(uint32_t code) {
 	return nullptr;
 }
 /////////kdiy////
-irr::video::ITexture* ImageManager::GetTextureCloseup(uint32_t code, uint32_t alias, bool is_closeup) {
+std::tuple<irr::video::ITexture*, irr::video::SColor> ImageManager::GetTextureCloseup(uint32_t code, uint32_t alias, bool is_closeup) {
 	if(code == 0 || (is_closeup && !gGameConfig->closeup) || (!is_closeup && !gGameConfig->painting))
-		return nullptr;
-    auto chk1 = GetTextureCloseupCode(code, is_closeup);
-    auto chk2 = GetTextureCloseupCode(alias, is_closeup);
+		return { nullptr, irr::video::SColor(255, 255, 255, 0) };
+	irr::video::ITexture* chk1; irr::video::ITexture* chk2; irr::video::SColor chk1c; irr::video::SColor chk2c;
+	std::tie(chk1, chk1c) = GetTextureCloseupCode(code, is_closeup);
+	std::tie(chk2, chk2c) = GetTextureCloseupCode(alias, is_closeup);
     if(chk1)
-        return chk1;
+		return { chk1, chk1c };
     else
-        return chk2;
+        return {chk2, chk2c };
 }
-irr::video::ITexture* ImageManager::GetTextureCloseupCode(uint32_t code, bool is_closeup) {
+std::tuple<irr::video::ITexture*, irr::video::SColor> ImageManager::GetTextureCloseupCode(uint32_t code, bool is_closeup) {
 	if(code == 0 || (is_closeup && !gGameConfig->closeup))
-		return nullptr;
+		return { nullptr, irr::video::SColor(255, 255, 255, 0) };
 	auto tit = tCloseup.find(code);
-	if(tit != tCloseup.end())
-		return tit->second;
+	auto titc = tCloseupcolor.find(code);
+	if(tit != tCloseup.end()) {
+		if(titc != tCloseupcolor.end())
+			return { tit->second, titc->second };
+		else
+			return { tit->second, irr::video::SColor(255, 255, 255, 0) };
+	}
 	auto status = gImageDownloader->GetDownloadStatus(code, imgType::CLOSEUP);
 	if(status != ImageDownloader::downloadStatus::NONE) {
 		if(status == ImageDownloader::downloadStatus::DOWNLOADED) {
 			const auto path = gImageDownloader->GetDownloadPath(code, imgType::CLOSEUP);
 			auto downloaded = driver->getTexture({ path.data(), static_cast<irr::u32>(path.size()) });
 			tCloseup.emplace(code, downloaded);
-			return downloaded;
+
+            const auto& image = driver->createImage(downloaded, irr::core::position2d<irr::s32>(0, 0), downloaded->getSize());
+			unsigned long long r = 0, g = 0, b = 0;
+			unsigned long long totalAlpha = 0;
+			unsigned count = 0;
+			// scan through each pixel in the image data and accumulate the total color
+			for(auto y = 0; y < image->getDimension().Height; y++) {
+				for(auto x = 0; x < image->getDimension().Width; x++) {
+					irr::video::SColor color = image->getPixel(x, y);
+					if(color.getAlpha() > 200) {
+						r += color.getRed();
+						g += color.getGreen();
+						b += color.getBlue();
+						count++;
+					}
+				}
+			}
+			image->drop();
+			// calculate the average color
+			r /= count;
+			g /= count;
+			b /= count;
+            if(r > 120) r = 255;
+            if(g > 120) g = 255;
+            if(b > 120) b = 255;
+            tCloseupcolor.emplace(code, irr::video::SColor(255, r, g, b));
+            
+			return { downloaded, irr::video::SColor(255, r, g, b) };
 		}
-		return nullptr;
+		return { nullptr, irr::video::SColor(255, 255, 255, 0) };
 	}
 	for(auto& path : mainGame->closeup_dirs) {
 		for(auto extension : { EPRO_TEXT(".png"), EPRO_TEXT(".jpg") }) {
@@ -1481,12 +1514,39 @@ irr::video::ITexture* ImageManager::GetTextureCloseupCode(uint32_t code, bool is
 				img = driver->getTexture(epro::format(EPRO_TEXT("{}{}{}"), path, code, extension).data());
 			if(img) {
 				tCloseup.emplace(code, img);
-				return img;
+                
+                const auto& image = driver->createImage(img, irr::core::position2d<irr::s32>(0, 0), img->getSize());
+                unsigned long long r = 0, g = 0, b = 0;
+                unsigned long long totalAlpha = 0;
+                unsigned count = 0;
+                // scan through each pixel in the image data and accumulate the total color
+                for(auto y = 0; y < image->getDimension().Height; y++) {
+                    for(auto x = 0; x < image->getDimension().Width; x++) {
+                        irr::video::SColor color = image->getPixel(x, y);
+                        if(color.getAlpha() > 200) {
+                            r += color.getRed();
+                            g += color.getGreen();
+                            b += color.getBlue();
+                            count++;
+                        }
+                    }
+                }
+                image->drop();
+                // calculate the average color
+                r /= count;
+                g /= count;
+                b /= count;
+                if(r > 120) r = 255;
+                if(g > 120) g = 255;
+                if(b > 120) b = 255;
+                tCloseupcolor.emplace(code, irr::video::SColor(255, r, g, b));
+                
+				return { img, irr::video::SColor(255, r, g, b) };
 			}
 		}
 	}
 	gImageDownloader->AddToDownloadQueue(code, imgType::CLOSEUP);
-	return nullptr;
+	return { nullptr, irr::video::SColor(255, 255, 255, 0) };
 }
 /////////kdiy////
 

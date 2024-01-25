@@ -114,8 +114,8 @@ public:
 	irr::video::ITexture* GetTextureCard(uint32_t code, imgType type, bool wait = false, bool fit = false, int* chk = nullptr);
 	irr::video::ITexture* GetTextureField(uint32_t code);
 	////////kdiy////
-	irr::video::ITexture* GetTextureCloseup(uint32_t code, uint32_t alias = 0, bool is_closeup=false);
-	irr::video::ITexture* GetTextureCloseupCode(uint32_t code, bool is_closeup=false);
+	std::tuple<irr::video::ITexture*, irr::video::SColor> GetTextureCloseup(uint32_t code, uint32_t alias = 0, bool is_closeup=false);
+	std::tuple<irr::video::ITexture*, irr::video::SColor> GetTextureCloseupCode(uint32_t code, bool is_closeup=false);
 	////////kdiy////
 	irr::video::ITexture* GetCheckboxScaledTexture(float scale);
 	irr::video::ITexture* guiScalingResizeCached(irr::video::ITexture* src, const irr::core::rect<irr::s32>& srcrect,
@@ -173,6 +173,7 @@ private:
 
 	std::vector<uint8_t> imgcharacter;
 	std::unordered_map<uint32_t, irr::video::ITexture*> tCloseup;
+    std::unordered_map<uint32_t, irr::video::SColor> tCloseupcolor;
 	/////////kdiy////
 	irr::IrrlichtDevice* device;
 	irr::video::IVideoDriver* driver;

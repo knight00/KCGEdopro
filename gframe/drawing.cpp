@@ -395,300 +395,266 @@ void Game::DrawCards() {
 	}
 }
 void Game::DrawCard(ClientCard* pcard) {
-	if(pcard->aniFrame > 0) {
+	if (pcard->aniFrame > 0) {
 		uint32_t movetime = std::min<uint32_t>(delta_time, pcard->aniFrame);
-		if(pcard->is_moving) {
+		if (pcard->is_moving) {
 			pcard->curPos += (pcard->dPos * movetime);
 			pcard->curRot += (pcard->dRot * movetime);
 			pcard->mTransform.setTranslation(pcard->curPos);
 			pcard->mTransform.setRotationRadians(pcard->curRot);
 		}
-		if(pcard->is_fading)
+		if (pcard->is_fading)
 			pcard->curAlpha += pcard->dAlpha * movetime;
 		pcard->aniFrame -= movetime;
-		if(pcard->aniFrame <= 0) {
+		if (pcard->aniFrame <= 0) {
 			pcard->aniFrame = 0;
 			pcard->is_moving = false;
 			pcard->is_fading = false;
-			if(std::exchange(pcard->refresh_on_stop, false))
+			if (std::exchange(pcard->refresh_on_stop, false))
 				pcard->UpdateDrawCoordinates(true);
 		}
 	}
-    ///kdiy////////
-	auto cardcloseup = imageManager.GetTextureCloseup(pcard->code, pcard->alias);
+	///kdiy////////
+	irr::video::ITexture* cardcloseup; irr::video::SColor cardcloseupcolor;
+	std::tie(cardcloseup, cardcloseupcolor) = imageManager.GetTextureCloseup(pcard->code, pcard->alias);
 	matManager.mTexture.AmbientColor = 0xffffffff;
-    ///kdiy////////
+	///kdiy////////
 	matManager.mCard.AmbientColor = 0xffffffff;
 	matManager.mCard.DiffuseColor = ((int)std::round(pcard->curAlpha) << 24) | 0xffffff;
 	driver->setTransform(irr::video::ETS_WORLD, pcard->mTransform);
 	auto m22 = pcard->mTransform(2, 2);
-	if(m22 > -0.99 || pcard->is_moving) {
-        ///kdiy////////
-        if((pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
-            matManager.mCard.AmbientColor = irr::video::SColor(255, 128, 128, 180);
-        else
-            matManager.mCard.AmbientColor = 0xffffffff;
-        if(pcard->is_attack) {
-            float sy;
-            float xa = mainGame->dField.attacker->attPos.X;
-            float ya = mainGame->dField.attacker->attPos.Y;
-            float xd, yd;
-            xd = pcard->curPos.X;
+	if (m22 > -0.99 || pcard->is_moving) {
+		///kdiy////////
+		if ((pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
+			matManager.mCard.AmbientColor = irr::video::SColor(255, 128, 128, 180);
+		else
+			matManager.mCard.AmbientColor = 0xffffffff;
+		if (pcard->is_attack) {
+			float sy;
+			float xa = mainGame->dField.attacker->attPos.X;
+			float ya = mainGame->dField.attacker->attPos.Y;
+			float xd, yd;
+			xd = pcard->curPos.X;
 			yd = pcard->curPos.Y;
-            sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
-            irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
-            if(ya <= yd)
-                atkr.Z += irr::core::PI;
-            pcard->mTransform.setRotationRadians(atkr);
-        } else if((pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && (pcard->type & TYPE_SPELL) && pcard->is_pzone && !pcard->equipTarget
-            && !gGameConfig->topdown_view) {
-            pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(pcard->controler == 0 ? -0.32f : 0.32f, pcard->controler == 0 ? 0 : -0.8f, 0));
-            pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(-irr::core::PI/3, 0, pcard->controler == 0 ? -irr::core::PI/5 : -irr::core::PI+irr::core::PI/5));
-        } else if((pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 4 || pcard->sequence == 7)) && (pcard->type & TYPE_SPELL) && pcard->is_pzone && !pcard->equipTarget
-            && !gGameConfig->topdown_view) {
-            pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(pcard->controler == 0 ? 0.32f : -0.32f, pcard->controler == 0 ? 0 : -0.8f, 0));
-            pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(-irr::core::PI/3, 0, pcard->controler == 0 ? irr::core::PI/5 : -irr::core::PI-irr::core::PI/5));
-        } else {
-            pcard->mTransform.setTranslation(pcard->curPos);
-            pcard->mTransform.setRotationRadians(pcard->curRot);
-        }
-        ///kdiy////////
+			sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
+			irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
+			if (ya <= yd)
+				atkr.Z += irr::core::PI;
+			pcard->mTransform.setRotationRadians(atkr);
+		}
+		else if ((pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && (pcard->type & TYPE_SPELL) && pcard->is_pzone && !pcard->equipTarget
+			&& !gGameConfig->topdown_view) {
+			pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(pcard->controler == 0 ? -0.32f : 0.32f, pcard->controler == 0 ? 0 : -0.8f, 0));
+			pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(-irr::core::PI / 3, 0, pcard->controler == 0 ? -irr::core::PI / 5 : -irr::core::PI + irr::core::PI / 5));
+		}
+		else if ((pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 4 || pcard->sequence == 7)) && (pcard->type & TYPE_SPELL) && pcard->is_pzone && !pcard->equipTarget
+			&& !gGameConfig->topdown_view) {
+			pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(pcard->controler == 0 ? 0.32f : -0.32f, pcard->controler == 0 ? 0 : -0.8f, 0));
+			pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(-irr::core::PI / 3, 0, pcard->controler == 0 ? irr::core::PI / 5 : -irr::core::PI - irr::core::PI / 5));
+		}
+		else {
+			pcard->mTransform.setTranslation(pcard->curPos);
+			pcard->mTransform.setRotationRadians(pcard->curRot);
+		}
+		///kdiy////////
 		matManager.mCard.setTexture(0, imageManager.GetTextureCard(pcard->code, imgType::ART));
 		driver->setMaterial(matManager.mCard);
 		driver->drawVertexPrimitiveList(matManager.vCardFront, 4, matManager.iRectangle, 2);
 	}
-	if(m22 < 0.99 || pcard->is_moving) {
+	if (m22 < 0.99 || pcard->is_moving) {
 		auto txt = imageManager.GetTextureCard(pcard->cover, imgType::COVER);
-		if(txt == imageManager.tCover[0]) {
+		if (txt == imageManager.tCover[0]) {
 			matManager.mCard.setTexture(0, imageManager.tCover[pcard->controler]);
-		} else {
+		}
+		else {
 			matManager.mCard.setTexture(0, imageManager.GetTextureCard(pcard->cover, imgType::COVER));
 		}
 		driver->setMaterial(matManager.mCard);
 		driver->drawVertexPrimitiveList(matManager.vCardBack, 4, matManager.iRectangle, 2);
 	}
-	if(pcard->is_selectable && (pcard->location & 0xe)) {
+	if (pcard->is_selectable && (pcard->location & 0xe)) {
 		irr::video::SColor outline_color = skin::DUELFIELD_SELECTABLE_CARD_OUTLINE_VAL;
-		if((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP)))
-            ///kdiy////////
-            //DrawSelectionLine(matManager.vCardOutline, !pcard->is_selected, 2, outline_color);
-            {
-            if((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup && !(pcard->cmdFlag & COMMAND_ATTACK))
-                DrawSelectionLine(matManager.vCardOutline2, !pcard->is_selected, 2, outline_color);
-            else
-			    DrawSelectionLine(matManager.vCardOutline, !pcard->is_selected, 2, outline_color);
-            }
-            ///kdiy////////
+		if ((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP)))
+			///kdiy////////
+			//DrawSelectionLine(matManager.vCardOutline, !pcard->is_selected, 2, outline_color);
+		{
+			if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup && !(pcard->cmdFlag & COMMAND_ATTACK))
+				DrawSelectionLine(matManager.vCardOutline2, !pcard->is_selected, 2, outline_color);
+			else
+				DrawSelectionLine(matManager.vCardOutline, !pcard->is_selected, 2, outline_color);
+		}
+		///kdiy////////
 		else
 			DrawSelectionLine(matManager.vCardOutliner, !pcard->is_selected, 2, outline_color);
 	}
-	if(pcard->is_highlighting) {
+	if (pcard->is_highlighting) {
 		irr::video::SColor outline_color = skin::DUELFIELD_HIGHLIGHTING_CARD_OUTLINE_VAL;
-		if((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP)))
+		if ((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP)))
 			///kdiy////////
-            //DrawSelectionLine(matManager.vCardOutline, true, 2, outline_color);
-            {
-            if((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup && !(pcard->cmdFlag & COMMAND_ATTACK))
-                DrawSelectionLine(matManager.vCardOutline2, true, 2, outline_color);
-            else
-			    DrawSelectionLine(matManager.vCardOutline, true, 2, outline_color);
-            }
-            ///kdiy////////
+			//DrawSelectionLine(matManager.vCardOutline, true, 2, outline_color);
+		{
+			if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup && !(pcard->cmdFlag & COMMAND_ATTACK))
+				DrawSelectionLine(matManager.vCardOutline2, true, 2, outline_color);
+			else
+				DrawSelectionLine(matManager.vCardOutline, true, 2, outline_color);
+		}
+		///kdiy////////
 		else
 			DrawSelectionLine(matManager.vCardOutliner, true, 2, outline_color);
 	}
-	if(pcard->is_showequip) {
+	if (pcard->is_showequip) {
 		matManager.mTexture.setTexture(0, imageManager.tEquip);
 		driver->setMaterial(matManager.mTexture);
 		driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
-	} else if(pcard->is_showtarget) {
+	}
+	else if (pcard->is_showtarget) {
 		matManager.mTexture.setTexture(0, imageManager.tTarget);
 		driver->setMaterial(matManager.mTexture);
 		driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
-	} else if(pcard->is_showchaintarget) {
+	}
+	else if (pcard->is_showchaintarget) {
 		matManager.mTexture.setTexture(0, imageManager.tChainTarget);
 		driver->setMaterial(matManager.mTexture);
 		driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
-	} else if((pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN))
+	}
+	else if ((pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN))
 		&& (pcard->location & LOCATION_ONFIELD) && (pcard->position & POS_FACEUP)) {
-    ///kdiy////////
+		///kdiy////////
 		// matManager.mTexture.setTexture(0, imageManager.tNegated);
 		// driver->setMaterial(matManager.mTexture);
 		// driver->drawVertexPrimitiveList(matManager.vNegate, 4, matManager.iRectangle, 2);
-    }
-    if((pcard->location & LOCATION_ONFIELD)) {
-        if((pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup) {
-            if((pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
-                matManager.mTexture.AmbientColor = irr::video::SColor(255, 128, 128, 128);
-            else if(pcard->position & POS_DEFENSE)
-                matManager.mTexture.AmbientColor = irr::video::SColor(255, 180, 180, 255);
+		///kdiy////////
+	}
+	///kdiy////////
+	if ((pcard->location & LOCATION_ONFIELD)) {
+		if ((pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup) {
+			if ((pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
+				matManager.mTexture.AmbientColor = irr::video::SColor(255, 128, 128, 128);
+			else if (pcard->position & POS_DEFENSE)
+				matManager.mTexture.AmbientColor = irr::video::SColor(255, 180, 180, 255);
 			else
-                matManager.mTexture.AmbientColor = 0xffffffff;
-            matManager.mTexture.setTexture(0, cardcloseup);
-            driver->setMaterial(matManager.mTexture);
-            irr::core::matrix4 atk;
-            if(!(pcard->cmdFlag & COMMAND_ATTACK))
-                atk.setTranslation(pcard->curPos + irr::core::vector3df(0, pcard->controler == 0 ? 0 : 0.2f, 0.2f));
-            else
-                atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? -0.4f : 0.4f) * (atkdy / 4.0f + 0.35f), 0.05f));
-            if(pcard->is_attack) {
-                float sy;
-                float xa = mainGame->dField.attacker->attPos.X;
-                float ya = mainGame->dField.attacker->attPos.Y;
-                float xd, yd;
-                xd = pcard->curPos.X;
-                yd = pcard->curPos.Y;
-                sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
-                irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
-                if(ya <= yd)
-                    atkr.Z += irr::core::PI;
-                atk.setRotationRadians(atkr);
-            } else
-                atk.setRotationRadians(irr::core::vector3df(0, 0, 0));
-            driver->setTransform(irr::video::ETS_WORLD, atk);
-			if(pcard->attack >= 5000)
+				matManager.mTexture.AmbientColor = 0xffffffff;
+			matManager.mTexture.setTexture(0, cardcloseup);
+			driver->setMaterial(matManager.mTexture);
+			irr::core::matrix4 atk;
+			if (!(pcard->cmdFlag & COMMAND_ATTACK))
+				atk.setTranslation(pcard->curPos + irr::core::vector3df(0, pcard->controler == 0 ? 0 : 0.2f, 0.2f));
+			else
+				atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? -0.4f : 0.4f) * (atkdy / 4.0f + 0.35f), 0.05f));
+			if (pcard->is_attack) {
+				float sy;
+				float xa = mainGame->dField.attacker->attPos.X;
+				float ya = mainGame->dField.attacker->attPos.Y;
+				float xd, yd;
+				xd = pcard->curPos.X;
+				yd = pcard->curPos.Y;
+				sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
+				irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
+				if (ya <= yd)
+					atkr.Z += irr::core::PI;
+				atk.setRotationRadians(atkr);
+			}
+			else
+				atk.setRotationRadians(irr::core::vector3df(0, 0, 0));
+			driver->setTransform(irr::video::ETS_WORLD, atk);
+			if (pcard->attack >= 5000)
 				driver->drawVertexPrimitiveList(matManager.vAttack3, 4, matManager.iRectangle, 2);
-			else if(pcard->attack < 1000 && ((pcard->type & TYPE_LINK) && pcard->link < 2) || ((pcard->type & TYPE_XYZ) && pcard->rank < 4) || (!(pcard->type & (TYPE_LINK | TYPE_XYZ)) && pcard->level < 4))
+			else if (pcard->attack < 1000 && ((pcard->type & TYPE_LINK) && pcard->link < 2) || ((pcard->type & TYPE_XYZ) && pcard->rank < 4) || (!(pcard->type & (TYPE_LINK | TYPE_XYZ)) && pcard->level < 4))
 				driver->drawVertexPrimitiveList(matManager.vAttack2, 4, matManager.iRectangle, 2);
 			else
 				driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
-			if(pcard->type & TYPE_XYZ) {
-				auto cd = gDataManager->GetCardData(pcard->code);
-				if(cd) {
-					auto setcodes = cd->setcodes;
-					if(cd->alias && setcodes.empty()) {
-						auto data = gDataManager->GetCardData(cd->alias);
-						if(data)
-							setcodes = data->setcodes;
-					}
-					if(pcard && pcard->is_change && pcard->rsetnames && pcard->rsetnames > 0) {
-						setcodes.clear();
-						for(int i = 0; i < 4; i++) {
-							uint16_t setcode = (pcard->rsetnames >> (i * 16)) & 0xffff;
-							if(setcode)
-								setcodes.push_back(setcode);
-						}
-					}
-					if(std::find(setcodes.begin(), setcodes.end(), 0x1073) != setcodes.end() || std::find(setcodes.begin(), setcodes.end(), 0x1048) != setcodes.end()) {
-						for(int i = 0; i < pcard->overlayed.size(); i++) {
-                            if(i>9) break;
-							matManager.mTexture.setTexture(0, imageManager.tCXyz);
-							driver->setMaterial(matManager.mTexture);
-							irr::core::matrix4 atk;
-							atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.6f + 0.3f*(i%5), i<5 ? 0.58f : 0.78f, 0.25f));
-							driver->setTransform(irr::video::ETS_WORLD, atk);
-							driver->drawVertexPrimitiveList(matManager.vCXyz, 4, matManager.iRectangle, 2);
-						}
-					}
+		}
+	}
+	///kdiy////////
+	if (pcard->is_moving)
+		return;
+	///kdiy////////
+	if(pcard->type & TYPE_XYZ) {
+		auto cd = gDataManager->GetCardData(pcard->code);
+		if(cd) {
+			auto setcodes = cd->setcodes;
+			if(cd->alias && setcodes.empty()) {
+				auto data = gDataManager->GetCardData(cd->alias);
+				if(data)
+					setcodes = data->setcodes;
+			}
+			if(pcard && pcard->is_change && pcard->rsetnames && pcard->rsetnames > 0) {
+				setcodes.clear();
+				for(int i = 0; i < 4; i++) {
+					uint16_t setcode = (pcard->rsetnames >> (i * 16)) & 0xffff;
+					if(setcode)
+						setcodes.push_back(setcode);
+				}
+			}
+			if(std::find(setcodes.begin(), setcodes.end(), 0x1073) != setcodes.end() || std::find(setcodes.begin(), setcodes.end(), 0x1048) != setcodes.end()) {
+				for(int i = 0; i < pcard->overlayed.size(); i++) {
+					if(i > 9) break;
+					matManager.mTexture.setTexture(0, imageManager.tCXyz);
+					driver->setMaterial(matManager.mTexture);
+					irr::core::matrix4 atk;
+					atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.6f + 0.3f * (i % 5), i < 5 ? 0.58f : 0.78f, 0.25f));
+					driver->setTransform(irr::video::ETS_WORLD, atk);
+					driver->drawVertexPrimitiveList(matManager.vCXyz, 4, matManager.iRectangle, 2);
+				}
+			} else {
+				int incre = 0;
+				int incre2 = 0;
+				for(int i = 0; i < pcard->overlayed.size(); i++) {
+					if(i > 9) break;
+					int neg = 1;
+					if(pcard->overlayed.size() > 2 && i >= pcard->overlayed.size() / 2) neg = -1;
+					int power = 1;
+					if(pcard->overlayed.size() / 4 > 0) power = pcard->overlayed.size() / 4;
+					if(pcard->overlayed.size() > 2 && i % 2 == 0 && i < pcard->overlayed.size() / 2) incre += 1;
+					if(pcard->overlayed.size() > 2 && i % 2 == 0 && i >= pcard->overlayed.size() / 2) incre2 += 1;
+					int sequence = (pcard->location & LOCATION_SZONE) ? pcard->sequence + 7 : pcard->sequence;
+					matManager.mTexture.setTexture(0, imageManager.tXyz);
+					matManager.mTexture.AmbientColor = cardcloseupcolor;
+					driver->setMaterial(matManager.mTexture);
+					irr::core::matrix4 atk;
+					atk.setTranslation(pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2));
+					driver->setTransform(irr::video::ETS_WORLD, atk);
+					driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
+					if(!haloNodeexist[pcard->controler][sequence][i])
+						haloNodeexist[pcard->controler][sequence][i] = true;
 					else {
-						const auto& image = driver->createImage(cardcloseup, irr::core::position2d<irr::s32>(0, 0), cardcloseup->getSize());
-						unsigned long long r = 0, g = 0, b = 0;
-						unsigned long long totalAlpha = 0;
-						unsigned count = 0;
-						// scan through each pixel in the image data and accumulate the total color
-						for(auto y = 0; y < image->getDimension().Height; y++) {
-							for(auto x = 0; x < image->getDimension().Width; x++) {
-								irr::video::SColor color = image->getPixel(x, y);
-								if(color.getAlpha() > 200) {
-									r += color.getRed();
-									g += color.getGreen();
-									b += color.getBlue();
-									count++;
-								}
-							}
-						}
-						image->drop();
-						// calculate the average color
-						r /= count;
-						g /= count;
-						b /= count;
-
-						int incre = 0;
-						int incre2 = 0;
-						for(int i = 0; i < pcard->overlayed.size(); i++) {
-                            if(i>9) break;
-                            int neg = 1;
-							if(pcard->overlayed.size() > 2 && i >= pcard->overlayed.size() / 2) neg = -1;
-							int power = 1;
-							if(pcard->overlayed.size() / 4 > 0) power = pcard->overlayed.size() / 4;
-							if(pcard->overlayed.size() > 2 && i % 2 == 0 && i < pcard->overlayed.size() / 2) incre += 1;
-							if(pcard->overlayed.size() > 2 && i % 2 == 0 && i >= pcard->overlayed.size() / 2) incre2 += 1;
-							int sequence = (pcard->location & LOCATION_SZONE) ? pcard->sequence + 7 : pcard->sequence;
-							// if(haloNodeexist[pcard->controler][sequence][i] && haloNode[pcard->controler][sequence][i].size() > 5) {
-							// 	for(int k = 5; k < haloNode[pcard->controler][sequence][i].size(); k++) {
-                            //         if(haloNode[pcard->controler][sequence][i][k] != nullptr) {
-                            //             haloNode[pcard->controler][sequence][i][k]->remove();
-                            //             haloNode[pcard->controler][sequence][i].pop_back();
-                            //         }
-							// 	}
-							// }
-							// irr::scene::ISceneNode* halo = smgr->addSphereSceneNode(0.05f);
-							// halo->setMaterialType(irr::video::EMT_TRANSPARENT_ADD_COLOR);
-							// halo->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-							// if(!haloNodeexist[pcard->controler][sequence][i])
-							//     haloNodeexist[pcard->controler][sequence][i] = true;
-                            // halo->setPosition(pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2));
-							// haloNode[pcard->controler][sequence][i].insert(haloNode[pcard->controler][sequence][i].begin(), halo);
-							// if(i+1 == pcard->overlayed.size() && haloNodeexist[pcard->controler][sequence][i+1]) {
-							// 	for(int j = i + 1; ; j++) {
-							// 		for(int k = 0; k < haloNode[pcard->controler][sequence][j].size(); k++) {
-                            //             if(haloNode[pcard->controler][sequence][i][k] != nullptr) {
-                            //                 haloNode[pcard->controler][sequence][j][k]->remove();
-                            //                 haloNode[pcard->controler][sequence][j].pop_back();
-                            //             }
-							// 		}
-							// 		haloNodeexist[pcard->controler][sequence][j] = false;
-							// 	}
-							// }
-
+						for(int k = 0; k < points[pcard->controler][sequence][i].size(); k++) {
+							irr::core::vector3df pt = points[pcard->controler][sequence][i][k];
 							matManager.mTexture.setTexture(0, imageManager.tXyz);
-							matManager.mTexture.AmbientColor = irr::video::SColor(255, r > 120 ? 255 : r, g > 120 ? 255 : g, b > 120 ? 255 : b);
-							driver->setMaterial(matManager.mTexture);
+							float scale = 1.0f - (k * 1.06f / 80);
+							if(scale < 0.0f)
+								scale = 0.0f;
+							int alpha = 255 - (k * 266 / 80);
+							if(alpha < 0)
+								alpha = 0;
+							matManager.mTexture.AmbientColor = cardcloseupcolor;
+							irr::video::SColor color(alpha, 255, 255, 255);
+							matManager.mTexture.DiffuseColor = color;
 							irr::core::matrix4 atk;
-							atk.setTranslation(pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2));
+							atk.setTranslation(pt);
+							atk.setScale(irr::core::vector3df(scale, scale, scale));
 							driver->setTransform(irr::video::ETS_WORLD, atk);
-							driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
-                            if(!haloNodeexist[pcard->controler][sequence][i])
-							    haloNodeexist[pcard->controler][sequence][i] = true;
-                            for(int k = 0; k < points[pcard->controler][sequence][i].size(); k++) {
-								irr::core::vector3df pt = points[pcard->controler][sequence][i][k];
-                                matManager.mTexture.setTexture(0, imageManager.tXyz);
-								matManager.mTexture.AmbientColor = irr::video::SColor(255, r > 120 ? 255 : r, g > 120 ? 255 : g, b > 120 ? 255 : b);
-                                irr::core::matrix4 atk;
-								// float scale = 1.0f - (k * 2 / 80);
-								// if(scale < 0.0f)
-								// 	scale = 0.0f;
-								// int alpha = 255 - (k * 250 / 80);
-								// if(alpha < 0)
-								// 	alpha = 0;
-                                atk.setTranslation(pt);
-                                driver->setTransform(irr::video::ETS_WORLD, atk);
-								// atk.setScale(irr::core::vector3df(scale, scale, scale));
-								// irr::video::SColor color(alpha, 255, 255, 255);
-								// matManager.mTexture.DiffuseColor = color;
-                                driver->setMaterial(matManager.mTexture);
-                                driver->drawVertexPrimitiveList(matManager.vXyztrail, 4, matManager.iRectangle, 2);
-                            }
-                            points[pcard->controler][sequence][i].insert(points[pcard->controler][sequence][i].begin(), pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2));
-                            while(points[pcard->controler][sequence][i].size() > 80)
-                                points[pcard->controler][sequence][i].pop_back();
-                            if(i+1 == pcard->overlayed.size() && haloNodeexist[pcard->controler][sequence][i+1]) {
-								for(int j = i + 1; ; j++) {
-									for(int k = 0; k < points[pcard->controler][sequence][j].size(); k++)
-                                        points[pcard->controler][sequence][j].pop_back();
-									haloNodeexist[pcard->controler][sequence][j] = false;
-								}
-							}
+							driver->setMaterial(matManager.mTexture);
+							driver->drawVertexPrimitiveList(matManager.vXyztrail, 4, matManager.iRectangle, 2);
+						}
+					}
+					points[pcard->controler][sequence][i].insert(points[pcard->controler][sequence][i].begin(), pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2));
+					while(points[pcard->controler][sequence][i].size() > 80)
+						points[pcard->controler][sequence][i].pop_back();
+					if(i + 1 == pcard->overlayed.size() && haloNodeexist[pcard->controler][sequence][i + 1]) {
+						for(int j = i + 1; !haloNodeexist[pcard->controler][sequence][j + 1]; j++) {
+							for(int k = 0; k < points[pcard->controler][sequence][j].size(); k++)
+								points[pcard->controler][sequence][j].pop_back();
+							haloNodeexist[pcard->controler][sequence][j] = false;
 						}
 					}
 				}
+				matManager.mTexture.AmbientColor = 0xffffffff;
+				matManager.mTexture.DiffuseColor = 0xff000000;
 			}
-        }
-    ///kdiy////////
+		}
 	}
-	if(pcard->is_moving)
-		return;
-    ////kidy/////////
+    ////kdiy/////////
     //if(pcard->cmdFlag & COMMAND_ATTACK) {
 	if((pcard->cmdFlag & COMMAND_ATTACK) && !cardcloseup) {
     ////kidy/////////
@@ -700,7 +666,7 @@ void Game::DrawCard(ClientCard* pcard) {
 		driver->setTransform(irr::video::ETS_WORLD, atk);
 		driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
 	}
-    ////kidy/////////
+    ////kdiy/////////
 	if((pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && (pcard->type & TYPE_SPELL) && pcard->is_pzone && !pcard->equipTarget) {
 		int scale = pcard->lscale;
 		if(scale >= 0 && scale <= 13 && imageManager.tLScale[scale]) {
@@ -726,7 +692,7 @@ void Game::DrawCard(ClientCard* pcard) {
 		driver->setTransform(irr::video::ETS_WORLD, atk);
 		driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
     }
-	////kidy/////////
+	////kdiy/////////
 }
 template<typename T>
 inline void DrawShadowTextPos(irr::gui::CGUITTFont* font, const T& text, const irr::core::recti& shadowposition, const irr::core::recti& mainposition,
@@ -1293,7 +1259,8 @@ void Game::DrawSpec() {
 		driver->setMaterial(matManager.mTexture);
 		driver->drawVertexPrimitiveList(vertices, 4, matManager.iRectangle, 2);
 	};
-    auto cardcloseup = imageManager.GetTextureCloseup(showcardcode, showcardalias, true);
+	irr::video::ITexture* cardcloseup; irr::video::SColor cardcloseupcolor;
+	std::tie(cardcloseup, cardcloseupcolor) = imageManager.GetTextureCloseup(showcardcode, showcardalias, true);
     //////kdiy//////////
 	if(showcard) {
 		switch(showcard) {
@@ -1357,7 +1324,8 @@ void Game::DrawSpec() {
 			driver->draw2DImage(cardtxt, rect, cardrect, 0, matManager.c2d, true);
             //////kdiy//////////
             if(chklast) {
-                auto cardcloseup = imageManager.GetTextureCloseup(showcardcode, showcardalias, true);
+				irr::video::ITexture* cardcloseup; irr::video::SColor cardcloseupcolor;
+				std::tie(cardcloseup, cardcloseupcolor) = imageManager.GetTextureCloseup(showcardcode, showcardalias, true);
                 if(cardcloseup)
                     DrawTextureRect(matManager.vCloseup, cardcloseup);
             }
