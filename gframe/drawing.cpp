@@ -328,38 +328,13 @@ void Game::DrawCards() {
 	for(auto& pcard : dField.overlay_cards)
 		DrawCard(pcard);
 	for(int p = 0; p < 2; ++p) {
-		//////ktestxyzlight/////////
-		// for(int i = 0; i < 7; i++) {
-		// 	for(int j = 0; j < 10; j++) {
-		// 		if(!dField.mzone[p][i] && haloNodeexist[p][i][j]) {
-		// 			for(int k = 0; k < haloNode[p][i][j].size(); k++) {
-		// 		        if(haloNode[p][i][j][k] != nullptr) {
-        //                     haloNode[p][i][j][k]->remove();
-        //                     haloNode[p][i][j].pop_back();
-        //                 }
-		// 			}
-		// 		    haloNodeexist[p][i][j] = false;
-		// 		}
-		// 	}
-		// }
-		// for(int i = 0; i < 5; i++) {
-		// 	for(int j = 0; j < 10; j++) {
-		// 		if(!dField.szone[p][i] && haloNodeexist[p][i+7][j]) {
-		// 		    for(int k = 0; k < haloNode[p][i+7][j].size(); k++) {
-		// 		        if(haloNode[p][i+7][j][k] != nullptr) {
-        //                     haloNode[p][i+7][j][k]->remove();
-        //                     haloNode[p][i+7][j].pop_back();
-        //                 }
-		// 			}
-		// 		    haloNodeexist[p][i+7][j] = false;
-		// 		}
-		// 	}
-		// }
+		//////kdiy/////////
 		for(int i = 0; i < 7; i++) {
 			for(int j = 0; j < 10; j++) {
 				if(!dField.mzone[p][i] && haloNodeexist[p][i][j]) {
-					for(int k = 0; k < points[p][i][j].size(); k++)
-						points[p][i][j].pop_back();
+					int halosize = haloNode[p][i][j].size();
+					for(int k = 0; k < halosize; k++)
+					    haloNode[p][i][j].pop_back();
 				    haloNodeexist[p][i][j] = false;
 				}
 			}
@@ -367,13 +342,14 @@ void Game::DrawCards() {
 		for(int i = 0; i < 5; i++) {
 			for(int j = 0; j < 10; j++) {
 				if(!dField.szone[p][i] && haloNodeexist[p][i+7][j]) {
-				    for(int k = 0; k < points[p][i+7][j].size(); k++)
-						points[p][i+7][j].pop_back();
+					int halosize = haloNode[p][i+7][j].size();
+				    for(int k = 0; k < halosize; k++)
+						haloNode[p][i+7][j].pop_back();
 				    haloNodeexist[p][i+7][j] = false;
 				}
 			}
 		}
-		//////ktestxyzlight/////////
+		//////kdiy/////////
 		for(auto& pcard : dField.mzone[p])
 			if(pcard)
 				DrawCard(pcard);
@@ -618,14 +594,14 @@ void Game::DrawCard(ClientCard* pcard) {
 					if(!haloNodeexist[pcard->controler][sequence][i])
 						haloNodeexist[pcard->controler][sequence][i] = true;
 					else {
-						for(int k = 0; k < points[pcard->controler][sequence][i].size(); k++) {
-							irr::core::vector3df pt = points[pcard->controler][sequence][i][k];
+						int ptk = 0;
+						for (irr::core::vector3df pt : haloNode[pcard->controler][sequence][i]) {
 							matManager.mTexture.setTexture(0, imageManager.tXyz);
-							float scale = 1.0f - (k * 1.06f / 80);
-							if(scale < 0.0f)
+							float scale = 1.0f - (ptk * 1.06f / 80);
+							if (scale < 0.0f)
 								scale = 0.0f;
-							int alpha = 255 - (k * 266 / 80);
-							if(alpha < 0)
+							int alpha = 255 - (ptk * 266 / 80);
+							if (alpha < 0)
 								alpha = 0;
 							matManager.mTexture.AmbientColor = cardcloseupcolor;
 							irr::video::SColor color(alpha, 255, 255, 255);
@@ -638,13 +614,14 @@ void Game::DrawCard(ClientCard* pcard) {
 							driver->drawVertexPrimitiveList(matManager.vXyztrail, 4, matManager.iRectangle, 2);
 						}
 					}
-					points[pcard->controler][sequence][i].insert(points[pcard->controler][sequence][i].begin(), pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2));
-					while(points[pcard->controler][sequence][i].size() > 80)
-						points[pcard->controler][sequence][i].pop_back();
+					haloNode[pcard->controler][sequence][i].insert(haloNode[pcard->controler][sequence][i].begin(), pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2));
+					while(haloNode[pcard->controler][sequence][i].size() > 80)
+						haloNode[pcard->controler][sequence][i].pop_back();
 					if(i + 1 == pcard->overlayed.size() && haloNodeexist[pcard->controler][sequence][i + 1]) {
 						for(int j = i + 1; !haloNodeexist[pcard->controler][sequence][j + 1]; j++) {
-							for(int k = 0; k < points[pcard->controler][sequence][j].size(); k++)
-								points[pcard->controler][sequence][j].pop_back();
+							int halosize = haloNode[pcard->controler][sequence][j].size();
+							for(int k = 0; k < halosize; k++)
+								haloNode[pcard->controler][sequence][j].pop_back();
 							haloNodeexist[pcard->controler][sequence][j] = false;
 						}
 					}

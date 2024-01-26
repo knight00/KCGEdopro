@@ -60,9 +60,6 @@ namespace irr {
 	namespace scene {
 		class ISceneManager;
 		class ICameraSceneNode;
-		////ktestxyzlight//////
-		class ISceneNode;
-		////ktestxyzlight//////
 	}
 }
 namespace ygo {
@@ -430,8 +427,7 @@ public:
 	std::vector<epro::path_string> cover_dirs;
 	///kdiy////////
 	bool haloNodeexist[2][12][10];
-    //std::vector<irr::scene::ISceneNode*> haloNode[2][12][10];
-    std::vector<irr::core::vector3df> points[2][12][10];
+    std::vector<irr::core::vector3df> haloNode[2][12][10];
 	std::vector<epro::path_string> closeup_dirs;
 	///kdiy////////
 	std::vector<epro::path_string> script_dirs;
