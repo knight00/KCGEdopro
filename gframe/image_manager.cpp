@@ -606,12 +606,8 @@ bool ImageManager::Initial() {
     ASSIGN_DEFAULT(tMain);
 	tDeck = loadTextureFixedSize(EPRO_TEXT("deck"_sv), 30, 30);
     ASSIGN_DEFAULT(tDeck);
-	tOpponentDeck = loadTextureFixedSize(EPRO_TEXT("opponentdeck"_sv), 30, 30);
-    ASSIGN_DEFAULT(tOpponentDeck);
 	tGrave = loadTextureFixedSize(EPRO_TEXT("grave"_sv), 30, 30);
     ASSIGN_DEFAULT(tGrave);
-	tOpponentGrave = loadTextureFixedSize(EPRO_TEXT("opponentgrave"_sv), 30, 30);
-    ASSIGN_DEFAULT(tOpponentGrave);
 	tRemoved = loadTextureFixedSize(EPRO_TEXT("removed"_sv), 30, 30);
     ASSIGN_DEFAULT(tRemoved);
 	tOnHand = loadTextureFixedSize(EPRO_TEXT("onhand"_sv), 30, 30);

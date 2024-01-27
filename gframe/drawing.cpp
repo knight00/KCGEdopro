@@ -595,23 +595,24 @@ void Game::DrawCard(ClientCard* pcard) {
 						haloNodeexist[pcard->controler][sequence][i] = true;
 					else {
 						int ptk = 0;
-						for (irr::core::vector3df pt : haloNode[pcard->controler][sequence][i]) {
+						for(irr::core::vector3df pt : haloNode[pcard->controler][sequence][i]) {
 							matManager.mTexture.setTexture(0, imageManager.tXyz);
 							float scale = 1.0f - (ptk * 1.06f / 80);
-							if (scale < 0.0f)
+							if(scale < 0.0f)
 								scale = 0.0f;
 							int alpha = 255 - (ptk * 266 / 80);
-							if (alpha < 0)
+							if(alpha < 0)
 								alpha = 0;
 							matManager.mTexture.AmbientColor = cardcloseupcolor;
 							irr::video::SColor color(alpha, 255, 255, 255);
 							matManager.mTexture.DiffuseColor = color;
+							driver->setMaterial(matManager.mTexture);
 							irr::core::matrix4 atk;
 							atk.setTranslation(pt);
 							atk.setScale(irr::core::vector3df(scale, scale, scale));
 							driver->setTransform(irr::video::ETS_WORLD, atk);
-							driver->setMaterial(matManager.mTexture);
 							driver->drawVertexPrimitiveList(matManager.vXyztrail, 4, matManager.iRectangle, 2);
+                            ptk++;
 						}
 					}
 					haloNode[pcard->controler][sequence][i].insert(haloNode[pcard->controler][sequence][i].begin(), pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2));
@@ -1685,21 +1686,25 @@ void Game::DrawDeckBd() {
 		if(mainGame->btnLocation[5]->isPressed()) show_oppdeck2 = dField.extra[1];
 		std::sort(show_oppdeck2.begin(), show_oppdeck2.end());
 
-		auto decksize = mainGame->btnLocation[0]->isPressed() ? show_deck.size() : show_deck2.size();
-		auto oppdecksize = show_oppdeck2.size();
+		auto decksize = mainGame->btnLocation[0]->isPressed() ? show_deck.size() : show_oppdeck2.size();
+		auto decksize2 = show_deck2.size();
 
 		DRAWRECT(MAIN_INFO, 10, 5, 297, 20);
 		DRAWOUTLINE(MAIN_INFO, 9, 4, 297, 20);
 
-		DrawShadowText(textFont, gDataManager->GetSysString(mainGame->btnLocation[1]->isPressed() ? 1000 : mainGame->btnLocation[2]->isPressed() ? 1004 : mainGame->btnLocation[3]->isPressed() ? 1005 : mainGame->btnLocation[4]->isPressed() ? 1001 : mainGame->btnLocation[5]->isPressed() ? 1006 : 8059), Resize(14, 4, 109, 19), Resize(1, 1, 1, 1), 0xffffffff, 0xff000000, false, true);
+		DrawShadowText(textFont, gDataManager->GetSysString(mainGame->btnLocation[1]->isPressed() ? 8060 : mainGame->btnLocation[2]->isPressed() ? 8061 : mainGame->btnLocation[3]->isPressed() ? 8062 : mainGame->btnLocation[4]->isPressed() ? 8063 : mainGame->btnLocation[5]->isPressed() ? 8064 : 8059), Resize(14, 4, 109, 19), Resize(1, 1, 1, 1), 0xffffffff, 0xff000000, false, true);
 
 		auto main_deck_size_str = fmt::to_wstring(decksize);;
 		DrawShadowText(numFont, main_deck_size_str, Resize(79, 5, 139, 20), Resize(1, 1, 1, 1), 0xffffffff, 0xff000000, false, true);
 
+        bool half = !(mainGame->btnLocation[0]->isPressed());
         int monster_count = deckBuilder.main_monster_count;
         int spell_count = deckBuilder.main_spell_count;
         int trap_count = deckBuilder.main_trap_count;
-        if(!mainGame->btnLocation[0]->isPressed()) {
+		int oppmonster_count = 0;
+        int oppspell_count = 0;
+        int opptrap_count = 0;
+        if(half) {
             monster_count = 0;
             spell_count = 0;
             trap_count = 0;
@@ -1711,17 +1716,6 @@ void Game::DrawDeckBd() {
                 else if(card->type & TYPE_TRAP)
                     trap_count++;
             }
-        }
-		auto main_types_count_str = epro::format(L"{} {} {} {} {} {}",
-													  gDataManager->GetSysString(1312), monster_count,
-													  gDataManager->GetSysString(1313), spell_count,
-													  gDataManager->GetSysString(1314), trap_count);
-
-		int oppmonster_count = 0;
-        int oppspell_count = 0;
-        int opptrap_count = 0;
-        bool half = !(mainGame->btnLocation[0]->isPressed());
-        if(half) {
             for(const auto& card : show_oppdeck2) {
                 if(card->type & TYPE_MONSTER)
                     oppmonster_count++;
@@ -1731,6 +1725,10 @@ void Game::DrawDeckBd() {
                     opptrap_count++;
             }
         }
+		auto main_types_count_str = epro::format(L"{} {} {} {} {} {}",
+													  gDataManager->GetSysString(1312), oppmonster_count,
+													  gDataManager->GetSysString(1313), oppspell_count,
+													  gDataManager->GetSysString(1314), opptrap_count);
 
 		auto mainpos = Resize(10, 5, 297, 20);
 		auto mainDeckTypeSize = textFont->getDimensionustring(main_types_count_str);
@@ -1747,7 +1745,7 @@ void Game::DrawDeckBd() {
 		float dx = (297.0f-14.0f-47.0f) / (cards_per_row - 1);
 
 		for(int i = 0; i < static_cast<int>(decksize); ++i) {
-			DrawThumb2(!mainGame->btnLocation[0]->isPressed() ? show_deck2[i]->code : show_deck[i]->code, irr::core::vector2di(14 + (i % cards_per_row) * dx, 28 + (i / cards_per_row) * 42));
+			DrawThumb2(!mainGame->btnLocation[0]->isPressed() ? show_oppdeck2[i]->code : show_deck[i]->code, irr::core::vector2di(14 + (i % cards_per_row) * dx, 28 + (i / cards_per_row) * 42));
 		}
 
 		if(half) {
@@ -1756,12 +1754,12 @@ void Game::DrawDeckBd() {
 			
 			DrawShadowText(textFont, gDataManager->GetSysString(mainGame->btnLocation[2]->isPressed() ? 1004 : mainGame->btnLocation[3]->isPressed() ? 1005 : mainGame->btnLocation[4]->isPressed() ? 1001 : mainGame->btnLocation[5]->isPressed() ? 1006 : 1000), Resize(14, 258, 109, 273), Resize(1, 1, 1, 1), 0xffffffff, 0xff000000, false, true);
 			
-			auto main_deck_size_str = fmt::to_wstring(oppdecksize);;
+			auto main_deck_size_str = fmt::to_wstring(decksize2);;
 			DrawShadowText(numFont, main_deck_size_str, Resize(79, 259, 139, 274), Resize(1, 1, 1, 1), 0xffffffff, 0xff000000, false, true);
 			auto main_types_count_str = epro::format(L"{} {} {} {} {} {}",
-													  gDataManager->GetSysString(1312), oppmonster_count,
-													  gDataManager->GetSysString(1313), oppspell_count,
-													  gDataManager->GetSysString(1314), opptrap_count);
+													  gDataManager->GetSysString(1312), monster_count,
+													  gDataManager->GetSysString(1313), spell_count,
+													  gDataManager->GetSysString(1314), trap_count);
 			auto mainpos = Resize(10, 259, 297, 274);
 			auto mainDeckTypeSize = textFont->getDimensionustring(main_types_count_str);
             auto pos = irr::core::recti(mainpos.LowerRightCorner.X - mainDeckTypeSize.Width - 5, mainpos.UpperLeftCorner.Y,
@@ -1772,11 +1770,11 @@ void Game::DrawDeckBd() {
 			DRAWRECT(MAIN, 10, 278, 297, 505);
 			DRAWOUTLINE(MAIN, 9, 276, 297, 505);
 			
-			int cards_per_row = (oppdecksize > 46) ? static_cast<int>((oppdecksize - 47) / 5 + 11) : 8;
+			int cards_per_row = (decksize2 > 46) ? static_cast<int>((decksize2 - 47) / 5 + 11) : 8;
 			float dx = (297.0f-14.0f-47.0f) / (cards_per_row - 1);
 			
-			for(int i = 0; i < static_cast<int>(oppdecksize); ++i) {
-				DrawThumb2(show_oppdeck2[i]->code, irr::core::vector2di(14 + (i % cards_per_row) * dx, 282 + (i / cards_per_row) * 42));
+			for(int i = 0; i < static_cast<int>(decksize2); ++i) {
+				DrawThumb2(show_deck2[i]->code, irr::core::vector2di(14 + (i % cards_per_row) * dx, 282 + (i / cards_per_row) * 42));
 		}
 		}
 	}
