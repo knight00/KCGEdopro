@@ -69,6 +69,8 @@ OPTION(bool, enablecanime, false)
 OPTION(bool, enableaanime, false)
 OPTION(bool, system_engine, true)
 OPTION(bool, pauseduel, true)
+OPTION(bool, chkField, false)
+OPTION_ALIASED(bool, chkHideNameTag, hide_nameTag, false)
 ///kdiy//////////
 OPTION(std::wstring, lastServer, L"")
 OPTION_ALIASED(bool, chkMAutoPos, automonsterpos, false)
@@ -79,9 +81,6 @@ OPTION_ALIASED(bool, chkWaitChain, waitchain, false)
 OPTION_ALIASED(bool, chkIgnore1, mute_opponent, false)
 OPTION_ALIASED(bool, chkIgnore2, mute_spectators, false)
 OPTION_ALIASED(bool, chkHideSetname, hide_setname, false)
-/////kdiy/////
-OPTION_ALIASED(bool, chkHideNameTag, hide_nameTag, false)
-/////kdiy/////
 OPTION_ALIASED(bool, chkHideHintButton, hide_hint_button, false)
 OPTION(bool, draw_field_spell, true)
 OPTION(bool, quick_animation, false)

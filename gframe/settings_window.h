@@ -110,6 +110,7 @@ struct SettingsWindow {
 	irr::gui::IGUICheckBox* chkRandomtexture;
 	irr::gui::IGUICheckBox* chkCloseup;
 	irr::gui::IGUICheckBox* chkPainting;
+	irr::gui::IGUICheckBox* chktField;
 	irr::gui::IGUICheckBox* chkHideNameTag;
 	///////kdiy////////
 	irr::gui::IGUIStaticText* stMusicVolume;
