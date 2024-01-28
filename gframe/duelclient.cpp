@@ -926,25 +926,37 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		std::lock_guard<epro::mutex> lock(mainGame->gMutex);
 		matManager.SetActiveVertices(mainGame->dInfo.HasFieldFlag(DUEL_3_COLUMNS_FIELD),
 									 !mainGame->dInfo.HasFieldFlag(DUEL_SEPARATE_PZONE));
-		int x = (pkt.info.team1 + pkt.info.team2 >= 5) ? 60 : 0;
+        int x = (pkt.info.team1 + pkt.info.team2 >= 5) ? 60 : 0;
         /////kdiy//////
 		if(!mainGame->mode->isMode) {
-		mainGame->btnHostPrepOB->setRelativePosition(mainGame->Scale<irr::s32>(10, 180 + x, 110, 205 + x));
-		mainGame->stHostPrepOB->setRelativePosition(mainGame->Scale<irr::s32>(10, 210 + x, 270, 230 + x));
-		mainGame->stHostPrepRule->setRelativePosition(mainGame->Scale<irr::s32>(280, 30, 460, 270 + x));
-		mainGame->stDeckSelect->setRelativePosition(mainGame->Scale<irr::s32>(10, 235 + x, 110, 255 + x));
+		//mainGame->btnHostPrepOB->setRelativePosition(mainGame->Scale<irr::s32>(10, 180 + x, 110, 205 + x));
+		//mainGame->stHostPrepOB->setRelativePosition(mainGame->Scale<irr::s32>(10, 210 + x, 270, 230 + x));
+        //mainGame->stHostPrepRule->setRelativePosition(mainGame->Scale<irr::s32>(280, 30, 460, 270 + x));
 		//mainGame->cbDeckSelect->setRelativePosition(mainGame->Scale<irr::s32>(120, 230 + x, 270, 255 + x));
-		mainGame->cbDeck2Select->setRelativePosition(mainGame->Scale<irr::s32>(120, 230 + x, 210, 250 + x));
-		mainGame->cbDeckSelect->setRelativePosition(mainGame->Scale<irr::s32>(220, 230 + x, 430, 250 + x));
+        //mainGame->stDeckSelect->setRelativePosition(mainGame->Scale<irr::s32>(10, 235 + x, 110, 255 + x));
+		// mainGame->btnHostPrepReady->setRelativePosition(mainGame->Scale<irr::s32>(170, 180 + x, 270, 205 + x));
+		// mainGame->btnHostPrepNotReady->setRelativePosition(mainGame->Scale<irr::s32>(170, 180 + x, 270, 205 + x));
+		// mainGame->btnHostPrepStart->setRelativePosition(mainGame->Scale<irr::s32>(230, 280 + x, 340, 305 + x));
+		// mainGame->btnHostPrepCancel->setRelativePosition(mainGame->Scale<irr::s32>(350, 280 + x, 460, 305 + x));
+		// mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(270, 120, 750, 440 + x));
+		// mainGame->wHostPrepareR->setRelativePosition(mainGame->ResizeWin(750, 120, 950, 440 + x));
+		// mainGame->wHostPrepareL->setRelativePosition(mainGame->ResizeWin(70, 120, 270, 440 + x));
+		//mainGame->gBot.window->setRelativePosition(irr::core::vector2di(mainGame->wHostPrepare->getAbsolutePosition().LowerRightCorner.X, mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
+		mainGame->stHostPrepRule->setRelativePosition(mainGame->Scale<irr::s32>(310, 30 + x, 490, 270 + x));
+		mainGame->stDeckSelect->setRelativePosition(mainGame->Scale<irr::s32>(10, 285 + x, 110, 305 + x));
+		mainGame->btnHostPrepOB->setRelativePosition(mainGame->Scale<irr::s32>(10, 230 + x, 110, 255 + x));
+		mainGame->stHostPrepOB->setRelativePosition(mainGame->Scale<irr::s32>(10, 260 + x, 270, 280 + x));
+		mainGame->cbDeck2Select->setRelativePosition(mainGame->Scale<irr::s32>(120, 280 + x, 210, 300 + x));
+		mainGame->cbDeckSelect->setRelativePosition(mainGame->Scale<irr::s32>(220, 280 + x, 430, 300 + x));
+		mainGame->btnHostPrepReady->setRelativePosition(mainGame->Scale<irr::s32>(170, 230 + x, 270, 255 + x));
+		mainGame->btnHostPrepNotReady->setRelativePosition(mainGame->Scale<irr::s32>(170, 230 + x, 270, 255 + x));
+		mainGame->btnHostPrepStart->setRelativePosition(mainGame->Scale<irr::s32>(230, 330 + x, 340, 355 + x));
+		mainGame->btnHostPrepCancel->setRelativePosition(mainGame->Scale<irr::s32>(350, 330 + x, 460, 355 + x));
+        mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(220, 120, 730, 520 + x));
+		mainGame->wHostPrepareR->setRelativePosition(mainGame->ResizeWin(730, 120, 930, 520 + x));
+		mainGame->wHostPrepareL->setRelativePosition(mainGame->ResizeWin(20, 120, 220, 520 + x));
+        mainGame->gBot.window->setRelativePosition(irr::core::vector2di(mainGame->wHostPrepare->getAbsolutePosition().LowerRightCorner.X - 210, mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
 		//////kdiy/////////
-		mainGame->btnHostPrepReady->setRelativePosition(mainGame->Scale<irr::s32>(170, 180 + x, 270, 205 + x));
-		mainGame->btnHostPrepNotReady->setRelativePosition(mainGame->Scale<irr::s32>(170, 180 + x, 270, 205 + x));
-		mainGame->btnHostPrepStart->setRelativePosition(mainGame->Scale<irr::s32>(230, 280 + x, 340, 305 + x));
-		mainGame->btnHostPrepCancel->setRelativePosition(mainGame->Scale<irr::s32>(350, 280 + x, 460, 305 + x));
-		mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(270, 120, 750, 440 + x));
-		mainGame->wHostPrepareR->setRelativePosition(mainGame->ResizeWin(750, 120, 950, 440 + x));
-		mainGame->wHostPrepareL->setRelativePosition(mainGame->ResizeWin(70, 120, 270, 440 + x));
-		mainGame->gBot.window->setRelativePosition(irr::core::vector2di(mainGame->wHostPrepare->getAbsolutePosition().LowerRightCorner.X, mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
 		for(int i = 0; i < 6; i++) {
 			mainGame->chkHostPrepReady[i]->setVisible(false);
 			mainGame->chkHostPrepReady[i]->setChecked(false);
@@ -959,33 +971,33 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		for(int i = 0; i < pkt.info.team1; i++) {
 			mainGame->chkHostPrepReady[i]->setVisible(true);
 			mainGame->stHostPrepDuelist[i]->setVisible(true);
-			mainGame->btnHostPrepKick[i]->setRelativePosition(mainGame->Scale<irr::s32>(10, 65 + i * 25, 30, 85 + i * 25));
 			///////kdiy/////////
-			mainGame->ebCharacter[i]->setVisible(true);
+			//mainGame->btnHostPrepKick[i]->setRelativePosition(mainGame->Scale<irr::s32>(10, 65 + i * 25, 30, 85 + i * 25));
 			//mainGame->stHostPrepDuelist[i]->setRelativePosition(mainGame->Scale<irr::s32>(40, 65 + i * 25, 240, 85 + i * 25));
-			mainGame->stHostPrepDuelist[i]->setRelativePosition(mainGame->Scale<irr::s32>(65, 65 + i * 25, 130, 85 + i * 25));
-			mainGame->ebCharacter[i]->setRelativePosition(mainGame->Scale<irr::s32>(140, 65 + i * 25, 240, 85 + i * 25));
-			///////kdiy/////////
-			mainGame->chkHostPrepReady[i]->setRelativePosition(mainGame->Scale<irr::s32>(250, 65 + i * 25, 270, 85 + i * 25));
-			///////kdiy/////////
+			//mainGame->chkHostPrepReady[i]->setRelativePosition(mainGame->Scale<irr::s32>(250, 65 + i * 25, 270, 85 + i * 25));
+			mainGame->ebCharacter[i]->setVisible(true);
 			mainGame->icon[i]->setVisible(true);
-			mainGame->icon[i]->setRelativePosition(mainGame->Scale<irr::s32>(40, 65 + i * 25, 60, 85 + i * 25));
+            mainGame->btnHostPrepKick[i]->setRelativePosition(mainGame->Scale<irr::s32>(10, 70 + i * 35, 30, 90 + i * 35));
+			mainGame->icon[i]->setRelativePosition(mainGame->Scale<irr::s32>(40, 65 + i * 35, 70, 95 + i * 35));
+			mainGame->stHostPrepDuelist[i]->setRelativePosition(mainGame->Scale<irr::s32>(80, 70 + i * 35, 160, 90 + i * 35));
+			mainGame->ebCharacter[i]->setRelativePosition(mainGame->Scale<irr::s32>(170, 70 + i * 35, 270, 90 + i * 35));
+            mainGame->chkHostPrepReady[i]->setRelativePosition(mainGame->Scale<irr::s32>(280, 70 + i * 35, 300, 90 + i * 35));
 			///////kdiy/////////
 		}
 		for(int i = pkt.info.team1; i < pkt.info.team1 + pkt.info.team2; i++) {
 			mainGame->chkHostPrepReady[i]->setVisible(true);
 			mainGame->stHostPrepDuelist[i]->setVisible(true);
-			mainGame->btnHostPrepKick[i]->setRelativePosition(mainGame->Scale<irr::s32>(10, 10 + 65 + i * 25, 30, 10 + 85 + i * 25));
 			///////kdiy/////////
-			mainGame->ebCharacter[i]->setVisible(true);
+			//mainGame->btnHostPrepKick[i]->setRelativePosition(mainGame->Scale<irr::s32>(10, 10 + 65 + i * 25, 30, 10 + 85 + i * 25));
 			//mainGame->stHostPrepDuelist[i]->setRelativePosition(mainGame->Scale<irr::s32>(40, 10 + 65 + i * 25, 240, 10 + 85 + i * 25));
-			mainGame->stHostPrepDuelist[i]->setRelativePosition(mainGame->Scale<irr::s32>(65, 10 + 65 + i * 25, 130, 10 + 85 + i * 25));
-			mainGame->ebCharacter[i]->setRelativePosition(mainGame->Scale<irr::s32>(140, 10 + 65 + i * 25, 240, 10 + 85 + i * 25));
-			///////kdiy/////////
-			mainGame->chkHostPrepReady[i]->setRelativePosition(mainGame->Scale<irr::s32>(250, 10 + 65 + i * 25, 270, 10 + 85 + i * 25));
-			///////kdiy/////////
+			//mainGame->chkHostPrepReady[i]->setRelativePosition(mainGame->Scale<irr::s32>(250, 10 + 65 + i * 25, 270, 10 + 85 + i * 25));
+			mainGame->ebCharacter[i]->setVisible(true);
 			mainGame->icon[i]->setVisible(true);
-			mainGame->icon[i]->setRelativePosition(mainGame->Scale<irr::s32>(40, 10 + 65 + i * 25, 60, 10 + 85 + i * 25));
+            mainGame->btnHostPrepKick[i]->setRelativePosition(mainGame->Scale<irr::s32>(10, 10 + 70 + i * 35, 30, 10 + 90 + i * 35));
+			mainGame->icon[i]->setRelativePosition(mainGame->Scale<irr::s32>(40, 10 + 65 + i * 35, 70, 10 + 95 + i * 35));
+			mainGame->stHostPrepDuelist[i]->setRelativePosition(mainGame->Scale<irr::s32>(80, 10 + 70 + i * 35, 160, 10 + 90 + i * 35));
+			mainGame->ebCharacter[i]->setRelativePosition(mainGame->Scale<irr::s32>(170, 10 + 70 + i * 35, 270, 10 + 90 + i * 35));
+            mainGame->chkHostPrepReady[i]->setRelativePosition(mainGame->Scale<irr::s32>(280, 10 + 70 + i * 35, 300, 10 + 90 + i * 35));
 			///////kdiy/////////
 		}
         /////kdiy//////
@@ -1668,6 +1680,7 @@ inline std::unique_lock<epro::mutex> LockIf() {
 void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t msg) {
 	switch(msg) {
     case MSG_NEW_TURN: {
+        //((dInfo.turn % 2 && dInfo.isFirst) || (!(dInfo.turn % 2) && !dInfo.isFirst))
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
         int avataricon1 = 0; int avataricon2 = 0;
 		if(mainGame->dInfo.isTeam1) {

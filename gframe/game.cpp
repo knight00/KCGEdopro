@@ -678,7 +678,7 @@ void Game::Initialize() {
 	mainMenuRightX = 510 + mainMenuWidth / 2;
 	////kdiy////////
 	int QQWidth = std::max(100, static_cast<int>(titleWidth / dpi_scale + 15));
-	wQQ = env->addWindow(Scale(mainMenuRightX+10, 200, mainMenuRightX+150, 450));
+	wQQ = env->addWindow(Scale(mainMenuLeftX - 150, 200, mainMenuLeftX - 10, 450));
 	wQQ->getCloseButton()->setVisible(false);
 	wQQ->setDraggable(false);
 	wQQ->setDrawTitlebar(false);
@@ -840,30 +840,23 @@ void Game::Initialize() {
 	btnHostCancel2 = env->addButton(Scale(260, 385, 370, 410), wCreateHost2, BUTTON_LOCAL_HOST_CANCEL, gDataManager->GetSysString(1212).data());
 	defaultStrings.emplace_back(btnHostCancel2, 1212);
 
-	wCharacter = env->addWindow(Scale(0, 15, 200, 315));
+	wCharacter = env->addWindow(Scale(60, 120, 260, 440));
 	wCharacter->getCloseButton()->setVisible(false);
 	wCharacter->setDraggable(false);
 	wCharacter->setDrawTitlebar(false);
-	wCharacter->setDrawBackground(false);
 	wCharacter->setVisible(false);
 	btnCharacter = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 200, 300), wCharacter, BUTTON_CHARACTER);
 	btnCharacter->setDrawBorder(true);
 	btnCharacter->setImageSize(Scale(0, 0, 200, 300).getSize());
 
-	wCharacterSelect = env->addWindow(Scale(0, 315, 200, 340));
-	wCharacterSelect->getCloseButton()->setVisible(false);
-	wCharacterSelect->setDraggable(false);
-	wCharacterSelect->setDrawTitlebar(false);
-	wCharacterSelect->setDrawBackground(false);
-	wCharacterSelect->setVisible(false);
-	btnCharacterSelect = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 25, 25), wCharacterSelect, BUTTON_CHARACTER_SELECT);
-	btnCharacterSelect->setDrawBorder(true);
-	btnCharacterSelect->setImageSize(Scale(0, 0, 25, 25).getSize());
+	btnCharacterSelect = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 300, 20, 320), wCharacter, BUTTON_CHARACTER_SELECT);
+	btnCharacterSelect->setImageSize(Scale(0, 0, 20, 20).getSize());
 	btnCharacterSelect->setImage(imageManager.tcharacterselect);
-	btnCharacterSelect2 = irr::gui::CGUIImageButton::addImageButton(env, Scale(175, 0, 200, 30), wCharacterSelect, BUTTON_CHARACTER_SELECT2);
-	btnCharacterSelect2->setDrawBorder(true);
-	btnCharacterSelect2->setImageSize(Scale(0, 0, 25, 25).getSize());
+	btnCharacterSelect->setDrawBorder(true);
+	btnCharacterSelect2 = irr::gui::CGUIImageButton::addImageButton(env, Scale(180, 300, 200, 320), wCharacter, BUTTON_CHARACTER_SELECT2);
+	btnCharacterSelect2->setImageSize(Scale(0, 0, 20, 20).getSize());
 	btnCharacterSelect2->setImage(imageManager.tcharacterselect2);
+	btnCharacterSelect2->setDrawBorder(true);
 	irr::core::dimension2di avatarsize = { Scale<irr::s32>(CARD_IMG_WIDTH * 0.5f), Scale<irr::s32>(CARD_IMG_HEIGHT * 0.5f) };
 	
 	wAvatar[0] = env->addWindow(Scale(220, 435, 360, 635));
@@ -1479,38 +1472,59 @@ void Game::Initialize() {
     ////kdiy////////
     btnCharacterSelect_replay = env->addButton(Scale(360, 200, 560, 220), wReplay, BUTTON_CHARACTER_REPLAY, gDataManager->GetSysString(8015).data());
 	defaultStrings.emplace_back(btnCharacterSelect_replay, 8015);
+    btnCharacterSelect_replay->setEnabled(false);
 #ifndef VIP
     btnCharacterSelect_replay->setEnabled(false);
     defaultStrings.emplace_back(btnCharacterSelect_replay, 8025);
 #endif
-    wCharacterReplay = env->addWindow(Scale(220, 100, 460, 330), false, gDataManager->GetSysString(8015).data());
+    wCharacterReplay = env->addWindow(Scale(220, 100, 835, 500), false, gDataManager->GetSysString(8015).data());
 	defaultStrings.emplace_back(wCharacterReplay, 8015);
     wCharacterReplay->getCloseButton()->setVisible(false);
 	wCharacterReplay->setVisible(false);
+    stCharacterReplay = env->addStaticText(L"===VS===", Scale(0, 0, 10, 10), false, true, wCharacterReplay);
     btnCharacterSelect_replayclose = env->addButton(Scale(170, 45, 220, 70), wCharacterReplay, BUTTON_CHARACTEROK_REPLAY, gDataManager->GetSysString(1211).data());
 	defaultStrings.emplace_back(btnCharacterSelect_replayclose, 1211);
     for(int i = 0; i < 6; ++i) {
-        ebCharacter2[i] = AddComboBox(env, Scale(65, 45 + i * 25, 165, 65 + i * 25), wCharacterReplay, COMBOBOX2_CHARACTER + i);
-        ebCharacter2[i]->clear();
-#ifdef VIP
-        ebCharacter2[i]->addItem(gDataManager->GetSysString(8047).data());
-        defaultStrings.emplace_back(ebCharacter2[i], 8047);
-#else
-        ebCharacter2[i]->addItem(gDataManager->GetSysString(8048).data());
-        defaultStrings.emplace_back(ebCharacter2[i], 8048);
-        ebCharacter2[i]->setEnabled(false);
-#endif
-        for (auto j = 9000; j < 9000 + CHARACTER_VOICE - 1; ++j) {
-            ebCharacter2[i]->addItem(gDataManager->GetSysString(j).data());
-            defaultStrings.emplace_back(ebCharacter2[i], j);
-        }
-        ebCharacter2[i]->setSelected(0);
-        ebCharacter2[i]->setMaxSelectionRows(10);
-		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, BUTTON2_ICON + i);
+		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, -1);
 		icon2[i]->setDrawBorder(false);
 		icon2[i]->setImageSize(Scale(0, 0, 20, 20).getSize());
 		icon2[i]->setImage(0);
+        icon2[i]->setVisible(false);
+        ebName_replay[i] = env->addEditBox(L"", Scale(65, 45 + i * 25, 165, 65 + i * 25), true, wCharacterReplay, EDITBOX_REPLAYNAME);
+        ebName_replay[i]->setVisible(false);
+        btnCharacterSelect_replayreset[i] = env->addButton(Scale(168, 45 + i * 25, 218, 65 + i * 25), wCharacterReplay, BUTTON_NAMERESET_REPLAY, gDataManager->GetSysString(8065).data());
+        defaultStrings.emplace_back(btnCharacterSelect_replayreset[i], 8065);
+        btnCharacterSelect_replayreset[i]->setVisible(false);
+        ebCharacter_replay[i] = AddComboBox(env, Scale(221, 45 + i * 25, 321, 65 + i * 25), wCharacterReplay, COMBOBOX2_CHARACTER + i);
+        ebCharacter_replay[i]->clear();
+#ifdef VIP
+        ebCharacter_replay[i]->addItem(gDataManager->GetSysString(8047).data());
+        defaultStrings.emplace_back(ebCharacter_replay[i], 8047);
+#else
+        ebCharacter_replay[i]->addItem(gDataManager->GetSysString(8048).data());
+        defaultStrings.emplace_back(ebCharacter_replay[i], 8048);
+        ebCharacter_replay[i]->setEnabled(false);
+#endif
+        for (auto j = 9000; j < 9000 + CHARACTER_VOICE - 1; ++j) {
+            ebCharacter_replay[i]->addItem(gDataManager->GetSysString(j).data());
+            defaultStrings.emplace_back(ebCharacter_replay[i], j);
+        }
+        ebCharacter_replay[i]->setSelected(0);
+        ebCharacter_replay[i]->setMaxSelectionRows(10);
+        ebCharacter_replay[i]->setVisible(false);
 	}
+    btnCharacter_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(375, 45, 575, 345), wCharacterReplay, BUTTON_CHARACTER);
+	btnCharacter_replay->setDrawBorder(true);
+	btnCharacter_replay->setImageSize(Scale(0, 0, 200, 300).getSize());
+	btnCharacterSelect1_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(375, 345, 395, 370), wCharacterReplay, BUTTON_CHARACTER_SELECT);
+	btnCharacterSelect1_replay->setDrawBorder(true);
+	btnCharacterSelect1_replay->setImageSize(Scale(0, 0, 20, 20).getSize());
+	btnCharacterSelect1_replay->setImage(imageManager.tcharacterselect);
+	btnCharacterSelect2_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(555, 345, 575, 370), wCharacterReplay, BUTTON_CHARACTER_SELECT2);
+	btnCharacterSelect2_replay->setDrawBorder(true);
+	btnCharacterSelect2_replay->setImageSize(Scale(0, 0, 20, 20).getSize());
+	btnCharacterSelect2_replay->setImage(imageManager.tcharacterselect2);
+
 	//main meun
 	wEntertainmentPlay = env->addWindow(Scale(220, 100, 800, 520), false, gDataManager->GetSysString(1205).data());
 	defaultStrings.emplace_back(wEntertainmentPlay, 1205);
@@ -2220,7 +2234,10 @@ void Game::PopulateGameHostWindows() {
 	}
 
 	//host(single)
-	wHostPrepare = env->addWindow(Scale(270, 120, 750, 440), false, gDataManager->GetSysString(1250).data());
+    /////kdiy//////
+	//wHostPrepare = env->addWindow(Scale(270, 120, 750, 440), false, gDataManager->GetSysString(1250).data());
+	wHostPrepare = env->addWindow(Scale(220, 120, 730, 520), false, gDataManager->GetSysString(1250).data());
+    /////kdiy//////
 	defaultStrings.emplace_back(wHostPrepare, 1250);
 	wHostPrepare->getCloseButton()->setVisible(false);
 	wHostPrepare->setVisible(false);
@@ -2246,11 +2263,17 @@ void Game::PopulateGameHostWindows() {
 	btnHostPrepWindBot = env->addButton(Scale(170, 30, 270, 55), wHostPrepare, BUTTON_HP_AI_TOGGLE, gDataManager->GetSysString(2050).data());
 	defaultStrings.emplace_back(btnHostPrepWindBot, 2050);
 	for(int i = 0; i < 6; ++i) {
-		btnHostPrepKick[i] = env->addButton(Scale(10, 65 + i * 25, 30, 85 + i * 25), wHostPrepare, BUTTON_HP_KICK, L"X");
 		///////kdiy/////////
+		//btnHostPrepKick[i] = env->addButton(Scale(10, 65 + i * 25, 30, 85 + i * 25), wHostPrepare, BUTTON_HP_KICK, L"X");
 		//stHostPrepDuelist[i] = env->addStaticText(L"", Scale(40, 65 + i * 25, 240, 85 + i * 25), true, false, wHostPrepare);
-		stHostPrepDuelist[i] = env->addStaticText(L"", Scale(65, 65 + i * 25, 130, 85 + i * 25), true, false, wHostPrepare);
-        ebCharacter[i] = AddComboBox(env, Scale(140, 65 + i * 25, 240, 85 + i * 25), wHostPrepare, COMBOBOX_CHARACTER + i);
+		//chkHostPrepReady[i] = env->addCheckBox(false, Scale(250, 80 + i * 25, 270, 100 + i * 25), wHostPrepare, CHECKBOX_HP_READY, L"");
+        btnHostPrepKick[i] = env->addButton(Scale(10, 70 + i * 35, 30, 90 + i * 35), wHostPrepare, BUTTON_HP_KICK, L"X");
+		icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 35, 70, 95 + i * 35), wHostPrepare, BUTTON_ICON);
+		icon[i]->setDrawBorder(true);
+		icon[i]->setImageSize(Scale(0, 0, 30, 30).getSize());
+		icon[i]->setImage(0);
+		stHostPrepDuelist[i] = env->addStaticText(L"", Scale(80, 70 + i * 35, 160, 90 + i * 35), true, false, wHostPrepare);
+        ebCharacter[i] = AddComboBox(env, Scale(170, 70 + i * 35, 270, 90 + i * 35), wHostPrepare, COMBOBOX_CHARACTER);
         ebCharacter[i]->clear();
 #ifdef VIP
         ebCharacter[i]->addItem(gDataManager->GetSysString(8047).data());
@@ -2266,39 +2289,57 @@ void Game::PopulateGameHostWindows() {
         }
         ebCharacter[i]->setSelected(0);
         ebCharacter[i]->setMaxSelectionRows(10);
+        chkHostPrepReady[i] = env->addCheckBox(false, Scale(280, 70 + i * 35, 300, 90 + i * 35), wHostPrepare, CHECKBOX_HP_READY, L"");
 		///////kdiy/////////
-		chkHostPrepReady[i] = env->addCheckBox(false, Scale(250, 65 + i * 25, 270, 85 + i * 25), wHostPrepare, CHECKBOX_HP_READY, L"");
 		chkHostPrepReady[i]->setEnabled(false);
-		///////kdiy/////////
-		icon[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 65 + i * 25, 60, 85 + i * 25), wHostPrepare, BUTTON_ICON + i);
-		icon[i]->setDrawBorder(false);
-		icon[i]->setImageSize(Scale(0, 0, 20, 20).getSize());
-		icon[i]->setImage(0);
-		///////kdiy/////////
 	}
-	btnHostPrepOB = env->addButton(Scale(10, 180, 110, 205), wHostPrepare, BUTTON_HP_OBSERVER, gDataManager->GetSysString(1252).data());
+	///////kdiy/////////
+	//btnHostPrepOB = env->addButton(Scale(10, 180, 110, 205), wHostPrepare, BUTTON_HP_OBSERVER, gDataManager->GetSysString(1252).data());
+	btnHostPrepOB = env->addButton(Scale(10, 230, 110, 255), wHostPrepare, BUTTON_HP_OBSERVER, gDataManager->GetSysString(1252).data());
+	///////kdiy/////////
 	defaultStrings.emplace_back(btnHostPrepOB, 1252);
-	stHostPrepOB = env->addStaticText(epro::format(L"{} 0", gDataManager->GetSysString(1253)).data(), Scale(10, 210, 270, 230), false, false, wHostPrepare);
+	///////kdiy/////////
+	//stHostPrepOB = env->addStaticText(epro::format(L"{} 0", gDataManager->GetSysString(1253)).data(), Scale(10, 210, 270, 230), false, false, wHostPrepare);
+	stHostPrepOB = env->addStaticText(epro::format(L"{} 0", gDataManager->GetSysString(1253)).data(), Scale(10, 240, 270, 260), false, false, wHostPrepare);
+	///////kdiy/////////
 	defaultStrings.emplace_back(stHostPrepOB, 1253);
-	stHostPrepRule = irr::gui::CGUICustomText::addCustomText(L"", false, env, wHostPrepare, -1, Scale(280, 30, 460, 270));
+	///////kdiy/////////
+	//stHostPrepRule = irr::gui::CGUICustomText::addCustomText(L"", false, env, wHostPrepare, -1, Scale(280, 30, 460, 270));
+	stHostPrepRule = irr::gui::CGUICustomText::addCustomText(L"", false, env, wHostPrepare, -1, Scale(310, 30, 490, 270));
+	///////kdiy/////////
 	stHostPrepRule->setWordWrap(true);
-	stDeckSelect = env->addStaticText(gDataManager->GetSysString(1254).data(), Scale(10, 235, 110, 255), false, false, wHostPrepare);
+	///////kdiy/////////
+	//stDeckSelect = env->addStaticText(gDataManager->GetSysString(1254).data(), Scale(10, 235, 110, 255), false, false, wHostPrepare);
+	stDeckSelect = env->addStaticText(gDataManager->GetSysString(1254).data(), Scale(10, 285, 110, 305), false, false, wHostPrepare);
+	///////kdiy/////////
 	defaultStrings.emplace_back(stDeckSelect, 1254);
 	///////kdiy////
 	//cbDeckSelect = AddComboBox(env, Scale(120, 230, 270, 255), wHostPrepare);
-	cbDeck2Select = AddComboBox(env, Scale(120, 230, 210, 250), wHostPrepare, COMBOBOX_cbDeckSelect);
+	cbDeck2Select = AddComboBox(env, Scale(120, 280, 210, 300), wHostPrepare, COMBOBOX_cbDeckSelect);
 	cbDeck2Select->setMaxSelectionRows(10);
-	cbDeckSelect = AddComboBox(env, Scale(220, 230, 430, 250), wHostPrepare);
+	cbDeckSelect = AddComboBox(env, Scale(220, 280, 430, 300), wHostPrepare);
 	///////kdiy////
 	cbDeckSelect->setMaxSelectionRows(10);
-	btnHostPrepReady = env->addButton(Scale(170, 180, 270, 205), wHostPrepare, BUTTON_HP_READY, gDataManager->GetSysString(1218).data());
+	///////kdiy////
+	//btnHostPrepReady = env->addButton(Scale(170, 180, 270, 205), wHostPrepare, BUTTON_HP_READY, gDataManager->GetSysString(1218).data());
+	btnHostPrepReady = env->addButton(Scale(170, 230, 270, 255), wHostPrepare, BUTTON_HP_READY, gDataManager->GetSysString(1218).data());
+	///////kdiy////
 	defaultStrings.emplace_back(btnHostPrepReady, 1218);
-	btnHostPrepNotReady = env->addButton(Scale(170, 180, 270, 205), wHostPrepare, BUTTON_HP_NOTREADY, gDataManager->GetSysString(1219).data());
+	///////kdiy////
+	//btnHostPrepNotReady = env->addButton(Scale(170, 180, 270, 205), wHostPrepare, BUTTON_HP_NOTREADY, gDataManager->GetSysString(1219).data());
+	btnHostPrepNotReady = env->addButton(Scale(170, 230, 270, 255), wHostPrepare, BUTTON_HP_NOTREADY, gDataManager->GetSysString(1219).data());
+	///////kdiy////
 	defaultStrings.emplace_back(btnHostPrepNotReady, 1219);
 	btnHostPrepNotReady->setVisible(false);
-	btnHostPrepStart = env->addButton(Scale(230, 280, 340, 305), wHostPrepare, BUTTON_HP_START, gDataManager->GetSysString(1215).data());
+	///////kdiy////
+	//btnHostPrepStart = env->addButton(Scale(230, 280, 340, 305), wHostPrepare, BUTTON_HP_START, gDataManager->GetSysString(1215).data());
+	btnHostPrepStart = env->addButton(Scale(230, 330, 340, 355), wHostPrepare, BUTTON_HP_START, gDataManager->GetSysString(1215).data());
+	///////kdiy////
 	defaultStrings.emplace_back(btnHostPrepStart, 1215);
-	btnHostPrepCancel = env->addButton(Scale(350, 280, 460, 305), wHostPrepare, BUTTON_HP_CANCEL, gDataManager->GetSysString(1210).data());
+	///////kdiy////
+	//btnHostPrepCancel = env->addButton(Scale(350, 280, 460, 305), wHostPrepare, BUTTON_HP_CANCEL, gDataManager->GetSysString(1210).data());
+	btnHostPrepCancel = env->addButton(Scale(350, 330, 460, 355), wHostPrepare, BUTTON_HP_CANCEL, gDataManager->GetSysString(1210).data());
+	///////kdiy////
 	defaultStrings.emplace_back(btnHostPrepCancel, 1210);
 }
 
@@ -2310,7 +2351,7 @@ void Game::PopulateAIBotWindow() {
 #endif
 	///////kdiy/////////
 	// gBot.window = env->addWindow(Scale(750, 120, 960, showWindbotArgs ? 455 : 420), false, gDataManager->GetSysString(2051).data());
-	gBot.window = env->addWindow(Scale(750, 120, 1220, showWindbotArgs ? 430 : 395), false, gDataManager->GetSysString(2051).data());
+	gBot.window = env->addWindow(Scale(550, 120, 1040, showWindbotArgs ? 430 : 395), false, gDataManager->GetSysString(2051).data());
 	///////kdiy/////////
 	defaultStrings.emplace_back(gBot.window, 2051);
 	gBot.window->getCloseButton()->setVisible(false);
@@ -2719,7 +2760,8 @@ void Game::PopulateSettingsWindow() {
 		menuHandler.MakeElementSynchronized(gSettings.chkNoChainDelay);
 		defaultStrings.emplace_back(gSettings.chkNoChainDelay, 1277);
 		//////kdiy///////////
-		IncrementXorY();
+        gSettings.chktField = env->addCheckBox(gGameConfig->chkField, GetNextRect(), sPanel, CHECKBOX_NO_CHAIN_DELAY, gDataManager->GetSysString(8066).data());
+		defaultStrings.emplace_back(gSettings.chktField, 8066);
 		gSettings.chkEnableAnime = env->addCheckBox(gGameConfig->enableanime, GetNextRect(), sPanel, CHECKBOX_ENABLE_ANIME, gDataManager->GetSysString(8008).data());
 		defaultStrings.emplace_back(gSettings.chkEnableAnime, 8008);
 #if !EDOPRO_WINDOWS
@@ -3970,6 +4012,7 @@ void Game::SaveConfig() {
 	gGameConfig->randomtexture = gSettings.chkRandomtexture->isChecked();
 	gGameConfig->closeup = gSettings.chkCloseup->isChecked();
 	gGameConfig->painting = gSettings.chkPainting->isChecked();
+	gGameConfig->chkField = gSettings.chktField->isChecked();
 	/////kdiy//////
 	gGameConfig->hdpic = cbpics->getSelected();
 	auto lastServerIndex = serverChoice->getSelected();
@@ -4663,7 +4706,6 @@ void Game::CloseDuelWindow() {
 	btnLeaveGame->setVisible(false);
 	///////kdiy///////
 	wCharacter->setVisible(false);
-	wCharacterSelect->setVisible(false);
 	wAvatar[0]->setVisible(false);
 	wAvatar[1]->setVisible(false);
     wHead[0]->setVisible(false);
@@ -5343,9 +5385,10 @@ void Game::OnResize() {
 	#else
 	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 535));
 	#endif
-	wQQ->setRelativePosition(ResizeWin(mainMenuRightX+10, 200, mainMenuRightX+150, 450));
+	wQQ->setRelativePosition(ResizeWin(mainMenuLeftX - 150, 200, mainMenuLeftX - 10, 450));
 	wBtnSettings->setRelativePosition(ResizeWin(0, 590, 30, 620));
 	wBtnShowCard->setRelativePosition(ResizeWin(430, 10, 470, 50));
+    wCharacter->setRelativePosition(ResizeWin(60, 120, 260, 440));
 	////////kdiy///////
 	SetCentered(wCommitsLog);
 	SetCentered(updateWindow, false);
@@ -5373,20 +5416,30 @@ void Game::OnResize() {
 	SetCentered(wCreateHost2, false);
 	/////kdiy/////
 	if(dInfo.opponames.size() + dInfo.selfnames.size() >= 5) {
-		wHostPrepare->setRelativePosition(ResizeWin(270, 120, 750, 500));
-		wHostPrepareR->setRelativePosition(ResizeWin(750, 120, 950, 500));
-		wHostPrepareL->setRelativePosition(ResizeWin(70, 120, 270, 500));
+        ////kdiy////////////
+		//wHostPrepare->setRelativePosition(ResizeWin(270, 120, 750, 500));
+		// wHostPrepareR->setRelativePosition(ResizeWin(750, 120, 950, 500));
+		// wHostPrepareL->setRelativePosition(ResizeWin(70, 120, 270, 500));
+        wHostPrepare->setRelativePosition(ResizeWin(220, 120, 730, 580));
+        wHostPrepareR->setRelativePosition(ResizeWin(730, 120, 930, 580));
+		wHostPrepareL->setRelativePosition(ResizeWin(20, 120, 220, 580));
+        ////kdiy////////////
 	} else {
-		wHostPrepare->setRelativePosition(ResizeWin(270, 120, 750, 440));
-		wHostPrepareR->setRelativePosition(ResizeWin(750, 120, 950, 440));
-		wHostPrepareL->setRelativePosition(ResizeWin(70, 120, 270, 440));
+        ////kdiy////////////
+		//wHostPrepare->setRelativePosition(ResizeWin(270, 120, 750, 440));
+		// wHostPrepareR->setRelativePosition(ResizeWin(750, 120, 950, 440));
+		// wHostPrepareL->setRelativePosition(ResizeWin(70, 120, 270, 440));
+        wHostPrepare->setRelativePosition(ResizeWin(220, 120, 730, 520));
+		wHostPrepareR->setRelativePosition(ResizeWin(730, 120, 930, 520));
+		wHostPrepareL->setRelativePosition(ResizeWin(20, 120, 220, 520));
+        ////kdiy////////////
 	}
 	wRules->setRelativePosition(ResizeWin(630, 100, 1000, 310));
 	wReplay->setRelativePosition(ResizeWin(220, 100, 800, 520));
     ////kdiy////////////
     wAvatar[0]->setRelativePosition(ResizeWin(220, 435, 360, 635));
     wAvatar[1]->setRelativePosition(ResizeWin(880, 20, 1020, 220));
-    wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 460, 330));
+    wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 835, 500));
     wHead[0]->setRelativePosition(ResizeWin(365, 5, 417, 57));
 	wHead[1]->setRelativePosition(ResizeWin(900, 5, 952, 57));
     wBody->setRelativePosition(ResizeWin(370, 175, 570, 475));
@@ -5397,7 +5450,10 @@ void Game::OnResize() {
     wChBody[1]->setRelativePosition(ResizeWin(475, 48, 527, 100));
     ////kdiy/////////
 	wSinglePlay->setRelativePosition(ResizeWin(220, 100, 800, 520));
-	gBot.window->setRelativePosition(irr::core::vector2di(wHostPrepare->getAbsolutePosition().LowerRightCorner.X, wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
+    ////kdiy/////////
+	//gBot.window->setRelativePosition(irr::core::vector2di(wHostPrepare->getAbsolutePosition().LowerRightCorner.X, wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
+    gBot.window->setRelativePosition(irr::core::vector2di(wHostPrepare->getAbsolutePosition().LowerRightCorner.X - 210, wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
+    ////kdiy/////////
 
 	wHand->setRelativePosition(ResizeWin(500, 450, 825, 605));
 	wFTSelect->setRelativePosition(ResizeWin(550, 240, 780, 340));
@@ -5681,8 +5737,8 @@ bool Game::chantcheck() {
 			mainGame->icon2[i]->setEnabled(false);
 			mainGame->ebCharacter[i]->setSelected(0);
 			mainGame->ebCharacter[i]->setEnabled(false);
-			mainGame->ebCharacter2[i]->setSelected(0);
-			mainGame->ebCharacter2[i]->setEnabled(false);
+			mainGame->ebCharacter_replay[i]->setSelected(0);
+			mainGame->ebCharacter_replay[i]->setEnabled(false);
 		}
 		mainGame->ebCharacterDeck->setSelected(0);
 		mainGame->ebCharacterDeck->setEnabled(false);
@@ -5697,7 +5753,9 @@ void Game::charactselect(uint8_t player, int sel) {
 		mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
 		mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
 		mainGame->ebCharacter[mainGame->choose_player]->setSelected(player);
-		mainGame->ebCharacter2[mainGame->choose_player]->setSelected(player);
+		mainGame->ebCharacter_replay[mainGame->choose_player]->setSelected(player);
+		mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
+		mainGame->btnCharacter_replay->setImage(mainGame->imageManager.character[player]);
 		if(mainGame->choose_player == 0)
             mainGame->ebCharacterDeck->setSelected(player);
 		gSoundManager->PlayChant(SoundManager::CHANT::STARTUP, 0, 0, mainGame->choose_player);

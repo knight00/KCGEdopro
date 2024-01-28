@@ -106,7 +106,6 @@ public:
 	bool GetNextResponse(ReplayResponse*& res);
 	const std::vector<std::wstring>& GetPlayerNames();
     ///////kdiy//////////
-    bool namechanged = false;
 	std::vector<std::wstring> playersC;
     ///////kdiy//////////
 	const ReplayDeckList& GetPlayerDecks();

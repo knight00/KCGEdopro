@@ -207,6 +207,7 @@ public:
 	bool moviecheck();
 	bool chantcheck();
 	void charactselect(uint8_t player, int sel);
+    std::vector<std::wstring>& GetPlayerReplayNames();
 	////////kdiy////////
 	void RefreshLFLists();
 	void RefreshAiDecks();
@@ -627,13 +628,19 @@ public:
 	uint8_t character[6] = {0,0,0,0,0,0};
 	uint8_t choose_player = -1; //0-5th players
 	irr::gui::IGUIWindow* wCharacter;
-	irr::gui::IGUIWindow* wCharacterSelect;
 	irr::gui::CGUIImageButton* btnCharacter;
 	irr::gui::CGUIImageButton* btnCharacterSelect;
 	irr::gui::CGUIImageButton* btnCharacterSelect2;
-    irr::gui::IGUIButton* btnCharacterSelect_replay;
     irr::gui::IGUIWindow* wCharacterReplay;
+	irr::gui::IGUIButton* btnCharacterSelect_replay;
+	irr::gui::CGUIImageButton* btnCharacter_replay;
+	irr::gui::CGUIImageButton* btnCharacterSelect1_replay;
+	irr::gui::CGUIImageButton* btnCharacterSelect2_replay;
     irr::gui::IGUIButton* btnCharacterSelect_replayclose;
+    irr::gui::IGUIButton* btnCharacterSelect_replayreset[6];
+    irr::gui::IGUIComboBox* ebCharacter_replay[6];
+    irr::gui::IGUIEditBox* ebName_replay[6];
+	irr::gui::IGUIStaticText* stCharacterReplay;
 	irr::gui::IGUIWindow* wAvatar[2];
 	irr::gui::CGUIImageButton* avatarbutton[2];
 	irr::gui::IGUIButton* cardbutton[3];
@@ -671,7 +678,6 @@ public:
 	irr::gui::IGUIStaticText* stDeckSelect;
 	//////////kdiy/////////
     irr::gui::IGUIComboBox* ebCharacter[6];
-    irr::gui::IGUIComboBox* ebCharacter2[6];
 	irr::gui::IGUIComboBox* ebCharacterDeck;
     irr::gui::IGUIComboBox* cbDBDecks2;
     irr::gui::IGUIComboBox* cbDBDecks22;

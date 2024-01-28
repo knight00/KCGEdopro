@@ -98,8 +98,13 @@ int ReplayMode::ReplayThread() {
 	// mainGame->dInfo.opponames.assign(first_oppo_player, names.end());
 	auto names2 = cur_replay.playersC;
 	auto oppo_player1 = names2.begin() + mainGame->dInfo.team1;
-    mainGame->dInfo.selfnames.assign(names2.begin(), oppo_player1);
-	mainGame->dInfo.opponames.assign(oppo_player1, names2.end());
+    if(names2.size() < 2) {
+        mainGame->dInfo.selfnames.assign(names.begin(), first_oppo_player);
+        mainGame->dInfo.opponames.assign(first_oppo_player, names.end());
+    } else {
+        mainGame->dInfo.selfnames.assign(names2.begin(), oppo_player1);
+        mainGame->dInfo.opponames.assign(oppo_player1, names2.end());
+    }
     /////kdiy///////
 	mainGame->dInfo.duel_params = cur_replay.params.duel_flags;
 	mainGame->dInfo.duel_field = mainGame->GetMasterRule(mainGame->dInfo.duel_params);

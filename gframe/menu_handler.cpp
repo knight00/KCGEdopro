@@ -384,7 +384,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			case BUTTON_HOST_CANCEL: {
 				///////kdiy///////
 				mainGame->wCharacter->setVisible(false);
-				mainGame->wCharacterSelect->setVisible(false);
 				///////kdiy///////
 				if(DuelClient::IsConnected())
 					break;
@@ -495,112 +494,26 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				bool filechk = mainGame->chantcheck();
 				if(!filechk)
 				    break;
-				for(int i = 1; i < 6; ++i)
-					mainGame->icon[i]->setEnabled(false);
-				mainGame->choose_player = 0;
-				mainGame->wCharacter->setVisible(true);
-				mainGame->wCharacterSelect->setVisible(true);
-				int player = gSoundManager->character[mainGame->choose_player];
-				mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
-				break;
-			}
-			case BUTTON_ICON1: {
-#ifndef VIP
-				break;
-#endif
-				bool filechk = mainGame->chantcheck();
-				if(!filechk)
-				    break;
+                mainGame->wCharacter->setVisible(true);
+                auto elem = static_cast<irr::gui::CGUIImageButton*>(event.GUIEvent.Caller);
 				for(int i = 0; i < 6; ++i) {
-					if (i==1) continue;
-					mainGame->icon[i]->setEnabled(false);
-				}
-				mainGame->choose_player = 1;
-				mainGame->wCharacter->setVisible(true);
-				mainGame->wCharacterSelect->setVisible(true);
+                    if(elem == mainGame->icon[i])
+                        mainGame->choose_player = i;
+                }
 				int player = gSoundManager->character[mainGame->choose_player];
 				mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
-				break;
-			}
-			case BUTTON_ICON2: {
-#ifndef VIP
-				break;
-#endif
-				bool filechk = mainGame->chantcheck();
-				if(!filechk)
-				    break;
-				for(int i = 0; i < 6; ++i) {
-					if (i==2) continue;
-					mainGame->icon[i]->setEnabled(false);
-				}
-				mainGame->choose_player = 2;
-				mainGame->wCharacter->setVisible(true);
-				mainGame->wCharacterSelect->setVisible(true);
-				int player = gSoundManager->character[mainGame->choose_player];
-				mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
-				break;
-			}
-			case BUTTON_ICON3: {
-#ifndef VIP
-				break;
-#endif
-				bool filechk = mainGame->chantcheck();
-				if(!filechk)
-				    break;
-				for(int i = 0; i < 6; ++i) {
-					if (i==3) continue;
-					mainGame->icon[i]->setEnabled(false);
-				}
-				mainGame->choose_player = 3;
-				mainGame->wCharacter->setVisible(true);
-				mainGame->wCharacterSelect->setVisible(true);
-				int player = gSoundManager->character[mainGame->choose_player];
-				mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
-				break;
-			}
-			case BUTTON_ICON4: {
-#ifndef VIP
-				break;
-#endif
-				bool filechk = mainGame->chantcheck();
-				if(!filechk)
-				    break;
-				for(int i = 0; i < 6; ++i) {
-					if (i==4) continue;
-					mainGame->icon[i]->setEnabled(false);
-				}
-				mainGame->choose_player = 4;
-				mainGame->wCharacter->setVisible(true);
-				mainGame->wCharacterSelect->setVisible(true);
-				int player = gSoundManager->character[mainGame->choose_player];
-				mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
-				break;
-			}
-			case BUTTON_ICON5: {
-#ifndef VIP
-				break;
-#endif
-				bool filechk = mainGame->chantcheck();
-				if(!filechk)
-				    break;
-				for(int i = 0; i < 5; ++i)
-					mainGame->icon[i]->setEnabled(false);
-				mainGame->choose_player = 5;
-				mainGame->wCharacter->setVisible(true);
-				mainGame->wCharacterSelect->setVisible(true);
-				int player = gSoundManager->character[mainGame->choose_player];
-				mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
+				mainGame->btnCharacter_replay->setImage(mainGame->imageManager.character[player]);
 				break;
 			}
 			case BUTTON_CHARACTER: {
-				for(int i = 0; i < 6; ++i)
-					mainGame->icon[i]->setEnabled(true);
 #ifdef VIP
 				gSoundManager->PlayChant(SoundManager::CHANT::STARTUP, 0, 0, mainGame->choose_player);
 #endif
-				mainGame->choose_player = -1;
-				mainGame->wCharacter->setVisible(false);
-				mainGame->wCharacterSelect->setVisible(false);
+                auto elem = static_cast<irr::gui::CGUIImageButton*>(event.GUIEvent.Caller);
+                if(elem == mainGame->btnCharacter) {
+                    mainGame->choose_player = -1;
+                    mainGame->wCharacter->setVisible(false);
+                }
 				break;
 			}
 			case BUTTON_CHARACTER_SELECT2: {
@@ -611,10 +524,11 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				else gSoundManager->character[mainGame->choose_player] ++;
 				int player = gSoundManager->character[mainGame->choose_player];
 				mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
+				mainGame->btnCharacter_replay->setImage(mainGame->imageManager.character[player]);
 				mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
                 mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
                 mainGame->ebCharacter[mainGame->choose_player]->setSelected(gSoundManager->character[mainGame->choose_player]);
-                mainGame->ebCharacter2[mainGame->choose_player]->setSelected(gSoundManager->character[mainGame->choose_player]);
+                mainGame->ebCharacter_replay[mainGame->choose_player]->setSelected(gSoundManager->character[mainGame->choose_player]);
 				if(mainGame->choose_player == 0)
                     mainGame->ebCharacterDeck->setSelected(player);
 				break;
@@ -627,10 +541,11 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				else gSoundManager->character[mainGame->choose_player] --;
 				int player = gSoundManager->character[mainGame->choose_player];
 				mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
+				mainGame->btnCharacter_replay->setImage(mainGame->imageManager.character[player]);
 				mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
                 mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
                 mainGame->ebCharacter[mainGame->choose_player]->setSelected(gSoundManager->character[mainGame->choose_player]);
-                mainGame->ebCharacter2[mainGame->choose_player]->setSelected(gSoundManager->character[mainGame->choose_player]);
+                mainGame->ebCharacter_replay[mainGame->choose_player]->setSelected(gSoundManager->character[mainGame->choose_player]);
 				if(mainGame->choose_player == 0)
                     mainGame->ebCharacterDeck->setSelected(player);
 				break;
@@ -713,7 +628,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			case BUTTON_HP_START: {
 				///////kdiy///////
 				mainGame->wCharacter->setVisible(false);
-				mainGame->wCharacterSelect->setVisible(false);
 				//////kdiy/////
 				DuelClient::SendPacketToServer(CTOS_HS_START);
 				break;
@@ -721,7 +635,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			case BUTTON_HP_CANCEL: {
 				///////kdiy///////
 				mainGame->wCharacter->setVisible(false);
-				mainGame->wCharacterSelect->setVisible(false);
 				///////kdiy///////
 				DuelClient::StopClient();
 				mainGame->dInfo.isInLobby = false;
@@ -747,6 +660,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 #ifdef EK
 				mainGame->HideElement(mainGame->wQQ);
 #endif
+                mainGame->btnCharacterSelect_replay->setEnabled(false);
 				////kdiy////////
 				mainGame->stReplayInfo->setText(L"");
 				mainGame->btnLoadReplay->setEnabled(false);
@@ -822,8 +736,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_LOAD_REPLAY: {
                 ////kdiy////////
-                mainGame->HideElement(mainGame->wCharacterReplay);
-                 ////kdiy////////
+                if(mainGame->wCharacterReplay->isVisible())
+                    mainGame->HideElement(mainGame->wCharacterReplay);
+                ////kdiy////////
 				if(mainGame->lstReplayList->isDirectory(mainGame->lstReplayList->getSelected()))
 					mainGame->lstReplayList->enterDirectory(mainGame->lstReplayList->getSelected());
 				else
@@ -865,7 +780,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->HideElement(mainGame->wReplay);
 				mainGame->ShowElement(mainGame->wMainMenu);
 				////kdiy////////
-                mainGame->HideElement(mainGame->wCharacterReplay);
+                if(mainGame->wCharacterReplay->isVisible())
+                    mainGame->HideElement(mainGame->wCharacterReplay);
 #ifdef EK
 				mainGame->ShowElement(mainGame->wQQ);
 #endif
@@ -911,17 +827,76 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
             ////kdiy////////
             case BUTTON_CHARACTER_REPLAY: {
 				mainGame->PopupElement(mainGame->wCharacterReplay);
-                for(int i = 0; i < 6; ++i) {
-					if(gSoundManager->character[i] > CHARACTER_VOICE - 1)
+                auto& replay = ReplayMode::cur_replay;
+				const auto& names = replay.GetPlayerNames();
+				auto& names2 = replay.playersC;
+                if(names2.size() < 2)
+                    names2.assign(names.begin(), names.end());
+				for(int i = 0; i < replay.GetPlayersCount(0); i++) {
+                    if(gSoundManager->character[i] > CHARACTER_VOICE - 1)
 					    mainGame->imageManager.icon[gSoundManager->character[i]] = 0;
+                    mainGame->icon2[i]->setVisible(true);
+                    mainGame->icon2[i]->setRelativePosition(mainGame->Resize(40, 45 + i * 25, 60, 65 + i * 25));
 				    mainGame->icon2[i]->setImage(mainGame->imageManager.icon[gSoundManager->character[i]]);
+                    mainGame->ebName_replay[i]->setVisible(true);
+                    mainGame->ebName_replay[i]->setRelativePosition(mainGame->Resize(65, 45 + i * 25, 165, 65 + i * 25));
+                    mainGame->ebName_replay[i]->setText(Utils::ToUnicodeIfNeeded(names2[i]).c_str());
+                    mainGame->btnCharacterSelect_replayreset[i]->setVisible(true);
+                    mainGame->btnCharacterSelect_replayreset[i]->setRelativePosition(mainGame->Resize(168, 45 + i * 25, 218, 65 + i * 25));
+                    mainGame->ebCharacter_replay[i]->setVisible(true);
+                    mainGame->ebCharacter_replay[i]->setRelativePosition(mainGame->Resize(221, 45 + i * 25, 321, 65 + i * 25));
 				}
+                int height = 65 + 15 + (replay.GetPlayersCount(0) - 1) * 25;
+                mainGame->stCharacterReplay->setRelativePosition(mainGame->Resize(65, height, 165, height + 20));
+                height = height + 20 + 15;
+				for(int i = 0; i < replay.GetPlayersCount(1); i++) {
+                    int j = i + replay.GetPlayersCount(0);
+                    if(gSoundManager->character[j] > CHARACTER_VOICE - 1)
+					    mainGame->imageManager.icon[gSoundManager->character[j]] = 0;
+                    mainGame->icon2[j]->setVisible(true);
+                    mainGame->icon2[j]->setRelativePosition(mainGame->Resize(40, height + i * 25, 60, height + 20 + i * 25));
+				    mainGame->icon2[j]->setImage(mainGame->imageManager.icon[gSoundManager->character[j]]);
+                    mainGame->ebName_replay[j]->setVisible(true);
+                    mainGame->ebName_replay[j]->setRelativePosition(mainGame->Resize(65, height + i * 25, 165, height + 20 + i * 25));
+                    mainGame->ebName_replay[j]->setText(Utils::ToUnicodeIfNeeded(names2[j]).c_str());
+                    mainGame->btnCharacterSelect_replayreset[j]->setVisible(true);
+                    mainGame->btnCharacterSelect_replayreset[j]->setRelativePosition(mainGame->Resize(168, height + i * 25, 218, height + 20 + i * 25));
+                    mainGame->ebCharacter_replay[j]->setVisible(true);
+                    mainGame->ebCharacter_replay[j]->setRelativePosition(mainGame->Resize(221, height + i * 25, 321, height + 20 + i * 25));
+				}
+                mainGame->btnCharacterSelect_replayclose->setRelativePosition(mainGame->Resize(65, height + 20 + 15 + (replay.GetPlayersCount(1) - 1) * 25, 165, height + 20 + 15 + 20 + (replay.GetPlayersCount(1) - 1) * 25));
                 break;
+			}
+            case BUTTON_NAMERESET_REPLAY: {
+                auto& replay = ReplayMode::cur_replay;
+				const auto& names = replay.GetPlayerNames();
+				auto& names2 = replay.playersC;
+				if(names2.size() < 2) break;
+				auto elem = static_cast<irr::gui::IGUIButton*>(event.GUIEvent.Caller);
+                for(int i = 0; i < 6; i++) {
+                    if(elem == mainGame->btnCharacterSelect_replayreset[i]) {
+                        names2[i] = names[i];
+                        mainGame->ebName_replay[i]->setText(Utils::ToUnicodeIfNeeded(names2[i]).c_str());
+                    }
+                }
+                std::wstring repinfo;
+				time_t curtime = replay.pheader.base.timestamp;
+				repinfo.append(epro::format(L"{:%Y/%m/%d %H:%M:%S}\n", fmt::localtime(curtime)));
+				for(int i = 0; i < replay.GetPlayersCount(0); i++) {
+					repinfo.append(names2[i] + L"\n");
+				}
+				repinfo.append(L"===VS===\n");
+				for(int i = 0; i < replay.GetPlayersCount(1); i++) {
+					repinfo.append(names2[i + replay.GetPlayersCount(0)] + L"\n");
+				}
+				if(replay.GetTurnsCount())
+					repinfo.append(epro::format(L"\n{}: {}", gDataManager->GetSysString(2009), replay.GetTurnsCount()));
+				mainGame->stReplayInfo->setText(repinfo.data());
+				break;
 			}
             case BUTTON_CHARACTEROK_REPLAY: {
 				mainGame->HideElement(mainGame->wCharacterReplay);
                 mainGame->wCharacter->setVisible(false);
-				mainGame->wCharacterSelect->setVisible(false);
 				break;
 			}
             ////kdiy////////
@@ -1204,6 +1179,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			case LISTBOX_REPLAY_LIST: {
 				int sel = mainGame->lstReplayList->getSelected();
 				mainGame->stReplayInfo->setText(L"");
+                /////kdiy/////
+                mainGame->wCharacterReplay->setVisible(false);
+                mainGame->btnCharacterSelect_replay->setEnabled(false);
+                /////kdiy/////
 				mainGame->btnLoadReplay->setEnabled(false);
 				mainGame->btnDeleteReplay->setEnabled(false);
 				mainGame->btnRenameReplay->setEnabled(false);
@@ -1223,6 +1202,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 
 				bool can_be_played = replay.CanBePlayedInStreamedMode() || (replay.CanBePlayedInOldMode() && mainGame->coreloaded);
 				mainGame->btnLoadReplay->setEnabled(can_be_played);
+                /////kdiy/////
+                mainGame->btnCharacterSelect_replay->setEnabled(can_be_played);
+                /////kdiy/////
 
 				mainGame->btnDeleteReplay->setEnabled(true);
 				mainGame->btnRenameReplay->setEnabled(true);
@@ -1231,7 +1213,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				std::wstring repinfo;
 				time_t curtime = replay.pheader.base.timestamp;
 				repinfo.append(epro::format(L"{:%Y/%m/%d %H:%M:%S}\n", fmt::localtime(curtime)));
-				const auto& names = replay.GetPlayerNames();
+                ///kdiy////
+				//const auto& names = replay.GetPlayerNames();
+                auto& names = replay.playersC.size() > 1 ? replay.playersC : replay.GetPlayerNames();
+                ///kdiy////
 				for(int i = 0; i < replay.GetPlayersCount(0); i++) {
 					repinfo.append(names[i] + L"\n");
 				}
@@ -1300,8 +1285,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
 			case LISTBOX_REPLAY_LIST: {
                 ////kdiy////////
-                mainGame->HideElement(mainGame->wCharacterReplay);
-                 ////kdiy////////
+                if(mainGame->wCharacterReplay->isVisible())
+                     mainGame->HideElement(mainGame->wCharacterReplay);
+                ////kdiy////////
 				if(mainGame->lstReplayList->isDirectory(mainGame->lstReplayList->getSelected()))
 					mainGame->lstReplayList->enterDirectory(mainGame->lstReplayList->getSelected());
 				else
@@ -1479,6 +1465,31 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 		}
 		case irr::gui::EGET_EDITBOX_CHANGED: {
 			switch(id) {
+            //kdiy///////
+            case EDITBOX_REPLAYNAME: {
+                auto& replay = ReplayMode::cur_replay;
+				auto& names = replay.playersC;
+				auto elem = static_cast<irr::gui::IGUIEditBox*>(event.GUIEvent.Caller);
+                for(int i = 0; i < 6; i++) {
+                    if(elem == mainGame->ebName_replay[i])
+                        names[i] = Utils::ToPathString(elem->getText());
+                }
+                std::wstring repinfo;
+				time_t curtime = replay.pheader.base.timestamp;
+				repinfo.append(epro::format(L"{:%Y/%m/%d %H:%M:%S}\n", fmt::localtime(curtime)));
+				for(int i = 0; i < replay.GetPlayersCount(0); i++) {
+					repinfo.append(names[i] + L"\n");
+				}
+				repinfo.append(L"===VS===\n");
+				for(int i = 0; i < replay.GetPlayersCount(1); i++) {
+					repinfo.append(names[i + replay.GetPlayersCount(0)] + L"\n");
+				}
+				if(replay.GetTurnsCount())
+					repinfo.append(epro::format(L"\n{}: {}", gDataManager->GetSysString(2009), replay.GetTurnsCount()));
+				mainGame->stReplayInfo->setText(repinfo.data());
+				break;
+			}
+            //kdiy///////
 			case EDITBOX_PORT_BOX: {
 				const wchar_t* text = caller->getText();
 				wchar_t filtered[20];
@@ -1730,63 +1741,13 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				bool filechk = mainGame->chantcheck();
 				if(!filechk)
 				    break;
-                int sel = mainGame->ebCharacter[0]->getSelected();
-				mainGame->charactselect(0, sel);
-				break;
-			}
-            case COMBOBOX_CHARACTER1: {
-#ifndef VIP
-				break;
-#endif
-				bool filechk = mainGame->chantcheck();
-				if(!filechk)
-				    break;
-                int sel = mainGame->ebCharacter[1]->getSelected();
-				mainGame->charactselect(1, sel);
-				break;
-			}
-            case COMBOBOX_CHARACTER2: {
-#ifndef VIP
-				break;
-#endif
-				bool filechk = mainGame->chantcheck();
-				if(!filechk)
-				    break;
-                int sel = mainGame->ebCharacter[2]->getSelected();
-				mainGame->charactselect(2, sel);
-				break;
-			}
-            case COMBOBOX_CHARACTER3: {
-#ifndef VIP
-				break;
-#endif
-				bool filechk = mainGame->chantcheck();
-				if(!filechk)
-				    break;
-                int sel = mainGame->ebCharacter[3]->getSelected();
-				mainGame->charactselect(3, sel);
-				break;
-			}
-            case COMBOBOX_CHARACTER4: {
-#ifndef VIP
-				break;
-#endif
-				bool filechk = mainGame->chantcheck();
-				if(!filechk)
-				    break;
-                int sel = mainGame->ebCharacter[4]->getSelected();
-				mainGame->charactselect(4, sel);
-				break;
-			}
-            case COMBOBOX_CHARACTER5: {
-#ifndef VIP
-				break;
-#endif
-				bool filechk = mainGame->chantcheck();
-				if(!filechk)
-				    break;
-                int sel = mainGame->ebCharacter[5]->getSelected();
-				mainGame->charactselect(5, sel);
+                auto elem = static_cast<irr::gui::IGUIComboBox*>(event.GUIEvent.Caller);
+				for(int i = 0; i < 6; ++i) {
+                    if(elem == mainGame->ebCharacter[i]) {
+                        int sel = mainGame->ebCharacter[i]->getSelected();
+                        mainGame->charactselect(i, sel);
+                    }
+                }
 				break;
 			}
             case COMBOBOX2_CHARACTER: {
@@ -1796,7 +1757,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				bool filechk = mainGame->chantcheck();
 				if(!filechk)
 				    break;
-                int sel = mainGame->ebCharacter2[0]->getSelected();
+                int sel = mainGame->ebCharacter_replay[0]->getSelected();
 				mainGame->charactselect(0, sel);
 				break;
 			}
@@ -1807,7 +1768,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				bool filechk = mainGame->chantcheck();
 				if(!filechk)
 				    break;
-                int sel = mainGame->ebCharacter2[1]->getSelected();
+                int sel = mainGame->ebCharacter_replay[1]->getSelected();
 				mainGame->charactselect(1, sel);
 				break;
 			}
@@ -1818,7 +1779,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				bool filechk = mainGame->chantcheck();
 				if(!filechk)
 				    break;
-                int sel = mainGame->ebCharacter2[2]->getSelected();
+                int sel = mainGame->ebCharacter_replay[2]->getSelected();
 				mainGame->charactselect(2, sel);
 				break;
 			}
@@ -1829,7 +1790,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				bool filechk = mainGame->chantcheck();
 				if(!filechk)
 				    break;
-                int sel = mainGame->ebCharacter2[3]->getSelected();
+                int sel = mainGame->ebCharacter_replay[3]->getSelected();
 				mainGame->charactselect(3, sel);
 				break;
 			}
@@ -1840,7 +1801,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				bool filechk = mainGame->chantcheck();
 				if(!filechk)
 				    break;
-                int sel = mainGame->ebCharacter2[4]->getSelected();
+                int sel = mainGame->ebCharacter_replay[4]->getSelected();
 				mainGame->charactselect(4, sel);
 				break;
 			}
@@ -1851,7 +1812,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				bool filechk = mainGame->chantcheck();
 				if(!filechk)
 				    break;
-                int sel = mainGame->ebCharacter2[5]->getSelected();
+                int sel = mainGame->ebCharacter_replay[5]->getSelected();
 				mainGame->charactselect(5, sel);
 				break;
 			}

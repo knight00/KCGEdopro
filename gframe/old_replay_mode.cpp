@@ -115,8 +115,13 @@ namespace ygo {
 		//mainGame->dInfo.opponames.assign(first_oppo_player, names.end());
 		auto names2 = cur_yrp->playersC;
 		auto oppo_player1 = names2.begin() + cur_yrp->GetPlayersCount(0);
-        mainGame->dInfo.selfnames.assign(names2.begin(), oppo_player1);
-		mainGame->dInfo.opponames.assign(oppo_player1, names2.end());
+        if(names2.size() < 2) {
+            mainGame->dInfo.selfnames.assign(names.begin(), first_oppo_player);
+            mainGame->dInfo.opponames.assign(first_oppo_player, names.end());
+        } else {
+            mainGame->dInfo.selfnames.assign(names2.begin(), oppo_player1);
+            mainGame->dInfo.opponames.assign(oppo_player1, names2.end());
+        }
         /////kdiy///////
 		uint32_t start_lp = cur_yrp->params.start_lp;
 		uint32_t start_hand = cur_yrp->params.start_hand;

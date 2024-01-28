@@ -61,6 +61,10 @@ void ClientField::Clear() {
 		ClearVector(szone[i]);
 		mzone[i].resize(7, nullptr);
 		szone[i].resize(8, nullptr);
+        ////kdiy///////
+		ClearVector(maindeck[i]);
+		ClearVector(mainextra[i]);
+        ////kdiy///////
 		ClearVector(deck[i]);
 		ClearVector(hand[i]);
 		ClearVector(grave[i]);
@@ -119,6 +123,9 @@ void ClientField::Initial(uint8_t player, uint32_t deckc, uint32_t extrac) {
 	for(uint32_t i = 0; i < deckc; ++i) {
 		pcard = new ClientCard{};
 		deck[player].push_back(pcard);
+        ////kdiy/////
+		maindeck[player].push_back(pcard);
+        ////kdiy/////
 		pcard->owner = player;
 		pcard->controler = player;
 		pcard->location = LOCATION_DECK;
@@ -129,6 +136,9 @@ void ClientField::Initial(uint8_t player, uint32_t deckc, uint32_t extrac) {
 	for(uint32_t i = 0; i < extrac; ++i) {
 		pcard = new ClientCard{};
 		extra[player].push_back(pcard);
+        ////kdiy/////
+		mainextra[player].push_back(pcard);
+        ////kdiy/////
 		pcard->owner = player;
 		pcard->controler = player;
 		pcard->location = LOCATION_EXTRA;
@@ -644,6 +654,10 @@ void ClientField::ReplaySwap() {
 		for(const auto& pcard : zone)
 			reset(pcard);
 	};
+    ////kdiy///////
+	std::swap(maindeck[0], maindeck[1]);
+	std::swap(mainextra[0], mainextra[1]);
+    ////kdiy///////
 	std::swap(deck[0], deck[1]);
 	std::swap(hand[0], hand[1]);
 	std::swap(mzone[0], mzone[1]);
