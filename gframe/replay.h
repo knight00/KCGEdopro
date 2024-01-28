@@ -105,6 +105,10 @@ public:
 	static bool RenameReplay(const epro::path_string& oldname, const epro::path_string& newname);
 	bool GetNextResponse(ReplayResponse*& res);
 	const std::vector<std::wstring>& GetPlayerNames();
+    ///////kdiy//////////
+    bool namechanged = false;
+	std::vector<std::wstring> playersC;
+    ///////kdiy//////////
 	const ReplayDeckList& GetPlayerDecks();
 	const std::vector<uint32_t>& GetRuleCards();
 	void Rewind();
