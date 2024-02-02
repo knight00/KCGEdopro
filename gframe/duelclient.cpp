@@ -732,6 +732,8 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		mainGame->btnSideReload->setVisible(true);
 		if(mainGame->wQuery->isVisible())
 			mainGame->HideElement(mainGame->wQuery);
+		if(mainGame->wOptions->isVisible())
+			mainGame->HideElement(mainGame->wOptions);
 		if(mainGame->wPosSelect->isVisible())
 			mainGame->HideElement(mainGame->wPosSelect);
 		if(mainGame->wCardSelect->isVisible())
@@ -1204,6 +1206,8 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->btnCancelOrFinish->setVisible(false);
 			if(mainGame->wQuery->isVisible())
 				mainGame->HideElement(mainGame->wQuery);
+			if(mainGame->wOptions->isVisible())
+				mainGame->HideElement(mainGame->wOptions);
 			if(mainGame->wPosSelect->isVisible())
 				mainGame->HideElement(mainGame->wPosSelect);
 			if(mainGame->wCardSelect->isVisible())
@@ -1438,6 +1442,8 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		mainGame->dInfo.checkRematch = true;
 		if(mainGame->wQuery->isVisible())
 			mainGame->HideElement(mainGame->wQuery);
+		if(mainGame->wOptions->isVisible())
+			mainGame->HideElement(mainGame->wOptions);
 		if(mainGame->wPosSelect->isVisible())
 			mainGame->HideElement(mainGame->wPosSelect);
 		if(mainGame->wCardSelect->isVisible())
