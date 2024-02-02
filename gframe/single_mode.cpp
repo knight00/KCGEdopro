@@ -112,7 +112,7 @@ restart:
 		mainGame->dInfo.strLP[1] = L"\u221E";
     } else
 		mainGame->dInfo.strLP[1] = fmt::to_wstring(mainGame->dInfo.lp[1]);
-	///////////kdiy///////////		
+	///////////kdiy///////////
 	mainGame->dInfo.selfnames = { mainGame->ebNickName->getText() };
 	mainGame->dInfo.opponames = { L"" };
 	mainGame->dInfo.player_type = 0;

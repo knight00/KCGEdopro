@@ -27,10 +27,6 @@ struct ChainInfo {
 
 class ClientField final : public irr::IEventReceiver {
 public:
-	////kdiy///////
-	std::vector<ClientCard*> maindeck[2];
-	std::vector<ClientCard*> mainextra[2];
-	////kdiy///////
 	std::vector<ClientCard*> deck[2];
 	std::vector<ClientCard*> hand[2];
 	std::vector<ClientCard*> mzone[2];

@@ -828,10 +828,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
             case BUTTON_CHARACTER_REPLAY: {
 				mainGame->PopupElement(mainGame->wCharacterReplay);
                 auto& replay = ReplayMode::cur_replay;
-				const auto& names = replay.GetPlayerNames();
-				auto& names2 = replay.playersC;
-                if(names2.size() < 2)
-                    names2.assign(names.begin(), names.end());
+				const auto& names1 = replay.GetPlayerNames();
+				auto& names = replay.playersC;
+                if(names.size() < 2)
+                    names.assign(names1.begin(), names1.end());
 				for(int i = 0; i < replay.GetPlayersCount(0); i++) {
                     if(gSoundManager->character[i] > CHARACTER_VOICE - 1)
 					    mainGame->imageManager.icon[gSoundManager->character[i]] = 0;
@@ -840,11 +840,11 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				    mainGame->icon2[i]->setImage(mainGame->imageManager.icon[gSoundManager->character[i]]);
                     mainGame->ebName_replay[i]->setVisible(true);
                     mainGame->ebName_replay[i]->setRelativePosition(mainGame->Resize(65, 45 + i * 25, 165, 65 + i * 25));
-                    mainGame->ebName_replay[i]->setText(Utils::ToUnicodeIfNeeded(names2[i]).c_str());
+                    mainGame->ebName_replay[i]->setText(Utils::ToUnicodeIfNeeded(names[i]).c_str());
                     mainGame->btnCharacterSelect_replayreset[i]->setVisible(true);
-                    mainGame->btnCharacterSelect_replayreset[i]->setRelativePosition(mainGame->Resize(168, 45 + i * 25, 218, 65 + i * 25));
+                    mainGame->btnCharacterSelect_replayreset[i]->setRelativePosition(mainGame->Resize(168, 45 + i * 25, 248, 65 + i * 25));
                     mainGame->ebCharacter_replay[i]->setVisible(true);
-                    mainGame->ebCharacter_replay[i]->setRelativePosition(mainGame->Resize(221, 45 + i * 25, 321, 65 + i * 25));
+                    mainGame->ebCharacter_replay[i]->setRelativePosition(mainGame->Resize(251, 45 + i * 25, 351, 65 + i * 25));
 				}
                 int height = 65 + 15 + (replay.GetPlayersCount(0) - 1) * 25;
                 mainGame->stCharacterReplay->setRelativePosition(mainGame->Resize(65, height, 165, height + 20));
@@ -858,36 +858,36 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				    mainGame->icon2[j]->setImage(mainGame->imageManager.icon[gSoundManager->character[j]]);
                     mainGame->ebName_replay[j]->setVisible(true);
                     mainGame->ebName_replay[j]->setRelativePosition(mainGame->Resize(65, height + i * 25, 165, height + 20 + i * 25));
-                    mainGame->ebName_replay[j]->setText(Utils::ToUnicodeIfNeeded(names2[j]).c_str());
+                    mainGame->ebName_replay[j]->setText(Utils::ToUnicodeIfNeeded(names[j]).c_str());
                     mainGame->btnCharacterSelect_replayreset[j]->setVisible(true);
-                    mainGame->btnCharacterSelect_replayreset[j]->setRelativePosition(mainGame->Resize(168, height + i * 25, 218, height + 20 + i * 25));
+                    mainGame->btnCharacterSelect_replayreset[j]->setRelativePosition(mainGame->Resize(168, height + i * 25, 248, height + 20 + i * 25));
                     mainGame->ebCharacter_replay[j]->setVisible(true);
-                    mainGame->ebCharacter_replay[j]->setRelativePosition(mainGame->Resize(221, height + i * 25, 321, height + 20 + i * 25));
+                    mainGame->ebCharacter_replay[j]->setRelativePosition(mainGame->Resize(251, height + i * 25, 351, height + 20 + i * 25));
 				}
                 mainGame->btnCharacterSelect_replayclose->setRelativePosition(mainGame->Resize(65, height + 20 + 15 + (replay.GetPlayersCount(1) - 1) * 25, 165, height + 20 + 15 + 20 + (replay.GetPlayersCount(1) - 1) * 25));
                 break;
 			}
             case BUTTON_NAMERESET_REPLAY: {
                 auto& replay = ReplayMode::cur_replay;
-				const auto& names = replay.GetPlayerNames();
-				auto& names2 = replay.playersC;
-				if(names2.size() < 2) break;
+				const auto& names1 = replay.GetPlayerNames();
+				auto& names = replay.playersC;
+				if(names.size() < 2) break;
 				auto elem = static_cast<irr::gui::IGUIButton*>(event.GUIEvent.Caller);
                 for(int i = 0; i < 6; i++) {
                     if(elem == mainGame->btnCharacterSelect_replayreset[i]) {
-                        names2[i] = names[i];
-                        mainGame->ebName_replay[i]->setText(Utils::ToUnicodeIfNeeded(names2[i]).c_str());
+                        names[i] = names1[i];
+                        mainGame->ebName_replay[i]->setText(Utils::ToUnicodeIfNeeded(names[i]).c_str());
                     }
                 }
                 std::wstring repinfo;
 				time_t curtime = replay.pheader.base.timestamp;
 				repinfo.append(epro::format(L"{:%Y/%m/%d %H:%M:%S}\n", fmt::localtime(curtime)));
 				for(int i = 0; i < replay.GetPlayersCount(0); i++) {
-					repinfo.append(names2[i] + L"\n");
+					repinfo.append(names[i] + L"\n");
 				}
 				repinfo.append(L"===VS===\n");
 				for(int i = 0; i < replay.GetPlayersCount(1); i++) {
-					repinfo.append(names2[i + replay.GetPlayersCount(0)] + L"\n");
+					repinfo.append(names[i + replay.GetPlayersCount(0)] + L"\n");
 				}
 				if(replay.GetTurnsCount())
 					repinfo.append(epro::format(L"\n{}: {}", gDataManager->GetSysString(2009), replay.GetTurnsCount()));
@@ -1215,7 +1215,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				repinfo.append(epro::format(L"{:%Y/%m/%d %H:%M:%S}\n", fmt::localtime(curtime)));
                 ///kdiy////
 				//const auto& names = replay.GetPlayerNames();
-                auto& names = replay.playersC.size() > 1 ? replay.playersC : replay.GetPlayerNames();
+				const auto& names1 = replay.GetPlayerNames();
+                auto& names = replay.playersC;
+                if(names.size() < 2)
+                    names.assign(names1.begin(), names1.end());
                 ///kdiy////
 				for(int i = 0; i < replay.GetPlayersCount(0); i++) {
 					repinfo.append(names[i] + L"\n");
@@ -1468,11 +1471,15 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
             //kdiy///////
             case EDITBOX_REPLAYNAME: {
                 auto& replay = ReplayMode::cur_replay;
-				auto& names = replay.playersC;
+				const auto& names1 = replay.GetPlayerNames();
+                auto& names = replay.playersC;
+                if(names.size() < 2)
+                    names.assign(names1.begin(), names1.end());
 				auto elem = static_cast<irr::gui::IGUIEditBox*>(event.GUIEvent.Caller);
                 for(int i = 0; i < 6; i++) {
-                    if(elem == mainGame->ebName_replay[i])
-                        names[i] = Utils::ToPathString(elem->getText());
+					if(elem == mainGame->ebName_replay[i]) {
+						names[i] = epro::format(L"{}", elem->getText());
+					}
                 }
                 std::wstring repinfo;
 				time_t curtime = replay.pheader.base.timestamp;

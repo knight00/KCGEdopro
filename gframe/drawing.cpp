@@ -10,6 +10,9 @@
 #include "CGUIImageButton/CGUIImageButton.h"
 #include "custom_skin_enum.h"
 #include "image_manager.h"
+//////kdiy///////
+#include "replay_mode.h"
+//////kdiy///////
 
 namespace ygo {
 void Game::DrawSelectionLine(const Materials::QuadVertex vec, bool strip, int width, irr::video::SColor color) {
@@ -399,6 +402,8 @@ void Game::DrawCard(ClientCard* pcard) {
 	irr::video::ITexture* cardcloseup; irr::video::SColor cardcloseupcolor;
 	std::tie(cardcloseup, cardcloseupcolor) = imageManager.GetTextureCloseup(pcard->code, pcard->alias);
 	matManager.mTexture.AmbientColor = 0xffffffff;
+	bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
+	bool is_pzone = (pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && (pcard->location & LOCATION_SZONE) && !is_orica;
 	///kdiy////////
 	matManager.mCard.AmbientColor = 0xffffffff;
 	matManager.mCard.DiffuseColor = ((int)std::round(pcard->curAlpha) << 24) | 0xffffff;
@@ -406,7 +411,7 @@ void Game::DrawCard(ClientCard* pcard) {
 	auto m22 = pcard->mTransform(2, 2);
 	if (m22 > -0.99 || pcard->is_moving) {
 		///kdiy////////
-		if ((pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
+		if ((pcard->position & POS_FACEUP) && (pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
 			matManager.mCard.AmbientColor = irr::video::SColor(255, 128, 128, 180);
 		else
 			matManager.mCard.AmbientColor = 0xffffffff;
@@ -422,13 +427,12 @@ void Game::DrawCard(ClientCard* pcard) {
 			if (ya <= yd)
 				atkr.Z += irr::core::PI;
 			pcard->mTransform.setRotationRadians(atkr);
-		}
-		else if ((pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && (pcard->type & TYPE_SPELL) && pcard->is_pzone && !pcard->equipTarget
+		} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && 
+		is_pzone
 			&& !gGameConfig->topdown_view) {
 			pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(pcard->controler == 0 ? -0.32f : 0.32f, pcard->controler == 0 ? 0 : -0.8f, 0));
 			pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(-irr::core::PI / 3, 0, pcard->controler == 0 ? -irr::core::PI / 5 : -irr::core::PI + irr::core::PI / 5));
-		}
-		else if ((pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 4 || pcard->sequence == 7)) && (pcard->type & TYPE_SPELL) && pcard->is_pzone && !pcard->equipTarget
+		} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 4 || pcard->sequence == 7)) && is_pzone
 			&& !gGameConfig->topdown_view) {
 			pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(pcard->controler == 0 ? 0.32f : -0.32f, pcard->controler == 0 ? 0 : -0.8f, 0));
 			pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(-irr::core::PI / 3, 0, pcard->controler == 0 ? irr::core::PI / 5 : -irr::core::PI - irr::core::PI / 5));
@@ -564,7 +568,7 @@ void Game::DrawCard(ClientCard* pcard) {
 	if (pcard->is_moving)
 		return;
 	///kdiy////////
-	if(pcard->type & TYPE_XYZ) {
+	if((pcard->position & POS_FACEUP) && pcard->type & TYPE_XYZ) {
 		auto cd = gDataManager->GetCardData(pcard->code);
 		if(cd) {
 			auto setcodes = cd->setcodes;
@@ -582,7 +586,7 @@ void Game::DrawCard(ClientCard* pcard) {
 				}
 			}
 			if(std::find(setcodes.begin(), setcodes.end(), 0x1073) != setcodes.end() || std::find(setcodes.begin(), setcodes.end(), 0x1048) != setcodes.end()) {
-				for(int i = 0; i < pcard->overlayed.size(); i++) {
+				for(size_t i = 0; i < pcard->overlayed.size(); i++) {
 					if(i > 9) break;
 					matManager.mTexture.setTexture(0, imageManager.tCXyz);
 					driver->setMaterial(matManager.mTexture);
@@ -594,7 +598,7 @@ void Game::DrawCard(ClientCard* pcard) {
 			} else {
 				int incre = 0;
 				int incre2 = 0;
-				for(int i = 0; i < pcard->overlayed.size(); i++) {
+				for(size_t i = 0; i < pcard->overlayed.size(); i++) {
 					if(i > 9) break;
 					int neg = 1;
 					if(pcard->overlayed.size() > 2 && i >= pcard->overlayed.size() / 2) neg = -1;
@@ -664,7 +668,7 @@ void Game::DrawCard(ClientCard* pcard) {
 		driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
 	}
     ////kdiy/////////
-	if((pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && (pcard->type & TYPE_SPELL) && pcard->is_pzone && !pcard->equipTarget) {
+	if((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && is_pzone ) {
 		int scale = pcard->lscale;
 		if(scale >= 0 && scale <= 13 && imageManager.tLScale[scale]) {
 			matManager.mTexture.setTexture(0, imageManager.tLScale[scale]);
@@ -672,7 +676,7 @@ void Game::DrawCard(ClientCard* pcard) {
 			driver->drawVertexPrimitiveList(matManager.vPScale, 4, matManager.iRectangle, 2);
 		}
 	}
-	if((pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 4 || pcard->sequence == 7)) && (pcard->type & TYPE_SPELL) && pcard->is_pzone && !pcard->equipTarget) {
+	if((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 4 || pcard->sequence == 7)) && is_pzone) {
 		int scale2 = pcard->rscale;
 		if(scale2 >= 0 && scale2 <= 13 && imageManager.tRScale[scale2]) {
 			matManager.mTexture.setTexture(0, imageManager.tRScale[scale2]);
@@ -936,14 +940,18 @@ void Game::DrawMisc() {
 			pcard = dField.mzone[p][i];
 			/////////kdiy////////////
 			//if (pcard && pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)))
-			if(pcard && pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && !pcard->is_sanct && !pcard->equipTarget && !pcard->is_attack)
+			if(!pcard) continue;
+			bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
+			if(pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && is_orica && !pcard->is_attack)
 			/////////kdiy////////////
 				DrawStatus(pcard);
 		}
 		/////////kdiy////////////
 		for (int i = 0; i < 5; ++i) {
 			pcard = dField.szone[p][i];
-			if(pcard && pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && pcard->is_orica && !pcard->equipTarget && !pcard->is_attack)
+			if(!pcard) continue;
+			bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
+			if(pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && is_orica && !pcard->is_attack)
 				DrawStatus(pcard);
 		}
 		/////////kdiy////////////
@@ -952,7 +960,10 @@ void Game::DrawMisc() {
 			pcard = dField.szone[p][pzone];
 			/////////kdiy////////////
 			//if (pcard && (pcard->type & TYPE_PENDULUM) && !pcard->equipTarget)
-			if (pcard && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && pcard->is_pzone && !pcard->equipTarget)
+			if(!pcard) continue;
+			bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
+			bool is_pzone = (pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && (pcard->location & LOCATION_SZONE) && !is_orica;
+			if(pcard && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && is_pzone)
 			/////////kdiy////////////
 				DrawPendScale(pcard);
 		}
@@ -1692,8 +1703,20 @@ void Game::DrawDeckBd() {
         }
         
 		auto show_deck = deckBuilder.GetCurrentDeck().main;
-        auto turnplayer = ((dInfo.turn % 2 && dInfo.isFirst) || (!(dInfo.turn % 2) && !dInfo.isFirst));
-        auto show_deck3 = dField.maindeck[1 - turnplayer];
+		const auto& players = ReplayMode::cur_replay.GetPlayerNames();
+		if(players.empty())
+			return;
+		const auto& decks = ReplayMode::cur_replay.GetPlayerDecks();
+		if(players.size() > decks.size())
+			return;
+        auto turnplayer = 1 - ((dInfo.turn % 2 && dInfo.isFirst) || (!(dInfo.turn % 2) && !dInfo.isFirst));
+		const auto& self = dInfo.isTeam1 ? dInfo.selfnames : dInfo.opponames;
+		int i = 0;
+        auto show_deck3 = decks[turnplayer].main_deck;
+		for(const auto& player : self) {
+			if(i++ == dInfo.current_player[turnplayer])
+			    show_deck3 = decks[turnplayer].main_deck;
+		}
 		auto show_deck2 = dField.deck[0];
 		if(mainGame->btnLocation[2]->isPressed()) show_deck2 = dField.grave[0];
 		if(mainGame->btnLocation[3]->isPressed()) show_deck2 = dField.remove[0];
@@ -1766,7 +1789,8 @@ void Game::DrawDeckBd() {
 		float dx = (297.0f-14.0f-47.0f) / (cards_per_row - 1);
 
 		for(int i = 0; i < static_cast<int>(decksize); ++i) {
-			DrawThumb2(!mainGame->btnLocation[0]->isPressed() ? show_oppdeck2[i]->code : dInfo.isReplay ? show_deck3[i]->code : show_deck[i]->code, irr::core::vector2di(14 + (i % cards_per_row) * dx, 28 + (i / cards_per_row) * 42));
+			if(28 + (i / cards_per_row) * 42 > (half ? 256 : 505)) break;
+			DrawThumb2(!mainGame->btnLocation[0]->isPressed() ? show_oppdeck2[i]->code : dInfo.isReplay ? show_deck3[i] : show_deck[i]->code, irr::core::vector2di(14 + (i % cards_per_row) * dx, 28 + (i / cards_per_row) * 42));
 		}
 
 		if(half) {
@@ -1795,6 +1819,7 @@ void Game::DrawDeckBd() {
 			float dx = (297.0f-14.0f-47.0f) / (cards_per_row - 1);
 			
 			for(int i = 0; i < static_cast<int>(decksize2); ++i) {
+				if(282 + (i / cards_per_row) * 42 > 505) break;
 				DrawThumb2(show_deck2[i]->code, irr::core::vector2di(14 + (i % cards_per_row) * dx, 282 + (i / cards_per_row) * 42));
 		}
 		}

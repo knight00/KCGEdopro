@@ -669,7 +669,7 @@ bool SoundManager::PlayFieldSound() {
     return false;
 }
 void SoundManager::AddtoChantSPList(CHANT chant, uint16_t extra, std::vector<std::string>& chantlist, std::vector<std::string>& list) {
-	for(int j = 0; j < chantlist.size(); j++) {
+	for(size_t j = 0; j < chantlist.size(); j++) {
 		std::string sound = chantlist[j];
 		if(chant == CHANT::SUMMON) {
 			if((extra & 0x1) && sound.find("summon/fusion/") != std::string::npos)
@@ -938,8 +938,8 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
                 chantlist2.erase(std::remove(chantlist2.begin(), chantlist2.end(), file), chantlist2.end());
             }
         }
-		int count = chantlist.size();
-		int _count = chantlist2.size();
+		int count = (int)chantlist.size();
+		int _count = (int)chantlist2.size();
 		if(count > 0) {
 			int chantno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
 			return PlayZipChants(chant, chantlist[chantno], gSoundManager->soundcount, player);

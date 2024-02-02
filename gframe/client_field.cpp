@@ -61,10 +61,6 @@ void ClientField::Clear() {
 		ClearVector(szone[i]);
 		mzone[i].resize(7, nullptr);
 		szone[i].resize(8, nullptr);
-        ////kdiy///////
-		ClearVector(maindeck[i]);
-		ClearVector(mainextra[i]);
-        ////kdiy///////
 		ClearVector(deck[i]);
 		ClearVector(hand[i]);
 		ClearVector(grave[i]);
@@ -123,9 +119,6 @@ void ClientField::Initial(uint8_t player, uint32_t deckc, uint32_t extrac) {
 	for(uint32_t i = 0; i < deckc; ++i) {
 		pcard = new ClientCard{};
 		deck[player].push_back(pcard);
-        ////kdiy/////
-		maindeck[player].push_back(pcard);
-        ////kdiy/////
 		pcard->owner = player;
 		pcard->controler = player;
 		pcard->location = LOCATION_DECK;
@@ -136,9 +129,6 @@ void ClientField::Initial(uint8_t player, uint32_t deckc, uint32_t extrac) {
 	for(uint32_t i = 0; i < extrac; ++i) {
 		pcard = new ClientCard{};
 		extra[player].push_back(pcard);
-        ////kdiy/////
-		mainextra[player].push_back(pcard);
-        ////kdiy/////
 		pcard->owner = player;
 		pcard->controler = player;
 		pcard->location = LOCATION_EXTRA;
@@ -654,10 +644,6 @@ void ClientField::ReplaySwap() {
 		for(const auto& pcard : zone)
 			reset(pcard);
 	};
-    ////kdiy///////
-	std::swap(maindeck[0], maindeck[1]);
-	std::swap(mainextra[0], mainextra[1]);
-    ////kdiy///////
 	std::swap(deck[0], deck[1]);
 	std::swap(hand[0], hand[1]);
 	std::swap(mzone[0], mzone[1]);
@@ -863,7 +849,8 @@ void ClientField::GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df
 		////////kdiy///////////
 		//if(location == LOCATION_MZONE) {
 			// if(controler == 0)
-		if(((location == LOCATION_MZONE && !pcard->is_sanct) || (location == LOCATION_SZONE && pcard->is_orica)) && !pcard->equipTarget) {
+		bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
+		if((location == LOCATION_MZONE || location == LOCATION_SZONE) && is_orica) {
             if((controler == 0 || pcard->is_attack) && !pcard->attack_me)
 		////////kdiy///////////
 				*r = (pcard->position & POS_DEFENSE) ? selfDEF : selfATK;
@@ -878,7 +865,7 @@ void ClientField::GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df
 			*r += facedown;
 			////////kdiy///////////
 			//if(location == LOCATION_MZONE && pcard->position & POS_DEFENSE)
-			if(((location == LOCATION_MZONE && !pcard->is_sanct) || (location == LOCATION_SZONE && pcard->is_orica)) && (pcard->position & POS_DEFENSE))
+			if(((location == LOCATION_MZONE || location == LOCATION_SZONE) && is_orica) && (pcard->position & POS_DEFENSE))
 			////////kdiy///////////
 				r->Y = irr::core::PI + 0.001f;
 		}

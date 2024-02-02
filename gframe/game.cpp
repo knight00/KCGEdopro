@@ -1492,10 +1492,10 @@ void Game::Initialize() {
         icon2[i]->setVisible(false);
         ebName_replay[i] = env->addEditBox(L"", Scale(65, 45 + i * 25, 165, 65 + i * 25), true, wCharacterReplay, EDITBOX_REPLAYNAME);
         ebName_replay[i]->setVisible(false);
-        btnCharacterSelect_replayreset[i] = env->addButton(Scale(168, 45 + i * 25, 218, 65 + i * 25), wCharacterReplay, BUTTON_NAMERESET_REPLAY, gDataManager->GetSysString(8065).data());
+        btnCharacterSelect_replayreset[i] = env->addButton(Scale(168, 45 + i * 25, 248, 65 + i * 25), wCharacterReplay, BUTTON_NAMERESET_REPLAY, gDataManager->GetSysString(8065).data());
         defaultStrings.emplace_back(btnCharacterSelect_replayreset[i], 8065);
         btnCharacterSelect_replayreset[i]->setVisible(false);
-        ebCharacter_replay[i] = AddComboBox(env, Scale(221, 45 + i * 25, 321, 65 + i * 25), wCharacterReplay, COMBOBOX2_CHARACTER + i);
+        ebCharacter_replay[i] = AddComboBox(env, Scale(251, 45 + i * 25, 351, 65 + i * 25), wCharacterReplay, COMBOBOX2_CHARACTER + i);
         ebCharacter_replay[i]->clear();
 #ifdef VIP
         ebCharacter_replay[i]->addItem(gDataManager->GetSysString(8047).data());
@@ -1514,14 +1514,14 @@ void Game::Initialize() {
         ebCharacter_replay[i]->setVisible(false);
 	}
     btnCharacter_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(375, 45, 575, 345), wCharacterReplay, BUTTON_CHARACTER);
-	btnCharacter_replay->setDrawBorder(true);
+	btnCharacter_replay->setDrawBorder(false);
 	btnCharacter_replay->setImageSize(Scale(0, 0, 200, 300).getSize());
 	btnCharacterSelect1_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(375, 345, 395, 370), wCharacterReplay, BUTTON_CHARACTER_SELECT);
-	btnCharacterSelect1_replay->setDrawBorder(true);
+	btnCharacterSelect1_replay->setDrawBorder(false);
 	btnCharacterSelect1_replay->setImageSize(Scale(0, 0, 20, 20).getSize());
 	btnCharacterSelect1_replay->setImage(imageManager.tcharacterselect);
 	btnCharacterSelect2_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(555, 345, 575, 370), wCharacterReplay, BUTTON_CHARACTER_SELECT2);
-	btnCharacterSelect2_replay->setDrawBorder(true);
+	btnCharacterSelect2_replay->setDrawBorder(false);
 	btnCharacterSelect2_replay->setImageSize(Scale(0, 0, 20, 20).getSize());
 	btnCharacterSelect2_replay->setImage(imageManager.tcharacterselect2);
 
