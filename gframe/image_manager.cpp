@@ -600,6 +600,8 @@ bool ImageManager::Initial() {
 	ASSIGN_DEFAULT(tCXyz);
     tCrack = loadTextureAnySize(EPRO_TEXT("crack"_sv));
 	ASSIGN_DEFAULT(tCrack);
+	tCardinfo = loadTextureAnySize(EPRO_TEXT("showdeck"_sv));
+    ASSIGN_DEFAULT(tCardinfo);
 	tCard = loadTextureAnySize(EPRO_TEXT("showcard"_sv));
     ASSIGN_DEFAULT(tCard);
 	tMain = loadTextureFixedSize(EPRO_TEXT("maindeck"_sv), 30, 30);
@@ -1467,23 +1469,21 @@ std::tuple<irr::video::ITexture*, irr::video::SColor> ImageManager::GetTextureCl
 			auto downloaded = driver->getTexture({ path.data(), static_cast<irr::u32>(path.size()) });
 			tCloseup.emplace(code, downloaded);
 
-            const auto& image = driver->createImage(downloaded, irr::core::position2d<irr::s32>(0, 0), downloaded->getSize());
-			unsigned long long r = 0, g = 0, b = 0;
+            irr::video::SColor* pixels = (irr::video::SColor*)downloaded->lock();
+            int pixelCount = downloaded->getOriginalSize().Width * downloaded->getOriginalSize().Height;
+			downloaded->unlock();
+            unsigned long long r = 0, g = 0, b = 0;
 			unsigned long long totalAlpha = 0;
 			unsigned count = 0;
 			// scan through each pixel in the image data and accumulate the total color
-			for(auto y = 0; y < image->getDimension().Height; y++) {
-				for(auto x = 0; x < image->getDimension().Width; x++) {
-					irr::video::SColor color = image->getPixel(x, y);
-					if(color.getAlpha() > 200) {
-						r += color.getRed();
-						g += color.getGreen();
-						b += color.getBlue();
-						count++;
-					}
+			for(int i = 0; i < pixelCount; i++) {
+                if(pixels[i].getAlpha() > 100) {
+                    count++;
+					r += pixels[i].getRed();
+					g += pixels[i].getGreen();
+					b += pixels[i].getBlue();
 				}
 			}
-			image->drop();
 			// calculate the average color
 			r /= count;
 			g /= count;
@@ -1492,7 +1492,6 @@ std::tuple<irr::video::ITexture*, irr::video::SColor> ImageManager::GetTextureCl
             if(g > 120) g = 255;
             if(b > 120) b = 255;
             tCloseupcolor.emplace(code, irr::video::SColor(255, r, g, b));
-            
 			return { downloaded, irr::video::SColor(255, r, g, b) };
 		}
 		return { nullptr, irr::video::SColor(255, 255, 255, 0) };
@@ -1511,23 +1510,21 @@ std::tuple<irr::video::ITexture*, irr::video::SColor> ImageManager::GetTextureCl
 			if(img) {
 				tCloseup.emplace(code, img);
                 
-                const auto& image = driver->createImage(img, irr::core::position2d<irr::s32>(0, 0), img->getSize());
+                irr::video::SColor* pixels = (irr::video::SColor*)img->lock();
+                int pixelCount = img->getOriginalSize().Width * img->getOriginalSize().Height;
+                img->unlock();
                 unsigned long long r = 0, g = 0, b = 0;
                 unsigned long long totalAlpha = 0;
                 unsigned count = 0;
                 // scan through each pixel in the image data and accumulate the total color
-                for(auto y = 0; y < image->getDimension().Height; y++) {
-                    for(auto x = 0; x < image->getDimension().Width; x++) {
-                        irr::video::SColor color = image->getPixel(x, y);
-                        if(color.getAlpha() > 200) {
-                            r += color.getRed();
-                            g += color.getGreen();
-                            b += color.getBlue();
-                            count++;
-                        }
+                for(int i = 0; i < pixelCount; i++) {
+                    if(pixels[i].getAlpha() > 100) {
+                        count++;
+                        r += pixels[i].getRed();
+                        g += pixels[i].getGreen();
+                        b += pixels[i].getBlue();
                     }
                 }
-                image->drop();
                 // calculate the average color
                 r /= count;
                 g /= count;
@@ -1536,7 +1533,6 @@ std::tuple<irr::video::ITexture*, irr::video::SColor> ImageManager::GetTextureCl
                 if(g > 120) g = 255;
                 if(b > 120) b = 255;
                 tCloseupcolor.emplace(code, irr::video::SColor(255, r, g, b));
-                
 				return { img, irr::video::SColor(255, r, g, b) };
 			}
 		}

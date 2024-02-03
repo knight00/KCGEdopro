@@ -230,6 +230,7 @@ public:
 	A(tCXyz)
 	A(tCrack)
 	A(tCard)
+	A(tCardinfo)
 	A(tMain)
 	A(tDeck)
 	A(tGrave)

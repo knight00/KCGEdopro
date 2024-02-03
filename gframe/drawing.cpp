@@ -402,8 +402,17 @@ void Game::DrawCard(ClientCard* pcard) {
 	irr::video::ITexture* cardcloseup; irr::video::SColor cardcloseupcolor;
 	std::tie(cardcloseup, cardcloseupcolor) = imageManager.GetTextureCloseup(pcard->code, pcard->alias);
 	matManager.mTexture.AmbientColor = 0xffffffff;
-	bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
+	bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK || pcard->position == POS_FACEUP_DEFENSE)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
 	bool is_pzone = (pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && (pcard->location & LOCATION_SZONE) && !is_orica;
+    int pattern = linePatternD3D - 14;
+    if(linePatternD3D < 15)
+        pattern += 15;
+    auto drawLine = [&](const auto& pos0, const auto& pos1, const auto& pos2, const auto& pos3, irr::video::SColor color) -> void {
+        driver->draw3DLineW(pos0, pos1, color, (pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup ? 10 : 8);
+        driver->draw3DLineW(pos1, pos3, color, (pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup ? 10 : 8);
+        driver->draw3DLineW(pos3, pos2, color, (pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup ? 10 : 8);
+        driver->draw3DLineW(pos2, pos0, color, (pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup ? 10 : 8);
+    };
 	///kdiy////////
 	matManager.mCard.AmbientColor = 0xffffffff;
 	matManager.mCard.DiffuseColor = ((int)std::round(pcard->curAlpha) << 24) | 0xffffff;
@@ -427,8 +436,7 @@ void Game::DrawCard(ClientCard* pcard) {
 			if (ya <= yd)
 				atkr.Z += irr::core::PI;
 			pcard->mTransform.setRotationRadians(atkr);
-		} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && 
-		is_pzone
+		} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && is_pzone
 			&& !gGameConfig->topdown_view) {
 			pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(pcard->controler == 0 ? -0.32f : 0.32f, pcard->controler == 0 ? 0 : -0.8f, 0));
 			pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(-irr::core::PI / 3, 0, pcard->controler == 0 ? -irr::core::PI / 5 : -irr::core::PI + irr::core::PI / 5));
@@ -462,13 +470,11 @@ void Game::DrawCard(ClientCard* pcard) {
 		if ((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP)))
 			///kdiy////////
 			//DrawSelectionLine(matManager.vCardOutline, !pcard->is_selected, 2, outline_color);
-		{
-			if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup && !(pcard->cmdFlag & COMMAND_ATTACK))
-				DrawSelectionLine(matManager.vCardOutline2, !pcard->is_selected, 2, outline_color);
-			else
-				DrawSelectionLine(matManager.vCardOutline, !pcard->is_selected, 2, outline_color);
-		}
-		///kdiy////////
+		    {
+                driver->setMaterial(matManager.mOutLine);
+                drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffff00ff);
+            }
+            ///kdiy////////
 		else
 			DrawSelectionLine(matManager.vCardOutliner, !pcard->is_selected, 2, outline_color);
 	}
@@ -477,13 +483,11 @@ void Game::DrawCard(ClientCard* pcard) {
 		if ((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP)))
 			///kdiy////////
 			//DrawSelectionLine(matManager.vCardOutline, true, 2, outline_color);
-		{
-			if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup && !(pcard->cmdFlag & COMMAND_ATTACK))
-				DrawSelectionLine(matManager.vCardOutline2, true, 2, outline_color);
-			else
-				DrawSelectionLine(matManager.vCardOutline, true, 2, outline_color);
-		}
-		///kdiy////////
+            {
+                driver->setMaterial(matManager.mOutLine);
+                drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffffff00);
+            }
+            ///kdiy////////
 		else
 			DrawSelectionLine(matManager.vCardOutliner, true, 2, outline_color);
 	}
@@ -513,17 +517,7 @@ void Game::DrawCard(ClientCard* pcard) {
 	///kdiy////////
     if(pcard->is_activatable) {
         driver->setMaterial(matManager.mOutLine);
-        int pattern = linePatternD3D - 14;
-        if(linePatternD3D < 15) {
-            pattern += 15;
-        }
-        auto drawLine = [&](const auto& pos1, const auto& pos2) -> void {
-            driver->draw3DLineW(pos1, pos2, 0xffffff00, (pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup ? 10 : 8);
-        };
-        drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos);
-        drawLine(matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[3].Pos);
-        drawLine(matManager.vCardOutliner[3].Pos, matManager.vCardOutliner[2].Pos);
-        drawLine(matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[0].Pos);
+        drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff00ff00);
     }
 	if((pcard->location & LOCATION_ONFIELD)) {
 		if ((pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup) {
@@ -941,7 +935,7 @@ void Game::DrawMisc() {
 			/////////kdiy////////////
 			//if (pcard && pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)))
 			if(!pcard) continue;
-			bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
+			bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK || pcard->position == POS_FACEUP_DEFENSE)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
 			if(pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && is_orica && !pcard->is_attack)
 			/////////kdiy////////////
 				DrawStatus(pcard);
@@ -950,7 +944,7 @@ void Game::DrawMisc() {
 		for (int i = 0; i < 5; ++i) {
 			pcard = dField.szone[p][i];
 			if(!pcard) continue;
-			bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
+			bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK || pcard->position == POS_FACEUP_DEFENSE)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
 			if(pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && is_orica && !pcard->is_attack)
 				DrawStatus(pcard);
 		}
@@ -961,7 +955,7 @@ void Game::DrawMisc() {
 			/////////kdiy////////////
 			//if (pcard && (pcard->type & TYPE_PENDULUM) && !pcard->equipTarget)
 			if(!pcard) continue;
-			bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
+			bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK || pcard->position == POS_FACEUP_DEFENSE)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
 			bool is_pzone = (pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && (pcard->location & LOCATION_SZONE) && !is_orica;
 			if(pcard && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && is_pzone)
 			/////////kdiy////////////
@@ -1686,7 +1680,6 @@ void Game::DrawDeckBd() {
 
 	///kdiy///////
 	if(dInfo.isInDuel) {
-	{
         if(dInfo.isSingleMode && !dInfo.isHandTest) {
             mainGame->btnLocation[0]->setVisible(false);
             for(int i = 1; i < 8; ++i)
@@ -1704,19 +1697,14 @@ void Game::DrawDeckBd() {
         
 		auto show_deck = deckBuilder.GetCurrentDeck().main;
 		const auto& players = ReplayMode::cur_replay.GetPlayerNames();
-		if(players.empty())
+		if(dInfo.isReplay && players.empty())
 			return;
 		const auto& decks = ReplayMode::cur_replay.GetPlayerDecks();
-		if(players.size() > decks.size())
+		if(dInfo.isReplay && players.size() > decks.size())
 			return;
         auto turnplayer = 1 - ((dInfo.turn % 2 && dInfo.isFirst) || (!(dInfo.turn % 2) && !dInfo.isFirst));
-		const auto& self = dInfo.isTeam1 ? dInfo.selfnames : dInfo.opponames;
-		int i = 0;
-        auto show_deck3 = decks[turnplayer].main_deck;
-		for(const auto& player : self) {
-			if(i++ == dInfo.current_player[turnplayer])
-			    show_deck3 = decks[turnplayer].main_deck;
-		}
+		cardlist_type show_deck3;
+        if(dInfo.isReplay) show_deck3 = decks[(turnplayer == 0) ? dInfo.current_player[0] : dInfo.current_player[1] + dInfo.team1].main_deck;
 		auto show_deck2 = dField.deck[0];
 		if(mainGame->btnLocation[2]->isPressed()) show_deck2 = dField.grave[0];
 		if(mainGame->btnLocation[3]->isPressed()) show_deck2 = dField.remove[0];
@@ -1821,9 +1809,8 @@ void Game::DrawDeckBd() {
 			for(int i = 0; i < static_cast<int>(decksize2); ++i) {
 				if(282 + (i / cards_per_row) * 42 > 505) break;
 				DrawThumb2(show_deck2[i]->code, irr::core::vector2di(14 + (i % cards_per_row) * dx, 282 + (i / cards_per_row) * 42));
+            }
 		}
-		}
-	}
 	    return;
 	}
 	///kdiy///////

@@ -953,7 +953,16 @@ void Game::Initialize() {
 	btnShowCard = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, dimBtnSettings2, wBtnShowCard, BUTTON_SHOW_CARD));
 	btnShowCard->setDrawBorder(false);
 	btnShowCard->setImageSize(dimBtnSettings2.getSize());
-	btnShowCard->setImage(imageManager.tCard);
+	btnShowCard->setImage(imageManager.tCardinfo);
+	wBtnHideCard = AlignElementWithParent(env->addWindow(Scale(430, 80, 470, 120)));
+	wBtnHideCard->getCloseButton()->setVisible(false);
+	wBtnHideCard->setDraggable(false);
+	wBtnHideCard->setDrawTitlebar(false);
+    wBtnHideCard->setDrawBackground(false);
+	btnHideCard = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, dimBtnSettings2, wBtnHideCard, BUTTON_HIDE_CARD));
+	btnHideCard->setDrawBorder(false);
+	btnHideCard->setImageSize(dimBtnSettings2.getSize());
+	btnHideCard->setImage(imageManager.tCard);
 	wLocation = AlignElementWithParent(env->addWindow(Scale(9, 505, 300, 535)));
 	wLocation->getCloseButton()->setVisible(false);
 	wLocation->setDraggable(false);
@@ -3333,7 +3342,8 @@ bool Game::MainLoop() {
 			DrawCards();
 			DrawMisc();
 			///kdiy///////
-			DrawDeckBd();
+            if(mainGame->wLocation->isVisible())
+			    DrawDeckBd();
 			///kdiy///////
 			smgr->drawAll();
 			driver->setMaterial(irr::video::IdentityMaterial);
@@ -3389,7 +3399,7 @@ bool Game::MainLoop() {
 		wBtnSettings->setVisible(!(is_building || is_siding || dInfo.isInDuel || open_file));
 		/////kdiy//////////
 		wBtnShowCard->setVisible(dInfo.isInDuel);
-        wLocation->setVisible(dInfo.isInDuel);
+		wBtnHideCard->setVisible(dInfo.isInDuel);
 		/////kdiy//////////
 		EnableMaterial2D(true);
 		DrawGUI();
@@ -4708,6 +4718,7 @@ void Game::CloseDuelWindow() {
 	btnSideReload->setVisible(false);
 	btnLeaveGame->setVisible(false);
 	///////kdiy///////
+    wLocation->setVisible(false);
 	wCharacter->setVisible(false);
 	wAvatar[0]->setVisible(false);
 	wAvatar[1]->setVisible(false);
@@ -5391,7 +5402,8 @@ void Game::OnResize() {
 	wQQ->setRelativePosition(ResizeWin(mainMenuLeftX - 150, 200, mainMenuLeftX - 10, 450));
 	wBtnSettings->setRelativePosition(ResizeWin(0, 590, 30, 620));
 	wBtnShowCard->setRelativePosition(ResizeWin(430, 10, 470, 50));
-    wCharacter->setRelativePosition(ResizeWin(60, 120, 260, 440));
+	wBtnHideCard->setRelativePosition(ResizeWin(430, 80, 470, 120));
+    wCharacter->setRelativePosition(ResizeWin(430, 70, 470, 110));
 	////////kdiy///////
 	SetCentered(wCommitsLog);
 	SetCentered(updateWindow, false);

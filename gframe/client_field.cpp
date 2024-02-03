@@ -849,7 +849,7 @@ void ClientField::GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df
 		////////kdiy///////////
 		//if(location == LOCATION_MZONE) {
 			// if(controler == 0)
-		bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
+		bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK || pcard->position == POS_FACEUP_DEFENSE)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
 		if((location == LOCATION_MZONE || location == LOCATION_SZONE) && is_orica) {
             if((controler == 0 || pcard->is_attack) && !pcard->attack_me)
 		////////kdiy///////////

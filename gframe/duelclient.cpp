@@ -1143,6 +1143,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		/////kdiy/////
 		//mainGame->wCardImg->setVisible(true);
 		//mainGame->wInfos->setVisible(true);
+        mainGame->wLocation->setVisible(true);
 		/////kdiy/////
 		mainGame->wPhase->setVisible(true);
 		mainGame->btnSideOK->setVisible(false);
@@ -1773,7 +1774,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 			PlayChant(SoundManager::CHANT::DESTROY, nullptr, previous.controler);
 		if(previous.location != current.location && (reason & REASON_RELEASE) && firstone)
 			PlayChant(SoundManager::CHANT::RELEASE, nullptr, previous.controler);
-		bool is_orica = (((current.position & POS_FACEUP) && (current.position == POS_FACEUP_ATTACK)) || ((current.position & POS_FACEDOWN) && (current.position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
+		bool is_orica = (((current.position & POS_FACEUP) && (current.position == POS_FACEUP_ATTACK || current.position == POS_FACEUP_DEFENSE)) || ((current.position & POS_FACEDOWN) && (current.position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
 		bool cpzone = (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && ((current.location & LOCATION_SZONE) && (current.sequence == 0 || current.sequence == 6))  && !is_orica;
         if(cpzone)
             PlayChantcode(SoundManager::CHANT::PSCALE, 0, 0, current.controler, 0);
@@ -1864,7 +1865,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		auto cd = gDataManager->GetCardData(code);
 		uint32_t code2 = 0;
 		if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
-		bool is_orica = (((info.position & POS_FACEUP) && (info.position == POS_FACEUP_ATTACK)) || ((info.position & POS_FACEDOWN) && (info.position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
+		bool is_orica = (((info.position & POS_FACEUP) && (info.position == POS_FACEUP_ATTACK || info.position == POS_FACEUP_DEFENSE)) || ((info.position & POS_FACEDOWN) && (info.position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
 		bool cpzone = (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && ((cl & LOCATION_SZONE) && (cs == 0 || cs == 6))  && !is_orica;
 		//////ktest///////
 		//默认摄像头

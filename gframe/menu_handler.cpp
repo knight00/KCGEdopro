@@ -89,6 +89,7 @@ static void LoadReplay() {
 	/////kdiy/////
 	//mainGame->wCardImg->setVisible(true);
 	//mainGame->wInfos->setVisible(true);
+    mainGame->wLocation->setVisible(true);
 	/////kdiy/////
 	mainGame->wReplay->setVisible(true);
 	mainGame->wReplayControl->setVisible(true);
@@ -830,7 +831,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
                 auto& replay = ReplayMode::cur_replay;
 				const auto& names1 = replay.GetPlayerNames();
 				auto& names = replay.playersC;
-                if(names.size() < 2)
+                if(names.empty() || names.size() < 2)
                     names.assign(names1.begin(), names1.end());
 				for(int i = 0; i < replay.GetPlayersCount(0); i++) {
                     if(gSoundManager->character[i] > CHARACTER_VOICE - 1)
@@ -871,7 +872,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
                 auto& replay = ReplayMode::cur_replay;
 				const auto& names1 = replay.GetPlayerNames();
 				auto& names = replay.playersC;
-				if(names.size() < 2) break;
+				if(names.empty() || names.size() < 2) break;
 				auto elem = static_cast<irr::gui::IGUIButton*>(event.GUIEvent.Caller);
                 for(int i = 0; i < 6; i++) {
                     if(elem == mainGame->btnCharacterSelect_replayreset[i]) {
@@ -1217,7 +1218,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				//const auto& names = replay.GetPlayerNames();
 				const auto& names1 = replay.GetPlayerNames();
                 auto& names = replay.playersC;
-                if(names.size() < 2)
+                if(names.empty() || names.size() < 2)
                     names.assign(names1.begin(), names1.end());
                 ///kdiy////
 				for(int i = 0; i < replay.GetPlayersCount(0); i++) {
@@ -1473,7 +1474,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
                 auto& replay = ReplayMode::cur_replay;
 				const auto& names1 = replay.GetPlayerNames();
                 auto& names = replay.playersC;
-                if(names.size() < 2)
+                if(names.empty() || names.size() < 2)
                     names.assign(names1.begin(), names1.end());
 				auto elem = static_cast<irr::gui::IGUIEditBox*>(event.GUIEvent.Caller);
                 for(int i = 0; i < 6; i++) {

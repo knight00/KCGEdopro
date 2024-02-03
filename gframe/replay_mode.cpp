@@ -97,11 +97,11 @@ int ReplayMode::ReplayThread() {
 	// mainGame->dInfo.selfnames.assign(names.begin(), first_oppo_player);
 	// mainGame->dInfo.opponames.assign(first_oppo_player, names.end());
 	auto names2 = cur_replay.playersC;
-	auto oppo_player1 = names2.begin() + mainGame->dInfo.team1;
-    if(names2.size() < 2) {
+    if(names2.empty() || names2.size() < 2) {
         mainGame->dInfo.selfnames.assign(names.begin(), first_oppo_player);
         mainGame->dInfo.opponames.assign(first_oppo_player, names.end());
     } else {
+        auto oppo_player1 = names2.begin() + mainGame->dInfo.team1;
         mainGame->dInfo.selfnames.assign(names2.begin(), oppo_player1);
         mainGame->dInfo.opponames.assign(oppo_player1, names2.end());
     }

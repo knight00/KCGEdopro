@@ -216,6 +216,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					mainGame->wPhase->setVisible(false);
 					mainGame->btnLeaveGame->setVisible(false);
 					///////kdiy///////
+                    mainGame->wLocation->setVisible(false);
 					mainGame->wAvatar[0]->setVisible(false);
 					mainGame->wAvatar[1]->setVisible(false);
 					///////kdiy///////
@@ -2078,6 +2079,13 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 					mainGame->HideElement(mainGame->wCardImg);
 				mainGame->env->setFocus(mainGame->wInfos);
 				mainGame->env->setFocus(mainGame->wCardImg);
+				break;
+			}
+			case BUTTON_HIDE_CARD: {
+				if(!mainGame->wLocation->isVisible())
+					mainGame->PopupElement(mainGame->wLocation);
+                else
+					mainGame->HideElement(mainGame->wLocation);
 				break;
 			}
 			case BUTTON_LOCATION_0: {

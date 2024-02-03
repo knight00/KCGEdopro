@@ -241,6 +241,7 @@ restart:
 	/////kdiy/////
 	//mainGame->wCardImg->setVisible(true);
 	//mainGame->wInfos->setVisible(true);
+    mainGame->wLocation->setVisible(true);
 	/////kdiy/////
 	mainGame->btnLeaveGame->setVisible(true);
 	mainGame->btnLeaveGame->setText(gDataManager->GetSysString(1210).data());

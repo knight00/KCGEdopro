@@ -500,8 +500,10 @@ public:
 	irr::gui::IGUIStaticText* updateSubprogressText;
 	IProgressBar* updateProgressBottom;
     /////kdiy/////////
-	irr::gui::CGUIImageButton* btnShowCard;
 	irr::gui::IGUIWindow* wBtnShowCard;
+	irr::gui::IGUIWindow* wBtnHideCard;
+	irr::gui::CGUIImageButton* btnShowCard;
+	irr::gui::CGUIImageButton* btnHideCard;
 	irr::gui::IGUIWindow* wLocation;
 	irr::gui::IGUIButton* btnLocation[8];
 	irr::gui::IGUIWindow* pwupdateWindow;
