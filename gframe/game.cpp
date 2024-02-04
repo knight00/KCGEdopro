@@ -840,7 +840,7 @@ void Game::Initialize() {
 	btnHostCancel2 = env->addButton(Scale(260, 385, 370, 410), wCreateHost2, BUTTON_LOCAL_HOST_CANCEL, gDataManager->GetSysString(1212).data());
 	defaultStrings.emplace_back(btnHostCancel2, 1212);
 
-	wCharacter = env->addWindow(Scale(60, 120, 260, 440));
+	wCharacter = env->addWindow(Scale(20, 120, 220, 440));
 	wCharacter->getCloseButton()->setVisible(false);
 	wCharacter->setDraggable(false);
 	wCharacter->setDrawTitlebar(false);
@@ -1486,7 +1486,7 @@ void Game::Initialize() {
     btnCharacterSelect_replay->setEnabled(false);
     defaultStrings.emplace_back(btnCharacterSelect_replay, 8025);
 #endif
-    wCharacterReplay = env->addWindow(Scale(220, 100, 835, 500), false, gDataManager->GetSysString(8015).data());
+    wCharacterReplay = env->addWindow(Scale(220, 100, 880, 500), false, gDataManager->GetSysString(8015).data());
 	defaultStrings.emplace_back(wCharacterReplay, 8015);
     wCharacterReplay->getCloseButton()->setVisible(false);
 	wCharacterReplay->setVisible(false);
@@ -1522,14 +1522,14 @@ void Game::Initialize() {
         ebCharacter_replay[i]->setMaxSelectionRows(10);
         ebCharacter_replay[i]->setVisible(false);
 	}
-    btnCharacter_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(375, 45, 575, 345), wCharacterReplay, BUTTON_CHARACTER);
+    btnCharacter_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(420, 45, 620, 345), wCharacterReplay, BUTTON_CHARACTER);
 	btnCharacter_replay->setDrawBorder(false);
 	btnCharacter_replay->setImageSize(Scale(0, 0, 200, 300).getSize());
-	btnCharacterSelect1_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(375, 345, 395, 370), wCharacterReplay, BUTTON_CHARACTER_SELECT);
+	btnCharacterSelect1_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(420, 345, 440, 370), wCharacterReplay, BUTTON_CHARACTER_SELECT);
 	btnCharacterSelect1_replay->setDrawBorder(false);
 	btnCharacterSelect1_replay->setImageSize(Scale(0, 0, 20, 20).getSize());
 	btnCharacterSelect1_replay->setImage(imageManager.tcharacterselect);
-	btnCharacterSelect2_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(555, 345, 575, 370), wCharacterReplay, BUTTON_CHARACTER_SELECT2);
+	btnCharacterSelect2_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(600, 345, 620, 370), wCharacterReplay, BUTTON_CHARACTER_SELECT2);
 	btnCharacterSelect2_replay->setDrawBorder(false);
 	btnCharacterSelect2_replay->setImageSize(Scale(0, 0, 20, 20).getSize());
 	btnCharacterSelect2_replay->setImage(imageManager.tcharacterselect2);
@@ -5401,9 +5401,6 @@ void Game::OnResize() {
 	#endif
 	wQQ->setRelativePosition(ResizeWin(mainMenuLeftX - 150, 200, mainMenuLeftX - 10, 450));
 	wBtnSettings->setRelativePosition(ResizeWin(0, 590, 30, 620));
-	wBtnShowCard->setRelativePosition(ResizeWin(430, 10, 470, 50));
-	wBtnHideCard->setRelativePosition(ResizeWin(430, 80, 470, 120));
-    wCharacter->setRelativePosition(ResizeWin(430, 70, 470, 110));
 	////////kdiy///////
 	SetCentered(wCommitsLog);
 	SetCentered(updateWindow, false);
@@ -5452,9 +5449,12 @@ void Game::OnResize() {
 	wRules->setRelativePosition(ResizeWin(630, 100, 1000, 310));
 	wReplay->setRelativePosition(ResizeWin(220, 100, 800, 520));
     ////kdiy////////////
+	wBtnShowCard->setRelativePosition(ResizeWin(430, 10, 470, 50));
+	wBtnHideCard->setRelativePosition(ResizeWin(430, 80, 470, 120));
+    wCharacter->setRelativePosition(ResizeWin(20, 120, 220, 440));
     wAvatar[0]->setRelativePosition(ResizeWin(220, 435, 360, 635));
     wAvatar[1]->setRelativePosition(ResizeWin(880, 20, 1020, 220));
-    wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 835, 500));
+    wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 880, 500));
     wHead[0]->setRelativePosition(ResizeWin(365, 5, 417, 57));
 	wHead[1]->setRelativePosition(ResizeWin(900, 5, 952, 57));
     wBody->setRelativePosition(ResizeWin(370, 175, 570, 475));

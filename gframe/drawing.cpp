@@ -403,7 +403,6 @@ void Game::DrawCard(ClientCard* pcard) {
 	std::tie(cardcloseup, cardcloseupcolor) = imageManager.GetTextureCloseup(pcard->code, pcard->alias);
 	matManager.mTexture.AmbientColor = 0xffffffff;
 	bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK || pcard->position == POS_FACEUP_DEFENSE)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
-	bool is_pzone = (pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && (pcard->location & LOCATION_SZONE) && !is_orica;
     int pattern = linePatternD3D - 14;
     if(linePatternD3D < 15)
         pattern += 15;
@@ -436,11 +435,11 @@ void Game::DrawCard(ClientCard* pcard) {
 			if (ya <= yd)
 				atkr.Z += irr::core::PI;
 			pcard->mTransform.setRotationRadians(atkr);
-		} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && is_pzone
+		} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && pcard->is_pzone
 			&& !gGameConfig->topdown_view) {
 			pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(pcard->controler == 0 ? -0.32f : 0.32f, pcard->controler == 0 ? 0 : -0.8f, 0));
 			pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(-irr::core::PI / 3, 0, pcard->controler == 0 ? -irr::core::PI / 5 : -irr::core::PI + irr::core::PI / 5));
-		} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 4 || pcard->sequence == 7)) && is_pzone
+		} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 4 || pcard->sequence == 7)) && pcard->is_pzone
 			&& !gGameConfig->topdown_view) {
 			pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(pcard->controler == 0 ? 0.32f : -0.32f, pcard->controler == 0 ? 0 : -0.8f, 0));
 			pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(-irr::core::PI / 3, 0, pcard->controler == 0 ? irr::core::PI / 5 : -irr::core::PI - irr::core::PI / 5));
@@ -662,7 +661,7 @@ void Game::DrawCard(ClientCard* pcard) {
 		driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
 	}
     ////kdiy/////////
-	if((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && is_pzone ) {
+	if((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && pcard->is_pzone ) {
 		int scale = pcard->lscale;
 		if(scale >= 0 && scale <= 13 && imageManager.tLScale[scale]) {
 			matManager.mTexture.setTexture(0, imageManager.tLScale[scale]);
@@ -670,7 +669,7 @@ void Game::DrawCard(ClientCard* pcard) {
 			driver->drawVertexPrimitiveList(matManager.vPScale, 4, matManager.iRectangle, 2);
 		}
 	}
-	if((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 4 || pcard->sequence == 7)) && is_pzone) {
+	if((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 4 || pcard->sequence == 7)) && pcard->is_pzone) {
 		int scale2 = pcard->rscale;
 		if(scale2 >= 0 && scale2 <= 13 && imageManager.tRScale[scale2]) {
 			matManager.mTexture.setTexture(0, imageManager.tRScale[scale2]);
@@ -948,19 +947,13 @@ void Game::DrawMisc() {
 			if(pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && is_orica && !pcard->is_attack)
 				DrawStatus(pcard);
 		}
-		/////////kdiy////////////
-		// Draw pendulum scales
-		for (const auto pzone : pzones) {
-			pcard = dField.szone[p][pzone];
-			/////////kdiy////////////
-			//if (pcard && (pcard->type & TYPE_PENDULUM) && !pcard->equipTarget)
-			if(!pcard) continue;
-			bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK || pcard->position == POS_FACEUP_DEFENSE)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
-			bool is_pzone = (pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && (pcard->location & LOCATION_SZONE) && !is_orica;
-			if(pcard && (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && is_pzone)
-			/////////kdiy////////////
-				DrawPendScale(pcard);
-		}
+		// // Draw pendulum scales
+		// for (const auto pzone : pzones) {
+		// 	pcard = dField.szone[p][pzone];
+		// 	if (pcard && (pcard->type & TYPE_PENDULUM) && !pcard->equipTarget)
+		// 		DrawPendScale(pcard);
+		// }
+        /////////kdiy////////////
 		if (dField.extra[p].size()) {
 			const auto str = (dField.extra_p_count[p]) ? epro::format(L"{}({})", dField.extra[p].size(), dField.extra_p_count[p]) : epro::format(L"{}", dField.extra[p].size());
 			DrawStackIndicator(str, matManager.getExtra()[p], (p == 1));

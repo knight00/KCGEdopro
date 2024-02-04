@@ -1741,13 +1741,12 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto reason = BufferIO::Read<uint32_t>(pbuf);
 		//extra parameter
 		const auto rp = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
+		const auto cpzone = BufferIO::Read<bool>(pbuf);
 		const auto firstone = BufferIO::Read<bool>(pbuf);
         auto cd = gDataManager->GetCardData(code);
         uint32_t code2 = 0;
         if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
-		if(current.location & LOCATION_OVERLAY) break;
-		ClientCard* pcard = mainGame->dField.GetCard(mainGame->LocalPlayer(current.controler), current.location, current.sequence, current.position);
-		if(!pcard) break;
+        if((previous.location & LOCATION_OVERLAY) || (current.location & LOCATION_OVERLAY)) break;
         if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY && chapter > 0) {
             if(!(current.position & POS_FACEUP)) return;
             for(uint8_t index = 1; index < mainGame->mode->modePloats[chapter - 1]->size(); index++) {
@@ -1772,11 +1771,9 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         }
 		if(previous.location != current.location && (reason & REASON_DESTROY) && rp != 2 && rp != previous.controler && firstone)
 			PlayChant(SoundManager::CHANT::DESTROY, nullptr, previous.controler);
-		if(previous.location != current.location && (reason & REASON_RELEASE) && firstone)
+		if(previous.location != current.location && (reason & REASON_RELEASE) && rp != 2 && rp == previous.controler && firstone)
 			PlayChant(SoundManager::CHANT::RELEASE, nullptr, previous.controler);
-		bool is_orica = (((current.position & POS_FACEUP) && (current.position == POS_FACEUP_ATTACK || current.position == POS_FACEUP_DEFENSE)) || ((current.position & POS_FACEDOWN) && (current.position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
-		bool cpzone = (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && ((current.location & LOCATION_SZONE) && (current.sequence == 0 || current.sequence == 6))  && !is_orica;
-        if(cpzone)
+		if(cpzone)
             PlayChantcode(SoundManager::CHANT::PSCALE, 0, 0, current.controler, 0);
 		break;
     }
@@ -1861,12 +1858,11 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		/*const auto ct = */CompatRead<uint8_t, uint32_t>(pbuf);
 		//extra parameter
         CoreUtils::loc_info previous = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+        const auto cpzone = BufferIO::Read<bool>(pbuf);
         ClientCard* pcard = mainGame->dField.GetCard(mainGame->LocalPlayer(info.controler), info.location, info.sequence, info.position);
 		auto cd = gDataManager->GetCardData(code);
 		uint32_t code2 = 0;
 		if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
-		bool is_orica = (((info.position & POS_FACEUP) && (info.position == POS_FACEUP_ATTACK || info.position == POS_FACEUP_DEFENSE)) || ((info.position & POS_FACEDOWN) && (info.position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
-		bool cpzone = (pcard->type & TYPE_PENDULUM) && (pcard->type & TYPE_SPELL) && ((cl & LOCATION_SZONE) && (cs == 0 || cs == 6))  && !is_orica;
 		//////ktest///////
 		//默认摄像头
 			// cv::VideoCapture cap("./movies/c28649820.mp4");
@@ -1935,7 +1931,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 				}
 				if(pcard->type & TYPE_MONSTER) extra |= 0x800;
 				if(mainGame->LocalPlayer(previous.controler) == mainGame->LocalPlayer(info.controler) && previous.location == info.location & (previous.position & POS_FACEDOWN) & (info.position & POS_FACEUP)) extra |= 0x400;
-                if(cpzone)
+                if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && cpzone)
                     PlayChantcode(SoundManager::CHANT::PENDULUM, code, code2, cc, extra);
 			    else
 				    PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, cc, extra);
@@ -4239,6 +4235,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         //////kdiy///
 		//extra parameter
 		const auto rp = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
+		const auto cpzone = BufferIO::Read<bool>(pbuf);
 		const auto firstone = BufferIO::Read<bool>(pbuf);
         //////kdiy///
 		if (previous.location != current.location) {
@@ -4250,6 +4247,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		auto lock = LockIf();
 		if (previous.location == 0) {
 			ClientCard* pcard = new ClientCard{};
+			//////kdiy///
+			pcard->is_pzone = cpzone;
+			//////kdiy///
 			pcard->position = current.position;
 			pcard->SetCode(code);
 			mainGame->dField.AddCard(pcard, current.controler, current.location, current.sequence);
@@ -4293,6 +4293,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		} else {
 			if (!(previous.location & LOCATION_OVERLAY) && !(current.location & LOCATION_OVERLAY)) {
 				ClientCard* pcard = mainGame->dField.GetCard(previous.controler, previous.location, previous.sequence);
+				//////kdiy///
+                pcard->is_pzone = cpzone;
+				//////kdiy///
 				if (pcard->code != code && (code != 0 || current.location == LOCATION_EXTRA))
 					pcard->SetCode(code);
 				pcard->cHint = 0;
@@ -4347,10 +4350,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					}
 				}
 			} else if (!(previous.location & LOCATION_OVERLAY)) {
-                //////kdiy///
-                Play(SoundManager::SFX::OVERLAY);
-                //////kdiy///
 				ClientCard* pcard = mainGame->dField.GetCard(previous.controler, previous.location, previous.sequence);
+				//////kdiy///
+                Play(SoundManager::SFX::OVERLAY);
+                pcard->is_pzone = cpzone;
+				//////kdiy///
 				if (code != 0 && pcard->code != code)
 					pcard->SetCode(code);
 				pcard->counters.clear();
