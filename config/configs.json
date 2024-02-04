@@ -57,6 +57,10 @@
 		{
 			"url": "https://code.mycard.moe/perfectdicky/Rush-HD-Pictures/-/raw/pics/{}.png",
 			"type": "pic"
+		},	
+		{
+			"url": "https://code.mycard.moe/perfectdicky/Rush-HD-Pictures/-/raw/master/pics/{}.png",
+			"type": "pic"
 		},
 		{
 			"url": "default",
