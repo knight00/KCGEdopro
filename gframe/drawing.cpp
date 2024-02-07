@@ -340,9 +340,7 @@ void Game::DrawCards() {
 		for(int i = 0; i < 7; i++) {
 			for(int j = 0; j < 10; j++) {
 				if(!dField.mzone[p][i] && haloNodeexist[p][i][j]) {
-					int halosize = haloNode[p][i][j].size();
-					for(int k = 0; k < halosize; k++)
-					    haloNode[p][i][j].pop_back();
+					haloNode[p][i][j].clear();
 				    haloNodeexist[p][i][j] = false;
 				}
 			}
@@ -350,9 +348,7 @@ void Game::DrawCards() {
 		for(int i = 0; i < 5; i++) {
 			for(int j = 0; j < 10; j++) {
 				if(!dField.szone[p][i] && haloNodeexist[p][i+7][j]) {
-					int halosize = haloNode[p][i+7][j].size();
-				    for(int k = 0; k < halosize; k++)
-						haloNode[p][i+7][j].pop_back();
+					haloNode[p][i+7][j].clear();
 				    haloNodeexist[p][i+7][j] = false;
 				}
 			}
@@ -399,7 +395,7 @@ void Game::DrawCard(ClientCard* pcard) {
 		}
 	}
 	///kdiy////////
-	irr::video::ITexture* cardcloseup; irr::video::SColor cardcloseupcolor;
+	irr::video::ITexture* cardcloseup; irr::video::SColor cardcloseupcolor = irr::video::SColor(255, 255, 255, 0);
 	std::tie(cardcloseup, cardcloseupcolor) = imageManager.GetTextureCloseup(pcard->code, pcard->alias);
 	matManager.mTexture.AmbientColor = 0xffffffff;
 	bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK || pcard->position == POS_FACEUP_DEFENSE)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
@@ -561,7 +557,7 @@ void Game::DrawCard(ClientCard* pcard) {
 	if (pcard->is_moving)
 		return;
 	///kdiy////////
-	if((pcard->position & POS_FACEUP) && pcard->type & TYPE_XYZ) {
+	if((pcard->type & TYPE_XYZ) && (pcard->location & LOCATION_ONFIELD)) {
 		auto cd = gDataManager->GetCardData(pcard->code);
 		if(cd) {
 			auto setcodes = cd->setcodes;
@@ -589,6 +585,7 @@ void Game::DrawCard(ClientCard* pcard) {
 					driver->drawVertexPrimitiveList(matManager.vCXyz, 4, matManager.iRectangle, 2);
 				}
 			} else {
+				int sequence = (pcard->location & LOCATION_SZONE) ? pcard->sequence + 7 : pcard->sequence;
 				int incre = 0;
 				int incre2 = 0;
 				for(size_t i = 0; i < pcard->overlayed.size(); i++) {
@@ -599,7 +596,6 @@ void Game::DrawCard(ClientCard* pcard) {
 					if(pcard->overlayed.size() / 4 > 0) power = pcard->overlayed.size() / 4;
 					if(pcard->overlayed.size() > 2 && i % 2 == 0 && i < pcard->overlayed.size() / 2) incre += 1;
 					if(pcard->overlayed.size() > 2 && i % 2 == 0 && i >= pcard->overlayed.size() / 2) incre2 += 1;
-					int sequence = (pcard->location & LOCATION_SZONE) ? pcard->sequence + 7 : pcard->sequence;
 					matManager.mTexture.setTexture(0, imageManager.tXyz);
 					matManager.mTexture.AmbientColor = cardcloseupcolor;
 					driver->setMaterial(matManager.mTexture);
@@ -632,15 +628,15 @@ void Game::DrawCard(ClientCard* pcard) {
 						}
 					}
 					haloNode[pcard->controler][sequence][i].insert(haloNode[pcard->controler][sequence][i].begin(), pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2));
-					while(haloNode[pcard->controler][sequence][i].size() > 80)
+					if(haloNode[pcard->controler][sequence][i].size() > 80) {
 						haloNode[pcard->controler][sequence][i].pop_back();
-					if(i + 1 == pcard->overlayed.size() && haloNodeexist[pcard->controler][sequence][i + 1]) {
-						for(int j = i + 1; !haloNodeexist[pcard->controler][sequence][j + 1]; j++) {
-							int halosize = haloNode[pcard->controler][sequence][j].size();
-							for(int k = 0; k < halosize; k++)
-								haloNode[pcard->controler][sequence][j].pop_back();
-							haloNodeexist[pcard->controler][sequence][j] = false;
-						}
+					}
+				}
+				if(haloNodeexist[pcard->controler][sequence][pcard->overlayed.size()]) {
+					for(size_t j = pcard->overlayed.size(); ; j++) {
+						if(!haloNodeexist[pcard->controler][sequence][j]) break;
+						haloNode[pcard->controler][sequence][j].clear();
+						haloNodeexist[pcard->controler][sequence][j] = false;
 					}
 				}
 				matManager.mTexture.AmbientColor = 0xffffffff;

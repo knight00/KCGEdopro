@@ -1449,7 +1449,7 @@ std::tuple<irr::video::ITexture*, irr::video::SColor> ImageManager::GetTextureCl
     if(chk1)
 		return { chk1, chk1c };
     else
-        return {chk2, chk2c };
+        return { chk2, chk2c };
 }
 std::tuple<irr::video::ITexture*, irr::video::SColor> ImageManager::GetTextureCloseupCode(uint32_t code, bool is_closeup) {
 	if(code == 0 || (is_closeup && !gGameConfig->closeup))
