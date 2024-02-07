@@ -43,7 +43,7 @@ public:
 	uint32_t alias;
 	uint32_t type;
 	/////////kdiy/////////
-	bool is_activatable;
+	bool is_activable;
 	//uint32_t level;
 	int32_t level;
 	int32_t rank;

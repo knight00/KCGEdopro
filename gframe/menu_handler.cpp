@@ -828,6 +828,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
             ////kdiy////////
             case BUTTON_CHARACTER_REPLAY: {
 				mainGame->PopupElement(mainGame->wCharacterReplay);
+				mainGame->env->setFocus(mainGame->wCharacterReplay);
                 auto& replay = ReplayMode::cur_replay;
 				const auto& names1 = replay.GetPlayerNames();
 				auto& names = replay.playersC;

@@ -272,7 +272,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				case MSG_SELECT_YESNO:
 				case MSG_SELECT_EFFECTYN: {
 					if(highlighting_card)
-						highlighting_card->is_highlighting = false;
+					    ////kdiy///////////
+						//highlighting_card->is_highlighting = false;
+						highlighting_card->is_activable = false;
+						////kdiy///////////
 					highlighting_card = 0;
 					DuelClient::SetResponseI(1);
 					mainGame->HideElement(mainGame->wQuery, true);
@@ -310,7 +313,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				case MSG_SELECT_YESNO:
 				case MSG_SELECT_EFFECTYN: {
 					if(highlighting_card)
-						highlighting_card->is_highlighting = false;
+					    ////kdiy///////////
+						//highlighting_card->is_highlighting = false;
+						highlighting_card->is_activable = false;
+						////kdiy///////////
 					highlighting_card = 0;
 					DuelClient::SetResponseI(0);
 					mainGame->HideElement(mainGame->wQuery, true);
@@ -2070,20 +2076,18 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			case BUTTON_SHOW_CARD: {
 				if(!mainGame->wInfos->isVisible()) {
                     mainGame->wInfos->setRelativePosition(mainGame->Resize(1, 275, 301, 580));
-					mainGame->PopupElement(mainGame->wInfos);
+					mainGame->wInfos->setVisible(!mainGame->wInfos->isVisible());
                 } else
 					mainGame->HideElement(mainGame->wInfos);
 				if(!mainGame->wCardImg->isVisible())
-					mainGame->PopupElement(mainGame->wCardImg);
+					mainGame->wCardImg->setVisible(true);
 				else
 					mainGame->HideElement(mainGame->wCardImg);
-				mainGame->env->setFocus(mainGame->wInfos);
-				mainGame->env->setFocus(mainGame->wCardImg);
 				break;
 			}
 			case BUTTON_HIDE_CARD: {
 				if(!mainGame->wLocation->isVisible())
-					mainGame->PopupElement(mainGame->wLocation);
+					mainGame->wLocation->setVisible(true);
                 else
 					mainGame->HideElement(mainGame->wLocation);
 				break;
@@ -2756,14 +2760,16 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				mainGame->device->minimizeWindow();
 			return true;
 		}
-		case irr::KEY_F9: {
-			if (!event.KeyInput.PressedDown) {
-				const auto new_val = !mainGame->current_topdown;
-				SetCheckbox(mainGame->gSettings.chkTopdown, new_val);
-				SetCheckbox(mainGame->gSettings.chkKeepFieldRatio, new_val);
-			}
-			return true;
-		}
+		///kdiy///////
+		// case irr::KEY_F9: {
+		// 	if (!event.KeyInput.PressedDown) {
+		// 		const auto new_val = !mainGame->current_topdown;
+		// 		SetCheckbox(mainGame->gSettings.chkTopdown, new_val);
+		// 		SetCheckbox(mainGame->gSettings.chkKeepFieldRatio, new_val);
+		// 	}
+		// 	return true;
+		// }
+		///kdiy///////
 		case irr::KEY_F10: {
 			if(event.KeyInput.Shift)
 				gGameConfig->windowStruct.clear();
@@ -3514,7 +3520,10 @@ void ClientField::CancelOrFinish() {
 	case MSG_SELECT_YESNO:
 	case MSG_SELECT_EFFECTYN: {
 		if (highlighting_card)
-			highlighting_card->is_highlighting = false;
+			////kdiy///////////
+			//highlighting_card->is_highlighting = false;
+			highlighting_card->is_activable = false;
+			////kdiy///////////
 		highlighting_card = 0;
 		DuelClient::SetResponseI(0);
 		mainGame->HideElement(mainGame->wQuery, true);

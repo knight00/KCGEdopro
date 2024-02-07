@@ -40,6 +40,7 @@ Materials::Materials() {
 	SetS3DVertex(vAttack3, -0.85f, -1, 0.85f, 1, 0.01f, 1, 0, 0, 1, 1);
 	//SetS3DVertex(vSymbol, -0.35f, -0.35f, 0.35f, 0.35f, 0.01f, 1, 0, 0, 1, 1);
 	//SetS3DVertex(vNegate, -0.25f, -0.28f, 0.25f, 0.22f, 0.01f, 1, 0, 0, 1, 1);
+    SetS3DVertex(vSymbol0, -0.35f, -0.35f, 0.35f, 0.35f, 0.01f, 1, 0, 0, 1, 1);
     SetS3DVertex(vSymbol, -0.75f, -0.75f, 0.75f, 0.75f, 0.08f, 1, 0, 0, 1, 1);
     SetS3DVertex(vNegate, -0.7f, -0.73f, 0.7f, 0.77f, 0.08f, 1, 0, 0, 1, 1);
 	SetS3DVertex(vXyz, -0.1f, -0.1f, 0.1f, 0.1f, 0, 1, 0, 0, 1, 1);
