@@ -420,17 +420,17 @@ void Game::DrawCard(ClientCard* pcard) {
 		else
 			matManager.mCard.AmbientColor = 0xffffffff;
 		if (pcard->is_attack) {
-			float sy;
-			float xa = mainGame->dField.attacker->attPos.X;
-			float ya = mainGame->dField.attacker->attPos.Y;
-			float xd, yd;
-			xd = pcard->curPos.X;
-			yd = pcard->curPos.Y;
-			sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
-			irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
-			if (ya <= yd)
-				atkr.Z += irr::core::PI;
-			pcard->mTransform.setRotationRadians(atkr);
+            if(pcard->location & LOCATION_ONFIELD) {
+                float sy;
+                float xa = mainGame->dField.attacker->attPos.X;
+                float ya = mainGame->dField.attacker->attPos.Y;
+                float xd, yd;
+                xd = pcard->curPos.X;
+                yd = pcard->curPos.Y;
+                sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
+                irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
+                pcard->mTransform.setRotationRadians(atkr);
+            }
 		} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && pcard->is_pzone
 			&& !gGameConfig->topdown_view) {
 			pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(pcard->controler == 0 ? -0.32f : 0.32f, pcard->controler == 0 ? 0 : -0.8f, 0));
@@ -594,8 +594,6 @@ void Game::DrawCard(ClientCard* pcard) {
 				yd = pcard->curPos.Y;
 				sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
 				irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
-				if (ya <= yd)
-					atkr.Z += irr::core::PI;
 				atk.setRotationRadians(atkr);
 			}
 			else

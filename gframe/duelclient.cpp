@@ -5164,12 +5164,15 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         }
         if(acontroler == 1)
 			mainGame->dField.attacker->attack_me = true;
+        else
+			mainGame->dField.attacker->attack_me = false;
         mainGame->dField.MoveCard(mainGame->dField.attacker, 10);
 		for(auto& pcard : mainGame->dField.attacker->overlayed) {
+            pcard->is_attack = true;
             pcard->controler = mainGame->dField.attacker->controler;
 			pcard->attsequence = pcard->sequence;
             pcard->sequence = mainGame->dField.attacker->sequence;
-            pcard->location = mainGame->dField.attacker->location;
+			pcard->attack_me = mainGame->dField.attacker->attack_me;
             mainGame->dField.MoveCard(pcard, 10);
         }
         mainGame->WaitFrameSignal(10, lock);
@@ -5180,11 +5183,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         for(auto& pcard : mainGame->dField.attacker->overlayed) {
             pcard->controler = mainGame->dField.attacker->controler;
 			pcard->sequence = pcard->attsequence;
-            pcard->location = LOCATION_OVERLAY;
             mainGame->dField.MoveCard(pcard, 10);
         }
         mainGame->WaitFrameSignal(10, lock);
         mainGame->dField.attacker->is_attack = false;
+        for(auto& pcard : mainGame->dField.attacker->overlayed)
+            pcard->is_attack = false;
         ////kdiy///////////
 		return true;
 	}
