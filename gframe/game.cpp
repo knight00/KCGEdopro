@@ -2508,13 +2508,13 @@ void Game::PopulateTabSettingsWindow() {
 		tabSettings.chkQuickAnimation = env->addCheckBox(gGameConfig->quick_animation, GetNextRect(), tabPanel, CHECKBOX_QUICK_ANIMATION, gDataManager->GetSysString(1299).data());
 		menuHandler.MakeElementSynchronized(tabSettings.chkQuickAnimation);
 		defaultStrings.emplace_back(tabSettings.chkQuickAnimation, 1299);
-		tabSettings.chkTopdown = env->addCheckBox(gGameConfig->topdown_view, GetNextRect(), tabPanel, CHECKBOX_TOPDOWN, gDataManager->GetSysString(2093).data());
-		menuHandler.MakeElementSynchronized(tabSettings.chkTopdown);
-		defaultStrings.emplace_back(tabSettings.chkTopdown, 2093);
-		tabSettings.chkKeepFieldRatio = env->addCheckBox(gGameConfig->keep_aspect_ratio, GetNextRect(), tabPanel, CHECKBOX_KEEP_FIELD_ASPECT_RATIO, gDataManager->GetSysString(2094).data());
-		menuHandler.MakeElementSynchronized(tabSettings.chkKeepFieldRatio);
-		defaultStrings.emplace_back(tabSettings.chkKeepFieldRatio, 2094);
 		////kdiy///////
+		// tabSettings.chkTopdown = env->addCheckBox(gGameConfig->topdown_view, GetNextRect(), tabPanel, CHECKBOX_TOPDOWN, gDataManager->GetSysString(2093).data());
+		// menuHandler.MakeElementSynchronized(tabSettings.chkTopdown);
+		// defaultStrings.emplace_back(tabSettings.chkTopdown, 2093);
+		// tabSettings.chkKeepFieldRatio = env->addCheckBox(gGameConfig->keep_aspect_ratio, GetNextRect(), tabPanel, CHECKBOX_KEEP_FIELD_ASPECT_RATIO, gDataManager->GetSysString(2094).data());
+		// menuHandler.MakeElementSynchronized(tabSettings.chkKeepFieldRatio);
+		// defaultStrings.emplace_back(tabSettings.chkKeepFieldRatio, 2094);
 		//tabSettings.chkAlternativePhaseLayout = env->addCheckBox(gGameConfig->alternative_phase_layout, GetNextRect(), tabPanel, CHECKBOX_ALTERNATIVE_PHASE_LAYOUT, gDataManager->GetSysString(1298).data());
 		//menuHandler.MakeElementSynchronized(tabSettings.chkAlternativePhaseLayout);
 		//defaultStrings.emplace_back(tabSettings.chkAlternativePhaseLayout, 1298);
@@ -2727,16 +2727,15 @@ void Game::PopulateSettingsWindow() {
 		menuHandler.MakeElementSynchronized(gSettings.chkQuickAnimation);
 		defaultStrings.emplace_back(gSettings.chkQuickAnimation, 1299);
 
-		gSettings.chkTopdown = env->addCheckBox(gGameConfig->topdown_view, GetNextRect(), sPanel, CHECKBOX_TOPDOWN, gDataManager->GetSysString(2093).data());
-		menuHandler.MakeElementSynchronized(gSettings.chkTopdown);
-		defaultStrings.emplace_back(gSettings.chkTopdown, 2093);
-		gSettings.chkKeepFieldRatio = env->addCheckBox(gGameConfig->keep_aspect_ratio, GetNextRect(), sPanel, CHECKBOX_KEEP_FIELD_ASPECT_RATIO, gDataManager->GetSysString(2094).data());
-		menuHandler.MakeElementSynchronized(gSettings.chkKeepFieldRatio);
-		defaultStrings.emplace_back(gSettings.chkKeepFieldRatio, 2094);
-		gSettings.chkKeepCardRatio = env->addCheckBox(gGameConfig->keep_cardinfo_aspect_ratio, GetNextRect(), sPanel, CHECKBOX_KEEP_CARD_ASPECT_RATIO, gDataManager->GetSysString(2095).data());
-		defaultStrings.emplace_back(gSettings.chkKeepCardRatio, 2095);
-
 		////kdiy///////
+		// gSettings.chkTopdown = env->addCheckBox(gGameConfig->topdown_view, GetNextRect(), sPanel, CHECKBOX_TOPDOWN, gDataManager->GetSysString(2093).data());
+		// menuHandler.MakeElementSynchronized(gSettings.chkTopdown);
+		// defaultStrings.emplace_back(gSettings.chkTopdown, 2093);
+		// gSettings.chkKeepFieldRatio = env->addCheckBox(gGameConfig->keep_aspect_ratio, GetNextRect(), sPanel, CHECKBOX_KEEP_FIELD_ASPECT_RATIO, gDataManager->GetSysString(2094).data());
+		// menuHandler.MakeElementSynchronized(gSettings.chkKeepFieldRatio);
+		// defaultStrings.emplace_back(gSettings.chkKeepFieldRatio, 2094);
+		// gSettings.chkKeepCardRatio = env->addCheckBox(gGameConfig->keep_cardinfo_aspect_ratio, GetNextRect(), sPanel, CHECKBOX_KEEP_CARD_ASPECT_RATIO, gDataManager->GetSysString(2095).data());
+		// defaultStrings.emplace_back(gSettings.chkKeepCardRatio, 2095);
 		//gSettings.chkAlternativePhaseLayout = env->addCheckBox(gGameConfig->alternative_phase_layout, GetNextRect(), sPanel, CHECKBOX_ALTERNATIVE_PHASE_LAYOUT, gDataManager->GetSysString(1298).data());
 		//menuHandler.MakeElementSynchronized(gSettings.chkAlternativePhaseLayout);
 		//defaultStrings.emplace_back(gSettings.chkAlternativePhaseLayout, 1298);

@@ -2524,10 +2524,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		uint32_t code, count, seq;
 		uint8_t con, loc/*, diratt*/;
 		ClientCard* pcard;
-		/////////kdiy/////////
-        for(auto& pcard : mainGame->dField.activatable_cards)
-			pcard->is_activatable = false;
-        /////////kdiy/////////
 		mainGame->dField.activatable_cards.clear();
 		mainGame->dField.activatable_descs.clear();
 		mainGame->dField.conti_cards.clear();
@@ -2555,10 +2551,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				mainGame->dField.limbo_temp.push_back(pcard);
 			}
 			mainGame->dField.activatable_cards.push_back(pcard);
-			/////////kdiy/////////
-            if(selecting_player == 0 && (loc & (LOCATION_HAND | LOCATION_ONFIELD)))
-                pcard->is_activatable = true;
-            /////////kdiy/////////
 			mainGame->dField.activatable_descs.push_back(std::make_pair(desc, flag));
 			if(flag == EFFECT_CLIENT_MODE_RESOLVE) {
 				pcard->chain_code = code;
@@ -2692,10 +2684,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->dField.ssetable_cards.push_back(pcard);
 			pcard->cmdFlag |= COMMAND_SSET;
 		}
-		/////////kdiy/////////
-        for(auto& pcard : mainGame->dField.activatable_cards)
-			pcard->is_activatable = false;
-        /////////kdiy/////////
 		mainGame->dField.activatable_cards.clear();
 		mainGame->dField.activatable_descs.clear();
 		mainGame->dField.conti_cards.clear();
@@ -2723,10 +2711,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				mainGame->dField.limbo_temp.push_back(pcard);
 			}
 			mainGame->dField.activatable_cards.push_back(pcard);
-			/////////kdiy/////////
-            if(selecting_player == 0 && (loc & (LOCATION_HAND | LOCATION_ONFIELD)))
-                pcard->is_activatable = true;
-            /////////kdiy/////////
 			mainGame->dField.activatable_descs.push_back(std::make_pair(desc, flag));
 			if(flag == EFFECT_CLIENT_MODE_RESOLVE) {
 				pcard->chain_code = code;
@@ -2798,7 +2782,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		if (pcard->code != code)
 			pcard->SetCode(code);
 		if(info.location != LOCATION_DECK) {
-			pcard->is_highlighting = true;
+			/////////kdiy/////////
+			//pcard->is_highlighting = true;
+			pcard->is_activable = true;
+			/////////kdiy/////////
 			mainGame->dField.highlighting_card = pcard;
 		}
 		mainGame->stQMessage->setText(text.data());
@@ -2980,10 +2967,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		bool conti_exist = false;
 		bool select_trigger = (specount == 0x7f);
 		mainGame->dField.chain_forced = (forced != 0);
-		/////////kdiy/////////
-        for(auto& pcard : mainGame->dField.activatable_cards)
-			pcard->is_activatable = false;
-        /////////kdiy/////////
 		mainGame->dField.activatable_cards.clear();
 		mainGame->dField.activatable_descs.clear();
 		mainGame->dField.conti_cards.clear();
@@ -4663,7 +4646,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->showcardcode = code;
 			mainGame->showcarddif = 0;
 			mainGame->showcard = 1;
-			pcard->is_highlighting = true;
+			/////kdiy//////
+			//pcard->is_highlighting = true;
+			pcard->is_activable = true;
+			/////kdiy//////
 			if(pcard->location & 0x30) {
 				constexpr float milliseconds = 5.0f * 1000.0f / 60.0f;
 				float shift = -0.75f / milliseconds;
@@ -4676,7 +4662,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				mainGame->dField.MoveCard(pcard, 5);
 			} else
 				mainGame->WaitFrameSignal(30, lock);
-			pcard->is_highlighting = false;
+			/////kdiy//////
+			//pcard->is_highlighting = false;
+			pcard->is_activable = false;
+			/////kdiy//////
 		}
 		mainGame->dField.current_chain.chain_card = pcard;
 		mainGame->dField.current_chain.code = code;

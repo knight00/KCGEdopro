@@ -460,31 +460,91 @@ void Game::DrawCard(ClientCard* pcard) {
 		driver->setMaterial(matManager.mCard);
 		driver->drawVertexPrimitiveList(matManager.vCardBack, 4, matManager.iRectangle, 2);
 	}
+	///kdiy////////
+    if((pcard->cmdFlag & COMMAND_ACTIVATE) && pcard->controler == 0 && (pcard->location & (LOCATION_HAND | LOCATION_ONFIELD))
+	  && !(pcard->is_selectable && (pcard->location & 0xe))
+	  && !(pcard->is_activable) && !(pcard->is_highlighting)) {
+        driver->setMaterial(matManager.mOutLine);
+        drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff00ff00);
+    }
+    if((pcard->cmdFlag & COMMAND_SPSUMMON) && (pcard->location & LOCATION_HAND)
+	  && !(pcard->is_selectable && (pcard->location & 0xe))
+	  && !(pcard->is_activable) && !(pcard->is_highlighting)) {
+        driver->setMaterial(matManager.mOutLine);
+        drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff0000ff);
+    }
+	if (pcard->is_activable) {
+		irr::video::SColor outline_color = skin::DUELFIELD_HIGHLIGHTING_CARD_OUTLINE_VAL;
+		if(gGameConfig->dotted_lines) {
+			if ((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP)))
+				DrawSelectionLine(matManager.vCardOutline, true, 2, outline_color);
+			else
+			    DrawSelectionLine(matManager.vCardOutliner, true, 2, outline_color);
+		} else {
+			if ((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP))) {
+				driver->setMaterial(matManager.mOutLine);
+				drawLine(matManager.vCardOutline[0].Pos, matManager.vCardOutline[1].Pos, matManager.vCardOutline[2].Pos, matManager.vCardOutline[3].Pos, 0xffffff00);
+			} else {
+				driver->setMaterial(matManager.mOutLine);
+				drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffffff00);
+			}
+		}
+	}
+	///kdiy////////
 	if (pcard->is_selectable && (pcard->location & 0xe)) {
 		irr::video::SColor outline_color = skin::DUELFIELD_SELECTABLE_CARD_OUTLINE_VAL;
-		if ((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP)))
-			///kdiy////////
+		///kdiy////////
+		// if ((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP)))
 			//DrawSelectionLine(matManager.vCardOutline, !pcard->is_selected, 2, outline_color);
-		    {
-                driver->setMaterial(matManager.mOutLine);
-                drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffff00ff);
-            }
-            ///kdiy////////
-		else
-			DrawSelectionLine(matManager.vCardOutliner, !pcard->is_selected, 2, outline_color);
+		// else
+		// 	DrawSelectionLine(matManager.vCardOutliner, !pcard->is_selected, 2, outline_color);
+		if(gGameConfig->dotted_lines) {
+			if ((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP)))
+			    DrawSelectionLine(matManager.vCardOutline, !pcard->is_selected, 2, outline_color);
+			else
+			    DrawSelectionLine(matManager.vCardOutliner, !pcard->is_selected, 2, outline_color);
+		} else {
+			if ((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP))) {
+				if(!pcard->is_selected) {
+					driver->setMaterial(matManager.mOutLine);
+					drawLine(matManager.vCardOutline[0].Pos, matManager.vCardOutline[1].Pos, matManager.vCardOutline[2].Pos, matManager.vCardOutline[3].Pos, 0xffff00ff);
+				} else {
+					driver->setMaterial(matManager.mOutLine);
+					drawLine(matManager.vCardOutline[0].Pos, matManager.vCardOutline[1].Pos, matManager.vCardOutline[2].Pos, matManager.vCardOutline[3].Pos, 0xff808080);
+				}
+			} else {
+				if(!pcard->is_selected) {
+					driver->setMaterial(matManager.mOutLine);
+					drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffff00ff);
+				} else {
+					driver->setMaterial(matManager.mOutLine);
+					drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff808080);
+				}
+			}
+		}
+		///kdiy////////
 	}
 	if (pcard->is_highlighting) {
 		irr::video::SColor outline_color = skin::DUELFIELD_HIGHLIGHTING_CARD_OUTLINE_VAL;
-		if ((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP)))
-			///kdiy////////
+		///kdiy////////
+		// if ((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP)))
 			//DrawSelectionLine(matManager.vCardOutline, true, 2, outline_color);
-            {
-                driver->setMaterial(matManager.mOutLine);
-                drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffffff00);
-            }
-            ///kdiy////////
-		else
-			DrawSelectionLine(matManager.vCardOutliner, true, 2, outline_color);
+		// else
+		// 	DrawSelectionLine(matManager.vCardOutliner, true, 2, outline_color);
+		if(gGameConfig->dotted_lines) {
+			if ((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP)))
+			    DrawSelectionLine(matManager.vCardOutline, true, 2, outline_color);
+			else
+			    DrawSelectionLine(matManager.vCardOutliner, true, 2, outline_color);
+		} else {
+		    if ((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP))) {
+				driver->setMaterial(matManager.mOutLine);
+				drawLine(matManager.vCardOutline[0].Pos, matManager.vCardOutline[1].Pos, matManager.vCardOutline[2].Pos, matManager.vCardOutline[3].Pos, 0xff00ffff);
+			} else {
+				driver->setMaterial(matManager.mOutLine);
+				drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff00ffff);
+			}
+		}
 	}
 	if (pcard->is_showequip) {
 		matManager.mTexture.setTexture(0, imageManager.tEquip);
@@ -510,10 +570,6 @@ void Game::DrawCard(ClientCard* pcard) {
 		///kdiy////////
 	}
 	///kdiy////////
-    if(pcard->is_activatable) {
-        driver->setMaterial(matManager.mOutLine);
-        drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff00ff00);
-    }
 	if((pcard->location & LOCATION_ONFIELD)) {
 		if ((pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup) {
 			if ((pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
@@ -628,16 +684,13 @@ void Game::DrawCard(ClientCard* pcard) {
 						}
 					}
 					haloNode[pcard->controler][sequence][i].insert(haloNode[pcard->controler][sequence][i].begin(), pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2));
-					if(haloNode[pcard->controler][sequence][i].size() > 80) {
+					if(haloNode[pcard->controler][sequence][i].size() > 80)
 						haloNode[pcard->controler][sequence][i].pop_back();
-					}
 				}
-				if(haloNodeexist[pcard->controler][sequence][pcard->overlayed.size()]) {
-					for(size_t j = pcard->overlayed.size(); ; j++) {
-						if(!haloNodeexist[pcard->controler][sequence][j]) break;
-						haloNode[pcard->controler][sequence][j].clear();
-						haloNodeexist[pcard->controler][sequence][j] = false;
-					}
+				for(size_t j = pcard->overlayed.size(); ; j++) {
+					if(!haloNodeexist[pcard->controler][sequence][j]) break;
+					haloNode[pcard->controler][sequence][j].clear();
+					haloNodeexist[pcard->controler][sequence][j] = false;
 				}
 				matManager.mTexture.AmbientColor = 0xffffffff;
 				matManager.mTexture.DiffuseColor = 0xff000000;
@@ -654,7 +707,10 @@ void Game::DrawCard(ClientCard* pcard) {
 		atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? -1 : 1) * (atkdy / 4.0f + 0.35f), 0.05f));
 		atk.setRotationRadians(irr::core::vector3df(0, 0, pcard->controler == 0 ? 0 : irr::core::PI));
 		driver->setTransform(irr::video::ETS_WORLD, atk);
-		driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
+		////kidy/////////
+		//driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
+		driver->drawVertexPrimitiveList(matManager.vSymbol0, 4, matManager.iRectangle, 2);
+		////kidy/////////
 	}
     ////kdiy/////////
 	if((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && pcard->is_pzone ) {
@@ -673,15 +729,6 @@ void Game::DrawCard(ClientCard* pcard) {
 			driver->drawVertexPrimitiveList(matManager.vPScale, 4, matManager.iRectangle, 2);
 		}
 	}
-	// if(pcard->is_activatable) {
-	// 	matManager.mTexture.setTexture(0, imageManager.tActivable);
-	// 	driver->setMaterial(matManager.mTexture);
-	// 	irr::core::matrix4 atk;
-	// 	atk.setTranslation(pcard->curPos + irr::core::vector3df(0, ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup) ? 1 : 0.65f, 0.2f));
-    //     atk.setRotationRadians(pcard->curRot);
-	// 	driver->setTransform(irr::video::ETS_WORLD, atk);
-	// 	driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
-    // }
 	////kdiy/////////
 }
 template<typename T>

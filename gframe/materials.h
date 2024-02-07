@@ -29,6 +29,7 @@ public:
 	QuadVertex vXyz;
 	QuadVertex vXyztrail;
 	QuadVertex vCXyz;
+	QuadVertex vSymbol0;
 	////kdiy////////
 	QuadVertex vSymbol;
 	QuadVertex vNegate;
