@@ -642,19 +642,19 @@ void Game::DrawCard(ClientCard* pcard) {
 				int sequence = (pcard->location & LOCATION_SZONE) ? pcard->sequence + 7 : pcard->sequence;
 				int incre = 0;
 				int incre2 = 0;
-				for(size_t i = 0; i < pcard->overlayed.size(); i++) {
-					if(i > 9) break;
+                int size = (pcard->overlayed.size() > 10) ? 10 : pcard->overlayed.size();
+				for(size_t i = 0; i < size; i++) {
 					int neg = 1;
-					if(pcard->overlayed.size() > 2 && i >= pcard->overlayed.size() / 2) neg = -1;
+					if(size > 2 && i >= size / 2) neg = -1;
 					int power = 1;
-					if(pcard->overlayed.size() / 4 > 0) power = pcard->overlayed.size() / 4;
-					if(pcard->overlayed.size() > 2 && i % 2 == 0 && i < pcard->overlayed.size() / 2) incre += 1;
-					if(pcard->overlayed.size() > 2 && i % 2 == 0 && i >= pcard->overlayed.size() / 2) incre2 += 1;
+					if(size / 4 > 0) power = size / 4;
+					if(size > 2 && i % 2 == 0 && i < size / 2) incre += 1;
+					if(size > 2 && i % 2 == 0 && i >= size / 2) incre2 += 1;
 					matManager.mTexture.setTexture(0, imageManager.tXyz);
 					matManager.mTexture.AmbientColor = cardcloseupcolor;
 					driver->setMaterial(matManager.mTexture);
 					irr::core::matrix4 atk;
-					atk.setTranslation(pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2));
+					atk.setTranslation(pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < size / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < size / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2));
 					driver->setTransform(irr::video::ETS_WORLD, atk);
 					driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
 					if(!haloNodeexist[pcard->controler][sequence][i])
@@ -681,11 +681,11 @@ void Game::DrawCard(ClientCard* pcard) {
                             ptk++;
 						}
 					}
-					haloNode[pcard->controler][sequence][i].insert(haloNode[pcard->controler][sequence][i].begin(), pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < pcard->overlayed.size() / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2));
+					haloNode[pcard->controler][sequence][i].insert(haloNode[pcard->controler][sequence][i].begin(), pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < size / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < size / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2));
 					if(haloNode[pcard->controler][sequence][i].size() > 80)
 						haloNode[pcard->controler][sequence][i].pop_back();
 				}
-				for(size_t j = pcard->overlayed.size(); ; j++) {
+				for(size_t j = size; ; j++) {
 					if(!haloNodeexist[pcard->controler][sequence][j]) break;
 					haloNode[pcard->controler][sequence][j].clear();
 					haloNodeexist[pcard->controler][sequence][j] = false;
