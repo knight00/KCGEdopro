@@ -481,13 +481,8 @@ void Game::DrawCard(ClientCard* pcard) {
 			else
 			    DrawSelectionLine(matManager.vCardOutliner, true, 2, outline_color);
 		} else {
-			if ((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP))) {
-				driver->setMaterial(matManager.mOutLine);
-				drawLine(matManager.vCardOutline[0].Pos, matManager.vCardOutline[1].Pos, matManager.vCardOutline[2].Pos, matManager.vCardOutline[3].Pos, 0xffffff00);
-			} else {
-				driver->setMaterial(matManager.mOutLine);
-				drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffffff00);
-			}
+			driver->setMaterial(matManager.mOutLine);
+			drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffffff00);
 		}
 	}
 	///kdiy////////
@@ -504,22 +499,12 @@ void Game::DrawCard(ClientCard* pcard) {
 			else
 			    DrawSelectionLine(matManager.vCardOutliner, !pcard->is_selected, 2, outline_color);
 		} else {
-			if ((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP))) {
-				if(!pcard->is_selected) {
-					driver->setMaterial(matManager.mOutLine);
-					drawLine(matManager.vCardOutline[0].Pos, matManager.vCardOutline[1].Pos, matManager.vCardOutline[2].Pos, matManager.vCardOutline[3].Pos, 0xffff00ff);
-				} else {
-					driver->setMaterial(matManager.mOutLine);
-					drawLine(matManager.vCardOutline[0].Pos, matManager.vCardOutline[1].Pos, matManager.vCardOutline[2].Pos, matManager.vCardOutline[3].Pos, 0xff808080);
-				}
+			if(!pcard->is_selected) {
+				driver->setMaterial(matManager.mOutLine);
+				drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffff00ff);
 			} else {
-				if(!pcard->is_selected) {
-					driver->setMaterial(matManager.mOutLine);
-					drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffff00ff);
-				} else {
-					driver->setMaterial(matManager.mOutLine);
-					drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff808080);
-				}
+				driver->setMaterial(matManager.mOutLine);
+				drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff808080);
 			}
 		}
 		///kdiy////////
@@ -537,13 +522,8 @@ void Game::DrawCard(ClientCard* pcard) {
 			else
 			    DrawSelectionLine(matManager.vCardOutliner, true, 2, outline_color);
 		} else {
-		    if ((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP))) {
-				driver->setMaterial(matManager.mOutLine);
-				drawLine(matManager.vCardOutline[0].Pos, matManager.vCardOutline[1].Pos, matManager.vCardOutline[2].Pos, matManager.vCardOutline[3].Pos, 0xff00ffff);
-			} else {
-				driver->setMaterial(matManager.mOutLine);
-				drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff00ffff);
-			}
+			driver->setMaterial(matManager.mOutLine);
+			drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff00ffff);
 		}
 	}
 	if (pcard->is_showequip) {
