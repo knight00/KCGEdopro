@@ -754,6 +754,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		////kdiy////////
 		mainGame->wAvatar[0]->setVisible(false);
 		mainGame->wAvatar[1]->setVisible(false);
+        mainGame->wLocation->setVisible(false);
         mainGame->wHead[0]->setVisible(false);
 		mainGame->wHead[1]->setVisible(false);
 		mainGame->wChBody[0]->setVisible(false);
@@ -1240,6 +1241,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
             mainGame->isEvent = false;
 			mainGame->wAvatar[0]->setVisible(false);
 			mainGame->wAvatar[1]->setVisible(false);
+            mainGame->wLocation->setVisible(false);
 			for(int i = 0; i < 6; ++i) {
 				mainGame->imageManager.scharacter[i][0] = mainGame->imageManager.character[0];
 				mainGame->imageManager.scharacter[i][1] = mainGame->imageManager.characterd[0];

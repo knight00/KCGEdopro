@@ -220,6 +220,7 @@ restart:
 				////kdiy////////
 				mainGame->wAvatar[0]->setVisible(false);
 				mainGame->wAvatar[1]->setVisible(false);
+                mainGame->wLocation->setVisible(false);
 				////kdiy////////
 				mainGame->deckBuilder.Initialize(false);
 			}
@@ -365,6 +366,7 @@ restart:
 			////kdiy////////
 			mainGame->wAvatar[0]->setVisible(false);
 			mainGame->wAvatar[1]->setVisible(false);
+            mainGame->wLocation->setVisible(false);
 			////kdiy////////
 			mainGame->deckBuilder.Initialize(false);
 		}
