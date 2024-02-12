@@ -259,17 +259,26 @@ void Game::DrawLinkedZones(ClientCard* pcard) {
 		}
 		if(mark & LINK_MARKER_BOTTOM_LEFT && dField.hovered_sequence > (0 + three_columns)) {
 			pcard2 = dField.szone[dField.hovered_controler][dField.hovered_sequence - 1];
-			if(CheckMutual(pcard2, LINK_MARKER_TOP_RIGHT))
+            /////kdiy//////
+			//if(CheckMutual(pcard2, LINK_MARKER_TOP_RIGHT))
+			CheckMutual(pcard2, LINK_MARKER_TOP_RIGHT);
+            /////kdiy//////
 				driver->drawVertexPrimitiveList(&matManager.getSzone()[dField.hovered_controler][dField.hovered_sequence - 1], 4, matManager.iRectangle, 2);
 		}
 		if(mark & LINK_MARKER_BOTTOM_RIGHT && dField.hovered_sequence < (4 - three_columns)) {
 			pcard2 = dField.szone[dField.hovered_controler][dField.hovered_sequence + 1];
-			if(CheckMutual(pcard2, LINK_MARKER_TOP_LEFT))
+            /////kdiy//////
+			//if(CheckMutual(pcard2, LINK_MARKER_TOP_LEFT))
+            CheckMutual(pcard2, LINK_MARKER_TOP_LEFT);
+            /////kdiy//////
 				driver->drawVertexPrimitiveList(&matManager.getSzone()[dField.hovered_controler][dField.hovered_sequence + 1], 4, matManager.iRectangle, 2);
 		}
 		if(mark & LINK_MARKER_BOTTOM) {
 			pcard2 = dField.szone[dField.hovered_controler][dField.hovered_sequence];
-			if(CheckMutual(pcard2, LINK_MARKER_TOP))
+            /////kdiy//////
+			//if(CheckMutual(pcard2, LINK_MARKER_TOP))
+            CheckMutual(pcard2, LINK_MARKER_TOP);
+            /////kdiy//////
 				driver->drawVertexPrimitiveList(&matManager.getSzone()[dField.hovered_controler][dField.hovered_sequence], 4, matManager.iRectangle, 2);
 		}
 		if(dInfo.HasFieldFlag(DUEL_EMZONE)) {
@@ -398,7 +407,6 @@ void Game::DrawCard(ClientCard* pcard) {
 	irr::video::ITexture* cardcloseup; irr::video::SColor cardcloseupcolor = irr::video::SColor(255, 255, 255, 0);
 	std::tie(cardcloseup, cardcloseupcolor) = imageManager.GetTextureCloseup(pcard->code, pcard->alias);
 	matManager.mTexture.AmbientColor = 0xffffffff;
-	bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK || pcard->position == POS_FACEUP_DEFENSE)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
     int pattern = linePatternD3D - 14;
     if(linePatternD3D < 15)
         pattern += 15;
@@ -955,7 +963,7 @@ void Game::DrawMisc() {
 			/////////kdiy////////////
 			//if (pcard && pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)))
 			if(!pcard) continue;
-			bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK || pcard->position == POS_FACEUP_DEFENSE)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
+			bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK || pcard->position == POS_FACEUP_DEFENSE)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && (pcard->type & (TYPE_MONSTER | TYPE_TRAPMONSTER)) && !pcard->equipTarget;
 			if(pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && is_orica && !pcard->is_attack)
 			/////////kdiy////////////
 				DrawStatus(pcard);
@@ -964,7 +972,7 @@ void Game::DrawMisc() {
 		for (int i = 0; i < 5; ++i) {
 			pcard = dField.szone[p][i];
 			if(!pcard) continue;
-			bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK || pcard->position == POS_FACEUP_DEFENSE)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && !pcard->equipTarget;
+			bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK || pcard->position == POS_FACEUP_DEFENSE)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && (pcard->type & (TYPE_MONSTER | TYPE_TRAPMONSTER)) && !pcard->equipTarget;
 			if(pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && is_orica && !pcard->is_attack)
 				DrawStatus(pcard);
 		}
