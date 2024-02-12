@@ -4436,6 +4436,11 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 			} else {
 				stInfo->setText(epro::format(L"[{}]", gDataManager->FormatType(pcard->rtype)).data());
 			}
+
+            if(pcard->rtype & TYPE_LINK) {
+			    stDataInfo->setText(epro::format(L"LINK {}   {}", pcard->rlevel, gDataManager->FormatLinkMarker(pcard->rlink_marker)).data());
+            } else
+			    stDataInfo->setText(L"");
 		}
 	} else {
     ///kdiy/////////
