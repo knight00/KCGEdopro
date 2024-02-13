@@ -2197,7 +2197,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			break;
 		}
 		case HINT_CARD: {
-			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
+			/////kdiy//////
+			//std::unique_lock<epro::mutex> lock(mainGame->gMutex);
+			/////kdiy//////
 			mainGame->showcardcode = data;
 			mainGame->showcarddif = 0;
 			mainGame->showcard = 1;
@@ -2207,7 +2209,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
             mainGame->showcardalias = code2;
 			uint16_t extra = 0x1;
-			if(cd->type & TYPE_SPELL) {
+			if(cd && (cd->type & TYPE_SPELL)) {
 				if(!(cd->type & (TYPE_FIELD | TYPE_EQUIP | TYPE_CONTINUOUS | TYPE_RITUAL | TYPE_QUICKPLAY | TYPE_PENDULUM))) extra |= 0x4;
 				if(cd->type & TYPE_QUICKPLAY) extra |= 0x8;
 				if(cd->type & TYPE_CONTINUOUS) extra |= 0x10;
@@ -2216,15 +2218,16 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				if(cd->type & TYPE_FIELD) extra |= 0x1000;
 				if(cd->type & TYPE_ACTION) extra |= 0x4000;
 			}
-			if(cd->type & TYPE_TRAP) {
+			if(cd && (cd->type & TYPE_TRAP)) {
 				if(!(cd->type & (TYPE_COUNTER | TYPE_CONTINUOUS))) extra |= 0x80;
 				if(cd->type & TYPE_CONTINUOUS) extra |= 0x100;
 				if(cd->type & TYPE_COUNTER) extra |= 0x200;
 			}
-			if(cd->type & TYPE_MONSTER) extra |= 0x800;
-			PlayChantcode(SoundManager::CHANT::ACTIVATE, cd->code, code2, player, extra);
-            PlayAnimecode(cd->code, code2, 1);
-			/////kdiy//////	
+			if(cd && (cd->type & TYPE_MONSTER)) extra |= 0x800;
+			PlayChantcode(SoundManager::CHANT::ACTIVATE, data, code2, player, extra);
+            PlayAnimecode(data, code2, 1);
+            std::unique_lock<epro::mutex> lock(mainGame->gMutex);
+			/////kdiy//////
 			Play(SoundManager::SFX::ACTIVATE);			
 			mainGame->WaitFrameSignal(30, lock);
 			break;
@@ -4476,21 +4479,21 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		/*CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);*/		
         /////kdiy//////
         auto cd = gDataManager->GetCardData(code);
-        if(cd && cd->type & TYPE_TOKEN)
+        if(cd && (cd->type & TYPE_TOKEN))
 			Play(SoundManager::SFX::TOKEN);
-        else if(cd && cd->attribute & ATTRIBUTE_DARK)
+        else if(cd && (cd->attribute & ATTRIBUTE_DARK))
 			Play(SoundManager::SFX::SUMMON_DARK);
-        else if(cd && cd->attribute & ATTRIBUTE_DIVINE)
+        else if(cd && (cd->attribute & ATTRIBUTE_DIVINE))
 			Play(SoundManager::SFX::SUMMON_DIVINE);
-        else if(cd && cd->attribute & ATTRIBUTE_EARTH)
+        else if(cd && (cd->attribute & ATTRIBUTE_EARTH))
 			Play(SoundManager::SFX::SUMMON_EARTH);
-        else if(cd && cd->attribute & ATTRIBUTE_FIRE)
+        else if(cd && (cd->attribute & ATTRIBUTE_FIRE))
 			Play(SoundManager::SFX::SUMMON_FIRE);
-        else if(cd && cd->attribute & ATTRIBUTE_LIGHT)
+        else if(cd && (cd->attribute & ATTRIBUTE_LIGHT))
 			Play(SoundManager::SFX::SUMMON_LIGHT);
-        else if(cd && cd->attribute & ATTRIBUTE_WATER)
+        else if(cd && (cd->attribute & ATTRIBUTE_WATER))
 			Play(SoundManager::SFX::SUMMON_WATER);
-        else if(cd && cd->attribute & ATTRIBUTE_WIND)
+        else if(cd && (cd->attribute & ATTRIBUTE_WIND))
 			Play(SoundManager::SFX::SUMMON_WIND);
         else
         /////kdiy//////
@@ -4527,29 +4530,29 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		    //Play(SoundManager::SFX::SPECIAL_SUMMON);
         CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
         auto cd = gDataManager->GetCardData(code);
-        if(cd && cd->type & TYPE_TOKEN)
+        if(cd && (cd->type & TYPE_TOKEN))
 			Play(SoundManager::SFX::TOKEN);
         else if((current.location & LOCATION_MZONE) && (current.position & POS_FACEUP)) {
-            if(cd->type & TYPE_PENDULUM) Play(SoundManager::SFX::PENDULUM_SUMMON);
-            else if(cd->type & TYPE_LINK) Play(SoundManager::SFX::LINK_SUMMON);
-            else if(cd->type & TYPE_XYZ) Play(SoundManager::SFX::XYZ_SUMMON);
-            else if(cd->type & TYPE_SYNCHRO) Play(SoundManager::SFX::SYNCHRO_SUMMON);
-            else if(cd->type & TYPE_FUSION) Play(SoundManager::SFX::FUSION_SUMMON);
-            else if(cd->type & TYPE_RITUAL) Play(SoundManager::SFX::RITUAL_SUMMON);
+            if(cd && (cd->type & TYPE_PENDULUM)) Play(SoundManager::SFX::PENDULUM_SUMMON);
+            else if(cd && (cd->type & TYPE_LINK)) Play(SoundManager::SFX::LINK_SUMMON);
+            else if(cd && (cd && cd->type & TYPE_XYZ)) Play(SoundManager::SFX::XYZ_SUMMON);
+            else if(cd && (cd->type & TYPE_SYNCHRO)) Play(SoundManager::SFX::SYNCHRO_SUMMON);
+            else if(cd && (cd->type & TYPE_FUSION)) Play(SoundManager::SFX::FUSION_SUMMON);
+            else if(cd && (cd->type & TYPE_RITUAL)) Play(SoundManager::SFX::RITUAL_SUMMON);
 		} else {
-			if(cd->attribute & ATTRIBUTE_DARK)
+			if(cd && (cd->attribute & ATTRIBUTE_DARK))
 				Play(SoundManager::SFX::SPECIAL_SUMMON_DARK);
-			else if(cd->attribute & ATTRIBUTE_DIVINE)
+			else if(cd && (cd->attribute & ATTRIBUTE_DIVINE))
 				Play(SoundManager::SFX::SPECIAL_SUMMON_DIVINE);
-			else if(cd->attribute & ATTRIBUTE_EARTH)
+			else if(cd && (cd->attribute & ATTRIBUTE_EARTH))
 				Play(SoundManager::SFX::SPECIAL_SUMMON_EARTH);
-			else if(cd->attribute & ATTRIBUTE_FIRE)
+			else if(cd && (cd->attribute & ATTRIBUTE_FIRE))
 				Play(SoundManager::SFX::SPECIAL_SUMMON_FIRE);
-			else if(cd->attribute & ATTRIBUTE_LIGHT)
+			else if(cd && (cd->attribute & ATTRIBUTE_LIGHT))
 				Play(SoundManager::SFX::SPECIAL_SUMMON_LIGHT);
-			else if(cd->attribute & ATTRIBUTE_WATER)
+			else if(cd && (cd->attribute & ATTRIBUTE_WATER))
 				Play(SoundManager::SFX::SPECIAL_SUMMON_WATER);
-			else if(cd->attribute & ATTRIBUTE_WIND)
+			else if(cd && (cd->attribute & ATTRIBUTE_WIND))
 				Play(SoundManager::SFX::SPECIAL_SUMMON_WIND);
 			else
 				Play(SoundManager::SFX::SPECIAL_SUMMON);
