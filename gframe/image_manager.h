@@ -237,6 +237,7 @@ public:
 	A(tRemoved)
 	A(tOnHand)
 	A(tExtra)
+	A(tcardtype[16])
 	/////kdiy/////
 	A(tSettings)
 	A(tCheckBox[3])

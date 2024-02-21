@@ -616,6 +616,8 @@ bool ImageManager::Initial() {
     ASSIGN_DEFAULT(tOnHand);
 	tExtra = loadTextureFixedSize(EPRO_TEXT("extra"_sv), 30, 30);
     ASSIGN_DEFAULT(tExtra);
+	tcardtype[0] = loadTextureFixedSize(EPRO_TEXT("cardtype_link"_sv), 260, 373);
+    ASSIGN_DEFAULT(tcardtype[0]);
     ///kdiy/////
 
 	// Not required to be present

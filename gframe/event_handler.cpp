@@ -219,6 +219,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
                     mainGame->wLocation->setVisible(false);
 					mainGame->wAvatar[0]->setVisible(false);
 					mainGame->wAvatar[1]->setVisible(false);
+					mainGame->wCardImg2->setVisible(false);
 					///////kdiy///////
 					mainGame->btnSpectatorSwap->setVisible(false);
 					mainGame->wChat->setVisible(false);
@@ -2040,6 +2041,11 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 					mainGame->wInfos->setRelativePosition(wInfosSize);
 				}
 				auto lstsSize = mainGame->Resize(10, 10, mainGame->infosExpanded ? 1012 : 290, 0);
+				/////kdiy/////
+				if(mainGame->dInfo.isInDuel)
+				lstsSize.LowerRightCorner.Y = mainGame->ResizeY(485 - mainGame->Scale(7)) - mainGame->Scale(10);
+			    else
+				/////kdiy/////
 				lstsSize.LowerRightCorner.Y = mainGame->ResizeY(300 - mainGame->Scale(7)) - mainGame->Scale(10);
 				mainGame->lstLog->setRelativePosition(lstsSize);
 				mainGame->lstChat->setRelativePosition(lstsSize);
@@ -2075,14 +2081,22 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			//////kdiy///////
 			case BUTTON_SHOW_CARD: {
 				if(!mainGame->wInfos->isVisible()) {
-                    mainGame->wInfos->setRelativePosition(mainGame->Resize(1, 275, 301, 580));
+					mainGame->wInfos->setRelativePosition(mainGame->Resize(1, 1, 301, 550));
+					mainGame->lstLog->setRelativePosition(mainGame->Resize(10, 10, 290, 475));
+					mainGame->lstLog->setItemHeight(mainGame->Scale(29));
+					mainGame->btnClearLog->setRelativePosition(mainGame->Resize(160, 485, 260, 510));
+					mainGame->btnExpandLog->setRelativePosition(mainGame->Resize(40, 485, 140, 510));
+					mainGame->lstChat->setRelativePosition(mainGame->Resize(10, 10, 290, 475));
+					mainGame->lstChat->setItemHeight(mainGame->Scale(29));
+					mainGame->btnClearChat->setRelativePosition(mainGame->Resize(160, 485, 260, 510));
+					mainGame->btnExpandChat->setRelativePosition(mainGame->Resize(40, 485, 140, 510));
 					mainGame->wInfos->setVisible(!mainGame->wInfos->isVisible());
-                } else
+				} else
 					mainGame->HideElement(mainGame->wInfos);
-				if(!mainGame->wCardImg->isVisible())
-					mainGame->wCardImg->setVisible(true);
-				else
-					mainGame->HideElement(mainGame->wCardImg);
+				// if(!mainGame->wCardImg->isVisible())
+				// 	mainGame->wCardImg->setVisible(true);
+				// else
+				// 	mainGame->HideElement(mainGame->wCardImg);
 				break;
 			}
 			case BUTTON_HIDE_CARD: {
