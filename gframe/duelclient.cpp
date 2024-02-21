@@ -4428,6 +4428,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			event_string = gDataManager->GetSysString(1600).data();
 			mainGame->dField.MoveCard(pcard, 10);
 			mainGame->WaitFrameSignal(11, lock);
+			mainGame->cap.open("./movies/c28649820.mp4");
+			if (mainGame->cap.isOpened())
+				mainGame->dInfo.isAnime = true;
 		}
 		return true;
 	}
