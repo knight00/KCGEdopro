@@ -1511,7 +1511,7 @@ bool DeckBuilder::CheckCardProperties(const CardDataM& data) {
 				break;
 			/////zdiy/////
 			case LIMITATION_FILTER_ZCG:
-				if(data->_data.ot != SCOPE_ZCG)
+				if(data._data.ot != SCOPE_ZCG)
 					return false;
 				break;
 			/////zdiy/////

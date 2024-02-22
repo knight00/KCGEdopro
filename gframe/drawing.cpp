@@ -107,10 +107,12 @@ void Game::DrawBackGround() {
 	// 		mainGame->cap.release();
 	// 	}
     // } else {
-    // if(!gGameConfig->chkField && DrawFieldSpell())
-	// DrawTextureRect(matManager.vField, imageManager.tFieldTransparent[three_columns][tfield]);
-    // if(gGameConfig->chkField)
     /////ktest//////
+    /////kdiy//////
+    if(!gGameConfig->chkField && DrawFieldSpell())
+	DrawTextureRect(matManager.vField, imageManager.tFieldTransparent[three_columns][tfield]);
+    if(gGameConfig->chkField)
+    /////kdiy//////
 	DrawTextureRect(matManager.vField, DrawFieldSpell() ? imageManager.tFieldTransparent[three_columns][tfield] : imageManager.tField[three_columns][tfield]);
     /////ktest//////
     // }
