@@ -156,3 +156,4 @@ config/system_backup.conf
 config/user_configs.json
 prerelease/
 upgrade2/
+vlc-master/

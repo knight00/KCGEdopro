@@ -30,13 +30,6 @@
 #include "progressivebuffer.h"
 #include "utils.h"
 #include "porting.h"
-//////ktest///////
-// #include <opencv2/core.hpp>
-// #include <opencv2/videoio.hpp>
-// #include <opencv2/highgui.hpp>
-// #include <stdio.h>
-// #include <iostream>
-//////ktest///////
 
 #define DEFAULT_DUEL_RULE 5
 namespace ygo {
@@ -1874,30 +1867,6 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		auto cd = gDataManager->GetCardData(code);
 		uint32_t code2 = 0;
 		if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
-		//////ktest///////
-		//默认摄像头
-			// cv::VideoCapture cap("./movies/c28649820.mp4");
-			// if (cap.isOpened()) {
-			// 	std::string window_name = "Anime";
-			// 	cv::namedWindow(window_name, cv::WINDOW_NORMAL);
-			// 	cv::setWindowProperty(window_name, cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
-			// 	//获取帧的宽和高，以及每秒帧数
-			// 	auto fps = cap.get(cv::CAP_PROP_FPS);
-			// 	auto width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
-			// 	auto height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
-			// 	while(1) {
-			// 		cv::Mat frame;
-			// 		if (!cap.read(frame))
-			// 			break;
-			// 		imshow(window_name, frame);
-			// 		auto key = cv::waitKey(10);
-			// 		//监听键盘任意键，退出
-			// 		if (key == 13)
-			// 			break;
-			// 	}
-			// 	cv::destroyWindow(window_name);
-			// }
-		//////ktest///////
         bool mode = false;
         if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
             if(!(info.position & POS_FACEUP)) return;
@@ -4437,6 +4406,18 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			event_string = gDataManager->GetSysString(1600).data();
 			mainGame->dField.MoveCard(pcard, 10);
 			mainGame->WaitFrameSignal(11, lock);
+            /////ktest//////
+			// mainGame->cap.open("./movies/c28649820.mp4");
+			// if (mainGame->cap.isOpened()) {
+			// 	mainGame->dInfo.isAnime = true;
+			// 	double fps = mainGame->cap.get(cv::CAP_PROP_FPS);
+			// 	// Get the total number of frames in the video
+			// 	double num_frames = mainGame->cap.get(cv::CAP_PROP_FRAME_COUNT);
+			// 	// Compute the duration of the video in seconds
+			// 	double duration = num_frames / mainGame->vfps;
+			// 	mainGame->WaitFrameSignal(num_frames, lock);
+			// }
+            /////ktest//////
 		}
 		return true;
 	}
