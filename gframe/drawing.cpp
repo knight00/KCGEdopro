@@ -91,31 +91,30 @@ void Game::DrawBackGround() {
 	};
 
 	//draw field
-    /////kdiy//////
-	if (dInfo.isAnime) {
-		cap >> frame;
-		if (!frame.empty() && waitkey != 13) {
-			//cv::flip(frame, frame, 0);
-			//cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
-			irr::video::IImage* irrImage = driver->createImageFromData(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, irr::core::dimension2d<irr::u32>(frame.cols, frame.rows), frame.data, true, false);
-			if (videotexture) driver->removeTexture(videotexture);
-			videotexture = driver->addTexture("video_frame", irrImage);
-			irrImage->drop();
-			DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
-		}
-		else {
-			mainGame->dInfo.isAnime = false;
-			mainGame->cap.release();
-		}
-    } else {
-    if(!gGameConfig->chkField && DrawFieldSpell())
-	DrawTextureRect(matManager.vField, imageManager.tFieldTransparent[three_columns][tfield]);
-    if(gGameConfig->chkField)
-    /////kdiy//////
+    /////ktest//////
+	// if (dInfo.isAnime) {
+	// 	cap >> frame;
+	// 	if (!frame.empty()) {
+	// 		//cv::flip(frame, frame, 0);
+	// 		//cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
+	// 		irr::video::IImage* irrImage = driver->createImageFromData(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, irr::core::dimension2d<irr::u32>(frame.cols, frame.rows), frame.data, true, false);
+	// 		if (videotexture) driver->removeTexture(videotexture);
+	// 		videotexture = driver->addTexture("video_frame", irrImage);
+	// 		irrImage->drop();
+	// 		DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
+	// 	} else {
+	// 		mainGame->dInfo.isAnime = false;
+	// 		mainGame->cap.release();
+	// 	}
+    // } else {
+    // if(!gGameConfig->chkField && DrawFieldSpell())
+	// DrawTextureRect(matManager.vField, imageManager.tFieldTransparent[three_columns][tfield]);
+    // if(gGameConfig->chkField)
+    /////ktest//////
 	DrawTextureRect(matManager.vField, DrawFieldSpell() ? imageManager.tFieldTransparent[three_columns][tfield] : imageManager.tField[three_columns][tfield]);
-    /////kdiy//////
-    }
-    /////kdiy//////
+    /////ktest//////
+    // }
+    /////ktest//////
 
 	driver->setMaterial(matManager.mBackLine);
 	//select field
@@ -1511,6 +1510,16 @@ void Game::DrawBackImage(irr::video::ITexture* texture, bool resized) {
 	}
 	if(resized)
 		prevbg = nullptr;
+    /////ktest//////
+    // cap >> frame;
+	// if (!frame.empty() && texture == imageManager.tBackGround_menu) {
+	// 	irr::video::IImage* irrImage = driver->createImageFromData(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, irr::core::dimension2d<irr::u32>(frame.cols, frame.rows), frame.data, true, false);
+	// 	if (videotexture) driver->removeTexture(videotexture);
+	// 	videotexture = driver->addTexture("video_frame", irrImage);
+	// 	irrImage->drop();
+    //     texture = videotexture;
+	// }
+    /////ktest//////
 	if(!texture)
 		return;
 	if(texture != prevbg) {

@@ -3150,6 +3150,9 @@ bool Game::MainLoop() {
 				haloNodeexist[p][i][j] = false;
 		}
     }
+    /////ktest//////
+    //mainGame->cap.open("./movies/c28649820.mp4");
+    /////ktest//////
 	/////////kdiy/////////
 	while(!restart && device->run()) {
 		DispatchQueue();
@@ -3364,7 +3367,7 @@ bool Game::MainLoop() {
 			else
 				discord.UpdatePresence(DiscordWrapper::MENU);
 			gSoundManager->PlayBGM(SoundManager::BGM::MENU, gGameConfig->loopMusic);
-			DrawBackImage(imageManager.tBackGround_menu, resized);
+            DrawBackImage(imageManager.tBackGround_menu, resized);
 		}
 		if(current_topdown != gGameConfig->topdown_view || current_keep_aspect_ratio != gGameConfig->keep_aspect_ratio) {
 			if(std::exchange(gGameConfig->topdown_view, current_topdown) != gGameConfig->topdown_view)

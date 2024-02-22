@@ -68,7 +68,6 @@ namespace ygo {
 class GitRepo;
 
 struct DuelInfo {
-	bool isAnime=false;
 	bool isInDuel;
 	bool isStarted;
 	bool isReplay;
