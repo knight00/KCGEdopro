@@ -2080,18 +2080,9 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			}
 			//////kdiy///////
 			case BUTTON_SHOW_CARD: {
-				if(!mainGame->wInfos->isVisible()) {
-					mainGame->wInfos->setRelativePosition(mainGame->Resize(1, 1, 301, 550));
-					mainGame->lstLog->setRelativePosition(mainGame->Resize(10, 10, 290, 475));
-					mainGame->lstLog->setItemHeight(mainGame->Scale(29));
-					mainGame->btnClearLog->setRelativePosition(mainGame->Resize(160, 485, 260, 510));
-					mainGame->btnExpandLog->setRelativePosition(mainGame->Resize(40, 485, 140, 510));
-					mainGame->lstChat->setRelativePosition(mainGame->Resize(10, 10, 290, 475));
-					mainGame->lstChat->setItemHeight(mainGame->Scale(29));
-					mainGame->btnClearChat->setRelativePosition(mainGame->Resize(160, 485, 260, 510));
-					mainGame->btnExpandChat->setRelativePosition(mainGame->Resize(40, 485, 140, 510));
-					mainGame->wInfos->setVisible(!mainGame->wInfos->isVisible());
-				} else
+				if(!mainGame->wInfos->isVisible())
+					mainGame->Reloadinfos();
+				else
 					mainGame->HideElement(mainGame->wInfos);
 				// if(!mainGame->wCardImg->isVisible())
 				// 	mainGame->wCardImg->setVisible(true);

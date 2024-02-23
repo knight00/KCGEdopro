@@ -87,19 +87,7 @@ static void LoadReplay() {
 	mainGame->ClearCardInfo();
 	mainGame->mTopMenu->setVisible(false);
 	/////kdiy/////
-	//mainGame->wCardImg->setVisible(true);
-	mainGame->wInfos->setRelativePosition(mainGame->Resize(1, 1, 301, 550));
-	mainGame->lstLog->setRelativePosition(mainGame->Resize(10, 10, 290, 475));
-	mainGame->lstLog->setItemHeight(mainGame->Scale(29));
-	mainGame->btnClearLog->setRelativePosition(mainGame->Resize(160, 485, 260, 510));
-	mainGame->btnExpandLog->setRelativePosition(mainGame->Resize(40, 485, 140, 510));
-	mainGame->lstChat->setRelativePosition(mainGame->Resize(10, 10, 290, 475));
-	mainGame->lstChat->setItemHeight(mainGame->Scale(29));
-	mainGame->btnClearChat->setRelativePosition(mainGame->Resize(160, 485, 260, 510));
-	mainGame->btnExpandChat->setRelativePosition(mainGame->Resize(40, 485, 140, 510));
-	mainGame->wInfos->setVisible(true);
-    // mainGame->wLocation->setVisible(true);
-	// mainGame->wCardImg2->setVisible(true);
+	mainGame->Reloadinfos();
 	/////kdiy/////
 	mainGame->wReplay->setVisible(true);
 	mainGame->wReplayControl->setVisible(true);

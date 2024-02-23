@@ -369,6 +369,7 @@ public:
 	int showcard;
 	uint32_t showcardcode;
     ////kdiy//////
+	void Reloadinfos();
     bool git_update = false;
     bool git_error = false;
     bool first_play = false;

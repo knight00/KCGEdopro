@@ -5309,6 +5309,22 @@ void Game::ReloadCBCoreLogOutput() {
 		}
 	}
 }
+////kdiy///////
+void Game::Reloadinfos() {
+	wInfos->setRelativePosition(mainGame->Resize(1, 1, 301, 550));
+	lstLog->setRelativePosition(mainGame->Resize(10, 10, 290, 475));
+	lstLog->setItemHeight(mainGame->Scale(29));
+	btnClearLog->setRelativePosition(mainGame->Resize(160, 485, 260, 510));
+	btnExpandLog->setRelativePosition(mainGame->Resize(40, 485, 140, 510));
+	lstChat->setRelativePosition(mainGame->Resize(10, 10, 290, 475));
+	lstChat->setItemHeight(mainGame->Scale(29));
+	btnClearChat->setRelativePosition(mainGame->Resize(160, 485, 260, 510));
+	btnExpandChat->setRelativePosition(mainGame->Resize(40, 485, 140, 510));
+	mTabRepositories->setRelativePosition(mainGame->Resize(1, 1, 301, 550));
+	wInfos->setVisible(true);
+	//wCardImg2->setVisible(true);
+}
+////kdiy///////
 void Game::ReloadCBVsync() {
 	gSettings.cbVSync->clear();
 	auto max = 12118;
@@ -5558,8 +5574,8 @@ void Game::OnResize() {
 	auto expandSize = Resize(40, 300 - Scale(7), 140, 325 - Scale(7));
 	/////kdiy/////
 	if(mainGame->dInfo.isInDuel) {
-		clearSize = Resize(160, 300 - Scale(7), 260, 325 - Scale(7));
-		expandSize = Resize(40, 300 - Scale(7), 140, 325 - Scale(7));
+		clearSize = Resize(160, 485 - Scale(7), 260, 510 - Scale(7));
+		expandSize = Resize(40, 485 - Scale(7), 140, 510 - Scale(7));
 	}
 	/////kdiy/////
 
@@ -5581,6 +5597,11 @@ void Game::OnResize() {
 
 	ShowCardInfo(showingcard, true);
 
+	/////kdiy/////
+	if(mainGame->dInfo.isInDuel)
+	tabSystem->setRelativePosition(Resize(1, 1, 301, 550));
+    else
+	/////kdiy/////
 	tabSystem->setRelativePosition({ {}, tabSystem->getParent()->getAbsolutePosition().getSize() });
 	auto repos_with_min_x = [x=std::min(tabSystem->getSubpanel()->getRelativePosition().getWidth() - 21, Scale(300))](irr::gui::IGUIElement* elem) {
 		auto cur_pos = elem->getRelativePosition();
