@@ -892,18 +892,43 @@ void Game::Initialize() {
 	imgCard->setUseAlphaChannel(true);
 	
 	///////kdiy///////
-	wCardImg2 = env->addStaticText(L"", Scale(1, 1, 275, 460), true, false, 0, -1, true);
-	wCardImg2->setDrawBackground(false);
+	wCardImg2 = AlignElementWithParent(env->addWindow(Scale(10, 10, 300, 550)));
+	wCardImg2->getCloseButton()->setVisible(false);
+	wCardImg2->setDraggable(true);
+	wCardImg2->setDrawTitlebar(true);
+	wCardImg2->setDrawBackground(true);
 	wCardImg2->setVisible(false);
-	imgCard0 = AlignElementWithParent(env->addImage(Scale(10, 9, 264, 449), wCardImg2));
-	imgCard0->setImage(imageManager.tCover[0]);
-	imgCard0->setScaleImage(true);
-	imgCard0->setUseAlphaChannel(true);
-	imgCard2 = AlignElementWithParent(env->addImage(Scale(40, 39, 227, 293), wCardImg2));
+    {
+        auto name = AlignElementWithParent(irr::gui::CGUICustomText::addCustomText(L"", true, env, wCardImg2, -1, Scale(0, 0, 290, 35)));
+        name->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+        name->setTextAutoScrolling(irr::gui::CGUICustomText::LEFT_TO_RIGHT_BOUNCING, 0, 1.0f, 0, 120, 300);
+        stName2 = name;
+    }
+    imgCard2 = AlignElementWithParent(env->addImage(Scale(0, 45, 128, 230), wCardImg2));
 	imgCard2->setImage(imageManager.tCover[0]);
 	imgCard2->setScaleImage(true);
 	imgCard2->setUseAlphaChannel(true);
-
+	wCardInfo2 = AlignElementWithParent(env->addStaticText(L"", Scale(0, 240, 290, 540), true, true, wCardImg2, -1, false));
+	stPasscodeScope2 = irr::gui::CGUICustomText::addCustomText(L"", false, env, wCardInfo2, -1, Scale(133, 45, 287, 68));
+	stPasscodeScope2->setWordWrap(true);
+	stPasscodeScope2->setOverrideColor(skin::CARDINFO_PASSCODE_SCOPE_TEXT_COLOR_VAL);
+	stPasscodeScope2->setVisible(!gGameConfig->hidePasscodeScope);
+	stInfo2 = irr::gui::CGUICustomText::addCustomText(L"", false, env, wCardInfo2, -1, Scale(133, 68, 287, 91));
+	stInfo2->setWordWrap(true);
+	stInfo2->setOverrideColor(skin::CARDINFO_TYPES_COLOR_VAL);
+	stDataInfo2 = irr::gui::CGUICustomText::addCustomText(L"", false, env, wCardInfo2, -1, Scale(133, 91, 287, 114));
+	stDataInfo2->setWordWrap(true);
+    stDataInfo2->setOverrideColor(skin::CARDINFO_STATS_COLOR_VAL);
+	stSetName2 = irr::gui::CGUICustomText::addCustomText(L"", false, env, wCardInfo2, -1, Scale(133, 114, 287, 137));
+	stSetName2->setWordWrap(true);
+	stSetName2->setOverrideColor(skin::CARDINFO_ARCHETYPE_TEXT_COLOR_VAL);
+	stSetName2->setVisible(!gGameConfig->chkHideSetname);
+	{
+		auto text = irr::gui::CGUICustomText::addCustomText(L"", false, env, wCardImg2, -1, Scale(10, 10, 287, 324));
+		text->enableScrollBar();
+		stText2 = text;
+	}
+	stText2->setWordWrap(true);
 	cardbutton[0] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(10, 9 + CARD_IMG_HEIGHT - 20, 30, 9 + CARD_IMG_HEIGHT), wCardImg, BUTTON_AVATAR_CARD0));
 	cardbutton[0]->setImage(imageManager.cardchant0);
 	cardbutton[0]->setDrawBorder(false);
@@ -2460,14 +2485,6 @@ void Game::PopulateTabSettingsWindow() {
 			stText = text;
 		}
 		stText->setWordWrap(true);
-		/////kdiy/////
-		{
-			auto text = irr::gui::CGUICustomText::addCustomText(L"", false, env, wCardImg2, -1, Scale(51, 277, 271, 377));
-			text->enableScrollBar();
-			stText2 = text;
-		}
-		stText2->setWordWrap(true);
-		/////kdiy/////
 	}
 	//log
 	{
@@ -4288,6 +4305,13 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 		stSetName->setRelativePosition(widthRect);
 		stPasscodeScope->setRelativePosition(widthRect);
 		stText->setRelativePosition(widthRect);
+        ///kdiy/////////
+		stInfo2->setRelativePosition(widthRect);
+		stDataInfo2->setRelativePosition(widthRect);
+		stSetName2->setRelativePosition(widthRect);
+		stPasscodeScope2->setRelativePosition(widthRect);
+		stText2->setRelativePosition(widthRect);
+        ///kdiy/////////
 	}
 	if(code == 0) {
 		ClearCardInfo(0);
@@ -4312,9 +4336,7 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 		cardimagetextureloading = true;
 	imgCard->setImage(img);
     ///kdiy/////////
-	imgCard0->setImage(imageManager.tcardtype[0]);
-	auto img2 = imageManager.GetTextureCard(code, resize ? prevtype : type, false, true, &shouldrefresh);
-	imgCard2->setImage(img2);
+	imgCard2->setImage(img);
     ///kdiy/////////
 	showingcard = code;
 	if(only_texture)
@@ -4328,6 +4350,7 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
     else
 	///kdiy/////////
     stName->setText(gDataManager->GetName(tmp_code).data());
+    stName2->setText(stName->getText());
     ///kdiy/////////
     //stPasscodeScope->setText(epro::format(L"[{:08}] {}", tmp_code, gDataManager->FormatScope(cd->ot)).data());
     auto tmp_code2 = 0;
@@ -4336,6 +4359,7 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
         stPasscodeScope->setText(epro::format(L"[{:08}] {}{}", tmp_code, tmp_code2 > 0 ? epro::format(L"[{:08}] ", tmp_code2) : L"", gDataManager->FormatScope(0x4)).data());
     else
         stPasscodeScope->setText(epro::format(L"[{:08}] {}{}", tmp_code, tmp_code2 > 0 ? epro::format(L"[{:08}] ", tmp_code2) : L"", gDataManager->FormatScope(cd->ot)).data());
+    stPasscodeScope2->setText(stPasscodeScope->getText());
     ///kdiy/////////
 	stSetName->setText(L"");
 	auto setcodes = cd->setcodes;
@@ -4360,6 +4384,7 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 	if (setcodes.size()) {
 		stSetName->setText(epro::format(L"{}{}", gDataManager->GetSysString(1329), gDataManager->FormatSetName(setcodes)).data());
 	}
+    stSetName2->setText(stSetName->getText());
 	///kdiy/////////
 	int32_t mixlink = 0;
 	if(pcard && pcard->is_change) {
@@ -4580,9 +4605,11 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 	}
     ///kdiy/////////
     }
+    stDataInfo2->setText(stDataInfo->getText());
     ///kdiy/////////
 	RefreshCardInfoTextPositions();
     ///kdiy/////////
+	//stText->setText(gDataManager->GetText(code).data());
     if(pcard && pcard->is_real && !pcard->text_hints.empty()) {
         std::wstring text;
 		for(std::vector<std::wstring>::size_type i = 0; i != pcard->text_hints.size(); i++) {
@@ -4594,10 +4621,8 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 		}
 	    stText->setText(text.data());
     } else
-	///kdiy/////////
-	stText->setText(gDataManager->GetText(code).data());
-	///kdiy/////////
-	stText2->setText(stText->getText());
+	    stText->setText(gDataManager->GetText(code).data());
+    stText2->setText(stText->getText());
 	///kdiy/////////
 }
 void Game::RefreshCardInfoTextPositions() {
@@ -4615,25 +4640,24 @@ void Game::RefreshCardInfoTextPositions() {
 	offsetIfVisibleWithContent(stSetName);
 	offsetIfVisibleWithContent(stPasscodeScope);
 	stText->setRelativePosition(irr::core::recti(xLeft, offset, xRight, stText->getParent()->getAbsolutePosition().getHeight() - Scale(1)));
-	///kdiy/////////
-	stText2->setRelativePosition(irr::core::recti(51, 277, 271, 377));
-	///kdiy/////////
 }
 void Game::ClearCardInfo(int player) {
 	imgCard->setImage(imageManager.tCover[player]);
-    ///kdiy/////////
-	imgCard0->setImage(imageManager.tCover[player]);
-	imgCard2->setImage(imageManager.tCover[player]);
-    ///kdiy/////////
 	stName->setText(L"");
 	stInfo->setText(L"");
 	stDataInfo->setText(L"");
 	stSetName->setText(L"");
 	stPasscodeScope->setText(L"");
 	stText->setText(L"");
-	///kdiy/////////
+    ///kdiy/////////
+	imgCard2->setImage(imageManager.tCover[player]);
+	stName2->setText(L"");
+	stInfo2->setText(L"");
+	stDataInfo2->setText(L"");
+	stSetName2->setText(L"");
+	stPasscodeScope2->setText(L"");
 	stText2->setText(L"");
-	///kdiy/////////
+    ///kdiy/////////
 	cardimagetextureloading = false;
 	showingcard = 0;
 }
@@ -4723,7 +4747,6 @@ void Game::ClearTextures() {
 	matManager.mCard.setTexture(0, 0);
 	imgCard->setImage(imageManager.tCover[0]);
     ///kdiy/////////
-	imgCard0->setImage(imageManager.tCover[0]);
 	imgCard2->setImage(imageManager.tCover[0]);
     ///kdiy/////////
 	btnPSAU->setImage();
@@ -4746,9 +4769,6 @@ void Game::CloseDuelWindow() {
 	wANNumber->setVisible(false);
 	wANRace->setVisible(false);
 	wCardImg->setVisible(false);
-	///////kdiy///////
-	wCardImg2->setVisible(false);
-	///////kdiy///////
 	wCardSelect->setVisible(false);
 	wCardDisplay->setVisible(false);
 	wCmdMenu->setVisible(false);
@@ -4769,13 +4789,13 @@ void Game::CloseDuelWindow() {
 	btnSideReload->setVisible(false);
 	btnLeaveGame->setVisible(false);
 	///////kdiy///////
+    wCardImg2->setVisible(false);
     wLocation->setVisible(false);
 	wCharacter->setVisible(false);
 	wAvatar[0]->setVisible(false);
 	wAvatar[1]->setVisible(false);
     wHead[0]->setVisible(false);
 	wHead[1]->setVisible(false);
-	wCardImg2->setVisible(false);
     //////kdiy///////
 	btnRestartSingle->setVisible(false);
 	btnSpectatorSwap->setVisible(false);
@@ -4796,9 +4816,6 @@ void Game::CloseDuelWindow() {
 	stSetName->setText(L"");
 	stPasscodeScope->setText(L"");
 	stText->setText(L"");
-	///kdiy/////////
-	stText2->setText(L"");
-	///kdiy/////////
 	stTip->setText(L"");
 	cardimagetextureloading = false;
 	showingcard = 0;
@@ -5086,9 +5103,6 @@ void Game::ResizeCardinfoWindow(bool keep_ratio) {
 		ResizeWithCappedWidth(1, 1, 1 + CARD_IMG_WRAPPER_WIDTH, 1 + CARD_IMG_WRAPPER_HEIGHT, CARD_IMG_WRAPPER_ASPECT_RATIO) :
 		Resize(1, 1, 1 + CARD_IMG_WIDTH + 20, 1 + CARD_IMG_HEIGHT + 18);
 	wCardImg->setRelativePosition(rect);
-	///////kdiy///////
-	wCardImg2->setRelativePosition(ResizeWithCappedWidth(1, 1, 275, 460, CARD_IMG_WRAPPER_ASPECT_RATIO));
-	///////kdiy///////
 }
 bool Game::HasFocus(irr::gui::EGUI_ELEMENT_TYPE type) const {
 	irr::gui::IGUIElement* focus = env->getFocus();
@@ -5311,18 +5325,20 @@ void Game::ReloadCBCoreLogOutput() {
 }
 ////kdiy///////
 void Game::Reloadinfos() {
-	wInfos->setRelativePosition(mainGame->Resize(1, 1, 301, 550));
-	lstLog->setRelativePosition(mainGame->Resize(10, 10, 290, 475));
-	lstLog->setItemHeight(mainGame->Scale(29));
-	btnClearLog->setRelativePosition(mainGame->Resize(160, 485, 260, 510));
-	btnExpandLog->setRelativePosition(mainGame->Resize(40, 485, 140, 510));
-	lstChat->setRelativePosition(mainGame->Resize(10, 10, 290, 475));
-	lstChat->setItemHeight(mainGame->Scale(29));
-	btnClearChat->setRelativePosition(mainGame->Resize(160, 485, 260, 510));
-	btnExpandChat->setRelativePosition(mainGame->Resize(40, 485, 140, 510));
-	mTabRepositories->setRelativePosition(mainGame->Resize(1, 1, 301, 550));
-	wInfos->setVisible(true);
-	//wCardImg2->setVisible(true);
+    wCardImg2->setVisible(true);
+	wInfos->setRelativePosition(Resize(1, 202, 301, 550));
+	lstLog->setRelativePosition(Resize(10, 10, 290, 475));
+	lstLog->setItemHeight(Scale(20));
+	btnClearLog->setRelativePosition(Resize(160, 485, 260, 510));
+	btnExpandLog->setRelativePosition(Resize(40, 485, 140, 510));
+	lstChat->setRelativePosition(Resize(10, 10, 290, 475));
+	lstChat->setItemHeight(Scale(20));
+	btnClearChat->setRelativePosition(Resize(160, 485, 260, 510));
+	btnExpandChat->setRelativePosition(Resize(40, 485, 140, 510));
+    tabSystem->setRelativePosition(Resize(0, 0, 301, 348));
+	mTabRepositories->setRelativePosition(Resize(0, 0, 301, 348));
+    //wInfos->setVisible(true);
+    //wCardImg->setVisible(true);
 }
 ////kdiy///////
 void Game::ReloadCBVsync() {
@@ -5573,6 +5589,7 @@ void Game::OnResize() {
 	auto clearSize = Resize(160, 300 - Scale(7), 260, 325 - Scale(7));
 	auto expandSize = Resize(40, 300 - Scale(7), 140, 325 - Scale(7));
 	/////kdiy/////
+	stName2->setRelativePosition(Scale(10, 10, 287 * window_scale.X, 32));
 	if(mainGame->dInfo.isInDuel) {
 		clearSize = Resize(160, 485 - Scale(7), 260, 510 - Scale(7));
 		expandSize = Resize(40, 485 - Scale(7), 140, 510 - Scale(7));

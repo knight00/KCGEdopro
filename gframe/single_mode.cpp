@@ -240,6 +240,8 @@ restart:
 	is_restarting = false;
 	mainGame->mTopMenu->setVisible(false);
 	/////kdiy/////
+    //mainGame->wCardImg->setVisible(true);
+    //mainGame->wInfos->setVisible(true);
 	mainGame->Reloadinfos();
 	/////kdiy/////
 	mainGame->btnLeaveGame->setVisible(true);

@@ -87,6 +87,8 @@ static void LoadReplay() {
 	mainGame->ClearCardInfo();
 	mainGame->mTopMenu->setVisible(false);
 	/////kdiy/////
+    //mainGame->wCardImg->setVisible(true);
+    //mainGame->wInfos->setVisible(true);
 	mainGame->Reloadinfos();
 	/////kdiy/////
 	mainGame->wReplay->setVisible(true);

@@ -461,7 +461,7 @@ public:
 	std::map<irr::gui::CGUIImageButton*, uint32_t> imageLoading;
 	//card image
 	irr::gui::IGUIStaticText* wCardImg;
-	irr::gui::IGUIImage* imgCard;
+    irr::gui::IGUIImage* imgCard;
 	//hint text
 	irr::gui::IGUIStaticText* stHintMsg;
 	irr::gui::IGUIStaticText* stTip;
@@ -505,9 +505,14 @@ public:
 	irr::gui::IGUIStaticText* updateSubprogressText;
 	IProgressBar* updateProgressBottom;
     /////kdiy/////////
-	irr::gui::IGUIStaticText* wCardImg2;
+	irr::gui::IGUIWindow* wCardImg2;
 	irr::gui::IGUIImage* imgCard2;
-	irr::gui::IGUIImage* imgCard0;
+    irr::gui::IGUIStaticText* wCardInfo2;
+	irr::gui::IGUIStaticText* stName2;
+	irr::gui::IGUIStaticText* stInfo2;
+	irr::gui::IGUIStaticText* stDataInfo2;
+	irr::gui::IGUIStaticText* stSetName2;
+	irr::gui::IGUIStaticText* stPasscodeScope2;
 	irr::gui::IGUIStaticText* stText2;
 	irr::gui::IGUIWindow* wBtnShowCard;
 	irr::gui::IGUIWindow* wBtnHideCard;

@@ -216,10 +216,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					mainGame->wPhase->setVisible(false);
 					mainGame->btnLeaveGame->setVisible(false);
 					///////kdiy///////
+					mainGame->wCardImg2->setVisible(false);
                     mainGame->wLocation->setVisible(false);
 					mainGame->wAvatar[0]->setVisible(false);
 					mainGame->wAvatar[1]->setVisible(false);
-					mainGame->wCardImg2->setVisible(false);
 					///////kdiy///////
 					mainGame->btnSpectatorSwap->setVisible(false);
 					mainGame->wChat->setVisible(false);
@@ -2084,10 +2084,10 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 					mainGame->Reloadinfos();
 				else
 					mainGame->HideElement(mainGame->wInfos);
-				// if(!mainGame->wCardImg->isVisible())
-				// 	mainGame->wCardImg->setVisible(true);
-				// else
-				// 	mainGame->HideElement(mainGame->wCardImg);
+				if(!mainGame->wCardImg->isVisible())
+					mainGame->wCardImg->setVisible(true);
+				else
+					mainGame->HideElement(mainGame->wCardImg);
 				break;
 			}
 			case BUTTON_HIDE_CARD: {
@@ -2879,7 +2879,10 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 		if(event.MouseInput.Event == irr::EMIE_LMOUSE_PRESSED_DOWN && mainGame->showingcard) {
 			irr::gui::IGUIElement* root = mainGame->env->getRootGUIElement();
 			irr::gui::IGUIElement* elem = root->getElementFromPoint({ event.MouseInput.X, event.MouseInput.Y });
-			if(elem == mainGame->stName) {
+            ///kdiy///////
+			//if(elem == mainGame->stName) {
+            if(elem == mainGame->stName || elem == mainGame->stName2) {
+            ///kdiy///////
 				auto path = mainGame->FindScript(epro::format(EPRO_TEXT("c{}.lua"), mainGame->showingcard));
 				if(path.empty()) {
 					auto cd = gDataManager->GetCardData(mainGame->showingcard);
