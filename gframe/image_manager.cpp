@@ -600,9 +600,11 @@ bool ImageManager::Initial() {
 	ASSIGN_DEFAULT(tCXyz);
     tCrack = loadTextureAnySize(EPRO_TEXT("crack"_sv));
 	ASSIGN_DEFAULT(tCrack);
-	tCardinfo = loadTextureAnySize(EPRO_TEXT("showdeck"_sv));
-    ASSIGN_DEFAULT(tCardinfo);
-	tCard = loadTextureAnySize(EPRO_TEXT("showcard"_sv));
+	tCardimg = loadTextureAnySize(EPRO_TEXT("cardimg"_sv));
+    ASSIGN_DEFAULT(tCardimg);
+	tChatlog = loadTextureAnySize(EPRO_TEXT("showcard"_sv));
+    ASSIGN_DEFAULT(tChatlog);
+	tCard = loadTextureAnySize(EPRO_TEXT("showdeck"_sv));
     ASSIGN_DEFAULT(tCard);
 	tMain = loadTextureFixedSize(EPRO_TEXT("maindeck"_sv), 30, 30);
     ASSIGN_DEFAULT(tMain);

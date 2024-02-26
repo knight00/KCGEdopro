@@ -216,7 +216,6 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					mainGame->wPhase->setVisible(false);
 					mainGame->btnLeaveGame->setVisible(false);
 					///////kdiy///////
-					mainGame->wCardImg2->setVisible(false);
                     mainGame->wLocation->setVisible(false);
 					mainGame->wAvatar[0]->setVisible(false);
 					mainGame->wAvatar[1]->setVisible(false);
@@ -2041,11 +2040,6 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 					mainGame->wInfos->setRelativePosition(wInfosSize);
 				}
 				auto lstsSize = mainGame->Resize(10, 10, mainGame->infosExpanded ? 1012 : 290, 0);
-				/////kdiy/////
-				if(mainGame->dInfo.isInDuel)
-				lstsSize.LowerRightCorner.Y = mainGame->ResizeY(485 - mainGame->Scale(7)) - mainGame->Scale(10);
-			    else
-				/////kdiy/////
 				lstsSize.LowerRightCorner.Y = mainGame->ResizeY(300 - mainGame->Scale(7)) - mainGame->Scale(10);
 				mainGame->lstLog->setRelativePosition(lstsSize);
 				mainGame->lstChat->setRelativePosition(lstsSize);
@@ -2080,20 +2074,23 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			}
 			//////kdiy///////
 			case BUTTON_SHOW_CARD: {
-				if(!mainGame->wInfos->isVisible())
-					mainGame->Reloadinfos();
-				else
-					mainGame->HideElement(mainGame->wInfos);
 				if(!mainGame->wCardImg->isVisible())
 					mainGame->wCardImg->setVisible(true);
 				else
 					mainGame->HideElement(mainGame->wCardImg);
 				break;
 			}
-			case BUTTON_HIDE_CARD: {
+			case BUTTON_CHATLOG: {
+				if(!mainGame->wInfos->isVisible())
+					mainGame->wInfos->setVisible(true);
+				else
+					mainGame->HideElement(mainGame->wInfos);
+				break;
+			}
+			case BUTTON_CARDLOC: {
 				if(!mainGame->wLocation->isVisible())
 					mainGame->wLocation->setVisible(true);
-                else
+				else
 					mainGame->HideElement(mainGame->wLocation);
 				break;
 			}
@@ -2528,13 +2525,13 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				gGameConfig->pauseduel = mainGame->gSettings.chkPauseduel->isChecked();
 				break;
 			}
+			// case CHECKBOX_HIDE_PASSCODE_SCOPE: {
+			// 	gGameConfig->hidePasscodeScope = mainGame->gSettings.chkHidePasscodeScope->isChecked();
+			// 	mainGame->stPasscodeScope->setVisible(!gGameConfig->hidePasscodeScope);
+			// 	mainGame->RefreshCardInfoTextPositions();
+			// 	return true;
+			// }
 			/////kdiy/////
-			case CHECKBOX_HIDE_PASSCODE_SCOPE: {
-				gGameConfig->hidePasscodeScope = mainGame->gSettings.chkHidePasscodeScope->isChecked();
-				mainGame->stPasscodeScope->setVisible(!gGameConfig->hidePasscodeScope);
-				mainGame->RefreshCardInfoTextPositions();
-				return true;
-			}
 			case CHECKBOX_SHOW_SCOPE_LABEL: {
 				gGameConfig->showScopeLabel = mainGame->gSettings.chkShowScopeLabel->isChecked();
 				return true;
@@ -2814,11 +2811,13 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				mainGame->wInfos->setActiveTab(3);
 			break;
 		}
-		case irr::KEY_KEY_5: {
-			if (event.KeyInput.Control && !event.KeyInput.PressedDown)
-				mainGame->wInfos->setActiveTab(4);
-			break;
-		}
+		/////kdiy/////////
+		// case irr::KEY_KEY_5: {
+		// 	if (event.KeyInput.Control && !event.KeyInput.PressedDown)
+		// 		mainGame->wInfos->setActiveTab(4);
+		// 	break;
+		// }
+		/////kdiy/////////
 		default: break;
 		}
 		break;
@@ -2879,10 +2878,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 		if(event.MouseInput.Event == irr::EMIE_LMOUSE_PRESSED_DOWN && mainGame->showingcard) {
 			irr::gui::IGUIElement* root = mainGame->env->getRootGUIElement();
 			irr::gui::IGUIElement* elem = root->getElementFromPoint({ event.MouseInput.X, event.MouseInput.Y });
-            ///kdiy///////
-			//if(elem == mainGame->stName) {
-            if(elem == mainGame->stName || elem == mainGame->stName2) {
-            ///kdiy///////
+            if(elem == mainGame->stName) {
 				auto path = mainGame->FindScript(epro::format(EPRO_TEXT("c{}.lua"), mainGame->showingcard));
 				if(path.empty()) {
 					auto cd = gDataManager->GetCardData(mainGame->showingcard);

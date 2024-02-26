@@ -239,10 +239,9 @@ restart:
 	}
 	is_restarting = false;
 	mainGame->mTopMenu->setVisible(false);
+	mainGame->wCardImg->setVisible(true);
 	/////kdiy/////
-    //mainGame->wCardImg->setVisible(true);
     //mainGame->wInfos->setVisible(true);
-	mainGame->Reloadinfos();
 	/////kdiy/////
 	mainGame->btnLeaveGame->setVisible(true);
 	mainGame->btnLeaveGame->setText(gDataManager->GetSysString(1210).data());

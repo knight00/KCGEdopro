@@ -86,10 +86,9 @@ static void LoadReplay() {
 	replay.Rewind();
 	mainGame->ClearCardInfo();
 	mainGame->mTopMenu->setVisible(false);
+	mainGame->wCardImg->setVisible(true);
 	/////kdiy/////
-    //mainGame->wCardImg->setVisible(true);
     //mainGame->wInfos->setVisible(true);
-	mainGame->Reloadinfos();
 	/////kdiy/////
 	mainGame->wReplay->setVisible(true);
 	mainGame->wReplayControl->setVisible(true);

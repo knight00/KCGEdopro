@@ -92,18 +92,8 @@ void DeckBuilder::Initialize(bool refresh) {
 	if(refresh)
 		mainGame->ClearCardInfo();
 	mainGame->mTopMenu->setVisible(false);
-	mainGame->wInfos->setVisible(true);
     ////kdiy////
-    mainGame->wInfos->setRelativePosition(mainGame->Resize(1, 275, 301, 639));
-	mainGame->lstLog->setRelativePosition(mainGame->Resize(10, 10, 290, 290));
-	mainGame->lstLog->setItemHeight(mainGame->Scale(18));
-	mainGame->btnClearLog->setRelativePosition(mainGame->Resize(160, 300, 260, 325));
-	mainGame->btnExpandLog->setRelativePosition(mainGame->Resize(40, 300, 140, 325));
-	mainGame->lstChat->setRelativePosition(mainGame->Resize(10, 10, 290, 290));
-	mainGame->lstChat->setItemHeight(mainGame->Scale(18));
-	mainGame->btnClearChat->setRelativePosition(mainGame->Resize(160, 300, 260, 325));
-	mainGame->btnExpandChat->setRelativePosition(mainGame->Resize(40, 300, 140, 325));
-	mainGame->mTabRepositories->setRelativePosition(mainGame->Resize(0, 0, 300, 364));
+	// mainGame->wInfos->setVisible(true);
     ////kdiy////
 	mainGame->wCardImg->setVisible(true);
 	mainGame->wDeckEdit->setVisible(true);
@@ -155,7 +145,9 @@ void DeckBuilder::Terminate(bool showmenu) {
 	mainGame->wSort->setVisible(false);
 	if(showmenu) {
 		mainGame->wCardImg->setVisible(false);
-		mainGame->wInfos->setVisible(false);
+		////kdiy////
+		// mainGame->wInfos->setVisible(false);
+		////kdiy////
 		mainGame->btnLeaveGame->setVisible(false);
 		mainGame->PopupElement(mainGame->wMainMenu);
 		////kdiy////////
@@ -167,10 +159,6 @@ void DeckBuilder::Terminate(bool showmenu) {
 		mainGame->ClearCardInfo(0);
 		gdeckManager->ClearDummies();
 	}
-    ////kdiy////////
-    mainGame->wCardImg->setVisible(false);
-	mainGame->wInfos->setVisible(false);
-    ////kdiy////////
 	mainGame->btnHandTest->setVisible(false);
 	mainGame->btnHandTestSettings->setVisible(false);
 	mainGame->btnYdkeManage->setVisible(false);

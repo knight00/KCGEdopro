@@ -1134,10 +1134,9 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		mainGame->dInfo.isReplaySwapped = false;
 		mainGame->is_building = false;
 		mainGame->mTopMenu->setVisible(false);
+		mainGame->wCardImg->setVisible(true);
 		/////kdiy/////
-        //mainGame->wCardImg->setVisible(true);
         //mainGame->wInfos->setVisible(true);
-		mainGame->Reloadinfos();
 		/////kdiy/////
 		mainGame->wPhase->setVisible(true);
 		mainGame->btnSideOK->setVisible(false);

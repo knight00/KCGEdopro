@@ -369,7 +369,6 @@ public:
 	int showcard;
 	uint32_t showcardcode;
     ////kdiy//////
-	void Reloadinfos();
     bool git_update = false;
     bool git_error = false;
     bool first_play = false;
@@ -460,7 +459,9 @@ public:
 	irr::gui::CGUITTFont* lpcFont;
 	std::map<irr::gui::CGUIImageButton*, uint32_t> imageLoading;
 	//card image
-	irr::gui::IGUIStaticText* wCardImg;
+	/////kdiy/////////
+	//irr::gui::IGUIStaticText* wCardImg;
+	/////kdiy/////////
     irr::gui::IGUIImage* imgCard;
 	//hint text
 	irr::gui::IGUIStaticText* stHintMsg;
@@ -505,19 +506,15 @@ public:
 	irr::gui::IGUIStaticText* updateSubprogressText;
 	IProgressBar* updateProgressBottom;
     /////kdiy/////////
-	irr::gui::IGUIWindow* wCardImg2;
-	irr::gui::IGUIImage* imgCard2;
+	irr::gui::IGUIWindow* wCardImg;
     irr::gui::IGUIStaticText* wCardInfo2;
-	irr::gui::IGUIStaticText* stName2;
-	irr::gui::IGUIStaticText* stInfo2;
-	irr::gui::IGUIStaticText* stDataInfo2;
-	irr::gui::IGUIStaticText* stSetName2;
-	irr::gui::IGUIStaticText* stPasscodeScope2;
-	irr::gui::IGUIStaticText* stText2;
 	irr::gui::IGUIWindow* wBtnShowCard;
-	irr::gui::IGUIWindow* wBtnHideCard;
+	irr::gui::IGUIStaticText* stInfo2;
+	irr::gui::IGUIWindow* wBtnChatLog;
+	irr::gui::IGUIWindow* wBtnCardLoc;
 	irr::gui::CGUIImageButton* btnShowCard;
-	irr::gui::CGUIImageButton* btnHideCard;
+	irr::gui::CGUIImageButton* btnChatLog;
+	irr::gui::CGUIImageButton* btnCardLoc;
 	irr::gui::IGUIWindow* wLocation;
 	irr::gui::IGUIButton* btnLocation[8];
 	irr::gui::IGUIWindow* pwupdateWindow;
