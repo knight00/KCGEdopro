@@ -1680,36 +1680,6 @@ inline std::unique_lock<epro::mutex> LockIf() {
 ///kdiy/////
 void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t msg) {
 	switch(msg) {
-    case MSG_NEW_TURN: {
-		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
-        int avataricon1 = 0; int avataricon2 = 0;
-		if(mainGame->dInfo.isTeam1) {
-			avataricon1 = mainGame->dInfo.current_player[0];
-			avataricon2 = mainGame->dInfo.current_player[1] + mainGame->dInfo.team1;
-		} else {
-			avataricon1 = mainGame->dInfo.current_player[0] + mainGame->dInfo.team1;
-			avataricon2 = mainGame->dInfo.current_player[1];
-		}
-        mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[avataricon1][0]);
-		mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[avataricon2][0]);
-        if(!mainGame->dInfo.isSingleMode && !mainGame->mode->isMode) {
-#ifdef VIP
-            if(gSoundManager->character[avataricon1] > 0)
-                mainGame->wAvatar[0]->setVisible(true);
-            else
-                mainGame->wAvatar[0]->setVisible(false);
-            if(gSoundManager->character[avataricon2] > 0)
-                mainGame->wAvatar[1]->setVisible(true);
-            else
-                mainGame->wAvatar[1]->setVisible(false);
-#endif
-        }
-        if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
-            mainGame->wHead[0]->setVisible(true);
-            mainGame->wHead[1]->setVisible(true);
-        }
-		break;
-    }
 	case MSG_NEW_PHASE: {
 		const auto phase = BufferIO::Read<uint16_t>(pbuf);
 		uint8_t player = 1 - ((mainGame->dInfo.turn % 2 && mainGame->dInfo.isFirst) || (!(mainGame->dInfo.turn % 2) && !mainGame->dInfo.isFirst));
@@ -2065,11 +2035,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		mainGame->dField.ReplaySwap();
 		is_swapping = false;
 	}
-	switch(curMsg) {
     /////kdiy////
     mainGame->cv = &cv;
     ModeClientAnalyze(mainGame->mode->chapter, pbuf, curMsg);
     /////kdiy////
+	switch(curMsg) {
 	case MSG_RETRY: {
 		if(!mainGame->dInfo.compat_mode) {
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);

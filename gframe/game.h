@@ -509,6 +509,7 @@ public:
 	irr::gui::IGUIWindow* wCardImg;
     irr::gui::IGUIStaticText* wCardInfo2;
 	irr::gui::IGUIWindow* wBtnShowCard;
+	irr::gui::IGUIStaticText* stPasscodeScope2;
 	irr::gui::IGUIStaticText* stInfo2;
 	irr::gui::IGUIWindow* wBtnChatLog;
 	irr::gui::IGUIWindow* wBtnCardLoc;

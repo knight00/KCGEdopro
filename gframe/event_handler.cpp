@@ -2076,21 +2076,24 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			case BUTTON_SHOW_CARD: {
 				if(!mainGame->wCardImg->isVisible())
 					mainGame->wCardImg->setVisible(true);
-				else
+                else
 					mainGame->HideElement(mainGame->wCardImg);
 				break;
 			}
 			case BUTTON_CHATLOG: {
-				if(!mainGame->wInfos->isVisible())
+				if (!mainGame->wInfos->isVisible()) {
 					mainGame->wInfos->setVisible(true);
-				else
+					mainGame->env->getRootGUIElement()->bringToFront(mainGame->wInfos);
+				} else
 					mainGame->HideElement(mainGame->wInfos);
 				break;
 			}
 			case BUTTON_CARDLOC: {
-				if(!mainGame->wLocation->isVisible())
+				if(!mainGame->wLocation->isVisible()) {
 					mainGame->wLocation->setVisible(true);
-				else
+					mainGame->HideElement(mainGame->wCardImg);
+					mainGame->HideElement(mainGame->wInfos);
+				} else
 					mainGame->HideElement(mainGame->wLocation);
 				break;
 			}

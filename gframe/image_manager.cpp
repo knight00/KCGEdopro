@@ -602,6 +602,12 @@ bool ImageManager::Initial() {
 	ASSIGN_DEFAULT(tCrack);
 	tCardimg = loadTextureAnySize(EPRO_TEXT("cardimg"_sv));
     ASSIGN_DEFAULT(tCardimg);
+	tLevel = loadTextureAnySize(EPRO_TEXT("level"_sv));
+    ASSIGN_DEFAULT(tLevel);
+	tRank = loadTextureAnySize(EPRO_TEXT("rank"_sv));
+    ASSIGN_DEFAULT(tRank);
+	tLvRank = loadTextureAnySize(EPRO_TEXT("lvrank"_sv));
+    ASSIGN_DEFAULT(tLvRank);
 	tChatlog = loadTextureAnySize(EPRO_TEXT("showcard"_sv));
     ASSIGN_DEFAULT(tChatlog);
 	tCard = loadTextureAnySize(EPRO_TEXT("showdeck"_sv));

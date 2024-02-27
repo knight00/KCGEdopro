@@ -581,6 +581,9 @@ std::wstring DataManager::FormatType(uint32_t type) const {
 		appendstring(res, GetSysString(1078));
 	}
 	for(uint32_t i = 1050, filter = 1; filter != TYPE_SKILL; filter <<= 1, ++i) {
+        ///kdiy/////
+        if(i == 1050) continue;
+        ///kdiy/////
 		if(type & filter) {
 			if(!res.empty())
 				res += L'|';
@@ -627,7 +630,10 @@ std::wstring DataManager::FormatSetName(const std::vector<uint16_t>& setcodes) c
 			break;
 		auto name = GetSetName(setcode);
 		if(!res.empty())
-			res += L'|';
+            ///kdiy/////////
+			//res += L'|';
+            res += L'\n';
+            ///kdiy/////////
 		if(name.empty())
 			appendstring(res, unknown_string);
 		else
