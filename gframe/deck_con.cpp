@@ -100,7 +100,10 @@ void DeckBuilder::Initialize(bool refresh) {
 	mainGame->wFilter->setVisible(true);
 	mainGame->wSort->setVisible(true);
 	mainGame->btnLeaveGame->setVisible(true);
-	mainGame->btnLeaveGame->setText(gDataManager->GetSysString(1306).data());
+	////kdiy////
+	//mainGame->btnLeaveGame->setText(gDataManager->GetSysString(1306).data());
+	mainGame->btnLeaveGame->setToolTipText(gDataManager->GetSysString(1306).data());
+	////kdiy////
 	mainGame->btnSideOK->setVisible(false);
 	mainGame->btnSideShuffle->setVisible(false);
 	mainGame->btnSideSort->setVisible(false);

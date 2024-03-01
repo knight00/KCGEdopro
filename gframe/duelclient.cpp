@@ -1171,7 +1171,10 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		}
 		if(selftype >= mainGame->dInfo.team1 + mainGame->dInfo.team2) {
 			mainGame->dInfo.player_type = 7;
-			mainGame->btnLeaveGame->setText(gDataManager->GetSysString(1350).data());
+			////kdiy////
+			//mainGame->btnLeaveGame->setText(gDataManager->GetSysString(1350).data());
+			mainGame->btnLeaveGame->setToolTipText(gDataManager->GetSysString(1350).data());
+			////kdiy////
 			mainGame->btnLeaveGame->setVisible(true);
 			mainGame->btnSpectatorSwap->setVisible(true);
 			mainGame->dInfo.isFirst = true;
@@ -3977,7 +3980,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		mainGame->dInfo.turn++;
 		//////kdiy///
 		if(!mainGame->dInfo.isReplay && !mainGame->dInfo.isSingleMode && mainGame->dInfo.player_type < (mainGame->dInfo.team1 + mainGame->dInfo.team2)) {
-			mainGame->btnLeaveGame->setText(gDataManager->GetSysString(1351).data());
+			////kdiy////
+			//mainGame->btnLeaveGame->setText(gDataManager->GetSysString(1351).data());
+			mainGame->btnLeaveGame->setToolTipText(gDataManager->GetSysString(1351).data());
+			////kdiy////
 			mainGame->btnLeaveGame->setVisible(true);
 		}
 		if(!mainGame->dInfo.isReplay && mainGame->dInfo.player_type < 7) {

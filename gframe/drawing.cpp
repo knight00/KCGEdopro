@@ -1734,16 +1734,16 @@ void Game::DrawDeckBd() {
 	if(dInfo.isInDuel) {
         if(dInfo.isSingleMode && !dInfo.isHandTest) {
             mainGame->btnLocation[0]->setVisible(false);
-            for(int i = 1; i < 8; ++i)
+            for(int i = 1; i < 6; ++i)
 				mainGame->btnLocation[i]->setVisible(true);
             if(mainGame->btnLocation[0]->isPressed()) {
-                for(int i = 0; i < 8; ++i) {
+                for(int i = 0; i < 6; ++i) {
 					if(i == 1) mainGame->btnLocation[1]->setPressed(true);
 					else mainGame->btnLocation[i]->setPressed(false);
 				}
             }
         } else {
-            for(int i = 0; i < 8; ++i)
+            for(int i = 0; i < 6; ++i)
 				mainGame->btnLocation[i]->setVisible(true);
         }
         

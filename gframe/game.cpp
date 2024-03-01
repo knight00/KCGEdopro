@@ -919,73 +919,74 @@ void Game::Initialize() {
     
 	//////kdiy//////
     //wBtnSettings = env->addWindow(Scale(0, 610, 30, 640));
-    wBtnSettings = env->addWindow(Scale(0, 590, 30, 620));
-	auto dimBtnSettings2 = Scale(0, 0, 50, 50);
-	wBtnShowCard = AlignElementWithParent(env->addWindow(Scale(230, 10, 280, 60)));
+	auto dimBtnSettings2 = Scale(0, 0, 40, 50);
+	wBtnShowCard = AlignElementWithParent(env->addWindow(Scale(315, 5, 405, 205)));
 	wBtnShowCard->getCloseButton()->setVisible(false);
 	wBtnShowCard->setDraggable(false);
 	wBtnShowCard->setDrawTitlebar(false);
     wBtnShowCard->setDrawBackground(false);
-	btnShowCard = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, dimBtnSettings2, wBtnShowCard, BUTTON_SHOW_CARD));
+	btnShowCard = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 90, 60), wBtnShowCard, BUTTON_SHOW_CARD));
 	btnShowCard->setDrawBorder(false);
 	btnShowCard->setImageSize(dimBtnSettings2.getSize());
 	btnShowCard->setImage(imageManager.tCardimg);
-	wBtnChatLog = AlignElementWithParent(env->addWindow(Scale(230, 90, 280, 130)));
-	wBtnChatLog->getCloseButton()->setVisible(false);
-	wBtnChatLog->setDraggable(false);
-	wBtnChatLog->setDrawTitlebar(false);
-    wBtnChatLog->setDrawBackground(false);
-	btnChatLog = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, dimBtnSettings2, wBtnChatLog, BUTTON_CHATLOG));
+	stShowCard = AlignElementWithParent(env->addStaticText(gDataManager->GetSysString(8067).data(), Scale(15, 15, 75, 45), false, true, btnShowCard));
+	defaultStrings.emplace_back(stShowCard, 8067);
+	btnChatLog = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 70, 90, 130), wBtnShowCard, BUTTON_CHATLOG));
 	btnChatLog->setDrawBorder(false);
 	btnChatLog->setImageSize(dimBtnSettings2.getSize());
 	btnChatLog->setImage(imageManager.tChatlog);
-	wBtnCardLoc = AlignElementWithParent(env->addWindow(Scale(230, 160, 280, 200)));
-	wBtnCardLoc->getCloseButton()->setVisible(false);
-	wBtnCardLoc->setDraggable(false);
-	wBtnCardLoc->setDrawTitlebar(false);
-    wBtnCardLoc->setDrawBackground(false);
-	btnCardLoc = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, dimBtnSettings2, wBtnCardLoc, BUTTON_CARDLOC));
+	stChatLog = AlignElementWithParent(env->addStaticText(gDataManager->GetSysString(8068).data(), Scale(15, 15, 75, 45), false, true, btnChatLog));
+	defaultStrings.emplace_back(stChatLog, 8068);
+	btnCardLoc = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 140, 90, 200), wBtnShowCard, BUTTON_CARDLOC));
 	btnCardLoc->setDrawBorder(false);
 	btnCardLoc->setImageSize(dimBtnSettings2.getSize());
 	btnCardLoc->setImage(imageManager.tCard);
+	stCardLoc = AlignElementWithParent(env->addStaticText(gDataManager->GetSysString(8069).data(), Scale(15, 15, 75, 45), false, true, btnCardLoc));
+	defaultStrings.emplace_back(stCardLoc, 8069);
 	wLocation = AlignElementWithParent(env->addWindow(Scale(9, 505, 300, 535)));
 	wLocation->getCloseButton()->setVisible(false);
 	wLocation->setDraggable(false);
 	wLocation->setDrawTitlebar(false);
 	wLocation->setDrawBackground(false);
 	wLocation->setVisible(false);
-	for(int i = 0; i < 8; ++i) {
+	for(int i = 0; i < 6; ++i) {
 		btnLocation[i] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(35 * i, 0, 30 + 35 * i, 30), wLocation, BUTTON_LOCATION_0 + i));
 		btnLocation[i]->setIsPushButton(true);
 		btnLocation[i]->setDrawBorder(false);
         btnLocation[i]->setVisible(false);
         btnLocation[i]->setPressed(false);
+		stLocation[i] = AlignElementWithParent(env->addStaticText(L"", Scale(0, 15, 30, 30), false, true, btnLocation[i]));
+		defaultStrings.emplace_back(stShowCard, 8067);
 	}
     btnLocation[0]->setPressed();
 	btnLocation[0]->setImage(imageManager.tMain);
-	btnLocation[0]->setToolTipText(gDataManager->GetSysString(8059).data());
-	defaultStrings.emplace_back(btnLocation[0], 8059);
+	stLocation[0]->setText(gDataManager->GetSysString(1000).data());
+	defaultStrings.emplace_back(stLocation[0], 8059);
 	btnLocation[1]->setImage(imageManager.tDeck);
-	btnLocation[1]->setToolTipText(gDataManager->GetSysString(1000).data());
-	defaultStrings.emplace_back(btnLocation[1], 1000);
+	stLocation[1]->setText(gDataManager->GetSysString(1000).data());
+	defaultStrings.emplace_back(stLocation[1], 1000);
 	btnLocation[2]->setImage(imageManager.tGrave);
-	btnLocation[2]->setToolTipText(gDataManager->GetSysString(1004).data());
-	defaultStrings.emplace_back(btnLocation[2], 1004);
+	stLocation[2]->setText(gDataManager->GetSysString(1004).data());
+	defaultStrings.emplace_back(stLocation[2], 1004);
 	btnLocation[3]->setImage(imageManager.tRemoved);
-	btnLocation[3]->setToolTipText(gDataManager->GetSysString(1005).data());
-	defaultStrings.emplace_back(btnLocation[3], 1005);
+	stLocation[3]->setText(gDataManager->GetSysString(1005).data());
+	defaultStrings.emplace_back(stLocation[3], 1005);
 	btnLocation[4]->setImage(imageManager.tOnHand);
-	btnLocation[4]->setToolTipText(gDataManager->GetSysString(1001).data());
-	defaultStrings.emplace_back(btnLocation[4], 1001);
+	stLocation[4]->setText(gDataManager->GetSysString(1001).data());
+	defaultStrings.emplace_back(stLocation[4], 1001);
 	btnLocation[5]->setImage(imageManager.tExtra);
-	btnLocation[5]->setToolTipText(gDataManager->GetSysString(1006).data());
-	defaultStrings.emplace_back(btnLocation[5], 1006);
+	stLocation[5]->setText(gDataManager->GetSysString(1006).data());
+	defaultStrings.emplace_back(stLocation[5], 1006);
+    wBtnSettings = env->addWindow(Scale(0, 590, 30, 620));
     //////kdiy//////
 	wBtnSettings->getCloseButton()->setVisible(false);
 	wBtnSettings->setDraggable(false);
 	wBtnSettings->setDrawTitlebar(false);
     wBtnSettings->setDrawBackground(false);
-	auto dimBtnSettings = Scale(0, 0, 50, 50);
+    //////kdiy//////
+	//auto dimBtnSettings = Scale(0, 0, 50, 50);
+    auto dimBtnSettings = Scale(0, 0, 30, 30);
+    //////kdiy//////
 	btnSettings = irr::gui::CGUIImageButton::addImageButton(env, dimBtnSettings, wBtnSettings, BUTTON_SHOW_SETTINGS);
 	btnSettings->setDrawBorder(false);
 	btnSettings->setImageSize(dimBtnSettings.getSize());
@@ -1780,15 +1781,23 @@ void Game::Initialize() {
 	//leave/surrender/exit
 	////kdiy////////
 	//btnLeaveGame = AlignElementWithParent(env->addButton(Scale(205, 5, 295, 45), 0, BUTTON_LEAVE_GAME, L""));
-	btnLeaveGame = AlignElementWithParent(env->addButton(Scale(315, 5, 405, 45), 0, BUTTON_LEAVE_GAME, L""));
-	////kdiy////////
-	btnLeaveGame->setVisible(false);
-	//restart single
-	////kdiy////////
+	//btnLeaveGame->setVisible(false);
 	//btnRestartSingle = AlignElementWithParent(env->addButton(Scale(205, 50, 295, 90), 0, BUTTON_RESTART_SINGLE, gDataManager->GetSysString(1366).data()));
-	btnRestartSingle = AlignElementWithParent(env->addButton(Scale(315, 50, 405, 90), 0, BUTTON_RESTART_SINGLE, gDataManager->GetSysString(1366).data()));
+	// defaultStrings.emplace_back(btnRestartSingle, 1366);
+	//restart single
+	btnLeaveGame = AlignElementWithParent(env->addButton(Scale(430, 50, 460, 80), 0, BUTTON_LEAVE_GAME, L""));
+	btnLeaveGame->setVisible(false);
+	btnLeaveGame->setImage(imageManager.tSettings);
+	btnLeaveGame->setScaleImage(true);
+	btnLeaveGame->setDrawBorder(false);
+	btnLeaveGame->setUseAlphaChannel(true);
+	//restart single
+	btnRestartSingle = AlignElementWithParent(env->addButton(Scale(430, 90, 460, 120), 0, BUTTON_RESTART_SINGLE, L"", gDataManager->GetSysString(1366).data()));
+	btnRestartSingle->setImage(imageManager.tSettings);
+	btnRestartSingle->setScaleImage(true);
+	btnRestartSingle->setDrawBorder(false);
+	btnRestartSingle->setUseAlphaChannel(true);
 	////kdiy////////
-	defaultStrings.emplace_back(btnRestartSingle, 1366);
 	btnRestartSingle->setVisible(false);
 	//tip
 	stTip = env->addStaticText(L"", Scale(0, 0, 150, 150), false, true, 0, -1, true);
@@ -3500,7 +3509,7 @@ bool Game::MainLoop() {
 		/////kdiy//////////
 		//wBtnSettings->setVisible(!(is_building || is_siding || dInfo.isInDuel || open_file));
 		wBtnSettings->setVisible(!open_file);
-        wBtnSettings->setRelativePosition(dInfo.isInDuel ? ResizeWin(430, 10, 470, 50) : ResizeWin(0, 590, 30, 620));
+        wBtnSettings->setRelativePosition(dInfo.isInDuel ? ResizeWin(430, 10, 460, 40) : ResizeWin(0, 590, 30, 620));
 	
 		int avataricon1 = 0; int avataricon2 = 0;
 		if (mainGame->dInfo.isTeam1) {
@@ -3528,8 +3537,6 @@ bool Game::MainLoop() {
                 mainGame->wAvatar[1]->setVisible(false);
         }
 #endif
-		wBtnChatLog->setVisible(dInfo.isInDuel);
-		wBtnCardLoc->setVisible(dInfo.isInDuel);
 		wBtnShowCard->setVisible(dInfo.isInDuel);
 		/////kdiy//////////
 		EnableMaterial2D(true);
@@ -4913,8 +4920,6 @@ void Game::CloseDuelWindow() {
 	btnSideReload->setVisible(false);
 	btnLeaveGame->setVisible(false);
 	///////kdiy///////
-	wBtnChatLog->setVisible(false);
-	wBtnCardLoc->setVisible(false);
     wLocation->setVisible(false);
 	wCharacter->setVisible(false);
 	wAvatar[0]->setVisible(false);
@@ -5482,7 +5487,7 @@ void Game::ReloadElementsStrings() {
 	prev = cbpics->getSelected();
 	ReloadCBpic();
 	cbpics->setSelected(prev);
-	//////kdiy//////////	
+	//////kdiy//////////
 	prev = cbHostLFList->getSelected();
 	cbHostLFList->removeItem(static_cast<irr::u32>(nullLFlist));
 	cbHostLFList->addItem(gdeckManager->_lfList[nullLFlist].listName.data(), gdeckManager->_lfList[nullLFlist].hash);
@@ -5512,15 +5517,26 @@ void Game::ReloadElementsStrings() {
 	ReloadCBRace();
 	cbRace->setSelected(prev);
 
+	//////kdiy//////////
+	// if(is_building) {
+	// 	btnLeaveGame->setText(gDataManager->GetSysString(1306).data());
+	// } else if(!dInfo.isReplay && !dInfo.isSingleMode && dInfo.player_type < (dInfo.team1 + dInfo.team2)) {
+	// 	btnLeaveGame->setText(gDataManager->GetSysString(1351).data());
+	// } else if(dInfo.player_type == 7) {
+	// 	btnLeaveGame->setText(gDataManager->GetSysString(1350).data());
+	// } else if(dInfo.isSingleMode) {
+	// 	btnLeaveGame->setText(gDataManager->GetSysString(1210).data());
+	// }
 	if(is_building) {
-		btnLeaveGame->setText(gDataManager->GetSysString(1306).data());
+		btnLeaveGame->setToolTipText(gDataManager->GetSysString(1306).data());
 	} else if(!dInfo.isReplay && !dInfo.isSingleMode && dInfo.player_type < (dInfo.team1 + dInfo.team2)) {
-		btnLeaveGame->setText(gDataManager->GetSysString(1351).data());
+		btnLeaveGame->setToolTipText(gDataManager->GetSysString(1351).data());
 	} else if(dInfo.player_type == 7) {
-		btnLeaveGame->setText(gDataManager->GetSysString(1350).data());
+		btnLeaveGame->setToolTipText(gDataManager->GetSysString(1350).data());
 	} else if(dInfo.isSingleMode) {
-		btnLeaveGame->setText(gDataManager->GetSysString(1210).data());
+		btnLeaveGame->setToolTipText(gDataManager->GetSysString(1210).data());
 	}
+	//////kdiy//////////
 
 	prev = cbFilterRule->getSelected();
 	ReloadCBFilterRule();

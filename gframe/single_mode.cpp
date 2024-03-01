@@ -80,7 +80,7 @@ int SingleMode::SinglePlayThread(DuelOptions&& duelOptions) {
 	};
 	////kdiy////////
 	//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 45));
-	mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(315, 5, 405, 45));
+	mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(430, 50, 460, 80));
 	////kdiy////////
 	is_continuing = false;
 	is_restarting = false;
@@ -199,7 +199,7 @@ restart:
 			}
 			////kdiy////////
 			//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
-			mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(315, 5, 405, 45));
+			mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(430, 50, 460, 80));
             gSoundManager->soundcount.clear();
 			////kdiy////////
 			if(!hand_test) {
@@ -227,7 +227,7 @@ restart:
 		} else
 			////kdiy////////
 			//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
-			mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(315, 5, 405, 45));
+			mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(430, 50, 460, 80));
 			////kdiy////////
 		is_restarting = false;
 		return 0;
@@ -244,7 +244,10 @@ restart:
     //mainGame->wInfos->setVisible(true);
 	/////kdiy/////
 	mainGame->btnLeaveGame->setVisible(true);
-	mainGame->btnLeaveGame->setText(gDataManager->GetSysString(1210).data());
+	////kdiy////
+	//mainGame->btnLeaveGame->setText(gDataManager->GetSysString(1210).data());
+	mainGame->btnLeaveGame->setToolTipText(gDataManager->GetSysString(1210).data());
+	////kdiy////
 	mainGame->btnRestartSingle->setVisible(true);
 	mainGame->wPhase->setVisible(true);
 	mainGame->dField.Clear();
@@ -290,7 +293,7 @@ restart:
 		mainGame->gMutex.lock();
 		////kdiy////////
 		//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
-		mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(315, 5, 405, 45));
+		mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(430, 50, 460, 80));
 		////kdiy////////
 		mainGame->gMutex.unlock();
 		return 0;
@@ -344,7 +347,7 @@ restart:
 		}
 		////kdiy////////
 		//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
-		mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(225, 137, 310, 187));
+		mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(430, 50, 460, 80));
         gSoundManager->soundcount.clear();
 		////kdiy////////
 		if(!hand_test) {
