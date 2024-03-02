@@ -80,7 +80,7 @@ int SingleMode::SinglePlayThread(DuelOptions&& duelOptions) {
 	};
 	////kdiy////////
 	//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 45));
-	mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(430, 50, 460, 80));
+	mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(420, 60, 460, 100));
 	////kdiy////////
 	is_continuing = false;
 	is_restarting = false;
@@ -199,7 +199,7 @@ restart:
 			}
 			////kdiy////////
 			//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
-			mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(430, 50, 460, 80));
+			mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(420, 60, 460, 100));
             gSoundManager->soundcount.clear();
 			////kdiy////////
 			if(!hand_test) {
@@ -227,7 +227,7 @@ restart:
 		} else
 			////kdiy////////
 			//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
-			mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(430, 50, 460, 80));
+			mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(420, 60, 460, 100));
 			////kdiy////////
 		is_restarting = false;
 		return 0;
@@ -293,7 +293,7 @@ restart:
 		mainGame->gMutex.lock();
 		////kdiy////////
 		//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
-		mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(430, 50, 460, 80));
+		mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(420, 60, 460, 100));
 		////kdiy////////
 		mainGame->gMutex.unlock();
 		return 0;
@@ -347,7 +347,7 @@ restart:
 		}
 		////kdiy////////
 		//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
-		mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(430, 50, 460, 80));
+		mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(420, 60, 460, 100));
         gSoundManager->soundcount.clear();
 		////kdiy////////
 		if(!hand_test) {

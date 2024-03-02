@@ -624,6 +624,14 @@ bool ImageManager::Initial() {
     ASSIGN_DEFAULT(tOnHand);
 	tExtra = loadTextureFixedSize(EPRO_TEXT("extra"_sv), 30, 30);
     ASSIGN_DEFAULT(tExtra);
+	tExit = loadTextureFixedSize(EPRO_TEXT("exit"_sv), 30, 30);
+    ASSIGN_DEFAULT(tExit);
+	tRestart = loadTextureFixedSize(EPRO_TEXT("restart"_sv), 30, 30);
+    ASSIGN_DEFAULT(tRestart);
+	tButton = loadTextureFixedSize(EPRO_TEXT("button"_sv), 30, 30);
+    ASSIGN_DEFAULT(tButton);
+	tButton2 = loadTextureFixedSize(EPRO_TEXT("button2"_sv), 30, 30);
+    ASSIGN_DEFAULT(tButton2);
     ///kdiy/////
 
 	// Not required to be present

@@ -600,7 +600,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				//if(selected == -1)
 					//break;
 				//if(!mainGame->deckBuilder.SetCurrentDeckFromFile(Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected))))
-				mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(430, 50, 460, 80));
+				mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(420, 60, 460, 100));
 				auto folder = Utils::ToPathString(mainGame->cbDeck2Select->getItem(mainGame->cbDeck2Select->getSelected()));
 				if(mainGame->cbDeck2Select->getSelected() == -1 || selected == -1 || !mainGame->deckBuilder.SetCurrentDeckFromFile(folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected))))
 				//////kdiy/////
@@ -998,7 +998,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				// if(open_file && mainGame->deckBuilder.SetCurrentDeckFromFile(open_file_name, true)) {
 				// 	auto name = Utils::GetFileName(open_file_name);
 				//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 137, 295, 187));
-				mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(280, 137, 310, 167));
+				mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(270, 137, 310, 177));
 				mainGame->RefreshDeck(mainGame->cbDBDecks, true);
 				auto folder = Utils::ToPathString(mainGame->cbDBDecks2->getItem(mainGame->cbDBDecks2->getSelected()));
                 for(uint32_t i = 0; i < mainGame->cbDBDecks2->getItemCount() - 1; i++) {
@@ -1332,7 +1332,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
 			case CHECKBOX_ENTERTAUNMENT_READY:{
 				if(mainGame->chkEntertainmentPrepReady->isChecked()) {
-                    mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(430, 50, 460, 80));
+                    mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(420, 60, 460, 100));
 					mainGame->lstEntertainmentPlayList->setEnabled(false);
 					mainGame->chkEntertainmentMode_1Check->setEnabled(false);
 					mainGame->cbEntertainmentMode_1Bot->setEnabled(false);
@@ -1428,7 +1428,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					mainGame->cbDeckSelect->setEnabled(false);
 					///////kdiy////
 					mainGame->cbDeck2Select->setEnabled(false);
-					mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(430, 50, 460, 80));
+					mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(420, 60, 460, 100));
 					///////kdiy////
 					if(mainGame->dInfo.team1 + mainGame->dInfo.team2 > 2)
 						mainGame->btnHostPrepDuelist->setEnabled(false);

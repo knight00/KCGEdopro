@@ -920,29 +920,29 @@ void Game::Initialize() {
 	//////kdiy//////
     //wBtnSettings = env->addWindow(Scale(0, 610, 30, 640));
 	auto dimBtnSettings2 = Scale(0, 0, 40, 50);
-	wBtnShowCard = AlignElementWithParent(env->addWindow(Scale(315, 5, 405, 205)));
+	wBtnShowCard = AlignElementWithParent(env->addWindow(Scale(315, 5, 405, 115)));
 	wBtnShowCard->getCloseButton()->setVisible(false);
 	wBtnShowCard->setDraggable(false);
 	wBtnShowCard->setDrawTitlebar(false);
     wBtnShowCard->setDrawBackground(false);
-	btnShowCard = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 90, 60), wBtnShowCard, BUTTON_SHOW_CARD));
+	btnShowCard = AlignElementWithParent(env->addButton(Scale(0, 0, 90, 30), wBtnShowCard, BUTTON_SHOW_CARD, gDataManager->GetSysString(8067).data()));
+	btnShowCard->setImage(imageManager.tButton2);
+	btnShowCard->setScaleImage(true);
 	btnShowCard->setDrawBorder(false);
-	btnShowCard->setImageSize(dimBtnSettings2.getSize());
-	btnShowCard->setImage(imageManager.tCardimg);
-	stShowCard = AlignElementWithParent(env->addStaticText(gDataManager->GetSysString(8067).data(), Scale(15, 15, 75, 45), false, true, btnShowCard));
-	defaultStrings.emplace_back(stShowCard, 8067);
-	btnChatLog = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 70, 90, 130), wBtnShowCard, BUTTON_CHATLOG));
+	btnShowCard->setUseAlphaChannel(true);
+	defaultStrings.emplace_back(btnShowCard, 8067);
+	btnChatLog = AlignElementWithParent(env->addButton(Scale(0, 40, 90, 70), wBtnShowCard, BUTTON_CHATLOG, gDataManager->GetSysString(8068).data()));
+	btnChatLog->setImage(imageManager.tButton2);
+	btnChatLog->setScaleImage(true);
 	btnChatLog->setDrawBorder(false);
-	btnChatLog->setImageSize(dimBtnSettings2.getSize());
-	btnChatLog->setImage(imageManager.tChatlog);
-	stChatLog = AlignElementWithParent(env->addStaticText(gDataManager->GetSysString(8068).data(), Scale(15, 15, 75, 45), false, true, btnChatLog));
-	defaultStrings.emplace_back(stChatLog, 8068);
-	btnCardLoc = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 140, 90, 200), wBtnShowCard, BUTTON_CARDLOC));
+	btnChatLog->setUseAlphaChannel(true);
+	defaultStrings.emplace_back(btnChatLog, 8068);
+	btnCardLoc = AlignElementWithParent(env->addButton(Scale(0, 80, 90, 110), wBtnShowCard, BUTTON_CARDLOC, gDataManager->GetSysString(8069).data()));
+	btnCardLoc->setImage(imageManager.tButton2);
+	btnCardLoc->setScaleImage(true);
 	btnCardLoc->setDrawBorder(false);
-	btnCardLoc->setImageSize(dimBtnSettings2.getSize());
-	btnCardLoc->setImage(imageManager.tCard);
-	stCardLoc = AlignElementWithParent(env->addStaticText(gDataManager->GetSysString(8069).data(), Scale(15, 15, 75, 45), false, true, btnCardLoc));
-	defaultStrings.emplace_back(stCardLoc, 8069);
+	btnCardLoc->setUseAlphaChannel(true);
+	defaultStrings.emplace_back(btnCardLoc, 8069);
 	wLocation = AlignElementWithParent(env->addWindow(Scale(9, 505, 300, 535)));
 	wLocation->getCloseButton()->setVisible(false);
 	wLocation->setDraggable(false);
@@ -956,7 +956,7 @@ void Game::Initialize() {
         btnLocation[i]->setVisible(false);
         btnLocation[i]->setPressed(false);
 		stLocation[i] = AlignElementWithParent(env->addStaticText(L"", Scale(0, 15, 30, 30), false, true, btnLocation[i]));
-		defaultStrings.emplace_back(stShowCard, 8067);
+		defaultStrings.emplace_back(stLocation[i], 8067);
 	}
     btnLocation[0]->setPressed();
 	btnLocation[0]->setImage(imageManager.tMain);
@@ -977,16 +977,15 @@ void Game::Initialize() {
 	btnLocation[5]->setImage(imageManager.tExtra);
 	stLocation[5]->setText(gDataManager->GetSysString(1006).data());
 	defaultStrings.emplace_back(stLocation[5], 1006);
-    wBtnSettings = env->addWindow(Scale(0, 590, 30, 620));
+    wBtnSettings = env->addWindow(Scale(0, 580, 40, 620));
     //////kdiy//////
 	wBtnSettings->getCloseButton()->setVisible(false);
 	wBtnSettings->setDraggable(false);
 	wBtnSettings->setDrawTitlebar(false);
     wBtnSettings->setDrawBackground(false);
     //////kdiy//////
-	//auto dimBtnSettings = Scale(0, 0, 50, 50);
-    auto dimBtnSettings = Scale(0, 0, 30, 30);
-    //////kdiy//////
+	// auto dimBtnSettings = Scale(0, 0, 50, 50);
+    auto dimBtnSettings = Scale(0, 0, 40, 40);
 	btnSettings = irr::gui::CGUIImageButton::addImageButton(env, dimBtnSettings, wBtnSettings, BUTTON_SHOW_SETTINGS);
 	btnSettings->setDrawBorder(false);
 	btnSettings->setImageSize(dimBtnSettings.getSize());
@@ -1288,16 +1287,23 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(btnHandTest, 1297);
 	btnHandTest->setVisible(false);
 	btnHandTest->setEnabled(coreloaded);
-	btnHandTestSettings = AlignElementWithParent(env->addButton(Scale(225, 235, 310, 275), 0, BUTTON_HAND_TEST_SETTINGS, L""));
+	btnHandTestSettings = AlignElementWithParent(env->addButton(Scale(260, 257, 310, 307), 0, BUTTON_HAND_TEST_SETTINGS, gDataManager->GetSysString(1375).data()));
+	btnHandTestSettings->setImage(imageManager.tButton);
+	btnHandTestSettings->setScaleImage(true);
+	btnHandTestSettings->setDrawBorder(false);
+	btnHandTestSettings->setUseAlphaChannel(true);
+    defaultStrings.emplace_back(btnHandTestSettings, 1375);
     //////kdiy//////
 	btnHandTestSettings->setVisible(false);
 	btnHandTestSettings->setEnabled(coreloaded);
 
-	stHandTestSettings = AlignElementWithParent(irr::gui::CGUICustomText::addCustomText(gDataManager->GetSysString(1375).data(), false, env, btnHandTestSettings, -1, Scale(0, 0, 90, 40)));
-	stHandTestSettings->setWordWrap(true);
-	stHandTestSettings->setEnabled(coreloaded);
-	stHandTestSettings->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-	defaultStrings.emplace_back(stHandTestSettings, 1375);
+	//////kdiy//////
+    // stHandTestSettings = AlignElementWithParent(irr::gui::CGUICustomText::addCustomText(gDataManager->GetSysString(1375).data(), false, env, btnHandTestSettings, -1, Scale(0, 0, 90, 40)));
+	// stHandTestSettings->setWordWrap(true);
+	// stHandTestSettings->setEnabled(coreloaded);
+	// stHandTestSettings->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+	// defaultStrings.emplace_back(stHandTestSettings, 1375);
+    //////kdiy//////
 
 	wHandTest = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 450), false, gDataManager->GetSysString(1297).data());
 	wHandTest->getCloseButton()->setVisible(false);
@@ -1331,7 +1337,11 @@ void Game::Initialize() {
 
 	///////kdiy////
     //btnYdkeManage = AlignElementWithParent(env->addButton(Scale(205, 190, 295, 230), 0, BUTTON_DECK_YDKE_MANAGE, gDataManager->GetSysString(2083).data()));
-    btnYdkeManage = AlignElementWithParent(env->addButton(Scale(225, 190, 310, 230), 0, BUTTON_DECK_YDKE_MANAGE, gDataManager->GetSysString(2083).data()));
+    btnYdkeManage = AlignElementWithParent(env->addButton(Scale(260, 197, 310, 247), 0, BUTTON_DECK_YDKE_MANAGE, gDataManager->GetSysString(2083).data()));
+	btnYdkeManage->setImage(imageManager.tButton);
+	btnYdkeManage->setScaleImage(true);
+	btnYdkeManage->setDrawBorder(false);
+	btnYdkeManage->setUseAlphaChannel(true);
     ///////kdiy////
 	defaultStrings.emplace_back(btnYdkeManage, 2083);
 	btnYdkeManage->setVisible(false);
@@ -1741,24 +1751,40 @@ void Game::Initialize() {
 	//swap
 	////kdiy////////
 	//btnSpectatorSwap = AlignElementWithParent(env->addButton(Scale(205, 100, 295, 135), 0, BUTTON_REPLAY_SWAP, gDataManager->GetSysString(1346).data()));
-	btnSpectatorSwap = AlignElementWithParent(env->addButton(Scale(315, 100, 405, 135), 0, BUTTON_REPLAY_SWAP, gDataManager->GetSysString(1346).data()));
+	btnSpectatorSwap = AlignElementWithParent(env->addButton(Scale(315, 215, 405, 245), 0, BUTTON_REPLAY_SWAP, gDataManager->GetSysString(1346).data()));
+	btnSpectatorSwap->setImage(imageManager.tButton);
+	btnSpectatorSwap->setScaleImage(true);
+	btnSpectatorSwap->setDrawBorder(false);
+	btnSpectatorSwap->setUseAlphaChannel(true);
 	////kdiy////////
 	defaultStrings.emplace_back(btnSpectatorSwap, 1346);
 	btnSpectatorSwap->setVisible(false);
 	//chain buttons
 	////kdiy////////
 	//btnChainIgnore = AlignElementWithParent(env->addButton(Scale(205, 100, 295, 135), 0, BUTTON_CHAIN_IGNORE, gDataManager->GetSysString(1292).data()));
-	btnChainIgnore = AlignElementWithParent(env->addButton(Scale(315, 100, 405, 135), 0, BUTTON_CHAIN_IGNORE, gDataManager->GetSysString(1292).data()));
+	btnChainIgnore = AlignElementWithParent(env->addButton(Scale(315, 215, 405, 245), 0, BUTTON_CHAIN_IGNORE, gDataManager->GetSysString(1292).data()));
+	btnChainIgnore->setImage(imageManager.tButton);
+	btnChainIgnore->setScaleImage(true);
+	btnChainIgnore->setDrawBorder(false);
+	btnChainIgnore->setUseAlphaChannel(true);
 	////kdiy////////
 	defaultStrings.emplace_back(btnChainIgnore, 1292);
 	////kdiy////////
 	//btnChainAlways = AlignElementWithParent(env->addButton(Scale(205, 140, 295, 175), 0, BUTTON_CHAIN_ALWAYS, gDataManager->GetSysString(1293).data()));
-	btnChainAlways = AlignElementWithParent(env->addButton(Scale(315, 140, 405, 175), 0, BUTTON_CHAIN_ALWAYS, gDataManager->GetSysString(1293).data()));
+	btnChainAlways = AlignElementWithParent(env->addButton(Scale(315, 255, 405, 285), 0, BUTTON_CHAIN_ALWAYS, gDataManager->GetSysString(1293).data()));
+	btnChainAlways->setImage(imageManager.tButton);
+	btnChainAlways->setScaleImage(true);
+	btnChainAlways->setDrawBorder(false);
+	btnChainAlways->setUseAlphaChannel(true);
 	////kdiy////////
 	defaultStrings.emplace_back(btnChainAlways, 1293);
 	////kdiy////////
 	//btnChainWhenAvail = AlignElementWithParent(env->addButton(Scale(205, 180, 295, 215), 0, BUTTON_CHAIN_WHENAVAIL, gDataManager->GetSysString(1294).data()));
-	btnChainWhenAvail = AlignElementWithParent(env->addButton(Scale(315, 180, 405, 215), 0, BUTTON_CHAIN_WHENAVAIL, gDataManager->GetSysString(1294).data()));
+	btnChainWhenAvail = AlignElementWithParent(env->addButton(Scale(315, 295, 405, 325), 0, BUTTON_CHAIN_WHENAVAIL, gDataManager->GetSysString(1294).data()));
+	btnChainWhenAvail->setImage(imageManager.tButton);
+	btnChainWhenAvail->setScaleImage(true);
+	btnChainWhenAvail->setDrawBorder(false);
+	btnChainWhenAvail->setUseAlphaChannel(true);
 	////kdiy////////
 	defaultStrings.emplace_back(btnChainWhenAvail, 1294);
 	btnChainIgnore->setIsPushButton(true);
@@ -1785,15 +1811,15 @@ void Game::Initialize() {
 	//btnRestartSingle = AlignElementWithParent(env->addButton(Scale(205, 50, 295, 90), 0, BUTTON_RESTART_SINGLE, gDataManager->GetSysString(1366).data()));
 	// defaultStrings.emplace_back(btnRestartSingle, 1366);
 	//restart single
-	btnLeaveGame = AlignElementWithParent(env->addButton(Scale(430, 50, 460, 80), 0, BUTTON_LEAVE_GAME, L""));
+	btnLeaveGame = AlignElementWithParent(env->addButton(Scale(420, 60, 460, 100), 0, BUTTON_LEAVE_GAME, L""));
 	btnLeaveGame->setVisible(false);
-	btnLeaveGame->setImage(imageManager.tSettings);
+	btnLeaveGame->setImage(imageManager.tExit);
 	btnLeaveGame->setScaleImage(true);
 	btnLeaveGame->setDrawBorder(false);
 	btnLeaveGame->setUseAlphaChannel(true);
 	//restart single
-	btnRestartSingle = AlignElementWithParent(env->addButton(Scale(430, 90, 460, 120), 0, BUTTON_RESTART_SINGLE, L"", gDataManager->GetSysString(1366).data()));
-	btnRestartSingle->setImage(imageManager.tSettings);
+	btnRestartSingle = AlignElementWithParent(env->addButton(Scale(420, 110, 460, 150), 0, BUTTON_RESTART_SINGLE, L"", gDataManager->GetSysString(1366).data()));
+	btnRestartSingle->setImage(imageManager.tRestart);
 	btnRestartSingle->setScaleImage(true);
 	btnRestartSingle->setDrawBorder(false);
 	btnRestartSingle->setUseAlphaChannel(true);
@@ -1987,7 +2013,10 @@ void Game::Initialize() {
 		PopupElement(wMessage);
 	}
 #endif
-	fpsCounter = env->addStaticText(L"", Scale(950, 620, 1024, 640), false, false);
+    /////kdiy/////////
+	//fpsCounter = env->addStaticText(L"", Scale(950, 620, 1024, 640), false, false);
+    fpsCounter = env->addStaticText(L"", Scale(5, 620, 79, 640), false, false);
+    /////kdiy/////////
 	fpsCounter->setOverrideColor(skin::FPS_TEXT_COLOR_VAL);
 	fpsCounter->setVisible(gGameConfig->showFPS);
 	fpsCounter->setTextRestrainedInside(false);
@@ -3496,20 +3525,24 @@ bool Game::MainLoop() {
 #else
 		int fpsCounterWidth = fpsCounter->getTextWidth() / (dpi_scale * window_scale.X) + 20; // corner may be curved
 #endif
-		if (is_building || is_siding) {
-            /////kdiy//////////
-			//fpsCounter->setRelativePosition(Resize(205, CARD_IMG_HEIGHT + 1, 300, CARD_IMG_HEIGHT + 21));
-            fpsCounter->setRelativePosition(Resize(1024 - fpsCounterWidth, 620, 1024, 640));
-            /////kdiy//////////
-		} else if (wChat->isVisible()) { // Move it above the chat box
-			fpsCounter->setRelativePosition(Resize(1020 - fpsCounterWidth, 595, 1020, 615));
-		} else { // bottom right of window with a little padding
-			fpsCounter->setRelativePosition(Resize(1024 - fpsCounterWidth, 620, 1024, 640));
-		}
-		/////kdiy//////////
+        /////kdiy//////////
+		// if (is_building || is_siding) {
+		// 	fpsCounter->setRelativePosition(Resize(205, CARD_IMG_HEIGHT + 1, 300, CARD_IMG_HEIGHT + 21));
+		// } else if (wChat->isVisible()) { // Move it above the chat box
+		// 	fpsCounter->setRelativePosition(Resize(1020 - fpsCounterWidth, 595, 1020, 615));
+		// } else { // bottom right of window with a little padding
+		// 	fpsCounter->setRelativePosition(Resize(1024 - fpsCounterWidth, 620, 1024, 640));
+		// }
 		//wBtnSettings->setVisible(!(is_building || is_siding || dInfo.isInDuel || open_file));
+		if (is_building || is_siding) {
+            fpsCounter->setRelativePosition(Resize(5, 620, 5 + fpsCounterWidth, 640));
+		} else if (wChat->isVisible()) { // Move it above the chat box
+			fpsCounter->setRelativePosition(Resize(5, 595, 5 + fpsCounterWidth, 615));
+		} else { // bottom right of window with a little padding
+			fpsCounter->setRelativePosition(Resize(5, 620, 5 + fpsCounterWidth, 640));
+		}
 		wBtnSettings->setVisible(!open_file);
-        wBtnSettings->setRelativePosition(dInfo.isInDuel ? ResizeWin(430, 10, 460, 40) : ResizeWin(0, 590, 30, 620));
+        wBtnSettings->setRelativePosition(dInfo.isInDuel ? ResizeWin(420, 10, 460, 50) : ResizeWin(0, 580, 40, 620));
 	
 		int avataricon1 = 0; int avataricon2 = 0;
 		if (mainGame->dInfo.isTeam1) {

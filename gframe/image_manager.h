@@ -241,6 +241,10 @@ public:
 	A(tRemoved)
 	A(tOnHand)
 	A(tExtra)
+	A(tExit)
+	A(tRestart)
+	A(tButton)
+	A(tButton2)
 	/////kdiy/////
 	A(tSettings)
 	A(tCheckBox[3])
