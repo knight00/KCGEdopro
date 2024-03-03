@@ -23,7 +23,7 @@
 /////kdiy/////
 #include "client_card.h"
 #include "network.h"
-#include <opencv2/opencv.hpp>
+// #include <opencv2/opencv.hpp>
 /////kdiy/////
 struct unzip_payload;
 class CGUISkinSystem;
@@ -430,9 +430,9 @@ public:
 	///kdiy////////
 	bool haloNodeexist[2][12][10];
     std::vector<irr::core::vector3df> haloNode[2][12][10];
-    cv::VideoCapture cap;
+    //cv::VideoCapture cap;
     irr::video::ITexture* videotexture = 0;
-    cv::Mat frame;
+    //cv::Mat frame;
 	std::vector<epro::path_string> closeup_dirs;
 	///kdiy////////
 	std::vector<epro::path_string> script_dirs;

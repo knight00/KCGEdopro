@@ -716,9 +716,6 @@ void Game::Initialize() {
 	offset += 35;
 	btnDeckEdit = env->addButton(OFFSET(10, 135, 270, 165), wMainMenu, BUTTON_DECK_EDIT, gDataManager->GetSysString(1204).data());
 	defaultStrings.emplace_back(btnDeckEdit, 1204);
-    ////kdiy////////
-    btnDeckEdit->setEnabled(coreloaded);
-    ////kdiy////////
 	offset += 35;
 	btnSettings2 = env->addButton(OFFSET(10, 170, 270, 200), wMainMenu, BUTTON_SHOW_SETTINGS, gDataManager->GetSysString(8044).data());
 	defaultStrings.emplace_back(btnSettings2, 8044);
@@ -859,23 +856,23 @@ void Game::Initialize() {
 	btnCharacterSelect2->setDrawBorder(true);
 	irr::core::dimension2di avatarsize = { Scale<irr::s32>(CARD_IMG_WIDTH * 0.5f), Scale<irr::s32>(CARD_IMG_HEIGHT * 0.5f) };
 	
-	wAvatar[0] = env->addWindow(Scale(220, 435, 360, 635));
+	wAvatar[0] = AlignElementWithParent(env->addWindow(Scale(215, 455, 315, 635)));
 	wAvatar[0]->getCloseButton()->setVisible(false);
 	wAvatar[0]->setDraggable(false);
 	wAvatar[0]->setDrawTitlebar(false);
 	wAvatar[0]->setDrawBackground(false);
 	wAvatar[0]->setVisible(false);
-	avatarbutton[0] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 140, 198), wAvatar[0], BUTTON_AVATAR_BORED0);
-	avatarbutton[0]->setImageSize(Scale(0, 0, 135, 198).getSize());
+	avatarbutton[0] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 100, 180), wAvatar[0], BUTTON_AVATAR_BORED0));
+    avatarbutton[0]->setImageSize(Scale(0, 0, 95, 180).getSize());
 	avatarbutton[0]->setDrawBorder(false);
-	wAvatar[1] = env->addWindow(Scale(880, 20, 1020, 220));
+	wAvatar[1] = AlignElementWithParent(env->addWindow(Scale(886, 12, 966, 156)));
 	wAvatar[1]->getCloseButton()->setVisible(false);
 	wAvatar[1]->setDraggable(false);
 	wAvatar[1]->setDrawTitlebar(false);
 	wAvatar[1]->setDrawBackground(false);
 	wAvatar[1]->setVisible(false);
-	avatarbutton[1] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 140, 198), wAvatar[1], BUTTON_AVATAR_BORED1);
-	avatarbutton[1]->setImageSize(Scale(0, 0, 135, 198).getSize());
+	avatarbutton[1] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 80, 144), wAvatar[1], BUTTON_AVATAR_BORED1));
+    avatarbutton[1]->setImageSize(Scale(0, 0, 75, 144).getSize());
 	avatarbutton[1]->setDrawBorder(false);
 	///////kdiy///////
 
@@ -1517,7 +1514,7 @@ void Game::Initialize() {
         btnCharacterSelect_replayreset[i] = env->addButton(Scale(168, 45 + i * 25, 248, 65 + i * 25), wCharacterReplay, BUTTON_NAMERESET_REPLAY, gDataManager->GetSysString(8065).data());
         defaultStrings.emplace_back(btnCharacterSelect_replayreset[i], 8065);
         btnCharacterSelect_replayreset[i]->setVisible(false);
-        ebCharacter_replay[i] = AddComboBox(env, Scale(251, 45 + i * 25, 351, 65 + i * 25), wCharacterReplay, COMBOBOX2_CHARACTER + i);
+        ebCharacter_replay[i] = AddComboBox(env, Scale(251, 45 + i * 25, 351, 65 + i * 25), wCharacterReplay, COMBOBOX_CHARACTER);
         ebCharacter_replay[i]->clear();
 #ifdef VIP
         ebCharacter_replay[i]->addItem(gDataManager->GetSysString(8047).data());
@@ -3371,7 +3368,6 @@ bool Game::MainLoop() {
 						btnHandTestSettings->setEnabled(true);
 						stHandTestSettings->setEnabled(true);
                         //kdiy///////
-                        btnDeckEdit->setEnabled(true);
                         btnEntertainmentMode->setEnabled(true);
                         //kdiy///////
 					}
@@ -3536,8 +3532,6 @@ bool Game::MainLoop() {
 		//wBtnSettings->setVisible(!(is_building || is_siding || dInfo.isInDuel || open_file));
 		if (is_building || is_siding) {
             fpsCounter->setRelativePosition(Resize(5, 620, 5 + fpsCounterWidth, 640));
-		} else if (wChat->isVisible()) { // Move it above the chat box
-			fpsCounter->setRelativePosition(Resize(5, 595, 5 + fpsCounterWidth, 615));
 		} else { // bottom right of window with a little padding
 			fpsCounter->setRelativePosition(Resize(5, 620, 5 + fpsCounterWidth, 640));
 		}
@@ -3545,12 +3539,27 @@ bool Game::MainLoop() {
         wBtnSettings->setRelativePosition(dInfo.isInDuel ? ResizeWin(420, 10, 460, 50) : ResizeWin(0, 580, 40, 620));
 	
 		int avataricon1 = 0; int avataricon2 = 0;
-		if (mainGame->dInfo.isTeam1) {
-			avataricon1 = mainGame->dInfo.current_player[0];
-			avataricon2 = mainGame->dInfo.current_player[1] + mainGame->dInfo.team1;
-		} else {
-			avataricon1 = mainGame->dInfo.current_player[0] + mainGame->dInfo.team1;
-			avataricon2 = mainGame->dInfo.current_player[1];
+        if(dInfo.isInDuel && !mainGame->dInfo.isSingleMode) {
+            if (mainGame->dInfo.isTeam1) {
+                avataricon1 = mainGame->dInfo.current_player[0];
+                avataricon2 = mainGame->dInfo.current_player[1] + mainGame->dInfo.team1;   
+            } else {
+                avataricon1 = mainGame->dInfo.current_player[0] + mainGame->dInfo.team1;
+                avataricon2 = mainGame->dInfo.current_player[1];
+            }
+        } else if(mainGame->dInfo.isSingleMode) {
+            avataricon1 = 0;
+            avataricon2 = 1;
+        } else if(is_building) {
+            avataricon1 = 0;
+        }
+		for(int i = 0; i < 6; ++i) {
+			if(gSoundManager->character[i] > CHARACTER_VOICE - 1) {
+			    mainGame->imageManager.character[gSoundManager->character[i]] = 0;
+			    mainGame->imageManager.characterd[gSoundManager->character[i]] = 0;
+            }
+			mainGame->imageManager.scharacter[i][0] = mainGame->imageManager.character[gSoundManager->character[i]];
+			mainGame->imageManager.scharacter[i][1] = mainGame->imageManager.characterd[gSoundManager->character[i]];
 		}
 		mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[avataricon1][0]);
 		mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[avataricon2][0]);
@@ -3559,17 +3568,21 @@ bool Game::MainLoop() {
 			mainGame->wHead[1]->setVisible(true);
 		}
 #ifdef VIP
-        if(dInfo.isInDuel && !mainGame->dInfo.isSingleMode && !mainGame->mode->isMode) {
+        if((dInfo.isInDuel || is_building) && !mainGame->mode->isMode) {
             if(gSoundManager->character[avataricon1] > 0)
                 mainGame->wAvatar[0]->setVisible(true);
             else
                 mainGame->wAvatar[0]->setVisible(false);
-            if(gSoundManager->character[avataricon2] > 0)
+            if(gSoundManager->character[avataricon2] > 0 && !is_building)
                 mainGame->wAvatar[1]->setVisible(true);
             else
                 mainGame->wAvatar[1]->setVisible(false);
+        } else {
+            mainGame->wAvatar[0]->setVisible(false);
+            mainGame->wAvatar[1]->setVisible(false);
         }
 #endif
+        btnLeaveGame->setRelativePosition(dInfo.isInDuel ? Resize(420, 60, 460, 100) : Resize(270, 137, 310, 177));
 		wBtnShowCard->setVisible(dInfo.isInDuel);
 		/////kdiy//////////
 		EnableMaterial2D(true);
@@ -5705,8 +5718,6 @@ void Game::OnResize() {
 	wReplay->setRelativePosition(ResizeWin(220, 100, 800, 520));
     ////kdiy////////////
     wCharacter->setRelativePosition(ResizeWin(20, 120, 220, 440));
-    wAvatar[0]->setRelativePosition(ResizeWin(220, 435, 360, 635));
-    wAvatar[1]->setRelativePosition(ResizeWin(880, 20, 1020, 220));
     wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 880, 500));
     wHead[0]->setRelativePosition(ResizeWin(365, 5, 417, 57));
 	wHead[1]->setRelativePosition(ResizeWin(900, 5, 952, 57));

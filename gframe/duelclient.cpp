@@ -745,8 +745,6 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		mainGame->btnChainWhenAvail->setVisible(false);
 		mainGame->btnCancelOrFinish->setVisible(false);
 		////kdiy////////
-		mainGame->wAvatar[0]->setVisible(false);
-		mainGame->wAvatar[1]->setVisible(false);
         mainGame->wLocation->setVisible(false);
         mainGame->wHead[0]->setVisible(false);
 		mainGame->wHead[1]->setVisible(false);
@@ -1234,8 +1232,6 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->device->setEventReceiver(&mainGame->menuHandler);
 			////kdiy////////
             mainGame->isEvent = false;
-			mainGame->wAvatar[0]->setVisible(false);
-			mainGame->wAvatar[1]->setVisible(false);
             mainGame->wLocation->setVisible(false);
 			for(int i = 0; i < 6; ++i) {
 				mainGame->imageManager.scharacter[i][0] = mainGame->imageManager.character[0];
@@ -2433,16 +2429,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					mainGame->dInfo.current_player[0] = mainGame->dInfo.team2 - 1;
 			}
 		}
-		///////////kdiy///////////
-		for(int i = 0; i < 6; ++i) {
-			if(gSoundManager->character[i] > CHARACTER_VOICE - 1) {
-			    mainGame->imageManager.character[gSoundManager->character[i]] = 0;
-			    mainGame->imageManager.characterd[gSoundManager->character[i]] = 0;
-            }
-			mainGame->imageManager.scharacter[i][0] = mainGame->imageManager.character[gSoundManager->character[i]];
-			mainGame->imageManager.scharacter[i][1] = mainGame->imageManager.characterd[gSoundManager->character[i]];
-		}
-		///////////kdiy///////////
 		mainGame->dInfo.lp[mainGame->LocalPlayer(0)] = BufferIO::Read<uint32_t>(pbuf);
 		mainGame->dInfo.lp[mainGame->LocalPlayer(1)] = BufferIO::Read<uint32_t>(pbuf);
 		if(mainGame->dInfo.lp[mainGame->LocalPlayer(0)] > 0)
@@ -6104,8 +6090,6 @@ void DuelClient::ReplayPrompt(bool local_stream) {
 	mainGame->btnCancelOrFinish->setVisible(false);
 	////kdiy////////
     mainGame->isEvent = false;
-	mainGame->wAvatar[0]->setVisible(false);
-	mainGame->wAvatar[1]->setVisible(false);
     mainGame->wHead[0]->setVisible(false);
 	mainGame->wHead[1]->setVisible(false);
 	mainGame->wChBody[0]->setVisible(false);

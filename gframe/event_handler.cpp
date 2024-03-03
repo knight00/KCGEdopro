@@ -217,8 +217,6 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					mainGame->btnLeaveGame->setVisible(false);
 					///////kdiy///////
                     mainGame->wLocation->setVisible(false);
-					mainGame->wAvatar[0]->setVisible(false);
-					mainGame->wAvatar[1]->setVisible(false);
 					///////kdiy///////
 					mainGame->btnSpectatorSwap->setVisible(false);
 					mainGame->wChat->setVisible(false);
