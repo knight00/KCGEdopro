@@ -216,6 +216,8 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					mainGame->wPhase->setVisible(false);
 					mainGame->btnLeaveGame->setVisible(false);
 					///////kdiy///////
+					for(int i = 0; i < 6; i++)
+					    mainGame->CardInfo[i]->setVisible(false);
                     mainGame->wLocation->setVisible(false);
 					///////kdiy///////
 					mainGame->btnSpectatorSwap->setVisible(false);

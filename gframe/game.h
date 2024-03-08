@@ -507,7 +507,10 @@ public:
 	IProgressBar* updateProgressBottom;
     /////kdiy/////////
 	irr::gui::IGUIWindow* wCardImg;
-    irr::gui::IGUIStaticText* wCardInfo2;
+	irr::gui::IGUIButton* CardInfo[6];
+	irr::gui::IGUIStaticText* stCardInfo[6];
+	std::wstring effectText[6];
+    irr::gui::IGUIStaticText* wCardInfo;
 	irr::gui::IGUIWindow* wBtnShowCard;
 	irr::gui::IGUIButton* btnShowCard;
 	irr::gui::IGUIButton* btnChatLog;

@@ -633,6 +633,9 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(chkCommitLogExpand, 1447);
 	mTopMenu = irr::gui::CGUICustomMenu::addCustomMenu(env);
 	mRepositoriesInfo = mTopMenu->getSubMenu(mTopMenu->addItem(gDataManager->GetSysString(2045).data(), 1, true, true));
+	/////kdiy/////
+	mRepositoriesInfo->setVisible(true);
+	/////kdiy/////
 	mAbout = mTopMenu->getSubMenu(mTopMenu->addItem(gDataManager->GetSysString(1970).data(), 2, true, true));
 	wAbout = env->addWindow(Scale(0, 0, 450, 700), false, L"", mAbout);
 	wAbout->getCloseButton()->setVisible(false);
@@ -2466,8 +2469,17 @@ void Game::PopulateTabSettingsWindow() {
 	imgCard->setImage(imageManager.tCover[0]);
 	imgCard->setScaleImage(true);
 	imgCard->setUseAlphaChannel(true);
-	wCardInfo2 = AlignElementWithParent(env->addStaticText(L"", Scale(0, 208, 210, 540), true, true, wCardImg, -1, false));
-	wCardInfo2->setDrawBackground(true);
+	wCardInfo = AlignElementWithParent(env->addStaticText(L"", Scale(0, 208, 210, 540), true, true, wCardImg, -1, false));
+	wCardInfo->setDrawBackground(true);
+	for(int i = 0; i < 6; i++) {
+		CardInfo[i] = AlignElementWithParent(env->addButton(Scale(220, 218 + i * 30, 320, 238 + i * 30), 0, BUTTON_CARDINFO));
+		CardInfo[i]->setVisible(false);
+		auto name = AlignElementWithParent(irr::gui::CGUICustomText::addCustomText(L"", true, env, CardInfo[i], -1, Scale(0, 0, 100, 20)));
+        name->setTextAutoScrolling(irr::gui::CGUICustomText::LEFT_TO_RIGHT_BOUNCING, 0, 1.0f, 0, 120, 300);
+        stCardInfo[i] = name;
+	}
+	stCardInfo[0]->setText(gDataManager->GetSysString(1270).data());
+	defaultStrings.emplace_back(stCardInfo[0], 1270);
     {
         auto name = AlignElementWithParent(irr::gui::CGUICustomText::addCustomText(L"", true, env, wCardImg, -1, Scale(133, 23, 207, 46)));
         name->setTextAutoScrolling(irr::gui::CGUICustomText::LEFT_TO_RIGHT_BOUNCING, 0, 1.0f, 0, 120, 300);
@@ -2505,24 +2517,25 @@ void Game::PopulateTabSettingsWindow() {
     stSetName->setWordWrap(true);
 	stSetName->setVisible(!gGameConfig->chkHideSetname);
 	{
-        auto name = AlignElementWithParent(irr::gui::CGUICustomText::addCustomText(L"", false, env, wCardInfo2, -1, Scale(10, 10, 207, 32)));
+        auto name = AlignElementWithParent(irr::gui::CGUICustomText::addCustomText(L"", false, env, wCardInfo, -1, Scale(10, 10, 207, 32)));
         name->setTextAutoScrolling(irr::gui::CGUICustomText::LEFT_TO_RIGHT_BOUNCING, 0, 1.0f, 0, 120, 300);
 		stDataInfo = name;
     }
     stDataInfo->setOverrideColor(skin::CARDINFO_STATS_COLOR_VAL);
 	{
-		auto text = AlignElementWithParent(irr::gui::CGUICustomText::addCustomText(L"", false, env, wCardInfo2, -1, Scale(10, 32, 207, 332)));
+		auto text = AlignElementWithParent(irr::gui::CGUICustomText::addCustomText(L"", false, env, wCardInfo, -1, Scale(10, 32, 207, 332)));
 		text->enableScrollBar();
 		stText = text;
 	}
 	stText->setWordWrap(true);
+	for (auto& text : effectText)
+		text = L"";
 
 	cardbutton[0] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(133, 188, 153, 208), wCardImg, BUTTON_AVATAR_CARD0));
 	cardbutton[0]->setImage(imageManager.cardchant0);
 	cardbutton[0]->setScaleImage(true);
 	cardbutton[0]->setDrawBorder(false);
 	cardbutton[0]->setToolTipText(gDataManager->GetSysString(8010).data());
-	cardbutton[0]->setIsPushButton();
 	cardbutton[0]->setPressed();
 	defaultStrings.emplace_back(cardbutton[0], 8010);
 
@@ -2531,7 +2544,6 @@ void Game::PopulateTabSettingsWindow() {
 	cardbutton[1]->setScaleImage(true);
 	cardbutton[1]->setDrawBorder(false);
 	cardbutton[1]->setToolTipText(gDataManager->GetSysString(8012).data());
-	cardbutton[1]->setIsPushButton();
 	cardbutton[1]->setPressed(false);
 	defaultStrings.emplace_back(cardbutton[1], 8012);
 
@@ -2540,7 +2552,6 @@ void Game::PopulateTabSettingsWindow() {
 	cardbutton[2]->setScaleImage(true);
 	cardbutton[2]->setDrawBorder(false);
 	cardbutton[2]->setToolTipText(gDataManager->GetSysString(8014).data());
-	cardbutton[2]->setIsPushButton();
 	cardbutton[2]->setPressed(false);
 	defaultStrings.emplace_back(cardbutton[2], 8014);
 	/////kdiy/////
@@ -3421,6 +3432,8 @@ bool Game::MainLoop() {
             if(!git_update) {
                 mainGame->mode->LoadJsonInfo();
                 git_update = true;
+				if(mRepositoriesInfo->isVisible())
+				    mRepositoriesInfo->setVisible(false);
             }
             if(first_play && git_update) {
                 mainGame->ApplyLocale(mainGame->gSettings.cbCurrentLocale->getSelected());
@@ -4769,6 +4782,13 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 	RefreshCardInfoTextPositions();
     ///kdiy/////////
 	//stText->setText(gDataManager->GetText(code).data());
+	std::wstring cardeffect = L"";
+	std::wstring delimiter = L"#@";
+	std::vector<std::wstring> parts;
+	size_t pos;
+	int i = 1;
+	for(int i = 0; i < 6; i++)
+		CardInfo[i]->setVisible(false);
     if(pcard && pcard->is_real && !pcard->text_hints.empty()) {
         std::wstring text;
 		for(std::vector<std::wstring>::size_type i = 0; i != pcard->text_hints.size(); i++) {
@@ -4778,9 +4798,37 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 			else
 				text.append(epro::format(L"\n{}", texts));
 		}
+		
 	    stText->setText(text.data());
-    } else
-	    stText->setText(gDataManager->GetText(code).data());
+	} else {
+		cardeffect = Utils::ToUnicodeIfNeeded(gDataManager->GetText(code));
+		while ((pos = cardeffect.find(delimiter)) != std::wstring::npos) {
+			if (pos != 0)
+				parts.push_back(cardeffect.substr(0, pos));
+			cardeffect.erase(0, pos + delimiter.length());
+		}
+		for (const auto& part : parts) {
+			bool isNumber = std::all_of(part.begin(), part.end(), ::iswdigit);
+			if (isNumber) {
+				uint32_t effectcode = static_cast<uint32_t>(std::stoul(part));
+				stCardInfo[i]->setText(gDataManager->GetName(effectcode).data());
+				CardInfo[0]->setVisible(true);
+				CardInfo[i]->setVisible(true);
+				if (i > 0)
+				    effectText[i] = Utils::ToUnicodeIfNeeded(gDataManager->GetText(effectcode));
+				i++;
+				if (i > 5) break;
+			}
+			size_t found = cardeffect.find(part);
+			if (found != std::wstring::npos)
+				cardeffect.erase(found, part.length());
+		}
+		while (cardeffect.substr(0, 2) == L"\r\n") {
+			cardeffect.erase(0, 2);
+		}
+		effectText[0] = cardeffect;
+	}
+	stText->setText(cardeffect.data());
 	///kdiy/////////
 }
 void Game::RefreshCardInfoTextPositions() {
@@ -4814,11 +4862,11 @@ void Game::RefreshCardInfoTextPositions() {
 	offsetIfVisibleWithContent(stSetName);
 
     const int xLeft2 = Scale(10);
-	const int xRight2 = wCardInfo2->getRelativePosition().LowerRightCorner.X - Scale(10);
+	const int xRight2 = wCardInfo->getRelativePosition().LowerRightCorner.X - Scale(10);
 	int offset2 = Scale(10);
 	auto offsetIfVisibleWithContent2 = [&](irr::gui::IGUIStaticText* st) {
 		if (st->isVisible() && wcscmp(st->getText(), L"")) {
-			st->setRelativePosition(irr::core::recti(xLeft2, offset2, xRight2, st == stText ? wCardInfo2->getRelativePosition().LowerRightCorner.Y - wCardInfo2->getRelativePosition().UpperLeftCorner.Y - offset2 : offset2 + st->getTextHeight()));
+			st->setRelativePosition(irr::core::recti(xLeft2, offset2, xRight2, st == stText ? wCardInfo->getRelativePosition().LowerRightCorner.Y - wCardInfo->getRelativePosition().UpperLeftCorner.Y - offset2 : offset2 + st->getTextHeight()));
 			offset2 += st->getTextHeight();
 		}
 	};
@@ -4833,6 +4881,8 @@ void Game::ClearCardInfo(int player) {
 	///kdiy/////////
 	stInfo2->setText(L"");
 	stPasscodeScope2->setText(L"");
+	for (auto& text : effectText)
+		text = L"";
 	///kdiy/////////
 	stDataInfo->setText(L"");
 	stSetName->setText(L"");
@@ -4966,6 +5016,8 @@ void Game::CloseDuelWindow() {
 	btnSideReload->setVisible(false);
 	btnLeaveGame->setVisible(false);
 	///////kdiy///////
+	for(int i = 0; i < 5; i++)
+		CardInfo[i]->setVisible(false);
     wLocation->setVisible(false);
 	wCharacter->setVisible(false);
 	wAvatar[0]->setVisible(false);
@@ -4991,6 +5043,8 @@ void Game::CloseDuelWindow() {
 	///kdiy/////////
 	stInfo2->setText(L"");
 	stPasscodeScope2->setText(L"");
+	for (auto& text : effectText)
+		text = L"";
 	///kdiy/////////
 	stDataInfo->setText(L"");
 	stSetName->setText(L"");

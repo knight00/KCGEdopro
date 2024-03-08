@@ -152,6 +152,8 @@ void DeckBuilder::Terminate(bool showmenu) {
 		mainGame->wCardImg->setVisible(false);
 		////kdiy////
 		// mainGame->wInfos->setVisible(false);
+		for(int i = 0; i < 6; i++)
+		    mainGame->CardInfo[i]->setVisible(false);
 		////kdiy////
 		mainGame->btnLeaveGame->setVisible(false);
 		mainGame->PopupElement(mainGame->wMainMenu);
@@ -231,6 +233,13 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_HAND_TEST:
 			case BUTTON_HAND_TEST_START: {
+				//////kdiy/////
+                if(!mainGame->git_update || mainGame->git_error) {
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8046).data());
+					mainGame->mRepositoriesInfo->setVisible(true);
+                    break;
+                }
+				//////kdiy/////
 				Terminate(false);
 				SingleMode::DuelOptions options("hand-test-mode");
 				options.handTestNoOpponent = mainGame->chkHandTestNoOpponent->isChecked();
@@ -417,6 +426,16 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			/////////kdiy/////
+			case BUTTON_CARDINFO: {
+				auto elem = static_cast<irr::gui::IGUIButton*>(event.GUIEvent.Caller);
+				for (int i = 0; i < 6; i++) {
+					if(elem == mainGame->CardInfo[i]) {
+						mainGame->stText->setText(mainGame->effectText[i].data());
+						break;
+					}
+				}
+				break;
+			}
 			case BUTTON_AVATAR_CARD0: {
 				mainGame->cardbutton[0]->setPressed();
 				mainGame->cardbutton[1]->setPressed(false);
