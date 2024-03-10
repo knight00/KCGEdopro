@@ -82,6 +82,44 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 		case irr::gui::EGET_BUTTON_CLICKED: {
 			switch(id) {
 			///////kdiy///////
+			case BUTTON_CARDINFO: {
+				auto elem = static_cast<irr::gui::IGUIButton*>(event.GUIEvent.Caller);
+				for (int i = 0; i < 6; i++) {
+					if(elem == mainGame->CardInfo[i]) {
+						mainGame->stText->setText(mainGame->effectText[i].data());
+						break;
+					}
+				}
+				break;
+			}
+			case BUTTON_AVATAR_CARD0: {
+				mainGame->cardbutton[0]->setPressed();
+				mainGame->cardbutton[1]->setPressed(false);
+				mainGame->cardbutton[2]->setPressed(false);
+                mainGame->cardbutton[0]->setImage(mainGame->imageManager.cardchant0);
+				mainGame->cardbutton[1]->setImage(mainGame->imageManager.cardchant01);
+				mainGame->cardbutton[2]->setImage(mainGame->imageManager.cardchant02);
+				break;
+			}
+			case BUTTON_AVATAR_CARD1: {
+				mainGame->cardbutton[0]->setPressed(false);
+				mainGame->cardbutton[1]->setPressed();
+				mainGame->cardbutton[2]->setPressed(false);
+                mainGame->cardbutton[0]->setImage(mainGame->imageManager.cardchant00);
+				mainGame->cardbutton[1]->setImage(mainGame->imageManager.cardchant1);
+				mainGame->cardbutton[2]->setImage(mainGame->imageManager.cardchant02);
+				break;
+			}
+			case BUTTON_AVATAR_CARD2: {
+				mainGame->cardbutton[0]->setPressed(false);
+				mainGame->cardbutton[1]->setPressed(false);
+				mainGame->cardbutton[2]->setPressed();
+                mainGame->cardbutton[0]->setImage(mainGame->imageManager.cardchant00);
+				mainGame->cardbutton[1]->setImage(mainGame->imageManager.cardchant01);
+				mainGame->cardbutton[2]->setImage(mainGame->imageManager.cardchant2);
+
+				break;
+			}
 			case BUTTON_AVATAR_BORED0: {
 #ifndef VIP
 				    break;

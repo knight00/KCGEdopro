@@ -1283,11 +1283,11 @@ void Game::Initialize() {
 	//btnHandTest->setVisible(false);
 	//btnHandTest->setEnabled(coreloaded);
 	//btnHandTestSettings = AlignElementWithParent(env->addButton(Scale(205, 140, 295, 180), 0, BUTTON_HAND_TEST_SETTINGS, L""));
-	btnHandTest = AlignElementWithParent(env->addButton(Scale(225, 190, 310, 230), nullptr, BUTTON_HAND_TEST, gDataManager->GetSysString(1297).data()));
+    btnHandTest = AlignElementWithParent(env->addButton(Scale(225, 190, 310, 230), nullptr, BUTTON_HAND_TEST, gDataManager->GetSysString(1297).data()));
 	defaultStrings.emplace_back(btnHandTest, 1297);
 	btnHandTest->setVisible(false);
 	btnHandTest->setEnabled(coreloaded);
-	btnHandTestSettings = AlignElementWithParent(env->addButton(Scale(260, 257, 310, 307), 0, BUTTON_HAND_TEST_SETTINGS, gDataManager->GetSysString(1375).data()));
+	btnHandTestSettings = AlignElementWithParent(env->addButton(Scale(260, 197, 310, 247), 0, BUTTON_HAND_TEST_SETTINGS, gDataManager->GetSysString(1375).data()));
 	btnHandTestSettings->setImage(imageManager.tButton);
 	btnHandTestSettings->setScaleImage(true);
 	btnHandTestSettings->setDrawBorder(false);
@@ -1337,7 +1337,7 @@ void Game::Initialize() {
 
 	///////kdiy////
     //btnYdkeManage = AlignElementWithParent(env->addButton(Scale(205, 190, 295, 230), 0, BUTTON_DECK_YDKE_MANAGE, gDataManager->GetSysString(2083).data()));
-    btnYdkeManage = AlignElementWithParent(env->addButton(Scale(260, 197, 310, 247), 0, BUTTON_DECK_YDKE_MANAGE, gDataManager->GetSysString(2083).data()));
+    btnYdkeManage = AlignElementWithParent(env->addButton(Scale(260, 137, 310, 187), 0, BUTTON_DECK_YDKE_MANAGE, gDataManager->GetSysString(2083).data()));
 	btnYdkeManage->setImage(imageManager.tButton);
 	btnYdkeManage->setScaleImage(true);
 	btnYdkeManage->setDrawBorder(false);
@@ -2472,9 +2472,10 @@ void Game::PopulateTabSettingsWindow() {
 	wCardInfo = AlignElementWithParent(env->addStaticText(L"", Scale(0, 208, 210, 540), true, true, wCardImg, -1, false));
 	wCardInfo->setDrawBackground(true);
 	for(int i = 0; i < 6; i++) {
-		CardInfo[i] = AlignElementWithParent(env->addButton(Scale(220, 218 + i * 30, 320, 238 + i * 30), 0, BUTTON_CARDINFO));
+		CardInfo[i] = AlignElementWithParent(env->addButton(Scale(220, 252 + i * 30, i == 0 ? 270 : 312, 272 + i * 30), 0, BUTTON_CARDINFO));
 		CardInfo[i]->setVisible(false);
-		auto name = AlignElementWithParent(irr::gui::CGUICustomText::addCustomText(L"", true, env, CardInfo[i], -1, Scale(0, 0, 100, 20)));
+		auto name = AlignElementWithParent(irr::gui::CGUICustomText::addCustomText(L"", true, env, CardInfo[i], -1, Scale(0, 0, i == 0 ? 50 : 92, 20), true));
+        name->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
         name->setTextAutoScrolling(irr::gui::CGUICustomText::LEFT_TO_RIGHT_BOUNCING, 0, 1.0f, 0, 120, 300);
         stCardInfo[i] = name;
 	}
@@ -3595,7 +3596,7 @@ bool Game::MainLoop() {
             mainGame->wAvatar[1]->setVisible(false);
         }
 #endif
-        btnLeaveGame->setRelativePosition(dInfo.isInDuel ? Resize(420, 60, 460, 100) : Resize(270, 137, 310, 177));
+        btnLeaveGame->setRelativePosition(dInfo.isInDuel ? Resize(420, 60, 460, 100) : Resize(60, 580, 100, 620));
 		wBtnShowCard->setVisible(dInfo.isInDuel);
 		/////kdiy//////////
 		EnableMaterial2D(true);
@@ -4790,44 +4791,40 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 	for(int i = 0; i < 6; i++)
 		CardInfo[i]->setVisible(false);
     if(pcard && pcard->is_real && !pcard->text_hints.empty()) {
-        std::wstring text;
 		for(std::vector<std::wstring>::size_type i = 0; i != pcard->text_hints.size(); i++) {
 			std::wstring texts = pcard->text_hints[i];
 			if(i == 0)
-				text.append(epro::format(L"{}", texts));
+				cardeffect.append(epro::format(L"{}", texts));
 			else
-				text.append(epro::format(L"\n{}", texts));
+				cardeffect.append(epro::format(L"\n{}", texts));
 		}
-		
-	    stText->setText(text.data());
 	} else {
 		cardeffect = Utils::ToUnicodeIfNeeded(gDataManager->GetText(code));
-		while ((pos = cardeffect.find(delimiter)) != std::wstring::npos) {
-			if (pos != 0)
-				parts.push_back(cardeffect.substr(0, pos));
-			cardeffect.erase(0, pos + delimiter.length());
-		}
-		for (const auto& part : parts) {
-			bool isNumber = std::all_of(part.begin(), part.end(), ::iswdigit);
-			if (isNumber) {
-				uint32_t effectcode = static_cast<uint32_t>(std::stoul(part));
-				stCardInfo[i]->setText(gDataManager->GetName(effectcode).data());
-				CardInfo[0]->setVisible(true);
-				CardInfo[i]->setVisible(true);
-				if (i > 0)
-				    effectText[i] = Utils::ToUnicodeIfNeeded(gDataManager->GetText(effectcode));
-				i++;
-				if (i > 5) break;
-			}
-			size_t found = cardeffect.find(part);
-			if (found != std::wstring::npos)
-				cardeffect.erase(found, part.length());
-		}
-		while (cardeffect.substr(0, 2) == L"\r\n") {
-			cardeffect.erase(0, 2);
-		}
-		effectText[0] = cardeffect;
 	}
+	effectText[0] = cardeffect;
+	while ((pos = cardeffect.find(delimiter)) != std::wstring::npos) {
+		if (pos != 0)
+			parts.push_back(cardeffect.substr(0, pos));
+		cardeffect.erase(0, pos + delimiter.length());
+	}
+	for (const auto& part : parts) {
+		bool isNumber = std::all_of(part.begin(), part.end(), ::iswdigit);
+		if (isNumber) {
+			uint32_t effectcode = static_cast<uint32_t>(std::stoul(part));
+			stCardInfo[i]->setText(gDataManager->GetName(effectcode).data());
+			CardInfo[0]->setVisible(true);
+			CardInfo[i]->setVisible(true);
+			if (i > 0)
+				effectText[i] = Utils::ToUnicodeIfNeeded(gDataManager->GetText(effectcode));
+			i++;
+			if (i > 5) break;
+		}
+		size_t found = cardeffect.find(part);
+		if (found != std::wstring::npos)
+			cardeffect.erase(found, part.length());
+	}
+	while (cardeffect.substr(0, 2) == L"\r\n")
+        cardeffect.erase(0, 2);
 	stText->setText(cardeffect.data());
 	///kdiy/////////
 }
