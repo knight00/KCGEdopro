@@ -12,6 +12,7 @@
 #include "image_manager.h"
 //////kdiy///////
 #include "replay_mode.h"
+#include "sound_manager.h"
 //////kdiy///////
 
 namespace ygo {
@@ -841,59 +842,50 @@ void Game::DrawMisc() {
 						Resize(15, 551, 218, 594 + static_cast<irr::s32>(23 * (self.size() - 1))) :
 						Resize(689, 8, 891, 51 + static_cast<irr::s32>(23 * (oppo.size() - 1)));
 						/////kdiy/////////
-	driver->draw2DRectangle(skin::DUELFIELD_TURNPLAYER_COLOR_VAL, lpframe_pos);
-	driver->draw2DRectangleOutline(lpframe_pos, skin::DUELFIELD_TURNPLAYER_OUTLINE_COLOR_VAL);
+	// driver->draw2DRectangle(skin::DUELFIELD_TURNPLAYER_COLOR_VAL, lpframe_pos);
+	// driver->draw2DRectangleOutline(lpframe_pos, skin::DUELFIELD_TURNPLAYER_OUTLINE_COLOR_VAL);
 	/////kdiy/////////
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(330, 10, 629, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(691, 10, 990, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
-	driver->draw2DImage(imageManager.tLPFrame, Resize(18, 553, 217, 573), irr::core::recti(0, 0, 200, 20), 0, 0, true);
+	driver->draw2DImage(imageManager.tLPFrame, Resize(28, 553, 217, 640), irr::core::recti(0, 0, 494, 228), 0, 0, true);
 	driver->draw2DImage(imageManager.tLPFrame, Resize(691, 10, 890, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
-	if(dInfo.isTeam1) {
-        btnHead[0]->setImage(imageManager.modeHead[dInfo.current_player[0]]);
-		btnHead[1]->setImage(imageManager.modeHead[dInfo.current_player[1] + dInfo.team1]);
-        btnChBody[0]->setImage(imageManager.modeHead[dInfo.current_player[0]]);
-		btnChBody[1]->setImage(imageManager.modeHead[dInfo.current_player[1] + dInfo.team1]);
-	} else {
-		btnHead[0]->setImage(imageManager.modeHead[dInfo.current_player[0] + dInfo.team1]);
-		btnHead[1]->setImage(imageManager.modeHead[dInfo.current_player[1]]);
-        btnChBody[0]->setImage(imageManager.modeHead[dInfo.current_player[0]]);
-		btnChBody[1]->setImage(imageManager.modeHead[dInfo.current_player[1] + dInfo.team1]);
-	}
 	/////kdiy/////////
 
 #define SKCOLOR(what) skin::LPBAR_##what##_VAL
 #define RECTCOLOR(what) SKCOLOR(what##_TOP_LEFT), SKCOLOR(what##_TOP_RIGHT), SKCOLOR(what##_BOTTOM_LEFT), SKCOLOR(what##_BOTTOM_RIGHT)
 #define	DRAWRECT(rect_pos,what,clip) do { driver->draw2DRectangleClip(rect_pos, RECTCOLOR(what),nullptr,clip); } while(0)
-	if(dInfo.lp[0]) {
-		/////kdiy/////////
-		//const auto lpbar_pos = Resize(335, 12, 625, 28);
-		const auto lpbar_pos = Resize(23, 555, 215, 571);
-		/////kdiy/////////
-		if(dInfo.lp[0] < dInfo.startlp) {
-			/////kdiy/////////
-			//auto cliprect = Resize(335, 12, 335 + 290 * (dInfo.lp[0] / static_cast<double>(dInfo.startlp)), 28);
-			auto cliprect = Resize(23, 555, 23 + (215-23) * (dInfo.lp[0] / static_cast<double>(dInfo.startlp)), 571);
-			/////kdiy/////////
-			DRAWRECT(lpbar_pos, 1, &cliprect);
-		} else {
-			DRAWRECT(lpbar_pos, 1, nullptr);
-		}
-	}
-	if(dInfo.lp[1] > 0) {
-		/////kdiy/////////
-		//const auto lpbar_pos = Resize(696, 12, 986, 28);
-		const auto lpbar_pos = Resize(696, 12, 886, 28);
-		/////kdiy/////////
-		if(dInfo.lp[1] < dInfo.startlp) {
-			/////kdiy/////////
-			//auto cliprect = Resize(986 - 290 * (dInfo.lp[1] / static_cast<double>(dInfo.startlp)), 12, 986, 28);
-			auto cliprect = Resize(886 - (886-696) * (dInfo.lp[1] / static_cast<double>(dInfo.startlp)), 12, 886, 28);
-			/////kdiy/////////
-			DRAWRECT(lpbar_pos, 2, &cliprect);
-		} else {
-			DRAWRECT(lpbar_pos, 2, nullptr);
-		}
-	}
+	/////kdiy/////////
+	// if(dInfo.lp[0]) {
+	// 	/////kdiy/////////
+	// 	//const auto lpbar_pos = Resize(335, 12, 625, 28);
+	// 	const auto lpbar_pos = Resize(23, 555, 215, 571);
+	// 	/////kdiy/////////
+	// 	if(dInfo.lp[0] < dInfo.startlp) {
+	// 		/////kdiy/////////
+	// 		//auto cliprect = Resize(335, 12, 335 + 290 * (dInfo.lp[0] / static_cast<double>(dInfo.startlp)), 28);
+	// 		auto cliprect = Resize(23, 555, 23 + (215-23) * (dInfo.lp[0] / static_cast<double>(dInfo.startlp)), 571);
+	// 		/////kdiy/////////
+	// 		DRAWRECT(lpbar_pos, 1, &cliprect);
+	// 	} else {
+	// 		DRAWRECT(lpbar_pos, 1, nullptr);
+	// 	}
+	// }
+	// if(dInfo.lp[1] > 0) {
+	// 	/////kdiy/////////
+	// 	//const auto lpbar_pos = Resize(696, 12, 986, 28);
+	// 	const auto lpbar_pos = Resize(696, 12, 886, 28);
+	// 	/////kdiy/////////
+	// 	if(dInfo.lp[1] < dInfo.startlp) {
+	// 		/////kdiy/////////
+	// 		//auto cliprect = Resize(986 - 290 * (dInfo.lp[1] / static_cast<double>(dInfo.startlp)), 12, 986, 28);
+	// 		auto cliprect = Resize(886 - (886-696) * (dInfo.lp[1] / static_cast<double>(dInfo.startlp)), 12, 886, 28);
+	// 		/////kdiy/////////
+	// 		DRAWRECT(lpbar_pos, 2, &cliprect);
+	// 	} else {
+	// 		DRAWRECT(lpbar_pos, 2, nullptr);
+	// 	}
+	// }
+	/////kdiy/////////
 
 	if(lpframe > 0 && delta_frames) {
 		dInfo.lp[lpplayer] -= lpd * delta_frames;
@@ -934,23 +926,62 @@ void Game::DrawMisc() {
 
     ////kdiy////////////
 	// DrawShadowText(numFont, dInfo.strLP[0], Resize(330, 11, 629, 29), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, true);
-	// DrawShadowText(numFont, dInfo.strLP[1], Resize(691, 11, 990, 29), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, true);
-	DrawShadowText(numFont, dInfo.strLP[0], Resize(18, 554, 217, 572), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, true);
+	// DrawShadowText(numFont, dInfo.strLP[1], Resize(691, 11, 990, 29), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, true); 28, 553, 217, 640
+    int avataricon1 = 0; int avataricon2 = 0;
+        if(dInfo.isInDuel && !mainGame->dInfo.isSingleMode) {
+            if (mainGame->dInfo.isTeam1) {
+                avataricon1 = mainGame->dInfo.current_player[0];
+                avataricon2 = mainGame->dInfo.current_player[1] + mainGame->dInfo.team1;   
+            } else {
+                avataricon1 = mainGame->dInfo.current_player[0] + mainGame->dInfo.team1;
+                avataricon2 = mainGame->dInfo.current_player[1];
+            }
+        } else if(mainGame->dInfo.isSingleMode) {
+            avataricon1 = 0;
+            avataricon2 = 1;
+        } else if(is_building) {
+            avataricon1 = 0;
+        }
+    driver->draw2DImage(imageManager.icon[gSoundManager->character[avataricon1]], Resize(130, 565, 180, 615), irr::core::recti(0, 0, imageManager.icon[gSoundManager->character[avataricon1]]->getSize().Width, imageManager.icon[gSoundManager->character[avataricon1]]->getSize().Height), 0, 0, true);
+	DrawShadowText(numFont, L"LP", Resize(33, 574, 100, 585), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, true);
+	DrawShadowText(lpFont, dInfo.strLP[0], Resize(95, 585, 156, 620), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, true);
 	DrawShadowText(numFont, dInfo.strLP[1], Resize(691, 11, 890, 29), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, true);
 
 	//irr::core::recti p1size = Resize(335, 31, 629, 50);
 	//irr::core::recti p2size = Resize(986, 31, 986, 50);
-	irr::core::recti p1size = Resize(23, 574, 217, 593);
+	// {
+	// 	int i = 0;
+	// 	for (const auto& player : self) {
+	// 		if (i++ == dInfo.current_player[0])
+	// 			textFont->drawustring(player, p1size, 0xffffffff, false, false, 0);
+	// 		else
+	// 			textFont->drawustring(player, p1size, 0xff808080, false, false, 0);
+	// 		p1size += irr::core::vector2di{ 0, p1size.getHeight() + ResizeY(4) };
+	// 	}
+	// 	i = 0;
+	// 	const auto basecorner = p2size.UpperLeftCorner.X;
+	// 	for (const auto& player : oppo) {
+	// 		const irr::core::ustring utext(player);
+	// 		auto cld = textFont->getDimensionustring(utext);
+	// 		p2size.UpperLeftCorner.X = basecorner - cld.Width;
+	// 		if (i++ == dInfo.current_player[1])
+	// 			textFont->drawustring(utext, p2size, 0xffffffff, false, false, 0);
+	// 		else
+	// 			textFont->drawustring(utext, p2size, 0xff808080, false, false, 0);
+	// 		p2size += irr::core::vector2di{ 0, p2size.getHeight() + ResizeY(4) };
+	// 	}
+	// }
+	irr::core::recti p1size = Resize(5, 534, 25, 553);
 	irr::core::recti p2size = Resize(886, 31, 886, 50);
-	////kdiy////////////
 	{
 		int i = 0;
 		for (const auto& player : self) {
 			if (i++ == dInfo.current_player[0])
-				textFont->drawustring(player, p1size, 0xffffffff, false, false, 0);
-			else
+				textFont->drawustring(player, Resize(105, 574, 125, 585), skin::DUELFIELD_LP_1_VAL, true, true, 0);
+			else {
 				textFont->drawustring(player, p1size, 0xff808080, false, false, 0);
-			p1size += irr::core::vector2di{ 0, p1size.getHeight() + ResizeY(4) };
+                p1size += irr::core::vector2di{ 0, p1size.getHeight() + ResizeY(4) };
+            }
 		}
 		i = 0;
 		const auto basecorner = p2size.UpperLeftCorner.X;
@@ -965,6 +996,7 @@ void Game::DrawMisc() {
 			p2size += irr::core::vector2di{ 0, p2size.getHeight() + ResizeY(4) };
 		}
 	}
+	////kdiy////////////
 	/*driver->draw2DRectangle(Resize(632, 10, 688, 30), 0x00000000, 0x00000000, 0xffffffff, 0xffffffff);
 	driver->draw2DRectangle(Resize(632, 30, 688, 50), 0xffffffff, 0xffffffff, 0x00000000, 0x00000000);*/
 	////kdiy////////////

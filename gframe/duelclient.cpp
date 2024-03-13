@@ -2273,14 +2273,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					mainGame->imageManager.SetAvatar(mainGame->dInfo.current_player[1], text);
                 }
 			}
-
-            if(mainGame->dInfo.isTeam1) {
-                mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0]][0]);
-                mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1][0]);
-            } else {
-                mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1][0]);
-                mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1]][0]);
-            }
 			break;
 		}
 		//////kdiy////////
@@ -5561,19 +5553,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->WaitFrameSignal(5, lock);
 		}
 		mainGame->dInfo.current_player[player] = (mainGame->dInfo.current_player[player] + 1) % ((player == 0 && mainGame->dInfo.isFirst) ? mainGame->dInfo.team1 : mainGame->dInfo.team2);
-		//kdiy/////////
-		if(mainGame->dInfo.isTeam1) {
-			mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0]][0]);
-			mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1][0]);
-			mainGame->btnHead[0]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[0]]);
-			mainGame->btnHead[1]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[1] + mainGame->dInfo.team1]);
-		} else {
-			mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1][0]);
-			mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->dInfo.current_player[1]][0]);
-			mainGame->btnHead[0]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[0] + mainGame->dInfo.team1]);
-			mainGame->btnHead[1]->setImage(mainGame->imageManager.modeHead[mainGame->dInfo.current_player[1]]);
-		}
-        ////kdiy////////
 		break;
 	}
 	case MSG_RELOAD_FIELD: {

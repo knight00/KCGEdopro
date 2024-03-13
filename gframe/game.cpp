@@ -612,6 +612,10 @@ void Game::Initialize() {
 	adFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
 	numfont.size = Scale(48);
 	lpcFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
+    ////kdiy/////////
+	numfont.size = Scale(28);
+	lpFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
+    ////kdiy/////////
 	if(!numFont || !adFont || !lpcFont)
 		throw std::runtime_error("Failed to load numbers font");
 	if(!ApplySkin(gGameConfig->skin, false, true)) {
@@ -3577,6 +3581,10 @@ bool Game::MainLoop() {
 		}
 		mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[avataricon1][0]);
 		mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[avataricon2][0]);
+        mainGame->btnHead[0]->setImage(imageManager.modeHead[avataricon1]);
+		mainGame->btnHead[1]->setImage(imageManager.modeHead[avataricon2]);
+        mainGame->btnChBody[0]->setImage(imageManager.modeHead[avataricon1]);
+		mainGame->btnChBody[1]->setImage(imageManager.modeHead[avataricon2]);
 		if (mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
 			mainGame->wHead[0]->setVisible(true);
 			mainGame->wHead[1]->setVisible(true);
