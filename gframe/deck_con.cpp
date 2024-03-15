@@ -150,9 +150,9 @@ void DeckBuilder::Terminate(bool showmenu) {
 	mainGame->wSort->setVisible(false);
 	if(showmenu) {
 		mainGame->wCardImg->setVisible(false);
+		mainGame->wInfos->setVisible(false);
 		////kdiy////
-		// mainGame->wInfos->setVisible(false);
-		for(int i = 0; i < 6; i++)
+		for(int i = 0; i < 8; i++)
 		    mainGame->CardInfo[i]->setVisible(false);
 		////kdiy////
 		mainGame->btnLeaveGame->setVisible(false);
@@ -236,7 +236,6 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 				//////kdiy/////
                 if(!mainGame->git_update || mainGame->git_error) {
                     mainGame->stACMessage->setText(gDataManager->GetSysString(8046).data());
-					mainGame->mRepositoriesInfo->setVisible(true);
                     break;
                 }
 				//////kdiy/////
@@ -428,7 +427,7 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 			/////////kdiy/////
 			case BUTTON_CARDINFO: {
 				auto elem = static_cast<irr::gui::IGUIButton*>(event.GUIEvent.Caller);
-				for (int i = 0; i < 6; i++) {
+				for (int i = 0; i < 8; i++) {
 					if(elem == mainGame->CardInfo[i]) {
 						mainGame->stText->setText(mainGame->effectText[i].data());
 						break;

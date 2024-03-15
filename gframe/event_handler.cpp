@@ -84,7 +84,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			///////kdiy///////
 			case BUTTON_CARDINFO: {
 				auto elem = static_cast<irr::gui::IGUIButton*>(event.GUIEvent.Caller);
-				for (int i = 0; i < 6; i++) {
+				for (int i = 0; i < 8; i++) {
 					if(elem == mainGame->CardInfo[i]) {
 						mainGame->stText->setText(mainGame->effectText[i].data());
 						break;
@@ -254,7 +254,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					mainGame->wPhase->setVisible(false);
 					mainGame->btnLeaveGame->setVisible(false);
 					///////kdiy///////
-					for(int i = 0; i < 6; i++)
+					for(int i = 0; i < 8; i++)
 					    mainGame->CardInfo[i]->setVisible(false);
                     mainGame->wLocation->setVisible(false);
 					///////kdiy///////

@@ -996,6 +996,12 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_DECK_EDIT: {
 				//////kdiy/////
+                if(!mainGame->git_update || mainGame->git_error) {
+                    mainGame->stACMessage->setText(gDataManager->GetSysString(8046).data());
+                    mainGame->PopupElement(mainGame->wACMessage, 20);
+					mainGame->mRepositoriesInfo->setVisible(true);
+                    break;
+                }
 				//mainGame->RefreshDeck(mainGame->cbDBDecks);
 				// if(open_file && mainGame->deckBuilder.SetCurrentDeckFromFile(open_file_name, true)) {
 				// 	auto name = Utils::GetFileName(open_file_name);

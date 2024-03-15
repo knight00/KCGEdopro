@@ -486,6 +486,10 @@ Game::~Game() {
 		adFont->drop();
 	if(lpcFont)
 		lpcFont->drop();
+	/////kdiy//////
+	if(lpFont)
+		lpFont->drop();
+	/////kdiy//////
 	if(filesystem)
 		filesystem->drop();
 	if(skinSystem)
@@ -533,6 +537,8 @@ void Game::Initialize() {
     if(Utils::FileExists(EPRO_TEXT("./config/user_configs.json"))) {
 		mainGame->mode->LoadJsonInfo();
         git_update = true;
+		if(mRepositoriesInfo->isVisible())
+			mRepositoriesInfo->setVisible(false);
     }
     if(!Utils::FileExists(EPRO_TEXT("./cdb/cards.cdb")))
         first_play = true;
@@ -2475,7 +2481,7 @@ void Game::PopulateTabSettingsWindow() {
 	imgCard->setUseAlphaChannel(true);
 	wCardInfo = AlignElementWithParent(env->addStaticText(L"", Scale(0, 208, 210, 540), true, true, wCardImg, -1, false));
 	wCardInfo->setDrawBackground(true);
-	for(int i = 0; i < 6; i++) {
+	for(int i = 0; i < 8; i++) {
 		CardInfo[i] = AlignElementWithParent(env->addButton(Scale(220, 252 + i * 30, i == 0 ? 270 : 312, 272 + i * 30), 0, BUTTON_CARDINFO));
 		CardInfo[i]->setVisible(false);
 		auto name = AlignElementWithParent(irr::gui::CGUICustomText::addCustomText(L"", true, env, CardInfo[i], -1, Scale(0, 0, i == 0 ? 50 : 92, 20), true));
@@ -4796,7 +4802,7 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 	std::vector<std::wstring> parts;
 	size_t pos;
 	int i = 1;
-	for(int i = 0; i < 6; i++)
+	for(int i = 0; i < 8; i++)
 		CardInfo[i]->setVisible(false);
     if(pcard && pcard->is_real && !pcard->text_hints.empty()) {
 		for(std::vector<std::wstring>::size_type i = 0; i != pcard->text_hints.size(); i++) {
@@ -4825,7 +4831,7 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 			if (i > 0)
 				effectText[i] = Utils::ToUnicodeIfNeeded(gDataManager->GetText(effectcode));
 			i++;
-			if (i > 5) break;
+			if (i > 7) break;
 		}
 		size_t found = cardeffect.find(part);
 		if (found != std::wstring::npos)
@@ -5021,7 +5027,7 @@ void Game::CloseDuelWindow() {
 	btnSideReload->setVisible(false);
 	btnLeaveGame->setVisible(false);
 	///////kdiy///////
-	for(int i = 0; i < 5; i++)
+	for(int i = 0; i < 8; i++)
 		CardInfo[i]->setVisible(false);
     wLocation->setVisible(false);
 	wCharacter->setVisible(false);
