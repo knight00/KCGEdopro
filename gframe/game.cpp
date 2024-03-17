@@ -489,6 +489,8 @@ Game::~Game() {
 	/////kdiy//////
 	if(lpFont)
 		lpFont->drop();
+	if(nameFont)
+		nameFont->drop();
 	/////kdiy//////
 	if(filesystem)
 		filesystem->drop();
@@ -537,8 +539,6 @@ void Game::Initialize() {
     if(Utils::FileExists(EPRO_TEXT("./config/user_configs.json"))) {
 		mainGame->mode->LoadJsonInfo();
         git_update = true;
-		if(mRepositoriesInfo->isVisible())
-			mRepositoriesInfo->setVisible(false);
     }
     if(!Utils::FileExists(EPRO_TEXT("./cdb/cards.cdb")))
         first_play = true;
@@ -621,6 +621,8 @@ void Game::Initialize() {
     ////kdiy/////////
 	numfont.size = Scale(28);
 	lpFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
+	textfont.size = Scale(textfont.size * 1.8);
+	nameFont = irr::gui::CGUITTFont::createTTFont(env, textfont, fallbackFonts);
     ////kdiy/////////
 	if(!numFont || !adFont || !lpcFont)
 		throw std::runtime_error("Failed to load numbers font");
@@ -869,14 +871,14 @@ void Game::Initialize() {
 	btnCharacterSelect2->setDrawBorder(true);
 	irr::core::dimension2di avatarsize = { Scale<irr::s32>(CARD_IMG_WIDTH * 0.5f), Scale<irr::s32>(CARD_IMG_HEIGHT * 0.5f) };
 	
-	wAvatar[0] = AlignElementWithParent(env->addWindow(Scale(215, 455, 315, 635)));
+	wAvatar[0] = AlignElementWithParent(env->addWindow(Scale(5, 455, 105, 635)));
 	wAvatar[0]->getCloseButton()->setVisible(false);
 	wAvatar[0]->setDraggable(false);
 	wAvatar[0]->setDrawTitlebar(false);
 	wAvatar[0]->setDrawBackground(false);
 	wAvatar[0]->setVisible(false);
 	avatarbutton[0] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 100, 180), wAvatar[0], BUTTON_AVATAR_BORED0));
-    avatarbutton[0]->setImageSize(Scale(0, 0, 95, 180).getSize());
+    avatarbutton[0]->setImageSize(Scale(0, 0, 100, 180).getSize());
 	avatarbutton[0]->setDrawBorder(false);
 	wAvatar[1] = AlignElementWithParent(env->addWindow(Scale(886, 12, 966, 156)));
 	wAvatar[1]->getCloseButton()->setVisible(false);
@@ -953,7 +955,7 @@ void Game::Initialize() {
 	btnCardLoc->setDrawBorder(false);
 	btnCardLoc->setUseAlphaChannel(true);
 	defaultStrings.emplace_back(btnCardLoc, 8069);
-	wLocation = AlignElementWithParent(env->addWindow(Scale(9, 505, 300, 535)));
+	wLocation = AlignElementWithParent(env->addWindow(Scale(105, 505, 300, 535)));
 	wLocation->getCloseButton()->setVisible(false);
 	wLocation->setDraggable(false);
 	wLocation->setDrawTitlebar(false);
@@ -2463,7 +2465,7 @@ void Game::PopulateAIBotWindow() {
 
 void Game::PopulateTabSettingsWindow() {
 	/////kdiy/////
-	wCardImg = AlignElementWithParent(env->addWindow(Scale(10, 10, 220, 550)));
+	wCardImg = AlignElementWithParent(env->addWindow(Scale(105, 10, 315, 550)));
 	wCardImg->getCloseButton()->setVisible(false);
 	wCardImg->setDraggable(false);
 	wCardImg->setDrawTitlebar(false);
@@ -2482,7 +2484,7 @@ void Game::PopulateTabSettingsWindow() {
 	wCardInfo = AlignElementWithParent(env->addStaticText(L"", Scale(0, 208, 210, 540), true, true, wCardImg, -1, false));
 	wCardInfo->setDrawBackground(true);
 	for(int i = 0; i < 8; i++) {
-		CardInfo[i] = AlignElementWithParent(env->addButton(Scale(220, 252 + i * 30, i == 0 ? 270 : 312, 272 + i * 30), 0, BUTTON_CARDINFO));
+		CardInfo[i] = AlignElementWithParent(env->addButton(Scale(i == 0 ? 55 : 5, 220 + i * 20, 105, 240 + i * 20), 0, BUTTON_CARDINFO));
 		CardInfo[i]->setVisible(false);
 		auto name = AlignElementWithParent(irr::gui::CGUICustomText::addCustomText(L"", true, env, CardInfo[i], -1, Scale(0, 0, i == 0 ? 50 : 92, 20), true));
         name->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
@@ -3611,6 +3613,10 @@ bool Game::MainLoop() {
         }
 #endif
         btnLeaveGame->setRelativePosition(dInfo.isInDuel ? Resize(420, 60, 460, 100) : Resize(60, 580, 100, 620));
+        wCardImg->setRelativePosition(dInfo.isInDuel ? Resize(105, 10, 315, 550) : Resize(10, 10, 220, 550));
+        wAvatar[0]->setRelativePosition(dInfo.isInDuel ? Resize(5, 455, 105, 635) : Resize(215, 455, 315, 635));
+        for(int i = 0; i < 8; i++)
+		    CardInfo[i]->setRelativePosition(dInfo.isInDuel ? Resize(i == 0 ? 55 : 5, 252 + i * 20, 105, 272 + i * 20) : Resize(220, 252 + i * 20, i == 0 ? 270 : 312, 272 + i * 20));
 		wBtnShowCard->setVisible(dInfo.isInDuel);
 		/////kdiy//////////
 		EnableMaterial2D(true);
@@ -4475,6 +4481,7 @@ void Game::LoadLocalServers() {
 }
 //void Game::ShowCardInfo(uint32_t code, bool resize, imgType type) {
 void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pcard) {
+    if(!wCardImg->isVisible()) return;
 ///kdiy/////////
 	static auto prevtype = imgType::ART;
 	if(resize) {
@@ -4815,7 +4822,6 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 	} else {
 		cardeffect = Utils::ToUnicodeIfNeeded(gDataManager->GetText(code));
 	}
-	effectText[0] = cardeffect;
 	while ((pos = cardeffect.find(delimiter)) != std::wstring::npos) {
 		if (pos != 0)
 			parts.push_back(cardeffect.substr(0, pos));
@@ -4833,12 +4839,11 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 			i++;
 			if (i > 7) break;
 		}
-		size_t found = cardeffect.find(part);
-		if (found != std::wstring::npos)
-			cardeffect.erase(found, part.length());
+
 	}
 	while (cardeffect.substr(0, 2) == L"\r\n")
         cardeffect.erase(0, 2);
+	effectText[0] = cardeffect;
 	stText->setText(cardeffect.data());
 	///kdiy/////////
 }

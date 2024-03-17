@@ -847,8 +847,8 @@ void Game::DrawMisc() {
 	/////kdiy/////////
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(330, 10, 629, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(691, 10, 990, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
-	driver->draw2DImage(imageManager.tLPFrame, Resize(28, 553, 217, 640), irr::core::recti(0, 0, 494, 228), 0, 0, true);
-	driver->draw2DImage(imageManager.tLPFrame, Resize(691, 10, 890, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
+	driver->draw2DImage(imageManager.tLPFrame, Resize(161, 553, 350, 640), irr::core::recti(0, 0, 494, 228), 0, 0, true);
+	driver->draw2DImage(imageManager.tLPFrame2, Resize(810, 73, 1019, 160), irr::core::recti(0, 0, 494, 228), 0, 0, true);
 	/////kdiy/////////
 
 #define SKCOLOR(what) skin::LPBAR_##what##_VAL
@@ -926,26 +926,19 @@ void Game::DrawMisc() {
 
     ////kdiy////////////
 	// DrawShadowText(numFont, dInfo.strLP[0], Resize(330, 11, 629, 29), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, true);
-	// DrawShadowText(numFont, dInfo.strLP[1], Resize(691, 11, 990, 29), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, true); 28, 553, 217, 640
-    int avataricon1 = 0; int avataricon2 = 0;
-        if(dInfo.isInDuel && !mainGame->dInfo.isSingleMode) {
-            if (mainGame->dInfo.isTeam1) {
-                avataricon1 = mainGame->dInfo.current_player[0];
-                avataricon2 = mainGame->dInfo.current_player[1] + mainGame->dInfo.team1;   
-            } else {
-                avataricon1 = mainGame->dInfo.current_player[0] + mainGame->dInfo.team1;
-                avataricon2 = mainGame->dInfo.current_player[1];
-            }
-        } else if(mainGame->dInfo.isSingleMode) {
-            avataricon1 = 0;
-            avataricon2 = 1;
-        } else if(is_building) {
-            avataricon1 = 0;
-        }
-    driver->draw2DImage(imageManager.icon[gSoundManager->character[avataricon1]], Resize(130, 565, 180, 615), irr::core::recti(0, 0, imageManager.icon[gSoundManager->character[avataricon1]]->getSize().Width, imageManager.icon[gSoundManager->character[avataricon1]]->getSize().Height), 0, 0, true);
-	DrawShadowText(numFont, L"LP", Resize(33, 574, 100, 585), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, true);
-	DrawShadowText(lpFont, dInfo.strLP[0], Resize(95, 585, 156, 620), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, true);
-	DrawShadowText(numFont, dInfo.strLP[1], Resize(691, 11, 890, 29), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, true);
+	// DrawShadowText(numFont, dInfo.strLP[1], Resize(691, 11, 990, 29), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, true); 161, 553, 350, 640 810, 73, 1019, 160
+    driver->draw2DImage(imageManager.icon[gSoundManager->character[avataricon1]], Resize(266, 560, 313, 610), irr::core::recti(0, 0, imageManager.icon[gSoundManager->character[avataricon1]]->getSize().Width, imageManager.icon[gSoundManager->character[avataricon1]]->getSize().Height), 0, 0, true);
+    driver->draw2DImage(imageManager.icon[gSoundManager->character[avataricon2]], Resize(915, 80, 982, 130), irr::core::recti(0, 0, imageManager.icon[gSoundManager->character[avataricon2]]->getSize().Width, imageManager.icon[gSoundManager->character[avataricon2]]->getSize().Height), 0, 0, true);
+	DrawShadowText(numFont, L"LP", Resize(166, 585, 233, 604), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, true);
+	DrawShadowText(numFont, L"LP", Resize(815, 105, 902, 124), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, true);
+    if(dInfo.lp[0] >= 8888888)
+	    DrawShadowText(nameFont, dInfo.strLP[0], Resize(228, 580, 268, 634), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, true);
+    else
+	    DrawShadowText(lpFont, dInfo.strLP[0], Resize(228, 600, 288, 634), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, true);
+    if(dInfo.lp[1] >= 8888888)
+	    DrawShadowText(nameFont, dInfo.strLP[1], Resize(877, 100, 937, 154), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, true);
+    else
+	    DrawShadowText(lpFont, dInfo.strLP[1], Resize(877, 120, 957, 154), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, true);
 
 	//irr::core::recti p1size = Resize(335, 31, 629, 50);
 	//irr::core::recti p2size = Resize(986, 31, 986, 50);
@@ -971,13 +964,13 @@ void Game::DrawMisc() {
 	// 		p2size += irr::core::vector2di{ 0, p2size.getHeight() + ResizeY(4) };
 	// 	}
 	// }
-	irr::core::recti p1size = Resize(5, 534, 25, 553);
+	irr::core::recti p1size = Resize(355, 585, 375, 604);
 	irr::core::recti p2size = Resize(886, 31, 886, 50);
 	{
 		int i = 0;
 		for (const auto& player : self) {
 			if (i++ == dInfo.current_player[0])
-				textFont->drawustring(player, Resize(105, 574, 125, 585), skin::DUELFIELD_LP_1_VAL, true, true, 0);
+				textFont->drawustring(player, Resize(210, 574, 240, 585), skin::DUELFIELD_LP_1_VAL, true, true, 0);
 			else {
 				textFont->drawustring(player, p1size, 0xff808080, false, false, 0);
                 p1size += irr::core::vector2di{ 0, p1size.getHeight() + ResizeY(4) };
@@ -991,9 +984,10 @@ void Game::DrawMisc() {
 			p2size.UpperLeftCorner.X = basecorner - cld.Width;
 			if (i++ == dInfo.current_player[1])
 				textFont->drawustring(utext, p2size, 0xffffffff, false, false, 0);
-			else
+			else {
 				textFont->drawustring(utext, p2size, 0xff808080, false, false, 0);
-			p2size += irr::core::vector2di{ 0, p2size.getHeight() + ResizeY(4) };
+                p2size += irr::core::vector2di{ 0, p2size.getHeight() + ResizeY(4) };
+            }
 		}
 	}
 	////kdiy////////////

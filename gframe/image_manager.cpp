@@ -358,13 +358,6 @@ bool ImageManager::Initial() {
     }
 	ASSERT_TEXTURE_LOADED(tLPBar, "lp");
 
-	GetRandomImage(tLPFrame, TEXTURE_LPf);
-	if (!tLPFrame) {
-		tLPFrame = loadTextureAnySize(EPRO_TEXT("lpf"_sv));
-        ASSIGN_DEFAULT(tLPFrame);
-    }
-	ASSERT_TEXTURE_LOADED(tLPFrame, "lpf");
-
 	GetRandomImage(tMask, TEXTURE_MASK, 254, 254);
 	if (!tMask) {
 		tMask = loadTextureFixedSize(EPRO_TEXT("mask"_sv), 254, 254);
@@ -632,6 +625,10 @@ bool ImageManager::Initial() {
     ASSIGN_DEFAULT(tButton);
 	tButton2 = loadTextureFixedSize(EPRO_TEXT("button2"_sv), 30, 30);
     ASSIGN_DEFAULT(tButton2);
+	tLPFrame = loadTextureAnySize(EPRO_TEXT("lpf"_sv));
+    ASSIGN_DEFAULT(tLPFrame);
+	tLPFrame2 = loadTextureAnySize(EPRO_TEXT("lpf2"_sv));
+    ASSIGN_DEFAULT(tLPFrame2);
     ///kdiy/////
 
 	// Not required to be present
@@ -899,9 +896,6 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 	GetRandomImage(tLPBar, TEXTURE_LP);
 	if(!tLPBar)
 	    REPLACE_TEXTURE_ANY_SIZE(tLPBar, "lp");
-	GetRandomImage(tLPFrame, TEXTURE_LPf);
-	if(!tLPFrame)
-	    REPLACE_TEXTURE_ANY_SIZE(tLPFrame, "lpf");
 	GetRandomImage(tMask, TEXTURE_MASK, 254, 254);
 	if(!tMask)
 	    REPLACE_TEXTURE_WITH_FIXED_SIZE(tMask, "mask", 254, 254);

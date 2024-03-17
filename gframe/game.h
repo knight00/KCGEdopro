@@ -461,6 +461,7 @@ public:
 	//card image
 	/////kdiy/////////
 	irr::gui::CGUITTFont* lpFont;
+	irr::gui::CGUITTFont* nameFont;
 	//irr::gui::IGUIStaticText* wCardImg;
 	/////kdiy/////////
     irr::gui::IGUIImage* imgCard;
@@ -661,6 +662,8 @@ public:
 	irr::gui::IGUIWindow* wAvatar[2];
 	irr::gui::CGUIImageButton* avatarbutton[2];
 	irr::gui::IGUIButton* cardbutton[3];
+    int avataricon1 = 0;
+    int avataricon2 = 0;
 	///////kdiy//////////
 
 	//deck options

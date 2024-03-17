@@ -191,6 +191,7 @@ public:
 	A(tChain)
 	A(tNumber)
 	A(tLPFrame)
+	A(tLPFrame2)
 	A(tLPBar)
 	A(tMask)
 	A(tEquip)

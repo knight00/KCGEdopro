@@ -1902,16 +1902,8 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto val = BufferIO::Read<uint32_t>(pbuf);
 		//extra parameter
 		const auto reason = BufferIO::Read<uint32_t>(pbuf);
-        int avataricon1 = 0; int avataricon2 = 0;
-		if(mainGame->dInfo.isTeam1) {
-			avataricon1 = mainGame->dInfo.current_player[0];
-			avataricon2 = mainGame->dInfo.current_player[1] + mainGame->dInfo.team1;
-		} else {
-			avataricon1 = mainGame->dInfo.current_player[0] + mainGame->dInfo.team1;
-			avataricon2 = mainGame->dInfo.current_player[1];
-		}
 		if(!(reason & REASON_COST))
-            mainGame->avatarbutton[player]->setImage(mainGame->imageManager.scharacter[player == 0 ? avataricon1 : avataricon2][1]);
+            mainGame->avatarbutton[player]->setImage(mainGame->imageManager.scharacter[player == 0 ? mainGame->avataricon1 : mainGame->avataricon2][1]);
 		uint16_t extra = 0;
 		if(reason & REASON_COST) extra = 0x1;
 		else if((mainGame->dInfo.lp[player] > 0 && mainGame->dInfo.lp[player] >= mainGame->dInfo.lp[1 - player] * 2) || val >= 4000) extra = 0x4;
@@ -2260,19 +2252,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		}
 		case HINT_AVATAR: {
 			auto text = gDataManager->GetDesc(data, mainGame->dInfo.compat_mode).data();
-			if(mainGame->dInfo.isTeam1) {
-				if(player == 0) {
-				    mainGame->imageManager.SetAvatar(mainGame->dInfo.current_player[0], text);
-                } else {
-					mainGame->imageManager.SetAvatar(mainGame->dInfo.current_player[1] + mainGame->dInfo.team1, text);
-                }
-			} else {
-				if(player == 0) {
-					mainGame->imageManager.SetAvatar(mainGame->dInfo.current_player[0] + mainGame->dInfo.team1, text);
-                } else {
-					mainGame->imageManager.SetAvatar(mainGame->dInfo.current_player[1], text);
-                }
-			}
+            mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->avataricon1][0]);
+            mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->avataricon2][0]);
+            if(player == 0)
+                mainGame->imageManager.SetAvatar(mainGame->avataricon1, text);
+            else
+                mainGame->imageManager.SetAvatar(mainGame->avataricon2, text);
 			break;
 		}
 		//////kdiy////////
@@ -5553,6 +5538,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->WaitFrameSignal(5, lock);
 		}
 		mainGame->dInfo.current_player[player] = (mainGame->dInfo.current_player[player] + 1) % ((player == 0 && mainGame->dInfo.isFirst) ? mainGame->dInfo.team1 : mainGame->dInfo.team2);
+        /////kdiy//////////
+		mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->avataricon1][0]);
+		mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->avataricon2][0]);
+        /////kdiy//////////
 		break;
 	}
 	case MSG_RELOAD_FIELD: {

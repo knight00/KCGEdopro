@@ -233,12 +233,6 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_HAND_TEST:
 			case BUTTON_HAND_TEST_START: {
-				//////kdiy/////
-                if(!mainGame->git_update || mainGame->git_error) {
-                    mainGame->stACMessage->setText(gDataManager->GetSysString(8046).data());
-                    break;
-                }
-				//////kdiy/////
 				Terminate(false);
 				SingleMode::DuelOptions options("hand-test-mode");
 				options.handTestNoOpponent = mainGame->chkHandTestNoOpponent->isChecked();
