@@ -871,7 +871,7 @@ void Game::Initialize() {
 	btnCharacterSelect2->setDrawBorder(true);
 	irr::core::dimension2di avatarsize = { Scale<irr::s32>(CARD_IMG_WIDTH * 0.5f), Scale<irr::s32>(CARD_IMG_HEIGHT * 0.5f) };
 	
-	wAvatar[0] = AlignElementWithParent(env->addWindow(Scale(5, 455, 105, 635)));
+	wAvatar[0] = AlignElementWithParent(env->addWindow(Scale(215, 340, 315, 580)));
 	wAvatar[0]->getCloseButton()->setVisible(false);
 	wAvatar[0]->setDraggable(false);
 	wAvatar[0]->setDrawTitlebar(false);
@@ -989,7 +989,7 @@ void Game::Initialize() {
 	btnLocation[5]->setImage(imageManager.tExtra);
 	stLocation[5]->setText(gDataManager->GetSysString(1006).data());
 	defaultStrings.emplace_back(stLocation[5], 1006);
-    wBtnSettings = env->addWindow(Scale(0, 580, 40, 620));
+    wBtnSettings = env->addWindow(Scale(10, 580, 50, 620));
     //////kdiy//////
 	wBtnSettings->getCloseButton()->setVisible(false);
 	wBtnSettings->setDraggable(false);
@@ -1823,14 +1823,14 @@ void Game::Initialize() {
 	//btnRestartSingle = AlignElementWithParent(env->addButton(Scale(205, 50, 295, 90), 0, BUTTON_RESTART_SINGLE, gDataManager->GetSysString(1366).data()));
 	// defaultStrings.emplace_back(btnRestartSingle, 1366);
 	//restart single
-	btnLeaveGame = AlignElementWithParent(env->addButton(Scale(420, 60, 460, 100), 0, BUTTON_LEAVE_GAME, L""));
+	btnLeaveGame = AlignElementWithParent(env->addButton(Scale(60, 580, 100, 620), 0, BUTTON_LEAVE_GAME, L""));
 	btnLeaveGame->setVisible(false);
 	btnLeaveGame->setImage(imageManager.tExit);
 	btnLeaveGame->setScaleImage(true);
 	btnLeaveGame->setDrawBorder(false);
 	btnLeaveGame->setUseAlphaChannel(true);
 	//restart single
-	btnRestartSingle = AlignElementWithParent(env->addButton(Scale(420, 110, 460, 150), 0, BUTTON_RESTART_SINGLE, L"", gDataManager->GetSysString(1366).data()));
+	btnRestartSingle = AlignElementWithParent(env->addButton(Scale(110, 580, 150, 620), 0, BUTTON_RESTART_SINGLE, L"", gDataManager->GetSysString(1366).data()));
 	btnRestartSingle->setImage(imageManager.tRestart);
 	btnRestartSingle->setScaleImage(true);
 	btnRestartSingle->setDrawBorder(false);
@@ -2465,7 +2465,7 @@ void Game::PopulateAIBotWindow() {
 
 void Game::PopulateTabSettingsWindow() {
 	/////kdiy/////
-	wCardImg = AlignElementWithParent(env->addWindow(Scale(105, 10, 315, 550)));
+	wCardImg = AlignElementWithParent(env->addWindow(Scale(10, 10, 220, 550)));
 	wCardImg->getCloseButton()->setVisible(false);
 	wCardImg->setDraggable(false);
 	wCardImg->setDrawTitlebar(false);
@@ -2484,7 +2484,7 @@ void Game::PopulateTabSettingsWindow() {
 	wCardInfo = AlignElementWithParent(env->addStaticText(L"", Scale(0, 208, 210, 540), true, true, wCardImg, -1, false));
 	wCardInfo->setDrawBackground(true);
 	for(int i = 0; i < 8; i++) {
-		CardInfo[i] = AlignElementWithParent(env->addButton(Scale(i == 0 ? 55 : 5, 220 + i * 20, 105, 240 + i * 20), 0, BUTTON_CARDINFO));
+		CardInfo[i] = AlignElementWithParent(env->addButton(Scale(220, 252 + i * 20, i == 0 ? 270 : 312, 272 + i * 20), 0, BUTTON_CARDINFO));
 		CardInfo[i]->setVisible(false);
 		auto name = AlignElementWithParent(irr::gui::CGUICustomText::addCustomText(L"", true, env, CardInfo[i], -1, Scale(0, 0, i == 0 ? 50 : 92, 20), true));
         name->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
@@ -3561,9 +3561,7 @@ bool Game::MainLoop() {
 		} else { // bottom right of window with a little padding
 			fpsCounter->setRelativePosition(Resize(5, 620, 5 + fpsCounterWidth, 640));
 		}
-		wBtnSettings->setVisible(!open_file);
-        wBtnSettings->setRelativePosition(dInfo.isInDuel ? ResizeWin(420, 10, 460, 50) : ResizeWin(0, 580, 40, 620));
-	
+
 		int avataricon1 = 0; int avataricon2 = 0;
         if(dInfo.isInDuel && !mainGame->dInfo.isSingleMode) {
             if (mainGame->dInfo.isTeam1) {
@@ -3612,11 +3610,13 @@ bool Game::MainLoop() {
             mainGame->wAvatar[1]->setVisible(false);
         }
 #endif
-        btnLeaveGame->setRelativePosition(dInfo.isInDuel ? Resize(420, 60, 460, 100) : Resize(60, 580, 100, 620));
-        wCardImg->setRelativePosition(dInfo.isInDuel ? Resize(105, 10, 315, 550) : Resize(10, 10, 220, 550));
-        wAvatar[0]->setRelativePosition(dInfo.isInDuel ? Resize(5, 455, 105, 635) : Resize(215, 455, 315, 635));
+        btnLeaveGame->setRelativePosition(Resize(60, 580, 100, 620));
+		wBtnSettings->setVisible(!open_file);
+        wBtnSettings->setRelativePosition(Resize(10, 580, 50, 620));
+        wCardImg->setRelativePosition(Resize(10, 10, 220, 550));
         for(int i = 0; i < 8; i++)
-		    CardInfo[i]->setRelativePosition(dInfo.isInDuel ? Resize(i == 0 ? 55 : 5, 252 + i * 20, 105, 272 + i * 20) : Resize(220, 252 + i * 20, i == 0 ? 270 : 312, 272 + i * 20));
+		    CardInfo[i]->setRelativePosition(Resize(220, 252 + i * 20, i == 0 ? 270 : 312, 272 + i * 20));
+        wAvatar[0]->setRelativePosition(dInfo.isInDuel ? Resize(215, 400, 315, 580) : Resize(215, 455, 315, 635));
 		wBtnShowCard->setVisible(dInfo.isInDuel);
 		/////kdiy//////////
 		EnableMaterial2D(true);
