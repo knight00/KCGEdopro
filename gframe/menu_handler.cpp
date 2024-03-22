@@ -89,6 +89,7 @@ static void LoadReplay() {
 	mainGame->wCardImg->setVisible(true);
 	/////kdiy/////
     //mainGame->wInfos->setVisible(true);
+	mainGame->btnLeaveGame->setVisible(true);
 	/////kdiy/////
 	mainGame->wReplay->setVisible(true);
 	mainGame->wReplayControl->setVisible(true);

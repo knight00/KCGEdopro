@@ -1295,11 +1295,11 @@ void Game::Initialize() {
 	//btnHandTest->setVisible(false);
 	//btnHandTest->setEnabled(coreloaded);
 	//btnHandTestSettings = AlignElementWithParent(env->addButton(Scale(205, 140, 295, 180), 0, BUTTON_HAND_TEST_SETTINGS, L""));
-    btnHandTest = AlignElementWithParent(env->addButton(Scale(225, 190, 310, 230), nullptr, BUTTON_HAND_TEST, gDataManager->GetSysString(1297).data()));
+    btnHandTest = AlignElementWithParent(env->addButton(Scale(110, 580, 195, 620), nullptr, BUTTON_HAND_TEST, gDataManager->GetSysString(1297).data()));
 	defaultStrings.emplace_back(btnHandTest, 1297);
 	btnHandTest->setVisible(false);
 	btnHandTest->setEnabled(coreloaded);
-	btnHandTestSettings = AlignElementWithParent(env->addButton(Scale(260, 197, 310, 247), 0, BUTTON_HAND_TEST_SETTINGS, gDataManager->GetSysString(1375).data()));
+	btnHandTestSettings = AlignElementWithParent(env->addButton(Scale(110, 570, 160, 620), 0, BUTTON_HAND_TEST_SETTINGS, gDataManager->GetSysString(1375).data()));
 	btnHandTestSettings->setImage(imageManager.tButton);
 	btnHandTestSettings->setScaleImage(true);
 	btnHandTestSettings->setDrawBorder(false);
@@ -1349,7 +1349,7 @@ void Game::Initialize() {
 
 	///////kdiy////
     //btnYdkeManage = AlignElementWithParent(env->addButton(Scale(205, 190, 295, 230), 0, BUTTON_DECK_YDKE_MANAGE, gDataManager->GetSysString(2083).data()));
-    btnYdkeManage = AlignElementWithParent(env->addButton(Scale(260, 137, 310, 187), 0, BUTTON_DECK_YDKE_MANAGE, gDataManager->GetSysString(2083).data()));
+    btnYdkeManage = AlignElementWithParent(env->addButton(Scale(170, 570, 220, 620), 0, BUTTON_DECK_YDKE_MANAGE, gDataManager->GetSysString(2083).data()));
 	btnYdkeManage->setImage(imageManager.tButton);
 	btnYdkeManage->setScaleImage(true);
 	btnYdkeManage->setDrawBorder(false);
@@ -1734,25 +1734,56 @@ void Game::Initialize() {
 	//replay control
 	////kdiy////////
 	//wReplayControl = AlignElementWithParent(env->addStaticText(L"", Scale(205, 143, 295, 273), true, false, 0, -1, true));
-	wReplayControl = AlignElementWithParent(env->addWindow(Scale(315, 143, 405, 273), false, L""));
-	////kdiy////////
-	wReplayControl->setVisible(false);
-	btnReplayStart = AlignElementWithParent(env->addButton(Scale(5, 5, 85, 25), wReplayControl, BUTTON_REPLAY_START, gDataManager->GetSysString(1343).data()));
-	defaultStrings.emplace_back(btnReplayStart, 1343);
-	btnReplayPause = AlignElementWithParent(env->addButton(Scale(5, 5, 85, 25), wReplayControl, BUTTON_REPLAY_PAUSE, gDataManager->GetSysString(1344).data()));
-	defaultStrings.emplace_back(btnReplayPause, 1344);
-	btnReplayStep = AlignElementWithParent(env->addButton(Scale(5, 55, 85, 75), wReplayControl, BUTTON_REPLAY_STEP, gDataManager->GetSysString(1345).data()));
-	defaultStrings.emplace_back(btnReplayStep, 1345);
-	btnReplayUndo = AlignElementWithParent(env->addButton(Scale(5, 80, 85, 100), wReplayControl, BUTTON_REPLAY_UNDO, gDataManager->GetSysString(1360).data()));
-	defaultStrings.emplace_back(btnReplayUndo, 1360);
-	btnReplaySwap = AlignElementWithParent(env->addButton(Scale(5, 30, 85, 50), wReplayControl, BUTTON_REPLAY_SWAP, gDataManager->GetSysString(1346).data()));
-	defaultStrings.emplace_back(btnReplaySwap, 1346);
-	btnReplayExit = AlignElementWithParent(env->addButton(Scale(5, 105, 85, 125), wReplayControl, BUTTON_REPLAY_EXIT, gDataManager->GetSysString(1347).data()));
-	defaultStrings.emplace_back(btnReplayExit, 1347);
+	// wReplayControl->setVisible(false);
+	// btnReplayStart = AlignElementWithParent(env->addButton(Scale(5, 5, 85, 25), wReplayControl, BUTTON_REPLAY_START, gDataManager->GetSysString(1343).data()));
+	// defaultStrings.emplace_back(btnReplayStart, 1343);
+	// btnReplayPause = AlignElementWithParent(env->addButton(Scale(5, 5, 85, 25), wReplayControl, BUTTON_REPLAY_PAUSE, gDataManager->GetSysString(1344).data()));
+	// defaultStrings.emplace_back(btnReplayPause, 1344);
+	// btnReplayStep = AlignElementWithParent(env->addButton(Scale(5, 55, 85, 75), wReplayControl, BUTTON_REPLAY_STEP, gDataManager->GetSysString(1345).data()));
+	// defaultStrings.emplace_back(btnReplayStep, 1345);
+	// btnReplayUndo = AlignElementWithParent(env->addButton(Scale(5, 80, 85, 100), wReplayControl, BUTTON_REPLAY_UNDO, gDataManager->GetSysString(1360).data()));
+	// defaultStrings.emplace_back(btnReplayUndo, 1360);
+	// btnReplaySwap = AlignElementWithParent(env->addButton(Scale(5, 30, 85, 50), wReplayControl, BUTTON_REPLAY_SWAP, gDataManager->GetSysString(1346).data()));
+	// defaultStrings.emplace_back(btnReplaySwap, 1346);
+	// btnReplayExit = AlignElementWithParent(env->addButton(Scale(5, 105, 85, 125), wReplayControl, BUTTON_REPLAY_EXIT, gDataManager->GetSysString(1347).data()));
+	// defaultStrings.emplace_back(btnReplayExit, 1347);
 	//chat
-	////kdiy////////
 	//wChat = AlignElementWithParent(env->addWindow(Scale(305, 615, 1020, 640), false, L""));
-	wChat = AlignElementWithParent(env->addWindow(Scale(365, 615, 1020, 640), false, L""));
+	wReplayControl = AlignElementWithParent(env->addWindow(Scale(410, 60, 590, 105), false, L""));
+	wReplayControl->setVisible(false);
+
+	btnReplayStart = AlignElementWithParent(env->addButton(Scale(5, 5, 45, 45), wReplayControl, BUTTON_REPLAY_START, L""));
+	btnReplayStart->setImage(imageManager.tStartReplay);
+	btnReplayStart->setScaleImage(true);
+	btnReplayStart->setDrawBorder(false);
+	btnReplayStart->setUseAlphaChannel(true);
+
+	btnReplayPause = AlignElementWithParent(env->addButton(Scale(5, 5, 45, 45), wReplayControl, BUTTON_REPLAY_PAUSE, L""));
+	btnReplayPause->setImage(imageManager.tPauseReplay);
+	btnReplayPause->setScaleImage(true);
+	btnReplayPause->setDrawBorder(false);
+	btnReplayPause->setUseAlphaChannel(true);
+
+	btnReplayStep = AlignElementWithParent(env->addButton(Scale(50, 5, 90, 45), wReplayControl, BUTTON_REPLAY_STEP, L""));
+	btnReplayStep->setImage(imageManager.tNextReplay);
+	btnReplayStep->setScaleImage(true);
+	btnReplayStep->setDrawBorder(false);
+	btnReplayStep->setUseAlphaChannel(true);
+
+	btnReplayUndo = AlignElementWithParent(env->addButton(Scale(95, 5, 135, 45), wReplayControl, BUTTON_REPLAY_UNDO, L""));
+	btnReplayUndo->setImage(imageManager.tLastReplay);
+	btnReplayUndo->setScaleImage(true);
+	btnReplayUndo->setDrawBorder(false);
+	btnReplayUndo->setUseAlphaChannel(true);
+
+	btnReplaySwap = AlignElementWithParent(env->addButton(Scale(140, 5, 180, 45), wReplayControl, BUTTON_REPLAY_SWAP, L""));
+	btnReplaySwap->setImage(imageManager.tReplaySwap);
+	btnReplaySwap->setScaleImage(true);
+	btnReplaySwap->setDrawBorder(false);
+	btnReplaySwap->setUseAlphaChannel(true);
+
+	//chat
+	wChat = AlignElementWithParent(env->addWindow(Scale(380, 615, 1020, 640), false, L""));
 	////kdiy////////
 	wChat->getCloseButton()->setVisible(false);
 	wChat->setDraggable(false);
@@ -3610,14 +3641,14 @@ bool Game::MainLoop() {
             mainGame->wAvatar[1]->setVisible(false);
         }
 #endif
-        btnLeaveGame->setRelativePosition(Resize(60, 580, 100, 620));
-		wBtnSettings->setVisible(!open_file);
-        wBtnSettings->setRelativePosition(Resize(10, 580, 50, 620));
         wCardImg->setRelativePosition(Resize(10, 10, 220, 550));
         for(int i = 0; i < 8; i++)
-		    CardInfo[i]->setRelativePosition(Resize(220, 252 + i * 20, i == 0 ? 270 : 312, 272 + i * 20));
+		    CardInfo[i]->setRelativePosition(Resize(220, 198 + i * 20, i == 0 ? 270 : 312, 218 + i * 20));
         wAvatar[0]->setRelativePosition(dInfo.isInDuel ? Resize(215, 400, 315, 580) : Resize(215, 455, 315, 635));
 		wBtnShowCard->setVisible(dInfo.isInDuel);
+		wBtnSettings->setVisible(!open_file);
+        wBtnSettings->setRelativePosition(Resize(10, 580, 50, 620));
+        btnLeaveGame->setRelativePosition(Resize(60, 580, 100, 620));
 		/////kdiy//////////
 		EnableMaterial2D(true);
 		DrawGUI();

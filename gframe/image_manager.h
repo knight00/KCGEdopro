@@ -246,6 +246,11 @@ public:
 	A(tRestart)
 	A(tButton)
 	A(tButton2)
+	A(tStartReplay)
+	A(tPauseReplay)
+	A(tNextReplay)
+	A(tLastReplay)
+	A(tReplaySwap)
 	/////kdiy/////
 	A(tSettings)
 	A(tCheckBox[3])

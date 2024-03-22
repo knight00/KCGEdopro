@@ -229,6 +229,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			case BUTTON_LEAVE_GAME: {
 			    ////kdiy////////
                 gSoundManager->soundcount.clear();
+				if(mainGame->dInfo.isReplay) {
+					ReplayMode::StopReplay();
+					break;
+				}
 			    ////kdiy////////
 				if(mainGame->dInfo.isSingleMode) {
 					SingleMode::singleSignal.SetNoWait(true);
@@ -1700,10 +1704,12 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			irr::core::vector2di mousepos(event.MouseInput.X, event.MouseInput.Y);
 			irr::s32 x = pos.X;
 			irr::s32 y = pos.Y;
-			if(x < 300) {
-				mainGame->stTip->setVisible(should_show_tip);
-				break;
-			}
+			/////kdiy/////
+			// if(x < 300) {
+			// 	mainGame->stTip->setVisible(should_show_tip);
+			// 	break;
+			// }
+			/////kdiy/////
 			hovered_location = 0;
 			ClientCard* mcard = 0;
 			uint8_t mplayer = 2;
@@ -1869,18 +1875,18 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			if(mplayer != hovered_player) {
 				if(mplayer < 2) {
 					std::wstring player_name;
-					auto& self = mainGame->dInfo.isTeam1 ? mainGame->dInfo.selfnames : mainGame->dInfo.opponames;
-					auto& oppo = mainGame->dInfo.isTeam1 ? mainGame->dInfo.opponames : mainGame->dInfo.selfnames;
-					if (mplayer == 0)
-						player_name = self[mainGame->dInfo.current_player[mplayer]];
-					else
-						player_name = oppo[mainGame->dInfo.current_player[mplayer]];
+					/////kdiy/////
+					// auto& self = mainGame->dInfo.isTeam1 ? mainGame->dInfo.selfnames : mainGame->dInfo.opponames;
+					// auto& oppo = mainGame->dInfo.isTeam1 ? mainGame->dInfo.opponames : mainGame->dInfo.selfnames;
+					// if (mplayer == 0)
+					// 	player_name = self[mainGame->dInfo.current_player[mplayer]];
+					// else
+					// 	player_name = oppo[mainGame->dInfo.current_player[mplayer]];
+					/////kdiy/////
 					for(const auto& hint : player_desc_hints[mplayer]) {
 						player_name.append(epro::format(L"\n*{}", gDataManager->GetDesc(hint.first, mainGame->dInfo.compat_mode)));
 					}
-                    /////kdiy/////
-					// should_show_tip = true;
-                    /////kdiy/////
+					should_show_tip = true;
 					auto dtip = mainGame->textFont->getDimensionustring(player_name) + mainGame->Scale(irr::core::dimension2d<uint32_t>(10, 10));
 					mainGame->stTip->setRelativePosition(irr::core::recti(mousepos.X - mainGame->Scale(10) - dtip.Width, mousepos.Y + mainGame->Scale(10), mousepos.X - mainGame->Scale(10), mousepos.Y + mainGame->Scale(10) + dtip.Height));
 					mainGame->stTip->setText(player_name.data());

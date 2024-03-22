@@ -629,6 +629,16 @@ bool ImageManager::Initial() {
     ASSIGN_DEFAULT(tLPFrame);
 	tLPFrame2 = loadTextureAnySize(EPRO_TEXT("lpf2"_sv));
     ASSIGN_DEFAULT(tLPFrame2);
+	tStartReplay = loadTextureAnySize(EPRO_TEXT("play"_sv));
+    ASSIGN_DEFAULT(tStartReplay);
+	tPauseReplay = loadTextureAnySize(EPRO_TEXT("pause"_sv));
+    ASSIGN_DEFAULT(tPauseReplay);
+	tNextReplay = loadTextureAnySize(EPRO_TEXT("next"_sv));
+    ASSIGN_DEFAULT(tNextReplay);
+	tLastReplay = loadTextureAnySize(EPRO_TEXT("back"_sv));
+    ASSIGN_DEFAULT(tLastReplay);
+	tReplaySwap = loadTextureAnySize(EPRO_TEXT("swap"_sv));
+    ASSIGN_DEFAULT(tReplaySwap);
     ///kdiy/////
 
 	// Not required to be present
