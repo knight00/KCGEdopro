@@ -35,7 +35,9 @@ OPTION(bool, noCheckDeckContent, false)
 OPTION(bool, noCheckDeckSize, false)
 OPTION(bool, hideHandsInReplays, false)
 OPTION(ygo::GameConfig::TextFont, textfont, EPRO_TEXT("fonts/ygo.ttf"), 12)
-OPTION(epro::path_string, numfont, EPRO_TEXT("fonts/ygo.ttf"))
+///kdiy//////////
+//OPTION(epro::path_string, numfont, EPRO_TEXT("fonts/ygo.ttf"))
+///kdiy//////////
 #ifdef YGOPRO_USE_BUNDLED_FONT
 OPTION(ygo::GameConfig::FallbackFonts, fallbackFonts, ygo::GameConfig::TextFont{ epro::path_string{EPRO_TEXT("bundled")}, 12 })
 #else

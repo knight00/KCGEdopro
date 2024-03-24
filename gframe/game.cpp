@@ -487,6 +487,8 @@ Game::~Game() {
 	if(lpcFont)
 		lpcFont->drop();
 	/////kdiy//////
+	if(numFont0)
+		numFont0->drop();
 	if(lpFont)
 		lpFont->drop();
 	if(nameFont)
@@ -612,19 +614,25 @@ void Game::Initialize() {
 		throw std::runtime_error("Failed to load text font");
 	textFont = guiFont;
 	textFont->grab();
-	GameConfig::TextFont numfont{ gGameConfig->numfont, (uint8_t)Scale(16) };
+    ////kdiy/////////
+	//GameConfig::TextFont numfont{ gGameConfig->numfont, (uint8_t)Scale(16) };
+    GameConfig::TextFont numfont{ L"fonts/BroadbandRegular.ttf", (uint8_t)Scale(16) };
+    ////kdiy/////////
 	numFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
 	numfont.size = Scale(12);
 	adFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
 	numfont.size = Scale(48);
 	lpcFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
     ////kdiy/////////
+	GameConfig::TextFont numfont0{ L"fonts/ygo.ttf", (uint8_t)Scale(16) };
+	numFont0 = irr::gui::CGUITTFont::createTTFont(env, numfont0, fallbackFonts);
 	numfont.size = Scale(28);
 	lpFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
 	textfont.size = Scale(textfont.size * 1.8);
 	nameFont = irr::gui::CGUITTFont::createTTFont(env, textfont, fallbackFonts);
+	//if(!numFont || !adFont || !lpcFont)
+	if(!numFont || !adFont || !numFont0 || !lpcFont)
     ////kdiy/////////
-	if(!numFont || !adFont || !lpcFont)
 		throw std::runtime_error("Failed to load numbers font");
 	if(!ApplySkin(gGameConfig->skin, false, true)) {
 		gGameConfig->skin = NoSkinLabel();
@@ -1171,7 +1179,10 @@ void Game::Initialize() {
 		}
 	}
 	//selection hint
-	stHintMsg = env->addStaticText(L"", Scale(500, 60, 820, 90), true, false, 0, -1, false);
+	/////kdiy/////
+	//stHintMsg = env->addStaticText(L"", Scale(500, 60, 820, 90), true, false, 0, -1, false);
+	stHintMsg = env->addStaticText(L"", Scale(298, 320, 538, 350), true, false, 0, -1, false);
+	/////kdiy/////
 	stHintMsg->setBackgroundColor(skin::DUELFIELD_TOOLTIP_TEXT_BACKGROUND_COLOR_VAL);
 	tmp_color = skin::DUELFIELD_TOOLTIP_TEXT_COLOR_VAL;
 	if(tmp_color != 0)
@@ -1794,7 +1805,7 @@ void Game::Initialize() {
 	//swap
 	////kdiy////////
 	//btnSpectatorSwap = AlignElementWithParent(env->addButton(Scale(205, 100, 295, 135), 0, BUTTON_REPLAY_SWAP, gDataManager->GetSysString(1346).data()));
-	btnSpectatorSwap = AlignElementWithParent(env->addButton(Scale(315, 215, 405, 245), 0, BUTTON_REPLAY_SWAP, gDataManager->GetSysString(1346).data()));
+	btnSpectatorSwap = AlignElementWithParent(env->addButton(Scale(315, 195, 405, 225), 0, BUTTON_REPLAY_SWAP, gDataManager->GetSysString(1346).data()));
 	btnSpectatorSwap->setImage(imageManager.tButton);
 	btnSpectatorSwap->setScaleImage(true);
 	btnSpectatorSwap->setDrawBorder(false);
@@ -1805,7 +1816,7 @@ void Game::Initialize() {
 	//chain buttons
 	////kdiy////////
 	//btnChainIgnore = AlignElementWithParent(env->addButton(Scale(205, 100, 295, 135), 0, BUTTON_CHAIN_IGNORE, gDataManager->GetSysString(1292).data()));
-	btnChainIgnore = AlignElementWithParent(env->addButton(Scale(315, 215, 405, 245), 0, BUTTON_CHAIN_IGNORE, gDataManager->GetSysString(1292).data()));
+	btnChainIgnore = AlignElementWithParent(env->addButton(Scale(315, 195, 405, 225), 0, BUTTON_CHAIN_IGNORE, gDataManager->GetSysString(1292).data()));
 	btnChainIgnore->setImage(imageManager.tButton);
 	btnChainIgnore->setScaleImage(true);
 	btnChainIgnore->setDrawBorder(false);
@@ -1814,7 +1825,7 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(btnChainIgnore, 1292);
 	////kdiy////////
 	//btnChainAlways = AlignElementWithParent(env->addButton(Scale(205, 140, 295, 175), 0, BUTTON_CHAIN_ALWAYS, gDataManager->GetSysString(1293).data()));
-	btnChainAlways = AlignElementWithParent(env->addButton(Scale(315, 255, 405, 285), 0, BUTTON_CHAIN_ALWAYS, gDataManager->GetSysString(1293).data()));
+	btnChainAlways = AlignElementWithParent(env->addButton(Scale(315, 235, 405, 265), 0, BUTTON_CHAIN_ALWAYS, gDataManager->GetSysString(1293).data()));
 	btnChainAlways->setImage(imageManager.tButton);
 	btnChainAlways->setScaleImage(true);
 	btnChainAlways->setDrawBorder(false);
@@ -1823,7 +1834,7 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(btnChainAlways, 1293);
 	////kdiy////////
 	//btnChainWhenAvail = AlignElementWithParent(env->addButton(Scale(205, 180, 295, 215), 0, BUTTON_CHAIN_WHENAVAIL, gDataManager->GetSysString(1294).data()));
-	btnChainWhenAvail = AlignElementWithParent(env->addButton(Scale(315, 295, 405, 325), 0, BUTTON_CHAIN_WHENAVAIL, gDataManager->GetSysString(1294).data()));
+	btnChainWhenAvail = AlignElementWithParent(env->addButton(Scale(315, 275, 405, 305), 0, BUTTON_CHAIN_WHENAVAIL, gDataManager->GetSysString(1294).data()));
 	btnChainWhenAvail->setImage(imageManager.tButton);
 	btnChainWhenAvail->setScaleImage(true);
 	btnChainWhenAvail->setDrawBorder(false);
@@ -1843,7 +1854,7 @@ void Game::Initialize() {
 	//cancel or finish
 	////kdiy////////
 	//btnCancelOrFinish = AlignElementWithParent(env->addButton(Scale(205, 230, 295, 265), 0, BUTTON_CANCEL_OR_FINISH, gDataManager->GetSysString(1295).data()));
-	btnCancelOrFinish = AlignElementWithParent(env->addButton(Scale(315, 230, 405, 265), 0, BUTTON_CANCEL_OR_FINISH, gDataManager->GetSysString(1295).data()));
+	btnCancelOrFinish = AlignElementWithParent(env->addButton(Scale(315, 360, 405, 390), 0, BUTTON_CANCEL_OR_FINISH, gDataManager->GetSysString(1295).data()));
 	////kdiy////////
 	defaultStrings.emplace_back(btnCancelOrFinish, 1295);
 	btnCancelOrFinish->setVisible(false);
@@ -4691,6 +4702,10 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 			//has lk
 			} else if (pcard->rtype & TYPE_LINK)
 			    text.append(ltext);
+            else {
+                text.append(epro::format(L"[{}{}] ", L"\u2605", pcard->level));
+                text.append(ltext);
+            }
 			if(pcard->rtype & TYPE_PENDULUM) {
 				text.append(epro::format(L"   {}/{}", pcard->rlscale, pcard->rrscale));
 			}
@@ -4862,11 +4877,18 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 		bool isNumber = std::all_of(part.begin(), part.end(), ::iswdigit);
 		if (isNumber) {
 			uint32_t effectcode = static_cast<uint32_t>(std::stoul(part));
+            std::wstring cardeffect0 = Utils::ToUnicodeIfNeeded(gDataManager->GetText(effectcode));
+            size_t pos;
+            while ((pos = cardeffect0.find(delimiter)) != std::wstring::npos) {
+                cardeffect0.erase(0, pos + delimiter.length());
+            }
 			stCardInfo[i]->setText(gDataManager->GetName(effectcode).data());
 			CardInfo[0]->setVisible(true);
 			CardInfo[i]->setVisible(true);
+            while (cardeffect0.substr(0, 2) == L"\r\n")
+                cardeffect0.erase(0, 2);
 			if (i > 0)
-				effectText[i] = Utils::ToUnicodeIfNeeded(gDataManager->GetText(effectcode));
+				effectText[i] = cardeffect0;
 			i++;
 			if (i > 7) break;
 		}
@@ -5848,7 +5870,10 @@ void Game::OnResize() {
 	wANAttribute->setRelativePosition(ResizeWin(500, 200, 830, 285));
 	wANRace->setRelativePosition(ResizeWin(480, 200, 850, 410));
 	wFileSave->setRelativePosition(ResizeWin(510, 200, 820, 320));
-	stHintMsg->setRelativePosition(ResizeWin(500, 60, 820, 90));
+    /////kdiy/////
+	//stHintMsg->setRelativePosition(ResizeWin(500, 60, 820, 90));
+    stHintMsg->setRelativePosition(ResizeWin(298, 320, 538, 350));
+    /////kdiy/////
 
 	ResizeCardinfoWindow(gGameConfig->keep_cardinfo_aspect_ratio);
 	for(auto& window : repoInfoGui) {

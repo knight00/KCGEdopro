@@ -623,6 +623,8 @@ bool ImageManager::Initial() {
     ASSIGN_DEFAULT(tRestart);
 	tButton = loadTextureFixedSize(EPRO_TEXT("button"_sv), 30, 30);
     ASSIGN_DEFAULT(tButton);
+	tButtonpress = loadTextureFixedSize(EPRO_TEXT("buttonpress"_sv), 30, 30);
+    ASSIGN_DEFAULT(tButtonpress);
 	tButton2 = loadTextureFixedSize(EPRO_TEXT("button2"_sv), 30, 30);
     ASSIGN_DEFAULT(tButton2);
 	tLPFrame = loadTextureAnySize(EPRO_TEXT("lpf"_sv));
@@ -639,6 +641,8 @@ bool ImageManager::Initial() {
     ASSIGN_DEFAULT(tLastReplay);
 	tReplaySwap = loadTextureAnySize(EPRO_TEXT("swap"_sv));
     ASSIGN_DEFAULT(tReplaySwap);
+	tTimer = loadTextureAnySize(EPRO_TEXT("timer"_sv));
+    ASSIGN_DEFAULT(tTimer);
     ///kdiy/////
 
 	// Not required to be present

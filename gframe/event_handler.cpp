@@ -3335,6 +3335,12 @@ void ClientField::UpdateChainButtons(irr::gui::IGUIElement* caller) {
 	} else {
 		auto SetButton = [caller=(irr::gui::IGUIButton*)caller](irr::gui::IGUIButton* button) {
 			const auto press = caller == button && caller->isPressed();
+            ////kdiy////////
+            if(press)
+                button->setImage(mainGame->imageManager.tButtonpress);
+            else
+                button->setImage(mainGame->imageManager.tButton);
+            ////kdiy////////
 			button->setPressed(press);
 			button->setSubElement(press);
 		};

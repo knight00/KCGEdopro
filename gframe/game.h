@@ -460,6 +460,7 @@ public:
 	std::map<irr::gui::CGUIImageButton*, uint32_t> imageLoading;
 	//card image
 	/////kdiy/////////
+	irr::gui::CGUITTFont* numFont0;
 	irr::gui::CGUITTFont* lpFont;
 	irr::gui::CGUITTFont* nameFont;
 	//irr::gui::IGUIStaticText* wCardImg;

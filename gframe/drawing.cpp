@@ -493,13 +493,19 @@ void Game::DrawCard(ClientCard* pcard) {
 	  && !(pcard->is_selectable && (pcard->location & 0xe))
 	  && !(pcard->is_activable) && !(pcard->is_highlighting)) {
         driver->setMaterial(matManager.mOutLine);
-        drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff00ff00);
+        if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup && pcard->attack >= 5000)
+			drawLine(matManager.vCardOutline2[0].Pos, matManager.vCardOutline2[1].Pos, matManager.vCardOutline2[2].Pos, matManager.vCardOutline2[3].Pos, 0xff00ff00);
+        else
+            drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff00ff00);
     }
     if((pcard->cmdFlag & COMMAND_SPSUMMON) && (pcard->location & LOCATION_HAND)
 	  && !(pcard->is_selectable && (pcard->location & 0xe))
 	  && !(pcard->is_activable) && !(pcard->is_highlighting)) {
         driver->setMaterial(matManager.mOutLine);
-        drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff0000ff);
+        if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup && pcard->attack >= 5000)
+			drawLine(matManager.vCardOutline2[0].Pos, matManager.vCardOutline2[1].Pos, matManager.vCardOutline2[2].Pos, matManager.vCardOutline2[3].Pos, 0xff0000ff);
+        else
+            drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff0000ff);
     }
 	if (pcard->is_activable) {
 		irr::video::SColor outline_color = skin::DUELFIELD_HIGHLIGHTING_CARD_OUTLINE_VAL;
@@ -510,7 +516,10 @@ void Game::DrawCard(ClientCard* pcard) {
 			    DrawSelectionLine(matManager.vCardOutliner, true, 2, outline_color);
 		} else {
 			driver->setMaterial(matManager.mOutLine);
-			drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffffff00);
+            if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup && pcard->attack >= 5000)
+			    drawLine(matManager.vCardOutline2[0].Pos, matManager.vCardOutline2[1].Pos, matManager.vCardOutline2[2].Pos, matManager.vCardOutline2[3].Pos, 0xffffff00);
+            else
+			    drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffffff00);
 		}
 	}
 	///kdiy////////
@@ -529,10 +538,16 @@ void Game::DrawCard(ClientCard* pcard) {
 		} else {
 			if(!pcard->is_selected) {
 				driver->setMaterial(matManager.mOutLine);
-				drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffff00ff);
+                if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup && pcard->attack >= 5000)
+			        drawLine(matManager.vCardOutline2[0].Pos, matManager.vCardOutline2[1].Pos, matManager.vCardOutline2[2].Pos, matManager.vCardOutline2[3].Pos, 0xffff00ff);
+                else
+			        drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffff00ff);
 			} else {
 				driver->setMaterial(matManager.mOutLine);
-				drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff808080);
+                if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup && pcard->attack >= 5000)
+			        drawLine(matManager.vCardOutline2[0].Pos, matManager.vCardOutline2[1].Pos, matManager.vCardOutline2[2].Pos, matManager.vCardOutline2[3].Pos, 0xff808080);
+                else
+			        drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff808080);
 			}
 		}
 		///kdiy////////
@@ -551,8 +566,12 @@ void Game::DrawCard(ClientCard* pcard) {
 			    DrawSelectionLine(matManager.vCardOutliner, true, 2, outline_color);
 		} else {
 			driver->setMaterial(matManager.mOutLine);
-			drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff00ffff);
+            if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup && pcard->attack >= 5000)
+			    drawLine(matManager.vCardOutline2[0].Pos, matManager.vCardOutline2[1].Pos, matManager.vCardOutline2[2].Pos, matManager.vCardOutline2[3].Pos, 0xff00ffff);
+            else
+			    drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff00ffff);
 		}
+        ///kdiy////////
 	}
 	if (pcard->is_showequip) {
 		matManager.mTexture.setTexture(0, imageManager.tEquip);
@@ -912,15 +931,17 @@ void Game::DrawMisc() {
 		////kdiy////////////
 		//auto rectpos = Resize(525, 34, 625, 44);
 		//auto cliprect = Resize(525, 34, 525 + dInfo.time_left[0] * 100 / dInfo.time_limit, 44);
-		auto rectpos = Resize(105, 577, 205, 587);
-		auto cliprect = Resize(105, 577, 105 + dInfo.time_left[0] * 100 / dInfo.time_limit, 587);
+		// DRAWRECT(rectpos, 1, &cliprect);
+		// driver->draw2DRectangleOutline(rectpos, skin::TIMEBAR_1_OUTLINE_VAL);
+		// rectpos = Resize(695, 34, 795, 44);
+		// cliprect = Resize(795 - dInfo.time_left[1] * 100 / dInfo.time_limit, 34, 795, 44);
+		// DRAWRECT(rectpos, 2, &cliprect);
+		// driver->draw2DRectangleOutline(rectpos, skin::TIMEBAR_2_OUTLINE_VAL);
+        driver->draw2DImage(imageManager.tTimer, Resize(380, 353, 440, 413), irr::core::recti(0, 0, 333, 332), 0, 0, true);
+        DrawShadowText(numFont, fmt::to_wstring(dInfo.time_left[0]), Resize(400, 373, 420, 393), Resize(0, 1, 2, 0), dInfo.time_left[0] < 10 ? 0xffff0000 : 0xffffffff, 0xff000000, true, false);
+        driver->draw2DImage(imageManager.tTimer, Resize(850, 260, 900, 320), irr::core::recti(0, 0, 333, 332), 0, 0, true);
+        DrawShadowText(numFont, fmt::to_wstring(dInfo.time_left[1]), Resize(870, 280, 880, 300), Resize(0, 1, 2, 0), dInfo.time_left[1] < 10 ? 0xffff0000 : 0xffffffff, 0xff000000, true, false);
 		////kdiy////////////
-		DRAWRECT(rectpos, 1, &cliprect);
-		driver->draw2DRectangleOutline(rectpos, skin::TIMEBAR_1_OUTLINE_VAL);
-		rectpos = Resize(695, 34, 795, 44);
-		cliprect = Resize(795 - dInfo.time_left[1] * 100 / dInfo.time_limit, 34, 795, 44);
-		DRAWRECT(rectpos, 2, &cliprect);
-		driver->draw2DRectangleOutline(rectpos, skin::TIMEBAR_2_OUTLINE_VAL);
 	}
 
     ////kdiy////////////
@@ -962,7 +983,7 @@ void Game::DrawMisc() {
 	// 	}
 	// } 161, 553, 350, 640 691, 48, 900, 135
 	irr::core::recti p1size = Resize(355, 585, 375, 604);
-	irr::core::recti p2size = Resize(663, 80, 683, 99);
+	irr::core::recti p2size = Resize(633, 80, 653, 99);
 	{
 		int i = 0;
 		for (const auto& player : self) {
@@ -991,7 +1012,7 @@ void Game::DrawMisc() {
 	driver->draw2DRectangle(Resize(632, 30, 688, 50), 0xffffffff, 0xffffffff, 0x00000000, 0x00000000);*/
 	////kdiy////////////
 	//DrawShadowText(lpcFont, gDataManager->GetNumString(dInfo.turn), Resize(635, 5, 685, 40), Resize(0, 0, 2, 0), skin::DUELFIELD_TURN_COUNT_VAL, 0x80000000, true);
-	DrawShadowText(lpcFont, L"TURN " + gDataManager->GetNumString(dInfo.turn), Resize(470, 5, 685, 40), Resize(0, 0, 20, 0), skin::DUELFIELD_TURN_COUNT_VAL, 0x80000000, true);
+	DrawShadowText(lpcFont, L"TURN " + gDataManager->GetNumString(dInfo.turn), Resize(410, 5, 625, 40), Resize(0, 0, 20, 0), skin::DUELFIELD_TURN_COUNT_VAL, 0x80000000, true);
 	////kdiy////////////
 #undef DRAWRECT
 #undef LPCOLOR
@@ -1103,17 +1124,17 @@ void Game::DrawStatus(ClientCard* pcard) {
 	const auto padding_1111 = Resize(1, 1, 1, 1);
 	const auto padding_1011 = Resize(1, 0, 1, 1);
 
-	if(pcard->type & TYPE_LINK) {
-		DrawShadowText(adFont, pcard->atkstring, irr::core::recti(x1 - std::floor(atk.Width / 2), y1, x1 + std::floor(atk.Width / 2), y1 + 1),
-					   padding_1111, GetAtkColor(), 0xff000000, true);
-	} else {
-		DrawShadowText(adFont, L"/", irr::core::recti(x1 - half_slash_width, y1, x1 + half_slash_width, y1 + 1), padding_1111, 0xffffffff, 0xff000000, true);
-		DrawShadowText(adFont, pcard->atkstring, irr::core::recti(x1 - half_slash_width - atk.Width - slash.Width, y1, x1 - half_slash_width, y1 + 1),
-					   padding_1111, GetAtkColor(), 0xff000000);
-		DrawShadowText(adFont, pcard->defstring, irr::core::recti(x1 + half_slash_width + slash.Width, y1, x1 - half_slash_width, y1 + 1),
-					   padding_1111, GetDefColor(), 0xff000000);
-	}
 	////kdiy//////////
+	// if(pcard->type & TYPE_LINK) {
+	// 	DrawShadowText(adFont, pcard->atkstring, irr::core::recti(x1 - std::floor(atk.Width / 2), y1, x1 + std::floor(atk.Width / 2), y1 + 1),
+	// 				   padding_1111, GetAtkColor(), 0xff000000, true);
+	// } else {
+	// 	DrawShadowText(adFont, L"/", irr::core::recti(x1 - half_slash_width, y1, x1 + half_slash_width, y1 + 1), padding_1111, 0xffffffff, 0xff000000, true);
+	// 	DrawShadowText(adFont, pcard->atkstring, irr::core::recti(x1 - half_slash_width - atk.Width - slash.Width, y1, x1 - half_slash_width, y1 + 1),
+	// 				   padding_1111, GetAtkColor(), 0xff000000);
+	// 	DrawShadowText(adFont, pcard->defstring, irr::core::recti(x1 + half_slash_width + slash.Width, y1, x1 - half_slash_width, y1 + 1),
+	// 				   padding_1111, GetDefColor(), 0xff000000);
+	// }
 	// if (pcard->level != 0 && pcard->rank != 0) {
 	// 	DrawShadowText(adFont, L"/", irr::core::recti(x2 - half_slash_width, y2, x2 + half_slash_width, y2 + 1),
 	// 	               padding_1111, 0xffffffff, 0xff000000, true);
@@ -1128,6 +1149,17 @@ void Game::DrawStatus(ClientCard* pcard) {
 	// else if (pcard->link != 0)
 	// 	DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1011, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
 	//has lv, rk, lk
+	if(pcard->type & TYPE_LINK) {
+		DrawShadowText(pcard->attack >= 8888888 ? numFont0 : adFont, pcard->atkstring, irr::core::recti(x1 - std::floor(atk.Width / 2), y1, x1 + std::floor(atk.Width / 2), y1 + 1),
+					   padding_1111, GetAtkColor(), 0xff000000, true);
+	} else {
+		DrawShadowText(pcard->attack >= 8888888 ? numFont0 : adFont, L"/", irr::core::recti(x1 - half_slash_width, y1, x1 + half_slash_width, y1 + 1), padding_1111, 0xffffffff, 0xff000000, true);
+		DrawShadowText(pcard->attack >= 8888888 ? numFont0 : adFont, pcard->atkstring, irr::core::recti(x1 - half_slash_width - atk.Width - slash.Width, y1, x1 - half_slash_width, y1 + 1),
+					   padding_1111, GetAtkColor(), 0xff000000);
+		DrawShadowText(pcard->defense >= 8888888 ? numFont0 : adFont, pcard->defstring, irr::core::recti(x1 + half_slash_width + slash.Width, y1, x1 - half_slash_width, y1 + 1),
+					   padding_1111, GetDefColor(), 0xff000000);
+	}
+
 	if ((pcard->level != 0 || (pcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL))) && (pcard->rank != 0 || (pcard->type & TYPE_XYZ)) && (pcard->link != 0 || (pcard->type & TYPE_LINK))) {
 		DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2 - std::floor(rk.Width / 2), y2, x2 + std::floor(rk.Width / 2), y2 + 1),
 					   padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000, true);
