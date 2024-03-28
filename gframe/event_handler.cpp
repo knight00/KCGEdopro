@@ -1704,12 +1704,13 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			irr::core::vector2di mousepos(event.MouseInput.X, event.MouseInput.Y);
 			irr::s32 x = pos.X;
 			irr::s32 y = pos.Y;
-			/////kdiy/////
-			// if(x < 300) {
-			// 	mainGame->stTip->setVisible(should_show_tip);
-			// 	break;
-			// }
-			/////kdiy/////
+			if(x < 300) {
+				mainGame->stTip->setVisible(should_show_tip);
+				/////kdiy/////
+				if(x < 160)
+				/////kdiy/////
+				break;
+			}
 			hovered_location = 0;
 			ClientCard* mcard = 0;
 			uint8_t mplayer = 2;
@@ -1738,12 +1739,12 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					const auto& oppo = mainGame->dInfo.isTeam1 ? mainGame->dInfo.opponames : mainGame->dInfo.selfnames;
 					/////kdiy/////////
 					//if(mainGame->Resize(327, 8, 630, 51 + static_cast<irr::s32>(23 * (self.size() - 1))).isPointInside(mousepos))
-					if(mainGame->Resize(15, 551, 218, 594 + static_cast<irr::s32>(23 * (self.size() - 1))).isPointInside(mousepos))
+					if(mainGame->Resize(161, 553, 350, 640 + static_cast<irr::s32>(23 * (self.size() - 1))).isPointInside(mousepos))
 					/////kdiy/////////
 						mplayer = 0;
 					/////kdiy/////////
 					//else if(mainGame->Resize(689, 8, 991, 51 + static_cast<irr::s32>(23 * (oppo.size() - 1))).isPointInside(mousepos))
-					else if(mainGame->Resize(689, 8, 891, 51 + static_cast<irr::s32>(23 * (oppo.size() - 1))).isPointInside(mousepos))
+					else if(mainGame->Resize(691, 48, 900, 135 + static_cast<irr::s32>(23 * (oppo.size() - 1))).isPointInside(mousepos))
 					/////kdiy/////////
 						mplayer = 1;
 				}
@@ -1788,20 +1789,12 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						if(mcard->location & (LOCATION_HAND | LOCATION_MZONE | LOCATION_SZONE | LOCATION_SKILL)) {
 							///////kdiy/////////
 							//std::wstring str(gDataManager->GetName(mcard->code));
-							std::wstring str(gDataManager->GetVirtualName(mcard, mcard->code));
-							///////kdiy/////////
-							if(!CardDataC::IsInArtworkOffsetRange(mcard) && str != gDataManager->GetName(mcard->alias)) {
-								///////kdiy/////////
-                                std::wstring str2(gDataManager->GetName(mcard->alias));
-                                auto index = str2.find(L"(");
-                                auto index_2 = str2.find(65288);
-                                auto index_3 = str2.find(L" (");
-                                if(index_3 != std::wstring::npos) str2 = str2.substr(0,index_3);
-                                else if(index != std::wstring::npos) str2 = str2.substr(0,index);
-                                else if(index_2 != std::wstring::npos) str2 = str2.substr(0,index_2);
-								if(!mcard->is_real && wcscmp(str2.data(), str.data()))
-								///////kdiy/////////
+							//if(!CardDataC::IsInArtworkOffsetRange(mcard) && str != gDataManager->GetName(mcard->alias)) {
+								//str.append(epro::format(L"\n({})", gDataManager->GetName(mcard->alias)));
+							std::wstring str(gDataManager->GetName(mcard));
+							if(!CardDataC::IsInArtworkOffsetRange(mcard) && gDataManager->GetName(mcard, true) != gDataManager->GetName(mcard->alias, true) && !mcard->is_real) {
 								str.append(epro::format(L"\n({})", gDataManager->GetName(mcard->alias)));
+							///////kdiy/////////
 							}
 							if(mcard->type & TYPE_MONSTER) {
 								//////kdiy/////
@@ -1874,22 +1867,23 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			}
 			if(mplayer != hovered_player) {
 				if(mplayer < 2) {
-					std::wstring player_name;
 					/////kdiy/////
+					// std::wstring player_name;
 					// auto& self = mainGame->dInfo.isTeam1 ? mainGame->dInfo.selfnames : mainGame->dInfo.opponames;
 					// auto& oppo = mainGame->dInfo.isTeam1 ? mainGame->dInfo.opponames : mainGame->dInfo.selfnames;
 					// if (mplayer == 0)
 					// 	player_name = self[mainGame->dInfo.current_player[mplayer]];
 					// else
 					// 	player_name = oppo[mainGame->dInfo.current_player[mplayer]];
+					// for(const auto& hint : player_desc_hints[mplayer]) {
+					// 	player_name.append(epro::format(L"\n*{}", gDataManager->GetDesc(hint.first, mainGame->dInfo.compat_mode)));
+					// }
+					// should_show_tip = true;
+					// auto dtip = mainGame->textFont->getDimensionustring(player_name) + mainGame->Scale(irr::core::dimension2d<uint32_t>(10, 10));
+					// mainGame->stTip->setRelativePosition(irr::core::recti(mousepos.X - mainGame->Scale(10) - dtip.Width, mousepos.Y + mainGame->Scale(10), mousepos.X - mainGame->Scale(10), mousepos.Y + mainGame->Scale(10) + dtip.Height));
+					// mainGame->stTip->setText(player_name.data());
+					mainGame->ShowPlayerInfo(mplayer);
 					/////kdiy/////
-					for(const auto& hint : player_desc_hints[mplayer]) {
-						player_name.append(epro::format(L"\n*{}", gDataManager->GetDesc(hint.first, mainGame->dInfo.compat_mode)));
-					}
-					should_show_tip = true;
-					auto dtip = mainGame->textFont->getDimensionustring(player_name) + mainGame->Scale(irr::core::dimension2d<uint32_t>(10, 10));
-					mainGame->stTip->setRelativePosition(irr::core::recti(mousepos.X - mainGame->Scale(10) - dtip.Width, mousepos.Y + mainGame->Scale(10), mousepos.X - mainGame->Scale(10), mousepos.Y + mainGame->Scale(10) + dtip.Height));
-					mainGame->stTip->setText(player_name.data());
 				}
 				hovered_player = mplayer;
 			}
@@ -3393,7 +3387,7 @@ void ClientField::ShowCardInfoInList(ClientCard* pcard, irr::gui::IGUIElement* e
 	if(pcard->code) {
 		////kdiy///////////
 		//str.append(gDataManager->GetName(pcard->code).data());
-		str.append(gDataManager->GetVirtualName(pcard, pcard->code).data());
+		str.append(gDataManager->GetName(pcard).data());
 		////kdiy///////////
 	}
 	if((pcard->status & STATUS_PROC_COMPLETE)
@@ -3407,7 +3401,7 @@ void ClientField::ShowCardInfoInList(ClientCard* pcard, irr::gui::IGUIElement* e
 		if(chit.target.find(pcard) != chit.target.end()) {
 			////kdiy///////////
 			//str.append(L"\n").append(epro::sprintf(gDataManager->GetSysString(217), i + 1, gDataManager->GetName(chit.chain_card->code)));
-			str.append(L"\n").append(epro::sprintf(gDataManager->GetSysString(217), i + 1, gDataManager->GetVirtualName(chit.chain_card, chit.chain_card->code)));
+			str.append(L"\n").append(epro::sprintf(gDataManager->GetSysString(217), i + 1, gDataManager->GetName(chit.chain_card)));
 			////kdiy///////////
 		}
 	}

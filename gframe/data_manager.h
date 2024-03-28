@@ -145,11 +145,12 @@ public:
 	void ClearLocaleStrings();
 	const CardDataC* GetCardData(uint32_t code) const;
 	const CardDataC* GetMappedCardData(uint32_t code) const;
-	epro::wstringview GetName(uint32_t code) const;
 	/////kdiy/////
-    std::wstring GetVirtualName(uint32_t code, bool removenametag=true) const;
-	std::wstring GetVirtualName(ClientCard* pcard, bool removenametag=true) const;
-	std::wstring GetVirtualName(ClientCard* pcard, uint32_t code, bool removenametag=true) const;
+	//epro::wstringview GetName(uint32_t code) const;
+	std::wstring GetOriginalName(uint32_t code, bool hidenametag=false) const;
+	std::wstring GetName(uint32_t code, bool hidenametag=false) const;
+	std::wstring GetName(ClientCard* pcard, bool hidenametag=false) const;
+	std::wstring GetName(ClientCard* pcard, uint32_t code, bool hidenametag=false) const;
 	/////kdiy/////
 	epro::wstringview GetText(uint32_t code) const;
 	epro::wstringview GetUppercaseName(uint32_t code) const;

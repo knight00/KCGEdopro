@@ -26,6 +26,7 @@ public:
 	QuadVertex vAttack;
 	QuadVertex vAttack2;
 	QuadVertex vAttack3;
+	QuadVertex vHint;
 	QuadVertex vXyz;
 	QuadVertex vXyztrail;
 	QuadVertex vCXyz;

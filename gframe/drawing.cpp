@@ -638,6 +638,14 @@ void Game::DrawCard(ClientCard* pcard) {
 	if (pcard->is_moving)
 		return;
 	///kdiy////////
+	if(pcard->desc_hints.size() > 0) {
+	    matManager.mTexture.setTexture(0, imageManager.tXyz);
+		driver->setMaterial(matManager.mTexture);
+		irr::core::matrix4 atk;
+		atk.setTranslation(pcard->curPos + irr::core::vector3df(0, -1.0f, 0));
+		driver->setTransform(irr::video::ETS_WORLD, atk);
+		driver->drawVertexPrimitiveList(matManager.vHint, 4, matManager.iRectangle, 2);
+	}
 	if((pcard->type & TYPE_XYZ) && (pcard->location & LOCATION_ONFIELD)) {
 		auto cd = gDataManager->GetCardData(pcard->code);
 		if(cd) {
@@ -866,7 +874,11 @@ void Game::DrawMisc() {
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(330, 10, 629, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(691, 10, 990, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
 	driver->draw2DImage(imageManager.tLPFrame, Resize(161, 553, 350, 640), irr::core::recti(0, 0, 494, 228), 0, 0, true);
+	if(dField.player_desc_hints[0].size() > 0)
+	    driver->draw2DImage(imageManager.tXyz, Resize(151, 550, 171, 570), irr::core::recti(0, 0, 92, 93), 0, 0, true);
 	driver->draw2DImage(imageManager.tLPFrame2, Resize(691, 48, 900, 135), irr::core::recti(0, 0, 494, 228), 0, 0, true);
+	if(dField.player_desc_hints[1].size() > 0)
+	    driver->draw2DImage(imageManager.tXyz, Resize(681, 45, 701, 65), irr::core::recti(0, 0, 92, 93), 0, 0, true);
 	/////kdiy/////////
 
 #define SKCOLOR(what) skin::LPBAR_##what##_VAL
@@ -1003,9 +1015,6 @@ void Game::DrawMisc() {
                 p2size += irr::core::vector2di{ 0, p2size.getHeight() + ResizeY(4) };
             }
 		}
-	}
-	for(const auto& hint : dField.player_desc_hints[0]) {
-		textFont->drawustring(gDataManager->GetDesc(hint.first, dInfo.compat_mode), Resize(161, 530, 350, 551), skin::DUELFIELD_LP_1_VAL, false, true, 0);
 	}
 	////kdiy////////////
 	/*driver->draw2DRectangle(Resize(632, 10, 688, 30), 0x00000000, 0x00000000, 0xffffffff, 0xffffffff);

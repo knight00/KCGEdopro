@@ -258,6 +258,7 @@ public:
 	void ReloadLocalCBRule();
 	//void ShowCardInfo(uint32_t code, bool resize = false, imgType type = imgType::ART);
     void ShowCardInfo(uint32_t code, bool resize = false, imgType type = imgType::ART, ClientCard* pcard = nullptr);
+    void ShowPlayerInfo(uint8_t player);
 	///kdiy//////////
 	void RefreshCardInfoTextPositions();
 	void ClearCardInfo(int player = 0);

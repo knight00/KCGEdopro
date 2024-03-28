@@ -105,7 +105,7 @@ std::wstring Mode::GetPloat(uint32_t code) {
 	if(plotIndex > modePloats[chapter - 1]->size() || plotIndex < 0) return str;
 	str = modePloats[chapter - 1]->at(plotIndex).title;
 	if(code > 0)
-	    str.append(epro::format(epro::format(L"{}\n{}{}",L":",L"  ", modePloats[chapter - 1]->at(plotIndex).ploat), gDataManager->GetVirtualName(code, true)));
+	    str.append(epro::format(epro::format(L"{}\n{}{}",L":",L"  ", modePloats[chapter - 1]->at(plotIndex).ploat), gDataManager->GetName(code)));
 	else
 	    str.append(epro::format(L"{}\n{}{}",L":",L"  ", modePloats[chapter - 1]->at(plotIndex).ploat));
 	return str;
@@ -4567,13 +4567,9 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 	if(cd->IsInArtworkOffsetRange())
 		tmp_code = cd->alias;
     ///kdiy/////////
-    if(pcard && pcard->is_real)
-	stName->setText(gDataManager->GetVirtualName(pcard, tmp_code, false).data());
-    else
-	///kdiy/////////
-    stName->setText(gDataManager->GetName(tmp_code).data());
-    ///kdiy/////////
+    //stName->setText(gDataManager->GetName(tmp_code).data());
     //stPasscodeScope->setText(epro::format(L"[{:08}] {}", tmp_code, gDataManager->FormatScope(cd->ot)).data());
+	stName->setText(gDataManager->GetName(pcard, tmp_code).data());
     auto tmp_code2 = 0;
     if(cd->alias) tmp_code2 = cd->alias;
     if(pcard && pcard->is_real) {
@@ -4900,6 +4896,18 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 	stText->setText(cardeffect.data());
 	///kdiy/////////
 }
+///kdiy/////////
+void Game::ShowPlayerInfo(uint8_t player) {
+    if(!wCardImg->isVisible()) return;
+	ClearCardInfo(0);
+	imgCard->setImage(0);
+	std::wstring playereffect = L"";
+	for(const auto& hint : dField.player_desc_hints[player]) {
+		playereffect.append(epro::format(L"\n{}", gDataManager->GetDesc(hint.first, dInfo.compat_mode)));
+		stText->setText(playereffect.data());
+	}
+}
+///kdiy/////////
 void Game::RefreshCardInfoTextPositions() {
 	///kdiy/////////
 	// const int xLeft = Scale(15);

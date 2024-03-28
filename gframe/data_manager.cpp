@@ -360,14 +360,18 @@ const CardDataC* DataManager::GetMappedCardData(uint32_t code) const {
 		return gDataManager->GetCardData(it->second);
 	return nullptr;
 }
-epro::wstringview DataManager::GetName(uint32_t code) const {
+/////kdiy/////
+//epro::wstringview DataManager::GetName(uint32_t code) const {
+	// auto csit = cards.find(code);
+	// if(csit == cards.end() || csit->second.GetStrings().name.empty())
+		// return unknown_string;
+	// return csit->second.GetStrings().name;
+std::wstring DataManager::GetOriginalName(uint32_t code, bool hidenametag) const {
 	auto csit = cards.find(code);
 	if(csit == cards.end() || csit->second.GetStrings().name.empty())
-		return unknown_string;
-	/////kdiy/////
-	//return csit->second.GetStrings().name;
-	epro::wstringview name = csit->second.GetStrings().name;
-	if(gGameConfig->chkHideNameTag) {
+		return std::wstring(unknown_string);
+	std::wstring name = csit->second.GetStrings().name;
+	if(gGameConfig->chkHideNameTag || hidenametag) {
 		auto index = name.find(L"(");
 		auto index_2 = name.find(65288);
         auto index_3 = name.find(L" (");
@@ -376,64 +380,38 @@ epro::wstringview DataManager::GetName(uint32_t code) const {
         else if(index_2 != std::wstring::npos) name = name.substr(0,index_2);
 	}
 	return name;
-	/////kdiy/////
 }
-/////kdiy/////
-std::wstring DataManager::GetVirtualName(uint32_t code, bool removenametag) const {
-	return gDataManager->GetVirtualName(nullptr, code, removenametag);
+std::wstring DataManager::GetName(uint32_t code, bool hidenametag) const {
+	return gDataManager->GetName(nullptr, code, hidenametag);
 }
-std::wstring DataManager::GetVirtualName(ClientCard* pcard, bool removenametag) const {
-	return gDataManager->GetVirtualName(pcard, pcard->code, removenametag);
+std::wstring DataManager::GetName(ClientCard* pcard, bool hidenametag) const {
+	return gDataManager->GetName(pcard, pcard->code, hidenametag);
 }
-std::wstring DataManager::GetVirtualName(ClientCard* pcard, uint32_t code, bool removenametag) const {
+std::wstring DataManager::GetName(ClientCard* pcard, uint32_t code, bool hidenametag) const {
 	uint32_t alias = 0;
     if(pcard) alias = pcard->alias;
-	std::wstring codename(GetName(code));
-	std::wstring aliasname(GetName(alias));
-    if(removenametag 
-        || (alias && pcard->is_real)) {
-        auto index = codename.find(L"(");
-        auto index_2 = codename.find(65288);
-        auto index_3 = codename.find(L" (");
-        if(index_3 != std::wstring::npos) codename = codename.substr(0,index_3);
-        else if(index != std::wstring::npos) codename = codename.substr(0,index);
-        else if(index_2 != std::wstring::npos) codename = codename.substr(0,index_2);
-        index = aliasname.find(L"(");
-        index_2 = aliasname.find(65288);
-        index_3 = aliasname.find(L" (");
-        if(index_3 != std::wstring::npos) aliasname = aliasname.substr(0,index_3);
-        else if(index != std::wstring::npos) aliasname = aliasname.substr(0,index);
-        else if(index_2 != std::wstring::npos) aliasname = aliasname.substr(0,index_2);
-    }
+	std::wstring codename = GetOriginalName(code, (pcard && pcard->is_real) ? true : hidenametag);
 	if(pcard && pcard->is_real && pcard->realchange > 0) {
 		if(pcard->realsetcode > 0) {
 			if(pcard->realchange & 0x1) {
-				std::wstring str2(epro::format(L"{} ", gDataManager->GetSetName(pcard->realsetcode)));
-				codename.insert(0, str2);
+				codename.insert(0, epro::format(L"{} ", gDataManager->GetSetName(pcard->realsetcode)));
 			} else if(pcard->realchange & 0x2) {
 				codename.append(epro::format(L" {}", gDataManager->GetSetName(pcard->realsetcode)));
 			} else if(pcard->realchange & 0x4) {
-				std::wstring str2(epro::format(L"{}", gDataManager->GetSetName(pcard->realsetcode)));
-				codename.insert(0, str2);
+				codename.insert(0, epro::format(L"{}", gDataManager->GetSetName(pcard->realsetcode)));
 			} else if(pcard->realchange & 0x8) {
 				codename.append(epro::format(L"{}", gDataManager->GetSetName(pcard->realsetcode)));
 			}
 		}
 	    if(pcard->realname > 0) {
 			if(pcard->realchange & 0x10) {
-				std::wstring rname(GetName(pcard->realname));
-				std::wstring str2(epro::format(L"{} ", rname));
-				codename.insert(0, str2);
+				codename.insert(0, epro::format(L"{} ", GetOriginalName(pcard->realname)));
 			} else if(pcard->realchange & 0x20) {
-				std::wstring rname(GetName(pcard->realname));
-				codename.append(epro::format(L" {}", rname));
+				codename.append(epro::format(L" {}", GetOriginalName(pcard->realname)));
 			} else if(pcard->realchange & 0x40) {
-				std::wstring rname(GetName(pcard->realname));
-				std::wstring str2(epro::format(L"{}", rname));
-				codename.insert(0, str2);
+				codename.insert(0, epro::format(L"{}", GetOriginalName(pcard->realname)));
 			} else if(pcard->realchange & 0x80) {
-				std::wstring rname(GetName(pcard->realname));
-				codename.append(epro::format(L"{}", rname));
+				codename.append(epro::format(L"{}", GetOriginalName(pcard->realname)));
 			}
 		}
 	}
