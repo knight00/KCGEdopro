@@ -783,6 +783,9 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					command_card = selectable_cards[id - BUTTON_CARD_0 + mainGame->scrCardList->getPos() / 10];
 					if (command_card->is_selected) {
 						command_card->is_selected = false;
+                        //////////kdiy/////////
+                        mainGame->selectedcard[id - BUTTON_CARD_0]->setVisible(false);
+                        //////////kdiy/////////
 						auto it = std::find(selected_cards.begin(), selected_cards.end(), command_card);
 						selected_cards.erase(it);
 						if(command_card->controler)
@@ -790,6 +793,9 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						else mainGame->stCardPos[id - BUTTON_CARD_0]->setBackgroundColor(skin::DUELFIELD_CARD_SELF_WINDOW_BACKGROUND_VAL);
 					} else {
 						command_card->is_selected = true;
+                        //////////kdiy/////////
+                        mainGame->selectedcard[id - BUTTON_CARD_0]->setVisible(true);
+                        //////////kdiy/////////
 						mainGame->stCardPos[id - BUTTON_CARD_0]->setBackgroundColor(skin::DUELFIELD_CARD_SELECTED_WINDOW_BACKGROUND_VAL);
 						selected_cards.push_back(command_card);
 					}
@@ -816,11 +822,17 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					command_card = selectable_cards[id - BUTTON_CARD_0 + mainGame->scrCardList->getPos() / 10];
 					if (command_card->is_selected) {
 						command_card->is_selected = false;
+                        //////////kdiy/////////
+                        mainGame->selectedcard[id - BUTTON_CARD_0]->setVisible(false);
+                        //////////kdiy/////////
 						if(command_card->controler)
 							mainGame->stCardPos[id - BUTTON_CARD_0]->setBackgroundColor(skin::DUELFIELD_CARD_OPPONENT_WINDOW_BACKGROUND_VAL);
 						else mainGame->stCardPos[id - BUTTON_CARD_0]->setBackgroundColor(skin::DUELFIELD_CARD_SELF_WINDOW_BACKGROUND_VAL);
 					} else {
 						command_card->is_selected = true;
+                        //////////kdiy/////////
+                        mainGame->selectedcard[id - BUTTON_CARD_0]->setVisible(true);
+                        //////////kdiy/////////
 						mainGame->stCardPos[id - BUTTON_CARD_0]->setBackgroundColor(skin::DUELFIELD_CARD_SELECTED_WINDOW_BACKGROUND_VAL);
 					}
 					selected_cards.push_back(command_card);
@@ -837,6 +849,9 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						break;
 					if (command_card->is_selected) {
 						command_card->is_selected = false;
+                        //////////kdiy/////////
+                        mainGame->selectedcard[id - BUTTON_CARD_0]->setVisible(false);
+                        //////////kdiy/////////
 						auto it = std::find(selected_cards.begin(), selected_cards.end(), command_card);
 						selected_cards.erase(it);
 					} else

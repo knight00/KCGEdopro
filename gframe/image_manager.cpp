@@ -599,12 +599,6 @@ bool ImageManager::Initial() {
     ASSIGN_DEFAULT(tRank);
 	tLvRank = loadTextureAnySize(EPRO_TEXT("lvrank"_sv));
     ASSIGN_DEFAULT(tLvRank);
-	tCardimg = loadTextureAnySize(EPRO_TEXT("cardimg"_sv));
-    ASSIGN_DEFAULT(tCardimg);
-	tChatlog = loadTextureAnySize(EPRO_TEXT("showcard"_sv));
-    ASSIGN_DEFAULT(tChatlog);
-	tCard = loadTextureAnySize(EPRO_TEXT("showdeck"_sv));
-    ASSIGN_DEFAULT(tCard);
 	tMain = loadTextureFixedSize(EPRO_TEXT("maindeck"_sv), 30, 30);
     ASSIGN_DEFAULT(tMain);
 	tDeck = loadTextureFixedSize(EPRO_TEXT("deck"_sv), 30, 30);
@@ -643,6 +637,10 @@ bool ImageManager::Initial() {
     ASSIGN_DEFAULT(tReplaySwap);
 	tTimer = loadTextureAnySize(EPRO_TEXT("timer"_sv));
     ASSIGN_DEFAULT(tTimer);
+    tHint = loadTextureAnySize(EPRO_TEXT("hint"_sv));
+	ASSIGN_DEFAULT(tHint);
+    tTick = loadTextureAnySize(EPRO_TEXT("tick"_sv));
+	ASSIGN_DEFAULT(tTick);
     ///kdiy/////
 
 	// Not required to be present

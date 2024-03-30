@@ -639,7 +639,7 @@ void Game::DrawCard(ClientCard* pcard) {
 		return;
 	///kdiy////////
 	if(pcard->desc_hints.size() > 0) {
-	    matManager.mTexture.setTexture(0, imageManager.tXyz);
+	    matManager.mTexture.setTexture(0, imageManager.tHint);
 		driver->setMaterial(matManager.mTexture);
 		irr::core::matrix4 atk;
 		atk.setTranslation(pcard->curPos + irr::core::vector3df(0, -1.0f, 0));
@@ -875,10 +875,10 @@ void Game::DrawMisc() {
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(691, 10, 990, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
 	driver->draw2DImage(imageManager.tLPFrame, Resize(161, 553, 350, 640), irr::core::recti(0, 0, 494, 228), 0, 0, true);
 	if(dField.player_desc_hints[0].size() > 0)
-	    driver->draw2DImage(imageManager.tXyz, Resize(151, 550, 171, 570), irr::core::recti(0, 0, 92, 93), 0, 0, true);
+	    driver->draw2DImage(imageManager.tHint, Resize(151, 550, 191, 615), irr::core::recti(0, 0, 532, 649), 0, 0, true);
 	driver->draw2DImage(imageManager.tLPFrame2, Resize(691, 48, 900, 135), irr::core::recti(0, 0, 494, 228), 0, 0, true);
 	if(dField.player_desc_hints[1].size() > 0)
-	    driver->draw2DImage(imageManager.tXyz, Resize(681, 45, 701, 65), irr::core::recti(0, 0, 92, 93), 0, 0, true);
+	    driver->draw2DImage(imageManager.tHint, Resize(681, 45, 721, 110), irr::core::recti(0, 0, 532, 649), 0, 0, true);
 	/////kdiy/////////
 
 #define SKCOLOR(what) skin::LPBAR_##what##_VAL
@@ -1094,7 +1094,7 @@ void Game::DrawStatus(ClientCard* pcard) {
 	auto GetAtkColor = [&pcard] {
 		////kdiy//////////
 		if(!(pcard->position & POS_ATTACK))
-			return irr::video::SColor(255, 128, 128, 128);
+			return irr::video::SColor(255, 200, 200, 200);
 		////kdiy//////////
 		if(pcard->attack > pcard->base_attack)
 			return skin::DUELFIELD_HIGHER_CARD_ATK_VAL;
@@ -1106,7 +1106,7 @@ void Game::DrawStatus(ClientCard* pcard) {
 	auto GetDefColor = [&pcard] {
 		////kdiy//////////
 		if(!(pcard->position & POS_DEFENSE))
-			return irr::video::SColor(255, 128, 128, 128);
+			return irr::video::SColor(255, 230, 230, 230);
 		////kdiy//////////
 		if(pcard->defense > pcard->base_defense)
 			return skin::DUELFIELD_HIGHER_CARD_DEF_VAL;
@@ -1121,13 +1121,14 @@ void Game::DrawStatus(ClientCard* pcard) {
 		return skin::DUELFIELD_CARD_LEVEL_VAL;
 	};
 
-	const auto atk = adFont->getDimensionustring(pcard->atkstring);
-	//////kdiy////////
+    //////kdiy////////
+	//const auto atk = adFont->getDimensionustring(pcard->atkstring);
+	//const auto atk = atkFont->getDimensionustring(pcard->atkstring);
 	auto lv = adFont->getDimensionustring(pcard->lvstring);
 	auto rk = adFont->getDimensionustring(pcard->rkstring);
 	auto lk = adFont->getDimensionustring(pcard->linkstring);
 	//////kdiy////////
-	const auto slash = adFont->getDimensionustring(L"/");
+    const auto slash = adFont->getDimensionustring(L"/");
 	const auto half_slash_width = static_cast<int>(std::floor(slash.Width / 2));
 
 	const auto padding_1111 = Resize(1, 1, 1, 1);
@@ -1159,13 +1160,19 @@ void Game::DrawStatus(ClientCard* pcard) {
 	// 	DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1011, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
 	//has lv, rk, lk
 	if(pcard->type & TYPE_LINK) {
-		DrawShadowText(pcard->attack >= 8888888 ? numFont0 : adFont, pcard->atkstring, irr::core::recti(x1 - std::floor(atk.Width / 2), y1, x1 + std::floor(atk.Width / 2), y1 + 1),
+        auto font = pcard->attack >= 8888888 ? numFont0 : atkFont;
+        const auto atk = font->getDimensionustring(pcard->atkstring);
+		DrawShadowText(font, pcard->atkstring, irr::core::recti(x1 - std::floor(atk.Width / 2), y1, x1 + std::floor(atk.Width / 2), y1 + 1),
 					   padding_1111, GetAtkColor(), 0xff000000, true);
 	} else {
-		DrawShadowText(pcard->attack >= 8888888 ? numFont0 : adFont, L"/", irr::core::recti(x1 - half_slash_width, y1, x1 + half_slash_width, y1 + 1), padding_1111, 0xffffffff, 0xff000000, true);
-		DrawShadowText(pcard->attack >= 8888888 ? numFont0 : adFont, pcard->atkstring, irr::core::recti(x1 - half_slash_width - atk.Width - slash.Width, y1, x1 - half_slash_width, y1 + 1),
+        auto font = pcard->attack >= 8888888 ? (pcard->position & POS_DEFENSE) ? adFont0 : numFont0 :  (pcard->position & POS_DEFENSE) ? defFont : atkFont;
+        const auto atk = font->getDimensionustring(pcard->atkstring);
+        const auto slash2 = font->getDimensionustring(L"/");
+        const auto half_slash_width2 = static_cast<int>(std::floor(slash2.Width / 2));
+		DrawShadowText(font, L"/", irr::core::recti(x1 - half_slash_width2, y1, x1 + half_slash_width2, y1 + 1), padding_1111, 0xffffffff, 0xff000000, true);
+		DrawShadowText(font, pcard->atkstring, irr::core::recti(x1 - half_slash_width2 - atk.Width, y1, x1 - half_slash_width2, y1 + 1),
 					   padding_1111, GetAtkColor(), 0xff000000);
-		DrawShadowText(pcard->defense >= 8888888 ? numFont0 : adFont, pcard->defstring, irr::core::recti(x1 + half_slash_width + slash.Width, y1, x1 - half_slash_width, y1 + 1),
+		DrawShadowText(pcard->defense >= 8888888 ? (pcard->position & POS_DEFENSE) ? adFont0 : numFont0 :  (pcard->position & POS_DEFENSE) ? atkFont : defFont, pcard->defstring, irr::core::recti(x1 + half_slash_width2, y1, x1 - half_slash_width2, y1 + 1),
 					   padding_1111, GetDefColor(), 0xff000000);
 	}
 

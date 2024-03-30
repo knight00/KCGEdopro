@@ -461,7 +461,10 @@ public:
 	std::map<irr::gui::CGUIImageButton*, uint32_t> imageLoading;
 	//card image
 	/////kdiy/////////
+	irr::gui::CGUITTFont* atkFont;
+	irr::gui::CGUITTFont* defFont;
 	irr::gui::CGUITTFont* numFont0;
+	irr::gui::CGUITTFont* adFont0;
 	irr::gui::CGUITTFont* lpFont;
 	irr::gui::CGUITTFont* nameFont;
 	//irr::gui::IGUIStaticText* wCardImg;
@@ -699,6 +702,7 @@ public:
 	irr::gui::IGUIStaticText* stHostPrepOB;
 	irr::gui::IGUIStaticText* stDeckSelect;
 	//////////kdiy/////////
+	irr::gui::IGUIButton* selectedcard[5];
     irr::gui::IGUIComboBox* ebCharacter[6];
 	irr::gui::IGUIComboBox* ebCharacterDeck;
     irr::gui::IGUIComboBox* cbDBDecks2;

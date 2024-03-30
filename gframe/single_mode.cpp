@@ -327,6 +327,9 @@ restart:
 			mainGame->wPosSelect->setVisible(false);
 			mainGame->wQuery->setVisible(false);
 			mainGame->stHintMsg->setVisible(false);
+            ////kdiy////////
+            mainGame->btnCancelOrFinish->setVisible(false);
+            ////kdiy////////
 			if(was_restarting)
 				goto restart;
 		}

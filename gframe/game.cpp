@@ -487,8 +487,14 @@ Game::~Game() {
 	if(lpcFont)
 		lpcFont->drop();
 	/////kdiy//////
+	if(atkFont)
+		atkFont->drop();
+	if(defFont)
+		defFont->drop();
 	if(numFont0)
 		numFont0->drop();
+	if(adFont0)
+		adFont0->drop();
 	if(lpFont)
 		lpFont->drop();
 	if(nameFont)
@@ -624,8 +630,14 @@ void Game::Initialize() {
 	numfont.size = Scale(48);
 	lpcFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
     ////kdiy/////////
+	numfont.size = Scale(9);
+	atkFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
+	numfont.size = Scale(7);
+	defFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
 	GameConfig::TextFont numfont0{ L"fonts/ygo.ttf", (uint8_t)Scale(16) };
 	numFont0 = irr::gui::CGUITTFont::createTTFont(env, numfont0, fallbackFonts);
+	numfont0.size = Scale(12);
+	adFont0 = irr::gui::CGUITTFont::createTTFont(env, numfont0, fallbackFonts);
 	numfont.size = Scale(28);
 	lpFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
 	textfont.size = Scale(textfont.size * 1.8);
@@ -1114,6 +1126,14 @@ void Game::Initialize() {
 		stCardPos[i]->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
 		btnCardSelect[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(30 + 125 * i, 55, 150 + 125 * i, 225), wCardSelect, BUTTON_CARD_0 + i);
 		btnCardSelect[i]->setImageSize(imgsize);
+        //////////kdiy/////////
+        selectedcard[i] = env->addButton(Scale(20 + 125 * i, 55, 40 + 125 * i, 75), wCardSelect, 0);
+        selectedcard[i]->setImage(imageManager.tTick);
+        selectedcard[i]->setScaleImage(true);
+        selectedcard[i]->setDrawBorder(false);
+        selectedcard[i]->setUseAlphaChannel(true);
+        selectedcard[i]->setVisible(false);
+        //////////kdiy/////////
 	}
 	scrCardList = env->addScrollBar(true, Scale(30, 235, 650, 255), wCardSelect, SCROLL_CARD_SELECT);
 	scrCardList->setLargeStep(scrCardList->getMax());

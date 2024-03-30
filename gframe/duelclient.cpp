@@ -3755,8 +3755,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					break;
 				}
 			}
-		}
-		//kdiy////////
+		    }
+		    //kdiy////////
 		return true;
 	}
 	case MSG_REFRESH_DECK: {
@@ -3874,9 +3874,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mc[i]->desc_hints.clear();
 			mc[i]->text_hints.clear();
 		}
-		//kdiy////////
 		for (int i = 0; i < count; ++i) {
-		//kdiy////////
 			for(size_t j = 0; j < real.size(); j++) {
 				ClientCard rcard = real[i];
 				if(mc[i]->code == rcard.code) {
