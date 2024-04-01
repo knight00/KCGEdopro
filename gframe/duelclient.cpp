@@ -731,6 +731,10 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->HideElement(mainGame->wPosSelect);
 		if(mainGame->wCardSelect->isVisible())
 			mainGame->HideElement(mainGame->wCardSelect);
+        //////////kdiy/////////
+        for(int i = 0; i < 5; ++i)
+            mainGame->selectedcard[i]->setVisible(false);
+        //////////kdiy/////////
 		if(mainGame->wCardDisplay->isVisible())
 			mainGame->HideElement(mainGame->wCardDisplay);
 		if(mainGame->wANNumber->isVisible())
@@ -1207,6 +1211,10 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 				mainGame->HideElement(mainGame->wPosSelect);
 			if(mainGame->wCardSelect->isVisible())
 				mainGame->HideElement(mainGame->wCardSelect);
+            //////////kdiy/////////
+            for(int i = 0; i < 5; ++i)
+                mainGame->selectedcard[i]->setVisible(false);
+            //////////kdiy/////////
 			if(mainGame->wCardDisplay->isVisible())
 				mainGame->HideElement(mainGame->wCardDisplay);
 			if(mainGame->wANNumber->isVisible())
@@ -1442,6 +1450,10 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->HideElement(mainGame->wPosSelect);
 		if(mainGame->wCardSelect->isVisible())
 			mainGame->HideElement(mainGame->wCardSelect);
+        //////////kdiy/////////
+        for(int i = 0; i < 5; ++i)
+            mainGame->selectedcard[i]->setVisible(false);
+        //////////kdiy/////////
 		if(mainGame->wCardDisplay->isVisible())
 			mainGame->HideElement(mainGame->wCardDisplay);
 		if(mainGame->wANNumber->isVisible())
@@ -2010,6 +2022,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->HideElement(mainGame->wCardSelect);
 			mainGame->WaitFrameSignal(11, lock);
 		}
+        //////////kdiy/////////
+        for(int i = 0; i < 5; ++i)
+            mainGame->selectedcard[i]->setVisible(false);
+        //////////kdiy/////////
 		/*if(mainGame->wCardDisplay->isVisible()) {
 			mainGame->HideElement(mainGame->wCardDisplay);
 			mainGame->WaitFrameSignal(11, lock);

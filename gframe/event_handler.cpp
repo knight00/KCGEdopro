@@ -742,6 +742,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						while(spsummonable_cards[index] != command_card) index++;
 						DuelClient::SetResponseI((index << 16) + 1);
 						mainGame->HideElement(mainGame->wCardSelect, true);
+                        //////////kdiy/////////
+                        for(int i = 0; i < 5; ++i)
+                            mainGame->selectedcard[i]->setVisible(false);
+                        //////////kdiy/////////
 						ShowCancelOrFinishButton(0);
 						break;
 					}
@@ -769,10 +773,18 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 								DuelClient::SetResponseI(index);
 							}
 							mainGame->HideElement(mainGame->wCardSelect, true);
+                            //////////kdiy/////////
+                            for(int i = 0; i < 5; ++i)
+                                mainGame->selectedcard[i]->setVisible(false);
+                            //////////kdiy/////////
 						} else {
 							mainGame->stOptions->setText(gDataManager->GetDesc(select_options[0], mainGame->dInfo.compat_mode).data());
 							selected_option = 0;
 							mainGame->wCardSelect->setVisible(false);
+                            //////////kdiy/////////
+                            for(int i = 0; i < 5; ++i)
+                                mainGame->selectedcard[i]->setVisible(false);
+                            //////////kdiy/////////
 							ShowSelectOption();
 						}
 						break;
@@ -804,6 +816,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						SetResponseSelectedCards();
 						ShowCancelOrFinishButton(0);
 						mainGame->HideElement(mainGame->wCardSelect, true);
+                        //////////kdiy/////////
+                        for(int i = 0; i < 5; ++i)
+                            mainGame->selectedcard[i]->setVisible(false);
+                        //////////kdiy/////////
 					} else if (sel >= select_min) {
 						select_ready = true;
 						mainGame->btnSelectOK->setVisible(true);
@@ -840,6 +856,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						SetResponseSelectedCards();
 						ShowCancelOrFinishButton(0);
 						mainGame->HideElement(mainGame->wCardSelect, true);
+                        //////////kdiy/////////
+                        for(int i = 0; i < 5; ++i)
+                            mainGame->selectedcard[i]->setVisible(false);
+                        //////////kdiy/////////
 					}
 					break;
 				}
@@ -887,6 +907,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 								respbuf[i] = sort_list[i] - 1;
 							DuelClient::SetResponseB(respbuf, select_max);
 							mainGame->HideElement(mainGame->wCardSelect, true);
+                            //////////kdiy/////////
+                            for(int i = 0; i < 5; ++i)
+                                mainGame->selectedcard[i]->setVisible(false);
+                            //////////kdiy/////////
 							sort_list.clear();
 						}
 					}
@@ -901,6 +925,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				auto HideCardSelectIfVisible = [](bool setAction = false) {
 					if (mainGame->wCardSelect->isVisible())
 						mainGame->HideElement(mainGame->wCardSelect, setAction);
+                    //////////kdiy/////////
+                    for(int i = 0; i < 5; ++i)
+                        mainGame->selectedcard[i]->setVisible(false);
+                    //////////kdiy/////////
 				};
  				mainGame->stCardListTip->setVisible(false);
 				if(mainGame->dInfo.isReplay) {
@@ -1052,6 +1080,12 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						}
 					}
 					curstring->setText(text.data());
+                    //////////kdiy/////////
+					if(curcard->is_selected)
+                        mainGame->selectedcard[i]->setVisible(true);
+                    else
+                        mainGame->selectedcard[i]->setVisible(false);
+                    //////////kdiy/////////
 					// color
 					if(conti_selecting)
 						curstring->setBackgroundColor(skin::DUELFIELD_CARD_SELF_WINDOW_BACKGROUND_VAL);
@@ -3537,6 +3571,10 @@ void ClientField::CancelOrFinish() {
 		DuelClient::SendPacketToServer(CTOS_REMATCH_RESPONSE, crr);
 		return;
 	}
+    //////////kdiy/////////
+    for(int i = 0; i < 5; ++i)
+        mainGame->selectedcard[i]->setVisible(false);
+    //////////kdiy/////////
 	switch (mainGame->dInfo.curMsg) {
 	case MSG_WAITING: {
 		if (mainGame->wCardSelect->isVisible()) {

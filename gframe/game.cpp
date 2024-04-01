@@ -622,7 +622,7 @@ void Game::Initialize() {
 	textFont->grab();
     ////kdiy/////////
 	//GameConfig::TextFont numfont{ gGameConfig->numfont, (uint8_t)Scale(16) };
-    GameConfig::TextFont numfont{ L"fonts/BroadbandRegular.ttf", (uint8_t)Scale(16) };
+	GameConfig::TextFont numfont{ Utils::ToPathString(L"fonts/BroadbandRegular.ttf"), (uint8_t)Scale(16) };
     ////kdiy/////////
 	numFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
 	numfont.size = Scale(12);
@@ -634,7 +634,7 @@ void Game::Initialize() {
 	atkFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
 	numfont.size = Scale(7);
 	defFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
-	GameConfig::TextFont numfont0{ L"fonts/ygo.ttf", (uint8_t)Scale(16) };
+	GameConfig::TextFont numfont0{ Utils::ToPathString(L"fonts/ygo.ttf"), (uint8_t)Scale(16) };
 	numFont0 = irr::gui::CGUITTFont::createTTFont(env, numfont0, fallbackFonts);
 	numfont0.size = Scale(12);
 	adFont0 = irr::gui::CGUITTFont::createTTFont(env, numfont0, fallbackFonts);
@@ -5094,6 +5094,10 @@ void Game::CloseDuelWindow() {
 	wANRace->setVisible(false);
 	wCardImg->setVisible(false);
 	wCardSelect->setVisible(false);
+    //////////kdiy/////////
+    for(int i = 0; i < 5; ++i)
+        mainGame->selectedcard[i]->setVisible(false);
+    //////////kdiy/////////
 	wCardDisplay->setVisible(false);
 	wCmdMenu->setVisible(false);
 	wFTSelect->setVisible(false);

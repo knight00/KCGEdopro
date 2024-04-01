@@ -6,6 +6,9 @@
 #include "game.h"
 #include "single_mode.h"
 #include "sound_manager.h"
+////kdiy////////
+#include <IGUIButton.h>
+////kdiy////////
 
 namespace ygo {
 
@@ -169,6 +172,10 @@ void ReplayMode::EndDuel() {
 		mainGame->stMessage->setText(gDataManager->GetSysString(1501).data());
 		if(mainGame->wCardSelect->isVisible())
 			mainGame->HideElement(mainGame->wCardSelect);
+        //////////kdiy/////////
+        for(int i = 0; i < 5; ++i)
+            mainGame->selectedcard[i]->setVisible(false);
+        //////////kdiy/////////
 		mainGame->PopupElement(mainGame->wMessage);
 		mainGame->actionSignal.Wait(lock);
 		mainGame->dInfo.isInDuel = false;

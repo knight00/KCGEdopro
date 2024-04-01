@@ -1024,6 +1024,10 @@ bool ClientField::ShowSelectSum() {
 		}
 	}
 	mainGame->wCardSelect->setVisible(false);
+    //////////kdiy/////////
+    for(int i = 0; i < 5; ++i)
+        mainGame->selectedcard[i]->setVisible(false);
+    //////////kdiy/////////
 	mainGame->stCardListTip->setVisible(false);
 	if(panelmode) {
 		mainGame->dField.ShowSelectCard(select_ready);

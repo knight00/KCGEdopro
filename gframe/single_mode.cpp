@@ -328,6 +328,8 @@ restart:
 			mainGame->wQuery->setVisible(false);
 			mainGame->stHintMsg->setVisible(false);
             ////kdiy////////
+            for(int i = 0; i < 5; ++i)
+                mainGame->selectedcard[i]->setVisible(false);
             mainGame->btnCancelOrFinish->setVisible(false);
             ////kdiy////////
 			if(was_restarting)
