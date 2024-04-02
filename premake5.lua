@@ -301,11 +301,11 @@ workspace "ygo"
 
 	filter { "configurations:Release*" , "action:not vs*" }
 		symbols "On"
-		defines "NDEBUG"
 
 	filter "configurations:Release"
 		optimize "Size"
 		targetdir "bin/release"
+		defines "NDEBUG"
 
 	filter { "configurations:Release", "action:vs* or system:not windows" }
 		flags "LinkTimeOptimization"
