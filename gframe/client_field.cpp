@@ -838,8 +838,7 @@ void ClientField::GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df
 		////////kdiy///////////
 		//if(location == LOCATION_MZONE) {
 			// if(controler == 0)
-		bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK || pcard->position == POS_FACEUP_DEFENSE)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && (pcard->type & (TYPE_MONSTER | TYPE_TRAPMONSTER)) && !pcard->equipTarget;
-		if((location == LOCATION_MZONE || location == LOCATION_SZONE) && is_orica) {
+		if((location == LOCATION_MZONE || location == LOCATION_SZONE) && pcard->is_orica) {
             if((controler == 0 || pcard->is_attack) && !pcard->attack_me)
 		////////kdiy///////////
 				*r = (pcard->position & POS_DEFENSE) ? selfDEF : selfATK;
@@ -857,7 +856,7 @@ void ClientField::GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df
 			*r += facedown;
 			////////kdiy///////////
 			//if(location == LOCATION_MZONE && pcard->position & POS_DEFENSE)
-			if(((location == LOCATION_MZONE || location == LOCATION_SZONE) && is_orica) && (pcard->position & POS_DEFENSE))
+			if(((location == LOCATION_MZONE || location == LOCATION_SZONE) && pcard->is_orica) && (pcard->position & POS_DEFENSE))
 			////////kdiy///////////
 				r->Y = irr::core::PI + 0.001f;
 		}

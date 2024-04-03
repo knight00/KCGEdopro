@@ -1035,8 +1035,7 @@ void Game::DrawMisc() {
 			/////////kdiy////////////
 			//if (pcard && pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)))
 			if(!pcard) continue;
-			bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK || pcard->position == POS_FACEUP_DEFENSE)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && (pcard->type & (TYPE_MONSTER | TYPE_TRAPMONSTER)) && !pcard->equipTarget;
-			if(pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && is_orica && !pcard->is_attack)
+			if(pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && pcard->is_orica && !pcard->is_attack)
 			/////////kdiy////////////
 				DrawStatus(pcard);
 		}
@@ -1044,8 +1043,7 @@ void Game::DrawMisc() {
 		for (int i = 0; i < 5; ++i) {
 			pcard = dField.szone[p][i];
 			if(!pcard) continue;
-			bool is_orica = (((pcard->position & POS_FACEUP) && (pcard->position == POS_FACEUP_ATTACK || pcard->position == POS_FACEUP_DEFENSE)) || ((pcard->position & POS_FACEDOWN) && (pcard->position == POS_FACEDOWN_DEFENSE))) && (pcard->type & (TYPE_MONSTER | TYPE_TRAPMONSTER)) && !pcard->equipTarget;
-			if(pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && is_orica && !pcard->is_attack)
+			if(pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && pcard->is_orica && !pcard->is_attack)
 				DrawStatus(pcard);
 		}
 		// // Draw pendulum scales
