@@ -43,6 +43,7 @@ public:
 	uint32_t alias;
 	uint32_t type;
 	/////////kdiy/////////
+	bool is_activable;
 	//uint32_t level;
 	int32_t level;
 	int32_t rank;
@@ -68,8 +69,6 @@ public:
 	bool is_pzone = false;
 	bool is_attack = false;
 	bool attack_me = false;
-	bool is_orica = false;
-	bool is_activable;
     /////////kdiy/////////
 	uint32_t attribute;
 	uint64_t race;
