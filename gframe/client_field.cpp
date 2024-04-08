@@ -435,6 +435,9 @@ void ClientField::ShowSelectCard(bool buttonok, bool chain) {
 		}
 		curstring->setVisible(true);
 		curstring->setRelativePosition(mainGame->Scale<irr::s32>(static_cast<irr::s32>(startpos + i * 125), 30, static_cast<irr::s32>(startpos + 120 + i * 125), 50));
+		//////////kdiy/////////
+		mainGame->selectedcard[i]->setRelativePosition(mainGame->Scale<irr::s32>(static_cast<irr::s32>(startpos - 10 + i * 125), 55, static_cast<irr::s32>(startpos + 10 + i * 125), 75));
+		//////////kdiy/////////
 	}
 	if(selectable_cards.size() <= 5) {
 		for(auto i = selectable_cards.size(); i < 5; ++i) {
