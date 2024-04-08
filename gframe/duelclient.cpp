@@ -1758,6 +1758,10 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         const auto player = mainGame->LocalPlayer(info.controler);
 		//extra parameter
         const auto setplayer = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
+        const auto settype = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
+		ClientCard* pcard = mainGame->dField.GetCard(player, info.location, info.sequence);
+		if(settype == 1) pcard->ismonster = true;
+		else pcard->ismonster = false;
 		uint16_t extra = 0;
 		if(info.location & LOCATION_MZONE) extra |= 0x1;
 		if(setplayer >= 0)
@@ -4190,6 +4194,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			ClientCard* pcard = new ClientCard{};
 			//////kdiy///
 			pcard->is_pzone = cpzone;
+			pcard->ismonster = false;
 			//////kdiy///
 			pcard->position = current.position;
 			pcard->SetCode(code);
@@ -4236,6 +4241,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				ClientCard* pcard = mainGame->dField.GetCard(previous.controler, previous.location, previous.sequence);
 				//////kdiy///
                 pcard->is_pzone = cpzone;
+				pcard->ismonster = false;
 				//////kdiy///
 				if (pcard->code != code && (code != 0 || current.location == LOCATION_EXTRA))
 					pcard->SetCode(code);
@@ -4295,6 +4301,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				//////kdiy///
                 Play(SoundManager::SFX::OVERLAY);
                 pcard->is_pzone = cpzone;
+				pcard->ismonster = false;
 				//////kdiy///
 				if (code != 0 && pcard->code != code)
 					pcard->SetCode(code);
@@ -4319,11 +4326,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				if(!mainGame->dInfo.isCatchingUp)
 					mainGame->WaitFrameSignal(5, lock);
 			} else if (!(current.location & LOCATION_OVERLAY)) {
-                //////kdiy///
-                Play(SoundManager::SFX::OVERLAY);
-                //////kdiy///
 				ClientCard* olcard = mainGame->dField.GetCard(previous.controler, previous.location & (~LOCATION_OVERLAY) & 0xff, previous.sequence);
 				ClientCard* pcard = olcard->overlayed[previous.position];
+                //////kdiy///
+                Play(SoundManager::SFX::OVERLAY);
+				pcard->ismonster = false;
+                //////kdiy///
 				olcard->overlayed.erase(olcard->overlayed.begin() + pcard->sequence);
 				pcard->overlayTarget = 0;
 				pcard->position = current.position;
@@ -4343,6 +4351,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				ClientCard* olcard1 = mainGame->dField.GetCard(previous.controler, previous.location & (~LOCATION_OVERLAY) & 0xff, previous.sequence);
 				ClientCard* pcard = olcard1->overlayed[previous.position];
 				ClientCard* olcard2 = mainGame->dField.GetCard(current.controler, current.location & (~LOCATION_OVERLAY) & 0xff, current.sequence);
+                //////kdiy///
+				pcard->ismonster = false;
+                //////kdiy///
 				olcard1->overlayed.erase(olcard1->overlayed.begin() + pcard->sequence);
 				olcard2->overlayed.push_back(pcard);
 				pcard->sequence = static_cast<uint32_t>(olcard2->overlayed.size() - 1);
