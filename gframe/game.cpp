@@ -4556,6 +4556,14 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 		// stSetName->setRelativePosition(widthRect);
 		// stPasscodeScope->setRelativePosition(widthRect);
 		// stText->setRelativePosition(widthRect);
+		const auto widthRect = irr::core::recti(Scale(133), 0, Scale(207 * window_scale.X), 10);
+		stPasscodeScope2->setRelativePosition(widthRect);
+		stInfo->setRelativePosition(widthRect);
+		stInfo2->setRelativePosition(widthRect);
+		stSetName->setRelativePosition(widthRect);
+		const auto widthRect2 = irr::core::recti(Scale(10), 0, Scale(207 * window_scale.X), 10);
+		stDataInfo->setRelativePosition(widthRect2);
+		stText->setRelativePosition(widthRect2);
 		///kdiy/////////
 	}
 	if(code == 0) {
