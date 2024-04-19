@@ -273,8 +273,6 @@ bool ImageManager::Initial() {
 	character[0] = driver->getTexture(0);
 	characterd[0] = driver->getTexture(0);
 	for(uint8_t i = 0; i < 6; i++) {
-        scharacter[i][0] = driver->getTexture(0);
-        scharacter[i][1] = driver->getTexture(0);
         modeHead[i] = driver->getTexture(0);
     }
     head[0] = driver->getTexture(0);
@@ -664,12 +662,12 @@ bool ImageManager::Initial() {
 void ImageManager::SetAvatar(int player, const wchar_t *avatar) {
     auto* tmp = loadTextureAnySize(epro::format(EPRO_TEXT("character/custom/{}"_sv), Utils::ToPathString(avatar)));
     if(tmp != nullptr) {
-        if (scharacter[player][0])
-            driver->removeTexture(scharacter[player][0]);
-        scharacter[player][0] = tmp;
-        if (scharacter[player][1])
-            driver->removeTexture(scharacter[player][1]);
-	    scharacter[player][1] = tmp;
+        if (mainGame->imageManager.character[gSoundManager->character[player]])
+            driver->removeTexture(mainGame->imageManager.character[gSoundManager->character[player]]);
+        mainGame->imageManager.character[gSoundManager->character[player]] = tmp;
+        if (mainGame->imageManager.characterd[gSoundManager->character[player]])
+            driver->removeTexture(mainGame->imageManager.characterd[gSoundManager->character[player]]);
+	    mainGame->imageManager.characterd[gSoundManager->character[player]] = tmp;
     }
 }
 void ImageManager::RefreshRandomImageList() {

@@ -209,6 +209,7 @@ public:
 	bool chantcheck();
 	void charactselect(uint8_t player, int sel);
     std::vector<std::wstring>& GetPlayerReplayNames();
+	bool damcharacter[6] = { false,false,false,false,false,false };
 	////////kdiy////////
 	void RefreshLFLists();
 	void RefreshAiDecks();

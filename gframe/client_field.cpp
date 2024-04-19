@@ -673,10 +673,6 @@ void ClientField::ReplaySwap() {
 		chit.UpdateDrawCoordinates();
 	}
 	disabled_field = (disabled_field >> 16) | (disabled_field << 16);
-	//kdiy/////////
-	mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[mainGame->avataricon1][0]);
-	mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[mainGame->avataricon2][0]);
-    ////kdiy////////
 }
 void ClientField::RefreshAllCards() {
 	auto refresh = [](ClientCard* const& pcard) {

@@ -220,8 +220,6 @@ public:
 	A(cardchant02)
 	A(tcharacterselect)
 	A(tcharacterselect2)
-	A(scharacter[6][2])
-	A(avcharacter[2])
 	A(QQ)
 	A(modeBody[CHAPTER])
     A(head[CHARACTER_STORY])

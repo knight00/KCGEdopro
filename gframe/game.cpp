@@ -3625,15 +3625,15 @@ bool Game::MainLoop() {
 		}
 
 		int avataricon1 = 0; int avataricon2 = 0;
-        if(dInfo.isInDuel && !mainGame->dInfo.isSingleMode) {
-            if (mainGame->dInfo.isTeam1) {
-                avataricon1 = mainGame->dInfo.current_player[0];
-                avataricon2 = mainGame->dInfo.current_player[1] + mainGame->dInfo.team1;   
+        if((dInfo.isInDuel && !dInfo.isSingleMode) || dInfo.isReplay) {
+            if (dInfo.isTeam1) {
+                avataricon1 = dInfo.current_player[0];
+                avataricon2 = dInfo.current_player[1] + dInfo.team1;
             } else {
-                avataricon1 = mainGame->dInfo.current_player[0] + mainGame->dInfo.team1;
-                avataricon2 = mainGame->dInfo.current_player[1];
+                avataricon1 = dInfo.current_player[0] + dInfo.team1;
+                avataricon2 = dInfo.current_player[1];
             }
-        } else if(mainGame->dInfo.isSingleMode) {
+        } else if(dInfo.isSingleMode) {
             avataricon1 = 0;
             avataricon2 = 1;
         } else if(is_building) {
@@ -3641,35 +3641,34 @@ bool Game::MainLoop() {
         }
 		for(int i = 0; i < 6; ++i) {
 			if(gSoundManager->character[i] > CHARACTER_VOICE - 1) {
-			    mainGame->imageManager.character[gSoundManager->character[i]] = 0;
-			    mainGame->imageManager.characterd[gSoundManager->character[i]] = 0;
+				gSoundManager->character[i] = 0;
+			    imageManager.character[gSoundManager->character[i]] = 0;
+			    imageManager.characterd[gSoundManager->character[i]] = 0;
             }
-			mainGame->imageManager.scharacter[i][0] = mainGame->imageManager.character[gSoundManager->character[i]];
-			mainGame->imageManager.scharacter[i][1] = mainGame->imageManager.characterd[gSoundManager->character[i]];
 		}
-		mainGame->avatarbutton[0]->setImage(mainGame->imageManager.scharacter[avataricon1][0]);
-		mainGame->avatarbutton[1]->setImage(mainGame->imageManager.scharacter[avataricon2][0]);
-        mainGame->btnHead[0]->setImage(imageManager.modeHead[avataricon1]);
-		mainGame->btnHead[1]->setImage(imageManager.modeHead[avataricon2]);
-        mainGame->btnChBody[0]->setImage(imageManager.modeHead[avataricon1]);
-		mainGame->btnChBody[1]->setImage(imageManager.modeHead[avataricon2]);
-		if (mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
-			mainGame->wHead[0]->setVisible(true);
-			mainGame->wHead[1]->setVisible(true);
+		avatarbutton[0]->setImage(damcharacter[gSoundManager->character[avataricon1]] == false ? imageManager.character[gSoundManager->character[avataricon1]] : imageManager.characterd[gSoundManager->character[avataricon1]]);
+		avatarbutton[1]->setImage(damcharacter[gSoundManager->character[avataricon2]] == false ? imageManager.character[gSoundManager->character[avataricon2]] : imageManager.characterd[gSoundManager->character[avataricon2]]);
+        btnHead[0]->setImage(imageManager.modeHead[avataricon1]);
+		btnHead[1]->setImage(imageManager.modeHead[avataricon2]);
+        btnChBody[0]->setImage(imageManager.modeHead[avataricon1]);
+		btnChBody[1]->setImage(imageManager.modeHead[avataricon2]);
+		if (mode->isMode && mode->rule == MODE_STORY) {
+			wHead[0]->setVisible(true);
+			wHead[1]->setVisible(true);
 		}
 #ifdef VIP
-        if((dInfo.isInDuel || is_building) && !mainGame->mode->isMode) {
+        if((dInfo.isInDuel || is_building) && !mode->isMode) {
             if(gSoundManager->character[avataricon1] > 0)
-                mainGame->wAvatar[0]->setVisible(true);
+                wAvatar[0]->setVisible(true);
             else
-                mainGame->wAvatar[0]->setVisible(false);
+                wAvatar[0]->setVisible(false);
             if(gSoundManager->character[avataricon2] > 0 && !is_building)
-                mainGame->wAvatar[1]->setVisible(true);
+                wAvatar[1]->setVisible(true);
             else
-                mainGame->wAvatar[1]->setVisible(false);
+                wAvatar[1]->setVisible(false);
         } else {
-            mainGame->wAvatar[0]->setVisible(false);
-            mainGame->wAvatar[1]->setVisible(false);
+            wAvatar[0]->setVisible(false);
+            wAvatar[1]->setVisible(false);
         }
 #endif
         wCardImg->setRelativePosition(Resize(10, 10, 220, 550));
@@ -6195,6 +6194,8 @@ bool Game::chantcheck() {
 void Game::charactselect(uint8_t player, int sel) {
 	if(sel >= 0) {
 		mainGame->choose_player = player;
+        if(gSoundManager->character[mainGame->choose_player] > CHARACTER_VOICE - 1)
+			sel = 0;
 		gSoundManager->character[mainGame->choose_player] = sel;
 		int player = gSoundManager->character[mainGame->choose_player];
 		mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
