@@ -3646,8 +3646,8 @@ bool Game::MainLoop() {
 			    imageManager.characterd[gSoundManager->character[i]] = 0;
             }
 		}
-		avatarbutton[0]->setImage(damcharacter[gSoundManager->character[avataricon1]] == false ? imageManager.character[gSoundManager->character[avataricon1]] : imageManager.characterd[gSoundManager->character[avataricon1]]);
-		avatarbutton[1]->setImage(damcharacter[gSoundManager->character[avataricon2]] == false ? imageManager.character[gSoundManager->character[avataricon2]] : imageManager.characterd[gSoundManager->character[avataricon2]]);
+		avatarbutton[0]->setImage(damcharacter[0] == false ? imageManager.character[gSoundManager->character[avataricon1]] : imageManager.characterd[gSoundManager->character[avataricon1]]);
+		avatarbutton[1]->setImage(damcharacter[1] == false ? imageManager.character[gSoundManager->character[avataricon2]] : imageManager.characterd[gSoundManager->character[avataricon2]]);
         btnHead[0]->setImage(imageManager.modeHead[avataricon1]);
 		btnHead[1]->setImage(imageManager.modeHead[avataricon2]);
         btnChBody[0]->setImage(imageManager.modeHead[avataricon1]);

@@ -1692,6 +1692,8 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 	case MSG_NEW_PHASE: {
 		const auto phase = BufferIO::Read<uint16_t>(pbuf);
 		uint8_t player = 1 - ((mainGame->dInfo.turn % 2 && mainGame->dInfo.isFirst) || (!(mainGame->dInfo.turn % 2) && !mainGame->dInfo.isFirst));
+		mainGame->damcharacter[0] = false;
+		mainGame->damcharacter[1] = false;
 		switch (phase) {
             case PHASE_DRAW:
             PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, player);
@@ -1701,7 +1703,6 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 			break;
             case PHASE_END:
             PlayChant(SoundManager::CHANT::TURNEND, nullptr, player);
-			mainGame->damcharacter[player == 0 ? gSoundManager->character[mainGame->avataricon1] : gSoundManager->character[mainGame->avataricon2]] = false;
             break;
 		}
 		break;
@@ -1918,7 +1919,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		//extra parameter
 		const auto reason = BufferIO::Read<uint32_t>(pbuf);
 		if(!(reason & REASON_COST))
-            mainGame->damcharacter[player == 0 ? gSoundManager->character[mainGame->avataricon1] : gSoundManager->character[mainGame->avataricon2]] = true;
+            mainGame->damcharacter[player] = true;
 		uint16_t extra = 0;
 		if(reason & REASON_COST) extra = 0x1;
 		else if((mainGame->dInfo.lp[player] > 0 && mainGame->dInfo.lp[player] >= mainGame->dInfo.lp[1 - player] * 2) || val >= 4000) extra = 0x4;
@@ -2273,11 +2274,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			auto text = gDataManager->GetDesc(data, mainGame->dInfo.compat_mode).data();
             if(player == 0) {
                 mainGame->imageManager.SetAvatar(mainGame->avataricon1, text);
-				mainGame->damcharacter[gSoundManager->character[mainGame->avataricon1]] = 0;
 			} else {
                 mainGame->imageManager.SetAvatar(mainGame->avataricon2, text);
-				mainGame->damcharacter[gSoundManager->character[mainGame->avataricon2]] = 0;
 			}
+			mainGame->damcharacter[player] = false;
 			break;
 		}
 		//////kdiy////////
