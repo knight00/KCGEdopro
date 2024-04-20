@@ -355,7 +355,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					    gSoundManager->character[i] = 0;
 					mainGame->ebCharacter[i]->setSelected(gSoundManager->character[i]);
 				    mainGame->icon[i]->setImage(mainGame->imageManager.icon[gSoundManager->character[i]]);
-					mainGame->damcharacter[i] = false;
                 }
 				///////kdiy///////
 				if(mainGame->isHostingOnline) {

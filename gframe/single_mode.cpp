@@ -198,6 +198,9 @@ restart:
 			}
 			////kdiy////////
 			//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
+            mainGame->isEvent = false;
+            mainGame->damcharacter[0] = false;
+            mainGame->damcharacter[1] = false;
             gSoundManager->soundcount.clear();
 			////kdiy////////
 			if(!hand_test) {
@@ -346,6 +349,9 @@ restart:
 		}
 		////kdiy////////
 		//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
+        mainGame->isEvent = false;
+        mainGame->damcharacter[0] = false;
+        mainGame->damcharacter[1] = false;
         gSoundManager->soundcount.clear();
 		////kdiy////////
 		if(!hand_test) {

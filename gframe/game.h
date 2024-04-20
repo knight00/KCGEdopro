@@ -210,6 +210,10 @@ public:
 	void charactselect(uint8_t player, int sel);
     std::vector<std::wstring>& GetPlayerReplayNames();
 	bool damcharacter[2] = { false,false };
+	int replay_player[2];
+    int replay_team1;
+    int replay_team2;
+    bool replayswap;
 	////////kdiy////////
 	void RefreshLFLists();
 	void RefreshAiDecks();

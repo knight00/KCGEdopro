@@ -673,6 +673,21 @@ void ClientField::ReplaySwap() {
 		chit.UpdateDrawCoordinates();
 	}
 	disabled_field = (disabled_field >> 16) | (disabled_field << 16);
+    /////kdiy//////////
+    if(!mainGame->replayswap) {
+        mainGame->replay_player[0] = mainGame->dInfo.current_player[0];
+        mainGame->replay_player[1] = mainGame->dInfo.current_player[1];
+        mainGame->replayswap = true;
+    } else
+	    std::swap(mainGame->replay_player[0], mainGame->replay_player[1]);
+    if(mainGame->dInfo.isReplaySwapped) {
+		mainGame->replay_team1 = mainGame->dInfo.team2;
+        mainGame->replay_team2 = mainGame->dInfo.team1;
+    } else {
+		mainGame->replay_team1 = mainGame->dInfo.team1;
+        mainGame->replay_team2 = mainGame->dInfo.team2;
+    }
+    /////kdiy//////////
 }
 void ClientField::RefreshAllCards() {
 	auto refresh = [](ClientCard* const& pcard) {

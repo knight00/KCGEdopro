@@ -186,6 +186,9 @@ void ReplayMode::EndDuel() {
 		mainGame->dInfo.isOldReplay = false;
 		mainGame->closeDuelWindow = true;
         ////kdiy////////
+        mainGame->isEvent = false;
+        mainGame->damcharacter[0] = false;
+        mainGame->damcharacter[1] = false;
         gSoundManager->soundcount.clear();
 		////kdiy////////
 		mainGame->closeDoneSignal.Wait(lock);
@@ -210,6 +213,9 @@ void ReplayMode::Restart(bool refresh) {
 	mainGame->dInfo.current_player[0] = 0;
 	mainGame->dInfo.current_player[1] = 0;
     ////kdiy////////
+    mainGame->isEvent = false;
+    mainGame->damcharacter[0] = false;
+    mainGame->damcharacter[1] = false;
     gSoundManager->soundcount.clear();
 	////kdiy////////
 	if(!mainGame->dInfo.isRelay) {

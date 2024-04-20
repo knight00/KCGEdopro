@@ -482,6 +482,8 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 				mainGame->dField.Clear();
 				mainGame->is_building = false;
                 ////kdiy////////
+                mainGame->damcharacter[0] = false;
+                mainGame->damcharacter[1] = false;
                 gSoundManager->soundcount.clear();
                 ////kdiy////////
 				mainGame->device->setEventReceiver(&mainGame->menuHandler);
@@ -734,6 +736,8 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
         //////////kdiy/////////
         for(int i = 0; i < 5; ++i)
             mainGame->selectedcard[i]->setVisible(false);
+		mainGame->damcharacter[0] = false;
+		mainGame->damcharacter[1] = false;
         //////////kdiy/////////
 		if(mainGame->wCardDisplay->isVisible())
 			mainGame->HideElement(mainGame->wCardDisplay);
@@ -1139,6 +1143,9 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		mainGame->wCardImg->setVisible(true);
 		/////kdiy/////
         //mainGame->wInfos->setVisible(true);
+		mainGame->damcharacter[0] = false;
+		mainGame->damcharacter[1] = false;
+        mainGame->replayswap = false;
 		/////kdiy/////
 		mainGame->wPhase->setVisible(true);
 		mainGame->btnSideOK->setVisible(false);
@@ -1244,6 +1251,8 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			for(int i = 0; i < 6; ++i) {
 				mainGame->imageManager.modeHead[i] = mainGame->imageManager.head[0];
 			}
+			mainGame->damcharacter[0] = false;
+			mainGame->damcharacter[1] = false;
             gSoundManager->soundcount.clear();
 			////kdiy////////
 			if(mainGame->isHostingOnline) {
@@ -1544,11 +1553,8 @@ inline bool PlayChantcode(SoundManager::CHANT sound, uint32_t code, uint32_t cod
 	if((sound == SoundManager::CHANT::ACTIVATE || sound == SoundManager::CHANT::PENDULUM) && !gGameConfig->enablecsound) return false;
 	if(sound == SoundManager::CHANT::SUMMON && !gGameConfig->enablessound) return false;
 	if(sound == SoundManager::CHANT::ATTACK && !gGameConfig->enableasound) return false;
-	uint8_t character = mainGame->dInfo.current_player[player];
-	if((player == 0 && !mainGame->dInfo.isTeam1) || (player == 1 && mainGame->dInfo.isTeam1))
-		character += mainGame->dInfo.team1;
 	if(!mainGame->dInfo.isCatchingUp)
-		return gSoundManager->PlayChant(sound, code, code2, character, extra);
+		return gSoundManager->PlayChant(sound, code, code2, player == 0 ? mainGame->avataricon1 : mainGame->avataricon2, extra);
 	return true;
 #else
     return false;
@@ -1895,10 +1901,11 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         PlayAnimecode(code, code2, 1);
         break;
     }
-	case MSG_CHAIN_NEGATED: {
+	case MSG_CHAIN_NEGATED:
+    case MSG_CHAIN_DISABLED: {
 		const auto ct = BufferIO::Read<uint8_t>(pbuf);
-		const auto cc = mainGame->dField.chains[ct - 1].controler;
-		const auto pc = mainGame->dField.chains[ct - 2].controler;
+		const auto cc = mainGame->dField.chains[ct].controler;
+		const auto pc = mainGame->dField.chains[ct - 1].controler;
 		if(cc != pc) {
             PlayChant(SoundManager::CHANT::SELFCOUNTER, nullptr, cc);
             PlayChant(SoundManager::CHANT::OPPCOUNTER, nullptr, pc);
@@ -1942,12 +1949,14 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         info1.controler = mainGame->LocalPlayer(info1.controler);
         mainGame->dField.attacker = mainGame->dField.GetCard(info1.controler, info1.location, info1.sequence);
         CoreUtils::loc_info info2 = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+        info2.controler = mainGame->LocalPlayer(info2.controler);
 		const bool is_direct = info2.location == 0;
         uint32_t code = mainGame->dField.attacker->code;
         uint16_t extra = 0x1;
         if(is_direct) extra |= 0x4;
         else extra |= 0x2;
-		PlayChant(SoundManager::CHANT::ATTACK, mainGame->dField.attacker, info1.controler, extra);
+        if(is_direct || (info1.controler != info2.controler))
+		    PlayChant(SoundManager::CHANT::ATTACK, mainGame->dField.attacker, info1.controler, extra);
         PlayAnime(mainGame->dField.attacker, 2);
 		break;
     }
@@ -2075,6 +2084,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				mainGame->dInfo.isInDuel = false;
 				mainGame->dInfo.checkRematch = false;
 				mainGame->dInfo.isStarted = false;
+                ////kdiy////////
+                mainGame->isEvent = false;
+                mainGame->damcharacter[0] = false;
+                mainGame->damcharacter[1] = false;
+                gSoundManager->soundcount.clear();
+                ////kdiy////////
 				mainGame->btnCreateHost->setEnabled(mainGame->coreloaded);
 				mainGame->btnJoinHost->setEnabled(true);
 				mainGame->btnJoinCancel->setEnabled(true);
@@ -4117,7 +4132,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			if(realcode > 0) {
 				pcard->is_real = true;
 				pcard->effcode = effcode;
-                pcard->text_hints.clear();
+                if(pcard != ocard)
+                    pcard->text_hints.clear();
                 if(effcode > 0) {
                     std::wstring text(epro::format(gDataManager->GetText(pcard->effcode), gDataManager->GetName(pcard->code).data()));
                     if(text != gDataManager->unknown_string)
@@ -4149,7 +4165,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			if(realcode > 0) {
 				pcard->is_real = true;
 				pcard->effcode = effcode;
-                pcard->text_hints.clear();
+                if(pcard != ocard)
+                    pcard->text_hints.clear();
                 if(effcode > 0) {
                     std::wstring text(epro::format(gDataManager->GetText(pcard->effcode), gDataManager->GetName(pcard->code).data()));
                     if(text != gDataManager->unknown_string)
@@ -5568,6 +5585,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->WaitFrameSignal(5, lock);
 		}
 		mainGame->dInfo.current_player[player] = (mainGame->dInfo.current_player[player] + 1) % ((player == 0 && mainGame->dInfo.isFirst) ? mainGame->dInfo.team1 : mainGame->dInfo.team2);
+        /////kdiy//////////
+        if(mainGame->dInfo.isReplay) {
+		    mainGame->replay_player[player] = (mainGame->replay_player[player] + 1) % ((player == 0 && mainGame->dInfo.isFirst) ? mainGame->replay_team1 : mainGame->replay_team2);
+        }
+        /////kdiy//////////
 		break;
 	}
 	case MSG_RELOAD_FIELD: {

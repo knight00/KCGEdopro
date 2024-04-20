@@ -3624,14 +3624,32 @@ bool Game::MainLoop() {
 			fpsCounter->setRelativePosition(Resize(5, 620, 5 + fpsCounterWidth, 640));
 		}
 
-		int avataricon1 = 0; int avataricon2 = 0;
-        if((dInfo.isInDuel && !dInfo.isSingleMode) || dInfo.isReplay) {
+		avataricon1 = 0; avataricon2 = 0;
+        if(dInfo.isInDuel && !dInfo.isSingleMode && !dInfo.isReplay) {
             if (dInfo.isTeam1) {
                 avataricon1 = dInfo.current_player[0];
                 avataricon2 = dInfo.current_player[1] + dInfo.team1;
             } else {
                 avataricon1 = dInfo.current_player[0] + dInfo.team1;
                 avataricon2 = dInfo.current_player[1];
+            }
+        } else if(dInfo.isReplay) {
+            if(dInfo.isReplaySwapped) {
+                if (!dInfo.isTeam1) {
+                    avataricon1 = replay_player[0] + dInfo.team1;
+                    avataricon2 = replay_player[1];
+                } else {
+                    avataricon1 = replay_player[0];
+                    avataricon2 = replay_player[1] + dInfo.team1;
+                }
+            } else {
+                if (dInfo.isTeam1) {
+                    avataricon1 = replay_player[0];
+                    avataricon2 = replay_player[1] + dInfo.team1;
+                } else {
+                    avataricon1 = replay_player[0] + dInfo.team1;
+                    avataricon2 = replay_player[1];
+                }
             }
         } else if(dInfo.isSingleMode) {
             avataricon1 = 0;

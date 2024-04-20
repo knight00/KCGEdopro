@@ -229,6 +229,11 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			case BUTTON_LEAVE_GAME: {
 			    ////kdiy////////
                 gSoundManager->soundcount.clear();
+                mainGame->isEvent = false;
+                mainGame->damcharacter[0] = false;
+                mainGame->damcharacter[1] = false;
+                gSoundManager->soundcount.clear();
+                ////kdiy////////
 				if(mainGame->dInfo.isReplay) {
 					ReplayMode::StopReplay();
 					break;
