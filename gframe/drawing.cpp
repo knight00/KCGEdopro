@@ -442,37 +442,6 @@ void Game::DrawCard(ClientCard* pcard) {
 	driver->setTransform(irr::video::ETS_WORLD, pcard->mTransform);
 	auto m22 = pcard->mTransform(2, 2);
 	if (m22 > -0.99 || pcard->is_moving) {
-		///kdiy////////
-		if ((pcard->position & POS_FACEUP) && (pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
-			matManager.mCard.AmbientColor = irr::video::SColor(255, 128, 128, 180);
-		else
-			matManager.mCard.AmbientColor = 0xffffffff;
-		if (pcard->is_attack) {
-            if(pcard->location & LOCATION_ONFIELD) {
-                float sy;
-                float xa = mainGame->dField.attacker->attPos.X;
-                float ya = mainGame->dField.attacker->attPos.Y;
-                float xd, yd;
-                xd = pcard->curPos.X;
-                yd = pcard->curPos.Y;
-                sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
-                irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
-                pcard->mTransform.setRotationRadians(atkr);
-            }
-		} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && pcard->is_pzone
-			&& !gGameConfig->topdown_view) {
-			pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(pcard->controler == 0 ? -0.32f : 0.32f, pcard->controler == 0 ? 0 : -0.8f, 0));
-			pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(-irr::core::PI / 3, 0, pcard->controler == 0 ? -irr::core::PI / 5 : -irr::core::PI + irr::core::PI / 5));
-		} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 4 || pcard->sequence == 7)) && pcard->is_pzone
-			&& !gGameConfig->topdown_view) {
-			pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(pcard->controler == 0 ? 0.32f : -0.32f, pcard->controler == 0 ? 0 : -0.8f, 0));
-			pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(-irr::core::PI / 3, 0, pcard->controler == 0 ? irr::core::PI / 5 : -irr::core::PI - irr::core::PI / 5));
-		}
-		else {
-			pcard->mTransform.setTranslation(pcard->curPos);
-			pcard->mTransform.setRotationRadians(pcard->curRot);
-		}
-		///kdiy////////
 		matManager.mCard.setTexture(0, imageManager.GetTextureCard(pcard->code, imgType::ART));
 		driver->setMaterial(matManager.mCard);
 		driver->drawVertexPrimitiveList(matManager.vCardFront, 4, matManager.iRectangle, 2);
@@ -489,6 +458,37 @@ void Game::DrawCard(ClientCard* pcard) {
 		driver->drawVertexPrimitiveList(matManager.vCardBack, 4, matManager.iRectangle, 2);
 	}
 	///kdiy////////
+	if ((pcard->position & POS_FACEUP) && (pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
+		matManager.mCard.AmbientColor = irr::video::SColor(255, 128, 128, 180);
+	else
+		matManager.mCard.AmbientColor = 0xffffffff;
+	if (pcard->is_attack) {
+		if (pcard->location & LOCATION_ONFIELD) {
+			float sy;
+			float xa = mainGame->dField.attacker->attPos.X;
+			float ya = mainGame->dField.attacker->attPos.Y;
+			float xd, yd;
+			xd = pcard->curPos.X;
+			yd = pcard->curPos.Y;
+			sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
+			irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
+			pcard->mTransform.setRotationRadians(atkr);
+		}
+	}
+	else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && pcard->is_pzone
+		&& !gGameConfig->topdown_view) {
+		pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(pcard->controler == 0 ? -0.32f : 0.32f, pcard->controler == 0 ? 0 : -0.8f, 0));
+		pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(-irr::core::PI / 3, 0, pcard->controler == 0 ? -irr::core::PI / 5 : -irr::core::PI + irr::core::PI / 5));
+	}
+	else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 4 || pcard->sequence == 7)) && pcard->is_pzone
+		&& !gGameConfig->topdown_view) {
+		pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(pcard->controler == 0 ? 0.32f : -0.32f, pcard->controler == 0 ? 0 : -0.8f, 0));
+		pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(-irr::core::PI / 3, 0, pcard->controler == 0 ? irr::core::PI / 5 : -irr::core::PI - irr::core::PI / 5));
+	}
+	else {
+		pcard->mTransform.setTranslation(pcard->curPos);
+		pcard->mTransform.setRotationRadians(pcard->curRot);
+	}
     if((pcard->cmdFlag & COMMAND_ACTIVATE) && pcard->controler == 0 && (pcard->location & (LOCATION_HAND | LOCATION_ONFIELD))
 	  && !(pcard->is_selectable && (pcard->location & 0xe))
 	  && !(pcard->is_activable) && !(pcard->is_highlighting)) {
@@ -930,10 +930,23 @@ void Game::DrawMisc() {
 		lpframe -= delta_frames;
 	}
 	if(lpcstring.size()) {
-		if(lpplayer == 0)
-			DrawShadowText(lpcFont, lpcstring, Resize(400, 470, 920, 520), Resize(0, 2, 2, 0), (lpcalpha << 24) | lpccolor, (lpcalpha << 24) | 0x00ffffff, true);
-		else
-			DrawShadowText(lpcFont, lpcstring, Resize(400, 160, 920, 210), Resize(0, 2, 2, 0), (lpcalpha << 24) | lpccolor, (lpcalpha << 24) | 0x00ffffff, true);
+        ///////////kdiy///////////
+		// if(lpplayer == 0)
+		// 	DrawShadowText(lpcFont, lpcstring, Resize(400, 470, 920, 520), Resize(0, 2, 2, 0), (lpcalpha << 24) | lpccolor, (lpcalpha << 24) | 0x00ffffff, true);
+		// else
+		// 	DrawShadowText(lpcFont, lpcstring, Resize(400, 160, 920, 210), Resize(0, 2, 2, 0), (lpcalpha << 24) | lpccolor, (lpcalpha << 24) | 0x00ffffff, true);
+		if(lpplayer == 0) {
+            if(lpcstring == epro::format(L"-\u221E"))
+                DrawShadowText(nameFont, lpcstring, Resize(400, 470, 920, 520), Resize(0, 2, 2, 0), (lpcalpha << 24) | lpccolor, (lpcalpha << 24) | 0x00ffffff, true);
+			else
+                DrawShadowText(lpcFont, lpcstring, Resize(400, 470, 920, 520), Resize(0, 2, 2, 0), (lpcalpha << 24) | lpccolor, (lpcalpha << 24) | 0x00ffffff, true);
+        } else {
+			if(lpcstring == epro::format(L"-\u221E"))
+                DrawShadowText(nameFont, lpcstring, Resize(400, 160, 920, 210), Resize(0, 2, 2, 0), (lpcalpha << 24) | lpccolor, (lpcalpha << 24) | 0x00ffffff, true);
+			else
+                DrawShadowText(lpcFont, lpcstring, Resize(400, 160, 920, 210), Resize(0, 2, 2, 0), (lpcalpha << 24) | lpccolor, (lpcalpha << 24) | 0x00ffffff, true);
+        }
+        ///////////kdiy///////////
 	}
 
 #undef SKCOLOR
@@ -1002,7 +1015,7 @@ void Game::DrawMisc() {
 			if (i++ == dInfo.current_player[0])
 				textFont->drawustring(player, Resize(196, 569, 226, 580), skin::DUELFIELD_LP_1_VAL, false, true, 0);
 			else {
-				textFont->drawustring(player, p1size, 0xff808080, false, true, 0);
+				textFont->drawustring(player, p1size, 0xff00ff00, false, true, 0);
                 p1size += irr::core::vector2di{ 0, p1size.getHeight() + ResizeY(4) };
             }
 		}
@@ -1011,7 +1024,7 @@ void Game::DrawMisc() {
 			if (i++ == dInfo.current_player[1])
 				textFont->drawustring(player, Resize(726, 64, 756, 75), skin::DUELFIELD_LP_2_VAL, false, true, 0);
 			else {
-				textFont->drawustring(player, p2size, 0xff808080, false, true, 0);
+				textFont->drawustring(player, p2size, 0xff00ff00, false, true, 0);
                 p2size += irr::core::vector2di{ 0, p2size.getHeight() + ResizeY(4) };
             }
 		}
