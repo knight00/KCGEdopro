@@ -66,7 +66,8 @@ public:
 	uint16_t realsetcode = 0;
 	uint32_t realname = 0;
 	uint32_t effcode = 0;
-	bool ismonster = false;
+	bool is_orica = false;
+	bool is_sanct = false;
 	bool is_pzone = false;
 	bool is_attack = false;
 	bool attack_me = false;

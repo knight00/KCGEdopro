@@ -852,8 +852,7 @@ void ClientField::GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df
 		////////kdiy///////////
 		//if(location == LOCATION_MZONE) {
 			// if(controler == 0)
-		bool is_monster = (mainGame->dInfo.isReplay || (pcard->position & POS_FACEUP)) ? ((pcard->type & (TYPE_MONSTER | TYPE_TRAPMONSTER)) && !(pcard->type & (TYPE_SPELL | TYPE_TRAP))) : (pcard->position == POS_FACEDOWN_DEFENSE || (pcard->ismonster == 0 && location == LOCATION_MZONE) || pcard->ismonster == 1) && !pcard->equipTarget;
-		if((location == LOCATION_MZONE || location == LOCATION_SZONE) && is_monster) {
+		if(((location == LOCATION_MZONE && !pcard->is_sanct) || (location == LOCATION_SZONE && pcard->is_orica)) && !pcard->equipTarget) {
             if((controler == 0 || pcard->is_attack) && !pcard->attack_me)
 		////////kdiy///////////
 				*r = (pcard->position & POS_DEFENSE) ? selfDEF : selfATK;
@@ -871,7 +870,7 @@ void ClientField::GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df
 			*r += facedown;
 			////////kdiy///////////
 			//if(location == LOCATION_MZONE && pcard->position & POS_DEFENSE)
-			if(((location == LOCATION_MZONE || location == LOCATION_SZONE) && is_monster) && (pcard->position & POS_DEFENSE))
+			if((((location == LOCATION_MZONE && !pcard->is_sanct) || (location == LOCATION_SZONE && pcard->is_orica)) && !pcard->equipTarget) && (pcard->position & POS_DEFENSE))
 			////////kdiy///////////
 				r->Y = irr::core::PI + 0.001f;
 		}
