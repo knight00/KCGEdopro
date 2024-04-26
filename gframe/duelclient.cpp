@@ -1753,9 +1753,9 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         }
 		if(previous.location != current.location && (reason & REASON_DESTROY) && rp != 2 && rp != previous.controler && firstone)
 			PlayChant(SoundManager::CHANT::DESTROY, nullptr, previous.controler);
-		if(previous.location != current.location && (reason & REASON_RELEASE) && rp != 2 && rp == previous.controler && firstone)
+		else if(previous.location != current.location && (reason & REASON_RELEASE) && rp != 2 && rp == previous.controler && firstone)
 			PlayChant(SoundManager::CHANT::RELEASE, nullptr, previous.controler);
-		if(cpzone)
+		else if(cpzone)
             PlayChantcode(SoundManager::CHANT::PSCALE, 0, 0, current.controler, 0);
 		break;
     }

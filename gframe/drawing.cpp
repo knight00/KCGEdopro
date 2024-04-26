@@ -493,7 +493,7 @@ void Game::DrawCard(ClientCard* pcard) {
 	  && !(pcard->is_selectable && (pcard->location & 0xe))
 	  && !(pcard->is_activable) && !(pcard->is_highlighting)) {
         driver->setMaterial(matManager.mOutLine);
-        if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup && pcard->attack >= 5000)
+        if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP_ATTACK) && cardcloseup && pcard->attack >= 5000)
 			drawLine(matManager.vCardOutline2[0].Pos, matManager.vCardOutline2[1].Pos, matManager.vCardOutline2[2].Pos, matManager.vCardOutline2[3].Pos, 0xff00ff00);
         else
             drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff00ff00);
@@ -502,7 +502,7 @@ void Game::DrawCard(ClientCard* pcard) {
 	  && !(pcard->is_selectable && (pcard->location & 0xe))
 	  && !(pcard->is_activable) && !(pcard->is_highlighting)) {
         driver->setMaterial(matManager.mOutLine);
-        if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup && pcard->attack >= 5000)
+        if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP_ATTACK) && cardcloseup && pcard->attack >= 5000)
 			drawLine(matManager.vCardOutline2[0].Pos, matManager.vCardOutline2[1].Pos, matManager.vCardOutline2[2].Pos, matManager.vCardOutline2[3].Pos, 0xff0000ff);
         else
             drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff0000ff);
@@ -516,7 +516,7 @@ void Game::DrawCard(ClientCard* pcard) {
 			    DrawSelectionLine(matManager.vCardOutliner, true, 2, outline_color);
 		} else {
 			driver->setMaterial(matManager.mOutLine);
-            if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup && pcard->attack >= 5000)
+            if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP_ATTACK) && cardcloseup && pcard->attack >= 5000)
 			    drawLine(matManager.vCardOutline2[0].Pos, matManager.vCardOutline2[1].Pos, matManager.vCardOutline2[2].Pos, matManager.vCardOutline2[3].Pos, 0xffffff00);
             else
 			    drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffffff00);
@@ -538,13 +538,13 @@ void Game::DrawCard(ClientCard* pcard) {
 		} else {
 			if(!pcard->is_selected) {
 				driver->setMaterial(matManager.mOutLine);
-                if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup && pcard->attack >= 5000)
+                if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP_ATTACK) && cardcloseup && pcard->attack >= 5000)
 			        drawLine(matManager.vCardOutline2[0].Pos, matManager.vCardOutline2[1].Pos, matManager.vCardOutline2[2].Pos, matManager.vCardOutline2[3].Pos, 0xffff00ff);
                 else
 			        drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffff00ff);
 			} else {
 				driver->setMaterial(matManager.mOutLine);
-                if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup && pcard->attack >= 5000)
+                if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP_ATTACK) && cardcloseup && pcard->attack >= 5000)
 			        drawLine(matManager.vCardOutline2[0].Pos, matManager.vCardOutline2[1].Pos, matManager.vCardOutline2[2].Pos, matManager.vCardOutline2[3].Pos, 0xff808080);
                 else
 			        drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff808080);
@@ -566,7 +566,7 @@ void Game::DrawCard(ClientCard* pcard) {
 			    DrawSelectionLine(matManager.vCardOutliner, true, 2, outline_color);
 		} else {
 			driver->setMaterial(matManager.mOutLine);
-            if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup && pcard->attack >= 5000)
+            if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP_ATTACK) && cardcloseup && pcard->attack >= 5000)
 			    drawLine(matManager.vCardOutline2[0].Pos, matManager.vCardOutline2[1].Pos, matManager.vCardOutline2[2].Pos, matManager.vCardOutline2[3].Pos, 0xff00ffff);
             else
 			    drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff00ffff);
