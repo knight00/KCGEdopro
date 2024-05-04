@@ -4892,6 +4892,7 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
     ///kdiy/////////
 	//stText->setText(gDataManager->GetText(code).data());
 	std::wstring cardeffect = L"";
+    std::wstring fcardeffect = L"";
 	std::wstring delimiter = L"#@";
 	std::vector<std::wstring> parts;
 	size_t pos;
@@ -4903,12 +4904,32 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 			std::wstring texts = pcard->text_hints[i];
 			if(i == 0)
 				cardeffect.append(epro::format(L"{}", texts));
-			else
+			else if(texts != L"" && texts != L" ")
 				cardeffect.append(epro::format(L"\n{}", texts));
 		}
 	} else {
 		cardeffect = Utils::ToUnicodeIfNeeded(gDataManager->GetText(code));
 	}
+    std::wstringstream ss(cardeffect);
+    std::wstring temp;
+    while (std::getline(ss, temp)) {
+        // Check if line contains parenthesis
+        size_t startPos = temp.find(delimiter);
+        if (startPos != std::wstring::npos) {
+            size_t endPos = temp.find(delimiter);
+            if (endPos != std::wstring::npos && endPos > startPos) {
+                // Extract the content within the parenthesis for output2
+                parts.push_back(temp.substr(startPos + 1, endPos - startPos - 1));
+            }
+        } else {
+            // The line does not contain parenthesis, so add to output1
+            fcardeffect += temp + L"\n";
+        }
+    }
+    // Remove the trailing newline from output1
+    if (!fcardeffect.empty() && fcardeffect[fcardeffect.size() - 1] == L'\n') {
+        fcardeffect.erase(fcardeffect.size() - 1);
+    }
 	while ((pos = cardeffect.find(delimiter)) != std::wstring::npos) {
 		if (pos != 0)
 			parts.push_back(cardeffect.substr(0, pos));
@@ -4933,12 +4954,11 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 			i++;
 			if (i > 7) break;
 		}
-
 	}
-	while (cardeffect.substr(0, 2) == L"\r\n")
-        cardeffect.erase(0, 2);
-	effectText[0] = cardeffect;
-	stText->setText(cardeffect.data());
+	while (fcardeffect.substr(0, 2) == L"\r\n")
+        fcardeffect.erase(0, 2);
+	effectText[0] = fcardeffect;
+	stText->setText(fcardeffect.data());
 	///kdiy/////////
 }
 ///kdiy/////////
@@ -4948,9 +4968,16 @@ void Game::ShowPlayerInfo(uint8_t player) {
 	imgCard->setImage(0);
 	std::wstring playereffect = L"";
 	for(const auto& hint : dField.player_desc_hints[player]) {
-		playereffect.append(epro::format(L"\n{}", gDataManager->GetDesc(hint.first, dInfo.compat_mode)));
-		stText->setText(playereffect.data());
+        if(playereffect == L"")
+		    playereffect.append(epro::format(L"{}", gDataManager->GetDesc(hint.first, dInfo.compat_mode)));
+		else
+            playereffect.append(epro::format(L"\n{}", gDataManager->GetDesc(hint.first, dInfo.compat_mode)));
 	}
+	while (playereffect.substr(0, 2) == L"\r\n")
+        playereffect.erase(0, 2);
+    stDataInfo->setText(L"");
+	stText->setText(playereffect.data());
+    RefreshCardInfoTextPositions();
 }
 ///kdiy/////////
 void Game::RefreshCardInfoTextPositions() {

@@ -5429,8 +5429,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		//kdiy////////
 		if(chtype == CHINT_DESC_ADD) {
             //kdiy////////
-            if(addtotext && value > 0) {
-				if(addtofront)
+            if(addtotext == true && value > 0) {
+				if(addtofront == true)
 				    pcard->text_hints.insert(pcard->text_hints.begin(), text);
 				else
 					pcard->text_hints.push_back(text);
