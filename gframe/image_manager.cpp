@@ -595,8 +595,10 @@ bool ImageManager::Initial() {
     ASSIGN_DEFAULT(tLevel);
 	tRank = loadTextureAnySize(EPRO_TEXT("rank"_sv));
     ASSIGN_DEFAULT(tRank);
-	tLvRank = loadTextureAnySize(EPRO_TEXT("lvrank"_sv));
+    tLvRank = loadTextureAnySize(EPRO_TEXT("lvrank"_sv));
     ASSIGN_DEFAULT(tLvRank);
+	tLink = loadTextureAnySize(EPRO_TEXT("link"_sv));
+    ASSIGN_DEFAULT(tLink);
 	tMain = loadTextureFixedSize(EPRO_TEXT("maindeck"_sv), 30, 30);
     ASSIGN_DEFAULT(tMain);
 	tDeck = loadTextureFixedSize(EPRO_TEXT("deck"_sv), 30, 30);

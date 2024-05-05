@@ -730,6 +730,86 @@ void Game::DrawCard(ClientCard* pcard) {
 			}
 		}
 	}
+    if(pcard->code != 0 && (pcard->controler == 0 || (pcard->position & POS_FACEUP)) 
+    && (((pcard->location & LOCATION_MZONE) && !pcard->is_sanct) || ((pcard->location & LOCATION_SZONE) && pcard->is_orica)) && !pcard->equipTarget) {
+        //has lv, rk, lk
+        if ((pcard->level != 0 || (pcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL))) && (pcard->rank != 0 || (pcard->type & TYPE_XYZ)) && (pcard->link != 0 || (pcard->type & TYPE_LINK))) {
+            matManager.mTexture.setTexture(0, imageManager.tLvRank);
+            driver->setMaterial(matManager.mTexture);
+            irr::core::matrix4 atk;
+            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.5f, pcard->controler == 0 ? -0.52f : 1.05f, 0.25f));
+            driver->setTransform(irr::video::ETS_WORLD, atk);
+            driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
+            matManager.mTexture.setTexture(0, imageManager.tLink);
+            driver->setMaterial(matManager.mTexture);
+            irr::core::matrix4 atk2;
+            atk2.setTranslation(pcard->curPos + irr::core::vector3df(0.3f, pcard->controler == 0 ? -0.52f : 1.05f, 0.25f));
+            driver->setTransform(irr::video::ETS_WORLD, atk2);
+            driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
+        //has lk, rk
+        } else if ((pcard->link != 0 || (pcard->type & TYPE_LINK)) && (pcard->rank != 0 || (pcard->type & TYPE_XYZ))) {
+            matManager.mTexture.setTexture(0, imageManager.tRank);
+            driver->setMaterial(matManager.mTexture);
+            irr::core::matrix4 atk;
+            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.5f, pcard->controler == 0 ? -0.52f : 1.05f, 0.25f));
+            driver->setTransform(irr::video::ETS_WORLD, atk);
+            driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
+
+            matManager.mTexture.setTexture(0, imageManager.tLink);
+            driver->setMaterial(matManager.mTexture);
+            irr::core::matrix4 atk2;
+            atk2.setTranslation(pcard->curPos + irr::core::vector3df(0, pcard->controler == 0 ? -0.52f : 1.05f, 0.25f));
+            driver->setTransform(irr::video::ETS_WORLD, atk2);
+            driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
+        //has lk, lv
+        } else if ((pcard->link != 0 || (pcard->type & TYPE_LINK)) && (pcard->rank != 0 || (pcard->type & TYPE_XYZ))) {
+            matManager.mTexture.setTexture(0, imageManager.tLevel);
+            driver->setMaterial(matManager.mTexture);
+            irr::core::matrix4 atk;
+            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.5f, pcard->controler == 0 ? -0.52f : 1.05f, 0.25f));
+            driver->setTransform(irr::video::ETS_WORLD, atk);
+            driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
+
+            matManager.mTexture.setTexture(0, imageManager.tLink);
+            driver->setMaterial(matManager.mTexture);
+            irr::core::matrix4 atk2;
+            atk2.setTranslation(pcard->curPos + irr::core::vector3df(0, pcard->controler == 0 ? -0.52f : 1.05f, 0.25f));
+            driver->setTransform(irr::video::ETS_WORLD, atk2);
+            driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
+        //has lv, rk
+        } else if ((pcard->level != 0 || (pcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL))) && (pcard->rank != 0 || (pcard->type & TYPE_XYZ))) {
+            matManager.mTexture.setTexture(0, imageManager.tLvRank);
+            driver->setMaterial(matManager.mTexture);
+            irr::core::matrix4 atk;
+            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.5f, pcard->controler == 0 ? -0.52f : 1.05f, 0.25f));
+            driver->setTransform(irr::video::ETS_WORLD, atk);
+            driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
+        //has rk
+        } else if (pcard->rank != 0 || (pcard->type & TYPE_XYZ)) {
+            matManager.mTexture.setTexture(0, imageManager.tRank);
+            driver->setMaterial(matManager.mTexture);
+            irr::core::matrix4 atk;
+            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.5f, pcard->controler == 0 ? -0.52f : 1.05f, 0.25f));
+            driver->setTransform(irr::video::ETS_WORLD, atk);
+            driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
+        //has lv
+        } else if (pcard->level != 0 || !(pcard->type & (TYPE_XYZ | TYPE_LINK))) {
+            matManager.mTexture.setTexture(0, imageManager.tLevel);
+            driver->setMaterial(matManager.mTexture);
+            irr::core::matrix4 atk;
+            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.5f, pcard->controler == 0 ? -0.52f : 1.05f, 0.25f));
+            driver->setTransform(irr::video::ETS_WORLD, atk);
+            driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
+        //has lk
+        } else if (pcard->link != 0 || (pcard->type & TYPE_LINK)) {
+            matManager.mTexture.setTexture(0, imageManager.tLink);
+            driver->setMaterial(matManager.mTexture);
+            irr::core::matrix4 atk;
+            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.5f, pcard->controler == 0 ? -0.52f : 1.05f, 0.25f));
+            driver->setTransform(irr::video::ETS_WORLD, atk);
+            driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
+        }
+    }
     ////kdiy/////////
     //if(pcard->cmdFlag & COMMAND_ATTACK) {
 	if((pcard->cmdFlag & COMMAND_ATTACK) && !cardcloseup) {
@@ -1086,21 +1166,48 @@ void Game::DrawStatus(ClientCard* pcard) {
 		return collisionmanager->getScreenCoordinatesFrom3DPosition(pos3d);
 	};
 	int x1, y1, x2, y2;
+	////kdiy//////////
+	//if (pcard->controler == 0) {
+	//	auto coords = getcoords({ pcard->curPos.X, (0.39f + pcard->curPos.Y), pcard->curPos.Z });
+	//	x1 = coords.X;
+	//	y1 = coords.Y;
+	//	coords = getcoords({ (pcard->curPos.X - 0.48f), (pcard->curPos.Y - 0.66f), pcard->curPos.Z });
+	//	x2 = coords.X;
+	//	y2 = coords.Y;
+	//} else {
+	//	auto coords = getcoords({ pcard->curPos.X, (pcard->curPos.Y - 0.66f), pcard->curPos.Z });
+	//	x1 = coords.X;
+	//	y1 = coords.Y;
+	//	coords = getcoords({ (pcard->curPos.X - 0.48f), (0.39f + pcard->curPos.Y), pcard->curPos.Z });
+	//	x2 = coords.X;
+	//	y2 = coords.Y;
+	//}
+	int x3, x4;
 	if (pcard->controler == 0) {
-		auto coords = getcoords({ pcard->curPos.X, (0.39f + pcard->curPos.Y), pcard->curPos.Z });
+		auto coords = getcoords({ pcard->curPos.X, (0.6f + pcard->curPos.Y), pcard->curPos.Z });
 		x1 = coords.X;
 		y1 = coords.Y;
-		coords = getcoords({ (pcard->curPos.X - 0.48f), (pcard->curPos.Y - 0.66f), pcard->curPos.Z });
+		coords = getcoords({ (pcard->curPos.X - 0.4f), (pcard->curPos.Y - 0.64f), pcard->curPos.Z + 0.25f });
 		x2 = coords.X;
 		y2 = coords.Y;
-	} else {
+		coords = getcoords({ (pcard->curPos.X + 0.4f), (pcard->curPos.Y - 0.64f), pcard->curPos.Z + 0.25f });
+		x3 = coords.X;
+		coords = getcoords({ (pcard->curPos.X + 0.1f), (pcard->curPos.Y - 0.64f), pcard->curPos.Z + 0.25f });
+		x4 = coords.X;
+	}
+	else {
 		auto coords = getcoords({ pcard->curPos.X, (pcard->curPos.Y - 0.66f), pcard->curPos.Z });
 		x1 = coords.X;
 		y1 = coords.Y;
-		coords = getcoords({ (pcard->curPos.X - 0.48f), (0.39f + pcard->curPos.Y), pcard->curPos.Z });
+		coords = getcoords({ (pcard->curPos.X - 0.4f), (0.93f + pcard->curPos.Y), pcard->curPos.Z + 0.25f });
 		x2 = coords.X;
 		y2 = coords.Y;
+		coords = getcoords({ (pcard->curPos.X + 0.4f), (0.93f + pcard->curPos.Y), pcard->curPos.Z + 0.25f });
+		x3 = coords.X;
+		coords = getcoords({ (pcard->curPos.X - 0.2f), (0.93f + pcard->curPos.Y), pcard->curPos.Z + 0.25f });
+		x4 = coords.X;
 	}
+	////kdiy//////////
 
 	auto GetAtkColor = [&pcard] {
 		////kdiy//////////
@@ -1169,7 +1276,6 @@ void Game::DrawStatus(ClientCard* pcard) {
 	// 	DrawShadowText(adFont, pcard->lvstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1011, GetLevelColor(), 0xff000000);
 	// else if (pcard->link != 0)
 	// 	DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1011, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
-	//has lv, rk, lk
 	if(pcard->type & TYPE_LINK) {
         auto font = pcard->attack >= 8888888 ? numFont0 : atkFont;
         const auto atk = font->getDimensionustring(pcard->atkstring);
@@ -1187,41 +1293,57 @@ void Game::DrawStatus(ClientCard* pcard) {
 					   padding_1111, GetDefColor(), 0xff000000);
 	}
 
+	//has lv, rk, lk
 	if ((pcard->level != 0 || (pcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL))) && (pcard->rank != 0 || (pcard->type & TYPE_XYZ)) && (pcard->link != 0 || (pcard->type & TYPE_LINK))) {
-		DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2 - std::floor(rk.Width / 2), y2, x2 + std::floor(rk.Width / 2), y2 + 1),
-					   padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000, true);
-		DrawShadowText(adFont, L"/", irr::core::recti(x2 - std::floor(rk.Width / 2) - slash.Width, y2, x2 - std::floor(rk.Width / 2), y2 + 1),
-		               padding_1111, 0xffffffff, 0xff000000);
-		DrawShadowText(adFont, L"/", irr::core::recti(x2 + std::floor(rk.Width / 2), y2, x2 + std::floor(rk.Width / 2) + slash.Width, y2 + 1),
-		               padding_1111, 0xffffffff, 0xff000000);
-		DrawShadowText(adFont, pcard->lvstring, irr::core::recti(x2 - std::floor(rk.Width / 2) - slash.Width - lv.Width, y2, x2 - std::floor(rk.Width / 2) - slash.Width, y2 + 1),
-					   padding_1111, GetLevelColor(), 0xff000000);
-		DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x2 + std::floor(rk.Width / 2) + slash.Width, y2, x2 + std::floor(rk.Width / 2) + slash.Width + lk.Width, y2 + 1),
-		               padding_1111, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
+		//DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2 - std::floor(rk.Width / 2), y2, x2 + std::floor(rk.Width / 2), y2 + 1),
+		//	padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000, true);
+		//DrawShadowText(adFont, L"/", irr::core::recti(x2 - std::floor(rk.Width / 2) - slash.Width, y2, x2 - std::floor(rk.Width / 2), y2 + 1),
+		//	padding_1111, 0xffffffff, 0xff000000);
+		//DrawShadowText(adFont, L"/", irr::core::recti(x2 + std::floor(rk.Width / 2), y2, x2 + std::floor(rk.Width / 2) + slash.Width, y2 + 1),
+		//	padding_1111, 0xffffffff, 0xff000000);
+		//DrawShadowText(adFont, pcard->lvstring, irr::core::recti(x2 - std::floor(rk.Width / 2) - slash.Width - lv.Width, y2, x2 - std::floor(rk.Width / 2) - slash.Width, y2 + 1),
+		//	padding_1111, GetLevelColor(), 0xff000000);
+		//DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x2 + std::floor(rk.Width / 2) + slash.Width, y2, x2 + std::floor(rk.Width / 2) + slash.Width + lk.Width, y2 + 1),
+		//	padding_1111, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
+		DrawShadowText(adFont, L"/", irr::core::recti(x2 + lv.Width, y2, x2 + lv.Width + slash.Width, y2 + 1),
+			padding_1111, 0xffffffff, 0xff000000, true);
+		DrawShadowText(adFont, pcard->lvstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1111, GetLevelColor(), 0xff000000);
+		DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2 + lv.Width + slash.Width, y2, x2 + lv.Width + slash.Width + rk.Width, y2 + 1),
+			padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000, true);
+		DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x3, y2, x3 + 1, y2 + 1), padding_1111, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
 	//has lk, rk
 	} else if ((pcard->link != 0 || (pcard->type & TYPE_LINK)) && (pcard->rank != 0 || (pcard->type & TYPE_XYZ))) {
-		DrawShadowText(adFont, L"/", irr::core::recti(x2 - std::floor(slash.Width / 2), y2, x2 + std::floor(slash.Width / 2), y2 + 1),
-		               padding_1111, 0xffffffff, 0xff000000, true);
-		DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2 - std::floor(slash.Width / 2) - rk.Width, y2, x2 - std::floor(slash.Width / 2), y2 + 1),
-					   padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
-		DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x2 + std::floor(slash.Width / 2), y2, x2 + std::floor(slash.Width / 2) + lk.Width, y2 + 1),
-					   padding_1011, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
+		//DrawShadowText(adFont, L"/", irr::core::recti(x2 - std::floor(slash.Width / 2), y2, x2 + std::floor(slash.Width / 2), y2 + 1),
+		//	padding_1111, 0xffffffff, 0xff000000, true);
+		//DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2 - std::floor(slash.Width / 2) - rk.Width, y2, x2 - std::floor(slash.Width / 2), y2 + 1),
+		//	padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
+		//DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x2 + std::floor(slash.Width / 2), y2, x2 + std::floor(slash.Width / 2) + lk.Width, y2 + 1),
+		//	padding_1011, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
+		DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
+		DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x4, y2, x4 + 1, y2 + 1), padding_1111, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
 	//has lk, lv
 	} else if ((pcard->link != 0 || (pcard->type & TYPE_LINK)) && (pcard->level != 0 || (pcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL)))) {
-		DrawShadowText(adFont, L"/", irr::core::recti(x2 - std::floor(slash.Width / 2), y2, x2 + std::floor(slash.Width / 2), y2 + 1),
-		               padding_1111, 0xffffffff, 0xff000000, true);
-		DrawShadowText(adFont, pcard->lvstring, irr::core::recti(x2 - half_slash_width - lv.Width, y2, x2 - half_slash_width, y2 + 1),
-					   padding_1111, GetLevelColor(), 0xff000000);
-		DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x2 + std::floor(slash.Width / 2), y2, x2 + std::floor(slash.Width / 2) + lk.Width, y2 + 1),
-					   padding_1011, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
+		//DrawShadowText(adFont, L"/", irr::core::recti(x2 - std::floor(slash.Width / 2), y2, x2 + std::floor(slash.Width / 2), y2 + 1),
+		//	padding_1111, 0xffffffff, 0xff000000, true);
+		//DrawShadowText(adFont, pcard->lvstring, irr::core::recti(x2 - half_slash_width - lv.Width, y2, x2 - half_slash_width, y2 + 1),
+		//	padding_1111, GetLevelColor(), 0xff000000);
+		//DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x2 + std::floor(slash.Width / 2), y2, x2 + std::floor(slash.Width / 2) + lk.Width, y2 + 1),
+		//	padding_1011, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
+		DrawShadowText(adFont, pcard->lvstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1111, GetLevelColor(), 0xff000000);
+		DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x4, y2, x4 + 1, y2 + 1), padding_1111, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
 	//has lv, rk
 	} else if ((pcard->level != 0 || (pcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL))) && (pcard->rank != 0 || (pcard->type & TYPE_XYZ))) {
-		DrawShadowText(adFont, L"/", irr::core::recti(x2 - half_slash_width, y2, x2 + half_slash_width, y2 + 1),
-		               padding_1111, 0xffffffff, 0xff000000, true);
-		DrawShadowText(adFont, pcard->lvstring, irr::core::recti(x2 - half_slash_width - lv.Width, y2, x2 - half_slash_width, y2 + 1),
-					   padding_1111, GetLevelColor(), 0xff000000);
-		DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2 + half_slash_width, y2, x2 + half_slash_width + rk.Width, y2 + 1),
-					   padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
+		//DrawShadowText(adFont, L"/", irr::core::recti(x2 - half_slash_width, y2, x2 + half_slash_width, y2 + 1),
+		//	padding_1111, 0xffffffff, 0xff000000, true);
+		//DrawShadowText(adFont, pcard->lvstring, irr::core::recti(x2 - half_slash_width - lv.Width, y2, x2 - half_slash_width, y2 + 1),
+		//	padding_1111, GetLevelColor(), 0xff000000);
+		//DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2 + half_slash_width, y2, x2 + half_slash_width + rk.Width, y2 + 1),
+		//	padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
+		DrawShadowText(adFont, L"/", irr::core::recti(x2 + lv.Width, y2, x2 + lv.Width + slash.Width, y2 + 1),
+			padding_1111, 0xffffffff, 0xff000000, true);
+		DrawShadowText(adFont, pcard->lvstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1111, GetLevelColor(), 0xff000000);
+		DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2 + lv.Width + slash.Width, y2, x2 + lv.Width + slash.Width + rk.Width, y2 + 1),
+			padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
 	//has rk
 	} else if (pcard->rank != 0 || (pcard->type & TYPE_XYZ))
 		DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1011, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
