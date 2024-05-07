@@ -462,30 +462,25 @@ void Game::DrawCard(ClientCard* pcard) {
 		matManager.mCard.AmbientColor = irr::video::SColor(255, 128, 128, 180);
 	else
 		matManager.mCard.AmbientColor = 0xffffffff;
-	if (pcard->is_attack) {
-		if (pcard->location & LOCATION_ONFIELD) {
-			float sy;
-			float xa = mainGame->dField.attacker->attPos.X;
-			float ya = mainGame->dField.attacker->attPos.Y;
-			float xd, yd;
-			xd = pcard->curPos.X;
-			yd = pcard->curPos.Y;
-			sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
-			irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
-			pcard->mTransform.setRotationRadians(atkr);
-		}
-	}
-	else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && pcard->is_pzone
+	if (pcard->is_attack && (pcard->location & LOCATION_ONFIELD)) {
+		float sy;
+		float xa = mainGame->dField.attacker->attPos.X;
+		float ya = mainGame->dField.attacker->attPos.Y;
+		float xd, yd;
+		xd = pcard->curPos.X;
+		yd = pcard->curPos.Y;
+		sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
+		irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
+		pcard->mTransform.setRotationRadians(atkr);
+	} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && pcard->is_pzone
 		&& !gGameConfig->topdown_view) {
 		pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(pcard->controler == 0 ? -0.32f : 0.32f, pcard->controler == 0 ? 0 : -0.8f, 0));
 		pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(-irr::core::PI / 3, 0, pcard->controler == 0 ? -irr::core::PI / 5 : -irr::core::PI + irr::core::PI / 5));
-	}
-	else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 4 || pcard->sequence == 7)) && pcard->is_pzone
+	} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 4 || pcard->sequence == 7)) && pcard->is_pzone
 		&& !gGameConfig->topdown_view) {
 		pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(pcard->controler == 0 ? 0.32f : -0.32f, pcard->controler == 0 ? 0 : -0.8f, 0));
 		pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(-irr::core::PI / 3, 0, pcard->controler == 0 ? irr::core::PI / 5 : -irr::core::PI - irr::core::PI / 5));
-	}
-	else {
+	} else {
 		pcard->mTransform.setTranslation(pcard->curPos);
 		pcard->mTransform.setRotationRadians(pcard->curRot);
 	}
@@ -493,19 +488,13 @@ void Game::DrawCard(ClientCard* pcard) {
 	  && !(pcard->is_selectable && (pcard->location & 0xe))
 	  && !(pcard->is_activable) && !(pcard->is_highlighting)) {
         driver->setMaterial(matManager.mOutLine);
-        if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP_ATTACK) && cardcloseup && pcard->attack >= 5000)
-			drawLine(matManager.vCardOutline2[0].Pos, matManager.vCardOutline2[1].Pos, matManager.vCardOutline2[2].Pos, matManager.vCardOutline2[3].Pos, 0xff00ff00);
-        else
-            drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff00ff00);
+        drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff00ff00);
     }
     if((pcard->cmdFlag & COMMAND_SPSUMMON) && (pcard->location & LOCATION_HAND)
 	  && !(pcard->is_selectable && (pcard->location & 0xe))
 	  && !(pcard->is_activable) && !(pcard->is_highlighting)) {
         driver->setMaterial(matManager.mOutLine);
-        if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP_ATTACK) && cardcloseup && pcard->attack >= 5000)
-			drawLine(matManager.vCardOutline2[0].Pos, matManager.vCardOutline2[1].Pos, matManager.vCardOutline2[2].Pos, matManager.vCardOutline2[3].Pos, 0xff0000ff);
-        else
-            drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff0000ff);
+        drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff0000ff);
     }
 	if (pcard->is_activable) {
 		irr::video::SColor outline_color = skin::DUELFIELD_HIGHLIGHTING_CARD_OUTLINE_VAL;
@@ -516,10 +505,7 @@ void Game::DrawCard(ClientCard* pcard) {
 			    DrawSelectionLine(matManager.vCardOutliner, true, 2, outline_color);
 		} else {
 			driver->setMaterial(matManager.mOutLine);
-            if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP_ATTACK) && cardcloseup && pcard->attack >= 5000)
-			    drawLine(matManager.vCardOutline2[0].Pos, matManager.vCardOutline2[1].Pos, matManager.vCardOutline2[2].Pos, matManager.vCardOutline2[3].Pos, 0xffffff00);
-            else
-			    drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffffff00);
+            drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffffff00);
 		}
 	}
 	///kdiy////////
@@ -538,16 +524,10 @@ void Game::DrawCard(ClientCard* pcard) {
 		} else {
 			if(!pcard->is_selected) {
 				driver->setMaterial(matManager.mOutLine);
-                if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP_ATTACK) && cardcloseup && pcard->attack >= 5000)
-			        drawLine(matManager.vCardOutline2[0].Pos, matManager.vCardOutline2[1].Pos, matManager.vCardOutline2[2].Pos, matManager.vCardOutline2[3].Pos, 0xffff00ff);
-                else
-			        drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffff00ff);
+                drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffff00ff);
 			} else {
 				driver->setMaterial(matManager.mOutLine);
-                if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP_ATTACK) && cardcloseup && pcard->attack >= 5000)
-			        drawLine(matManager.vCardOutline2[0].Pos, matManager.vCardOutline2[1].Pos, matManager.vCardOutline2[2].Pos, matManager.vCardOutline2[3].Pos, 0xff808080);
-                else
-			        drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff808080);
+                drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff808080);
 			}
 		}
 		///kdiy////////
@@ -566,10 +546,7 @@ void Game::DrawCard(ClientCard* pcard) {
 			    DrawSelectionLine(matManager.vCardOutliner, true, 2, outline_color);
 		} else {
 			driver->setMaterial(matManager.mOutLine);
-            if ((pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP_ATTACK) && cardcloseup && pcard->attack >= 5000)
-			    drawLine(matManager.vCardOutline2[0].Pos, matManager.vCardOutline2[1].Pos, matManager.vCardOutline2[2].Pos, matManager.vCardOutline2[3].Pos, 0xff00ffff);
-            else
-			    drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff00ffff);
+            drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff00ffff);
 		}
         ///kdiy////////
 	}
@@ -622,16 +599,15 @@ void Game::DrawCard(ClientCard* pcard) {
 				sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
 				irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
 				atk.setRotationRadians(atkr);
-			}
-			else
+			} else
 				atk.setRotationRadians(irr::core::vector3df(0, 0, 0));
 			driver->setTransform(irr::video::ETS_WORLD, atk);
-			if (pcard->attack >= 5000)
+			if (pcard->attack >= 4500)
 				driver->drawVertexPrimitiveList(matManager.vAttack3, 4, matManager.iRectangle, 2);
-			else if (pcard->attack < 1000 && ((pcard->type & TYPE_LINK) && pcard->link < 2) || ((pcard->type & TYPE_XYZ) && pcard->rank < 4) || (!(pcard->type & (TYPE_LINK | TYPE_XYZ)) && pcard->level < 4))
-				driver->drawVertexPrimitiveList(matManager.vAttack2, 4, matManager.iRectangle, 2);
-			else
+			else if (pcard->attack < 1000 && (((pcard->type & TYPE_LINK) && pcard->link < 3) || ((pcard->type & TYPE_XYZ) && pcard->rank < 4) || (!(pcard->type & (TYPE_LINK | TYPE_XYZ)) && pcard->level < 4)))
 				driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
+			else
+				driver->drawVertexPrimitiveList(matManager.vAttack2, 4, matManager.iRectangle, 2);
 		}
 	}
 	///kdiy////////
@@ -737,13 +713,14 @@ void Game::DrawCard(ClientCard* pcard) {
             matManager.mTexture.setTexture(0, imageManager.tLvRank);
             driver->setMaterial(matManager.mTexture);
             irr::core::matrix4 atk;
-            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.5f, pcard->controler == 0 ? -0.52f : 1.05f, 0.25f));
+            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.4f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
             driver->setTransform(irr::video::ETS_WORLD, atk);
             driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
+
             matManager.mTexture.setTexture(0, imageManager.tLink);
             driver->setMaterial(matManager.mTexture);
             irr::core::matrix4 atk2;
-            atk2.setTranslation(pcard->curPos + irr::core::vector3df(0.3f, pcard->controler == 0 ? -0.52f : 1.05f, 0.25f));
+            atk2.setTranslation(pcard->curPos + irr::core::vector3df(0.35f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
             driver->setTransform(irr::video::ETS_WORLD, atk2);
             driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
         //has lk, rk
@@ -751,29 +728,29 @@ void Game::DrawCard(ClientCard* pcard) {
             matManager.mTexture.setTexture(0, imageManager.tRank);
             driver->setMaterial(matManager.mTexture);
             irr::core::matrix4 atk;
-            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.5f, pcard->controler == 0 ? -0.52f : 1.05f, 0.25f));
+            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.4f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
             driver->setTransform(irr::video::ETS_WORLD, atk);
             driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
 
             matManager.mTexture.setTexture(0, imageManager.tLink);
             driver->setMaterial(matManager.mTexture);
             irr::core::matrix4 atk2;
-            atk2.setTranslation(pcard->curPos + irr::core::vector3df(0, pcard->controler == 0 ? -0.52f : 1.05f, 0.25f));
+            atk2.setTranslation(pcard->curPos + irr::core::vector3df(0.35f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
             driver->setTransform(irr::video::ETS_WORLD, atk2);
             driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
         //has lk, lv
-        } else if ((pcard->link != 0 || (pcard->type & TYPE_LINK)) && (pcard->rank != 0 || (pcard->type & TYPE_XYZ))) {
+        } else if ((pcard->link != 0 || (pcard->type & TYPE_LINK)) && (pcard->level != 0 || (pcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL)))) {
             matManager.mTexture.setTexture(0, imageManager.tLevel);
             driver->setMaterial(matManager.mTexture);
             irr::core::matrix4 atk;
-            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.5f, pcard->controler == 0 ? -0.52f : 1.05f, 0.25f));
+            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.4f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
             driver->setTransform(irr::video::ETS_WORLD, atk);
             driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
 
             matManager.mTexture.setTexture(0, imageManager.tLink);
             driver->setMaterial(matManager.mTexture);
             irr::core::matrix4 atk2;
-            atk2.setTranslation(pcard->curPos + irr::core::vector3df(0, pcard->controler == 0 ? -0.52f : 1.05f, 0.25f));
+            atk2.setTranslation(pcard->curPos + irr::core::vector3df(0.35f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
             driver->setTransform(irr::video::ETS_WORLD, atk2);
             driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
         //has lv, rk
@@ -781,7 +758,7 @@ void Game::DrawCard(ClientCard* pcard) {
             matManager.mTexture.setTexture(0, imageManager.tLvRank);
             driver->setMaterial(matManager.mTexture);
             irr::core::matrix4 atk;
-            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.5f, pcard->controler == 0 ? -0.52f : 1.05f, 0.25f));
+            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.4f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
             driver->setTransform(irr::video::ETS_WORLD, atk);
             driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
         //has rk
@@ -789,7 +766,7 @@ void Game::DrawCard(ClientCard* pcard) {
             matManager.mTexture.setTexture(0, imageManager.tRank);
             driver->setMaterial(matManager.mTexture);
             irr::core::matrix4 atk;
-            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.5f, pcard->controler == 0 ? -0.52f : 1.05f, 0.25f));
+            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.4f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
             driver->setTransform(irr::video::ETS_WORLD, atk);
             driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
         //has lv
@@ -797,7 +774,7 @@ void Game::DrawCard(ClientCard* pcard) {
             matManager.mTexture.setTexture(0, imageManager.tLevel);
             driver->setMaterial(matManager.mTexture);
             irr::core::matrix4 atk;
-            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.5f, pcard->controler == 0 ? -0.52f : 1.05f, 0.25f));
+            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.4f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
             driver->setTransform(irr::video::ETS_WORLD, atk);
             driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
         //has lk
@@ -805,7 +782,7 @@ void Game::DrawCard(ClientCard* pcard) {
             matManager.mTexture.setTexture(0, imageManager.tLink);
             driver->setMaterial(matManager.mTexture);
             irr::core::matrix4 atk;
-            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.5f, pcard->controler == 0 ? -0.52f : 1.05f, 0.25f));
+            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.4f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
             driver->setTransform(irr::video::ETS_WORLD, atk);
             driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
         }
@@ -1182,30 +1159,29 @@ void Game::DrawStatus(ClientCard* pcard) {
 	//	x2 = coords.X;
 	//	y2 = coords.Y;
 	//}
-	int x3, x4;
+	int x3, y3;
 	if (pcard->controler == 0) {
-		auto coords = getcoords({ pcard->curPos.X, (0.6f + pcard->curPos.Y), pcard->curPos.Z });
+		auto coords = getcoords({ pcard->curPos.X, (0.49f + pcard->curPos.Y), (pcard->curPos.Z + 0.25f) });
 		x1 = coords.X;
 		y1 = coords.Y;
-		coords = getcoords({ (pcard->curPos.X - 0.4f), (pcard->curPos.Y - 0.64f), pcard->curPos.Z + 0.25f });
+		coords = getcoords({ pcard->curPos.X, (0.55f + pcard->curPos.Y), (pcard->curPos.Z + 0.25f) });
+		y3 = coords.Y;
+		coords = getcoords({ (pcard->curPos.X - 0.3f), (pcard->curPos.Y - 0.5f), (pcard->curPos.Z + 0.25f) });
 		x2 = coords.X;
 		y2 = coords.Y;
-		coords = getcoords({ (pcard->curPos.X + 0.4f), (pcard->curPos.Y - 0.64f), pcard->curPos.Z + 0.25f });
+		coords = getcoords({ (pcard->curPos.X + 0.45f), (pcard->curPos.Y - 0.5f), (pcard->curPos.Z + 0.25f) });
 		x3 = coords.X;
-		coords = getcoords({ (pcard->curPos.X + 0.1f), (pcard->curPos.Y - 0.64f), pcard->curPos.Z + 0.25f });
-		x4 = coords.X;
-	}
-	else {
-		auto coords = getcoords({ pcard->curPos.X, (pcard->curPos.Y - 0.66f), pcard->curPos.Z });
+	} else {
+		auto coords = getcoords({ pcard->curPos.X, (pcard->curPos.Y - 0.4f), (pcard->curPos.Z + 0.25f) });
 		x1 = coords.X;
 		y1 = coords.Y;
-		coords = getcoords({ (pcard->curPos.X - 0.4f), (0.93f + pcard->curPos.Y), pcard->curPos.Z + 0.25f });
+		coords = getcoords({ pcard->curPos.X, (pcard->curPos.Y - 0.4f), (pcard->curPos.Z + 0.25f) });
+		y3 = coords.Y;
+		coords = getcoords({ (pcard->curPos.X - 0.3f), (0.59f + pcard->curPos.Y), (pcard->curPos.Z + 0.25f) });
 		x2 = coords.X;
 		y2 = coords.Y;
-		coords = getcoords({ (pcard->curPos.X + 0.4f), (0.93f + pcard->curPos.Y), pcard->curPos.Z + 0.25f });
+		coords = getcoords({ (pcard->curPos.X + 0.45f), (0.59f + pcard->curPos.Y), (pcard->curPos.Z + 0.25f) });
 		x3 = coords.X;
-		coords = getcoords({ (pcard->curPos.X - 0.2f), (0.93f + pcard->curPos.Y), pcard->curPos.Z + 0.25f });
-		x4 = coords.X;
 	}
 	////kdiy//////////
 
@@ -1241,12 +1217,14 @@ void Game::DrawStatus(ClientCard* pcard) {
 
     //////kdiy////////
 	//const auto atk = adFont->getDimensionustring(pcard->atkstring);
-	//const auto atk = atkFont->getDimensionustring(pcard->atkstring);
-	auto lv = adFont->getDimensionustring(pcard->lvstring);
-	auto rk = adFont->getDimensionustring(pcard->rkstring);
-	auto lk = adFont->getDimensionustring(pcard->linkstring);
+	//const auto slash = adFont->getDimensionustring(L"/");
+	auto lv = atkFont->getDimensionustring(pcard->lvstring);
+	auto rk = atkFont->getDimensionustring(pcard->rkstring);
+	auto lk = atkFont->getDimensionustring(pcard->linkstring);
+	const auto atk = atkFont->getDimensionustring(pcard->atkstring);
+	const auto slash = atkFont->getDimensionustring(L"/");
+	const auto slash2 = atkFont->getDimensionustring(L"|");
 	//////kdiy////////
-    const auto slash = adFont->getDimensionustring(L"/");
 	const auto half_slash_width = static_cast<int>(std::floor(slash.Width / 2));
 
 	const auto padding_1111 = Resize(1, 1, 1, 1);
@@ -1278,18 +1256,14 @@ void Game::DrawStatus(ClientCard* pcard) {
 	// 	DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1011, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
 	if(pcard->type & TYPE_LINK) {
         auto font = pcard->attack >= 8888888 ? numFont0 : atkFont;
-        const auto atk = font->getDimensionustring(pcard->atkstring);
 		DrawShadowText(font, pcard->atkstring, irr::core::recti(x1 - std::floor(atk.Width / 2), y1, x1 + std::floor(atk.Width / 2), y1 + 1),
 					   padding_1111, GetAtkColor(), 0xff000000, true);
 	} else {
         auto font = pcard->attack >= 8888888 ? (pcard->position & POS_DEFENSE) ? adFont0 : numFont0 :  (pcard->position & POS_DEFENSE) ? defFont : atkFont;
-        const auto atk = font->getDimensionustring(pcard->atkstring);
-        const auto slash2 = font->getDimensionustring(L"/");
-        const auto half_slash_width2 = static_cast<int>(std::floor(slash2.Width / 2));
-		DrawShadowText(font, L"/", irr::core::recti(x1 - half_slash_width2, y1, x1 + half_slash_width2, y1 + 1), padding_1111, 0xffffffff, 0xff000000, true);
-		DrawShadowText(font, pcard->atkstring, irr::core::recti(x1 - half_slash_width2 - atk.Width, y1, x1 - half_slash_width2, y1 + 1),
+		DrawShadowText(font, L"/", irr::core::recti(x1 - half_slash_width, y1, x1 + half_slash_width, y1 + 1), padding_1111, 0xffffffff, 0xff000000, true);
+		DrawShadowText(font, pcard->atkstring, irr::core::recti(x1 - half_slash_width - atk.Width, (pcard->position& POS_DEFENSE) ? y3 : y1, x1 - half_slash_width, ((pcard->position& POS_DEFENSE) ? y3 : y1) + 1),
 					   padding_1111, GetAtkColor(), 0xff000000);
-		DrawShadowText(pcard->defense >= 8888888 ? (pcard->position & POS_DEFENSE) ? adFont0 : numFont0 :  (pcard->position & POS_DEFENSE) ? atkFont : defFont, pcard->defstring, irr::core::recti(x1 + half_slash_width2, y1, x1 - half_slash_width2, y1 + 1),
+		DrawShadowText(pcard->defense >= 8888888 ? (pcard->position & POS_DEFENSE) ? adFont0 : numFont0 :  (pcard->position & POS_DEFENSE) ? atkFont : defFont, pcard->defstring, irr::core::recti(x1 + half_slash_width, (pcard->position& POS_DEFENSE) ? y1 : y3, x1 - half_slash_width, ((pcard->position& POS_DEFENSE) ? y1 : y3) + 1),
 					   padding_1111, GetDefColor(), 0xff000000);
 	}
 
@@ -1305,12 +1279,12 @@ void Game::DrawStatus(ClientCard* pcard) {
 		//	padding_1111, GetLevelColor(), 0xff000000);
 		//DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x2 + std::floor(rk.Width / 2) + slash.Width, y2, x2 + std::floor(rk.Width / 2) + slash.Width + lk.Width, y2 + 1),
 		//	padding_1111, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
-		DrawShadowText(adFont, L"/", irr::core::recti(x2 + lv.Width, y2, x2 + lv.Width + slash.Width, y2 + 1),
+		DrawShadowText(atkFont, L"|", irr::core::recti(x2 + lv.Width, y2, x2 + lv.Width + slash2.Width, y2 + 1),
 			padding_1111, 0xffffffff, 0xff000000, true);
-		DrawShadowText(adFont, pcard->lvstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1111, GetLevelColor(), 0xff000000);
-		DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2 + lv.Width + slash.Width, y2, x2 + lv.Width + slash.Width + rk.Width, y2 + 1),
+		DrawShadowText(atkFont, pcard->lvstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1111, GetLevelColor(), 0xff000000);
+		DrawShadowText(atkFont, pcard->rkstring, irr::core::recti(x2 + lv.Width + slash2.Width, y2, x2 + lv.Width + slash2.Width + rk.Width, y2 + 1),
 			padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000, true);
-		DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x3, y2, x3 + 1, y2 + 1), padding_1111, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
+		DrawShadowText(atkFont, pcard->linkstring, irr::core::recti(x3, y2, x3 + 1, y2 + 1), padding_1111, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
 	//has lk, rk
 	} else if ((pcard->link != 0 || (pcard->type & TYPE_LINK)) && (pcard->rank != 0 || (pcard->type & TYPE_XYZ))) {
 		//DrawShadowText(adFont, L"/", irr::core::recti(x2 - std::floor(slash.Width / 2), y2, x2 + std::floor(slash.Width / 2), y2 + 1),
@@ -1319,8 +1293,8 @@ void Game::DrawStatus(ClientCard* pcard) {
 		//	padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
 		//DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x2 + std::floor(slash.Width / 2), y2, x2 + std::floor(slash.Width / 2) + lk.Width, y2 + 1),
 		//	padding_1011, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
-		DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
-		DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x4, y2, x4 + 1, y2 + 1), padding_1111, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
+		DrawShadowText(atkFont, pcard->rkstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
+		DrawShadowText(atkFont, pcard->linkstring, irr::core::recti(x3, y2, x3 + 1, y2 + 1), padding_1111, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
 	//has lk, lv
 	} else if ((pcard->link != 0 || (pcard->type & TYPE_LINK)) && (pcard->level != 0 || (pcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL)))) {
 		//DrawShadowText(adFont, L"/", irr::core::recti(x2 - std::floor(slash.Width / 2), y2, x2 + std::floor(slash.Width / 2), y2 + 1),
@@ -1329,8 +1303,8 @@ void Game::DrawStatus(ClientCard* pcard) {
 		//	padding_1111, GetLevelColor(), 0xff000000);
 		//DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x2 + std::floor(slash.Width / 2), y2, x2 + std::floor(slash.Width / 2) + lk.Width, y2 + 1),
 		//	padding_1011, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
-		DrawShadowText(adFont, pcard->lvstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1111, GetLevelColor(), 0xff000000);
-		DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x4, y2, x4 + 1, y2 + 1), padding_1111, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
+		DrawShadowText(atkFont, pcard->lvstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1111, GetLevelColor(), 0xff000000);
+		DrawShadowText(atkFont, pcard->linkstring, irr::core::recti(x3, y2, x3 + 1, y2 + 1), padding_1111, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
 	//has lv, rk
 	} else if ((pcard->level != 0 || (pcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL))) && (pcard->rank != 0 || (pcard->type & TYPE_XYZ))) {
 		//DrawShadowText(adFont, L"/", irr::core::recti(x2 - half_slash_width, y2, x2 + half_slash_width, y2 + 1),
@@ -1339,20 +1313,20 @@ void Game::DrawStatus(ClientCard* pcard) {
 		//	padding_1111, GetLevelColor(), 0xff000000);
 		//DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2 + half_slash_width, y2, x2 + half_slash_width + rk.Width, y2 + 1),
 		//	padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
-		DrawShadowText(adFont, L"/", irr::core::recti(x2 + lv.Width, y2, x2 + lv.Width + slash.Width, y2 + 1),
+		DrawShadowText(atkFont, L"|", irr::core::recti(x2 + lv.Width, y2, x2 + lv.Width + slash2.Width, y2 + 1),
 			padding_1111, 0xffffffff, 0xff000000, true);
-		DrawShadowText(adFont, pcard->lvstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1111, GetLevelColor(), 0xff000000);
-		DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2 + lv.Width + slash.Width, y2, x2 + lv.Width + slash.Width + rk.Width, y2 + 1),
+		DrawShadowText(atkFont, pcard->lvstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1111, GetLevelColor(), 0xff000000);
+		DrawShadowText(atkFont, pcard->rkstring, irr::core::recti(x2 + lv.Width + slash2.Width, y2, x2 + lv.Width + slash2.Width + rk.Width, y2 + 1),
 			padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
 	//has rk
 	} else if (pcard->rank != 0 || (pcard->type & TYPE_XYZ))
-		DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1011, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
+		DrawShadowText(atkFont, pcard->rkstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1011, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
 	//has lv
 	else if (pcard->level != 0 || !(pcard->type & (TYPE_XYZ | TYPE_LINK)))
-		DrawShadowText(adFont, pcard->lvstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1011, GetLevelColor(), 0xff000000);
+		DrawShadowText(atkFont, pcard->lvstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1011, GetLevelColor(), 0xff000000);
 	//has lk
 	else if (pcard->link != 0 || (pcard->type & TYPE_LINK))
-		DrawShadowText(adFont, pcard->linkstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1011, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
+		DrawShadowText(atkFont, pcard->linkstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1011, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
 }
 /*
 Draws the pendulum scale value of a card in the pendulum zone based on its relative position

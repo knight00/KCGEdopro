@@ -1005,12 +1005,17 @@ void ClientField::MoveCard(ClientCard* pcard, float frame) {
 	else
 		pcard->dRot.Z = -(irr::core::PI * 2 - diff) / milliseconds;
 	pcard->is_moving = true;
-    ////kdiy///////////
-    if(!pcard->is_attack)
-    ////kdiy///////////
 	pcard->refresh_on_stop = true;
 	pcard->aniFrame = milliseconds;
 }
+////kdiy///////////
+void ClientField::MoveCard(ClientCard* pcard, irr::core::vector3df trans, float frame) {
+	float milliseconds = frame * 1000.0f / 60.0f;
+	pcard->dPos = (trans - pcard->curPos) / milliseconds;
+	pcard->is_moving = true;
+	pcard->aniFrame = milliseconds;
+}
+////kdiy///////////
 void ClientField::FadeCard(ClientCard* pcard, float alpha, float frame) {
 	float milliseconds = frame * 1000.0f / 60.0f;
 	pcard->dAlpha = (alpha - pcard->curAlpha) / milliseconds;

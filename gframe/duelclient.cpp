@@ -5160,41 +5160,29 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		// mainGame->is_attacking = true;
         // mainGame->WaitFrameSignal(40, lock);
 		// mainGame->is_attacking = false;
-        auto acontroler = mainGame->dField.attacker->controler;
-		mainGame->dField.attacker->attsequence = mainGame->dField.attacker->sequence;
-        auto alocation = mainGame->dField.attacker->location;
+        irr::core::vector3df pos = mainGame->dField.attacker->curPos;
         mainGame->dField.attacker->is_attack = true;
-        if(!is_direct) {
-            mainGame->dField.attacker->controler = info2.controler;
-            mainGame->dField.attacker->sequence = mainGame->dField.attack_target->sequence;
-            mainGame->dField.attacker->location = mainGame->dField.attack_target->location;
-        } else {
-            mainGame->dField.attacker->controler = 1 - mainGame->dField.attacker->controler;
-            mainGame->dField.attacker->sequence = 2;
-            mainGame->dField.attacker->location = LOCATION_MZONE;
-        }
-        if(acontroler == 1)
+        if(info1.controler == 1)
 			mainGame->dField.attacker->attack_me = true;
         else
 			mainGame->dField.attacker->attack_me = false;
-        mainGame->dField.MoveCard(mainGame->dField.attacker, 10);
+        if(!is_direct)
+            mainGame->dField.MoveCard(mainGame->dField.attacker, mainGame->dField.attack_target->curPos, 10);
+        else
+            mainGame->dField.MoveCard(mainGame->dField.attacker, irr::core::vector3df(3.9f, info1.controler == 0 ? -3.4f : 4.0f, 0.5f), 10);
 		for(auto& pcard : mainGame->dField.attacker->overlayed) {
             pcard->is_attack = true;
-            pcard->controler = mainGame->dField.attacker->controler;
-			pcard->attsequence = pcard->sequence;
-            pcard->sequence = mainGame->dField.attacker->sequence;
 			pcard->attack_me = mainGame->dField.attacker->attack_me;
-            mainGame->dField.MoveCard(pcard, 10);
+            if(!is_direct)
+                mainGame->dField.MoveCard(pcard, mainGame->dField.attack_target->curPos, 10);
+            else
+                mainGame->dField.MoveCard(pcard, irr::core::vector3df(3.9f, info1.controler == 0 ? -3.4f : 4.0f, 0.5f), 10);
         }
         mainGame->WaitFrameSignal(10, lock);
-        mainGame->dField.attacker->controler = acontroler;
-        mainGame->dField.attacker->sequence = mainGame->dField.attacker->attsequence;
-        mainGame->dField.attacker->location = alocation;
-        mainGame->dField.MoveCard(mainGame->dField.attacker, 10);
+        mainGame->dField.MoveCard(mainGame->dField.attacker, pos, 10);
         for(auto& pcard : mainGame->dField.attacker->overlayed) {
             pcard->controler = mainGame->dField.attacker->controler;
-			pcard->sequence = pcard->attsequence;
-            mainGame->dField.MoveCard(pcard, 10);
+            mainGame->dField.MoveCard(pcard, pos, 10);
         }
         mainGame->WaitFrameSignal(10, lock);
         mainGame->dField.attacker->is_attack = false;

@@ -20,7 +20,6 @@ public:
 	QuadVertex vCardOutliner;
 	QuadVertex vCardBack;
 	////kdiy////////
-	QuadVertex vCardOutline2;
 	QuadVertex vPScale;
     QuadVertex vCloseup;
 	QuadVertex vAttack;

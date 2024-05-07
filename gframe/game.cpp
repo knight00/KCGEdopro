@@ -630,7 +630,7 @@ void Game::Initialize() {
 	numfont.size = Scale(48);
 	lpcFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
     ////kdiy/////////
-	numfont.size = Scale(9);
+	numfont.size = Scale(11);
 	atkFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
 	numfont.size = Scale(7);
 	defFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
