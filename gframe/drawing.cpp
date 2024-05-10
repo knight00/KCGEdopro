@@ -484,6 +484,43 @@ void Game::DrawCard(ClientCard* pcard) {
 		pcard->mTransform.setTranslation(pcard->curPos);
 		pcard->mTransform.setRotationRadians(pcard->curRot);
 	}
+	if((pcard->location & LOCATION_ONFIELD)) {
+		if ((pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup) {
+			if ((pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
+				matManager.mTexture.AmbientColor = irr::video::SColor(255, 128, 128, 128);
+			else if (pcard->position & POS_DEFENSE)
+				matManager.mTexture.AmbientColor = irr::video::SColor(255, 180, 180, 255);
+			else
+				matManager.mTexture.AmbientColor = 0xffffffff;
+			matManager.mTexture.setTexture(0, cardcloseup);
+			driver->setMaterial(matManager.mTexture);
+			irr::core::matrix4 atk;
+			if (!(pcard->cmdFlag & COMMAND_ATTACK))
+				atk.setTranslation(pcard->curPos + irr::core::vector3df(0, pcard->controler == 0 ? 0 : 0.2f, 0.2f));
+			else
+				atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? -0.4f : 0.4f) * (atkdy / 4.0f + 0.35f), 0.05f));
+			if (pcard->is_attack) {
+				float sy;
+				float xa = mainGame->dField.attacker->attPos.X;
+				float ya = mainGame->dField.attacker->attPos.Y;
+				float xd, yd;
+				xd = pcard->curPos.X;
+				yd = pcard->curPos.Y;
+				sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
+				irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
+				atk.setRotationRadians(atkr);
+			} else
+				atk.setRotationRadians(irr::core::vector3df(0, 0, 0));
+			driver->setTransform(irr::video::ETS_WORLD, atk);
+			if (pcard->attack >= 4500)
+				driver->drawVertexPrimitiveList(matManager.vAttack3, 4, matManager.iRectangle, 2);
+			else if (pcard->attack < 1000 && (((pcard->type & TYPE_LINK) && pcard->link < 3) || ((pcard->type & TYPE_XYZ) && pcard->rank < 4) || (!(pcard->type & (TYPE_LINK | TYPE_XYZ)) && pcard->level < 4)))
+				driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
+			else
+				driver->drawVertexPrimitiveList(matManager.vAttack2, 4, matManager.iRectangle, 2);
+		}
+	}
+	driver->setTransform(irr::video::ETS_WORLD, pcard->mTransform);
     if((pcard->cmdFlag & COMMAND_ACTIVATE) && pcard->controler == 0 && (pcard->location & (LOCATION_HAND | LOCATION_ONFIELD))
 	  && !(pcard->is_selectable && (pcard->location & 0xe))
 	  && !(pcard->is_activable) && !(pcard->is_highlighting)) {
@@ -507,6 +544,11 @@ void Game::DrawCard(ClientCard* pcard) {
 			driver->setMaterial(matManager.mOutLine);
             drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffffff00);
 		}
+	}
+	if (pcard->is_damage) {
+		matManager.mTexture.setTexture(0, imageManager.tCrack);
+		driver->setMaterial(matManager.mTexture);
+		driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
 	}
 	///kdiy////////
 	if (pcard->is_selectable && (pcard->location & 0xe)) {
@@ -573,44 +615,6 @@ void Game::DrawCard(ClientCard* pcard) {
 		// driver->drawVertexPrimitiveList(matManager.vNegate, 4, matManager.iRectangle, 2);
 		///kdiy////////
 	}
-	///kdiy////////
-	if((pcard->location & LOCATION_ONFIELD)) {
-		if ((pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup) {
-			if ((pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
-				matManager.mTexture.AmbientColor = irr::video::SColor(255, 128, 128, 128);
-			else if (pcard->position & POS_DEFENSE)
-				matManager.mTexture.AmbientColor = irr::video::SColor(255, 180, 180, 255);
-			else
-				matManager.mTexture.AmbientColor = 0xffffffff;
-			matManager.mTexture.setTexture(0, cardcloseup);
-			driver->setMaterial(matManager.mTexture);
-			irr::core::matrix4 atk;
-			if (!(pcard->cmdFlag & COMMAND_ATTACK))
-				atk.setTranslation(pcard->curPos + irr::core::vector3df(0, pcard->controler == 0 ? 0 : 0.2f, 0.2f));
-			else
-				atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? -0.4f : 0.4f) * (atkdy / 4.0f + 0.35f), 0.05f));
-			if (pcard->is_attack) {
-				float sy;
-				float xa = mainGame->dField.attacker->attPos.X;
-				float ya = mainGame->dField.attacker->attPos.Y;
-				float xd, yd;
-				xd = pcard->curPos.X;
-				yd = pcard->curPos.Y;
-				sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
-				irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
-				atk.setRotationRadians(atkr);
-			} else
-				atk.setRotationRadians(irr::core::vector3df(0, 0, 0));
-			driver->setTransform(irr::video::ETS_WORLD, atk);
-			if (pcard->attack >= 4500)
-				driver->drawVertexPrimitiveList(matManager.vAttack3, 4, matManager.iRectangle, 2);
-			else if (pcard->attack < 1000 && (((pcard->type & TYPE_LINK) && pcard->link < 3) || ((pcard->type & TYPE_XYZ) && pcard->rank < 4) || (!(pcard->type & (TYPE_LINK | TYPE_XYZ)) && pcard->level < 4)))
-				driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
-			else
-				driver->drawVertexPrimitiveList(matManager.vAttack2, 4, matManager.iRectangle, 2);
-		}
-	}
-	///kdiy////////
 	if (pcard->is_moving)
 		return;
 	///kdiy////////
@@ -622,6 +626,7 @@ void Game::DrawCard(ClientCard* pcard) {
 		driver->setTransform(irr::video::ETS_WORLD, atk);
 		driver->drawVertexPrimitiveList(matManager.vHint, 4, matManager.iRectangle, 2);
 	}
+	driver->setTransform(irr::video::ETS_WORLD, pcard->mTransform);
 	if((pcard->type & TYPE_XYZ) && (pcard->location & LOCATION_ONFIELD)) {
 		auto cd = gDataManager->GetCardData(pcard->code);
 		if(cd) {
@@ -706,6 +711,7 @@ void Game::DrawCard(ClientCard* pcard) {
 			}
 		}
 	}
+	driver->setTransform(irr::video::ETS_WORLD, pcard->mTransform);
     if(pcard->code != 0 && (pcard->controler == 0 || (pcard->position & POS_FACEUP)) 
     && (((pcard->location & LOCATION_MZONE) && !pcard->is_sanct) || ((pcard->location & LOCATION_SZONE) && pcard->is_orica)) && !pcard->equipTarget) {
         //has lv, rk, lk
@@ -787,6 +793,7 @@ void Game::DrawCard(ClientCard* pcard) {
             driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
         }
     }
+	driver->setTransform(irr::video::ETS_WORLD, pcard->mTransform);
     ////kdiy/////////
     //if(pcard->cmdFlag & COMMAND_ATTACK) {
 	if((pcard->cmdFlag & COMMAND_ATTACK) && !cardcloseup) {

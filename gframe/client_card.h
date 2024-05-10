@@ -71,6 +71,7 @@ public:
 	bool is_pzone = false;
 	bool is_attack = false;
 	bool attack_me = false;
+	bool is_damage = false;
     /////////kdiy/////////
 	uint32_t attribute;
 	uint64_t race;

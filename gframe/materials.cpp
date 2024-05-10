@@ -42,8 +42,8 @@ Materials::Materials() {
 	//SetS3DVertex(vSymbol, -0.35f, -0.35f, 0.35f, 0.35f, 0.01f, 1, 0, 0, 1, 1);
 	//SetS3DVertex(vNegate, -0.25f, -0.28f, 0.25f, 0.22f, 0.01f, 1, 0, 0, 1, 1);
     SetS3DVertex(vSymbol0, -0.35f, -0.35f, 0.35f, 0.35f, 0.01f, 1, 0, 0, 1, 1);
-    SetS3DVertex(vSymbol, -0.59f, -0.59f, 0.59f, 0.59f, 0.08f, 1, 0, 0, 1, 1);
-    SetS3DVertex(vNegate, -0.54f, -0.57f, 0.54f, 0.57f, 0.08f, 1, 0, 0, 1, 1);
+    SetS3DVertex(vSymbol, -0.35f, -0.35f, 0.35f, 0.35f, 0.01f, 1, 0, 0, 1, 1);
+    SetS3DVertex(vNegate, -0.54f, -0.57f, 0.54f, 0.57f, 0.01f, 1, 0, 0, 1, 1);
 	SetS3DVertex(vHint, -0.25f, -0.25f, 0.25f, 0.25f, 0, 1, 0, 0, 1, 1);
 	SetS3DVertex(vXyz, -0.1f, -0.1f, 0.1f, 0.1f, 0, 1, 0, 0, 1, 1);
 	SetS3DVertex(vXyztrail, -0.05f, -0.05f, 0.05f, 0.05f, 0, 1, 0, 0, 1, 1);

@@ -4241,8 +4241,14 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				int frames = 20;
 				if(gGameConfig->quick_animation)
 					frames = 12;
+				//////kdiy///
+				if (reason & REASON_DESTROY) pcard->is_damage = true;
+				//////kdiy///
 				mainGame->dField.FadeCard(pcard, 5, frames);
 				mainGame->WaitFrameSignal(frames, lock);
+				//////kdiy///
+				pcard->is_damage = false;
+				//////kdiy///
 			}
 			if(pcard->location & LOCATION_OVERLAY) {
 				pcard->overlayTarget->overlayed.erase(pcard->overlayTarget->overlayed.begin() + pcard->sequence);
@@ -4310,7 +4316,13 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 							for(const auto& hcard : mainGame->dField.hand[previous.controler])
 								mainGame->dField.MoveCard(hcard, 10);
 						}
+						//////kdiy///
+						if (reason & REASON_DESTROY) pcard->is_damage = true;
+						//////kdiy///
 						mainGame->WaitFrameSignal(5, lock);
+						//////kdiy///
+						pcard->is_damage = false;
+						//////kdiy///
 					}
 				}
 			} else if (!(previous.location & LOCATION_OVERLAY)) {
