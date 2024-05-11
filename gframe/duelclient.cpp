@@ -4243,6 +4243,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					frames = 12;
 				//////kdiy///
 				if (reason & REASON_DESTROY) pcard->is_damage = true;
+				mainGame->WaitFrameSignal(frames, lock);
 				//////kdiy///
 				mainGame->dField.FadeCard(pcard, 5, frames);
 				mainGame->WaitFrameSignal(frames, lock);
@@ -4300,6 +4301,13 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 						mainGame->WaitFrameSignal(5, lock);
 					} else {
 						////////kdiy////////
+						if (reason & REASON_DESTROY) pcard->is_damage = true;
+                        int frames = 20;
+                        if(gGameConfig->quick_animation)
+                            frames = 12;
+						mainGame->WaitFrameSignal(frames, lock);
+                        mainGame->dField.FadeCard(pcard, 0, frames);
+						mainGame->WaitFrameSignal(frames, lock);
 						//if (current.location == LOCATION_MZONE && pcard->overlayed.size() > 0) {
 						if((current.location == LOCATION_MZONE || current.location == LOCATION_SZONE) && pcard->overlayed.size() > 0) {
 						////////kdiy////////
@@ -4312,13 +4320,13 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 								mainGame->dField.MoveCard(hcard, 10);
 						} else
 							mainGame->dField.MoveCard(pcard, 10);
+						//////kdiy///
+                        mainGame->dField.FadeCard(pcard, 255, 5);
+						//////kdiy///
 						if(previous.location == LOCATION_HAND) {
 							for(const auto& hcard : mainGame->dField.hand[previous.controler])
 								mainGame->dField.MoveCard(hcard, 10);
 						}
-						//////kdiy///
-						if (reason & REASON_DESTROY) pcard->is_damage = true;
-						//////kdiy///
 						mainGame->WaitFrameSignal(5, lock);
 						//////kdiy///
 						pcard->is_damage = false;
@@ -5175,16 +5183,16 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         irr::core::vector3df pos = mainGame->dField.attacker->curPos;
         mainGame->dField.attacker->is_attack = true;
         if(info1.controler == 1)
-			mainGame->dField.attacker->attack_me = true;
+			mainGame->dField.attacker->attackopp = true;
         else
-			mainGame->dField.attacker->attack_me = false;
+			mainGame->dField.attacker->attackopp = false;
         if(!is_direct)
             mainGame->dField.MoveCard(mainGame->dField.attacker, mainGame->dField.attack_target->curPos, 10);
         else
             mainGame->dField.MoveCard(mainGame->dField.attacker, irr::core::vector3df(3.9f, info1.controler == 0 ? -3.4f : 4.0f, 0.5f), 10);
 		for(auto& pcard : mainGame->dField.attacker->overlayed) {
             pcard->is_attack = true;
-			pcard->attack_me = mainGame->dField.attacker->attack_me;
+			pcard->attackopp = mainGame->dField.attacker->attackopp;
             if(!is_direct)
                 mainGame->dField.MoveCard(pcard, mainGame->dField.attack_target->curPos, 10);
             else

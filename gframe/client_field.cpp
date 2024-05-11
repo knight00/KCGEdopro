@@ -853,7 +853,7 @@ void ClientField::GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df
 		//if(location == LOCATION_MZONE) {
 			// if(controler == 0)
 		if(((location == LOCATION_MZONE && !pcard->is_sanct) || (location == LOCATION_SZONE && pcard->is_orica)) && !pcard->equipTarget) {
-            if((controler == 0 || pcard->is_attack) && !pcard->attack_me)
+            if((controler == 0 || pcard->is_attack) && !pcard->attackopp)
 		////////kdiy///////////
 				*r = (pcard->position & POS_DEFENSE) ? selfDEF : selfATK;
 			else
@@ -861,7 +861,7 @@ void ClientField::GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df
 		} else if (location == LOCATION_OVERLAY)
             ////////kdiy///////////
 			// *r = (pcard->overlayTarget->controler == 0) ? selfATK : oppoATK;
-            *r = ((pcard->overlayTarget->controler == 0 || pcard->is_attack) && !pcard->attack_me) ? selfATK : oppoATK;
+            *r = ((pcard->overlayTarget->controler == 0 || pcard->is_attack) && !pcard->attackopp) ? selfATK : oppoATK;
             ////////kdiy///////////
 		else
 			*r = (controler == 0) ? selfATK : oppoATK;

@@ -427,15 +427,16 @@ void Game::DrawCard(ClientCard* pcard) {
 	irr::video::ITexture* cardcloseup; irr::video::SColor cardcloseupcolor = irr::video::SColor(255, 255, 255, 0);
 	std::tie(cardcloseup, cardcloseupcolor) = imageManager.GetTextureCloseup(pcard->code, pcard->alias);
 	matManager.mTexture.AmbientColor = 0xffffffff;
-    int pattern = linePatternD3D - 14;
-    if(linePatternD3D < 15)
-        pattern += 15;
     auto drawLine = [&](const auto& pos0, const auto& pos1, const auto& pos2, const auto& pos3, irr::video::SColor color) -> void {
         driver->draw3DLineW(pos0, pos1, color, (pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup ? 10 : 8);
         driver->draw3DLineW(pos1, pos3, color, (pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup ? 10 : 8);
         driver->draw3DLineW(pos3, pos2, color, (pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup ? 10 : 8);
         driver->draw3DLineW(pos2, pos0, color, (pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup ? 10 : 8);
     };
+    ///kdiy////////
+	if (((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP))) && (pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
+	matManager.mCard.AmbientColor = irr::video::SColor(255, 128, 128, 180);
+	else
 	///kdiy////////
 	matManager.mCard.AmbientColor = 0xffffffff;
 	matManager.mCard.DiffuseColor = ((int)std::round(pcard->curAlpha) << 24) | 0xffffff;
@@ -458,10 +459,6 @@ void Game::DrawCard(ClientCard* pcard) {
 		driver->drawVertexPrimitiveList(matManager.vCardBack, 4, matManager.iRectangle, 2);
 	}
 	///kdiy////////
-	if ((pcard->position & POS_FACEUP) && (pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
-		matManager.mCard.AmbientColor = irr::video::SColor(255, 128, 128, 180);
-	else
-		matManager.mCard.AmbientColor = 0xffffffff;
 	if (pcard->is_attack && (pcard->location & LOCATION_ONFIELD)) {
 		float sy;
 		float xa = mainGame->dField.attacker->attPos.X;
@@ -548,7 +545,7 @@ void Game::DrawCard(ClientCard* pcard) {
 	if (pcard->is_damage) {
 		matManager.mTexture.setTexture(0, imageManager.tCrack);
 		driver->setMaterial(matManager.mTexture);
-		driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
+		driver->drawVertexPrimitiveList(matManager.vSymbol0, 4, matManager.iRectangle, 2);
 	}
 	///kdiy////////
 	if (pcard->is_selectable && (pcard->location & 0xe)) {

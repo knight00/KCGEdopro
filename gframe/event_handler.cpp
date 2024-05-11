@@ -1862,31 +1862,25 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 								// 	else {
 								// 		str.append(epro::format(L"\n{}{} {}/{}", (mcard->level ? L"\u2605" : L"\u2606"), (mcard->level ? mcard->level : mcard->rank), gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
 								// 	}
-                                if ((mcard->link != 0 || (mcard->type & TYPE_LINK))) {
-									str.append(epro::format(L"\n{}/{}", gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
-									str.append(epro::format(L"\n{}", mcard->atkstring));
+								//has lv, rk, lk
+								if ((mcard->level != 0 || (mcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL))) && (mcard->rank != 0 || (mcard->type & TYPE_XYZ)) && (mcard->link != 0 || (mcard->type & TYPE_LINK))) {
+									str.append(epro::format(L"\n\u2605{}/\u2606{} {}/{}", mcard->level, mcard->rank, gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
+									str.append(epro::format(L"\n{}/Link {}", mcard->atkstring, mcard->link));
 								//has lk, rk/lv
-								} else
-                                    str.append(epro::format(L"\n{}/{}\n{}/{}", gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute), mcard->atkstring, mcard->defstring));
-								// //has lv, rk, lk
-								// if ((mcard->level != 0 || (mcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL))) && (mcard->rank != 0 || (mcard->type & TYPE_XYZ)) && (mcard->link != 0 || (mcard->type & TYPE_LINK))) {
-								// 	str.append(epro::format(L"\n\u2605{}/\u2606{} {}/{}", mcard->level, mcard->rank, gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
-								// 	str.append(epro::format(L"\n{}/Link {}", mcard->atkstring, mcard->link));
-								// //has lk, rk/lv
-								// } else if ((mcard->link != 0 || (mcard->type & TYPE_LINK)) && ((mcard->rank != 0 || (mcard->type & TYPE_XYZ)) || (mcard->level != 0 || (mcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL))))) {
-								// 	str.append(epro::format(L"\n{}{} {}/{}", (mcard->type & TYPE_XYZ) ? L"\u2606" : L"\u2605", (mcard->type & TYPE_XYZ) ? mcard->rank : mcard->level, gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
-								// 	str.append(epro::format(L"\n{}/Link {}", mcard->atkstring, mcard->link));
-								// //has lv, rk
-								// } else if ((mcard->level != 0 || (mcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL))) && (mcard->rank != 0 || (mcard->type & TYPE_XYZ))) {
-								// 	str.append(epro::format(L"\n\u2605{}/\u2606{} {}/{}", mcard->level, mcard->rank, gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
-								// 	str.append(epro::format(L"\n{}/{}", mcard->atkstring, mcard->defstring));
-								// //has rk/lv
-								// } else if ((mcard->rank != 0 || (mcard->type & TYPE_XYZ)) || (mcard->level != 0 || !(mcard->type & (TYPE_XYZ | TYPE_LINK)))) {
-								// 	str.append(epro::format(L"\n{}{} {}/{}", (mcard->type & TYPE_XYZ)  ? L"\u2606" : L"\u2605", (mcard->type & TYPE_XYZ) ? mcard->rank : mcard->level, gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
-								// 	str.append(epro::format(L"\n{}/{}", mcard->atkstring, mcard->defstring));
-								// //has lk
-								// } else if (mcard->link != 0 || (mcard->type & TYPE_LINK))
-								//     str.append(epro::format(L"\n{}/Link {}\n{}/{}", mcard->atkstring, mcard->link, gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
+								} else if ((mcard->link != 0 || (mcard->type & TYPE_LINK)) && ((mcard->rank != 0 || (mcard->type & TYPE_XYZ)) || (mcard->level != 0 || (mcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL))))) {
+									str.append(epro::format(L"\n{}{} {}/{}", (mcard->type & TYPE_XYZ) ? L"\u2606" : L"\u2605", (mcard->type & TYPE_XYZ) ? mcard->rank : mcard->level, gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
+									str.append(epro::format(L"\n{}/Link {}", mcard->atkstring, mcard->link));
+								//has lv, rk
+								} else if ((mcard->level != 0 || (mcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL))) && (mcard->rank != 0 || (mcard->type & TYPE_XYZ))) {
+									str.append(epro::format(L"\n\u2605{}/\u2606{} {}/{}", mcard->level, mcard->rank, gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
+									str.append(epro::format(L"\n{}/{}", mcard->atkstring, mcard->defstring));
+								//has rk/lv
+								} else if ((mcard->rank != 0 || (mcard->type & TYPE_XYZ)) || (mcard->level != 0 || !(mcard->type & (TYPE_XYZ | TYPE_LINK)))) {
+									str.append(epro::format(L"\n{}{} {}/{}", (mcard->type & TYPE_XYZ)  ? L"\u2606" : L"\u2605", (mcard->type & TYPE_XYZ) ? mcard->rank : mcard->level, gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
+									str.append(epro::format(L"\n{}/{}", mcard->atkstring, mcard->defstring));
+								//has lk
+								} else if (mcard->link != 0 || (mcard->type & TYPE_LINK))
+								    str.append(epro::format(L"\n{}/Link {}\n{}/{}", mcard->atkstring, mcard->link, gDataManager->FormatRace(mcard->race), gDataManager->FormatAttribute(mcard->attribute)));
 								///////kdiy/////////
 							}
 							if((mcard->location & (LOCATION_HAND | LOCATION_SZONE)) != 0 && (mcard->type & TYPE_PENDULUM)) {

@@ -70,7 +70,7 @@ public:
 	bool is_sanct = false;
 	bool is_pzone = false;
 	bool is_attack = false;
-	bool attack_me = false;
+	bool attackopp = false;
 	bool is_damage = false;
     /////////kdiy/////////
 	uint32_t attribute;
