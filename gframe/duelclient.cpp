@@ -4242,8 +4242,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				if(gGameConfig->quick_animation)
 					frames = 12;
 				//////kdiy///
-				if (reason & REASON_DESTROY) pcard->is_damage = true;
-				mainGame->WaitFrameSignal(frames, lock);
+				if (reason & REASON_DESTROY) {
+                    pcard->is_damage = true;
+                    mainGame->WaitFrameSignal(frames, lock);
+                }
 				//////kdiy///
 				mainGame->dField.FadeCard(pcard, 5, frames);
 				mainGame->WaitFrameSignal(frames, lock);
@@ -4301,13 +4303,15 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 						mainGame->WaitFrameSignal(5, lock);
 					} else {
 						////////kdiy////////
-						if (reason & REASON_DESTROY) pcard->is_damage = true;
-                        int frames = 20;
-                        if(gGameConfig->quick_animation)
-                            frames = 12;
-						mainGame->WaitFrameSignal(frames, lock);
-                        mainGame->dField.FadeCard(pcard, 0, frames);
-						mainGame->WaitFrameSignal(frames, lock);
+						if (reason & REASON_DESTROY) {
+                            pcard->is_damage = true;
+                            int frames = 20;
+                            if(gGameConfig->quick_animation)
+                                frames = 12;
+						    mainGame->WaitFrameSignal(frames, lock);
+                            mainGame->dField.FadeCard(pcard, 0, frames);
+						    mainGame->WaitFrameSignal(frames, lock);
+                        }
 						//if (current.location == LOCATION_MZONE && pcard->overlayed.size() > 0) {
 						if((current.location == LOCATION_MZONE || current.location == LOCATION_SZONE) && pcard->overlayed.size() > 0) {
 						////////kdiy////////
@@ -4321,7 +4325,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 						} else
 							mainGame->dField.MoveCard(pcard, 10);
 						//////kdiy///
-                        mainGame->dField.FadeCard(pcard, 255, 5);
+                        if (reason & REASON_DESTROY)
+                            mainGame->dField.FadeCard(pcard, 255, 5);
 						//////kdiy///
 						if(previous.location == LOCATION_HAND) {
 							for(const auto& hcard : mainGame->dField.hand[previous.controler])
