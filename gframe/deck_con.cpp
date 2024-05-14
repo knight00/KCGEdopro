@@ -671,6 +671,22 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 				mainGame->charactselect(0, sel);
 				break;
 			}
+			case COMBOBOX_HTDECKS2: {
+				int sel = mainGame->cbHandTestDecks2->getSelected();
+				if(sel >= 0)
+				    mainGame->RefreshDeck(mainGame->cbHandTestDecks2);
+				else
+                    break;
+			}
+			case COMBOBOX_HTDECKS: {
+				int sel = mainGame->cbHandTestDecks->getSelected();
+				int sel2 = mainGame->cbHandTestDecks2->getSelected();
+				if(sel >= 0 && sel2 >= 0) {
+					auto folder = Utils::ToPathString(mainGame->cbHandTestDecks2->getItem(sel2));
+					mainGame->deckBuilder.SetCurrentDeckFromFile((sel2 == 0 ? EPRO_TEXT("") : folder + EPRO_TEXT("/")) + Utils::ToPathString(mainGame->cbDBDecks->getItem(sel)), true);
+				}
+				break;
+			}
 			case COMBOBOX_DBDECKS2: {
 				int sel = mainGame->cbDBDecks->getSelected();
 				int sel2 = mainGame->cbDBDecks2->getSelected();

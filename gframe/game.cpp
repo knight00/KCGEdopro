@@ -1370,6 +1370,14 @@ void Game::Initialize() {
 	cbHandTestDuelRule = AddComboBox(env, nextHandTestRow(95, mainMenuWidth - 10, false), wHandTest);
 	ReloadCBDuelRule(cbHandTestDuelRule);
 	cbHandTestDuelRule->setSelected(4);
+	///////kdiy////
+	tmpptr = env->addStaticText(gDataManager->GetSysString(1301).data(), nextHandTestRow(10, 80), false, false, wHandTest);
+	defaultStrings.emplace_back(tmpptr, 1301);
+	cbHandTestDecks2 = AddComboBox(env, nextHandTestRow(85, 158, false), wHandTest, COMBOBOX_HTDECKS2);
+	cbHandTestDecks2->setMaxSelectionRows(3);
+	cbHandTestDecks = AlignElementWithParent(AddComboBox(env,nextHandTestRow(159, mainMenuWidth - 10, false), wHandTest, COMBOBOX_HTDECKS));
+	cbHandTestDecks->setMaxSelectionRows(15);
+	///////kdiy////
 	chkHandTestSaveReplay = env->addCheckBox(gGameConfig->saveHandTest, nextHandTestRow(10, mainMenuWidth - 10), wHandTest, CHECKBOX_SAVE_HAND_TEST_REPLAY, gDataManager->GetSysString(2077).data());
 	defaultStrings.emplace_back(chkHandTestSaveReplay, 2077);
 	tmpptr = env->addButton(nextHandTestRow(10, mainMenuWidth / 2 - 5), wHandTest, BUTTON_HAND_TEST_CANCEL, gDataManager->GetSysString(1210).data()); // cancel
@@ -4091,6 +4099,8 @@ void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder) {
 	    cbDeck2 = cbDeck2Select;
     else if(cbDeck == cbDBDecks)
         cbDeck2 = cbDBDecks2;
+    else if(cbDeck == cbHandTestDecks)
+        cbDeck2 = cbHandTestDecks2;
 	if(refresh_folder) {
 		cbDeck2->clear();
         if(cbDeck == cbDBDecks)
@@ -4176,6 +4186,12 @@ void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder) {
             }
         }
 	}
+	for(irr::u32 i = 0; i < cbDBDecks2->getItemCount(); ++i) {
+        cbHandTestDecks2->addItem(cbDBDecks2->getItem(i));
+    }
+	for(irr::u32 i = 0; i < cbDBDecks->getItemCount(); ++i) {
+        cbHandTestDecks->addItem(cbDBDecks->getItem(i));
+    }
 	/////////kdiy///////
 }
 void Game::RefreshLFLists() {
@@ -5885,8 +5901,12 @@ void Game::OnResize() {
 
 	wCategories->setRelativePosition(ResizeWin(450, 60, 1000, 270));
 	wLinkMarks->setRelativePosition(ResizeWin(700, 30, 820, 150));
-	stBanlist->setRelativePosition(ResizeWin(10, 9, 100, 29));
-	stDeck->setRelativePosition(ResizeWin(10, 39, 100, 59));
+	//////kdiy//////
+	//stBanlist->setRelativePosition(ResizeWin(10, 9, 100, 29));
+	//stDeck->setRelativePosition(ResizeWin(10, 39, 100, 59));
+	stBanlist->setRelativePosition(ResizeWin(10, 9, 80, 29));
+	stDeck->setRelativePosition(ResizeWin(10, 39, 80, 59));
+	//////kdiy//////
 	stCategory->setRelativePosition(ResizeWin(10, 5, 70, 25));
 	stLimit->setRelativePosition(ResizeWin(205, 5, 280, 25));
 	stAttribute->setRelativePosition(ResizeWin(10, 28, 70, 48));

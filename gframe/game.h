@@ -712,6 +712,8 @@ public:
 	irr::gui::IGUIComboBox* ebCharacterDeck;
     irr::gui::IGUIComboBox* cbDBDecks2;
     irr::gui::IGUIComboBox* cbDBDecks22;
+    irr::gui::IGUIComboBox* cbHandTestDecks;
+    irr::gui::IGUIComboBox* cbHandTestDecks2;
 	irr::gui::CGUIImageButton* icon[6];
     irr::gui::CGUIImageButton* icon2[6];
 	irr::gui::IGUIComboBox* cbDeck2Select;
