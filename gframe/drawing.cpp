@@ -1165,7 +1165,7 @@ void Game::DrawStatus(ClientCard* pcard) {
 	//}
 	int x3, y3;
 	if (pcard->controler == 0) {
-		auto coords = getcoords({ pcard->curPos.X, (0.49f + pcard->curPos.Y), (pcard->curPos.Z + 0.25f) });
+		auto coords = getcoords({ pcard->curPos.X + 0.05f, (0.49f + pcard->curPos.Y), (pcard->curPos.Z + 0.25f) });
 		x1 = coords.X;
 		y1 = coords.Y;
 		coords = getcoords({ pcard->curPos.X, (0.55f + pcard->curPos.Y), (pcard->curPos.Z + 0.25f) });
@@ -1176,7 +1176,7 @@ void Game::DrawStatus(ClientCard* pcard) {
 		coords = getcoords({ (pcard->curPos.X + 0.45f), (pcard->curPos.Y - 0.5f), (pcard->curPos.Z + 0.25f) });
 		x3 = coords.X;
 	} else {
-		auto coords = getcoords({ pcard->curPos.X, (pcard->curPos.Y - 0.4f), (pcard->curPos.Z + 0.25f) });
+		auto coords = getcoords({ pcard->curPos.X + 0.1f, (pcard->curPos.Y - 0.4f), (pcard->curPos.Z + 0.25f) });
 		x1 = coords.X;
 		y1 = coords.Y;
 		coords = getcoords({ pcard->curPos.X, (pcard->curPos.Y - 0.4f), (pcard->curPos.Z + 0.25f) });
