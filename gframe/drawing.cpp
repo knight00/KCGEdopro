@@ -450,6 +450,9 @@ void Game::DrawCard(ClientCard* pcard) {
 	if (m22 < 0.99 || pcard->is_moving) {
 		auto txt = imageManager.GetTextureCard(pcard->cover, imgType::COVER);
 		if (txt == imageManager.tCover[0]) {
+            if (pcard->location & LOCATION_EXTRA)
+			matManager.mCard.setTexture(0, imageManager.tCover[2]);
+            else
 			matManager.mCard.setTexture(0, imageManager.tCover[pcard->controler]);
 		}
 		else {

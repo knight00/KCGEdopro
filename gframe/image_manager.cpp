@@ -302,15 +302,18 @@ bool ImageManager::Initial() {
     tcharacterselect = loadTextureFixedSize(EPRO_TEXT("character/left"_sv), 25, 25);
 	tcharacterselect2 = loadTextureFixedSize(EPRO_TEXT("character/right"_sv), 25, 25);
     GetRandomImage(tCover[0], TEXTURE_COVERS, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
-    GetRandomImage(tCover[1], TEXTURE_COVERO, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+    GetRandomImage(tCover[1], TEXTURE_COVERS, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+    GetRandomImage(tCover[2], TEXTURE_COVERS, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+    GetRandomImage(tCover[3], TEXTURE_COVERS, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
     if (!tCover[0])
 	    tCover[0] = loadTextureFixedSize(EPRO_TEXT("cover"_sv), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	ASSERT_TEXTURE_LOADED(tCover[0], "cover");
-
-	if (!tCover[1])
-	    tCover[1] = loadTextureFixedSize(EPRO_TEXT("cover2"_sv), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	if(!tCover[1])
 		tCover[1] = tCover[0];
+    if (!tCover[2])
+	    tCover[2] = tCover[0];
+    if (!tCover[3])
+	    tCover[3] = tCover[0];
 
 	GetRandomImage(tUnknown, TEXTURE_UNKNOWN, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	if (!tUnknown)
@@ -676,7 +679,6 @@ void ImageManager::RefreshRandomImageList() {
 	RefreshImageDir(EPRO_TEXT("bg_deck"), TEXTURE_DECK);
 	RefreshImageDir(EPRO_TEXT("bg_menu"), TEXTURE_MENU);
 	RefreshImageDir(EPRO_TEXT("cover"), TEXTURE_COVERS);
-	RefreshImageDir(EPRO_TEXT("cover2"), TEXTURE_COVERO);
 	RefreshImageDir(EPRO_TEXT("attack"), TEXTURE_ATTACK);
 	RefreshImageDir(EPRO_TEXT("act"), TEXTURE_ACTIVATE);
 	RefreshImageDir(EPRO_TEXT("chain"), TEXTURE_CHAIN);
@@ -1119,8 +1121,12 @@ void ImageManager::ClearFutureObjects() {
 
 void ImageManager::RefreshCovers() {
 	const auto is_base_path = textures_path == BASE_PATH;
-	auto reloadTextureWithNewSizes = [this, is_base_path, width = (int)sizes[1].first, height = (int)sizes[1].second](auto*& texture, epro::path_stringview texture_name) {
-		auto new_texture = loadTextureFixedSize(texture_name, width, height);
+	auto reloadTextureWithNewSizes = [this, is_base_path, width = (int)sizes[1].first, height = (int)sizes[1].second](auto*& texture, int texturecode, epro::path_stringview texture_name) {
+        /////////kdiy////
+		// auto new_texture = loadTextureFixedSize(texture_name, width, height);
+		irr::video::ITexture* new_texture;
+		GetRandomImage(new_texture, texturecode, width, height);
+        /////////kdiy////
 		if(!new_texture && !is_base_path) {
 			const auto old_textures_path = std::exchange(textures_path, BASE_PATH);
 			new_texture = loadTextureFixedSize(texture_name, width, height);
@@ -1130,12 +1136,27 @@ void ImageManager::RefreshCovers() {
 			return;
 		driver->removeTexture(std::exchange(texture, new_texture));
 	};
-	reloadTextureWithNewSizes(tCover[0], EPRO_TEXT("cover"_sv));
+	/////////kdiy////
+	// reloadTextureWithNewSizes(tCover[0], EPRO_TEXT("cover"_sv));
+	reloadTextureWithNewSizes(tCover[0], TEXTURE_COVERS, EPRO_TEXT("cover"_sv));
+	/////////kdiy////
 	driver->removeTexture(std::exchange(tCover[1], nullptr));
-	reloadTextureWithNewSizes(tCover[1], EPRO_TEXT("cover2"_sv));
+    /////////kdiy////
+	// reloadTextureWithNewSizes(tCover[1], EPRO_TEXT("cover2"_sv));
+	reloadTextureWithNewSizes(tCover[1], TEXTURE_COVERS, EPRO_TEXT("cover"_sv));
+    /////////kdiy////
 	if(!tCover[1])
 		tCover[1] = tCover[0];
-	reloadTextureWithNewSizes(tUnknown, EPRO_TEXT("unknown"_sv));
+    /////////kdiy////
+	// reloadTextureWithNewSizes(tUnknown, EPRO_TEXT("unknown"_sv));
+	reloadTextureWithNewSizes(tCover[2], TEXTURE_COVERS, EPRO_TEXT("cover"_sv));
+	if(!tCover[2])
+		tCover[2] = tCover[0];
+	reloadTextureWithNewSizes(tCover[3], TEXTURE_COVERS, EPRO_TEXT("cover"_sv));
+	if(!tCover[3])
+		tCover[3] = tCover[0];
+	reloadTextureWithNewSizes(tUnknown, TEXTURE_UNKNOWN, EPRO_TEXT("unknown"_sv));
+    /////////kdiy////
 }
 void ImageManager::LoadPic() {
 	Utils::SetThreadName("PicLoader");

@@ -178,7 +178,10 @@ private:
 	irr::IrrlichtDevice* device;
 	irr::video::IVideoDriver* driver;
 public:
-	irr::video::ITexture* tCover[2];
+    /////////kdiy////
+	// irr::video::ITexture* tCover[2];
+	irr::video::ITexture* tCover[4];
+    /////////kdiy////
 	irr::video::ITexture* tUnknown;
 #define A(what) \
 		public: \
