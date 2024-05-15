@@ -55,6 +55,11 @@ public:
 	const Deck& GetCurrentDeck() const {
 		return current_deck;
 	}
+    ////////kdiy///////////
+	const Deck& GetOpponentDeck() const {
+		return opponentdeck;
+	}
+    ////////kdiy///////////
 	bool SetCurrentDeckFromFile(epro::path_stringview file, bool separated = false);
 	void SetCurrentDeck(Deck new_deck) {
 		current_deck = std::move(new_deck);
@@ -121,6 +126,9 @@ private:
 	uint16_t main_legend_count_trap;
 	uint16_t main_skill_count;
 	Deck current_deck;
+	//////////kdiy//////
+    Deck opponentdeck;
+	//////////kdiy//////
 public:
 	uint32_t hovered_code;
 	int hovered_pos;

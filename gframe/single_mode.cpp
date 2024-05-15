@@ -139,8 +139,31 @@ restart:
 		if ((duelOptions.duelFlags & DUEL_PSEUDO_SHUFFLE) == 0)
 			std::shuffle(playerdeck.main.begin(), playerdeck.main.end(), rnd);
 		auto LoadDeck = [&](uint8_t team) {
-			OCG_NewCardInfo card_info = { team, 0, 0, team, 0, 0, POS_FACEDOWN_DEFENSE };
+            OCG_NewCardInfo card_info = { team, 0, 0, team, 0, 0, POS_FACEDOWN_DEFENSE };
 			card_info.loc = LOCATION_DECK;
+            ////////kdiy///////////
+            if(team == 1 && duelOptions.IshandTestOpponentDeck) {
+			Deck opponentdeck(mainGame->deckBuilder.GetOpponentDeck());
+            if ((duelOptions.duelFlags & DUEL_PSEUDO_SHUFFLE) == 0)
+			    std::shuffle(opponentdeck.main.begin(), opponentdeck.main.end(), rnd);
+            card_info.team = 1;
+            card_info.con = 1;
+            card_info.loc = LOCATION_DECK;
+			last_replay.Write<uint32_t>(static_cast<uint32_t>(opponentdeck.main.size()), false);
+			for (int32_t i = (int32_t)opponentdeck.main.size() - 1; i >= 0; --i) {
+				card_info.code = opponentdeck.main[i]->code;
+				OCG_DuelNewCard(pduel, card_info);
+				last_replay.Write<uint32_t>(opponentdeck.main[i]->code, false);
+			}
+			card_info.loc = LOCATION_EXTRA;
+			last_replay.Write<uint32_t>(static_cast<uint32_t>(opponentdeck.extra.size()), false);
+			for (int32_t i = (int32_t)opponentdeck.extra.size() - 1; i >= 0; --i) {
+				card_info.code = opponentdeck.extra[i]->code;
+				OCG_DuelNewCard(pduel, card_info);
+				last_replay.Write<uint32_t>(opponentdeck.extra[i]->code, false);
+			}
+            } else {
+            ////////kdiy///////////
 			last_replay.Write<uint32_t>(static_cast<uint32_t>(playerdeck.main.size()), false);
 			for (int32_t i = (int32_t)playerdeck.main.size() - 1; i >= 0; --i) {
 				card_info.code = playerdeck.main[i]->code;
@@ -154,6 +177,9 @@ restart:
 				OCG_DuelNewCard(pduel, card_info);
 				last_replay.Write<uint32_t>(playerdeck.extra[i]->code, false);
 			}
+            ////////kdiy///////////
+            }
+            ////////kdiy///////////
 		};
 		LoadDeck(0);
 		if (duelOptions.handTestNoOpponent) {

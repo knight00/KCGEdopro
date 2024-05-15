@@ -1346,9 +1346,10 @@ void Game::Initialize() {
 	// stHandTestSettings->setEnabled(coreloaded);
 	// stHandTestSettings->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
 	// defaultStrings.emplace_back(stHandTestSettings, 1375);
+	// wHandTest = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 450), false, gDataManager->GetSysString(1297).data());
     //////kdiy//////
 
-	wHandTest = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 450), false, gDataManager->GetSysString(1297).data());
+	wHandTest = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 485), false, gDataManager->GetSysString(1297).data());
 	wHandTest->getCloseButton()->setVisible(false);
 	wHandTest->setVisible(false);
 	defaultStrings.emplace_back(wHandTest, 1297);
@@ -1357,8 +1358,15 @@ void Game::Initialize() {
 		if(increment) offset += 35;
 		return Scale(leftRail, offset, rightRail, offset + 25);
 	};
-	chkHandTestNoOpponent = env->addCheckBox(false, nextHandTestRow(10, mainMenuWidth - 10), wHandTest, -1, gDataManager->GetSysString(2081).data());
+	///////kdiy////
+	//chkHandTestNoOpponent = env->addCheckBox(false, nextHandTestRow(10, mainMenuWidth - 10), wHandTest, -1, gDataManager->GetSysString(2081).data());
+	chkHandTestNoOpponent = env->addCheckBox(false, nextHandTestRow(10, 10 + mainMenuWidth / 2), wHandTest, -1, gDataManager->GetSysString(2081).data());
+	///////kdiy////
 	defaultStrings.emplace_back(chkHandTestNoOpponent, 2081);
+	///////kdiy////
+	chkHandTestOpponentDeck = env->addCheckBox(false, nextHandTestRow(10 + mainMenuWidth / 2, mainMenuWidth - 10, false), wHandTest, CHECKBOX_OPPONENT_DECK, gDataManager->GetSysString(8070).data());
+	defaultStrings.emplace_back(chkHandTestOpponentDeck, 8070);
+	///////kdiy////
 	chkHandTestNoShuffle = env->addCheckBox(false, nextHandTestRow(10, mainMenuWidth - 10), wHandTest, -1, gDataManager->GetSysString(1230).data());
 	defaultStrings.emplace_back(chkHandTestNoShuffle, 1230);
 	tmpptr = env->addStaticText(gDataManager->GetSysString(1232).data(), nextHandTestRow(10, 90), false, false, wHandTest);
@@ -1377,6 +1385,8 @@ void Game::Initialize() {
 	cbHandTestDecks2->setMaxSelectionRows(3);
 	cbHandTestDecks = AlignElementWithParent(AddComboBox(env,nextHandTestRow(159, mainMenuWidth - 10, false), wHandTest, COMBOBOX_HTDECKS));
 	cbHandTestDecks->setMaxSelectionRows(15);
+    cbHandTestDecks2->setEnabled(false);
+    cbHandTestDecks->setEnabled(false);
 	///////kdiy////
 	chkHandTestSaveReplay = env->addCheckBox(gGameConfig->saveHandTest, nextHandTestRow(10, mainMenuWidth - 10), wHandTest, CHECKBOX_SAVE_HAND_TEST_REPLAY, gDataManager->GetSysString(2077).data());
 	defaultStrings.emplace_back(chkHandTestSaveReplay, 2077);
@@ -4103,6 +4113,8 @@ void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder) {
         cbDeck2 = cbHandTestDecks2;
 	if(refresh_folder) {
 		cbDeck2->clear();
+        cbHandTestDecks2->clear();
+        cbHandTestDecks->clear();
         if(cbDeck == cbDBDecks)
             cbDBDecks22->clear();
         irr::u32 dcount = -1;
@@ -4167,6 +4179,14 @@ void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder) {
                 break;
             }
         }
+        for(irr::u32 i = 0; i < cbDBDecks2->getItemCount(); ++i) {
+            cbHandTestDecks2->addItem(cbDBDecks2->getItem(i));
+        }
+        cbHandTestDecks2->setSelected(cbDBDecks2->getSelected());
+        for(irr::u32 i = 0; i < cbDBDecks->getItemCount(); ++i) {
+            cbHandTestDecks->addItem(cbDBDecks->getItem(i));
+        }
+        cbHandTestDecks->setSelected(cbDBDecks->getSelected());
 	} else {
         auto _folder = Utils::ToPathString(cbDeck2->getItem(cbDeck2->getSelected()));
         for(auto& file : Utils::FindFiles(EPRO_TEXT("./deck/") + _folder + EPRO_TEXT("/"), { EPRO_TEXT("ydk") })) {
@@ -4186,12 +4206,6 @@ void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder) {
             }
         }
 	}
-	for(irr::u32 i = 0; i < cbDBDecks2->getItemCount(); ++i) {
-        cbHandTestDecks2->addItem(cbDBDecks2->getItem(i));
-    }
-	for(irr::u32 i = 0; i < cbDBDecks->getItemCount(); ++i) {
-        cbHandTestDecks->addItem(cbDBDecks->getItem(i));
-    }
 	/////////kdiy///////
 }
 void Game::RefreshLFLists() {

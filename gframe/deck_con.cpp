@@ -236,6 +236,13 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 				Terminate(false);
 				SingleMode::DuelOptions options("hand-test-mode");
 				options.handTestNoOpponent = mainGame->chkHandTestNoOpponent->isChecked();
+                ////////kdiy///////////
+				options.IshandTestOpponentDeck = mainGame->chkHandTestOpponentDeck->isChecked();
+                int sel = mainGame->cbHandTestDecks->getSelected();
+                int sel2 = mainGame->cbHandTestDecks2->getSelected();
+                auto folder = Utils::ToPathString(mainGame->cbHandTestDecks2->getItem(sel2));
+                DeckManager::LoadDeckFromFile((sel2 == 0 ? EPRO_TEXT("") : folder + EPRO_TEXT("/")) + Utils::ToPathString(mainGame->cbHandTestDecks->getItem(sel)), opponentdeck);
+                ////////kdiy///////////
 				try {
 					options.startingDrawCount = std::stoi(mainGame->ebHandTestStartHand->getText());
 				} catch(...) {}
@@ -674,18 +681,9 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 			case COMBOBOX_HTDECKS2: {
 				int sel = mainGame->cbHandTestDecks2->getSelected();
 				if(sel >= 0)
-				    mainGame->RefreshDeck(mainGame->cbHandTestDecks2);
+				    mainGame->RefreshDeck(mainGame->cbHandTestDecks);
 				else
                     break;
-			}
-			case COMBOBOX_HTDECKS: {
-				int sel = mainGame->cbHandTestDecks->getSelected();
-				int sel2 = mainGame->cbHandTestDecks2->getSelected();
-				if(sel >= 0 && sel2 >= 0) {
-					auto folder = Utils::ToPathString(mainGame->cbHandTestDecks2->getItem(sel2));
-					mainGame->deckBuilder.SetCurrentDeckFromFile((sel2 == 0 ? EPRO_TEXT("") : folder + EPRO_TEXT("/")) + Utils::ToPathString(mainGame->cbDBDecks->getItem(sel)), true);
-				}
-				break;
 			}
 			case COMBOBOX_DBDECKS2: {
 				int sel = mainGame->cbDBDecks->getSelected();
@@ -804,6 +802,18 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 					StartFilter(true);
 					break;
 				}
+                ///////kdiy////
+                case CHECKBOX_OPPONENT_DECK: {
+                    if(mainGame->chkHandTestOpponentDeck->isChecked()) {
+                        mainGame->cbHandTestDecks2->setEnabled(true);
+                        mainGame->cbHandTestDecks->setEnabled(true);
+                    } else {
+                        mainGame->cbHandTestDecks2->setEnabled(false);
+                        mainGame->cbHandTestDecks->setEnabled(false);
+                    }
+                    break;
+                }
+                ///////kdiy////
 			}
 			break;
 		}

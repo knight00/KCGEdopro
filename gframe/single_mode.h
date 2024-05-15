@@ -25,6 +25,9 @@ public:
 		uint32_t drawCountPerTurn{ 1 };
 		uint64_t duelFlags{ 0 };
 		bool handTestNoOpponent{ true };
+        ///////kdiy////
+		bool IshandTestOpponentDeck{ false };
+        ///////kdiy////
 		std::string scriptName;
 		DuelOptions() {};
 		explicit DuelOptions(epro::stringview filename) : scriptName(filename.data(), filename.size()) {};

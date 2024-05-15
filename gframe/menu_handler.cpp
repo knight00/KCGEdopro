@@ -1331,7 +1331,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			switch(id) {
 			/////kdiy/////
 			case CHECKBOX_ENTERTAUNMENT_MODE_1_CHECK: {
-
 				if(mainGame->chkEntertainmentMode_1Check->isChecked())
 					mainGame->cbEntertainmentMode_1Bot->setEnabled(true);
 				else
