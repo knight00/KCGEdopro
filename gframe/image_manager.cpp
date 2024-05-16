@@ -302,9 +302,9 @@ bool ImageManager::Initial() {
     tcharacterselect = loadTextureFixedSize(EPRO_TEXT("character/left"_sv), 25, 25);
 	tcharacterselect2 = loadTextureFixedSize(EPRO_TEXT("character/right"_sv), 25, 25);
     GetRandomImage(tCover[0], TEXTURE_COVERS, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
-    GetRandomImage(tCover[1], TEXTURE_COVERS, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
-    GetRandomImage(tCover[2], TEXTURE_COVERS, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
-    GetRandomImage(tCover[3], TEXTURE_COVERS, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+    GetRandomImage(tCover[1], TEXTURE_COVERS2, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+    GetRandomImage(tCover[2], TEXTURE_COVERS3, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+    GetRandomImage(tCover[3], TEXTURE_COVERS4, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
     if (!tCover[0])
 	    tCover[0] = loadTextureFixedSize(EPRO_TEXT("cover"_sv), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	ASSERT_TEXTURE_LOADED(tCover[0], "cover");
@@ -586,8 +586,6 @@ bool ImageManager::Initial() {
 		        modeBody[i] = driver->getTexture(buff);
         }
 	}
-    tActivable = loadTextureAnySize(EPRO_TEXT("activable"_sv));
-	ASSIGN_DEFAULT(tActivable);
     tXyz = loadTextureAnySize(EPRO_TEXT("xyz"_sv));
 	ASSIGN_DEFAULT(tXyz);
     tCXyz = loadTextureAnySize(EPRO_TEXT("cxyz"_sv));
@@ -679,6 +677,9 @@ void ImageManager::RefreshRandomImageList() {
 	RefreshImageDir(EPRO_TEXT("bg_deck"), TEXTURE_DECK);
 	RefreshImageDir(EPRO_TEXT("bg_menu"), TEXTURE_MENU);
 	RefreshImageDir(EPRO_TEXT("cover"), TEXTURE_COVERS);
+	RefreshImageDir(EPRO_TEXT("cover"), TEXTURE_COVERS2);
+	RefreshImageDir(EPRO_TEXT("cover"), TEXTURE_COVERS3);
+	RefreshImageDir(EPRO_TEXT("cover"), TEXTURE_COVERS4);
 	RefreshImageDir(EPRO_TEXT("attack"), TEXTURE_ATTACK);
 	RefreshImageDir(EPRO_TEXT("act"), TEXTURE_ACTIVATE);
 	RefreshImageDir(EPRO_TEXT("chain"), TEXTURE_CHAIN);
@@ -718,7 +719,7 @@ void ImageManager::RefreshRandomImageList() {
 		RefreshImageDir(epro::format(EPRO_TEXT("character/{}/damage"), gSoundManager->textcharacter[playno]), imgcharacter[playno] + CHARACTER_VOICE - 1);
 	}
 
-	for(int i = 0; i < 40 + CHARACTER_VOICE + CHARACTER_VOICE - 2; ++i)
+	for(int i = 0; i < 42 + CHARACTER_VOICE + CHARACTER_VOICE - 2; ++i)
 		saved_image_id[i] = -1;
 }
 void ImageManager::RefreshImageDir(epro::path_string path, int image_type) {
@@ -1143,16 +1144,16 @@ void ImageManager::RefreshCovers() {
 	driver->removeTexture(std::exchange(tCover[1], nullptr));
     /////////kdiy////
 	// reloadTextureWithNewSizes(tCover[1], EPRO_TEXT("cover2"_sv));
-	reloadTextureWithNewSizes(tCover[1], TEXTURE_COVERS, EPRO_TEXT("cover"_sv));
+	reloadTextureWithNewSizes(tCover[1], TEXTURE_COVERS2, EPRO_TEXT("cover"_sv));
     /////////kdiy////
 	if(!tCover[1])
 		tCover[1] = tCover[0];
     /////////kdiy////
 	// reloadTextureWithNewSizes(tUnknown, EPRO_TEXT("unknown"_sv));
-	reloadTextureWithNewSizes(tCover[2], TEXTURE_COVERS, EPRO_TEXT("cover"_sv));
+	reloadTextureWithNewSizes(tCover[2], TEXTURE_COVERS3, EPRO_TEXT("cover"_sv));
 	if(!tCover[2])
 		tCover[2] = tCover[0];
-	reloadTextureWithNewSizes(tCover[3], TEXTURE_COVERS, EPRO_TEXT("cover"_sv));
+	reloadTextureWithNewSizes(tCover[3], TEXTURE_COVERS4, EPRO_TEXT("cover"_sv));
 	if(!tCover[3])
 		tCover[3] = tCover[0];
 	reloadTextureWithNewSizes(tUnknown, TEXTURE_UNKNOWN, EPRO_TEXT("unknown"_sv));

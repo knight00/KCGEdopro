@@ -89,8 +89,8 @@ public:
 	bool Initial();
 	/////kdiy/////
     void SetAvatar(int player, const wchar_t *avatar);
-	std::vector<epro::path_string> ImageList[40+CHARACTER_VOICE+CHARACTER_VOICE-2];
-	int saved_image_id[40+CHARACTER_VOICE+CHARACTER_VOICE-2];
+	std::vector<epro::path_string> ImageList[42+CHARACTER_VOICE+CHARACTER_VOICE-2];
+	int saved_image_id[42+CHARACTER_VOICE+CHARACTER_VOICE-2];
 	//random image
 	void GetRandomImage(irr::video::ITexture*& src, int image_type, bool force_random=false);
 	void GetRandomImage(irr::video::ITexture*& src, int image_type, int width, int height, bool force_random = false);
@@ -133,7 +133,7 @@ private:
 #define TEXTURE_DECK				0
 #define TEXTURE_MENU				1
 #define TEXTURE_COVERS				2
-#define TEXTURE_COVERO				3
+#define TEXTURE_COVERS2				3
 #define TEXTURE_ATTACK				4
 #define TEXTURE_ACTIVATE			5
 #define TEXTURE_CHAIN			    6
@@ -170,6 +170,8 @@ private:
 #define TEXTURE_LIM                 37
 #define TEXTURE_OT                  38
 #define TEXTURE_SETTING             39
+#define TEXTURE_COVERS3				40
+#define TEXTURE_COVERS4				41
 
 	std::vector<uint8_t> imgcharacter;
 	std::unordered_map<uint32_t, irr::video::ITexture*> tCloseup;
@@ -227,7 +229,6 @@ public:
 	A(modeBody[CHAPTER])
     A(head[CHARACTER_STORY])
 	A(modeHead[6])
-	A(tActivable)
 	A(tXyz)
 	A(tCXyz)
 	A(tCrack)

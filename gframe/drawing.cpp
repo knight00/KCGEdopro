@@ -448,11 +448,14 @@ void Game::DrawCard(ClientCard* pcard) {
 		driver->drawVertexPrimitiveList(matManager.vCardFront, 4, matManager.iRectangle, 2);
 	}
 	if (m22 < 0.99 || pcard->is_moving) {
+        ///kdiy////////
 		auto txt = imageManager.GetTextureCard(pcard->cover, imgType::COVER);
 		if (txt == imageManager.tCover[0]) {
+            ///kdiy////////
             if (pcard->location & LOCATION_EXTRA)
-			matManager.mCard.setTexture(0, imageManager.tCover[2]);
+			matManager.mCard.setTexture(0, imageManager.tCover[pcard->controler + 2]);
             else
+            ///kdiy////////
 			matManager.mCard.setTexture(0, imageManager.tCover[pcard->controler]);
 		}
 		else {
