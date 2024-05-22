@@ -4247,9 +4247,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                     mainGame->WaitFrameSignal(frames, lock);
                 }
 				//////kdiy///
-				mainGame->dField.FadeCard(pcard, 5, frames);
-				mainGame->WaitFrameSignal(frames, lock);
+				mainGame->dField.FadeCard(pcard, 5, frames/2);
 				//////kdiy///
+				//mainGame->WaitFrameSignal(frames, lock);
+				mainGame->WaitFrameSignal((reason & REASON_DESTROY) ? frames/2 : frames, lock);
 				pcard->is_damage = false;
 				//////kdiy///
 			}
@@ -4308,9 +4309,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                             int frames = 20;
                             if(gGameConfig->quick_animation)
                                 frames = 12;
-						    mainGame->WaitFrameSignal(frames, lock);
+						    mainGame->WaitFrameSignal(frames/2, lock);
                             mainGame->dField.FadeCard(pcard, 0, frames);
-						    mainGame->WaitFrameSignal(frames, lock);
+						    mainGame->WaitFrameSignal(frames/2, lock);
                         }
 						//if (current.location == LOCATION_MZONE && pcard->overlayed.size() > 0) {
 						if((current.location == LOCATION_MZONE || current.location == LOCATION_SZONE) && pcard->overlayed.size() > 0) {
