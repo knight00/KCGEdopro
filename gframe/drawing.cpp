@@ -1,4 +1,3 @@
-#include <fmt/format.h>
 #include "game_config.h"
 #include <irrlicht.h>
 #include "game.h"
@@ -839,7 +838,7 @@ inline void DrawShadowTextPos(irr::gui::CGUITTFont* font, const T& text, const i
 }
 //We don't want multiple function signatures per argument combination
 template<typename T, typename... Args>
-__forceinline void DrawShadowText(irr::gui::CGUITTFont* font, const T& text, const irr::core::recti& shadowposition, const irr::core::recti& padding, Args&&... args) {
+ForceInline void DrawShadowText(irr::gui::CGUITTFont* font, const T& text, const irr::core::recti& shadowposition, const irr::core::recti& padding, Args&&... args) {
 	const irr::core::recti position(shadowposition.UpperLeftCorner.X + padding.UpperLeftCorner.X, shadowposition.UpperLeftCorner.Y + padding.UpperLeftCorner.Y,
 									shadowposition.LowerRightCorner.X + padding.LowerRightCorner.X, shadowposition.LowerRightCorner.Y + padding.LowerRightCorner.Y);
 	DrawShadowTextPos(font, text, shadowposition, position, std::forward<Args>(args)...);
