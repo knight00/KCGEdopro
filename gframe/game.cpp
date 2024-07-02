@@ -497,6 +497,8 @@ Game::~Game() {
 		lpFont->drop();
 	if(nameFont)
 		nameFont->drop();
+	if(turnFont)
+		turnFont->drop();
 	/////kdiy//////
 	if(filesystem)
 		filesystem->drop();
@@ -640,6 +642,8 @@ void Game::Initialize() {
 	lpFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
 	textfont.size = Scale(textfont.size * 1.8);
 	nameFont = irr::gui::CGUITTFont::createTTFont(env, textfont, fallbackFonts);
+	textfont.size = Scale(textfont.size * 1.2);
+	turnFont = irr::gui::CGUITTFont::createTTFont(env, textfont, fallbackFonts);
 	//if(!numFont || !adFont || !lpcFont)
 	if(!numFont || !adFont || !numFont0 || !lpcFont)
     ////kdiy/////////

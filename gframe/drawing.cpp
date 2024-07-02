@@ -1100,7 +1100,7 @@ void Game::DrawMisc() {
 	driver->draw2DRectangle(Resize(632, 30, 688, 50), 0xffffffff, 0xffffffff, 0x00000000, 0x00000000);*/
 	////kdiy////////////
 	//DrawShadowText(lpcFont, gDataManager->GetNumString(dInfo.turn), Resize(635, 5, 685, 40), Resize(0, 0, 2, 0), skin::DUELFIELD_TURN_COUNT_VAL, 0x80000000, true);
-	DrawShadowText(lpcFont, L"TURN " + gDataManager->GetNumString(dInfo.turn), Resize(410, 5, 625, 40), Resize(0, 0, 20, 0), skin::DUELFIELD_TURN_COUNT_VAL, 0x80000000, true);
+	DrawShadowText(turnFont, L"TURN " + gDataManager->GetNumString(dInfo.turn), Resize(410, 5, 625, 40), Resize(0, 0, 8, 0), 0xff000000, 0xffff00ff, true);
 	////kdiy////////////
 #undef DRAWRECT
 #undef LPCOLOR
@@ -1497,10 +1497,21 @@ void Game::DrawSpec() {
 		case 1: {
 			auto cardtxt = imageManager.GetTextureCard(showcardcode, imgType::ART);
 			auto cardrect = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cardtxt->getOriginalSize()));
-			driver->draw2DImage(cardtxt, drawrect2, cardrect);
-			driver->draw2DImage(imageManager.tMask, ResizeWin(574, 150, 574 + (showcarddif > CARD_IMG_WIDTH ? CARD_IMG_WIDTH : showcarddif), 404),
-								Scale<irr::s32>(CARD_IMG_HEIGHT - showcarddif, 0, CARD_IMG_HEIGHT - (showcarddif > CARD_IMG_WIDTH ? showcarddif - CARD_IMG_WIDTH : 0), CARD_IMG_HEIGHT), 0, 0, true);
             //////kdiy//////////
+			//driver->draw2DImage(cardtxt, drawrect2, cardrect);
+			//driver->draw2DImage(imageManager.tMask, ResizeWin(574, 150, 574 + (showcarddif > CARD_IMG_WIDTH ? CARD_IMG_WIDTH : showcarddif), 404),
+								//Scale<irr::s32>(CARD_IMG_HEIGHT - showcarddif, 0, CARD_IMG_HEIGHT - (showcarddif > CARD_IMG_WIDTH ? showcarddif - CARD_IMG_WIDTH : 0), CARD_IMG_HEIGHT), 0, 0, true);
+            matManager.mTexture.setTexture(0, cardtxt);
+            driver->setMaterial(matManager.mTexture);
+			irr::core::matrix4 atk;
+            atk.setTranslation(irr::core::vector3df(-4, -1, 0));
+            atk.setRotationRadians(irr::core::vector3df(-irr::core::PI/4, irr::core::PI/8, -irr::core::PI/8));
+			driver->setTransform(irr::video::ETS_WORLD, atk);
+			driver->drawVertexPrimitiveList(matManager.vCloseup, 4, matManager.iRectangle, 2);
+            atk.setTranslation(irr::core::vector3df(0, -1, 0));
+			atk.setScale(irr::core::vector3df(0.8f, 0.8f, 0.8f));
+            atk.setRotationRadians(irr::core::vector3df(0, 0, 0));
+			driver->setTransform(irr::video::ETS_WORLD, atk);
             if(cardcloseup)
                 DrawTextureRect(matManager.vCloseup, cardcloseup);
             //////kdiy//////////
@@ -1514,8 +1525,20 @@ void Game::DrawSpec() {
 		case 2: {
 			auto cardtxt = imageManager.GetTextureCard(showcardcode, imgType::ART);
 			auto cardrect = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cardtxt->getOriginalSize()));
-			driver->draw2DImage(cardtxt, drawrect2, cardrect);
-			driver->draw2DImage(imageManager.tMask, ResizeWin(574 + showcarddif, 150, 751, 404), Scale(0, 0, CARD_IMG_WIDTH - showcarddif, 254), 0, 0, true);
+            //////kdiy//////////
+            // driver->draw2DImage(cardtxt, drawrect2, cardrect);
+			// driver->draw2DImage(imageManager.tMask, ResizeWin(574 + showcarddif, 150, 751, 404), Scale(0, 0, CARD_IMG_WIDTH - showcarddif, 254), 0, 0, true);
+            matManager.mTexture.setTexture(0, cardtxt);
+            driver->setMaterial(matManager.mTexture);
+			irr::core::matrix4 atk;
+            atk.setTranslation(irr::core::vector3df(-4, -1, 0));
+            atk.setRotationRadians(irr::core::vector3df(-irr::core::PI/4, irr::core::PI/8, -irr::core::PI/8));
+			driver->setTransform(irr::video::ETS_WORLD, atk);
+			driver->drawVertexPrimitiveList(matManager.vCloseup, 4, matManager.iRectangle, 2);
+            atk.setTranslation(irr::core::vector3df(0, 0, 0));
+            atk.setRotationRadians(irr::core::vector3df(0, 0, 0));
+			driver->setTransform(irr::video::ETS_WORLD, atk);
+            //////kdiy//////////
 			showcarddif += (900.0f / 1000.0f) * (float)delta_time;
 			if(showcarddif >= CARD_IMG_WIDTH) {
 				showcard = 0;
@@ -1618,14 +1641,17 @@ void Game::DrawSpec() {
 		case 101: {
 			irr::core::ustring lstr = L"";
 			if(1 <= showcardcode && showcardcode <= 14) {
-				lstr = gDataManager->GetSysString(1700 + showcardcode);
+                lstr = gDataManager->GetSysString(1700 + showcardcode);
 			}
 			auto pos = lpcFont->getDimensionustring(lstr);
 			if(showcardp < 10.0f) {
 				int alpha = ((int)std::round(showcardp) * 25) << 24;
 				DrawShadowText(lpcFont, lstr, ResizePhaseHint(661 - (9 - showcardp) * 40, 291, 960, 370, pos.Width), Resize(-1, -1, 0, 0), alpha | 0xffffff, alpha);
 			} else if(showcardp < showcarddif) {
+                ////kdiy/////////
 				DrawShadowText(lpcFont, lstr, ResizePhaseHint(661, 291, 960, 370, pos.Width), Resize(-1, -1, 0, 0), 0xffffffff);
+				DrawShadowText(lpcFont, lstr, ResizePhaseHint(661, 291, 960, 370, pos.Width), Resize(-1, -1, 0, 0), 0xff000000);
+                ////kdiy/////////
 				if(dInfo.vic_string.size() && (showcardcode == 1 || showcardcode == 2)) {
 					auto a = (291 + pos.Height + 2);
 					driver->draw2DRectangle(0xa0000000, Resize(540, a, 790, a + 20));
@@ -1824,10 +1850,10 @@ void Game::PopupElement(irr::gui::IGUIElement * element, int hideframe) {
 	else ShowElement(element, hideframe);
 }
 void Game::WaitFrameSignal(int frame, std::unique_lock<epro::mutex>& _lck) {
-	//kdiy///////
+	//kidy///////
 	//signalFrame = (gGameConfig->quick_animation && frame >= 12) ? 12 * 1000 / 60 : frame * 1000 / 60;
-	signalFrame = (gGameConfig->quick_animation && frame >= 12) ? (frame - 12) * 1000 / 60 : frame * 1000 / 60;
-	//kdiy///////
+	signalFrame = (gGameConfig->quick_animation && frame >= 12) ? (frame - 10) * 1000 / 60 : frame * 1000 / 60;
+	//kidy///////
 	frameSignal.Wait(_lck);
 }
 void Game::DrawThumb(const CardDataC* cp, irr::core::vector2di pos, LFList* lflist, bool drag, const irr::core::recti* cliprect, bool load_image) {

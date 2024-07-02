@@ -234,7 +234,7 @@ public:
 	void ShowElement(irr::gui::IGUIElement* element, int autoframe = 0);
 	void HideElement(irr::gui::IGUIElement* element, bool set_action = false);
 	void PopupElement(irr::gui::IGUIElement* element, int hideframe = 0);
-	void WaitFrameSignal(int frame, std::unique_lock<epro::mutex>& _lck);
+    void WaitFrameSignal(int frame, std::unique_lock<epro::mutex>& _lck);
 	void DrawThumb(const CardDataC* cp, irr::core::vector2di pos, LFList* lflist, bool drag = false, const irr::core::recti* cliprect = nullptr, bool loadimage = true);
 	//kidy///////
 	void DrawThumb2(uint32_t code, irr::core::vector2di pos);
@@ -472,6 +472,7 @@ public:
 	irr::gui::CGUITTFont* adFont0;
 	irr::gui::CGUITTFont* lpFont;
 	irr::gui::CGUITTFont* nameFont;
+	irr::gui::CGUITTFont* turnFont;
 	//irr::gui::IGUIStaticText* wCardImg;
 	/////kdiy/////////
     irr::gui::IGUIImage* imgCard;
