@@ -589,11 +589,6 @@ void Game::Initialize() {
 #endif
 	filesystem = device->getFileSystem();
 	filesystem->grab();
-	coreloaded = true;
-#ifdef YGOPRO_BUILD_DLL
-	if(!(ocgcore = LoadOCGcore(Utils::GetWorkingDirectory())) && !(ocgcore = LoadOCGcore(epro::format(EPRO_TEXT("{}/expansions/"), Utils::GetWorkingDirectory()))))
-		coreloaded = false;
-#endif
 	skinSystem = new CGUISkinSystem(epro::format(EPRO_TEXT("{}/skin"), Utils::GetWorkingDirectory()).data(), device);
 	if(!skinSystem)
 		throw std::runtime_error("Couldn't create skin system");
@@ -701,7 +696,6 @@ void Game::Initialize() {
 	int titleWidth = stVersion->getTextWidth();
 	stVersion->setRelativePosition(irr::core::recti(Scale(10), Scale(10), titleWidth + Scale(10), Scale(35)));
 	stCoreVersion = env->addStaticText(L"", Scale(10, 40, 500, 65), false, false, wVersion);
-	RefreshUICoreVersion();
 	stExpectedCoreVersion = env->addStaticText(
 		GetLocalizedExpectedCore().data(),
 		Scale(10, 70, 290, 95), false, true, wVersion);
@@ -784,7 +778,6 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(btnModeExit, 1210);
 	offset += 35;
 #undef OFFSET
-	btnSingleMode->setEnabled(coreloaded);
 	//lan mode
 	wLanWindow = env->addWindow(Scale(220, 100, 800, 520), false, gDataManager->GetSysString(1200).data());
 	defaultStrings.emplace_back(wLanWindow, 1200);
@@ -814,8 +807,7 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(btnJoinCancel, 1212);
 	btnCreateHost = env->addButton(Scale(460, 25, 570, 50), wLanWindow, BUTTON_CREATE_HOST, gDataManager->GetSysString(1224).data());
 	defaultStrings.emplace_back(btnCreateHost, 1224);
-	btnCreateHost->setEnabled(coreloaded);
-    ///////kdiy///////
+	///////kdiy///////
 	btnSimpleJoinHost = env->addButton(Scale(460, 325, 570, 350), wLanWindow, BUTTON_SIMPLE_CREATE_HOST, gDataManager->GetSysString(8030).data());
 	defaultStrings.emplace_back(btnSimpleJoinHost, 8030);
 	wCreateHost2 = env->addWindow(Scale(320, 100, 700, 520), false, gDataManager->GetSysString(1224).data());
@@ -1322,16 +1314,9 @@ void Game::Initialize() {
 	btnSideReload = AlignElementWithParent(env->addButton(Scale(440, 100, 500, 130), nullptr, BUTTON_SIDE_RELOAD, gDataManager->GetSysString(1309).data()));
 	defaultStrings.emplace_back(btnSideReload, 1309);
 	btnSideReload->setVisible(false);
+	
 	//////kdiy//////
-	//btnHandTest = AlignElementWithParent(env->addButton(Scale(205, 90, 295, 130), nullptr, BUTTON_HAND_TEST, gDataManager->GetSysString(1297).data()));
-	//defaultStrings.emplace_back(btnHandTest, 1297);
-	//btnHandTest->setVisible(false);
-	//btnHandTest->setEnabled(coreloaded);
 	//btnHandTestSettings = AlignElementWithParent(env->addButton(Scale(205, 140, 295, 180), 0, BUTTON_HAND_TEST_SETTINGS, L""));
-    btnHandTest = AlignElementWithParent(env->addButton(Scale(110, 580, 195, 620), nullptr, BUTTON_HAND_TEST, gDataManager->GetSysString(1297).data()));
-	defaultStrings.emplace_back(btnHandTest, 1297);
-	btnHandTest->setVisible(false);
-	btnHandTest->setEnabled(coreloaded);
 	btnHandTestSettings = AlignElementWithParent(env->addButton(Scale(110, 570, 160, 620), 0, BUTTON_HAND_TEST_SETTINGS, gDataManager->GetSysString(1375).data()));
 	btnHandTestSettings->setImage(imageManager.tButton);
 	btnHandTestSettings->setScaleImage(true);
@@ -1340,18 +1325,14 @@ void Game::Initialize() {
     defaultStrings.emplace_back(btnHandTestSettings, 1375);
     //////kdiy//////
 	btnHandTestSettings->setVisible(false);
-	btnHandTestSettings->setEnabled(coreloaded);
 
 	//////kdiy//////
     // stHandTestSettings = AlignElementWithParent(irr::gui::CGUICustomText::addCustomText(gDataManager->GetSysString(1375).data(), false, env, btnHandTestSettings, -1, Scale(0, 0, 90, 40)));
 	// stHandTestSettings->setWordWrap(true);
-	// stHandTestSettings->setEnabled(coreloaded);
 	// stHandTestSettings->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
 	// defaultStrings.emplace_back(stHandTestSettings, 1375);
-	// wHandTest = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 450), false, gDataManager->GetSysString(1297).data());
+	// wHandTest = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 485), false, gDataManager->GetSysString(1297).data());
     //////kdiy//////
-
-	wHandTest = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 485), false, gDataManager->GetSysString(1297).data());
 	wHandTest->getCloseButton()->setVisible(false);
 	wHandTest->setVisible(false);
 	defaultStrings.emplace_back(wHandTest, 1297);
@@ -2100,14 +2081,6 @@ void Game::Initialize() {
     }
 	free(new_md5);
 #endif
-	////kdiy/////////
-#ifdef YGOPRO_BUILD_DLL
-	if(!coreloaded) {
-		stMessage->setText(gDataManager->GetSysString(1430).data());
-		PopupElement(wMessage);
-	}
-#endif
-    /////kdiy/////////
 	//fpsCounter = env->addStaticText(L"", Scale(950, 620, 1024, 640), false, false);
     fpsCounter = env->addStaticText(L"", Scale(5, 620, 79, 640), false, false);
     /////kdiy/////////
@@ -2151,6 +2124,21 @@ void Game::Initialize() {
 	Utils::CreateResourceFolders();
 
 	LoadGithubRepositories();
+	if(LoadCore()) {
+		(void)0;
+	}
+#ifdef YGOPRO_BUILD_DLL
+	else {
+		stMessage->setText(gDataManager->GetSysString(1430).data());
+		PopupElement(wMessage);
+	}
+#endif
+	btnSingleMode->setEnabled(coreloaded);
+	btnCreateHost->setEnabled(coreloaded);
+	btnHandTest->setEnabled(coreloaded);
+	btnHandTestSettings->setEnabled(coreloaded);
+	stHandTestSettings->setEnabled(coreloaded);
+	RefreshUICoreVersion();
 	ApplySkin(EPRO_TEXT(""), true);
 	auto selectedLocale = gSettings.cbCurrentLocale->getSelected();
 	if(selectedLocale != 0)
@@ -2160,6 +2148,54 @@ void Game::Initialize() {
 	env->getRootGUIElement()->bringToFront(mTopMenu);
 	env->setFocus(wMainMenu);
 }
+
+bool Game::LoadCore() {
+	coreloaded = true;
+#ifdef YGOPRO_BUILD_DLL
+	coreJustLoaded = false;
+	ocgcore = LoadOCGcore(Utils::GetWorkingDirectory());
+	if(ocgcore){
+		corename = Utils::ToUnicodeIfNeeded(Utils::GetWorkingDirectory());
+	} else {
+		const auto path = epro::format(EPRO_TEXT("{}/expansions/"), Utils::GetWorkingDirectory());
+		ocgcore = LoadOCGcore(path);
+		if(ocgcore)
+			corename = Utils::ToUnicodeIfNeeded(path);
+	}
+	coreloaded = ocgcore != nullptr;
+	if(gRepoManager->IsReadOnly())
+		LoadCoreFromRepos();
+#endif
+	return coreloaded;
+}
+
+#ifdef YGOPRO_BUILD_DLL
+void Game::LoadCoreFromRepos() {
+	if(cores_to_load.empty() || gRepoManager->GetUpdatingReposNumber() > 0)
+		return;
+	for(auto& path : cores_to_load) {
+		void* ncore = ChangeOCGcore(Utils::GetWorkingDirectory() + path, ocgcore);
+		if(!ncore)
+			continue;
+		corename = Utils::ToUnicodeIfNeeded(path);
+		coreJustLoaded = true;
+		ocgcore = ncore;
+		if(!coreloaded) {
+			coreloaded = true;
+			btnSingleMode->setEnabled(true);
+			btnCreateHost->setEnabled(true);
+			btnHandTest->setEnabled(true);
+			btnHandTestSettings->setEnabled(true);
+			stHandTestSettings->setEnabled(true);
+			//kdiy///////
+			btnEntertainmentMode->setEnabled(true);
+			//kdiy///////
+		}
+		break;
+	}
+	cores_to_load.clear();
+}
+#endif
 
 static constexpr std::pair<epro::wstringview, irr::video::E_DRIVER_TYPE> supported_graphic_drivers[]{
 	{ L"Default"_sv, irr::video::EDT_COUNT},
@@ -3405,82 +3441,12 @@ bool Game::MainLoop() {
 				ApplySkin(EPRO_TEXT(""), true);
 			}
 		}
-		auto repos = gRepoManager->GetReadyRepos();
-		if(!repos.empty()) {
-			bool refresh_db = false;
-			for(auto& repo : repos) {
-				auto grepo = &repoInfoGui[repo->repo_path];
-				UpdateRepoInfo(repo, grepo);
-				auto data_path = Utils::ToPathString(repo->data_path);
-				auto files = Utils::FindFiles(data_path, { EPRO_TEXT("cdb") }, 0);
-				if(!repo->is_language) {
-					for(auto& file : files) {
-						const auto db_path = data_path + file;
-						if(gDataManager->LoadDB(db_path)) {
-							WindBot::AddDatabase(db_path);
-							refresh_db = true;
-						}
-					}
-					gDataManager->LoadStrings(data_path + EPRO_TEXT("strings.conf"));
-					refresh_db = gDataManager->LoadIdsMapping(data_path + EPRO_TEXT("mappings.json")) || refresh_db;
-				} else {
-					if(Utils::ToUTF8IfNeeded(gGameConfig->locale) == repo->language) {
-						for(auto& file : files)
-						    refresh_db = gDataManager->LoadLocaleDB(data_path + file) || refresh_db;
-						gDataManager->LoadLocaleStrings(data_path + EPRO_TEXT("strings.conf"));
-					}
-					auto langpath = Utils::ToPathString(repo->language);
-					auto lang = Utils::ToUpperNoAccents(langpath);
-					auto it = std::find_if(locales.begin(), locales.end(),
-										   [&lang](const auto& locale) {
-											   return Utils::ToUpperNoAccents(locale.first) == lang;
-										   });
-					if(it != locales.end()) {
-						it->second.push_back(std::move(data_path));
-					} else {	
-						Utils::MakeDirectory(EPRO_TEXT("./config/languages/") + langpath);
-						locales.emplace_back(std::move(langpath), std::vector<epro::path_string>{ std::move(data_path) });
-						gSettings.cbCurrentLocale->addItem(BufferIO::DecodeUTF8(repo->language).data());
-					}
-				}
-			}
-			if(refresh_db && is_building) {
-				if(!is_siding)
-					deckBuilder.RefreshCurrentDeck();
-				if(deckBuilder.results.size())
-					deckBuilder.StartFilter(true);
-			}
-			if(gRepoManager->GetUpdatingReposNumber() == 0) {
-				gdeckManager->StopDummyLoading();
-				ReloadElementsStrings();
-			}
-		}
+		ParseGithubRepositories(gRepoManager->GetReadyRepos());
 		if(ServerLobby::HasRefreshedRooms())
 			ServerLobby::FillOnlineRooms();
 #ifdef YGOPRO_BUILD_DLL
-		bool coreJustLoaded = false;
-		if(!dInfo.isStarted && cores_to_load.size() && gRepoManager->GetUpdatingReposNumber() == 0) {
-			for(auto& path : cores_to_load) {
-				void* ncore = nullptr;
-				if((ncore = ChangeOCGcore(Utils::GetWorkingDirectory() + path, ocgcore))) {
-					corename = Utils::ToUnicodeIfNeeded(path);
-					coreJustLoaded = true;
-					ocgcore = ncore;
-					if(!coreloaded) {
-						coreloaded = true;
-						btnSingleMode->setEnabled(true);
-						btnCreateHost->setEnabled(true);
-						btnHandTest->setEnabled(true);
-						btnHandTestSettings->setEnabled(true);
-						stHandTestSettings->setEnabled(true);
-                        //kdiy///////
-                        btnEntertainmentMode->setEnabled(true);
-                        //kdiy///////
-					}
-					break;
-				}
-			}
-			cores_to_load.clear();
+		if(!dInfo.isStarted) {
+			LoadCoreFromRepos();
 		}
 #endif //YGOPRO_BUILD_DLL
 		for(auto& repo : gRepoManager->GetRepoStatus()) {
@@ -3893,8 +3859,7 @@ bool Game::MainLoop() {
 	ClearTextures();
 	SaveConfig();
 #ifdef YGOPRO_BUILD_DLL
-	if(ocgcore)
-		UnloadCore(ocgcore);
+	UnloadCore(ocgcore);
 #endif //YGOPRO_BUILD_DLL
 	//device->drop();
 	return restart;
@@ -4459,6 +4424,59 @@ void Game::LoadGithubRepositories() {
 			update_ready = false;
 		}
 	}
+	if(gRepoManager->IsReadOnly())
+		ParseGithubRepositories(gRepoManager->GetReadyRepos());
+}
+void Game::ParseGithubRepositories(const std::vector<const GitRepo*>& repos) {
+	if(repos.empty())
+		return;
+	bool refresh_db = false;
+	for(auto& repo : repos) {
+		auto grepo = &repoInfoGui[repo->repo_path];
+		UpdateRepoInfo(repo, grepo);
+		auto data_path = Utils::ToPathString(repo->data_path);
+		auto files = Utils::FindFiles(data_path, { EPRO_TEXT("cdb") }, 0);
+		if(!repo->is_language) {
+			for(auto& file : files) {
+				const auto db_path = data_path + file;
+				if(gDataManager->LoadDB(db_path)) {
+					WindBot::AddDatabase(db_path);
+					refresh_db = true;
+				}
+			}
+			gDataManager->LoadStrings(data_path + EPRO_TEXT("strings.conf"));
+			refresh_db = gDataManager->LoadIdsMapping(data_path + EPRO_TEXT("mappings.json")) || refresh_db;
+		} else {
+			if(Utils::ToUTF8IfNeeded(gGameConfig->locale) == repo->language) {
+				for(auto& file : files)
+					refresh_db = gDataManager->LoadLocaleDB(data_path + file) || refresh_db;
+				gDataManager->LoadLocaleStrings(data_path + EPRO_TEXT("strings.conf"));
+			}
+			auto langpath = Utils::ToPathString(repo->language);
+			auto lang = Utils::ToUpperNoAccents(langpath);
+			auto it = std::find_if(locales.begin(), locales.end(),
+								   [&lang](const auto& locale) {
+									   return Utils::ToUpperNoAccents(locale.first) == lang;
+								   });
+			if(it != locales.end()) {
+				it->second.push_back(std::move(data_path));
+			} else {
+				Utils::MakeDirectory(EPRO_TEXT("./config/languages/") + langpath);
+				locales.emplace_back(std::move(langpath), std::vector<epro::path_string>{ std::move(data_path) });
+				gSettings.cbCurrentLocale->addItem(BufferIO::DecodeUTF8(repo->language).data());
+			}
+		}
+	}
+	if(refresh_db && is_building) {
+		if(!is_siding)
+			deckBuilder.RefreshCurrentDeck();
+		if(deckBuilder.results.size())
+			deckBuilder.StartFilter(true);
+	}
+	if(gRepoManager->GetUpdatingReposNumber() == 0) {
+		gdeckManager->StopDummyLoading();
+		ReloadElementsStrings();
+	}
 }
 void Game::UpdateRepoInfo(const GitRepo* repo, RepoGui* grepo) {
 	if(repo->history.error.size()) {
@@ -4474,11 +4492,14 @@ void Game::UpdateRepoInfo(const GitRepo* repo, RepoGui* grepo) {
 		grepo->history_button2->setText(gDataManager->GetSysString(1434).data());
 		defaultStrings.emplace_back(grepo->history_button2, 1434);
 		grepo->history_button2->setEnabled(true);
+		auto error_string = repo->not_git_repo ? epro::format(gDataManager->GetSysString(1452), BufferIO::DecodeUTF8(repo->repo_path)) :
+															  epro::format(gDataManager->GetSysString(1435), BufferIO::DecodeUTF8(repo->url));
 		////kdiy/////////
-		//grepo->commit_history_full = epro::format(L"{}\n{}",
-												//epro::format(gDataManager->GetSysString(1435), BufferIO::DecodeUTF8(repo->url)),
-												//epro::format(gDataManager->GetSysString(1436), BufferIO::DecodeUTF8(repo->history.error))
-		grepo->commit_history_full = epro::format(L"{}", gDataManager->GetSysString(1436)
+		// grepo->commit_history_full = epro::format(L"{}\n{}",
+		// 										  error_string,
+		// 										  epro::format(gDataManager->GetSysString(1436), BufferIO::DecodeUTF8(repo->history.error))
+		grepo->commit_history_full = epro::format(L"{}",
+												  gDataManager->GetSysString(1436)
 		////kdiy/////////
 		);
 		grepo->commit_history_partial = grepo->commit_history_full;

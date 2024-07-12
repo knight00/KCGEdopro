@@ -46,6 +46,7 @@ public:
 	std::string pics_path{"pics"};
 	std::string core_path{};
 	std::string language{};
+	bool not_git_repo{false};
 	bool should_update{true};
 	bool has_core{false};
 	bool ready{false};
@@ -60,7 +61,7 @@ private:
 class RepoManager {
 public:
 
-	RepoManager();	
+	RepoManager();
 	// Cancel fetching of repos and synchronize with futures
 	~RepoManager();
 
@@ -69,10 +70,17 @@ public:
 	std::vector<const GitRepo*> GetReadyRepos(); // changes available_repos
 	std::map<std::string, int> GetRepoStatus(); // locks mutex
 
+	void ToggleReadOnly(bool readOnly) {
+		read_only = readOnly;
+	}
+
+	bool IsReadOnly() const { return read_only; }
+
 	void LoadRepositoriesFromJson(const nlohmann::json& configs);
 	bool TerminateIfNothingLoaded();
 private:
 	void TerminateThreads();
+	bool read_only{false};
 	std::forward_list<GitRepo> all_repos{};
 	size_t all_repos_count{};
 	std::vector<GitRepo*> available_repos{};
@@ -86,10 +94,10 @@ private:
 
 	void AddRepo(GitRepo&& repo);
 	void SetRepoPercentage(const std::string& path, int percent);
-	
+
 	// Will be started on a new thread
 	void CloneOrUpdateTask();
-	
+
 	// libgit2 Callbacks stuff
 	struct GitCbPayload
 	{
