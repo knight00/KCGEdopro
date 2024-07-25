@@ -2,6 +2,7 @@
 #include <curl/curl.h>
 #include <irrlicht.h>
 #include "config.h"
+#include "cli_args.h"
 #include "utils_gui.h"
 #include "deck_manager.h"
 #include "logging.h"
@@ -151,9 +152,10 @@ void DataHandler::LoadKZipArchives() {
 DataHandler::DataHandler() {
 	configs = std::make_unique<GameConfig>();
 	gGameConfig = configs.get();
-	tmp_device = nullptr;
-#if EDOPRO_IOS
+#if !EDOPRO_ANDROID
 	tmp_device = GUIUtils::CreateDevice(configs.get());
+#endif
+#if EDOPRO_IOS
 	if(tmp_device->getVideoDriver())
 		porting::exposed_data = &tmp_device->getVideoDriver()->getExposedVideoData();
 	Utils::OSOperator = new irr::COSiOSOperator();
@@ -162,7 +164,6 @@ DataHandler::DataHandler() {
 	Utils::OSOperator = new irr::COSAndroidOperator();
 	configs->ssl_certificate_path = epro::format("{}/cacert.pem", porting::internal_storage);
 #else
-	tmp_device = GUIUtils::CreateDevice(configs.get());
 	Utils::OSOperator = tmp_device->getGUIEnvironment()->getOSOperator();
 	Utils::OSOperator->grab();
 	if(configs->override_ssl_certificate_path.size()) {
@@ -182,6 +183,7 @@ DataHandler::DataHandler() {
 	deckManager = std::make_unique<DeckManager>();
 	gitManager = std::make_unique<RepoManager>();
 	sounds = std::make_unique<SoundManager>(configs->soundVolume / 100.0, configs->musicVolume / 100.0, configs->enablesound, configs->enablemusic);
+	gitManager->ToggleReadOnly(cli_args[REPOS_READ_ONLY].enabled);
 	gitManager->LoadRepositoriesFromJson(configs->user_configs);
 	////kdiy//////////
 	if(!Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))

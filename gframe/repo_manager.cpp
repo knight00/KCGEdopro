@@ -28,13 +28,15 @@ namespace ygo {
 // public
 
 bool GitRepo::Sanitize() {
-	if(url.empty())
+	if(!not_git_repo && url.empty())
 		return false;
 
 	if(repo_path.size())
 		repo_path = epro::format("./{}", repo_path);
 
 	if(repo_name.empty() && repo_path.empty()) {
+		if(url.empty())
+			return false;
 		repo_name = Utils::GetFileName(url);
 		if(repo_name.empty())
 			return false;
@@ -168,9 +170,11 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 	////kdiy//////////
 	if(cit != configs.end() && cit->is_array()) {
 		for(auto& obj : *cit) {
+			GitRepo tmp_repo;
+			if(!tmp_repo.not_git_repo && tmp_repo.url.empty())
+				continue;
 			{
 				////kdiy//////////
-				GitRepo tmp_repo;
 				JSON_SET_IF_VALID(repo_path, string, std::string);
 				JSON_SET_IF_VALID(repo_name, string, std::string);
 				if(tmp_repo.repo_path == tmp_repo3) {
@@ -194,7 +198,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 				if(it != obj.end() && it->is_boolean() && !it->get<bool>())
 					continue;
 			}
-			GitRepo tmp_repo;
+			JSON_SET_IF_VALID(not_git_repo, boolean, bool);
 			JSON_SET_IF_VALID(url, string, std::string);
 			////kdiy//////////
 			if(tmp_repo.url.substr(0,8) == "default/") {
@@ -206,8 +210,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
  				JSON_SET_IF_VALID(lflist_path, string, std::string);
 				JSON_SET_IF_VALID(script_path, string, std::string);
 				JSON_SET_IF_VALID(pics_path, string, std::string);
-				JSON_SET_IF_VALID(is_language, boolean, bool);	
-
+				JSON_SET_IF_VALID(is_language, boolean, bool);
  				if(tmp_repo.is_language)
  					JSON_SET_IF_VALID(language, string, std::string);
 #ifdef YGOPRO_BUILD_DLL
@@ -302,15 +305,28 @@ void RepoManager::TerminateThreads() {
 
 void RepoManager::AddRepo(GitRepo&& repo) {
 	std::lock_guard<epro::mutex> lck(syncing_mutex);
-	if(repos_status.find(repo.repo_path) != repos_status.end())
+	auto path = repo.repo_path;
+	if(repos_status.find(path) != repos_status.end())
 		return;
-	repos_status.emplace(repo.repo_path, 0);
+	repos_status.emplace(path, 0);
 	all_repos.push_front(std::move(repo));
 	auto* _repo = &all_repos.front();
 	available_repos.push_back(_repo);
-	to_sync.push(_repo);
 	all_repos_count++;
-	cv.notify_one();
+	if(_repo->not_git_repo || read_only) {
+		if(!Utils::DirectoryExists(Utils::ToPathString(path + "/"))) {
+			_repo->history.error = epro::format("Folder \"{}\" doesn't exist", path);
+			repos_status[path] = 0;
+		} else {
+			_repo->history.partial_history = { "Local folder" };
+			_repo->history.full_history = { "Local folder" };
+			repos_status[path] = 100;
+		}
+		_repo->internal_ready = true;
+	} else {
+		to_sync.push(_repo);
+		cv.notify_one();
+	}
 }
 
 void RepoManager::SetRepoPercentage(const std::string& path, int percent)
@@ -393,8 +409,7 @@ void RepoManager::CloneOrUpdateTask() {
 						auto commit = Git::MakeUnique(git_commit_lookup, repo.get(), &oid);
 						Git::Check(git_reset(repo.get(), reinterpret_cast<git_object*>(commit.get()),
 											 GIT_RESET_HARD, &checkoutOpts));
-					}
-					catch(const std::exception& e) {
+					} catch(const std::exception& e) {
 						history.partial_history.clear();
 						history.warning = e.what();
 						////kdiy//////////
@@ -424,8 +439,7 @@ void RepoManager::CloneOrUpdateTask() {
 				QueryFullHistory(repo.get(), walker.get());
 			}
 			SetRepoPercentage(path, 100);
-		}
-		catch(const std::exception& e) {
+		} catch(const std::exception& e) {
 			history.error = e.what();
 			////kdiy//////////
 			//ErrorLog("Exception occurred in repo {}: {}", _repo.url, history.error);
