@@ -149,13 +149,70 @@ std::map<std::string, int> RepoManager::GetRepoStatus() {
 	} while(0)
 
 void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
+	auto cit = configs.find("repos");
 	////kdiy//////////
 	std::string tmp_repo3 = "./config/languages";
 	bool repo3chk = false;
 	////kdiy//////////
-	auto cit = configs.find("repos");
+	if(cit != configs.end() && cit->is_array()) {
+		for(auto& obj : *cit) {
+			{
+				auto it = obj.find("should_read");
+				if(it != obj.end() && it->is_boolean() && !it->get<bool>())
+					continue;
+			}
+			GitRepo tmp_repo;
+            JSON_SET_IF_VALID(not_git_repo, boolean, bool);
+			JSON_SET_IF_VALID(url, string, std::string);
+			if(!tmp_repo.not_git_repo && tmp_repo.url.empty())
+				continue;
+			JSON_SET_IF_VALID(should_update, boolean, bool);
+			JSON_SET_IF_VALID(repo_path, string, std::string);
+			JSON_SET_IF_VALID(repo_name, string, std::string);
+			JSON_SET_IF_VALID(data_path, string, std::string);
+			JSON_SET_IF_VALID(lflist_path, string, std::string);
+			JSON_SET_IF_VALID(script_path, string, std::string);
+			JSON_SET_IF_VALID(pics_path, string, std::string);
+			JSON_SET_IF_VALID(is_language, boolean, bool);
+			if(tmp_repo.is_language)
+				JSON_SET_IF_VALID(language, string, std::string);
+#ifdef YGOPRO_BUILD_DLL
+			JSON_SET_IF_VALID(has_core, boolean, bool);
+			if(tmp_repo.has_core)
+				JSON_SET_IF_VALID(core_path, string, std::string);
+#endif
+            ////kdiy//////////
+            // if(tmp_repo.Sanitize())
+			// 	AddRepo(std::move(tmp_repo));
+            {
+                auto it = obj.find("admin_update");
+				    if(it != obj.end() && it->is_boolean() && !it->get<bool>())
+					    tmp_repo.should_update = false;
+					else
+						tmp_repo.should_update = true;
+            }
+			if(tmp_repo.repo_path == tmp_repo3) {
+				if(tmp_repo.repo_name.empty())
+					tmp_repo.repo_name = "Language";
+				tmp_repo.url = "https://e.coding.net/ygo94/kcg/Ch.git";
+				tmp_repo.data_path = "";
+				tmp_repo.is_language = true;
+				repo3chk = true;
+				if(tmp_repo.Sanitize() && gGameConfig->system_engine)
+					AddRepo(std::move(tmp_repo));
+				continue;
+			}
+			if(tmp_repo.url.substr(0,8) == "default/")
+			    tmp_repo.url = "https://e.coding.net/ygo94/kcg" + tmp_repo.url.substr(7,tmp_repo.url.length());
+			else 
+                continue;
+            if(tmp_repo.Sanitize() && gGameConfig->system_engine)
+				AddRepo(std::move(tmp_repo));
+		    ////kdiy//////////
+        }
+	}
 	////kdiy//////////
-	if(cit == configs.end()) {
+	if(cit == configs.end() || !repo3chk) {
 		GitRepo repo1;
 		repo1.repo_name = "Language";
 		repo1.url = "https://e.coding.net/ygo94/kcg/Ch.git";
@@ -165,121 +222,8 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 		repo1.should_update = true;
 		if(repo1.Sanitize() && gGameConfig->system_engine)
 			AddRepo(std::move(repo1));
-		return;
 	}
-	////kdiy//////////
-	if(cit != configs.end() && cit->is_array()) {
-		for(auto& obj : *cit) {
-			{
-				GitRepo tmp_repo;
-				if(!tmp_repo.not_git_repo && tmp_repo.url.empty())
-				    continue;
-				////kdiy//////////
-				JSON_SET_IF_VALID(repo_path, string, std::string);
-				JSON_SET_IF_VALID(repo_name, string, std::string);
-				if(tmp_repo.repo_path == tmp_repo3) {
-					if(tmp_repo.repo_name.empty())
-						tmp_repo.repo_name = "Language";
-					tmp_repo.url = "https://e.coding.net/ygo94/kcg/Ch.git";
-					tmp_repo.data_path = "";
-					tmp_repo.is_language = true;
-					repo3chk = true;
-					auto it = obj.find("admin_update");
-				    if(it != obj.end() && it->is_boolean() && !it->get<bool>())
-					    tmp_repo.should_update = false;
-					else
-						tmp_repo.should_update = true;
-					if(tmp_repo.Sanitize() && gGameConfig->system_engine)
-						AddRepo(std::move(tmp_repo));
-					continue;
-				}
-				////kdiy//////////
-				auto it = obj.find("should_read");
-				if(it != obj.end() && it->is_boolean() && !it->get<bool>())
-					continue;
-			}
-			GitRepo tmp_repo;
-			JSON_SET_IF_VALID(not_git_repo, boolean, bool);
-			JSON_SET_IF_VALID(url, string, std::string);
-			////kdiy//////////
-			if(tmp_repo.url.substr(0,8) == "default/") {
-			    tmp_repo.url = "https://e.coding.net/ygo94/kcg" + tmp_repo.url.substr(7,tmp_repo.url.length());
-				JSON_SET_IF_VALID(should_update, boolean, bool);
- 				JSON_SET_IF_VALID(repo_path, string, std::string);
- 				JSON_SET_IF_VALID(repo_name, string, std::string);
-				JSON_SET_IF_VALID(data_path, string, std::string);
- 				JSON_SET_IF_VALID(lflist_path, string, std::string);
-				JSON_SET_IF_VALID(script_path, string, std::string);
-				JSON_SET_IF_VALID(pics_path, string, std::string);
-				JSON_SET_IF_VALID(is_language, boolean, bool);
- 				if(tmp_repo.is_language)
- 					JSON_SET_IF_VALID(language, string, std::string);
-#ifdef YGOPRO_BUILD_DLL
-			    JSON_SET_IF_VALID(core_path, string, std::string);
-			    JSON_SET_IF_VALID(has_core, boolean, bool);
-#endif
-                auto it = obj.find("should_read");
-				if(it != obj.end() && it->is_boolean() && !it->get<bool>())
-					continue;
-				auto it2 = obj.find("admin_update");
-				if(it2 != obj.end() && it2->is_boolean() && !it2->get<bool>())
-					tmp_repo.should_update = false;
-				else
-					tmp_repo.should_update = true;
-			}
-			else continue;
-            if(tmp_repo.Sanitize() && gGameConfig->system_engine)
-				AddRepo(std::move(tmp_repo));
-			//JSON_SET_IF_VALID(should_update, boolean, bool);
-// 			if(tmp_repo.url == "default") {
-// #ifdef DEFAULT_LIVE_URL
-// 				tmp_repo.url = DEFAULT_LIVE_URL;
-// #ifdef YGOPRO_BUILD_DLL
-// 				tmp_repo.has_core = true;
-// #endif
-// #else
-// 				continue;
-// #endif //DEFAULT_LIVE_URL
-// 			} else if(tmp_repo.url == "default_anime") {
-// #ifdef DEFAULT_LIVEANIME_URL
-// 				tmp_repo.url = DEFAULT_LIVEANIME_URL;
-// #else
-// 				continue;
-// #endif //DEFAULT_LIVEANIME_URL
-// 			} else {
-// 				JSON_SET_IF_VALID(repo_path, string, std::string);
-// 				JSON_SET_IF_VALID(repo_name, string, std::string);
-// 				JSON_SET_IF_VALID(data_path, string, std::string);
-// 				JSON_SET_IF_VALID(lflist_path, string, std::string);
-// 				JSON_SET_IF_VALID(script_path, string, std::string);
-// 				JSON_SET_IF_VALID(pics_path, string, std::string);
-// 				JSON_SET_IF_VALID(is_language, boolean, bool);
-// 				if(tmp_repo.is_language)
-// 					JSON_SET_IF_VALID(language, string, std::string);
-// #ifdef YGOPRO_BUILD_DLL
-// 			JSON_SET_IF_VALID(core_path, string, std::string);
-// 			JSON_SET_IF_VALID(has_core, boolean, bool);
-// #endif
-// 			}
-			// if(tmp_repo.Sanitize())
-			// 	AddRepo(std::move(tmp_repo));
-            ////kdiy//////////
-		}
-		////kdiy//////////
-		if(!repo3chk) {
-			GitRepo tmp_repo;
-			tmp_repo.repo_name = "Language";
-			tmp_repo.url = "https://e.coding.net/ygo94/kcg/Ch.git";
-			tmp_repo.repo_path = tmp_repo3;
-			tmp_repo.data_path = "";
-			tmp_repo.is_language = true;
-			tmp_repo.should_update = true;
-			if(tmp_repo.Sanitize() && gGameConfig->system_engine)
-			    AddRepo(std::move(tmp_repo));
-		}
-		return;
-		////kdiy//////////
-	}	
+	////kdiy//////////	
 }
 
 bool RepoManager::TerminateIfNothingLoaded() {

@@ -736,7 +736,6 @@ void Game::Initialize() {
 	////////kdiy////////
 	btnEntertainmentMode = env->addButton(OFFSET(10, 30, 270, 60), wMainMenu, BUTTON_ENTERTAUNMENT_MODE, gDataManager->GetSysString(1205).data());
 	defaultStrings.emplace_back(btnEntertainmentMode, 1205);
-	btnEntertainmentMode->setEnabled(coreloaded);
 	offset += 35;
 	////////kdiy////////
 	btnSingleMode = env->addButton(OFFSET(10, 65, 270, 95), wMainMenu, BUTTON_SINGLE_MODE, gDataManager->GetSysString(1201).data());
@@ -1314,7 +1313,9 @@ void Game::Initialize() {
 	btnSideReload = AlignElementWithParent(env->addButton(Scale(440, 100, 500, 130), nullptr, BUTTON_SIDE_RELOAD, gDataManager->GetSysString(1309).data()));
 	defaultStrings.emplace_back(btnSideReload, 1309);
 	btnSideReload->setVisible(false);
-	
+    btnHandTest = AlignElementWithParent(env->addButton(Scale(110, 580, 195, 620), nullptr, BUTTON_HAND_TEST, gDataManager->GetSysString(1297).data()));
+	defaultStrings.emplace_back(btnHandTest, 1297);
+	btnHandTest->setVisible(false);
 	//////kdiy//////
 	//btnHandTestSettings = AlignElementWithParent(env->addButton(Scale(205, 140, 295, 180), 0, BUTTON_HAND_TEST_SETTINGS, L""));
 	btnHandTestSettings = AlignElementWithParent(env->addButton(Scale(110, 570, 160, 620), 0, BUTTON_HAND_TEST_SETTINGS, gDataManager->GetSysString(1375).data()));
@@ -1326,13 +1327,11 @@ void Game::Initialize() {
     //////kdiy//////
 	btnHandTestSettings->setVisible(false);
 
-	//////kdiy//////
-    // stHandTestSettings = AlignElementWithParent(irr::gui::CGUICustomText::addCustomText(gDataManager->GetSysString(1375).data(), false, env, btnHandTestSettings, -1, Scale(0, 0, 90, 40)));
-	// stHandTestSettings->setWordWrap(true);
-	// stHandTestSettings->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
-	// defaultStrings.emplace_back(stHandTestSettings, 1375);
-	// wHandTest = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 485), false, gDataManager->GetSysString(1297).data());
-    //////kdiy//////
+    stHandTestSettings = AlignElementWithParent(irr::gui::CGUICustomText::addCustomText(gDataManager->GetSysString(1375).data(), false, env, btnHandTestSettings, -1, Scale(0, 0, 90, 40)));
+	stHandTestSettings->setWordWrap(true);
+	stHandTestSettings->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+	defaultStrings.emplace_back(stHandTestSettings, 1375);
+	wHandTest = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 485), false, gDataManager->GetSysString(1297).data());
 	wHandTest->getCloseButton()->setVisible(false);
 	wHandTest->setVisible(false);
 	defaultStrings.emplace_back(wHandTest, 1297);
@@ -2138,6 +2137,9 @@ void Game::Initialize() {
 	btnHandTest->setEnabled(coreloaded);
 	btnHandTestSettings->setEnabled(coreloaded);
 	stHandTestSettings->setEnabled(coreloaded);
+	//kdiy///////
+	btnEntertainmentMode->setEnabled(coreloaded);
+	//kdiy///////
 	RefreshUICoreVersion();
 	ApplySkin(EPRO_TEXT(""), true);
 	auto selectedLocale = gSettings.cbCurrentLocale->getSelected();
