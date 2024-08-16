@@ -4329,8 +4329,8 @@ void Game::SaveConfig() {
 	gGameConfig->closeup = gSettings.chkCloseup->isChecked();
 	gGameConfig->painting = gSettings.chkPainting->isChecked();
 	gGameConfig->chkField = gSettings.chktField->isChecked();
-	/////kdiy//////
 	gGameConfig->hdpic = cbpics->getSelected();
+	/////kdiy//////
 	auto lastServerIndex = serverChoice->getSelected();
 	if(lastServerIndex >= 0)
 		gGameConfig->lastServer = serverChoice->getItem(lastServerIndex);

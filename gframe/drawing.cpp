@@ -715,7 +715,7 @@ void Game::DrawCard(ClientCard* pcard) {
 	}
 	driver->setTransform(irr::video::ETS_WORLD, pcard->mTransform);
     if(pcard->code != 0 && (pcard->controler == 0 || (pcard->position & POS_FACEUP)) 
-    && (((pcard->location & LOCATION_MZONE) && !pcard->is_sanct) || ((pcard->location & LOCATION_SZONE) && pcard->is_orica)) && !pcard->equipTarget) {
+    && ((pcard->location == LOCATION_MZONE && !pcard->is_sanct) || (pcard->location == LOCATION_SZONE && pcard->is_orica)) && !pcard->equipTarget) {
         //has lv, rk, lk
         if ((pcard->level != 0 || (pcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL))) && (pcard->rank != 0 || (pcard->type & TYPE_XYZ)) && (pcard->link != 0 || (pcard->type & TYPE_LINK))) {
             matManager.mTexture.setTexture(0, imageManager.tLvRank);

@@ -165,9 +165,11 @@ int edopro_main(const args_t& args) {
 		updater.CheckUpdates();
 #if EDOPRO_WINDOWS
 	if(!data->configs->showConsole) {
-		fclose(stdin);
-		fclose(stderr);
-		fclose(stdout);
+		///kdiy///////
+		// fclose(stdin);
+		// fclose(stderr);
+		// fclose(stdout);
+		///kdiy///////
 		FreeConsole();
 	}
 #endif
