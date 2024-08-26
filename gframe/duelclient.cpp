@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <fmt/chrono.h>
 #include "config.h"
 #if EDOPRO_WINDOWS
 #include <ws2tcpip.h>

@@ -1,7 +1,6 @@
-#include <fmt/chrono.h>
+#include "config.h"
 #include "client_updater.h"
 #include "game_config.h"
-#include "config.h"
 #include "menu_handler.h"
 #include "netserver.h"
 #include "duelclient.h"
@@ -1183,7 +1182,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				if(sel == -1)
 					break;
 				const auto& selection = DuelClient::hosts[sel];
-				mainGame->ebJoinHost->setText(fmt::to_wstring(selection.address).data());
+				mainGame->ebJoinHost->setText(fmt::format(L"{}", selection.address).data());
 				mainGame->ebJoinPort->setText(fmt::to_wstring(selection.port).data());
 				break;
 			}
