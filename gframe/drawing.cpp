@@ -1481,6 +1481,12 @@ void Game::DrawGUI() {
 	}
 	env->drawAll();
 }
+inline void SetS3DVertex(Materials::QuadVertex v, irr::f32 x1, irr::f32 y1, irr::f32 x2, irr::f32 y2, irr::f32 z, irr::f32 nz, irr::f32 tu1, irr::f32 tv1, irr::f32 tu2, irr::f32 tv2) {
+	v[0] = irr::video::S3DVertex(x1, y1, z, 0, 0, nz, irr::video::SColor(255, 255, 255, 255), tu1, tv1);
+	v[1] = irr::video::S3DVertex(x2, y1, z, 0, 0, nz, irr::video::SColor(255, 255, 255, 255), tu2, tv1);
+	v[2] = irr::video::S3DVertex(x1, y2, z, 0, 0, nz, irr::video::SColor(255, 255, 255, 255), tu1, tv2);
+	v[3] = irr::video::S3DVertex(x2, y2, z, 0, 0, nz, irr::video::SColor(255, 255, 255, 255), tu2, tv2);
+}
 void Game::DrawSpec() {
 	const auto drawrect2 = ResizeWin(574, 150, 574 + CARD_IMG_WIDTH, 150 + CARD_IMG_HEIGHT);
      //////kdiy//////////
@@ -1498,23 +1504,21 @@ void Game::DrawSpec() {
 			auto cardtxt = imageManager.GetTextureCard(showcardcode, imgType::ART);
 			auto cardrect = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cardtxt->getOriginalSize()));
             //////kdiy//////////
-			//driver->draw2DImage(cardtxt, drawrect2, cardrect);
-			//driver->draw2DImage(imageManager.tMask, ResizeWin(574, 150, 574 + (showcarddif > CARD_IMG_WIDTH ? CARD_IMG_WIDTH : showcarddif), 404),
-								//Scale<irr::s32>(CARD_IMG_HEIGHT - showcarddif, 0, CARD_IMG_HEIGHT - (showcarddif > CARD_IMG_WIDTH ? showcarddif - CARD_IMG_WIDTH : 0), CARD_IMG_HEIGHT), 0, 0, true);
-            matManager.mTexture.setTexture(0, cardtxt);
-            driver->setMaterial(matManager.mTexture);
-			irr::core::matrix4 atk;
-            atk.setTranslation(irr::core::vector3df(-4, -1, 0));
-            atk.setRotationRadians(irr::core::vector3df(-irr::core::PI/4, irr::core::PI/8, -irr::core::PI/8));
-			driver->setTransform(irr::video::ETS_WORLD, atk);
-			driver->drawVertexPrimitiveList(matManager.vCloseup, 4, matManager.iRectangle, 2);
-            atk.setTranslation(irr::core::vector3df(0, -1, 0));
-			atk.setScale(irr::core::vector3df(0.8f, 0.8f, 0.8f));
-            atk.setRotationRadians(irr::core::vector3df(0, 0, 0));
-			driver->setTransform(irr::video::ETS_WORLD, atk);
-            if(cardcloseup)
-                DrawTextureRect(matManager.vCloseup, cardcloseup);
+			if(cardcloseup) {
+				matManager.mTexture.setTexture(0, cardtxt);
+				driver->setMaterial(matManager.mTexture);
+				irr::core::matrix4 atk;
+				atk.setTranslation(irr::core::vector3df(-4, -1, 0));
+				atk.setRotationRadians(irr::core::vector3df(-irr::core::PI/4, irr::core::PI/8, -irr::core::PI/8));
+				driver->setTransform(irr::video::ETS_WORLD, atk);
+				driver->drawVertexPrimitiveList(matManager.vCloseup, 4, matManager.iRectangle, 2);
+			    auto cardrect2 = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cardcloseup->getOriginalSize()));
+				driver->draw2DImage(cardcloseup, drawrect2, cardrect2, 0, 0, true);
+			} else
             //////kdiy//////////
+			driver->draw2DImage(cardtxt, drawrect2, cardrect);
+			driver->draw2DImage(imageManager.tMask, ResizeWin(574, 150, 574 + (showcarddif > CARD_IMG_WIDTH ? CARD_IMG_WIDTH : showcarddif), 404),
+								Scale<irr::s32>(CARD_IMG_HEIGHT - showcarddif, 0, CARD_IMG_HEIGHT - (showcarddif > CARD_IMG_WIDTH ? showcarddif - CARD_IMG_WIDTH : 0), CARD_IMG_HEIGHT), 0, 0, true);
 			showcarddif += (900.0f / 1000.0f) * (float)delta_time;
 			if(std::round(showcarddif) >= CARD_IMG_HEIGHT) {
 				showcard = 2;
@@ -1526,19 +1530,20 @@ void Game::DrawSpec() {
 			auto cardtxt = imageManager.GetTextureCard(showcardcode, imgType::ART);
 			auto cardrect = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cardtxt->getOriginalSize()));
             //////kdiy//////////
-            // driver->draw2DImage(cardtxt, drawrect2, cardrect);
-			// driver->draw2DImage(imageManager.tMask, ResizeWin(574 + showcarddif, 150, 751, 404), Scale(0, 0, CARD_IMG_WIDTH - showcarddif, 254), 0, 0, true);
-            matManager.mTexture.setTexture(0, cardtxt);
-            driver->setMaterial(matManager.mTexture);
-			irr::core::matrix4 atk;
-            atk.setTranslation(irr::core::vector3df(-4, -1, 0));
-            atk.setRotationRadians(irr::core::vector3df(-irr::core::PI/4, irr::core::PI/8, -irr::core::PI/8));
-			driver->setTransform(irr::video::ETS_WORLD, atk);
-			driver->drawVertexPrimitiveList(matManager.vCloseup, 4, matManager.iRectangle, 2);
-            atk.setTranslation(irr::core::vector3df(0, 0, 0));
-            atk.setRotationRadians(irr::core::vector3df(0, 0, 0));
-			driver->setTransform(irr::video::ETS_WORLD, atk);
+			if(cardcloseup) {
+				matManager.mTexture.setTexture(0, cardtxt);
+				driver->setMaterial(matManager.mTexture);
+				irr::core::matrix4 atk;
+				atk.setTranslation(irr::core::vector3df(-4, -1, 0));
+				atk.setRotationRadians(irr::core::vector3df(-irr::core::PI/4, irr::core::PI/8, -irr::core::PI/8));
+				driver->setTransform(irr::video::ETS_WORLD, atk);
+				driver->drawVertexPrimitiveList(matManager.vCloseup, 4, matManager.iRectangle, 2);
+				auto cardrect2 = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cardcloseup->getOriginalSize()));
+				driver->draw2DImage(cardcloseup, drawrect2, cardrect2, 0, 0, true);
+			} else
             //////kdiy//////////
+			driver->draw2DImage(cardtxt, drawrect2, cardrect);
+			driver->draw2DImage(imageManager.tMask, ResizeWin(574 + showcarddif, 150, 751, 404), Scale(0, 0, CARD_IMG_WIDTH - showcarddif, 254), 0, 0, true);
 			showcarddif += (900.0f / 1000.0f) * (float)delta_time;
 			if(showcarddif >= CARD_IMG_WIDTH) {
 				showcard = 0;
