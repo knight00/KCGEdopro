@@ -140,7 +140,7 @@ void ImageDownloader::DownloadPic() {
 			}
 			//kdiy//////
 			case imgType::CLOSEUP: {
-				dest = EPRO_TEXT("./pics/closeup/{}"_sv);
+				dest = EPRO_TEXT("./pics/closeup/{}"sv);
 				name.append(EPRO_TEXT("_u"));
 				break;
 			}
