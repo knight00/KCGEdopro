@@ -3,6 +3,7 @@
 #include "duelclient.h"
 #include "game.h"
 #include "single_mode.h"
+#include "fmt.h"
 
 namespace ygo {
 	bool ReplayMode::ReadReplayResponse() {
@@ -136,12 +137,12 @@ namespace ygo {
 		mainGame->dInfo.lp[1] = start_lp;
 		mainGame->dInfo.startlp = start_lp;
 		///////////kdiy///////////
-		//mainGame->dInfo.strLP[0] = fmt::to_wstring(start_lp);
+		//mainGame->dInfo.strLP[0] = epro::to_wstring(start_lp);
 		//mainGame->dInfo.strLP[1] = mainGame->dInfo.strLP[0];
 		if(start_lp >= 8888888)
 			mainGame->dInfo.strLP[0] = L"\u221E";
 		else
-		    mainGame->dInfo.strLP[0] = fmt::to_wstring(start_lp);
+		    mainGame->dInfo.strLP[0] = epro::to_wstring(start_lp);
 		if(start_lp >= 8888888)
 			mainGame->dInfo.strLP[1] = L"\u221E";
 		else

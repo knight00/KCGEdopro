@@ -41,6 +41,7 @@
 #include "MD5/md5.h"
 //kdiy///////
 #include "porting.h"
+#include "fmt.h"
 
 #if EDOPRO_ANDROID || EDOPRO_IOS
 #include "CGUICustomComboBox/CGUICustomComboBox.h"
@@ -2200,19 +2201,19 @@ void Game::LoadCoreFromRepos() {
 #endif
 
 static constexpr std::pair<epro::wstringview, irr::video::E_DRIVER_TYPE> supported_graphic_drivers[]{
-	{ L"Default"_sv, irr::video::EDT_COUNT},
+	{ L"Default"sv, irr::video::EDT_COUNT},
 #if !EDOPRO_ANDROID && !EDOPRO_IOS
-	{ L"OpenGL"_sv, irr::video::EDT_OPENGL },
+	{ L"OpenGL"sv, irr::video::EDT_OPENGL },
 #endif
 #if EDOPRO_WINDOWS
-	{ L"Direct3D 9"_sv, irr::video::EDT_DIRECT3D9},
+	{ L"Direct3D 9"sv, irr::video::EDT_DIRECT3D9},
 #if (IRRLICHT_VERSION_MAJOR==1 && IRRLICHT_VERSION_MINOR==9)
-	{ L"Direct3D 9on12"_sv, irr::video::EDT_DIRECT3D9_ON_12},
+	{ L"Direct3D 9on12"sv, irr::video::EDT_DIRECT3D9_ON_12},
 #endif
 #endif
 #if !EDOPRO_MACOS && (IRRLICHT_VERSION_MAJOR==1 && IRRLICHT_VERSION_MINOR==9)
-	{ L"OpenGL ES 1"_sv, irr::video::EDT_OGLES1 },
-	{ L"OpenGL ES 2"_sv, irr::video::EDT_OGLES2 },
+	{ L"OpenGL ES 1"sv, irr::video::EDT_OGLES1 },
+	{ L"OpenGL ES 2"sv, irr::video::EDT_OGLES2 },
 #endif
 };
 
@@ -2236,7 +2237,7 @@ void Game::PopulateGameHostWindows() {
 		ReloadCBRule();
 		cbRule->setSelected(gGameConfig->lastallowedcards);
 		defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1227).data(), Scale(20, 70, 220, 90), false, false, tDuelSettings), 1227);
-#define WStr(i) fmt::to_wstring<int>(i).data()
+#define WStr(i) epro::to_wstring<int>(i).data()
 		ebTeam1 = env->addEditBox(WStr(gGameConfig->team1count), Scale(140, 65, 170, 90), true, tDuelSettings, EDITBOX_TEAM_COUNT);
 		ebTeam1->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
 		auto vsstring = env->addStaticText(gDataManager->GetSysString(1380).data(), Scale(175, 65, 195, 90), false, false, tDuelSettings);
@@ -4542,7 +4543,7 @@ void Game::UpdateRepoInfo(const GitRepo* repo, RepoGui* grepo) {
 	grepo->history_button2->setEnabled(true);
 	if(!repo->is_language) {
 		script_dirs.insert(script_dirs.begin(), Utils::ToPathString(repo->script_path));
-		auto init_script = fmt::format(EPRO_TEXT("{}{}"), script_dirs.front(), EPRO_TEXT("init.lua"));
+		auto init_script = epro::format(EPRO_TEXT("{}{}"), script_dirs.front(), EPRO_TEXT("init.lua"));
 		if(Utils::FileExists(init_script))
 			init_scripts.push_back(std::move(init_script));
 		auto script_subdirs = Utils::FindSubfolders(Utils::ToPathString(repo->script_path), 2);

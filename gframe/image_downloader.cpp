@@ -6,6 +6,7 @@
 #include "utils.h"
 #include "game_config.h"
 #include "file_stream.h"
+#include "fmt.h"
 
 namespace ygo {
 
@@ -124,16 +125,16 @@ void ImageDownloader::DownloadPic() {
 		switch(type) {
 			case imgType::ART:
 			case imgType::THUMB: {
-				dest = EPRO_TEXT("./pics/{}"_sv);
+				dest = EPRO_TEXT("./pics/{}"sv);
 				break;
 			}
 			case imgType::FIELD: {
-				dest = EPRO_TEXT("./pics/field/{}"_sv);
+				dest = EPRO_TEXT("./pics/field/{}"sv);
 				name.append(EPRO_TEXT("_f"));
 				break;
 			}
 			case imgType::COVER: {
-				dest = EPRO_TEXT("./pics/cover/{}"_sv);
+				dest = EPRO_TEXT("./pics/cover/{}"sv);
 				name.append(EPRO_TEXT("_c"));
 				break;
 			}

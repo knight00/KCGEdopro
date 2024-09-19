@@ -6,6 +6,7 @@
 #include "game_config.h"
 #include "text_types.h"
 #include "porting.h"
+#include "fmt.h"
 #if EDOPRO_WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -30,7 +31,7 @@ using CCursorControl = irr::CCursorControl;
 
 static inline bool try_guess_wayland() {
 	const char* env = getenv("XDG_SESSION_TYPE");
-	return env == nullptr || env != "x11"_sv;
+	return env == nullptr || env != "x11"sv;
 }
 #endif //EDOPRO_WINDOWS
 

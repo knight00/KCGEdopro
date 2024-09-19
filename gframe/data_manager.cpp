@@ -8,6 +8,7 @@
 #include "utils.h"
 #include "common.h"
 #include "file_stream.h"
+#include "fmt.h"
 /////kdiy/////
 #include "game_config.h"
 /////kdiy/////
@@ -17,19 +18,19 @@ namespace ygo {
 constexpr epro::wstringview DataManager::unknown_string;
 static constexpr auto SELECT_STMT =
 R"(SELECT datas.id,datas.ot,datas.alias,datas.setcode,datas.type,datas.atk,datas.def,datas.level,datas.race,datas.attribute,datas.category,texts.name,texts.desc,texts.str1,texts.str2,texts.str3,texts.str4,texts.str5,texts.str6,texts.str7,texts.str8,texts.str9,texts.str10,texts.str11,texts.str12,texts.str13,texts.str14,texts.str15,texts.str16
-FROM datas,texts WHERE texts.id = datas.id ORDER BY texts.id;)"_sv;
+FROM datas,texts WHERE texts.id = datas.id ORDER BY texts.id;)"sv;
 
 static constexpr auto SELECT_STMT_LOCALE =
 R"(SELECT id,name,desc,str1,str2,str3,str4,str5,str6,str7,str8,str9,str10,str11,str12,str13,str14,str15,str16
-FROM texts ORDER BY texts.id;)"_sv;
+FROM texts ORDER BY texts.id;)"sv;
 
 DataManager::DataManager() : irrvfs(irrsqlite_createfilesystem()) {
 	if(sqlite3_threadsafe())
 		sqlite3_config(SQLITE_CONFIG_SINGLETHREAD);
 	sqlite3_initialize();
 	sqlite3_vfs_register(irrvfs.get(), 0);
-	cards.reserve(10000);
-	locales.reserve(10000);
+	cards.reserve(25000);
+	locales.reserve(15000);
 }
 
 DataManager::~DataManager() {
@@ -479,12 +480,8 @@ std::vector<uint16_t> DataManager::GetSetCode(const std::vector<epro::wstringvie
 }
 std::wstring DataManager::GetNumString(size_t num, bool bracket) const {
 	if(!bracket)
-		return fmt::to_wstring(num);
+		return epro::to_wstring(num);
 	return epro::format(L"({})", num);
-}
-template<typename T1, typename T2>
-static inline void appendstring(T1& to, const T2& what) {
-	to.append(what.data(), what.size());
 }
 
 epro::wstringview DataManager::FormatLocation(uint32_t location, int sequence) const {
@@ -514,7 +511,7 @@ std::wstring DataManager::FormatAttribute(uint32_t attribute) const {
 		if(attribute & filter) {
 			if(!res.empty())
 				res += L'|';
-			appendstring(res, GetSysString(i));
+			res += GetSysString(i);
 		}
 	}
 	if(res.empty())
@@ -527,7 +524,7 @@ static std::wstring FormatSkill(uint64_t skill_type) {
 		if(skill_type & 0x1u) {
 			if(!res.empty())
 				res += L'|';
-			appendstring(res, gDataManager->GetSysString(i));
+			res += gDataManager->GetSysString(i);
 		}
 	}
 	if(res.empty())
@@ -541,7 +538,7 @@ std::wstring DataManager::FormatRace(uint64_t race, bool isSkill) const {
 		if(race & 0x1u) {
 			if(!res.empty())
 				res += L'|';
-			appendstring(res, GetSysString(GetRaceStringIndex(i)));
+			res += GetSysString(GetRaceStringIndex(i));
 		}
 	}
 	if(res.empty())
@@ -551,11 +548,11 @@ std::wstring DataManager::FormatRace(uint64_t race, bool isSkill) const {
 std::wstring DataManager::FormatType(uint32_t type) const {
 	std::wstring res;
 	if(type & TYPE_SKILL)
-		appendstring(res, GetSysString(1077));
+		res += GetSysString(1077);
 	if(type & TYPE_ACTION) {
 		if (!res.empty())
 			res += L'|';
-		appendstring(res, GetSysString(1078));
+		res += GetSysString(1078);
 	}
 	for(uint32_t i = 1050, filter = 1; filter != TYPE_SKILL; filter <<= 1, ++i) {
         ///kdiy/////
@@ -564,7 +561,7 @@ std::wstring DataManager::FormatType(uint32_t type) const {
 		if(type & filter) {
 			if(!res.empty())
 				res += L'|';
-			appendstring(res, GetSysString(i));
+			res += GetSysString(i);
 		}
 	}
 	if(res.empty())
@@ -595,7 +592,7 @@ std::wstring DataManager::FormatScope(uint32_t scope, bool hideOCGTCG) const {
 			if (!buffer.empty()) {
 				buffer += L'/';
 			}
-			appendstring(buffer, GetSysString(tuple.second));
+			buffer += GetSysString(tuple.second);
 		}
 	}
 	return buffer;
@@ -612,9 +609,9 @@ std::wstring DataManager::FormatSetName(const std::vector<uint16_t>& setcodes) c
             res += L'\n';
             ///kdiy/////////
 		if(name.empty())
-			appendstring(res, unknown_string);
+			res += unknown_string;
 		else
-			appendstring(res, name);
+			res += name;
 	}
 	return res;
 }

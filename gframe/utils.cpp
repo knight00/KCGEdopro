@@ -2,6 +2,7 @@
 #include <cmath> // std::round
 #include "epro_thread.h"
 #include "config.h"
+#include "fmt.h"
 
 #if EDOPRO_WINDOWS
 #define WIN32_LEAN_AND_MEAN
@@ -27,6 +28,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <limits.h> // PATH_MAX
 using Stat = struct stat;
 #include "porting.h"
 #endif //EDOPRO_LINUX_KERNEL || EDOPRO_APPLE
@@ -408,9 +410,9 @@ namespace ygo {
 						continue;
 				}
 #if EDOPRO_ANDROID
-				if(dirp->d_name == EPRO_TEXT("."_sv))
+				if(dirp->d_name == EPRO_TEXT("."sv))
 					found_curdir = true;
-				if(dirp->d_name == EPRO_TEXT(".."_sv))
+				if(dirp->d_name == EPRO_TEXT(".."sv))
 					found_topdir = true;
 #endif //EDOPRO_ANDROID
 				cb(dirp->d_name, isdir);
@@ -595,12 +597,10 @@ namespace ygo {
 		std::replace(ret.begin(), ret.end(), EPRO_TEXT('\\'), EPRO_TEXT('/'));
 		return ret;
 #else
-		epro::path_char* p = realpath(path.data(), nullptr);
-		if(!p)
+		char buff[PATH_MAX];
+		if(realpath(path.data(), buff) == nullptr)
 			return { path.data(), path.size() };
-		epro::path_string ret{ p };
-		free(p);
-		return ret;
+		return buff;
 #endif
 	}
 	bool Utils::ContainsSubstring(epro::wstringview input, const std::vector<epro::wstringview>& tokens) {

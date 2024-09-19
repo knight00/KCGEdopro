@@ -9,6 +9,7 @@
 #include "utils.h"
 #include "client_card.h"
 #include "file_stream.h"
+#include "fmt.h"
 
 namespace ygo {
 const CardDataC* DeckManager::GetDummyOrMappedCardData(uint32_t code) const {
@@ -30,7 +31,7 @@ void DeckManager::ClearDummies() {
 	dummy_entries.clear();
 }
 bool DeckManager::LoadLFListSingle(const epro::path_string& path) {
-	static constexpr auto key = "$whitelist"_sv;
+	static constexpr auto key = "$whitelist"sv;
 	FileStream infile{ path, FileStream::in };
 	if(infile.fail())
 		return false;
@@ -428,7 +429,7 @@ bool DeckManager::SaveDeck(epro::path_stringview name, const Deck& deck) {
 	deckfile << "#created by " << BufferIO::EncodeUTF8(mainGame->ebNickName->getText()) << "\n#main\n";
 	auto serializeDeck = [&deckfile](const auto& deck) {
 		for(auto card : deck)
-			deckfile << fmt::to_string(card->getRealCode()) << "\n";
+			deckfile << epro::to_string(card->getRealCode()) << "\n";
 	};
 	serializeDeck(deck.main);
 	deckfile << "#extra\n";
@@ -444,13 +445,13 @@ bool DeckManager::SaveDeck(epro::path_stringview name, const cardlist_type& main
 		return false;
 	deckfile << "#created by " << BufferIO::EncodeUTF8(mainGame->ebNickName->getText()) << "\n#main\n";
 	for(auto card : mainlist)
-		deckfile << fmt::to_string(card) << "\n";
+		deckfile << epro::to_string(card) << "\n";
 	deckfile << "#extra\n";
 	for(auto card : extralist)
-		deckfile << fmt::to_string(card) << "\n";
+		deckfile << epro::to_string(card) << "\n";
 	deckfile << "!side\n";
 	for(auto card : sidelist)
-		deckfile << fmt::to_string(card) << "\n";
+		deckfile << epro::to_string(card) << "\n";
 	return true;
 }
 const wchar_t* DeckManager::ExportDeckBase64(const Deck& deck) {

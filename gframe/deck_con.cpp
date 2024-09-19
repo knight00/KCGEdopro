@@ -13,6 +13,7 @@
 #include "duelclient.h"
 #include "single_mode.h"
 #include "client_card.h"
+#include "fmt.h"
 /////kdiy/////
 #include "sound_manager.h"
 /////kdiy/////
@@ -1373,14 +1374,14 @@ void DeckBuilder::FilterCards(bool force_refresh) {
 			std::vector<epro::wstringview> tokens;
 			int modif = 0;
 			if(!subterm.empty()) {
-				if(subterm.starts_with(L"!!")) {
+				if(starts_with(subterm, L"!!")) {
 					modif |= SEARCH_MODIFIER_NEGATIVE_LOOKUP;
 					subterm.remove_prefix(2);
 				}
-				if(subterm.starts_with(L'@')) {
+				if(starts_with(subterm, L'@')) {
 					modif |= SEARCH_MODIFIER_ARCHETYPE_ONLY;
 					subterm.remove_prefix(1);
-				} else if(subterm.starts_with(L'$')) {
+				} else if(starts_with(subterm, L'$')) {
 					modif |= SEARCH_MODIFIER_NAME_ONLY;
 					subterm.remove_prefix(1);
 				}
@@ -1417,7 +1418,7 @@ void DeckBuilder::FilterCards(bool force_refresh) {
 	SortList();
 	auto ip = std::unique(results.begin(), results.end());
 	results.resize(std::distance(results.begin(), ip));
-	result_string = fmt::to_wstring(results.size());
+	result_string = epro::to_wstring(results.size());
 	scroll_pos = 0;
 	if(results.size() > 7) {
 		mainGame->scrFilter->setVisible(true);

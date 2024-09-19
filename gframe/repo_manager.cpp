@@ -8,6 +8,7 @@
 #include "logging.h"
 #include "utils.h"
 #include "libgit2.hpp"
+#include "fmt.h"
 ////kdiy////////
 #include <regex>
 ////kdiy////////

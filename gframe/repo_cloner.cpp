@@ -1,6 +1,7 @@
 #include "repo_cloner.h"
 
 #include "config.h"
+#include "fmt.h"
 #include "game_config.h"
 #include "porting.h"
 #include "repo_manager.h"
@@ -106,7 +107,7 @@ int repo_cloner_main(const args_t& args) {
 		}
 		if(should_print) {
 			// prints a json array contaning all the info about the repos being cloned
-			fmt::print("[{{{}}}]\n", fmt::join(repos_to_clone.begin(), repos_to_clone.end(), "},{"));
+			epro::print("[{{{}}}]\n", fmt::join(repos_to_clone.begin(), repos_to_clone.end(), "},{"));
 			std::fflush(stdout);
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));

@@ -40,6 +40,7 @@
 #include <IMeshSceneNode.h>
 #include <unordered_set>
 #include <climits>
+#include "../fmt.h"
 #ifdef YGOPRO_USE_BUNDLED_FONT
 extern const char* bundled_font_name;
 extern const size_t bundled_font_len;
@@ -454,7 +455,7 @@ CGUITTGlyphPage* CGUITTFont::getLastGlyphPage() const {
 
 CGUITTGlyphPage* CGUITTFont::createGlyphPage(const u8& pixel_mode) {
 	// Name of our page.
-	auto name = fmt::format("TTFontGlyphPage_{}.{}.{}._{}",
+	auto name = epro::format("TTFontGlyphPage_{}.{}.{}._{}",
 							tt_face->family_name, tt_face->style_name, size, Glyph_Pages.size()); // The newly created page will be at the end of the collection.
 
 	// Create the new page.
@@ -796,10 +797,10 @@ s32 CGUITTFont::getCharacterFromPos(const core::ustring& text, s32 pixel_x) cons
 
 		previousChar = c;
 		++character;
-#if WCHAR_MAX == USHRT_MAX
-		if(c >= 0x10000)
-			++character;
-#endif
+		if constexpr(sizeof(wchar_t) == 2) {
+			if(c >= 0x10000)
+				++character;
+		}
 	}
 
 	return -1;

@@ -9,6 +9,7 @@
 #include "CGUIImageButton/CGUIImageButton.h"
 #include "custom_skin_enum.h"
 #include "image_manager.h"
+#include "fmt.h"
 //////kdiy///////
 #include "replay_mode.h"
 //////kdiy///////
@@ -985,7 +986,7 @@ void Game::DrawMisc() {
 
 	if(lpframe > 0 && delta_frames) {
 		dInfo.lp[lpplayer] -= lpd * delta_frames;
-		dInfo.strLP[lpplayer] = fmt::to_wstring(std::max(0, dInfo.lp[lpplayer]));
+		dInfo.strLP[lpplayer] = epro::to_wstring(std::max(0, dInfo.lp[lpplayer]));
 		///////////kdiy///////////
 		if(dInfo.lp[lpplayer] >= 8888888) {
             dInfo.lp[lpplayer] = 8888888l;
@@ -1029,9 +1030,9 @@ void Game::DrawMisc() {
 		// DRAWRECT(rectpos, 2, &cliprect);
 		// driver->draw2DRectangleOutline(rectpos, skin::TIMEBAR_2_OUTLINE_VAL);
         driver->draw2DImage(imageManager.tTimer, Resize(380, 353, 440, 413), irr::core::recti(0, 0, 333, 332), 0, 0, true);
-        DrawShadowText(numFont, fmt::to_wstring(dInfo.time_left[0]), Resize(400, 373, 420, 393), Resize(0, 1, 2, 0), dInfo.time_left[0] < 10 ? 0xffff0000 : 0xffffffff, 0xff000000, true, false);
+        DrawShadowText(numFont, epro::to_wstring(dInfo.time_left[0]), Resize(400, 373, 420, 393), Resize(0, 1, 2, 0), dInfo.time_left[0] < 10 ? 0xffff0000 : 0xffffffff, 0xff000000, true, false);
         driver->draw2DImage(imageManager.tTimer, Resize(850, 260, 900, 320), irr::core::recti(0, 0, 333, 332), 0, 0, true);
-        DrawShadowText(numFont, fmt::to_wstring(dInfo.time_left[1]), Resize(870, 280, 880, 300), Resize(0, 1, 2, 0), dInfo.time_left[1] < 10 ? 0xffff0000 : 0xffffffff, 0xff000000, true, false);
+        DrawShadowText(numFont, epro::to_wstring(dInfo.time_left[1]), Resize(870, 280, 880, 300), Resize(0, 1, 2, 0), dInfo.time_left[1] < 10 ? 0xffff0000 : 0xffffffff, 0xff000000, true, false);
 		////kdiy////////////
 	}
 
@@ -1947,7 +1948,7 @@ void Game::DrawDeckBd() {
 	const auto GetDeckSizeStr = [&](const Deck::Vector& deck, const Deck::Vector& pre_deck)->std::wstring {
 		if(is_siding)
 			return epro::format(L"{} ({})", deck.size(), pre_deck.size());
-		return fmt::to_wstring(deck.size());
+		return epro::to_wstring(deck.size());
 	};
 	const auto& current_deck = deckBuilder.GetCurrentDeck();
 
@@ -1999,7 +2000,7 @@ void Game::DrawDeckBd() {
 
 		DrawShadowText(textFont, gDataManager->GetSysString(mainGame->btnLocation[1]->isPressed() ? 8060 : mainGame->btnLocation[2]->isPressed() ? 8061 : mainGame->btnLocation[3]->isPressed() ? 8062 : mainGame->btnLocation[4]->isPressed() ? 8063 : mainGame->btnLocation[5]->isPressed() ? 8064 : 8059), Resize(14, 4, 109, 19), Resize(1, 1, 1, 1), 0xffffffff, 0xff000000, false, true);
 
-		auto main_deck_size_str = fmt::to_wstring(decksize);;
+		auto main_deck_size_str = epro::to_wstring(decksize);;
 		DrawShadowText(numFont, main_deck_size_str, Resize(79, 5, 139, 20), Resize(1, 1, 1, 1), 0xffffffff, 0xff000000, false, true);
 
         bool half = !(mainGame->btnLocation[0]->isPressed());
@@ -2060,7 +2061,7 @@ void Game::DrawDeckBd() {
 			
 			DrawShadowText(textFont, gDataManager->GetSysString(mainGame->btnLocation[2]->isPressed() ? 1004 : mainGame->btnLocation[3]->isPressed() ? 1005 : mainGame->btnLocation[4]->isPressed() ? 1001 : mainGame->btnLocation[5]->isPressed() ? 1006 : 1000), Resize(14, 258, 109, 273), Resize(1, 1, 1, 1), 0xffffffff, 0xff000000, false, true);
 			
-			auto main_deck_size_str = fmt::to_wstring(decksize2);;
+			auto main_deck_size_str = epro::to_wstring(decksize2);;
 			DrawShadowText(numFont, main_deck_size_str, Resize(79, 259, 139, 274), Resize(1, 1, 1, 1), 0xffffffff, 0xff000000, false, true);
 			auto main_types_count_str = epro::format(L"{} {} {} {} {} {}",
 													  gDataManager->GetSysString(1312), monster_count,

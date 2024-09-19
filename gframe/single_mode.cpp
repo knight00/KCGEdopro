@@ -4,6 +4,7 @@
 #include "game.h"
 #include "core_utils.h"
 #include "sound_manager.h"
+#include "fmt.h"
 #include "CGUIFileSelectListBox/CGUIFileSelectListBox.h"
 #include <IrrlichtDevice.h>
 #include <IGUIWindow.h>
@@ -97,19 +98,19 @@ restart:
 								 !mainGame->dInfo.HasFieldFlag(DUEL_SEPARATE_PZONE));
 	mainGame->dInfo.compat_mode = false;
 	mainGame->dInfo.legacy_race_size = false;
-	///////////kdiy///////////
 	mainGame->dInfo.startlp = mainGame->dInfo.lp[0] = mainGame->dInfo.lp[1] = duelOptions.startingLP;
-	mainGame->dInfo.strLP[0] = mainGame->dInfo.strLP[1] = fmt::to_wstring(mainGame->dInfo.lp[0]);
+	mainGame->dInfo.strLP[0] = mainGame->dInfo.strLP[1] = epro::to_wstring(mainGame->dInfo.lp[0]);
+	///////////kdiy///////////
 	if(mainGame->dInfo.lp[0] >= 8888888) {
         mainGame->dInfo.lp[0] = 8888888;
 		mainGame->dInfo.strLP[0] = L"\u221E";
     } else
-		mainGame->dInfo.strLP[0] = fmt::to_wstring(mainGame->dInfo.lp[0]);
+		mainGame->dInfo.strLP[0] = epro::to_wstring(mainGame->dInfo.lp[0]);
 	if(mainGame->dInfo.lp[1] >= 8888888) {
         mainGame->dInfo.lp[1] = 8888888;
 		mainGame->dInfo.strLP[1] = L"\u221E";
     } else
-		mainGame->dInfo.strLP[1] = fmt::to_wstring(mainGame->dInfo.lp[1]);
+		mainGame->dInfo.strLP[1] = epro::to_wstring(mainGame->dInfo.lp[1]);
 	///////////kdiy///////////
 	mainGame->dInfo.selfnames = { mainGame->ebNickName->getText() };
 	mainGame->dInfo.opponames = { L"" };
@@ -453,7 +454,7 @@ bool SingleMode::SinglePlayAnalyze(CoreUtils::Packet& packet) {
 			case 203: {
 				analyze = true;
 				break;
-			
+
 			}
 			}
 			if(analyze)
