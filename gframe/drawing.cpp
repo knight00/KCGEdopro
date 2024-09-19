@@ -1489,7 +1489,8 @@ inline void SetS3DVertex(Materials::QuadVertex v, irr::f32 x1, irr::f32 y1, irr:
 }
 void Game::DrawSpec() {
 	const auto drawrect2 = ResizeWin(574, 150, 574 + CARD_IMG_WIDTH, 150 + CARD_IMG_HEIGHT);
-     //////kdiy//////////
+    //////kdiy//////////
+	const auto drawrect3 = ResizeWin(594, 150, 594 + 300, 150 + 300);
 	auto DrawTextureRect = [this](Materials::QuadVertex vertices, irr::video::ITexture* texture) {
 		matManager.mTexture.setTexture(0, texture);
 		driver->setMaterial(matManager.mTexture);
@@ -1513,7 +1514,7 @@ void Game::DrawSpec() {
 				driver->setTransform(irr::video::ETS_WORLD, atk);
 				driver->drawVertexPrimitiveList(matManager.vCloseup, 4, matManager.iRectangle, 2);
 			    auto cardrect2 = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cardcloseup->getOriginalSize()));
-				driver->draw2DImage(cardcloseup, drawrect2, cardrect2, 0, 0, true);
+				driver->draw2DImage(cardcloseup, drawrect3, cardrect2, 0, 0, true);
 			} else
             //////kdiy//////////
 			driver->draw2DImage(cardtxt, drawrect2, cardrect);
@@ -1539,7 +1540,7 @@ void Game::DrawSpec() {
 				driver->setTransform(irr::video::ETS_WORLD, atk);
 				driver->drawVertexPrimitiveList(matManager.vCloseup, 4, matManager.iRectangle, 2);
 				auto cardrect2 = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cardcloseup->getOriginalSize()));
-				driver->draw2DImage(cardcloseup, drawrect2, cardrect2, 0, 0, true);
+				driver->draw2DImage(cardcloseup, drawrect3, cardrect2, 0, 0, true);
 			} else
             //////kdiy//////////
 			driver->draw2DImage(cardtxt, drawrect2, cardrect);
