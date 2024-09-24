@@ -2247,11 +2247,11 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				break;
 			}
 			case BUTTON_HOME: {
-                Utils::SystemOpen(EPRO_TEXT("https://afdian.net/a/Edokcg/"), Utils::OPEN_URL);
+                Utils::SystemOpen(EPRO_TEXT("https://afdian.com/a/Edokcg/"), Utils::OPEN_URL);
 				break;
 			}
 			case BUTTON_FOLDER: {
-                Utils::SystemOpen(EPRO_TEXT("https://afdian.net/p/4a2966dcbb0d11edaaa052540025c377/"), Utils::OPEN_URL);
+                Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/4a2966dcbb0d11edaaa052540025c377/"), Utils::OPEN_URL);
 				break;
 			}
             case BUTTON_SOUND: {

@@ -1086,7 +1086,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					break;
 				}
 				case ACTION_SHOW_CHANGELOG: {
-					Utils::SystemOpen(EPRO_TEXT("https://afdian.net/p/7676acb6c0af11ed898652540025c377/"), Utils::OPEN_URL);
+					Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/7676acb6c0af11ed898652540025c377/"), Utils::OPEN_URL);
 					mainGame->btnNo->setVisible(true);
 					mainGame->btnNo->setEnabled(true);
 					break;

@@ -185,9 +185,12 @@ DataHandler::DataHandler() {
 	gitManager = std::make_unique<RepoManager>();
 	sounds = std::make_unique<SoundManager>(configs->soundVolume / 100.0, configs->musicVolume / 100.0, configs->enablesound, configs->enablemusic);
 	gitManager->ToggleReadOnly(cli_args[REPOS_READ_ONLY].enabled);
+	////kdiy//////////
+	if(Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
+	////kdiy//////////
 	gitManager->LoadRepositoriesFromJson(configs->user_configs);
 	////kdiy//////////
-	if(!Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
+	else
 	////kdiy//////////
 	gitManager->LoadRepositoriesFromJson(configs->configs);
 	if(gitManager->TerminateIfNothingLoaded())

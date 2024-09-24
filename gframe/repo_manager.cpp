@@ -205,7 +205,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 			}
 			if(tmp_repo.url.substr(0,8) == "default/")
 			    tmp_repo.url = "https://e.coding.net/ygo94/kcg" + tmp_repo.url.substr(7,tmp_repo.url.length());
-			else 
+			else
                 continue;
             if(tmp_repo.Sanitize() && gGameConfig->system_engine)
 				AddRepo(std::move(tmp_repo));
@@ -224,7 +224,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 		if(repo1.Sanitize() && gGameConfig->system_engine)
 			AddRepo(std::move(repo1));
 	}
-	////kdiy//////////	
+	////kdiy//////////
 }
 
 bool RepoManager::TerminateIfNothingLoaded() {
