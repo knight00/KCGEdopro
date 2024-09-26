@@ -81,6 +81,11 @@ static size_t WriteCallback(char *contents, size_t size, size_t nmemb, void *use
 static CURLcode curlPerform(const char* url, void* payload, void* payload2 = nullptr) {
 	char curl_error_buffer[CURL_ERROR_SIZE];
 	CURL* curl_handle = curl_easy_init();
+    ////kdiy////////
+    // Disabling SSL certificate verification
+    curl_easy_setopt(curl_handle, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(curl_handle, CURLOPT_SSL_VERIFYHOST, 0L);
+    ////kdiy////////
 	curl_easy_setopt(curl_handle, CURLOPT_ERRORBUFFER, curl_error_buffer);
 	curl_easy_setopt(curl_handle, CURLOPT_FAILONERROR, 1);
 	curl_easy_setopt(curl_handle, CURLOPT_URL, url);

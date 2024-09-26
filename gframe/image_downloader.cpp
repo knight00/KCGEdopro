@@ -83,6 +83,11 @@ void ImageDownloader::DownloadPic() {
 		ErrorLog("Failed to start downloader thread");
 		return;
 	}
+    ////kdiy////////
+    // Disabling SSL certificate verification
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+    ////kdiy////////
 	curl_payload payload;
 	char curl_error_buffer[CURL_ERROR_SIZE];
 	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, curl_error_buffer);

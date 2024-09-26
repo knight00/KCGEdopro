@@ -70,11 +70,11 @@ int repo_cloner_main(const args_t& args) {
 
 	auto gitManager = std::make_unique<RepoManager>();
 	////kdiy//////////
-	if(Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
+	//if(Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
 	////kdiy//////////
 	gitManager->LoadRepositoriesFromJson(configs->user_configs);
 	////kdiy//////////
-	else
+	//else
 	////kdiy//////////
 	gitManager->LoadRepositoriesFromJson(configs->configs);
 	if(gitManager->TerminateIfNothingLoaded())

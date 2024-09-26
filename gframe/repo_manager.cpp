@@ -11,6 +11,15 @@
 #include "fmt.h"
 ////kdiy////////
 #include <regex>
+// Callback function to always accept certificates
+static int cert_verify_callback(git_cert *cert, int valid, const char *host, void *payload) {
+    (void)cert;    // Unused
+    (void)valid;   // Unused
+    (void)host;    // Unused
+    (void)payload; // Unused
+    // Bypass SSL certificate validation
+    return 0; // Return 0 to indicate certificate is always valid
+}
 ////kdiy////////
 
 static constexpr int MAX_HISTORY_LENGTH = 100;
@@ -338,6 +347,9 @@ void RepoManager::CloneOrUpdateTask() {
 					try {
 						// git fetch
 						git_fetch_options fetchOpts = GIT_FETCH_OPTIONS_INIT;
+						////kdiy//////////
+						fetchOpts.callbacks.certificate_check = cert_verify_callback;
+						////kdiy//////////
 						fetchOpts.callbacks.transfer_progress = RepoManager::FetchCb;
 						fetchOpts.callbacks.payload = &payload;
 						auto remote = Git::MakeUnique(git_remote_lookup, repo.get(), "origin");
@@ -358,7 +370,7 @@ void RepoManager::CloneOrUpdateTask() {
 						history.warning = e.what();
 						////kdiy//////////
 						//ErrorLog("Warning occurred in repo {}: {}", url, history.warning);
-						ErrorLog("Warning occurred in repo {}",  _repo.repo_name);
+						ErrorLog("Warning occurred in repo {}: {}",  _repo.repo_name, history.warning);
 						////kdiy//////////
 					}
 				}
@@ -373,6 +385,9 @@ void RepoManager::CloneOrUpdateTask() {
 				Utils::DeleteDirectory(Utils::ToPathString(path + "/"));
 				// git clone <url> <path>
 				git_clone_options cloneOpts = GIT_CLONE_OPTIONS_INIT;
+                ////kdiy//////////
+                cloneOpts.fetch_opts.callbacks.certificate_check = cert_verify_callback;
+                ////kdiy//////////
 				cloneOpts.fetch_opts.callbacks.transfer_progress = RepoManager::FetchCb;
 				cloneOpts.fetch_opts.callbacks.payload = &payload;
 				cloneOpts.checkout_opts.progress_cb = RepoManager::CheckoutCb;
@@ -387,7 +402,7 @@ void RepoManager::CloneOrUpdateTask() {
 			history.error = e.what();
 			////kdiy//////////
 			//ErrorLog("Exception occurred in repo {}: {}", _repo.url, history.error);
-			ErrorLog("Exception occurred in repo {}", _repo.repo_name);
+			ErrorLog("Exception occurred in repo {}: {}", _repo.repo_name, history.error);
 			////kdiy//////////
 		}
 		lck.lock();
