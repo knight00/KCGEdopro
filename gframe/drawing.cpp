@@ -475,11 +475,11 @@ void Game::DrawCard(ClientCard* pcard) {
 		sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
 		irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
 		pcard->mTransform.setRotationRadians(atkr);
-	} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && pcard->is_pzone
+	} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->location & LOCATION_SZONE) && (pcard->sequence == dInfo.GetPzoneIndex(0)) && !(pcard->status & STATUS_MSZONE)
 		&& !gGameConfig->topdown_view) {
 		pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(pcard->controler == 0 ? -0.32f : 0.32f, pcard->controler == 0 ? 0 : -0.8f, 0));
 		pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(-irr::core::PI / 3, 0, pcard->controler == 0 ? -irr::core::PI / 5 : -irr::core::PI + irr::core::PI / 5));
-	} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 4 || pcard->sequence == 7)) && pcard->is_pzone
+	} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->location & LOCATION_SZONE) && (pcard->sequence == dInfo.GetPzoneIndex(1)) && !(pcard->status & STATUS_MSZONE)
 		&& !gGameConfig->topdown_view) {
 		pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(pcard->controler == 0 ? 0.32f : -0.32f, pcard->controler == 0 ? 0 : -0.8f, 0));
 		pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(-irr::core::PI / 3, 0, pcard->controler == 0 ? irr::core::PI / 5 : -irr::core::PI - irr::core::PI / 5));
@@ -487,8 +487,8 @@ void Game::DrawCard(ClientCard* pcard) {
 		pcard->mTransform.setTranslation(pcard->curPos);
 		pcard->mTransform.setRotationRadians(pcard->curRot);
 	}
-	if((pcard->location & LOCATION_ONFIELD)) {
-		if ((pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup) {
+	if((pcard->location & LOCATION_ONFIELD) && (pcard->position & POS_FACEUP) && cardcloseup) {
+		if ( ((pcard->location == LOCATION_MZONE && !(pcard->status & STATUS_SMZONE)) || (pcard->location == LOCATION_SZONE && (pcard->status & STATUS_MSZONE))) || (pcard->cmdFlag & COMMAND_ATTACK)) {
 			if ((pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
 				matManager.mTexture.AmbientColor = irr::video::SColor(255, 128, 128, 128);
 			else if (pcard->position & POS_DEFENSE)
@@ -610,14 +610,14 @@ void Game::DrawCard(ClientCard* pcard) {
 		driver->setMaterial(matManager.mTexture);
 		driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
 	}
-	else if ((pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN))
-		&& (pcard->location & LOCATION_ONFIELD) && (pcard->position & POS_FACEUP)) {
-		///kdiy////////
+	///kdiy////////
+	// else if ((pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN))
+	// 	&& (pcard->location & LOCATION_ONFIELD) && (pcard->position & POS_FACEUP)) {
 		// matManager.mTexture.setTexture(0, imageManager.tNegated);
 		// driver->setMaterial(matManager.mTexture);
 		// driver->drawVertexPrimitiveList(matManager.vNegate, 4, matManager.iRectangle, 2);
-		///kdiy////////
-	}
+	// }
+	///kdiy////////
 	if (pcard->is_moving)
 		return;
 	///kdiy////////
@@ -715,88 +715,6 @@ void Game::DrawCard(ClientCard* pcard) {
 		}
 	}
 	driver->setTransform(irr::video::ETS_WORLD, pcard->mTransform);
-    if(pcard->code != 0 && (pcard->controler == 0 || (pcard->position & POS_FACEUP)) 
-    && ((pcard->location == LOCATION_MZONE && !pcard->is_sanct) || (pcard->location == LOCATION_SZONE && pcard->is_orica)) && !pcard->equipTarget) {
-        //has lv, rk, lk
-        if ((pcard->level != 0 || (pcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL))) && (pcard->rank != 0 || (pcard->type & TYPE_XYZ)) && (pcard->link != 0 || (pcard->type & TYPE_LINK))) {
-            matManager.mTexture.setTexture(0, imageManager.tLvRank);
-            driver->setMaterial(matManager.mTexture);
-            irr::core::matrix4 atk;
-            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.4f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
-            driver->setTransform(irr::video::ETS_WORLD, atk);
-            driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
-
-            matManager.mTexture.setTexture(0, imageManager.tLink);
-            driver->setMaterial(matManager.mTexture);
-            irr::core::matrix4 atk2;
-            atk2.setTranslation(pcard->curPos + irr::core::vector3df(0.35f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
-            driver->setTransform(irr::video::ETS_WORLD, atk2);
-            driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
-        //has lk, rk
-        } else if ((pcard->link != 0 || (pcard->type & TYPE_LINK)) && (pcard->rank != 0 || (pcard->type & TYPE_XYZ))) {
-            matManager.mTexture.setTexture(0, imageManager.tRank);
-            driver->setMaterial(matManager.mTexture);
-            irr::core::matrix4 atk;
-            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.4f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
-            driver->setTransform(irr::video::ETS_WORLD, atk);
-            driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
-
-            matManager.mTexture.setTexture(0, imageManager.tLink);
-            driver->setMaterial(matManager.mTexture);
-            irr::core::matrix4 atk2;
-            atk2.setTranslation(pcard->curPos + irr::core::vector3df(0.35f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
-            driver->setTransform(irr::video::ETS_WORLD, atk2);
-            driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
-        //has lk, lv
-        } else if ((pcard->link != 0 || (pcard->type & TYPE_LINK)) && (pcard->level != 0 || (pcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL)))) {
-            matManager.mTexture.setTexture(0, imageManager.tLevel);
-            driver->setMaterial(matManager.mTexture);
-            irr::core::matrix4 atk;
-            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.4f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
-            driver->setTransform(irr::video::ETS_WORLD, atk);
-            driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
-
-            matManager.mTexture.setTexture(0, imageManager.tLink);
-            driver->setMaterial(matManager.mTexture);
-            irr::core::matrix4 atk2;
-            atk2.setTranslation(pcard->curPos + irr::core::vector3df(0.35f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
-            driver->setTransform(irr::video::ETS_WORLD, atk2);
-            driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
-        //has lv, rk
-        } else if ((pcard->level != 0 || (pcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL))) && (pcard->rank != 0 || (pcard->type & TYPE_XYZ))) {
-            matManager.mTexture.setTexture(0, imageManager.tLvRank);
-            driver->setMaterial(matManager.mTexture);
-            irr::core::matrix4 atk;
-            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.4f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
-            driver->setTransform(irr::video::ETS_WORLD, atk);
-            driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
-        //has rk
-        } else if (pcard->rank != 0 || (pcard->type & TYPE_XYZ)) {
-            matManager.mTexture.setTexture(0, imageManager.tRank);
-            driver->setMaterial(matManager.mTexture);
-            irr::core::matrix4 atk;
-            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.4f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
-            driver->setTransform(irr::video::ETS_WORLD, atk);
-            driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
-        //has lv
-        } else if (pcard->level != 0 || !(pcard->type & (TYPE_XYZ | TYPE_LINK))) {
-            matManager.mTexture.setTexture(0, imageManager.tLevel);
-            driver->setMaterial(matManager.mTexture);
-            irr::core::matrix4 atk;
-            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.4f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
-            driver->setTransform(irr::video::ETS_WORLD, atk);
-            driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
-        //has lk
-        } else if (pcard->link != 0 || (pcard->type & TYPE_LINK)) {
-            matManager.mTexture.setTexture(0, imageManager.tLink);
-            driver->setMaterial(matManager.mTexture);
-            irr::core::matrix4 atk;
-            atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.4f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
-            driver->setTransform(irr::video::ETS_WORLD, atk);
-            driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
-        }
-    }
-	driver->setTransform(irr::video::ETS_WORLD, pcard->mTransform);
     ////kdiy/////////
     //if(pcard->cmdFlag & COMMAND_ATTACK) {
 	if((pcard->cmdFlag & COMMAND_ATTACK) && !cardcloseup) {
@@ -813,7 +731,7 @@ void Game::DrawCard(ClientCard* pcard) {
 		////kidy/////////
 	}
     ////kdiy/////////
-	if((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 0 || pcard->sequence == 6)) && pcard->is_pzone ) {
+	if((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->location & LOCATION_SZONE) && (pcard->sequence == dInfo.GetPzoneIndex(0)) && !(pcard->status & STATUS_MSZONE) ) {
 		int scale = pcard->lscale;
 		if(scale >= 0 && scale <= 13 && imageManager.tLScale[scale]) {
 			matManager.mTexture.setTexture(0, imageManager.tLScale[scale]);
@@ -821,7 +739,7 @@ void Game::DrawCard(ClientCard* pcard) {
 			driver->drawVertexPrimitiveList(matManager.vPScale, 4, matManager.iRectangle, 2);
 		}
 	}
-	if((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && ((pcard->location & LOCATION_SZONE) && (pcard->sequence == 4 || pcard->sequence == 7)) && pcard->is_pzone) {
+	if((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->location & LOCATION_SZONE) && (pcard->sequence == dInfo.GetPzoneIndex(1)) && !(pcard->status & STATUS_MSZONE)) {
 		int scale2 = pcard->rscale;
 		if(scale2 >= 0 && scale2 <= 13 && imageManager.tRScale[scale2]) {
 			matManager.mTexture.setTexture(0, imageManager.tRScale[scale2]);
@@ -1114,17 +1032,18 @@ void Game::DrawMisc() {
 			pcard = dField.mzone[p][i];
 			/////////kdiy////////////
 			//if (pcard && pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)))
+				// DrawStatus(pcard);
 			if(!pcard) continue;
-			if(pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && !pcard->is_sanct && !pcard->equipTarget && !pcard->is_attack)
+			if(pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && (!(pcard->status & STATUS_SMZONE) || (pcard->cmdFlag & COMMAND_ATTACK)) && !pcard->is_attack)
+				DrawStatus(pcard, (pcard->cmdFlag & COMMAND_ATTACK) ? true : false);
 			/////////kdiy////////////
-				DrawStatus(pcard);
 		}
 		/////////kdiy////////////
 		for (int i = 0; i < 5; ++i) {
 			pcard = dField.szone[p][i];
 			if(!pcard) continue;
-			if(pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && pcard->is_orica && !pcard->equipTarget && !pcard->is_attack)
-				DrawStatus(pcard);
+			if(pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && ((pcard->status & STATUS_MSZONE) || (pcard->cmdFlag & COMMAND_ATTACK)) && !pcard->is_attack)
+				DrawStatus(pcard, (pcard->cmdFlag & COMMAND_ATTACK) ? true : false);
 		}
 		// // Draw pendulum scales
 		// for (const auto pzone : pzones) {
@@ -1148,7 +1067,10 @@ void Game::DrawMisc() {
 /*
 Draws the stats of a card based on its relative position
 */
-void Game::DrawStatus(ClientCard* pcard) {
+//kidy///////
+//void Game::DrawStatus(ClientCard* pcard) {
+void Game::DrawStatus(ClientCard* pcard, bool attackonly) {
+//kidy///////
 	auto getcoords = [collisionmanager=device->getSceneManager()->getSceneCollisionManager()](const irr::core::vector3df& pos3d) {
 		return collisionmanager->getScreenCoordinatesFrom3DPosition(pos3d);
 	};
@@ -1197,7 +1119,7 @@ void Game::DrawStatus(ClientCard* pcard) {
 
 	auto GetAtkColor = [&pcard] {
 		////kdiy//////////
-		if(!(pcard->position & POS_ATTACK))
+		if(pcard->position == POS_FACEDOWN || pcard->position == POS_FACEUP_DEFENSE || pcard->position == POS_FACEDOWN_DEFENSE)
 			return irr::video::SColor(255, 200, 200, 200);
 		////kdiy//////////
 		if(pcard->attack > pcard->base_attack)
@@ -1209,8 +1131,8 @@ void Game::DrawStatus(ClientCard* pcard) {
 
 	auto GetDefColor = [&pcard] {
 		////kdiy//////////
-		if(!(pcard->position & POS_DEFENSE))
-			return irr::video::SColor(255, 230, 230, 230);
+		if(!(pcard->position == POS_FACEDOWN || pcard->position == POS_FACEUP_DEFENSE || pcard->position == POS_FACEDOWN_DEFENSE))
+			return irr::video::SColor(255, 200, 200, 200);
 		////kdiy//////////
 		if(pcard->defense > pcard->base_defense)
 			return skin::DUELFIELD_HIGHER_CARD_DEF_VAL;
@@ -1269,14 +1191,15 @@ void Game::DrawStatus(ClientCard* pcard) {
 		DrawShadowText(font, pcard->atkstring, irr::core::recti(x1 - std::floor(atk.Width / 2), y1, x1 + std::floor(atk.Width / 2), y1 + 1),
 					   padding_1111, GetAtkColor(), 0xff000000, true);
 	} else {
-        auto font = pcard->attack >= 8888888 ? (pcard->position & POS_DEFENSE) ? adFont0 : numFont0 :  (pcard->position & POS_DEFENSE) ? defFont : atkFont;
+        auto font = pcard->attack >= 8888888 ? (pcard->position == POS_FACEDOWN || pcard->position == POS_FACEUP_DEFENSE || pcard->position == POS_FACEDOWN_DEFENSE) ? adFont0 : numFont0 :  (pcard->position == POS_FACEDOWN || pcard->position == POS_FACEUP_DEFENSE || pcard->position == POS_FACEDOWN_DEFENSE) ? defFont : atkFont;
 		DrawShadowText(font, L"/", irr::core::recti(x1 - half_slash_width, y1, x1 + half_slash_width, y1 + 1), padding_1111, 0xffffffff, 0xff000000, true);
-		DrawShadowText(font, pcard->atkstring, irr::core::recti(x1 - half_slash_width - atk.Width, (pcard->position& POS_DEFENSE) ? y3 : y1, x1 - half_slash_width, ((pcard->position& POS_DEFENSE) ? y3 : y1) + 1),
+		DrawShadowText(font, pcard->atkstring, irr::core::recti(x1 - half_slash_width - atk.Width, (pcard->position == POS_FACEDOWN || pcard->position == POS_FACEUP_DEFENSE || pcard->position == POS_FACEDOWN_DEFENSE) ? y3 : y1, x1 - half_slash_width, ((pcard->position == POS_FACEDOWN || pcard->position == POS_FACEUP_DEFENSE || pcard->position == POS_FACEDOWN_DEFENSE) ? y3 : y1) + 1),
 					   padding_1111, GetAtkColor(), 0xff000000);
-		DrawShadowText(pcard->defense >= 8888888 ? (pcard->position & POS_DEFENSE) ? adFont0 : numFont0 :  (pcard->position & POS_DEFENSE) ? atkFont : defFont, pcard->defstring, irr::core::recti(x1 + half_slash_width, (pcard->position& POS_DEFENSE) ? y1 : y3, x1 - half_slash_width, ((pcard->position& POS_DEFENSE) ? y1 : y3) + 1),
+		DrawShadowText(pcard->defense >= 8888888 ? (pcard->position == POS_FACEDOWN || pcard->position == POS_FACEUP_DEFENSE || pcard->position == POS_FACEDOWN_DEFENSE) ? adFont0 : numFont0 :  (pcard->position == POS_FACEDOWN || pcard->position == POS_FACEUP_DEFENSE || pcard->position == POS_FACEDOWN_DEFENSE) ? atkFont : defFont, pcard->defstring, irr::core::recti(x1 + half_slash_width, (pcard->position == POS_FACEDOWN || pcard->position == POS_FACEUP_DEFENSE || pcard->position == POS_FACEDOWN_DEFENSE) ? y1 : y3, x1 - half_slash_width, ((pcard->position == POS_FACEDOWN || pcard->position == POS_FACEUP_DEFENSE || pcard->position == POS_FACEDOWN_DEFENSE) ? y1 : y3) + 1),
 					   padding_1111, GetDefColor(), 0xff000000);
 	}
 
+	if(!attackonly) {
 	//has lv, rk, lk
 	if ((pcard->level != 0 || (pcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL))) && (pcard->rank != 0 || (pcard->type & TYPE_XYZ)) && (pcard->link != 0 || (pcard->type & TYPE_LINK))) {
 		//DrawShadowText(adFont, pcard->rkstring, irr::core::recti(x2 - std::floor(rk.Width / 2), y2, x2 + std::floor(rk.Width / 2), y2 + 1),
@@ -1295,6 +1218,20 @@ void Game::DrawStatus(ClientCard* pcard) {
 		DrawShadowText(atkFont, pcard->rkstring, irr::core::recti(x2 + lv.Width + slash2.Width, y2, x2 + lv.Width + slash2.Width + rk.Width, y2 + 1),
 			padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000, true);
 		DrawShadowText(atkFont, pcard->linkstring, irr::core::recti(x3, y2, x3 + 1, y2 + 1), padding_1111, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
+
+        matManager.mTexture.setTexture(0, imageManager.tLvRank);
+        driver->setMaterial(matManager.mTexture);
+        irr::core::matrix4 atk;
+        atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.4f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
+        driver->setTransform(irr::video::ETS_WORLD, atk);
+        driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
+
+        matManager.mTexture.setTexture(0, imageManager.tLink);
+        driver->setMaterial(matManager.mTexture);
+        irr::core::matrix4 atk2;
+        atk2.setTranslation(pcard->curPos + irr::core::vector3df(0.35f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
+        driver->setTransform(irr::video::ETS_WORLD, atk2);
+        driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
 	//has lk, rk
 	} else if ((pcard->link != 0 || (pcard->type & TYPE_LINK)) && (pcard->rank != 0 || (pcard->type & TYPE_XYZ))) {
 		//DrawShadowText(adFont, L"/", irr::core::recti(x2 - std::floor(slash.Width / 2), y2, x2 + std::floor(slash.Width / 2), y2 + 1),
@@ -1305,6 +1242,20 @@ void Game::DrawStatus(ClientCard* pcard) {
 		//	padding_1011, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
 		DrawShadowText(atkFont, pcard->rkstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
 		DrawShadowText(atkFont, pcard->linkstring, irr::core::recti(x3, y2, x3 + 1, y2 + 1), padding_1111, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
+
+        matManager.mTexture.setTexture(0, imageManager.tRank);
+        driver->setMaterial(matManager.mTexture);
+        irr::core::matrix4 atk;
+        atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.4f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
+        driver->setTransform(irr::video::ETS_WORLD, atk);
+        driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
+
+        matManager.mTexture.setTexture(0, imageManager.tLink);
+        driver->setMaterial(matManager.mTexture);
+        irr::core::matrix4 atk2;
+        atk2.setTranslation(pcard->curPos + irr::core::vector3df(0.35f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
+        driver->setTransform(irr::video::ETS_WORLD, atk2);
+        driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
 	//has lk, lv
 	} else if ((pcard->link != 0 || (pcard->type & TYPE_LINK)) && (pcard->level != 0 || (pcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL)))) {
 		//DrawShadowText(adFont, L"/", irr::core::recti(x2 - std::floor(slash.Width / 2), y2, x2 + std::floor(slash.Width / 2), y2 + 1),
@@ -1315,6 +1266,20 @@ void Game::DrawStatus(ClientCard* pcard) {
 		//	padding_1011, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
 		DrawShadowText(atkFont, pcard->lvstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1111, GetLevelColor(), 0xff000000);
 		DrawShadowText(atkFont, pcard->linkstring, irr::core::recti(x3, y2, x3 + 1, y2 + 1), padding_1111, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
+
+		matManager.mTexture.setTexture(0, imageManager.tLevel);
+        driver->setMaterial(matManager.mTexture);
+        irr::core::matrix4 atk;
+        atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.4f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
+        driver->setTransform(irr::video::ETS_WORLD, atk);
+        driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
+
+        matManager.mTexture.setTexture(0, imageManager.tLink);
+        driver->setMaterial(matManager.mTexture);
+        irr::core::matrix4 atk2;
+        atk2.setTranslation(pcard->curPos + irr::core::vector3df(0.35f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
+        driver->setTransform(irr::video::ETS_WORLD, atk2);
+        driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
 	//has lv, rk
 	} else if ((pcard->level != 0 || (pcard->type & (TYPE_FUSION | TYPE_SYNCHRO | TYPE_RITUAL))) && (pcard->rank != 0 || (pcard->type & TYPE_XYZ))) {
 		//DrawShadowText(adFont, L"/", irr::core::recti(x2 - half_slash_width, y2, x2 + half_slash_width, y2 + 1),
@@ -1328,15 +1293,46 @@ void Game::DrawStatus(ClientCard* pcard) {
 		DrawShadowText(atkFont, pcard->lvstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1111, GetLevelColor(), 0xff000000);
 		DrawShadowText(atkFont, pcard->rkstring, irr::core::recti(x2 + lv.Width + slash2.Width, y2, x2 + lv.Width + slash2.Width + rk.Width, y2 + 1),
 			padding_1111, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
+
+        matManager.mTexture.setTexture(0, imageManager.tLvRank);
+        driver->setMaterial(matManager.mTexture);
+        irr::core::matrix4 atk;
+        atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.4f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
+        driver->setTransform(irr::video::ETS_WORLD, atk);
+        driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
 	//has rk
-	} else if (pcard->rank != 0 || (pcard->type & TYPE_XYZ))
+	} else if (pcard->rank != 0 || (pcard->type & TYPE_XYZ)) {
 		DrawShadowText(atkFont, pcard->rkstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1011, skin::DUELFIELD_CARD_RANK_VAL, 0xff000000);
+
+        matManager.mTexture.setTexture(0, imageManager.tRank);
+        driver->setMaterial(matManager.mTexture);
+        irr::core::matrix4 atk;
+        atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.4f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
+        driver->setTransform(irr::video::ETS_WORLD, atk);
+        driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
 	//has lv
-	else if (pcard->level != 0 || !(pcard->type & (TYPE_XYZ | TYPE_LINK)))
+    } else if (pcard->level != 0 || !(pcard->type & (TYPE_XYZ | TYPE_LINK))) {
 		DrawShadowText(atkFont, pcard->lvstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1011, GetLevelColor(), 0xff000000);
+	
+        matManager.mTexture.setTexture(0, imageManager.tLevel);
+        driver->setMaterial(matManager.mTexture);
+        irr::core::matrix4 atk;
+        atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.4f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
+        driver->setTransform(irr::video::ETS_WORLD, atk);
+        driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
 	//has lk
-	else if (pcard->link != 0 || (pcard->type & TYPE_LINK))
+	} else if (pcard->link != 0 || (pcard->type & TYPE_LINK)) {
 		DrawShadowText(atkFont, pcard->linkstring, irr::core::recti(x2, y2, x2 + 1, y2 + 1), padding_1011, skin::DUELFIELD_CARD_LINK_VAL, 0xff000000);
+	
+        matManager.mTexture.setTexture(0, imageManager.tLink);
+        driver->setMaterial(matManager.mTexture);
+        irr::core::matrix4 atk;
+        atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.4f, pcard->controler == 0 ? -0.385f : 0.705f, 0.25f));
+        driver->setTransform(irr::video::ETS_WORLD, atk);
+        driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
+	}
+	}
+	////kdiy//////////
 }
 /*
 Draws the pendulum scale value of a card in the pendulum zone based on its relative position

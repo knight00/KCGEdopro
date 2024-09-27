@@ -720,7 +720,10 @@ public:
 	void DrawCards();
 	void DrawCard(ClientCard* pcard);
 	void DrawMisc();
-	void DrawStatus(ClientCard* pcard);
+	//kidy///////
+	//void DrawStatus(ClientCard* pcard);
+	void DrawStatus(ClientCard* pcard, bool attackonly = false);
+	//kidy///////
 	void DrawPendScale(ClientCard* pcard);
 	void DrawStackIndicator(epro::wstringview text, const Materials::QuadVertex v, bool opponent);
 	void DrawGUI();
