@@ -1035,7 +1035,7 @@ void Game::DrawMisc() {
 				// DrawStatus(pcard);
 			if(!pcard) continue;
 			if(pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && (!(pcard->status & STATUS_SMZONE) || (pcard->cmdFlag & COMMAND_ATTACK)) && !pcard->is_attack)
-				DrawStatus(pcard, (pcard->cmdFlag & COMMAND_ATTACK) ? true : false);
+				DrawStatus(pcard, (pcard->status & STATUS_SMZONE) ? true : false);
 			/////////kdiy////////////
 		}
 		/////////kdiy////////////
@@ -1043,7 +1043,7 @@ void Game::DrawMisc() {
 			pcard = dField.szone[p][i];
 			if(!pcard) continue;
 			if(pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && ((pcard->status & STATUS_MSZONE) || (pcard->cmdFlag & COMMAND_ATTACK)) && !pcard->is_attack)
-				DrawStatus(pcard, (pcard->cmdFlag & COMMAND_ATTACK) ? true : false);
+				DrawStatus(pcard, !(pcard->status & STATUS_MSZONE) ? true : false);
 		}
 		// // Draw pendulum scales
 		// for (const auto pzone : pzones) {

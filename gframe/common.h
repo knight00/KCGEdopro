@@ -205,7 +205,7 @@
 #define STATUS_CONTROL_CHANGED    0x80000000
 ////kdiy/////////
 #define STATUS_MSZONE             0x800000
-#define STATUS_SMZONE             0x8000000
+#define STATUS_SMZONE             0x80000000
 ////kdiy/////////
 
 //Query list
