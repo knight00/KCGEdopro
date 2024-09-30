@@ -852,7 +852,7 @@ void ClientField::GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df
 		////////kdiy///////////
 		//if(location == LOCATION_MZONE) {
 			// if(controler == 0)
-		if((location == LOCATION_MZONE && !(pcard->status & STATUS_SMZONE)) || (location == LOCATION_SZONE && (pcard->status & STATUS_MSZONE))) {
+		if((location == LOCATION_MZONE && !pcard->is_sanct) || (location == LOCATION_SZONE && pcard->is_orica)) {
             if((controler == 0 || pcard->is_attack) && !pcard->attackopp)
 		////////kdiy///////////
 				*r = (pcard->position & POS_DEFENSE) ? selfDEF : selfATK;
@@ -870,7 +870,7 @@ void ClientField::GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df
 			*r += facedown;
 			////////kdiy///////////
 			//if(location == LOCATION_MZONE && pcard->position & POS_DEFENSE)
-			if(((location == LOCATION_MZONE && !(pcard->status & STATUS_SMZONE)) || (location == LOCATION_SZONE && (pcard->status & STATUS_MSZONE))) && (pcard->position & POS_DEFENSE))
+			if(((location == LOCATION_MZONE && !pcard->is_sanct) || (location == LOCATION_SZONE && pcard->is_orica)) && (pcard->position & POS_DEFENSE))
 			////////kdiy///////////
 				r->Y = irr::core::PI + 0.001f;
 		}

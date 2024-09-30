@@ -1766,6 +1766,8 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         const auto setplayer = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
         const auto settype = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		ClientCard* pcard = mainGame->dField.GetCard(player, info.location, info.sequence);
+		pcard->is_orica = true;
+		pcard->is_sanct = false;
 		uint16_t extra = 0;
 		if(info.location & LOCATION_MZONE) extra |= 0x1;
 		if(setplayer >= 0)
@@ -4211,6 +4213,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			//////kdiy///
 			pcard->is_pzone = cpzone;
 			pcard->is_sanct = sanct;
+			pcard->is_orica = false;
 			//////kdiy///
 			pcard->position = current.position;
 			pcard->SetCode(code);
@@ -4268,6 +4271,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				//////kdiy///
                 pcard->is_pzone = cpzone;
 				pcard->is_sanct = sanct;
+				pcard->is_orica = false;
 				//////kdiy///
 				if (pcard->code != code && (code != 0 || current.location == LOCATION_EXTRA))
 					pcard->SetCode(code);
@@ -4344,6 +4348,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                 Play(SoundManager::SFX::OVERLAY);
                 pcard->is_pzone = cpzone;
 				pcard->is_sanct = sanct;
+				pcard->is_orica = false;
 				//////kdiy///
 				if (code != 0 && pcard->code != code)
 					pcard->SetCode(code);
@@ -4373,6 +4378,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                 //////kdiy///
                 Play(SoundManager::SFX::OVERLAY);
 				pcard->is_sanct = sanct;
+				pcard->is_orica = false;
                 //////kdiy///
 				olcard->overlayed.erase(olcard->overlayed.begin() + pcard->sequence);
 				pcard->overlayTarget = 0;
@@ -4395,6 +4401,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				ClientCard* olcard2 = mainGame->dField.GetCard(current.controler, current.location & (~LOCATION_OVERLAY) & 0xff, current.sequence);
                 //////kdiy///
 				pcard->is_sanct = sanct;
+				pcard->is_orica = false;
                 //////kdiy///
 				olcard1->overlayed.erase(olcard1->overlayed.begin() + pcard->sequence);
 				olcard2->overlayed.push_back(pcard);
