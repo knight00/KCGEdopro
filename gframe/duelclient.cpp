@@ -1766,10 +1766,16 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         const auto setplayer = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
         const auto settype = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		ClientCard* pcard = mainGame->dField.GetCard(player, info.location, info.sequence);
-		pcard->is_orica = true;
-		pcard->is_sanct = false;
+		if(settype == 1) {
+            pcard->is_orica = true;
+            pcard->is_sanct = false;
+        }
+		if(settype == 2) {
+            pcard->is_sanct = true;
+            pcard->is_orica = false;
+        }
 		uint16_t extra = 0;
-		if(info.location & LOCATION_MZONE) extra |= 0x1;
+		if(settype == 1) extra |= 0x1;
 		if(setplayer >= 0)
 		    PlayChant(SoundManager::CHANT::SET, nullptr, setplayer, extra);
 		break;
@@ -5198,13 +5204,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->dField.attacker->attackopp = true;
         else
 			mainGame->dField.attacker->attackopp = false;
-        if(!is_direct)
+        if(!is_direct) {
+            mainGame->dField.attack_target->is_attacked = true;
             mainGame->dField.MoveCard(mainGame->dField.attacker, mainGame->dField.attack_target->curPos, 10);
-        else
+        } else
             mainGame->dField.MoveCard(mainGame->dField.attacker, irr::core::vector3df(3.9f, info1.controler == 0 ? -3.4f : 4.0f, 0.5f), 10);
 		for(auto& pcard : mainGame->dField.attacker->overlayed) {
-            pcard->is_attack = true;
-			pcard->attackopp = mainGame->dField.attacker->attackopp;
             if(!is_direct)
                 mainGame->dField.MoveCard(pcard, mainGame->dField.attack_target->curPos, 10);
             else
@@ -5217,9 +5222,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
             mainGame->dField.MoveCard(pcard, pos, 10);
         }
         mainGame->WaitFrameSignal(10, lock);
+        if(!is_direct)
+            mainGame->dField.attack_target->is_attacked = false;
         mainGame->dField.attacker->is_attack = false;
-        for(auto& pcard : mainGame->dField.attacker->overlayed)
-            pcard->is_attack = false;
         ////kdiy///////////
 		return true;
 	}

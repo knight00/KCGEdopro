@@ -70,6 +70,7 @@ public:
 	bool is_sanct = false;
 	bool is_pzone = false;
 	bool is_attack = false;
+	bool is_attacked = false;
 	bool attackopp = false;
 	bool is_damage = false;
     /////////kdiy/////////

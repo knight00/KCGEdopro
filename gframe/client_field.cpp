@@ -859,12 +859,14 @@ void ClientField::GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df
 			else
 				*r = (pcard->position & POS_DEFENSE) ? oppoDEF : oppoATK;
 		} else if (location == LOCATION_OVERLAY)
-            ////////kdiy///////////
+        ////////kdiy///////////
 			// *r = (pcard->overlayTarget->controler == 0) ? selfATK : oppoATK;
-            *r = ((pcard->overlayTarget->controler == 0 || pcard->is_attack) && !pcard->attackopp) ? selfATK : oppoATK;
-            ////////kdiy///////////
-		else
-			*r = (controler == 0) ? selfATK : oppoATK;
+        // else
+		// 	*r = (controler == 0) ? selfATK : oppoATK;
+            *r = ((pcard->overlayTarget->controler == 0 || pcard->overlayTarget->is_attack) && !pcard->overlayTarget->attackopp) ? selfATK : oppoATK;
+        else
+			*r = ((controler == 0 || pcard->is_attack) && !pcard->attackopp) ? selfATK : oppoATK;
+        ////////kdiy///////////
 		if(((location & (LOCATION_GRAVE | LOCATION_OVERLAY)) == 0) && ((location == LOCATION_DECK && deck_reversed == pcard->is_reversed) ||
 			(location != LOCATION_DECK && pcard->position & POS_FACEDOWN))) {
 			*r += facedown;
