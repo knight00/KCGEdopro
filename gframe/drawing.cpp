@@ -475,11 +475,11 @@ void Game::DrawCard(ClientCard* pcard) {
 		sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
 		irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
 		pcard->mTransform.setRotationRadians(atkr);
-	} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->location & LOCATION_SZONE) && (pcard->sequence == dInfo.GetPzoneIndex(0)) && !pcard->is_orica
+	} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->location & LOCATION_SZONE) && (pcard->sequence == dInfo.GetPzoneIndex(0)) && !pcard->is_orica && pcard->is_pzone && !pcard->equipTarget
 		&& !gGameConfig->topdown_view) {
 		pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(pcard->controler == 0 ? -0.32f : 0.32f, pcard->controler == 0 ? 0 : -0.8f, 0));
 		pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(-irr::core::PI / 3, 0, pcard->controler == 0 ? -irr::core::PI / 5 : -irr::core::PI + irr::core::PI / 5));
-	} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->location & LOCATION_SZONE) && (pcard->sequence == dInfo.GetPzoneIndex(1)) && !pcard->is_orica
+	} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->location & LOCATION_SZONE) && (pcard->sequence == dInfo.GetPzoneIndex(1)) && !pcard->is_orica && pcard->is_pzone && !pcard->equipTarget
 		&& !gGameConfig->topdown_view) {
 		pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(pcard->controler == 0 ? 0.32f : -0.32f, pcard->controler == 0 ? 0 : -0.8f, 0));
 		pcard->mTransform.setRotationRadians(pcard->curRot + irr::core::vector3df(-irr::core::PI / 3, 0, pcard->controler == 0 ? irr::core::PI / 5 : -irr::core::PI - irr::core::PI / 5));
@@ -488,7 +488,7 @@ void Game::DrawCard(ClientCard* pcard) {
 		pcard->mTransform.setRotationRadians(pcard->curRot);
 	}
 	if((pcard->location & LOCATION_ONFIELD) && (pcard->position & POS_FACEUP) && cardcloseup) {
-		if ( ((pcard->location == LOCATION_MZONE && !pcard->is_sanct) || (pcard->location == LOCATION_SZONE && pcard->is_orica)) || (pcard->cmdFlag & COMMAND_ATTACK) || pcard->is_attack || pcard->is_attack || pcard->is_attacked) {
+		if ( ((pcard->location == LOCATION_MZONE && !pcard->is_sanct) || (pcard->location == LOCATION_SZONE && pcard->is_orica)) || (pcard->cmdFlag & COMMAND_ATTACK) || pcard->is_attack || pcard->is_attacked) {
 			if ((pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
 				matManager.mTexture.AmbientColor = irr::video::SColor(255, 128, 128, 128);
 			else if (pcard->position & POS_DEFENSE)
@@ -731,7 +731,7 @@ void Game::DrawCard(ClientCard* pcard) {
 		////kidy/////////
 	}
     ////kdiy/////////
-	if((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->location & LOCATION_SZONE) && (pcard->sequence == dInfo.GetPzoneIndex(0)) && !pcard->is_orica ) {
+	if((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->location & LOCATION_SZONE) && (pcard->sequence == dInfo.GetPzoneIndex(0)) && !pcard->is_orica && pcard->is_pzone && !pcard->equipTarget) {
 		int scale = pcard->lscale;
 		if(scale >= 0 && scale <= 13 && imageManager.tLScale[scale]) {
 			matManager.mTexture.setTexture(0, imageManager.tLScale[scale]);
@@ -739,7 +739,7 @@ void Game::DrawCard(ClientCard* pcard) {
 			driver->drawVertexPrimitiveList(matManager.vPScale, 4, matManager.iRectangle, 2);
 		}
 	}
-	if((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->location & LOCATION_SZONE) && (pcard->sequence == dInfo.GetPzoneIndex(1)) && !pcard->is_orica) {
+	if((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->location & LOCATION_SZONE) && (pcard->sequence == dInfo.GetPzoneIndex(1)) && !pcard->is_orica && pcard->is_pzone && !pcard->equipTarget) {
 		int scale2 = pcard->rscale;
 		if(scale2 >= 0 && scale2 <= 13 && imageManager.tRScale[scale2]) {
 			matManager.mTexture.setTexture(0, imageManager.tRScale[scale2]);

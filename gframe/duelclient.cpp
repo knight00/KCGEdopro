@@ -5200,10 +5200,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		// mainGame->is_attacking = false;
         irr::core::vector3df pos = mainGame->dField.attacker->curPos;
         mainGame->dField.attacker->is_attack = true;
-        if(info1.controler == 1)
-			mainGame->dField.attacker->attackopp = true;
-        else
-			mainGame->dField.attacker->attackopp = false;
         if(!is_direct) {
             mainGame->dField.attack_target->is_attacked = true;
             mainGame->dField.MoveCard(mainGame->dField.attacker, mainGame->dField.attack_target->curPos, 10);
@@ -5216,15 +5212,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                 mainGame->dField.MoveCard(pcard, irr::core::vector3df(3.9f, info1.controler == 0 ? -3.4f : 4.0f, 0.5f), 10);
         }
         mainGame->WaitFrameSignal(10, lock);
-        mainGame->dField.MoveCard(mainGame->dField.attacker, pos, 10);
-        for(auto& pcard : mainGame->dField.attacker->overlayed) {
-            pcard->controler = mainGame->dField.attacker->controler;
-            mainGame->dField.MoveCard(pcard, pos, 10);
-        }
-        mainGame->WaitFrameSignal(10, lock);
+
         if(!is_direct)
             mainGame->dField.attack_target->is_attacked = false;
-        mainGame->dField.attacker->is_attack = false;
         ////kdiy///////////
 		return true;
 	}
@@ -5269,10 +5259,28 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         Play(SoundManager::SFX::ATTACK_DISABLED);
 		//event_string = epro::sprintf(gDataManager->GetSysString(1621), gDataManager->GetName(mainGame->dField.attacker->code));
 		event_string = epro::sprintf(gDataManager->GetSysString(1621), gDataManager->GetName(mainGame->dField.attacker));
+		std::unique_lock<epro::mutex> lock(mainGame->gMutex);
+        mainGame->dField.MoveCard(mainGame->dField.attacker, mainGame->dField.attacker->attPos, 10);
+        for(auto& pcard : mainGame->dField.attacker->overlayed) {
+            pcard->controler = mainGame->dField.attacker->controler;
+            mainGame->dField.MoveCard(pcard, mainGame->dField.attacker->attPos, 10);
+        }
+        mainGame->WaitFrameSignal(10, lock);
+        mainGame->dField.attacker->is_attack = false;
 		////kdiy///////////
 		return true;
 	}
 	case MSG_DAMAGE_STEP_START: {
+		////kdiy///////////
+		std::unique_lock<epro::mutex> lock(mainGame->gMutex);
+        mainGame->dField.MoveCard(mainGame->dField.attacker, mainGame->dField.attacker->attPos, 10);
+        for(auto& pcard : mainGame->dField.attacker->overlayed) {
+            pcard->controler = mainGame->dField.attacker->controler;
+            mainGame->dField.MoveCard(pcard, mainGame->dField.attacker->attPos, 10);
+        }
+        mainGame->WaitFrameSignal(10, lock);
+        mainGame->dField.attacker->is_attack = false;
+		////kdiy///////////
 		return true;
 	}
 	case MSG_DAMAGE_STEP_END: {
