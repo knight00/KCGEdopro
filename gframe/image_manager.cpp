@@ -1482,6 +1482,14 @@ irr::video::ITexture* ImageManager::GetTextureField(uint32_t code) {
 	return nullptr;
 }
 /////////kdiy////
+bool ImageManager::GetTextureCardHD(uint32_t code) {
+	if(code == 0 || gGameConfig->hdpic == 0)
+		return false;
+	auto folder = epro::format(EPRO_TEXT("./hdpics/jp/{}"), code);
+	for(auto file : Utils::FindFiles(folder, { EPRO_TEXT("jpg"), EPRO_TEXT("png") }))
+		return true;
+	return false;
+}
 std::tuple<irr::video::ITexture*, irr::video::SColor> ImageManager::GetTextureCloseup(uint32_t code, uint32_t alias, bool is_closeup) {
 	if(code == 0 || (is_closeup && !gGameConfig->closeup) || (!is_closeup && !gGameConfig->painting))
 		return { nullptr, irr::video::SColor(255, 255, 255, 0) };

@@ -1487,6 +1487,8 @@ inline void SetS3DVertex(Materials::QuadVertex v, irr::f32 x1, irr::f32 y1, irr:
 void Game::DrawSpec() {
 	const auto drawrect2 = ResizeWin(574, 150, 574 + CARD_IMG_WIDTH, 150 + CARD_IMG_HEIGHT);
     //////kdiy//////////
+	const auto drawrect2_hd = ResizeWin(574, 150, 574 + 484, 150 + 700);
+	bool hdexist = imageManager.GetTextureCardHD(showcardcode);
 	const auto drawrect3 = ResizeWin(594, 150, 594 + 300, 150 + 300);
 	auto DrawTextureRect = [this](Materials::QuadVertex vertices, irr::video::ITexture* texture) {
 		matManager.mTexture.setTexture(0, texture);
@@ -1502,6 +1504,7 @@ void Game::DrawSpec() {
 			auto cardtxt = imageManager.GetTextureCard(showcardcode, imgType::ART);
 			auto cardrect = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cardtxt->getOriginalSize()));
             //////kdiy//////////
+			//driver->draw2DImage(cardtxt, drawrect2, cardrect);
 			if(cardcloseup) {
 				matManager.mTexture.setTexture(0, cardtxt);
 				driver->setMaterial(matManager.mTexture);
@@ -1513,8 +1516,8 @@ void Game::DrawSpec() {
 			    auto cardrect2 = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cardcloseup->getOriginalSize()));
 				driver->draw2DImage(cardcloseup, drawrect3, cardrect2, 0, 0, true);
 			} else
+			    driver->draw2DImage(cardtxt, hdexist ? drawrect2_hd : drawrect2, cardrect);
             //////kdiy//////////
-			driver->draw2DImage(cardtxt, drawrect2, cardrect);
 			driver->draw2DImage(imageManager.tMask, ResizeWin(574, 150, 574 + (showcarddif > CARD_IMG_WIDTH ? CARD_IMG_WIDTH : showcarddif), 404),
 								Scale<irr::s32>(CARD_IMG_HEIGHT - showcarddif, 0, CARD_IMG_HEIGHT - (showcarddif > CARD_IMG_WIDTH ? showcarddif - CARD_IMG_WIDTH : 0), CARD_IMG_HEIGHT), 0, 0, true);
 			showcarddif += (900.0f / 1000.0f) * (float)delta_time;
@@ -1528,6 +1531,7 @@ void Game::DrawSpec() {
 			auto cardtxt = imageManager.GetTextureCard(showcardcode, imgType::ART);
 			auto cardrect = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cardtxt->getOriginalSize()));
             //////kdiy//////////
+			//driver->draw2DImage(cardtxt, drawrect2, cardrect);
 			if(cardcloseup) {
 				matManager.mTexture.setTexture(0, cardtxt);
 				driver->setMaterial(matManager.mTexture);
@@ -1539,8 +1543,8 @@ void Game::DrawSpec() {
 				auto cardrect2 = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cardcloseup->getOriginalSize()));
 				driver->draw2DImage(cardcloseup, drawrect3, cardrect2, 0, 0, true);
 			} else
+			    driver->draw2DImage(cardtxt, hdexist ? drawrect2_hd : drawrect2, cardrect);
             //////kdiy//////////
-			driver->draw2DImage(cardtxt, drawrect2, cardrect);
 			driver->draw2DImage(imageManager.tMask, ResizeWin(574 + showcarddif, 150, 751, 404), Scale(0, 0, CARD_IMG_WIDTH - showcarddif, 254), 0, 0, true);
 			showcarddif += (900.0f / 1000.0f) * (float)delta_time;
 			if(showcarddif >= CARD_IMG_WIDTH) {
@@ -1551,7 +1555,10 @@ void Game::DrawSpec() {
 		case 3: {
 			auto cardtxt = imageManager.GetTextureCard(showcardcode, imgType::ART);
 			auto cardrect = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cardtxt->getOriginalSize()));
-			driver->draw2DImage(cardtxt, drawrect2, cardrect);
+			//////kdiy//////////
+			//driver->draw2DImage(cardtxt, drawrect2, cardrect);
+			driver->draw2DImage(cardtxt, hdexist ? drawrect2_hd : drawrect2, cardrect);
+			//////kdiy//////////
 			driver->draw2DImage(imageManager.tNegated, ResizeWin(536 + showcarddif, 141 + showcarddif, 793 - showcarddif, 397 - showcarddif), Scale(0, 0, 128, 128), 0, 0, true);
 			if(showcarddif < 64)
 				showcarddif += (240.0f / 1000.0f) * (float)delta_time;
@@ -1564,7 +1571,10 @@ void Game::DrawSpec() {
 			matManager.c2d[1] = ((int)std::round(showcarddif) << 24) | 0xffffff;
 			matManager.c2d[2] = ((int)std::round(showcarddif) << 24) | 0xffffff;
 			matManager.c2d[3] = ((int)std::round(showcarddif) << 24) | 0xffffff;
-			driver->draw2DImage(cardtxt, drawrect2, cardrect, 0, matManager.c2d, true);
+			//////kdiy//////////
+			//driver->draw2DImage(cardtxt, drawrect2, cardrect, 0, matManager.c2d, true);
+			driver->draw2DImage(cardtxt, hdexist ? drawrect2_hd : drawrect2, cardrect, 0, matManager.c2d, true);
+			//////kdiy//////////
 			if(showcarddif < 255)
 				showcarddif += (1020.0f / 1000.0f) * (float)delta_time;
 			break;
@@ -1596,7 +1606,10 @@ void Game::DrawSpec() {
 		case 6: {
 			auto cardtxt = imageManager.GetTextureCard(showcardcode, imgType::ART);
 			auto cardrect = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cardtxt->getOriginalSize()));
-			driver->draw2DImage(cardtxt, drawrect2, cardrect);
+			//////kdiy//////////
+			//driver->draw2DImage(cardtxt, drawrect2, cardrect);
+			driver->draw2DImage(cardtxt, hdexist ? drawrect2_hd : drawrect2, cardrect);
+			//////kdiy//////////
 			driver->draw2DImage(imageManager.tNumber, ResizeWin(536 + showcarddif, 141 + showcarddif, 793 - showcarddif, 397 - showcarddif),
 								Scale(((int)std::round(showcardp) % 5) * 64, ((int)std::round(showcardp) / 5) * 64, ((int)std::round(showcardp) % 5 + 1) * 64, ((int)std::round(showcardp) / 5 + 1) * 64), 0, 0, true);
 			if(showcarddif < 64)
@@ -1855,7 +1868,7 @@ void Game::PopupElement(irr::gui::IGUIElement * element, int hideframe) {
 void Game::WaitFrameSignal(int frame, std::unique_lock<epro::mutex>& _lck) {
 	//kidy///////
 	//signalFrame = (gGameConfig->quick_animation && frame >= 12) ? 12 * 1000 / 60 : frame * 1000 / 60;
-	signalFrame = (gGameConfig->quick_animation && frame >= 12) ? (frame - 10) * 1000 / 60 : frame * 1000 / 60;
+	signalFrame = (gGameConfig->quick_animation && frame >= 12) ? (frame == 40 ? (30 * 1000 / 60) : (12 * 1000 / 60)) : (frame * 1000 / 60);
 	//kidy///////
 	frameSignal.Wait(_lck);
 }
