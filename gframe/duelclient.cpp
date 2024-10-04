@@ -4277,7 +4277,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				//////kdiy///
                 pcard->is_pzone = cpzone;
 				pcard->is_sanct = sanct;
-				pcard->is_orica = false;
+				if(sanct || !(current.location & LOCATION_ONFIELD))
+			        pcard->is_orica = false;
 				//////kdiy///
 				if (pcard->code != code && (code != 0 || current.location == LOCATION_EXTRA))
 					pcard->SetCode(code);
