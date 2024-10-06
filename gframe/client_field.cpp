@@ -818,9 +818,6 @@ void ClientField::GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df
 		return (pos[0].Pos.Y + pos[2].Pos.Y) / 2.0f;
 	};
 	if(!pcard->location) return;
-	////////kdiy///////////
-	if(pcard->is_attack || (pcard->location == LOCATION_OVERLAY && pcard->overlayTarget->is_attack)) return;
-	////////kdiy///////////
 	const int& controler = pcard->overlayTarget ? pcard->overlayTarget->controler : pcard->controler;
 	const int& sequence = pcard->sequence;
 	const int& location = pcard->location;

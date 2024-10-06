@@ -467,8 +467,8 @@ void Game::DrawCard(ClientCard* pcard) {
 	///kdiy////////
 	if (pcard->is_attack && (pcard->location & LOCATION_ONFIELD)) {
 		float sy;
-		float xa = mainGame->dField.attacker->attPos.X;
-		float ya = mainGame->dField.attacker->attPos.Y;
+		float xa = pcard->attPos.X;
+		float ya = pcard->attPos.Y;
 		float xd, yd;
 		xd = pcard->curPos.X;
 		yd = pcard->curPos.Y;
@@ -504,12 +504,12 @@ void Game::DrawCard(ClientCard* pcard) {
 				atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? -0.4f : 0.4f) * (atkdy / 4.0f + 0.35f), 0.05f));
 			if (pcard->is_attack) {
 				float sy;
-				float xa = mainGame->dField.attacker->attPos.X;
-				float ya = mainGame->dField.attacker->attPos.Y;
 				float xd, yd;
-				xd = pcard->curPos.X;
-				yd = pcard->curPos.Y;
-				sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
+                float xa = pcard->attPos.X;
+                float ya = pcard->attPos.Y;
+                xd = pcard->curPos.X;
+                yd = pcard->curPos.Y;
+                sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
 				irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
 				atk.setRotationRadians(atkr);
 			} else
@@ -725,10 +725,7 @@ void Game::DrawCard(ClientCard* pcard) {
 		atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? -1 : 1) * (atkdy / 4.0f + 0.35f), 0.05f));
 		atk.setRotationRadians(irr::core::vector3df(0, 0, pcard->controler == 0 ? 0 : irr::core::PI));
 		driver->setTransform(irr::video::ETS_WORLD, atk);
-		////kidy/////////
-		//driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
-		driver->drawVertexPrimitiveList(matManager.vSymbol0, 4, matManager.iRectangle, 2);
-		////kidy/////////
+		driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
 	}
     ////kdiy/////////
 	if((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->location & LOCATION_SZONE) && (pcard->sequence == dInfo.GetPzoneIndex(0)) && !pcard->is_orica && pcard->is_pzone && !pcard->equipTarget) {
