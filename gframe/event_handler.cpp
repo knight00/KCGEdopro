@@ -2234,15 +2234,11 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				}
 				break;
 			}
-            case BUTTON_REPO_DELETE:	{
-                mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8049)).data());
-                mainGame->PopupElement(mainGame->wACMessage, 90);
+            case BUTTON_REPO_FILE:	{
 				irr::gui::IGUIButton* button = (irr::gui::IGUIButton*)event.GUIEvent.Caller;
 				for(auto& repo : mainGame->repoInfoGui) {
-					if(repo.second.del_button == button) {
-						if(Utils::DeleteDirectory(Utils::ToPathString(repo.second.path + "/")))
-                            exit(0);
-                    }
+					if(repo.second.file_button == button)
+						Utils::SystemOpen(Utils::ToPathString(repo.second.path), Utils::OPEN_FILE);
                 }
 				break;
 			}
@@ -2267,18 +2263,6 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 						mainGame->restart = true;
 					} catch(...){}
 				}
-				break;
-			}	
-			case BUTTON_CLEAR2: {
-                mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8049)).data());
-                mainGame->PopupElement(mainGame->wACMessage, 90);
-                Utils::DeleteDirectory(EPRO_TEXT("./config/languages/"));
-                Utils::DeleteDirectory(EPRO_TEXT("./cdb/"));
-                Utils::DeleteDirectory(EPRO_TEXT("./repositories/kcg/"));
-                Utils::DeleteDirectory(EPRO_TEXT("./repositories/lua/"));
-                Utils::DeleteDirectory(EPRO_TEXT("./puzzles/"));
-                Utils::DeleteDirectory(EPRO_TEXT("./lflists/"));
-                exit(0);
 				break;
 			}
 			case BUTTON_INTRO: {

@@ -111,7 +111,7 @@ void Game::DrawBackGround() {
     /////kdiy//////
     if(!gGameConfig->chkField && DrawFieldSpell())
 	DrawTextureRect(matManager.vField, imageManager.tFieldTransparent[three_columns][tfield]);
-    if(gGameConfig->chkField)
+    else if(gGameConfig->chkField || !gGameConfig->randomtexture)
     /////kdiy//////
 	DrawTextureRect(matManager.vField, DrawFieldSpell() ? imageManager.tFieldTransparent[three_columns][tfield] : imageManager.tField[three_columns][tfield]);
     /////ktest//////

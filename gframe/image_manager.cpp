@@ -839,13 +839,9 @@ void ImageManager::replaceTextureLoadingAnySize(irr::video::ITexture*& texture, 
 #define REPLACE_TEXTURE_ANY_SIZE(obj,name) replaceTextureLoadingAnySize(obj, def_##obj, EPRO_TEXT(name) ""sv)
 
 void ImageManager::ChangeTextures(epro::path_stringview _path) {
-	/////kdiy//////
-	// if(_path == textures_path)
-	// 	return;
-	// textures_path.assign(_path.data(), _path.size());
-	if (!gGameConfig->randomtexture)
-        return;
-	/////kdiy//////
+	if(_path == textures_path)
+		return;
+	textures_path.assign(_path.data(), _path.size());
 	const bool is_base = textures_path == BASE_PATH;
 	/////kdiy//////
     // REPLACE_TEXTURE_ANY_SIZE(tAct, "act");
@@ -1148,9 +1144,11 @@ void ImageManager::RefreshCovers() {
 		tCover[1] = tCover[0];
     /////////kdiy////
 	// reloadTextureWithNewSizes(tUnknown, EPRO_TEXT("unknown"sv));
+    driver->removeTexture(std::exchange(tCover[2], nullptr));
 	reloadTextureWithNewSizes(tCover[2], TEXTURE_COVERS3, EPRO_TEXT("cover"sv));
 	if(!tCover[2])
 		tCover[2] = tCover[0];
+    driver->removeTexture(std::exchange(tCover[3], nullptr));
 	reloadTextureWithNewSizes(tCover[3], TEXTURE_COVERS4, EPRO_TEXT("cover"sv));
 	if(!tCover[3])
 		tCover[3] = tCover[0];

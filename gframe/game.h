@@ -399,7 +399,6 @@ struct host_panel_elements {
     irr::gui::CGUIImageButton* icon2[6];
 	irr::gui::IGUIComboBox* cbDeck2Select;
 	irr::gui::IGUIButton* btnClearpics;
-	irr::gui::IGUIButton* btnClearrepo;
 	irr::gui::IGUIButton* btnIntro;
 	irr::gui::IGUIButton* btnTut;
 	irr::gui::IGUIButton* btnTut2;
@@ -745,7 +744,7 @@ public:
 		IProgressBar* progress2;
 		irr::gui::IGUIButton* history_button1;
         //kidy///////
-        irr::gui::IGUIButton* del_button;
+        irr::gui::IGUIButton* file_button;
         //kidy///////
 		irr::gui::IGUIButton* history_button2;
 		std::wstring commit_history_full;

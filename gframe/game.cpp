@@ -1343,6 +1343,7 @@ void Game::Initialize() {
 	};
 	///////kdiy////
 	//chkHandTestNoOpponent = env->addCheckBox(false, nextHandTestRow(10, mainMenuWidth - 10), wHandTest, -1, gDataManager->GetSysString(2081).data());
+    stHandTestSettings->setVisible(false);
 	chkHandTestNoOpponent = env->addCheckBox(false, nextHandTestRow(10, 10 + mainMenuWidth / 2), wHandTest, -1, gDataManager->GetSysString(2081).data());
 	///////kdiy////
 	defaultStrings.emplace_back(chkHandTestNoOpponent, 2081);
@@ -2135,7 +2136,9 @@ void Game::Initialize() {
 #endif
 	btnSingleMode->setEnabled(coreloaded);
 	btnCreateHost->setEnabled(coreloaded);
-	btnHandTest->setEnabled(coreloaded);
+    //kdiy///////
+	//btnHandTest->setEnabled(coreloaded);
+    //kdiy///////
 	btnHandTestSettings->setEnabled(coreloaded);
 	stHandTestSettings->setEnabled(coreloaded);
 	//kdiy///////
@@ -2187,7 +2190,9 @@ void Game::LoadCoreFromRepos() {
 			coreloaded = true;
 			btnSingleMode->setEnabled(true);
 			btnCreateHost->setEnabled(true);
-			btnHandTest->setEnabled(true);
+            //kdiy///////
+			//btnHandTest->setEnabled(true);
+            //kdiy///////
 			btnHandTestSettings->setEnabled(true);
 			stHandTestSettings->setEnabled(true);
 			//kdiy///////
@@ -3302,8 +3307,6 @@ void Game::PopulateSettingsWindow() {
         defaultStrings.emplace_back(btnTut, 8003);
         btnTut2 = env->addButton(GetNextRect(), sPanel, BUTTON_TUT2, gDataManager->GetSysString(8004).data());
         defaultStrings.emplace_back(btnTut2, 8004);
-        btnClearrepo = env->addButton(GetNextRect(), sPanel, BUTTON_CLEAR2, gDataManager->GetSysString(8005).data());
-        defaultStrings.emplace_back(btnClearrepo, 8005);
         btnClearpics = env->addButton(GetNextRect(), sPanel, BUTTON_CLEAR, gDataManager->GetSysString(8001).data());
         defaultStrings.emplace_back(btnClearpics, 8001);
         btnFolder = env->addButton(GetNextRect(), sPanel, BUTTON_FOLDER, gDataManager->GetSysString(8007).data());
@@ -4385,11 +4388,11 @@ Game::RepoGui* Game::AddGithubRepositoryStatusWindow(const GitRepo* repo) {
     //kidy///////
 	defaultStrings.emplace_back(grepo.history_button1, 1443);
 	grepo.history_button1->setEnabled(repo->ready);
-    //kidy///////
+     //kidy///////
     grepo.path = repo->repo_path;
-    grepo.del_button = env->addButton(Scale(90 + 295, 0, 170 + 295, 20 + 5), a, BUTTON_REPO_DELETE, gDataManager->GetSysString(8040).data());
-	defaultStrings.emplace_back(grepo.del_button, 8040);
-	grepo.del_button->setEnabled(true);
+    grepo.file_button = env->addButton(Scale(90 + 295, 0, 170 + 295, 20 + 5), a, BUTTON_REPO_FILE, gDataManager->GetSysString(8040).data());
+	defaultStrings.emplace_back(grepo.file_button, 8040);
+	grepo.file_button->setEnabled(true);
     //kidy///////
 
 	auto b = env->addWindow(Scale(0, 0, 10000, 55), false, L"", tabRepositories);
