@@ -170,9 +170,9 @@ private:
 #define TEXTURE_UNKNOWN             36
 #define TEXTURE_LIM                 37
 #define TEXTURE_OT                  38
-#define TEXTURE_SETTING             39
-#define TEXTURE_COVERS3				40
-#define TEXTURE_COVERS4				41
+#define TEXTURE_COVERS3				39
+#define TEXTURE_COVERS4				40
+#define TEXTURE_SETTING             41
 
 	std::vector<uint8_t> imgcharacter;
 	std::unordered_map<uint32_t, irr::video::ITexture*> tCloseup;

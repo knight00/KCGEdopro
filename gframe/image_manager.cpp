@@ -306,8 +306,10 @@ bool ImageManager::Initial() {
     if (!tCover[0])
 	    tCover[0] = loadTextureFixedSize(EPRO_TEXT("cover"sv), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	ASSERT_TEXTURE_LOADED(tCover[0], "cover");
-	if(!tCover[1])
-		tCover[1] = tCover[0];
+	if (!tCover[1])
+		tCover[1] = loadTextureFixedSize(EPRO_TEXT("cover2"sv), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+    if (!tCover[1])
+	    tCover[1] = tCover[0];
     if (!tCover[2])
 	    tCover[2] = tCover[0];
     if (!tCover[3])
@@ -722,13 +724,13 @@ void ImageManager::RefreshRandomImageList() {
 }
 void ImageManager::RefreshImageDir(epro::path_string path, int image_type) {
 	for(auto file : Utils::FindFiles(BASE_PATH + path, { EPRO_TEXT("jpg"), EPRO_TEXT("png") }))
-		ImageList[image_type].push_back(epro::format(EPRO_TEXT("{}{}/{}"), BASE_PATH, path, file));
+		ImageList[image_type].push_back(epro::format(EPRO_TEXT("{}/{}"), path, file));
 }
 void ImageManager::RefreshImageDirf() {
 	for(auto& _folder : Utils::FindSubfolders(epro::format(EPRO_TEXT("{}morra/"), BASE_PATH), 1, false)) {
         bool f1 = false; bool f2 = false; bool f3 = false;
-		auto folder = epro::format(EPRO_TEXT("{}morra/{}/"), BASE_PATH, _folder);
-		for(auto file : Utils::FindFiles(folder, { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
+		auto folder = epro::format(EPRO_TEXT("morra/{}/"), _folder);
+		for(auto file : Utils::FindFiles(BASE_PATH + folder, { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
 			if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f1"))
 				f1 = true;
 			if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f2"))
@@ -743,69 +745,68 @@ void ImageManager::RefreshImageDirf() {
 void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, bool force_random) {
     int count = ImageList[image_type].size();
 	if((!gGameConfig->randomtexture && !force_random) || count <= 0) {
-        src = NULL;
+        src = nullptr;
         return;
     }
     if(saved_image_id[image_type] == -1)
 		saved_image_id[image_type] = rand() % count;
 	int image_id = saved_image_id[image_type];
 	auto name = ImageList[image_type][image_id];
-    irr::video::ITexture* tmp = driver->getTexture(name.c_str());
-    if(tmp == nullptr)
+    irr::video::ITexture* tmp = driver->getTexture((BASE_PATH + name).c_str());
+    if(tmp == nullptr) {
+        src = nullptr;
         return;
-	if(src != tmp) {
+    }
+	if(src != nullptr && src != tmp)
 		driver->removeTexture(src);
-		src = tmp;
-	}
+	src = tmp;
 }
 void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, int width, int height, bool force_random) {
 	int count = ImageList[image_type].size();
 	if((!gGameConfig->randomtexture && !force_random) || count <= 0) {
-        src = NULL;
+        src = nullptr;
         return;
     }
     if(saved_image_id[image_type] == -1)
 		saved_image_id[image_type] = rand() % count;
 	int image_id = saved_image_id[image_type];
 	auto name = ImageList[image_type][image_id];
-    irr::video::ITexture* tmp = GetTextureFromFile(name.c_str(), width, height);
-    if(tmp == nullptr)
+    irr::video::ITexture* tmp = GetTextureFromFile((BASE_PATH + name).c_str(), width, height);
+    if(tmp == nullptr) {
+        src = nullptr;
         return;
-	if(src != tmp) {
+    }
+	if(src != nullptr && src != tmp)
 		driver->removeTexture(src);
-		src = tmp;
-	}
+	src = tmp;
 }
 void ImageManager::GetRandomImagef(int width, int height) {
 	int count = ImageList[TEXTURE_F1].size();
 	if(!gGameConfig->randomtexture || count <= 0) {
-		tHand[0] = NULL;
-		tHand[1] = NULL;
-		tHand[2] = NULL;
+		tHand[0] = nullptr;
+		tHand[1] = nullptr;
+		tHand[2] = nullptr;
         return;
     }
     if(saved_image_id[TEXTURE_F1] == -1)
 		saved_image_id[TEXTURE_F1] = rand() % count;
 	int image_id = saved_image_id[TEXTURE_F1];
-	for(auto file : Utils::FindFiles(ImageList[TEXTURE_F1][image_id], { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
-        irr::video::ITexture* tmp = GetTextureFromFile((ImageList[TEXTURE_F1][image_id] + file).c_str(), width, height);
+	for(auto file : Utils::FindFiles(BASE_PATH + ImageList[TEXTURE_F1][image_id], { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
+        irr::video::ITexture* tmp = GetTextureFromFile((BASE_PATH + ImageList[TEXTURE_F1][image_id] + file).c_str(), width, height);
         if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f1")) {
-			if(tHand[0] != tmp) {
+			if(tHand[0] != nullptr && tHand[0] != tmp)
 				driver->removeTexture(tHand[0]);
-				tHand[0] = tmp;
-			}
+			tHand[0] = tmp;
         }
         if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f2")) {
-			if(tHand[1] != tmp) {
+			if(tHand[1] != nullptr && tHand[1] != tmp)
 				driver->removeTexture(tHand[1]);
-				tHand[1] = tmp;
-			}
+			tHand[1] = tmp;
         }
         if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f3")) {
-			if(tHand[2] != tmp) {
+			if(tHand[2] != nullptr && tHand[2] != tmp)
 				driver->removeTexture(tHand[2]);
-				tHand[2] = tmp;
-			}
+			tHand[2] = tmp;
         }
 	}
 }
@@ -1116,11 +1117,14 @@ void ImageManager::ClearFutureObjects() {
 
 void ImageManager::RefreshCovers() {
 	const auto is_base_path = textures_path == BASE_PATH;
-	auto reloadTextureWithNewSizes = [this, is_base_path, width = (int)sizes[1].first, height = (int)sizes[1].second](auto*& texture, int texturecode, epro::path_stringview texture_name) {
-        /////////kdiy////
+	/////////kdiy////
+	// auto reloadTextureWithNewSizes = [this, is_base_path, width = (int)sizes[1].first, height = (int)sizes[1].second](auto*& texture, epro::path_stringview texture_name) {
 		// auto new_texture = loadTextureFixedSize(texture_name, width, height);
+	auto reloadTextureWithNewSizes = [this, is_base_path, width = (int)sizes[1].first, height = (int)sizes[1].second](auto*& texture, int texturecode, epro::path_stringview texture_name) {
 		irr::video::ITexture* new_texture;
 		GetRandomImage(new_texture, texturecode, width, height);
+		if (!new_texture)
+		    new_texture = loadTextureFixedSize(texture_name, width, height);
         /////////kdiy////
 		if(!new_texture && !is_base_path) {
 			const auto old_textures_path = std::exchange(textures_path, BASE_PATH);

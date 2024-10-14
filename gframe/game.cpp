@@ -1294,11 +1294,8 @@ void Game::Initialize() {
 	ebCharacterDeck = AlignElementWithParent(AddComboBox(env, Scale(275, 95, 375, 115), wDeckEdit, COMBOBOX_CHARACTER_DECK));
 	ebCharacterDeck->clear();
 	ebCharacterDeck->addItem(gDataManager->GetSysString(8047).data());
-    defaultStrings.emplace_back(ebCharacterDeck, 8047);
-	 for (auto j = 9000; j < 9000 + CHARACTER_VOICE - 1; ++j) {
+	 for (auto j = 9000; j < 9000 + CHARACTER_VOICE - 1; ++j)
         ebCharacterDeck->addItem(gDataManager->GetSysString(j).data());
-        defaultStrings.emplace_back(ebCharacterDeck, j);
-    }
     ebCharacterDeck->setSelected(0);
     ebCharacterDeck->setMaxSelectionRows(10);
 	//////kdiy//////
@@ -1566,16 +1563,12 @@ void Game::Initialize() {
         ebCharacter_replay[i]->clear();
 #ifdef VIP
         ebCharacter_replay[i]->addItem(gDataManager->GetSysString(8047).data());
-        defaultStrings.emplace_back(ebCharacter_replay[i], 8047);
 #else
         ebCharacter_replay[i]->addItem(gDataManager->GetSysString(8048).data());
-        defaultStrings.emplace_back(ebCharacter_replay[i], 8048);
         ebCharacter_replay[i]->setEnabled(false);
 #endif
-        for (auto j = 9000; j < 9000 + CHARACTER_VOICE - 1; ++j) {
+        for (auto j = 9000; j < 9000 + CHARACTER_VOICE - 1; ++j)
             ebCharacter_replay[i]->addItem(gDataManager->GetSysString(j).data());
-            defaultStrings.emplace_back(ebCharacter_replay[i], j);
-        }
         ebCharacter_replay[i]->setSelected(0);
         ebCharacter_replay[i]->setMaxSelectionRows(10);
         ebCharacter_replay[i]->setVisible(false);
@@ -3503,7 +3496,7 @@ bool Game::MainLoop() {
 				    mRepositoriesInfo->setVisible(false);
             }
             if(first_play && git_update) {
-                mainGame->ApplyLocale(mainGame->gSettings.cbCurrentLocale->getSelected());
+                mainGame->ApplyLocale(mainGame->gSettings.cbCurrentLocale->getSelected(), true);
             }
             //kdiy///////
 		}
@@ -6429,7 +6422,7 @@ void Game::PopulateLocales() {
 	for(auto& locale : Utils::FindSubfolders(EPRO_TEXT("./config/languages/"), 1, false)) {
 		//////kdiy//////////
 		if(locale == EPRO_TEXT("Chs") || locale == EPRO_TEXT("Cht") || locale == EPRO_TEXT("English"))	
-		//////kdiy//////////	
+		//////kdiy//////////
 		locales.emplace_back(locale, std::vector<epro::path_string>());
 	}
 }
