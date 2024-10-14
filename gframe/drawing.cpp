@@ -470,8 +470,8 @@ void Game::DrawCard(ClientCard* pcard) {
 		float xa = pcard->attPos.X;
 		float ya = pcard->attPos.Y;
 		float xd, yd;
-		xd = pcard->curPos.X;
-		yd = pcard->curPos.Y;
+		xd = pcard->attdPos.X;
+		yd = pcard->attdPos.Y;
 		sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
 		irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
 		pcard->mTransform.setRotationRadians(atkr);
@@ -502,18 +502,18 @@ void Game::DrawCard(ClientCard* pcard) {
 				atk.setTranslation(pcard->curPos + irr::core::vector3df(0, pcard->controler == 0 ? 0 : 0.2f, 0.2f));
 			else
 				atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? -0.4f : 0.4f) * (atkdy / 4.0f + 0.35f), 0.05f));
-			if (pcard->is_attack) {
-				float sy;
-				float xd, yd;
-                float xa = pcard->attPos.X;
-                float ya = pcard->attPos.Y;
-                xd = pcard->curPos.X;
-                yd = pcard->curPos.Y;
-                sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
-				irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
-				atk.setRotationRadians(atkr);
-			} else
-				atk.setRotationRadians(irr::core::vector3df(0, 0, 0));
+			// if (pcard->is_attack) {
+			// 	float sy;
+			// 	float xd, yd;
+            //     float xa = pcard->attPos.X;
+            //     float ya = pcard->attPos.Y;
+            //     xd = pcard->curPos.X;
+            //     yd = pcard->curPos.Y;
+            //     sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
+			// 	irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
+			// 	atk.setRotationRadians(atkr);
+			// } else
+			// 	atk.setRotationRadians(irr::core::vector3df(0, 0, 0));
 			driver->setTransform(irr::video::ETS_WORLD, atk);
 			if (pcard->attack >= 4500)
 				driver->drawVertexPrimitiveList(matManager.vAttack3, 4, matManager.iRectangle, 2);

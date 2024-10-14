@@ -5164,7 +5164,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		//CoreUtils::loc_info info2 = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		//const bool is_direct = info2.location == 0;
         mainGame->dField.attacker->attPos = mainGame->dField.attacker->curPos;
-        irr::core::vector3df attRot = mainGame->dField.attacker->curRot;
+        mainGame->dField.attacker->attRot = mainGame->dField.attacker->curRot;
         /////kdiy//////
 		info2.controler = mainGame->LocalPlayer(info2.controler);
 		std::unique_lock<epro::mutex> lock(mainGame->gMutex);
@@ -5201,18 +5201,13 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         // mainGame->WaitFrameSignal(40, lock);
 		// mainGame->is_attacking = false;
         mainGame->dField.attacker->is_attack = true;
+        mainGame->dField.attacker->is_attacking = true;
         if(!is_direct) {
             mainGame->dField.attack_target->is_attacked = true;
-            mainGame->dField.MoveCard(mainGame->dField.attacker, mainGame->dField.attack_target->curPos + irr::core::vector3df(0, 0, 0.3f), 10);
+			mainGame->dField.attacker->attdPos = mainGame->dField.attack_target->curPos;
         } else
-            mainGame->dField.MoveCard(mainGame->dField.attacker, irr::core::vector3df(3.9f, info1.controler == 0 ? -3.4f : 4.0f, 1.0f), 10);
+			mainGame->dField.attacker->attdPos = irr::core::vector3df(3.9f, info1.controler == 0 ? -3.4f : 4.0f, 0.0f);
         mainGame->WaitFrameSignal(20, lock);
-        mainGame->dField.MoveCard(mainGame->dField.attacker, mainGame->dField.attacker->attPos, 10);
-        mainGame->dField.attacker->curRot = attRot;
-        mainGame->WaitFrameSignal(20, lock);
-        mainGame->dField.attacker->is_attack = false;
-        if(!is_direct)
-            mainGame->dField.attack_target->is_attacked = false;
         ////kdiy///////////
 		return true;
 	}
@@ -5229,6 +5224,29 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		const auto datk = static_cast<int32_t>(BufferIO::Read<uint32_t>(pbuf));
 		const auto ddef = static_cast<int32_t>(BufferIO::Read<uint32_t>(pbuf));
 		/*const auto dd = */BufferIO::Read<uint8_t>(pbuf);
+        ////kdiy///////////
+		{
+		ClientCard* pcard1 = mainGame->dField.GetCard(info1.controler, info1.location, info1.sequence);
+		ClientCard* pcard2;
+		if(info2.location)
+		    pcard2 = mainGame->dField.GetCard(info2.controler, info2.location, info2.sequence);
+		std::unique_lock<epro::mutex> lock(mainGame->gMutex);
+        pcard1->is_attack = true;
+		if(info2.location) {
+            pcard2->is_attacked = true;
+            mainGame->dField.MoveCard(pcard1, pcard2->curPos + irr::core::vector3df(0, 0, 0.3f), 10);
+        } else
+            mainGame->dField.MoveCard(pcard1, irr::core::vector3df(3.9f, info1.controler == 0 ? -3.4f : 4.0f, 1.0f), 10);
+        mainGame->WaitFrameSignal(20, lock);
+        mainGame->dField.MoveCard(pcard1, pcard1->attPos, 10);
+        pcard1->curRot = pcard1->attRot;
+        mainGame->WaitFrameSignal(20, lock);
+        pcard1->is_attack = false;
+        if(info2.location)
+            pcard2->is_attacked = false;
+        pcard1->is_attacking = false;
+		}
+        ////kdiy///////////
 		std::lock_guard<epro::mutex> lock(mainGame->gMutex);
 		ClientCard* pcard = mainGame->dField.GetCard(info1.controler, info1.location, info1.sequence);
 		if(aatk != pcard->attack) {

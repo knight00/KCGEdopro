@@ -18,6 +18,8 @@ public:
 	irr::core::vector3df curRot;
     /////////kdiy/////////
 	irr::core::vector3df attPos;
+	irr::core::vector3df attdPos;
+	irr::core::vector3df attRot;
     /////////kdiy/////////
 	irr::core::vector3df dPos;
 	irr::core::vector3df dRot;
@@ -69,6 +71,7 @@ public:
 	bool is_sanct = false;
 	bool is_pzone = false;
 	bool is_attack = false;
+	bool is_attacking = false;
 	bool is_attacked = false;
 	bool is_damage = false;
     /////////kdiy/////////
