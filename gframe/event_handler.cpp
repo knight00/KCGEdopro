@@ -2184,6 +2184,8 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 					mainGame->wLocation->setVisible(true);
 					mainGame->HideElement(mainGame->wCardImg);
 					mainGame->HideElement(mainGame->wInfos);
+                    for(int i = 0; i < 8; i++)
+                        mainGame->CardInfo[i]->setVisible(false);
 				} else
 					mainGame->HideElement(mainGame->wLocation);
 				break;

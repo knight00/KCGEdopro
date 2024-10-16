@@ -634,7 +634,7 @@ void Game::Initialize() {
 	numFont0 = irr::gui::CGUITTFont::createTTFont(env, numfont0, fallbackFonts);
 	numfont0.size = Scale(12);
 	adFont0 = irr::gui::CGUITTFont::createTTFont(env, numfont0, fallbackFonts);
-	numfont.size = Scale(28);
+	numfont.size = Scale(26);
 	lpFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
 	textfont.size = Scale(textfont.size * 1.8);
 	nameFont = irr::gui::CGUITTFont::createTTFont(env, textfont, fallbackFonts);
@@ -5084,6 +5084,8 @@ void Game::ClearCardInfo(int player) {
 	stPasscodeScope2->setText(L"");
 	for (auto& text : effectText)
 		text = L"";
+	for(int i = 0; i < 8; i++)
+		mainGame->CardInfo[i]->setVisible(false);
 	///kdiy/////////
 	stDataInfo->setText(L"");
 	stSetName->setText(L"");

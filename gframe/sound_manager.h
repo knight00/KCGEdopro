@@ -41,6 +41,7 @@ public:
         OVERLAY,
         NEGATE,
         ATTACK_DISABLED,
+        POS_CHANGE,
         ///kdiy////////
 		ACTIVATE,
 		SET,
