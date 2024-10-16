@@ -424,8 +424,9 @@ void Game::DrawCard(ClientCard* pcard) {
 		}
 	}
 	///kdiy////////
+    auto cd = gDataManager->GetCardData(pcard->code);
 	irr::video::ITexture* cardcloseup; irr::video::SColor cardcloseupcolor = irr::video::SColor(255, 255, 255, 0);
-	std::tie(cardcloseup, cardcloseupcolor) = imageManager.GetTextureCloseup(pcard->code, pcard->alias);
+	std::tie(cardcloseup, cardcloseupcolor) = imageManager.GetTextureCloseup(pcard->code, pcard->is_change && cd ? cd->alias : pcard->alias);
 	matManager.mTexture.AmbientColor = 0xffffffff;
     auto drawLine = [&](const auto& pos0, const auto& pos1, const auto& pos2, const auto& pos3, irr::video::SColor color) -> void {
         driver->draw3DLineW(pos0, pos1, color, (pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup ? 10 : 8);
@@ -467,8 +468,8 @@ void Game::DrawCard(ClientCard* pcard) {
 	///kdiy////////
 	if (pcard->is_attack && (pcard->location & LOCATION_ONFIELD)) {
 		float sy;
-		float xa = pcard->attPos.X;
-		float ya = pcard->attPos.Y;
+		float xa = pcard->curPos.X;
+		float ya = pcard->curPos.Y;
 		float xd, yd;
 		xd = pcard->attdPos.X;
 		yd = pcard->attdPos.Y;
@@ -502,18 +503,6 @@ void Game::DrawCard(ClientCard* pcard) {
 				atk.setTranslation(pcard->curPos + irr::core::vector3df(0, pcard->controler == 0 ? 0 : 0.2f, 0.2f));
 			else
 				atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? -0.4f : 0.4f) * (atkdy / 4.0f + 0.35f), 0.05f));
-			// if (pcard->is_attack) {
-			// 	float sy;
-			// 	float xd, yd;
-            //     float xa = pcard->attPos.X;
-            //     float ya = pcard->attPos.Y;
-            //     xd = pcard->curPos.X;
-            //     yd = pcard->curPos.Y;
-            //     sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
-			// 	irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
-			// 	atk.setRotationRadians(atkr);
-			// } else
-			// 	atk.setRotationRadians(irr::core::vector3df(0, 0, 0));
 			driver->setTransform(irr::video::ETS_WORLD, atk);
 			if (pcard->attack >= 4500)
 				driver->drawVertexPrimitiveList(matManager.vAttack3, 4, matManager.iRectangle, 2);
@@ -631,7 +620,6 @@ void Game::DrawCard(ClientCard* pcard) {
 	}
 	driver->setTransform(irr::video::ETS_WORLD, pcard->mTransform);
 	if((pcard->type & TYPE_XYZ) && (pcard->location & LOCATION_ONFIELD)) {
-		auto cd = gDataManager->GetCardData(pcard->code);
 		if(cd) {
 			auto setcodes = cd->setcodes;
 			if(cd->alias && setcodes.empty()) {
@@ -955,7 +943,7 @@ void Game::DrawMisc() {
 	// DrawShadowText(numFont, dInfo.strLP[0], Resize(330, 11, 629, 29), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, true);
 	// DrawShadowText(numFont, dInfo.strLP[1], Resize(691, 11, 990, 29), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, true); 161, 553, 350, 640 691, 48, 900, 135
 	DrawShadowText(numFont, L"LP", Resize(166, 585, 233, 604), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, false);
-	DrawShadowText(numFont, L"LP", Resize(696, 80, 783, 99), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, false);
+	DrawShadowText(numFont, L"LP", Resize(690, 80, 777, 99), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, false);
     if(dInfo.lp[0] >= 8888888)
 	    DrawShadowText(nameFont, dInfo.strLP[0], Resize(228, 580, 268, 634), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, true);
     else
@@ -988,9 +976,9 @@ void Game::DrawMisc() {
 	// 			textFont->drawustring(utext, p2size, 0xff808080, false, false, 0);
 	// 		p2size += irr::core::vector2di{ 0, p2size.getHeight() + ResizeY(4) };
 	// 	}
-	// } 161, 553, 350, 640 691, 48, 900, 135
+	// }
 	irr::core::recti p1size = Resize(355, 585, 375, 604);
-	irr::core::recti p2size = Resize(633, 80, 653, 99);
+	irr::core::recti p2size = Resize(643, 80, 664, 99);
 	{
 		int i = 0;
 		for (const auto& player : self) {
@@ -1004,7 +992,7 @@ void Game::DrawMisc() {
 		i = 0;
 		for (const auto& player : oppo) {
 			if (i++ == dInfo.current_player[1])
-				textFont->drawustring(player, Resize(726, 64, 756, 75), skin::DUELFIELD_LP_2_VAL, false, true, 0);
+				textFont->drawustring(player, Resize(729, 64, 759, 75), skin::DUELFIELD_LP_2_VAL, false, true, 0);
 			else {
 				textFont->drawustring(player, p2size, 0xff00ff00, false, true, 0);
                 p2size += irr::core::vector2di{ 0, p2size.getHeight() + ResizeY(4) };
@@ -1016,7 +1004,7 @@ void Game::DrawMisc() {
 	driver->draw2DRectangle(Resize(632, 30, 688, 50), 0xffffffff, 0xffffffff, 0x00000000, 0x00000000);*/
 	////kdiy////////////
 	//DrawShadowText(lpcFont, gDataManager->GetNumString(dInfo.turn), Resize(635, 5, 685, 40), Resize(0, 0, 2, 0), skin::DUELFIELD_TURN_COUNT_VAL, 0x80000000, true);
-	DrawShadowText(turnFont, L"TURN " + gDataManager->GetNumString(dInfo.turn), Resize(410, 5, 625, 40), Resize(0, 0, 8, 0), 0xff000000, 0xffff00ff, true);
+	DrawShadowText(turnFont, L"TURN " + gDataManager->GetNumString(dInfo.turn), Resize(450, 5, 625, 40), Resize(0, 0, 8, 0), 0xff000000, 0xffff00ff, true);
 	////kdiy////////////
 #undef DRAWRECT
 #undef LPCOLOR
