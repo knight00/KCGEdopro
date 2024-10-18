@@ -232,6 +232,7 @@ public:
 	A(modeHead[6])
 	A(tXyz)
 	A(tCXyz)
+	A(tShield)
 	A(tCrack)
 	A(tLevel)
 	A(tRank)

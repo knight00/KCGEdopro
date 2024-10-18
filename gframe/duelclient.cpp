@@ -4420,8 +4420,15 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				}
 				if(!mainGame->dInfo.isCatchingUp) {
 					mainGame->WaitFrameSignal(5, lock);
+					//////kdiy///
+					if(reason == REASON_COST)
+                        pcard->is_detached = true;
+					//////kdiy///
 					mainGame->dField.MoveCard(pcard, 10);
 					mainGame->WaitFrameSignal(5, lock);
+					//////kdiy///
+                    pcard->is_detached = false;
+					//////kdiy///
 				}
 			} else {
 				ClientCard* olcard1 = mainGame->dField.GetCard(previous.controler, previous.location & (~LOCATION_OVERLAY) & 0xff, previous.sequence);
@@ -5366,6 +5373,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                 else
                     mainGame->dField.MoveCard(pcard1, irr::core::vector3df(3.9f, pcard1->controler == 0 ? -3.4f : 4.0f, 1.0f), 10);
                 mainGame->WaitFrameSignal(20, lock);
+				pcard2->is_attack_disabled = true;
+				int frames = 20;
+				if(gGameConfig->quick_animation)
+					frames = 12;
+                mainGame->WaitFrameSignal(frames, lock);
+				pcard2->is_attack_disabled = false;
                 mainGame->dField.MoveCard(pcard1, pcard1->attPos, 10);
                 mainGame->WaitFrameSignal(20, lock);
             }

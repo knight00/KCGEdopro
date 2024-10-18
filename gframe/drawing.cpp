@@ -537,6 +537,11 @@ void Game::DrawCard(ClientCard* pcard) {
             drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffffff00);
 		}
 	}
+	if (pcard->is_attack_disabled) {
+		matManager.mTexture.setTexture(0, imageManager.tShield);
+		driver->setMaterial(matManager.mTexture);
+		driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
+	}
 	if (pcard->is_damage) {
 		matManager.mTexture.setTexture(0, imageManager.tCrack);
 		driver->setMaterial(matManager.mTexture);

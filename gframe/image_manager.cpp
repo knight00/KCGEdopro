@@ -590,6 +590,8 @@ bool ImageManager::Initial() {
 	ASSIGN_DEFAULT(tXyz);
     tCXyz = loadTextureAnySize(EPRO_TEXT("cxyz"sv));
 	ASSIGN_DEFAULT(tCXyz);
+    tShield = loadTextureAnySize(EPRO_TEXT("atkshield"sv));
+	ASSIGN_DEFAULT(tShield);
     tCrack = loadTextureAnySize(EPRO_TEXT("crack"sv));
 	ASSIGN_DEFAULT(tCrack);
 	tLevel = loadTextureAnySize(EPRO_TEXT("level"sv));

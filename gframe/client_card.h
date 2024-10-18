@@ -73,7 +73,9 @@ public:
 	bool is_attack = false;
 	bool is_attacking = false;
 	bool is_attacked = false;
+	bool is_attack_disabled = false;
 	bool is_damage = false;
+	bool is_detached = false;
     /////////kdiy/////////
 	uint32_t attribute;
 	uint64_t race;
