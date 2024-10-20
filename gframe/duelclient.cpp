@@ -1970,7 +1970,10 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		uint8_t player = BufferIO::Read<uint8_t>(pbuf);
 		uint8_t type = BufferIO::Read<uint8_t>(pbuf);
         player = mainGame->LocalPlayer(player);
+		mainGame->isEvent = false;
+		mainGame->mode->isModeEvent = false;
         if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
+            mainGame->mode->isDuelEnd = true;
             for(uint8_t index = 1; index < mainGame->mode->modePloats[chapter - 1]->size(); index++) {
                 //auto controler = mainGame->mode->modePloats[chapter - 1]->at(index).control;
                 bool isWinDuel = mainGame->mode->modePloats[chapter - 1]->at(index).isWinDuel;
@@ -2383,6 +2386,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 	case MSG_WIN: {
 		uint8_t player = BufferIO::Read<uint8_t>(pbuf);
 		uint8_t type = BufferIO::Read<uint8_t>(pbuf);
+        /////kdiy//////
+        if(!(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY)) {
+        /////kdiy//////
 		std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 		mainGame->showcarddif = 110;
 		mainGame->showcardp = 0;
@@ -2407,6 +2413,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		mainGame->WaitFrameSignal(120, lock);
 		mainGame->dInfo.vic_string = L"";
 		mainGame->showcard = 0;
+        /////kdiy//////
+        }
+        /////kdiy//////
 		break;
 	}
 	case MSG_WAITING: {
@@ -4281,8 +4290,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			        pcard->is_orica = false;
                 if(pcard->is_attack) {
                     pcard->is_attack = false;
-                    pcard->is_attacking = false;
-                    pcard->curRot = pcard->attRot;
                     mainGame->WaitFrameSignal(20, lock);
                 }
                 pcard->is_attacked = false;
@@ -4364,8 +4371,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				pcard->is_orica = false;
                 if(pcard->is_attack) {
                     pcard->is_attack = false;
-                    pcard->is_attacking = false;
-                    pcard->curRot = pcard->attRot;
                     mainGame->WaitFrameSignal(20, lock);
                 }
                 pcard->is_attacked = false;
@@ -4401,8 +4406,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				pcard->is_orica = false;
                 if(pcard->is_attack) {
                     pcard->is_attack = false;
-                    pcard->is_attacking = false;
-                    pcard->curRot = pcard->attRot;
                     mainGame->WaitFrameSignal(20, lock);
                 }
                 pcard->is_attacked = false;
@@ -4439,8 +4442,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				pcard->is_orica = false;
                 if(pcard->is_attack) {
                     pcard->is_attack = false;
-                    pcard->is_attacking = false;
-                    pcard->curRot = pcard->attRot;
                     mainGame->WaitFrameSignal(20, lock);
                 }
                 pcard->is_attacked = false;
@@ -4475,8 +4476,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         /////kdiy//////
         if(pcard->is_attack) {
             pcard->is_attack = false;
-            pcard->is_attacking = false;
-			pcard->curRot = pcard->attRot;
             mainGame->WaitFrameSignal(20, lock);
         }
         pcard->is_attacked = false;
@@ -4510,14 +4509,13 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 	}
 	case MSG_SET: {	
         /////kdiy//////
-        auto lock = LockIf();
+		const auto code = BufferIO::Read<uint32_t>(pbuf);
         CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		info.controler = mainGame->LocalPlayer(info.controler);
 		ClientCard* pcard = mainGame->dField.GetCard(info.controler, info.location, info.sequence);
         if(pcard->is_attack) {
+            auto lock = LockIf();
             pcard->is_attack = false;
-            pcard->is_attacking = false;
-			pcard->curRot = pcard->attRot;
             mainGame->WaitFrameSignal(20, lock);
         }
         pcard->is_attacked = false;
@@ -4542,15 +4540,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         /////kdiy//////
         if(pc1->is_attack) {
             pc1->is_attack = false;
-            pc1->is_attacking = false;
-			pc1->curRot = pc1->attRot;
             mainGame->WaitFrameSignal(20, lock);
         }
         pc1->is_attacked = false;
         if(pc2->is_attack) {
             pc2->is_attack = false;
-            pc2->is_attacking = false;
-			pc2->curRot = pc2->attRot;
             mainGame->WaitFrameSignal(20, lock);
         }
         pc2->is_attacked = false;
@@ -5279,6 +5273,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->dField.attacker->attdPos = mainGame->dField.attack_target->curPos;
         } else
 			mainGame->dField.attacker->attdPos = irr::core::vector3df(3.9f, info1.controler == 0 ? -3.4f : 4.0f, 0.0f);
+        mainGame->dField.attacker->is_attacking = false;
         ////kdiy///////////
         mainGame->WaitFrameSignal(40, lock);
 		mainGame->is_attacking = false;
@@ -5302,6 +5297,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		if(info2.location)
 		    pcard2 = mainGame->dField.GetCard(info2.controler, info2.location, info2.sequence);
         if(pcard1->is_attack) {
+            pcard1->is_attacking = true;
+            pcard1->is_battling = true;
             auto lock = LockIf();
             if(!mainGame->dInfo.isCatchingUp) {
                 if(info2.location)
@@ -5312,12 +5309,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                 mainGame->dField.MoveCard(pcard1, pcard1->attPos, 10);
                 mainGame->WaitFrameSignal(20, lock);
             }
-            mainGame->dField.attacker->is_attack = false;
-            pcard1->curRot = pcard1->attRot;
+            pcard1->is_attack = false;
+            pcard1->is_battling = false;
+            pcard1->is_attacking = false;
             mainGame->WaitFrameSignal(20, lock);
             if(info2.location)
                 pcard2->is_attacked = false;
-            pcard1->is_attacking = false;
 		}
 		}
         ////kdiy///////////
@@ -5360,37 +5357,41 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 	}
 	case MSG_ATTACK_DISABLED: {
 		////kdiy///////////
+        Play(SoundManager::SFX::ATTACK_DISABLED);
         {
 		ClientCard* pcard1 = mainGame->dField.attacker;
 		ClientCard* pcard2;
 		if(mainGame->dField.attack_target)
 		    pcard2 = mainGame->dField.attack_target;
         if(pcard1->is_attack) {
+            pcard1->is_attacking = true;
+            pcard1->is_battling = true;
             auto lock = LockIf();
             if(!mainGame->dInfo.isCatchingUp) {
                 if(mainGame->dField.attack_target)
-                    mainGame->dField.MoveCard(pcard1, pcard2->curPos + irr::core::vector3df(0, 0, 0.3f), 10);
+                    mainGame->dField.MoveCard(pcard1, pcard2->curPos + irr::core::vector3df(0, 0, 0.3f), 10, 0.8f);
                 else
                     mainGame->dField.MoveCard(pcard1, irr::core::vector3df(3.9f, pcard1->controler == 0 ? -3.4f : 4.0f, 1.0f), 10);
                 mainGame->WaitFrameSignal(20, lock);
-				pcard2->is_attack_disabled = true;
-				int frames = 20;
-				if(gGameConfig->quick_animation)
-					frames = 12;
-                mainGame->WaitFrameSignal(frames, lock);
-				pcard2->is_attack_disabled = false;
+                if(mainGame->dField.attack_target) {
+                    pcard2->is_attack_disabled = true;
+                    int frames = 20;
+                    if(gGameConfig->quick_animation)
+					    frames = 12;
+                    mainGame->WaitFrameSignal(frames, lock);
+                    pcard2->is_attack_disabled = false;
+                }
                 mainGame->dField.MoveCard(pcard1, pcard1->attPos, 10);
                 mainGame->WaitFrameSignal(20, lock);
             }
-            mainGame->dField.attacker->is_attack = false;
-            pcard1->curRot = pcard1->attRot;
+            pcard1->is_attack = false;
+            pcard1->is_battling = false;
+            pcard1->is_attacking = false;
             mainGame->WaitFrameSignal(20, lock);
             if(mainGame->dField.attack_target)
                 pcard2->is_attacked = false;
-            pcard1->is_attacking = false;
 		}
         }
-        Play(SoundManager::SFX::ATTACK_DISABLED);
 		//event_string = epro::sprintf(gDataManager->GetSysString(1621), gDataManager->GetName(mainGame->dField.attacker->code));
 		event_string = epro::sprintf(gDataManager->GetSysString(1621), gDataManager->GetName(mainGame->dField.attacker));
 		////kdiy///////////

@@ -488,6 +488,30 @@ void Game::DrawCard(ClientCard* pcard) {
 		pcard->mTransform.setTranslation(pcard->curPos);
 		pcard->mTransform.setRotationRadians(pcard->curRot);
 	}
+    if((pcard->cmdFlag & COMMAND_ACTIVATE) && pcard->controler == 0 && (pcard->location & (LOCATION_HAND | LOCATION_ONFIELD))
+	  && !(pcard->is_selectable && (pcard->location & 0xe))
+	  && !(pcard->is_activable) && !(pcard->is_highlighting)) {
+        driver->setMaterial(matManager.mOutLine);
+        drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff00ff00);
+    }
+    if((pcard->cmdFlag & COMMAND_SPSUMMON) && (pcard->location & LOCATION_HAND)
+	  && !(pcard->is_selectable && (pcard->location & 0xe))
+	  && !(pcard->is_activable) && !(pcard->is_highlighting)) {
+        driver->setMaterial(matManager.mOutLine);
+        drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff0000ff);
+    }
+	if (pcard->is_activable) {
+		irr::video::SColor outline_color = skin::DUELFIELD_HIGHLIGHTING_CARD_OUTLINE_VAL;
+		if(gGameConfig->dotted_lines) {
+			if ((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP)))
+				DrawSelectionLine(matManager.vCardOutline, true, 2, outline_color);
+			else
+			    DrawSelectionLine(matManager.vCardOutliner, true, 2, outline_color);
+		} else {
+			driver->setMaterial(matManager.mOutLine);
+            drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffffff00);
+		}
+	}
 	if((pcard->location & LOCATION_ONFIELD) && (pcard->position & POS_FACEUP) && cardcloseup) {
 		if ( ((pcard->location == LOCATION_MZONE && !pcard->is_sanct) || (pcard->location == LOCATION_SZONE && pcard->is_orica)) || (pcard->cmdFlag & COMMAND_ATTACK) || pcard->is_attack || pcard->is_attacked) {
 			if ((pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
@@ -513,30 +537,6 @@ void Game::DrawCard(ClientCard* pcard) {
 		}
 	}
 	driver->setTransform(irr::video::ETS_WORLD, pcard->mTransform);
-    if((pcard->cmdFlag & COMMAND_ACTIVATE) && pcard->controler == 0 && (pcard->location & (LOCATION_HAND | LOCATION_ONFIELD))
-	  && !(pcard->is_selectable && (pcard->location & 0xe))
-	  && !(pcard->is_activable) && !(pcard->is_highlighting)) {
-        driver->setMaterial(matManager.mOutLine);
-        drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff00ff00);
-    }
-    if((pcard->cmdFlag & COMMAND_SPSUMMON) && (pcard->location & LOCATION_HAND)
-	  && !(pcard->is_selectable && (pcard->location & 0xe))
-	  && !(pcard->is_activable) && !(pcard->is_highlighting)) {
-        driver->setMaterial(matManager.mOutLine);
-        drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xff0000ff);
-    }
-	if (pcard->is_activable) {
-		irr::video::SColor outline_color = skin::DUELFIELD_HIGHLIGHTING_CARD_OUTLINE_VAL;
-		if(gGameConfig->dotted_lines) {
-			if ((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP)))
-				DrawSelectionLine(matManager.vCardOutline, true, 2, outline_color);
-			else
-			    DrawSelectionLine(matManager.vCardOutliner, true, 2, outline_color);
-		} else {
-			driver->setMaterial(matManager.mOutLine);
-            drawLine(matManager.vCardOutliner[0].Pos, matManager.vCardOutliner[1].Pos, matManager.vCardOutliner[2].Pos, matManager.vCardOutliner[3].Pos, 0xffffff00);
-		}
-	}
 	if (pcard->is_attack_disabled) {
 		matManager.mTexture.setTexture(0, imageManager.tShield);
 		driver->setMaterial(matManager.mTexture);
@@ -545,7 +545,7 @@ void Game::DrawCard(ClientCard* pcard) {
 	if (pcard->is_damage) {
 		matManager.mTexture.setTexture(0, imageManager.tCrack);
 		driver->setMaterial(matManager.mTexture);
-		driver->drawVertexPrimitiveList(matManager.vSymbol0, 4, matManager.iRectangle, 2);
+		driver->drawVertexPrimitiveList(matManager.vAttack3, 4, matManager.iRectangle, 2);
 	}
 	///kdiy////////
 	if (pcard->is_selectable && (pcard->location & 0xe)) {
@@ -849,9 +849,13 @@ void Game::DrawMisc() {
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(330, 10, 629, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(691, 10, 990, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
 	driver->draw2DImage(imageManager.tLPFrame, Resize(161, 553, 350, 640), irr::core::recti(0, 0, 494, 228), 0, 0, true);
+	if(mainGame->mode->isStoryStart)
+	    driver->draw2DImage(imageManager.modeHead[avataricon1], Resize(250, 563, 300, 613), irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(imageManager.modeHead[avataricon1]->getOriginalSize())), 0, 0, true);
 	if(dField.player_desc_hints[0].size() > 0)
 	    driver->draw2DImage(imageManager.tHint, Resize(151, 550, 191, 615), irr::core::recti(0, 0, 532, 649), 0, 0, true);
 	driver->draw2DImage(imageManager.tLPFrame2, Resize(691, 48, 900, 135), irr::core::recti(0, 0, 494, 228), 0, 0, true);
+    if(mainGame->mode->isStoryStart)
+	    driver->draw2DImage(imageManager.modeHead[avataricon2], Resize(800, 58, 850, 108), irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(imageManager.modeHead[avataricon2]->getOriginalSize())), 0, 0, true);
 	if(dField.player_desc_hints[1].size() > 0)
 	    driver->draw2DImage(imageManager.tHint, Resize(681, 45, 721, 110), irr::core::recti(0, 0, 532, 649), 0, 0, true);
 	/////kdiy/////////
@@ -1024,7 +1028,7 @@ void Game::DrawMisc() {
 			//if (pcard && pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)))
 				// DrawStatus(pcard);
 			if(!pcard) continue;
-			if(pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && (!pcard->is_sanct || (pcard->cmdFlag & COMMAND_ATTACK) || pcard->is_attacked) && !pcard->is_attack)
+			if(pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && (!pcard->is_sanct || (pcard->cmdFlag & COMMAND_ATTACK) || pcard->is_attack || pcard->is_attacked) && !pcard->is_battling)
 				DrawStatus(pcard, pcard->is_sanct ? true : false);
 			/////////kdiy////////////
 		}
@@ -1032,7 +1036,7 @@ void Game::DrawMisc() {
 		for (int i = 0; i < 5; ++i) {
 			pcard = dField.szone[p][i];
 			if(!pcard) continue;
-			if(pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && (pcard->is_orica || (pcard->cmdFlag & COMMAND_ATTACK) || pcard->is_attacked) && !pcard->is_attack)
+			if(pcard->code != 0 && (p == 0 || (pcard->position & POS_FACEUP)) && (pcard->is_orica || (pcard->cmdFlag & COMMAND_ATTACK) || pcard->is_attack || pcard->is_attacked) && !pcard->is_battling)
 				DrawStatus(pcard, !pcard->is_orica ? true : false);
 		}
 		// // Draw pendulum scales

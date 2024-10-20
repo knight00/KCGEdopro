@@ -227,7 +227,6 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_LEAVE_GAME: {
 			    ////kdiy////////
-                gSoundManager->soundcount.clear();
                 mainGame->isEvent = false;
                 mainGame->damcharacter[0] = false;
                 mainGame->damcharacter[1] = false;
@@ -1290,7 +1289,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				if(mainGame->mode->plotStep < 1) break;
                 if(!mainGame->dInfo.isStarted)
 				    mainGame->mode->isStartDuel = true;
-                else {
+                else if(!mainGame->mode->isDuelEnd) {
                     mainGame->cv->notify_one();
                     gSoundManager->StopSounds();
                 }

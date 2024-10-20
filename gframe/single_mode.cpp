@@ -249,10 +249,11 @@ restart:
 				////kdiy////////
 				mainGame->deckBuilder.Initialize(false);
 			}
-		} else
-			////kdiy////////
+		////kdiy////////
+		//} else
 			//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
-			////kdiy////////
+        }
+		////kdiy////////
 		is_restarting = false;
 		return 0;
 	}

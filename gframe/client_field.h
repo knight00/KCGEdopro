@@ -112,7 +112,7 @@ public:
 	void GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df* t, irr::core::vector3df* r, bool setTrans = false);
 	void MoveCard(ClientCard* pcard, float frame);
     ////kdiy///////////
-	void MoveCard(ClientCard* pcard, irr::core::vector3df trans, float frame);
+	void MoveCard(ClientCard* pcard, irr::core::vector3df trans, float frame, float tune = 1.0f);
     ////kdiy///////////
 	void FadeCard(ClientCard* pcard, float alpha, float frame);
 	bool ShowSelectSum();

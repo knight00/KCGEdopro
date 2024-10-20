@@ -90,6 +90,8 @@ Mode::Mode() {
 	modeTexts = new std::vector<ModeText>;
 	isMode = false;
 	isPlot = false;
+    isModeEvent = false;
+    isStoryStart = false;
 	isStartEvent = false;
 	isStartDuel = false;
 	flag_100000155 = false;
@@ -112,7 +114,7 @@ std::wstring Mode::GetPloat(uint32_t code) {
 void Mode::PlayNextPlot(uint32_t code) {
     int i = modePloats[chapter - 1]->at(plotIndex).control;
 	if(i < 0 || i > 5) i = 0;
-    mainGame->isEvent = true;
+    isModeEvent = true;
     //mainGame->stChPloatInfo[i]->setText(std::to_wstring(plotIndex).data());
     int playmode = gSoundManager->PlayModeSound(mainGame->dInfo.isStarted);
     if(playmode < 2) {
@@ -144,10 +146,10 @@ void Mode::NextPlot(uint8_t step, uint32_t code) {
         for(int i = 0; i < 6; ++i)
             character[i] = 0;
         if(chapter == 1) {
-            gSoundManager->character[0] = 15; //Player 1 voice: Yusei
+            gSoundManager->character[0] = 37; //Player 1 voice: Yusei
             gSoundManager->character[1] = CHARACTER_VOICE; //Player 2 voice: Dark Siner
         } else {
-            gSoundManager->character[0] = 15; //Player 1 voice: Yusei
+            gSoundManager->character[0] = 37; //Player 1 voice: Yusei
             gSoundManager->character[1] = CHARACTER_VOICE; //Player 2 voice: Dark Siner
         }
         mainGame->btnBody->setImage(mainGame->imageManager.modeBody[chapter]);
@@ -188,7 +190,8 @@ void Mode::NextPlot(uint8_t step, uint32_t code) {
 	}
     isPlot = false;
 	isStartEvent = false;
-    mainGame->isEvent = false;
+    isModeEvent = false;
+    isStoryStart = true;
     gSoundManager->PauseMusic(false);
     mainGame->stChPloatInfo[0]->setText(L"");
 	mainGame->stChPloatInfo[1]->setText(L"");
@@ -200,7 +203,7 @@ void Mode::NextPlot(uint8_t step, uint32_t code) {
 		mainGame->HideElement(mainGame->wChPloatBody[1]);
 	if(mainGame->wChBody[1]->isVisible())
 		mainGame->HideElement(mainGame->wChBody[1]);
-    if(isStartDuel) {
+    if(isStartDuel && !isDuelEnd) {
 		isStartDuel = false;
         DuelClient::SendPacketToServer(CTOS_MODE_HS_START);
 	}
@@ -258,6 +261,7 @@ void Mode::InitializeMode() {
 	isPlot = false;
 	isStartEvent = false;
 	isStartDuel = false;
+	isDuelEnd = false;
 	flag_100000155 = false;
 	plotStep = 0;
 	plotIndex = 0;

@@ -1008,9 +1008,11 @@ void ClientField::MoveCard(ClientCard* pcard, float frame) {
 	pcard->aniFrame = milliseconds;
 }
 ////kdiy///////////
-void ClientField::MoveCard(ClientCard* pcard, irr::core::vector3df trans, float frame) {
+void ClientField::MoveCard(ClientCard* pcard, irr::core::vector3df trans, float frame, float tune) {
 	float milliseconds = frame * 1000.0f / 60.0f;
 	pcard->dPos = (trans - pcard->curPos) / milliseconds;
+    pcard->dPos.X = pcard->dPos.X * tune;
+    pcard->dPos.Y = pcard->dPos.Y * tune;
 	pcard->is_moving = true;
 	pcard->refresh_on_stop = true;
 	pcard->aniFrame = milliseconds;

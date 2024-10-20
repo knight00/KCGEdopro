@@ -73,6 +73,7 @@ public:
 	bool is_attack = false;
 	bool is_attacking = false;
 	bool is_attacked = false;
+	bool is_battling = false;
 	bool is_attack_disabled = false;
 	bool is_damage = false;
 	bool is_detached = false;

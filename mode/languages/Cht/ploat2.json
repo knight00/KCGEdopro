@@ -4,7 +4,7 @@
         "aiNames": ["暗迪克皮塔", "Paradox"],
         "team1": 1,
         "team2": 2,
-        "relay": true
+        "relay": false
 	},
     {
 		"index": 0,

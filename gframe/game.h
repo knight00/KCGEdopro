@@ -163,8 +163,9 @@ public:
 	int modeIndex;//decide to play what kind of mode rule,from meun-list getSelected
 	bool isMode;//the duel is mode?
 	bool isPlot;//is showing ploat, ignore mouse/keyboard inputs
+    bool isModeEvent;
 	bool isStartEvent;//ploating, locking flow, allow left mouse click notify_one() to skip continuous ploat
-	bool isStartDuel;
+	bool isStartDuel, isDuelEnd, isStoryStart;
 	bool flag_100000155;//card 100000155 play sound
 	uint8_t rule;//the rule of duel,zcg|story......
     uint8_t chapter;//story chapter
