@@ -4286,6 +4286,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			        pcard->is_orica = false;
                 if(pcard->is_attack) {
                     pcard->is_attack = false;
+                    pcard->curRot = pcard->attRot;
                     mainGame->WaitFrameSignal(20, lock);
                 }
                 pcard->is_attacked = false;
@@ -4367,6 +4368,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				pcard->is_orica = false;
                 if(pcard->is_attack) {
                     pcard->is_attack = false;
+                    pcard->curRot = pcard->attRot;
                     mainGame->WaitFrameSignal(20, lock);
                 }
                 pcard->is_attacked = false;
@@ -4402,6 +4404,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				pcard->is_orica = false;
                 if(pcard->is_attack) {
                     pcard->is_attack = false;
+                    pcard->curRot = pcard->attRot;
                     mainGame->WaitFrameSignal(20, lock);
                 }
                 pcard->is_attacked = false;
@@ -4438,6 +4441,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				pcard->is_orica = false;
                 if(pcard->is_attack) {
                     pcard->is_attack = false;
+                    pcard->curRot = pcard->attRot;
                     mainGame->WaitFrameSignal(20, lock);
                 }
                 pcard->is_attacked = false;
@@ -4472,6 +4476,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         /////kdiy//////
         if(pcard->is_attack) {
             pcard->is_attack = false;
+            pcard->curRot = pcard->attRot;
             mainGame->WaitFrameSignal(20, lock);
         }
         pcard->is_attacked = false;
@@ -4512,6 +4517,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         if(pcard->is_attack) {
             auto lock = LockIf();
             pcard->is_attack = false;
+            pcard->curRot = pcard->attRot;
             mainGame->WaitFrameSignal(20, lock);
         }
         pcard->is_attacked = false;
@@ -4536,11 +4542,13 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         /////kdiy//////
         if(pc1->is_attack) {
             pc1->is_attack = false;
+            pc1->curRot = pc1->attRot;
             mainGame->WaitFrameSignal(20, lock);
         }
         pc1->is_attacked = false;
         if(pc2->is_attack) {
             pc2->is_attack = false;
+            pc2->curRot = pc2->attRot;
             mainGame->WaitFrameSignal(20, lock);
         }
         pc2->is_attacked = false;
@@ -5308,6 +5316,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
             pcard1->is_attack = false;
             pcard1->is_battling = false;
             pcard1->is_attacking = false;
+            pcard1->curRot = pcard1->attRot;
             mainGame->WaitFrameSignal(20, lock);
             if(info2.location)
                 pcard2->is_attacked = false;
@@ -5383,6 +5392,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
             pcard1->is_attack = false;
             pcard1->is_battling = false;
             pcard1->is_attacking = false;
+            pcard1->curRot = pcard1->attRot;
             mainGame->WaitFrameSignal(20, lock);
             if(mainGame->dField.attack_target)
                 pcard2->is_attacked = false;
