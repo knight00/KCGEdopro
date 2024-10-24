@@ -99,6 +99,9 @@ public:
 	void RefreshImageDir(epro::path_string path, int image_type);
 	void RefreshImageDirf();
     void RefreshKCGImage();
+	irr::core::rect<irr::s32> head_size[CHARACTER_STORY+1]; //story icon dimension
+	irr::core::rect<irr::s32> modehead_size[6];
+	irr::core::rect<irr::s32> icon_size[CHARACTER_VOICE];
 	/////kdiy/////
 
 	void ChangeTextures(epro::path_stringview path);
@@ -228,7 +231,7 @@ public:
 	A(tcharacterselect2)
 	A(QQ)
 	A(modeBody[CHAPTER])
-    A(head[CHARACTER_STORY])
+    A(head[CHARACTER_STORY+1]) //story icon
 	A(modeHead[6])
 	A(tXyz)
 	A(tCXyz)

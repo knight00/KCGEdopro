@@ -267,13 +267,12 @@ bool ImageManager::Initial() {
 	// ASSIGN_DEFAULT(tSettings);
     QQ = driver->getTexture(EPRO_TEXT("./textures/QQ.jpg"));
     ASSERT_TEXTURE_LOADED(QQ, "QQ");
-    icon[0] = loadTextureAnySize(EPRO_TEXT("character/player/mini_icon"sv));
-	character[0] = driver->getTexture(0);
-	characterd[0] = driver->getTexture(0);
 	for(uint8_t i = 0; i < 6; i++) {
         modeHead[i] = driver->getTexture(0);
+		modehead_size[i] = irr::core::rect<irr::s32>(0,0,0,0);
     }
     head[0] = driver->getTexture(0);
+	head_size[0] = irr::core::rect<irr::s32>(0,0,0,0);
     for(uint8_t i = 1; i <= CHARACTER_STORY; i++) {
         //1: Yusei
         //2: Darkman
@@ -281,12 +280,21 @@ bool ImageManager::Initial() {
         head[i] = driver->getTexture(epro::format(EPRO_TEXT("./mode/story/head/{}.jpg"), i).c_str());
         if(head[i] == nullptr)
             head[i] = driver->getTexture(epro::format(EPRO_TEXT("./mode/story/head/{}.png"), i).c_str());
+        if(head[i] == nullptr)
+		    head_size[i] = irr::core::rect<irr::s32>(0,0,0,0);
+		else
+		    head_size[i] = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(head[i]->getOriginalSize()));
     }
+    icon[0] = loadTextureAnySize(EPRO_TEXT("character/player/mini_icon"sv));
+	icon_size[0] = irr::core::rect<irr::s32>(0,0,0,0);
+	character[0] = driver->getTexture(0);
+	characterd[0] = driver->getTexture(0);
 #ifdef VIP
     RefreshKCGImage();
 #else
     for(uint8_t playno = 0; playno < CHARACTER_VOICE; playno++) {
 		icon[playno] = driver->getTexture(0);
+		icon_size[playno] = irr::core::rect<irr::s32>(0,0,0,0);
 	    character[playno] = driver->getTexture(0);
 	    characterd[playno] = driver->getTexture(0);
 	}
@@ -815,6 +823,10 @@ void ImageManager::GetRandomImagef(int width, int height) {
 void ImageManager::RefreshKCGImage() {
 	for(uint8_t playno = 1; playno < CHARACTER_VOICE; playno++) {
         icon[playno] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/mini_icon"sv), gSoundManager->textcharacter[playno-1]));
+		if(icon[playno] == nullptr)
+		    icon_size[playno] = irr::core::rect<irr::s32>(0,0,0,0);
+		else
+		    icon_size[playno] = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(icon[playno]->getOriginalSize()));
         GetRandomImage(character[playno], imgcharacter[playno-1], true);
         GetRandomImage(characterd[playno], imgcharacter[playno-1] + CHARACTER_VOICE - 1, true);
         if(!characterd[playno])

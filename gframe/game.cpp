@@ -119,7 +119,6 @@ void Mode::PlayNextPlot(uint32_t code) {
     int playmode = gSoundManager->PlayModeSound(mainGame->dInfo.isStarted);
     if(playmode < 2) {
         gSoundManager->PauseMusic(true);
-        mainGame->ShowElement(mainGame->wChBody[i]);
         mainGame->ShowElement(mainGame->wChPloatBody[i]);
         mainGame->stChPloatInfo[i]->setText(GetPloat(code).data());
     } else
@@ -139,8 +138,10 @@ void Mode::NextPlot(uint8_t step, uint32_t code) {
     character[i] = modePloats[chapter - 1]->at(plotIndex).icon;
             // character[0] = 1; //Player1 icon: Yusei
             // character[1] = 2; //Player2 icon: Dark Siner
-    for(int i = 0; i < 6; ++i)
+    for(int i = 0; i < 6; ++i) {
         mainGame->imageManager.modeHead[i] = mainGame->imageManager.head[character[i]];
+        mainGame->imageManager.modehead_size[i] = mainGame->imageManager.head_size[character[i]];
+	}
 	if(plotStep == 0) { //start
 		std::lock_guard<epro::mutex> lock(mainGame->gMutex);
         for(int i = 0; i < 6; ++i)
@@ -152,6 +153,16 @@ void Mode::NextPlot(uint8_t step, uint32_t code) {
             gSoundManager->character[0] = 37; //Player 1 voice: Yusei
             gSoundManager->character[1] = CHARACTER_VOICE; //Player 2 voice: Dark Siner
         }
+		for(uint8_t i = 0; i < mainGame->dInfo.team1 + mainGame->dInfo.team2; ++i) {
+			if(iconlist.find(chapter) != iconlist.end()) {
+				auto icons = iconlist[chapter];
+				character[i] = icons[i];
+				if(character[i] > 0) {
+					mainGame->imageManager.modeHead[i] = mainGame->imageManager.head[character[i]];
+					mainGame->imageManager.modehead_size[i] = mainGame->imageManager.head_size[character[i]];
+				}
+			}
+		}
         mainGame->btnBody->setImage(mainGame->imageManager.modeBody[chapter]);
 		mainGame->ShowElement(mainGame->wBody);
 		mainGame->ShowElement(mainGame->wPloat);
@@ -197,12 +208,8 @@ void Mode::NextPlot(uint8_t step, uint32_t code) {
 	mainGame->stChPloatInfo[1]->setText(L"");
     if(mainGame->wChPloatBody[0]->isVisible())
 	    mainGame->HideElement(mainGame->wChPloatBody[0]);
-	if(mainGame->wChBody[0]->isVisible())
-		mainGame->HideElement(mainGame->wChBody[0]);
 	if(mainGame->wChPloatBody[1]->isVisible())
 		mainGame->HideElement(mainGame->wChPloatBody[1]);
-	if(mainGame->wChBody[1]->isVisible())
-		mainGame->HideElement(mainGame->wChBody[1]);
     if(isStartDuel && !isDuelEnd) {
 		isStartDuel = false;
         DuelClient::SendPacketToServer(CTOS_MODE_HS_START);
@@ -241,7 +248,7 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
             }
 		}
         //1 VS ...
-        auto team = mainGame->dInfo.team1 + mainGame->dInfo.team2;
+        auto team = team1[chapter] + team2[chapter];
         for(auto count = team; count > 2; count--) {
             if(index < 0 || index >= (int32_t)bots.size()) return false;
             auto res2 = bots[index].Launch(port, pass, false, 0, nullptr, -1);
@@ -259,6 +266,8 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 void Mode::InitializeMode() {
 	isMode = true;
 	isPlot = false;
+    isModeEvent = false;
+    isStoryStart = false;
 	isStartEvent = false;
 	isStartDuel = false;
 	isDuelEnd = false;
@@ -383,24 +392,54 @@ bool Mode::LoadJson(epro::path_string path, uint8_t index, uint8_t chapter) {
 					try {
 						ModePloat modePloat;
                         std::vector<std::wstring> ais;
+						std::vector<uint8_t> allicon;
                         if(obj.find("playerNames") != obj.end())
-                            playerNames.insert(std::pair<int, std::wstring>(chapter, BufferIO::DecodeUTF8(obj.at("playerNames").get_ref<std::string&>())));
+                            playerNames.insert(std::pair<uint8_t, std::wstring>(chapter, BufferIO::DecodeUTF8(obj.at("playerNames").get_ref<std::string&>())));
 						if(obj.find("aiNames") != obj.end()) {
 							for(auto names : obj.at("aiNames"))
 								ais.push_back(BufferIO::DecodeUTF8(names.get_ref<std::string&>()));
 							aiNames.insert(std::pair<uint8_t, std::vector<std::wstring>>(chapter, ais));
 						}
-                        if(obj.find("team1") != obj.end())
+                        if(obj.find("iconlist") != obj.end()) {
+							for(auto icons : obj.at("iconlist")) {
+								if(icons.is_number()) {
+									allicon.push_back(icons.get<uint8_t>());
+								}
+							}
+							iconlist.insert(std::pair<uint8_t, std::vector<uint8_t>>(chapter, allicon));
+						}
+                        if(obj.find("rule") != obj.end() && obj.find("rule")->is_number())
+                            storyrule.insert(std::pair<uint8_t, uint8_t>(chapter, obj.at("rule").get<int>()));
+						else
+							storyrule.insert(std::pair<uint8_t, uint8_t>(chapter, 5));
+                        if(obj.find("rush") != obj.end() && obj.find("rush")->is_boolean())
+                            rush.insert(std::pair<uint8_t, bool>(chapter, obj.at("rush").get<bool>()));
+						else
+                            rush.insert(std::pair<uint8_t, bool>(chapter, false));
+                        if(obj.find("team1") != obj.end() && obj.find("team1")->is_number())
                             team1.insert(std::pair<uint8_t, int32_t>(chapter, obj.at("team1").get<int>()));
+						else
+                            team1.insert(std::pair<uint8_t, int32_t>(chapter, 1));
                         if(obj.find("team2") != obj.end())
                             team2.insert(std::pair<uint8_t, int32_t>(chapter, obj.at("team2").get<int>()));
+						else
+                            team2.insert(std::pair<uint8_t, int32_t>(chapter, 1));
                         if(obj.find("relay") != obj.end())
                             relay.insert(std::pair<uint8_t, bool>(chapter, obj.at("relay").get<bool>()));
+						else
+                            relay.insert(std::pair<uint8_t, bool>(chapter, false));
+                        if(obj.find("lua") != obj.end())
+                            lua.insert(std::pair<uint8_t, uint32_t>(chapter, obj.at("lua").get<int>()));
+						else
+                            lua.insert(std::pair<uint8_t, int32_t>(chapter, 99710411));
                         if(obj.find("index") == obj.end())
                             continue;
 						modePloat.index = obj.at("index").get<uint8_t>();
 						modePloat.title = BufferIO::DecodeUTF8(obj.at("title").get_ref<std::string&>());
-						modePloat.control = obj.at("control").get<int>();
+						if(obj.find("control") != obj.end())
+                            modePloat.control = obj.at("control").get<int>();
+                        else
+						    modePloat.control = 0;
 						if(obj.find("icon") != obj.end())
                             modePloat.icon = obj.at("icon").get<uint8_t>();
                         else
@@ -1542,7 +1581,6 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(btnCharacterSelect_replay, 8015);
     btnCharacterSelect_replay->setEnabled(false);
 #ifndef VIP
-    btnCharacterSelect_replay->setEnabled(false);
     defaultStrings.emplace_back(btnCharacterSelect_replay, 8025);
 #endif
     wCharacterReplay = env->addWindow(Scale(220, 100, 880, 500), false, gDataManager->GetSysString(8015).data());
@@ -1645,7 +1683,7 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(btnPloat, 1215);
 
 	//second  head 0 player + info
-	wChPloatBody[0] = env->addWindow(Scale(475, 375, 775, 455));
+	wChPloatBody[0] = env->addWindow(Scale(250, 458, 600, 558));
 	wChPloatBody[0]->getCloseButton()->setVisible(false);
 	wChPloatBody[0]->setDraggable(false);
 	wChPloatBody[0]->setDrawTitlebar(false);
@@ -1654,19 +1692,8 @@ void Game::Initialize() {
 	stChPloatInfo[0] = irr::gui::CGUICustomText::addCustomText(L"", false, env, wChPloatBody[0], -1, Scale(5, 15, 300, 80));
 	stChPloatInfo[0]->setWordWrap(true);
 
-	wChBody[0] = env->addWindow(Scale(475, 323, 527, 375));
-	wChBody[0]->getCloseButton()->setVisible(false);
-	wChBody[0]->setDraggable(false);
-	wChBody[0]->setDrawTitlebar(false);
-	wChBody[0]->setDrawBackground(true);
-	wChBody[0]->setVisible(false);
-	btnChBody[0] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 50, 50), wChBody[0], -1);
-	btnChBody[0]->setImageSize(Scale(0, 0, 50, 50).getSize());
-	btnChBody[0]->setDrawBorder(false);
-	btnChBody[0]->setEnabled(false);
-
 	//second  head 1 player + info
-	wChPloatBody[1] = env->addWindow(Scale(475, 100, 775, 180));
+	wChPloatBody[1] = env->addWindow(Scale(500, 140, 850, 240));
 	wChPloatBody[1]->getCloseButton()->setVisible(false);
 	wChPloatBody[1]->setDraggable(false);
 	wChPloatBody[1]->setDrawTitlebar(false);
@@ -1674,40 +1701,6 @@ void Game::Initialize() {
 	wChPloatBody[1]->setVisible(false);
 	stChPloatInfo[1] = irr::gui::CGUICustomText::addCustomText(L"", false, env, wChPloatBody[1], -1, Scale(5, 15, 300, 80));
 	stChPloatInfo[1]->setWordWrap(true);
-
-	wChBody[1] = env->addWindow(Scale(475, 48, 527, 100));
-	wChBody[1]->getCloseButton()->setVisible(false);
-	wChBody[1]->setDraggable(false);
-	wChBody[1]->setDrawTitlebar(false);
-	wChBody[1]->setDrawBackground(true);      
-	wChBody[1]->setVisible(false);
-	btnChBody[1] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 50, 50), wChBody[1], -1);
-	btnChBody[1]->setImageSize(Scale(0, 0, 50, 50).getSize());
-	btnChBody[1]->setDrawBorder(false);
-	btnChBody[1]->setEnabled(false);
-
-	//head image 
-	wHead[0] = env->addWindow(Scale(365, 5, 417, 57));
-	wHead[0]->getCloseButton()->setVisible(false);
-	wHead[0]->setDraggable(false);
-	wHead[0]->setDrawTitlebar(false);
-	wHead[0]->setDrawBackground(true);
-	wHead[0]->setVisible(false);
-	btnHead[0] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 50, 50), wHead[0], -1);
-	btnHead[0]->setImageSize(Scale(0, 0, 50, 50).getSize());
-	btnHead[0]->setDrawBorder(false);
-	btnHead[0]->setEnabled(false);
-
-	wHead[1] = env->addWindow(Scale(900, 5, 952, 57));
-	wHead[1]->getCloseButton()->setVisible(false);
-	wHead[1]->setDraggable(false);
-	wHead[1]->setDrawTitlebar(false);
-	wHead[1]->setDrawBackground(true);
-	wHead[1]->setVisible(false);
-	btnHead[1] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 50, 50), wHead[1], -1);
-	btnHead[1]->setImageSize(Scale(0, 0, 50, 50).getSize());
-	btnHead[1]->setDrawBorder(false);
-	btnHead[1]->setEnabled(false);
     ////kdiy////////
 	chkYrp = env->addCheckBox(false, Scale(360, 250, 560, 270), wReplay, -1, gDataManager->GetSysString(1356).data());
 	defaultStrings.emplace_back(chkYrp, 1356);
@@ -3056,15 +3049,6 @@ void Game::PopulateSettingsWindow() {
 		defaultStrings.emplace_back(gSettings.chktField, 8066);
 		gSettings.chkEnableAnime = env->addCheckBox(gGameConfig->enableanime, GetNextRect(), sPanel, CHECKBOX_ENABLE_ANIME, gDataManager->GetSysString(8008).data());
 		defaultStrings.emplace_back(gSettings.chkEnableAnime, 8008);
-#if !EDOPRO_WINDOWS
-        gSettings.chkEnableAnime->setChecked(false);
-    	gSettings.chkEnableAnime->setEnabled(false);
-#endif
-#ifndef VIP
-        gSettings.chkEnableAnime->setChecked(false);
-		gSettings.chkEnableAnime->setEnabled(false);
-        defaultStrings.emplace_back(gSettings.chkEnableAnime, 8053);
-#endif
         gSettings.stSound = env->addStaticText(gDataManager->GetSysString(8015).data(), GetCurrentRectWithXOffset(15, 90), false, false, sPanel);
 		defaultStrings.emplace_back(gSettings.stSound, 8015);
         IncrementXorY();
@@ -3075,54 +3059,18 @@ void Game::PopulateSettingsWindow() {
             gSettings.chkEnableSummonSound = env->addCheckBox(gGameConfig->enablessound, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_ENABLE_SSOUND, gDataManager->GetSysString(8010).data());
 	        defaultStrings.emplace_back(gSettings.chkEnableSummonSound, 8010);
             IncrementXorY();
-#if !EDOPRO_WINDOWS
-	        gSettings.chkEnableSummonAnime->setChecked(false);
-	        gSettings.chkEnableSummonAnime->setEnabled(false);
-#endif
-#ifndef VIP
-            gSettings.chkEnableSummonAnime->setChecked(false);
-            gSettings.chkEnableSummonAnime->setEnabled(false);
-            defaultStrings.emplace_back(gSettings.chkEnableSummonAnime, 8054);
-	        gSettings.chkEnableSummonSound->setChecked(false);
-	        gSettings.chkEnableSummonSound->setEnabled(false);
-            defaultStrings.emplace_back(gSettings.chkEnableSummonSound, 8021);
-#endif
 	        gSettings.chkEnableActivateAnime = env->addCheckBox(gGameConfig->enablecanime, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_ENABLE_CANIME, gDataManager->GetSysString(8013).data());
 	        defaultStrings.emplace_back(gSettings.chkEnableActivateAnime, 8013);
             IncrementXorY();
             gSettings.chkEnableActivateSound = env->addCheckBox(gGameConfig->enablecsound, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_ENABLE_CSOUND, gDataManager->GetSysString(8014).data());
 	        defaultStrings.emplace_back(gSettings.chkEnableActivateSound, 8014);
             IncrementXorY();
-#if !EDOPRO_WINDOWS
-	        gSettings.chkEnableActivateAnime->setChecked(false);
-	        gSettings.chkEnableActivateAnime->setEnabled(false);
-#endif
-#ifndef VIP
-	        gSettings.chkEnableActivateAnime->setChecked(false);
-	        gSettings.chkEnableActivateAnime->setEnabled(false);
-            defaultStrings.emplace_back(gSettings.chkEnableActivateAnime, 8056);
-            gSettings.chkEnableActivateSound->setChecked(false);
-	        gSettings.chkEnableActivateSound->setEnabled(false);
-            defaultStrings.emplace_back(gSettings.chkEnableActivateSound, 8023);
-#endif
             gSettings.chkEnableAttackAnime = env->addCheckBox(gGameConfig->enableaanime, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_ENABLE_AANIME, gDataManager->GetSysString(8011).data());
 	        defaultStrings.emplace_back(gSettings.chkEnableAttackAnime, 8011);
             IncrementXorY();
             gSettings.chkEnableAttackSound = env->addCheckBox(gGameConfig->enableasound, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_ENABLE_ASOUND, gDataManager->GetSysString(8012).data());
 	        defaultStrings.emplace_back(gSettings.chkEnableAttackSound, 8012);
             IncrementXorY();
-#if !EDOPRO_WINDOWS
-	        gSettings.chkEnableAttackAnime->setChecked(false);
-	        gSettings.chkEnableAttackAnime->setEnabled(false);
-#endif
-#ifndef VIP
-	        gSettings.chkEnableAttackAnime->setChecked(false);
-	        gSettings.chkEnableAttackAnime->setEnabled(false);
-            defaultStrings.emplace_back(gSettings.chkEnableAttackAnime, 8055);
-            gSettings.chkEnableAttackSound->setChecked(false);
-	        gSettings.chkEnableAttackSound->setEnabled(false);
-            defaultStrings.emplace_back(gSettings.chkEnableAttackSound, 8022);
-#endif
             IncrementXorY();
             gSettings.chkPauseduel = env->addCheckBox(gGameConfig->pauseduel, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_PAUSE_DUEL, gDataManager->GetSysString(8052).data());
             defaultStrings.emplace_back(gSettings.chkPauseduel, 8052);
@@ -3131,6 +3079,40 @@ void Game::PopulateSettingsWindow() {
 #endif
             IncrementXorY();
 		}
+#if !EDOPRO_WINDOWS
+        gSettings.chkEnableAnime->setChecked(false);
+    	gSettings.chkEnableAnime->setEnabled(false);
+	    gSettings.chkEnableSummonAnime->setChecked(false);
+	    gSettings.chkEnableSummonAnime->setEnabled(false);
+	    gSettings.chkEnableActivateAnime->setChecked(false);
+	    gSettings.chkEnableActivateAnime->setEnabled(false);
+	    gSettings.chkEnableAttackAnime->setChecked(false);
+	    gSettings.chkEnableAttackAnime->setEnabled(false);
+#endif
+#ifndef VIP
+		gGameConfig->enableanime = false;
+		gGameConfig->enablesanime = false;
+		gGameConfig->enablecanime = false;
+		gGameConfig->enableaanime = false;
+		gGameConfig->enablessound = false;
+		gGameConfig->enablessound = false;
+		gGameConfig->enablecsound = false;
+		gGameConfig->enableasound = false;
+        gSettings.chkEnableAnime->setChecked(false);
+        defaultStrings.emplace_back(gSettings.chkEnableAnime, 8053);
+        gSettings.chkEnableSummonAnime->setChecked(false);
+        defaultStrings.emplace_back(gSettings.chkEnableSummonAnime, 8054);
+	    gSettings.chkEnableSummonSound->setChecked(false);
+        defaultStrings.emplace_back(gSettings.chkEnableSummonSound, 8021);
+	    gSettings.chkEnableActivateAnime->setChecked(false);
+        defaultStrings.emplace_back(gSettings.chkEnableActivateAnime, 8056);
+        gSettings.chkEnableActivateSound->setChecked(false);
+        defaultStrings.emplace_back(gSettings.chkEnableActivateSound, 8023);
+	    gSettings.chkEnableAttackAnime->setChecked(false);
+        defaultStrings.emplace_back(gSettings.chkEnableAttackAnime, 8055);
+        gSettings.chkEnableAttackSound->setChecked(false);
+        defaultStrings.emplace_back(gSettings.chkEnableAttackSound, 8022);
+#endif
         //////kdiy///////////
 	}
 
@@ -3655,14 +3637,6 @@ bool Game::MainLoop() {
 		}
 		avatarbutton[0]->setImage(damcharacter[0] == false ? imageManager.character[gSoundManager->character[avataricon1]] : imageManager.characterd[gSoundManager->character[avataricon1]]);
 		avatarbutton[1]->setImage(damcharacter[1] == false ? imageManager.character[gSoundManager->character[avataricon2]] : imageManager.characterd[gSoundManager->character[avataricon2]]);
-        btnHead[0]->setImage(imageManager.modeHead[avataricon1]);
-		btnHead[1]->setImage(imageManager.modeHead[avataricon2]);
-        btnChBody[0]->setImage(imageManager.modeHead[avataricon1]);
-		btnChBody[1]->setImage(imageManager.modeHead[avataricon2]);
-		if (mode->isMode && mode->rule == MODE_STORY) {
-			wHead[0]->setVisible(true);
-			wHead[1]->setVisible(true);
-		}
 #ifdef VIP
         if((dInfo.isInDuel || is_building) && !mode->isMode) {
             if(gSoundManager->character[avataricon1] > 0)
@@ -4231,7 +4205,7 @@ void Game::RefreshAiDecks() {
 					bot.name = BufferIO::DecodeUTF8(obj.at("name").get_ref<std::string&>());
 					bot.deck = BufferIO::DecodeUTF8(obj.at("deck").get_ref<std::string&>());
 					/////kdiy////////
-                    if(obj.find("vip") != obj.end())
+                    if(obj.find("vip") != obj.end() && obj.find("vip")->is_boolean())
                         bot.vip = obj.at("vip").get<bool>();
 #ifndef VIP
                     if(bot.vip)
@@ -5233,8 +5207,6 @@ void Game::CloseDuelWindow() {
 	wCharacter->setVisible(false);
 	wAvatar[0]->setVisible(false);
 	wAvatar[1]->setVisible(false);
-    wHead[0]->setVisible(false);
-	wHead[1]->setVisible(false);
     //////kdiy///////
 	btnRestartSingle->setVisible(false);
 	btnSpectatorSwap->setVisible(false);
@@ -5988,14 +5960,10 @@ void Game::OnResize() {
     ////kdiy////////////
     wCharacter->setRelativePosition(ResizeWin(20, 120, 220, 440));
     wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 880, 500));
-    wHead[0]->setRelativePosition(ResizeWin(365, 5, 417, 57));
-	wHead[1]->setRelativePosition(ResizeWin(900, 5, 952, 57));
     wBody->setRelativePosition(ResizeWin(370, 175, 570, 475));
     wPloat->setRelativePosition(ResizeWin(520, 100, 775, 400));
-    wChPloatBody[0]->setRelativePosition(ResizeWin(475, 375, 775, 455));
-    wChBody[0]->setRelativePosition(ResizeWin(475, 323, 527, 375));
-    wChPloatBody[1]->setRelativePosition(ResizeWin(475, 100, 775, 180));
-    wChBody[1]->setRelativePosition(ResizeWin(475, 48, 527, 100));
+    wChPloatBody[0]->setRelativePosition(ResizeWin(250, 458, 600, 558));
+    wChPloatBody[1]->setRelativePosition(ResizeWin(500, 140, 850, 240));
     ////kdiy/////////
 	wSinglePlay->setRelativePosition(ResizeWin(220, 100, 800, 520));
     ////kdiy/////////
@@ -6264,27 +6232,57 @@ bool Game::moviecheck() {
 			break;
 		}
 	}
+#ifndef VIP
+	filechk = false;
+	Utils::SystemOpen(EPRO_TEXT("https://afdian.com/a/Edokcg/"), Utils::OPEN_URL);
+#endif
+#if !EDOPRO_WINDOWS
+	filechk = false;
+#endif
+    if(!gGameConfig->system_engine)
+        filechk = false;
 	if(!filechk) {
 		gGameConfig->enableanime = false;
 		gGameConfig->enablesanime = false;
 		gGameConfig->enablecanime = false;
 		gGameConfig->enableaanime = false;
 		mainGame->stACMessage->setText(gDataManager->GetSysString(8051).data());
-		mainGame->PopupElement(mainGame->wACMessage, 20);
+		mainGame->PopupElement(mainGame->wACMessage, 90);
 	}
+	if(gGameConfig->enablesanime || gGameConfig->enablecanime || gGameConfig->enableaanime)
+		gGameConfig->enableanime = true;
+	tabSettings.chkEnableAnime->setChecked(gGameConfig->enableanime);
+	gSettings.chkEnableAnime->setChecked(gGameConfig->enableanime);
+	if(gGameConfig->enableanime && !gGameConfig->enablesanime && !gGameConfig->enablecanime && !gGameConfig->enableaanime) {
+		gGameConfig->enablesanime = true;
+		gGameConfig->enablecanime = true;
+		gGameConfig->enableaanime = true;
+    }
+	if(!gGameConfig->enableanime) {
+		gGameConfig->enablesanime = false;
+		gGameConfig->enablecanime = false;
+		gGameConfig->enableaanime = false;
+	}
+	gSettings.chkEnableSummonAnime->setChecked(gGameConfig->enablesanime);
+	gSettings.chkEnableActivateAnime->setChecked(gGameConfig->enablecanime);
+	gSettings.chkEnableAttackAnime->setChecked(gGameConfig->enableaanime);
 	return filechk;
 }
 bool Game::chantcheck() {
 	bool filechk = false;
 	if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
 		filechk = true;
+#ifndef VIP
+	filechk = false;
+	Utils::SystemOpen(EPRO_TEXT("https://afdian.com/a/Edokcg/"), Utils::OPEN_URL);
+#endif
 	if(!filechk) {
 		gGameConfig->enablessound = false;
 		gGameConfig->enablessound = false;
 		gGameConfig->enablecsound = false;
 		gGameConfig->enableasound = false;
 		mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
-		mainGame->PopupElement(mainGame->wACMessage, 20);
+		mainGame->PopupElement(mainGame->wACMessage, 90);
 		for(int i = 0; i < 6; ++i) {
 			mainGame->icon[i]->setEnabled(false);
 			mainGame->icon2[i]->setEnabled(false);
@@ -6296,6 +6294,9 @@ bool Game::chantcheck() {
 		mainGame->ebCharacterDeck->setSelected(0);
 		mainGame->ebCharacterDeck->setEnabled(false);
 	}
+	gSettings.chkEnableSummonSound->setChecked(gGameConfig->enablessound);
+    gSettings.chkEnableActivateSound->setChecked(gGameConfig->enablecsound);
+	gSettings.chkEnableAttackSound->setChecked(gGameConfig->enableasound);
 	return filechk;
 }
 void Game::charactselect(uint8_t player, int sel) {

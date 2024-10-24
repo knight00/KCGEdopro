@@ -157,9 +157,13 @@ public:
 	std::vector<WindBot> bots;//all mode will load windbots from this
     std::map<uint8_t, std::wstring> playerNames;
 	std::map<uint8_t, std::vector<std::wstring>> aiNames;//player+bot names when duel start
+    std::map<uint8_t, std::vector<uint8_t>> iconlist;
+    std::map<uint8_t, uint8_t> storyrule;
+    std::map<uint8_t, bool> rush;
     std::map<uint8_t, int32_t> team1;
     std::map<uint8_t, int32_t> team2;
     std::map<uint8_t, bool> relay;
+    std::map<uint8_t, uint32_t> lua;
 	int modeIndex;//decide to play what kind of mode rule,from meun-list getSelected
 	bool isMode;//the duel is mode?
 	bool isPlot;//is showing ploat, ignore mouse/keyboard inputs
@@ -462,10 +466,6 @@ struct puzzle_panel_elements {
 
 	irr::gui::IGUIWindow* wChPloatBody[2];
 	irr::gui::IGUIStaticText* stChPloatInfo[2];
-	irr::gui::IGUIWindow* wChBody[2];
-	irr::gui::CGUIImageButton* btnChBody[2];
-	irr::gui::IGUIWindow* wHead[2];
-	irr::gui::CGUIImageButton* btnHead[2];
     //////////kdiy/////////
 };
 

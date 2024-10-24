@@ -2,8 +2,10 @@
 	{
 		"playerNames": "不动游星",
 		"aiNames": ["暗迪克皮塔"],
+        "iconlist": [1, 2],
         "team1": 1,
-        "team2": 1
+        "team2": 1,
+		"lua": 99710411
 	},
     {
 		"index": 0,

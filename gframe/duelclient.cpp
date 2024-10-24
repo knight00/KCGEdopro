@@ -312,6 +312,9 @@ catch(...) { what = def; }
                     case MODE_STORY: {
 				        cscg.info.team1 = mainGame->mode->team1[mainGame->mode->chapter];
 				        cscg.info.team2 = mainGame->mode->team2[mainGame->mode->chapter];
+                        cscg.info.rule = mainGame->mode->storyrule[mainGame->mode->chapter];
+                        if(mainGame->mode->rush[mainGame->mode->chapter])
+				            cscg.info.duel_flag_low = DUEL_MODE_RUSH;
                         if(cscg.info.team1 + cscg.info.team2 > 2)
                             cscg.info.mode |= MODE_TAG;
                         if(mainGame->mode->relay[mainGame->mode->chapter])
@@ -753,10 +756,6 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		mainGame->btnCancelOrFinish->setVisible(false);
 		////kdiy////////
         mainGame->wLocation->setVisible(false);
-        mainGame->wHead[0]->setVisible(false);
-		mainGame->wHead[1]->setVisible(false);
-		mainGame->wChBody[0]->setVisible(false);
-		mainGame->wChBody[1]->setVisible(false);
         mainGame->wChPloatBody[0]->setVisible(false);
         mainGame->wChPloatBody[1]->setVisible(false);
         ////kdiy////////
@@ -1249,6 +1248,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
             mainGame->wLocation->setVisible(false);
 			for(int i = 0; i < 6; ++i) {
 				mainGame->imageManager.modeHead[i] = mainGame->imageManager.head[0];
+				mainGame->imageManager.modehead_size[i] = irr::core::rect<irr::s32>(0,0,0,0);
 			}
 			mainGame->damcharacter[0] = false;
 			mainGame->damcharacter[1] = false;
@@ -1259,10 +1259,6 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			}
 			/////kdiy/////
 			else if(mainGame->mode->isMode) {
-				mainGame->wHead[0]->setVisible(false);
-				mainGame->wHead[1]->setVisible(false);
-				mainGame->wChBody[0]->setVisible(false);
-				mainGame->wChBody[1]->setVisible(false);
                 mainGame->wChPloatBody[0]->setVisible(false);
                 mainGame->wChPloatBody[1]->setVisible(false);
 				mainGame->stEntertainmentPlayInfo->setText(L"");
@@ -6267,10 +6263,6 @@ void DuelClient::ReplayPrompt(bool local_stream) {
 	mainGame->btnCancelOrFinish->setVisible(false);
 	////kdiy////////
     mainGame->isEvent = false;
-    mainGame->wHead[0]->setVisible(false);
-	mainGame->wHead[1]->setVisible(false);
-	mainGame->wChBody[0]->setVisible(false);
-	mainGame->wChBody[1]->setVisible(false);
     mainGame->wChPloatBody[0]->setVisible(false);
 	mainGame->wChPloatBody[1]->setVisible(false);
     ////kdiy////////

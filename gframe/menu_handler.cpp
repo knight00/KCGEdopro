@@ -834,6 +834,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
                     mainGame->btnCharacterSelect_replayreset[i]->setVisible(false);
                     mainGame->ebCharacter_replay[i]->setVisible(false);
                 }
+#ifndef VIP
+                Utils::SystemOpen(EPRO_TEXT("https://afdian.com/a/Edokcg/"), Utils::OPEN_URL);
+				break;
+#endif
 				mainGame->PopupElement(mainGame->wCharacterReplay);
 				mainGame->env->setFocus(mainGame->wCharacterReplay);
                 auto& replay = ReplayMode::cur_replay;

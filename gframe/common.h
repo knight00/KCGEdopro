@@ -482,7 +482,7 @@
 #define PLAY_MODE               1
 #define CHARACTER_VOICE         68
 #define CHARACTER_STORY_ONLY    1
-#define CHARACTER_STORY         4
+#define CHARACTER_STORY         3
 #define CHAPTER                 2
 //////kdiy//////
 
