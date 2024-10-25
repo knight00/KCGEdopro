@@ -894,6 +894,7 @@ public:
 	float atk2dy;
 	float atkdy2;
 	float atk2dy2;
+	float atkdy3;
 	double angle = 0.0f;
     ////kdiy//////
 	int lpframe;

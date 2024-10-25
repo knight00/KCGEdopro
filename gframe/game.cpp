@@ -284,22 +284,19 @@ void Mode::InitializeMode() {
 Mode::~Mode(){};
 void Mode::RefreshControlState(uint8_t state)
 {
-	mainGame->btnEntertainmentExitGame->setVisible(true);
+	mainGame->btnEntertainmentStartGame->setEnabled(false);
 	mainGame->btnEntertainmentExitGame->setEnabled(true);
-	mainGame->lstEntertainmentPlayList->setVisible(true);
 	mainGame->lstEntertainmentPlayList->setEnabled(true);
 	mainGame->chkEntertainmentMode_1Check->setVisible(false);
 	mainGame->cbEntertainmentMode_1Bot->setVisible(false);
+	mainGame->chkEntertainmentPrepReady->setEnabled(false);
+	mainGame->chkEntertainmentPrepReady->setChecked(false);
 	if(state > 0) { //duel mode
         if(state <= PLAY_MODE) {
-            mainGame->chkEntertainmentPrepReady->setVisible(true);
             mainGame->chkEntertainmentMode_1Check->setVisible(true);
             mainGame->cbEntertainmentMode_1Bot->setVisible(true);
-            mainGame->btnEntertainmentStartGame->setVisible(true);
-        } else { //story
-            mainGame->chkEntertainmentPrepReady->setVisible(true);
-            mainGame->btnEntertainmentStartGame->setVisible(true);
         }
+		mainGame->chkEntertainmentPrepReady->setVisible(true);
 	}
 }
 bool Mode::IsModeBot(std::wstring mode) {
@@ -312,9 +309,10 @@ void Mode::SetControlState(uint8_t index)
 	mainGame->btnEntertainmentStartGame->setEnabled(false);
 	mainGame->lstEntertainmentPlayList->setEnabled(true);
 	mainGame->btnEntertainmentExitGame->setEnabled(true);
+	mainGame->chkEntertainmentPrepReady->setEnabled(true);
+	mainGame->chkEntertainmentPrepReady->setChecked(false);
+	mainGame->stEntertainmentPlayInfo->setText(str.data());
 	if(index < PLAY_MODE) { //duel mode
-		mainGame->chkEntertainmentPrepReady->setEnabled(true);
-		mainGame->chkEntertainmentPrepReady->setChecked(false);
 		mainGame->chkEntertainmentMode_1Check->setEnabled(true);
 		mainGame->chkEntertainmentMode_1Check->setChecked(false);
 		mainGame->cbEntertainmentMode_1Bot->clear();
@@ -323,11 +321,7 @@ void Mode::SetControlState(uint8_t index)
 				mainGame->cbEntertainmentMode_1Bot->addItem(bots[i].name.data());
 		}
 		mainGame->cbEntertainmentMode_1Bot->setEnabled(false);
-	} else { //story
-		mainGame->chkEntertainmentPrepReady->setEnabled(true);
-		mainGame->chkEntertainmentPrepReady->setChecked(false);
 	}
-	mainGame->stEntertainmentPlayInfo->setText(str.data());
 }
 void Mode::RefreshEntertainmentPlay(std::vector<ModeText>*modeTexts) {
 	std::vector<std::wstring>* names = new std::vector<std::wstring>(modeTexts->size());
@@ -3501,6 +3495,7 @@ bool Game::MainLoop() {
 		atk2dy = (float)cos(atkframe);
 		atkdy2 = (float)sin(atkframe*0.65f);
 		atk2dy2 = (float)cos(atkframe*0.65f);
+		atkdy3 = (float)tan(atkframe);
         //kdiy///////
 		driver->beginScene(true, true, irr::video::SColor(0, 0, 0, 0));
 		gMutex.lock();

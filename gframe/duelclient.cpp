@@ -4427,8 +4427,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                         pcard->is_detached = true;
 					//////kdiy///
 					mainGame->dField.MoveCard(pcard, 10);
-					mainGame->WaitFrameSignal(5, lock);
 					//////kdiy///
+					//mainGame->WaitFrameSignal(5, lock);
+					mainGame->WaitFrameSignal(20, lock);
                     pcard->is_detached = false;
 					//////kdiy///
 				}

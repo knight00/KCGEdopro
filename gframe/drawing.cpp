@@ -667,7 +667,12 @@ void Game::DrawCard(ClientCard* pcard) {
 					matManager.mTexture.AmbientColor = cardcloseupcolor;
 					driver->setMaterial(matManager.mTexture);
 					irr::core::matrix4 atk;
-					atk.setTranslation(pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < size / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < size / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2));
+					auto pos = irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < size / 2 ? incre : incre2))) * (pcard->is_detached ? atk2dy2 : atkdy2), (((0.62f + 0.3f * neg / power * (i < size / 2 ? incre : incre2)))) * (pcard->is_detached ? atk2dy2 : atkdy2), pow(-1, i) * 0.2f * (pcard->is_detached ? atkdy2 : atk2dy2));
+					atk.setTranslation(pcard->curPos + pos);
+					float scale = pcard->is_detached && pos == irr::core::vector3df(0, 0, 0) ? std::min(atkdy3, 10.0f) : 1.0f;
+					if(scale < 0.0f)
+						scale = 0.0f;
+					atk.setScale(irr::core::vector3df(scale, scale, scale));
 					driver->setTransform(irr::video::ETS_WORLD, atk);
 					driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
 					if(!haloNodeexist[pcard->controler][sequence][i])
@@ -694,7 +699,7 @@ void Game::DrawCard(ClientCard* pcard) {
                             ptk++;
 						}
 					}
-					haloNode[pcard->controler][sequence][i].insert(haloNode[pcard->controler][sequence][i].begin(), pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < size / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < size / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2));
+					haloNode[pcard->controler][sequence][i].insert(haloNode[pcard->controler][sequence][i].begin(), pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < size / 2 ? incre : incre2))) * (pcard->is_detached ? atk2dy2 : atkdy2), (((0.62f + 0.3f * neg / power * (i < size / 2 ? incre : incre2)))) * (pcard->is_detached ? atk2dy2 : atkdy2), pow(-1, i) * 0.2f * (pcard->is_detached ? atkdy2 : atk2dy2)));
 					if(haloNode[pcard->controler][sequence][i].size() > 80)
 						haloNode[pcard->controler][sequence][i].pop_back();
 				}
