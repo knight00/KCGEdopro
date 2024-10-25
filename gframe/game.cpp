@@ -242,7 +242,7 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 	if(rule == MODE_STORY) {
 		for(uint32_t i = 0; i < bots.size(); ++i) {
 			auto bot = bots[i];
-            if(bot.mode == epro::format(L"STORY{}", chapter)) {
+            if(bot.mode == L"STORY" && bot.deck == aideck[chapter]) {
 				index = i;
                 break;
             }
@@ -394,6 +394,10 @@ bool Mode::LoadJson(epro::path_string path, uint8_t index, uint8_t chapter) {
 								ais.push_back(BufferIO::DecodeUTF8(names.get_ref<std::string&>()));
 							aiNames.insert(std::pair<uint8_t, std::vector<std::wstring>>(chapter, ais));
 						}
+                        if(obj.find("aideck") != obj.end())
+                            aideck.insert(std::pair<uint8_t, std::wstring>(chapter, BufferIO::DecodeUTF8(obj.at("aideck").get_ref<std::string&>())));
+						else
+                            aideck.insert(std::pair<uint8_t, std::wstring>(chapter, L"ModeDT1"));
                         if(obj.find("iconlist") != obj.end()) {
 							for(auto icons : obj.at("iconlist")) {
 								if(icons.is_number()) {

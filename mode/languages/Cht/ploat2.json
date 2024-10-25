@@ -2,6 +2,7 @@
 	{
 		"playerNames": "不動遊星",
         "aiNames": ["暗迪克皮塔", "Paradox"],
+		"aideck": "ModeDT1",
         "iconlist": [1, 2, 3],
         "rule": 4,
         "rush": true,

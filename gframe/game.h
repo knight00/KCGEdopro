@@ -157,6 +157,7 @@ public:
 	std::vector<WindBot> bots;//all mode will load windbots from this
     std::map<uint8_t, std::wstring> playerNames;
 	std::map<uint8_t, std::vector<std::wstring>> aiNames;//player+bot names when duel start
+    std::map<uint8_t, std::wstring> aideck;
     std::map<uint8_t, std::vector<uint8_t>> iconlist;
     std::map<uint8_t, uint8_t> storyrule;
     std::map<uint8_t, bool> rush;
