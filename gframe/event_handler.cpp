@@ -231,12 +231,11 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
                 mainGame->damcharacter[0] = false;
                 mainGame->damcharacter[1] = false;
                 gSoundManager->soundcount.clear();
-                ////kdiy////////
 				if(mainGame->dInfo.isReplay) {
 					ReplayMode::StopReplay();
 					break;
 				}
-			    ////kdiy////////
+                ////kdiy////////
 				if(mainGame->dInfo.isSingleMode) {
 					SingleMode::singleSignal.SetNoWait(true);
 					SingleMode::StopPlay(false);

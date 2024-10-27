@@ -77,13 +77,16 @@ void Replay::EndRecord(size_t size) {
 	is_recording = false;
 }
 void Replay::SaveReplay(const epro::path_string& name) {
-	auto replay_file = fileopen(epro::format(EPRO_TEXT("./replay/{}.yrpX"), name).data(), "wb");
-	if(replay_file == nullptr)
-		return;
-	auto header_len = (pheader.base.flag & REPLAY_EXTENDED_HEADER) ? sizeof(ExtendedReplayHeader) : sizeof(ReplayHeader);
-	fwrite(&pheader, 1, header_len, replay_file);
-	fwrite(comp_data.data(), 1, comp_data.size(), replay_file);
-	fclose(replay_file);
+    ////////kdiy///////////
+	// auto replay_file = fileopen(epro::format(EPRO_TEXT("./replay/{}.yrpX"), name).data(), "wb");
+	// if(replay_file == nullptr)
+	// 	return;
+	// auto header_len = (pheader.base.flag & REPLAY_EXTENDED_HEADER) ? sizeof(ExtendedReplayHeader) : sizeof(ReplayHeader);
+	// fwrite(&pheader, 1, header_len, replay_file);
+	// fwrite(comp_data.data(), 1, comp_data.size(), replay_file);
+	// fclose(replay_file);
+    Utils::FileCopy(EPRO_TEXT("./replay/_LastReplay.yrpX"), epro::format(EPRO_TEXT("./replay/{}.yrpX"), name));
+    ////////kdiy///////////
 }
 static inline bool IsReplayValid(uint32_t id) {
 	return id == REPLAY_YRP1 || id == REPLAY_YRPX;

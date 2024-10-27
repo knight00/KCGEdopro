@@ -675,7 +675,7 @@ void Game::Initialize() {
 	numFont0 = irr::gui::CGUITTFont::createTTFont(env, numfont0, fallbackFonts);
 	numfont0.size = Scale(12);
 	adFont0 = irr::gui::CGUITTFont::createTTFont(env, numfont0, fallbackFonts);
-	numfont.size = Scale(26);
+	numfont.size = Scale(24);
 	lpFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
 	textfont.size = Scale(textfont.size * 1.8);
 	nameFont = irr::gui::CGUITTFont::createTTFont(env, textfont, fallbackFonts);

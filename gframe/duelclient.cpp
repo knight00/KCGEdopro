@@ -5306,10 +5306,15 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
             pcard1->is_battling = true;
             auto lock = LockIf();
             if(!mainGame->dInfo.isCatchingUp) {
-                if(info2.location)
+                if(info2.location) {
+                    mainGame->dField.MoveCard(pcard1, pcard2->curPos, 10, -0.4f);
+                    mainGame->WaitFrameSignal(20, lock);
                     mainGame->dField.MoveCard(pcard1, pcard2->curPos + irr::core::vector3df(0, 0, 0.3f), 10);
-                else
+                } else {
+                    mainGame->dField.MoveCard(pcard1, irr::core::vector3df(3.9f, info1.controler == 0 ? -3.4f : 4.0f, pcard1->curPos.Z), 10, -0.4f);
+                    mainGame->WaitFrameSignal(20, lock);
                     mainGame->dField.MoveCard(pcard1, irr::core::vector3df(3.9f, info1.controler == 0 ? -3.4f : 4.0f, 1.0f), 10);
+                }
                 mainGame->WaitFrameSignal(20, lock);
                 mainGame->dField.MoveCard(pcard1, pcard1->attPos, 10);
                 mainGame->WaitFrameSignal(20, lock);
@@ -5374,10 +5379,15 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
             pcard1->is_battling = true;
             auto lock = LockIf();
             if(!mainGame->dInfo.isCatchingUp) {
-                if(mainGame->dField.attack_target)
+                if(mainGame->dField.attack_target) {
+                    mainGame->dField.MoveCard(pcard1, pcard2->curPos, 10, -0.4f);
+                    mainGame->WaitFrameSignal(20, lock);
                     mainGame->dField.MoveCard(pcard1, pcard2->curPos + irr::core::vector3df(0, 0, 0.3f), 10, 0.8f);
-                else
+                } else {
+                    mainGame->dField.MoveCard(pcard1, irr::core::vector3df(3.9f, pcard1->controler == 0 ? -3.4f : 4.0f, pcard1->curPos.Z), 10, -0.4f);
+                    mainGame->WaitFrameSignal(20, lock);
                     mainGame->dField.MoveCard(pcard1, irr::core::vector3df(3.9f, pcard1->controler == 0 ? -3.4f : 4.0f, 1.0f), 10);
+                }
                 mainGame->WaitFrameSignal(20, lock);
                 if(mainGame->dField.attack_target) {
                     pcard2->is_attack_disabled = true;
