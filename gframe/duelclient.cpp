@@ -4993,7 +4993,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			else
 			    mainGame->lpcstring = epro::format(L"-{}", val);
 			mainGame->WaitFrameSignal(final == 0 ? 50 : 30, lock);
-			if(val != 0) Play(SoundManager::SFX::LP_CHANGE);
 			mainGame->lpframe = 10;
 			mainGame->WaitFrameSignal(final == 0 ? 30 : 11, lock);
 			///////////kdiy///////////
@@ -5035,7 +5034,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			else
 			    mainGame->lpcstring = epro::format(L"+{}", val);
 			mainGame->WaitFrameSignal(final == 0 ? 50 : 30, lock);
-			if(val != 0) Play(SoundManager::SFX::LP_CHANGE);
 			///////////kdiy///////////
 			mainGame->lpframe = 10;
 			mainGame->WaitFrameSignal(11, lock);
@@ -5084,7 +5082,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->lpframe = 10;
 			///////////kdiy///////////
 			//mainGame->WaitFrameSignal(11, lock);
-			if(mainGame->dInfo.lp[player] - val != 0) Play(SoundManager::SFX::LP_CHANGE);;
 			mainGame->WaitFrameSignal(val == 0 ? 30 : 11, lock);
 			///////////kdiy///////////
 		}
@@ -5172,7 +5169,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			    mainGame->lpcstring = epro::format(L"-{}", cost);
 			mainGame->WaitFrameSignal(final == 0 ? 50 : 30, lock);
 			mainGame->lpframe = 10;
-			if(cost != 0) Play(SoundManager::SFX::LP_CHANGE);;
 			mainGame->WaitFrameSignal(final == 0 ? 30 : 11, lock);
 			///////////kdiy///////////
 			mainGame->lpcstring = L"";
@@ -5324,30 +5320,24 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
             auto lock = LockIf();
             if(!mainGame->dInfo.isCatchingUp) {
                 if(info2.location) {
-                    mainGame->dField.MoveCard(pcard1, pcard2->curPos, 10, -0.4f);
+					auto pos1 = pcard1->curPos;
+                    mainGame->dField.MoveCard(pcard1, pcard2->curPos, 10, -0.5f);
                     mainGame->WaitFrameSignal(20, lock);
-                    mainGame->dField.MoveCard(pcard1, pcard2->curPos + irr::core::vector3df(0, 0, 0.3f), 10);
-					mainGame->WaitFrameSignal(20, lock);
-					auto pos = pcard2->curPos;
-                    mainGame->dField.MoveCard(pcard2, pcard1->curPos, 8, -0.2f);
-                    mainGame->WaitFrameSignal(8, lock);
-                    mainGame->dField.MoveCard(pcard2, pos, 8);
-                    mainGame->WaitFrameSignal(8, lock);
+                    mainGame->dField.MoveCard(pcard1, pcard2->curPos + irr::core::vector3df(0, 0, 0.3f), 8);
+                    mainGame->WaitFrameSignal(16, lock);
+					auto pos2 = pcard2->curPos;
+                    mainGame->dField.MoveCard(pcard2, pos1, 8, -0.25f);
+                    mainGame->WaitFrameSignal(2, lock);
+                    mainGame->dField.MoveCard(pcard2, pos2, 8);
+                    mainGame->WaitFrameSignal(2, lock);
                 } else {
                     mainGame->dField.MoveCard(pcard1, irr::core::vector3df(3.9f, info1.controler == 0 ? -3.4f : 4.0f, pcard1->curPos.Z), 10, -0.4f);
                     mainGame->WaitFrameSignal(20, lock);
-                    mainGame->dField.MoveCard(pcard1, irr::core::vector3df(3.9f, info1.controler == 0 ? -3.4f : 4.0f, 1.0f), 10);
-					mainGame->WaitFrameSignal(20, lock);
-					for(const auto& hcard : mainGame->dField.hand[1 - info1.controler]) {
-						auto pos = hcard->curPos;
-						mainGame->dField.MoveCard(hcard, pcard1->curPos, 8, -0.2f);
-						mainGame->WaitFrameSignal(8, lock);
-						mainGame->dField.MoveCard(hcard, pos, 8);
-						mainGame->WaitFrameSignal(8, lock);
-					}
+                    mainGame->dField.MoveCard(pcard1, irr::core::vector3df(3.9f, info1.controler == 0 ? -3.4f : 4.0f, 1.0f), 8);
+					mainGame->WaitFrameSignal(16, lock);
                 }
-                mainGame->dField.MoveCard(pcard1, pcard1->attPos, 10);
-                mainGame->WaitFrameSignal(20, lock);
+                mainGame->dField.MoveCard(pcard1, pcard1->attPos, 8);
+                mainGame->WaitFrameSignal(16, lock);
             }
             pcard1->is_attack = false;
             pcard1->is_battling = false;
@@ -5412,25 +5402,13 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                 if(mainGame->dField.attack_target) {
                     mainGame->dField.MoveCard(pcard1, pcard2->curPos, 10, -0.4f);
                     mainGame->WaitFrameSignal(20, lock);
-                    mainGame->dField.MoveCard(pcard1, pcard2->curPos + irr::core::vector3df(0, 0, 0.3f), 10, 0.8f);
-					mainGame->WaitFrameSignal(20, lock);
-					auto pos = pcard2->curPos;
-                    mainGame->dField.MoveCard(pcard2, pcard1->curPos, 8, -0.2f);
-                    mainGame->WaitFrameSignal(8, lock);
-                    mainGame->dField.MoveCard(pcard2, pos, 8);
-                    mainGame->WaitFrameSignal(8, lock);
+                    mainGame->dField.MoveCard(pcard1, pcard2->curPos + irr::core::vector3df(0, 0, 0.3f), 8, 0.8f);
+					mainGame->WaitFrameSignal(16, lock);
                 } else {
                     mainGame->dField.MoveCard(pcard1, irr::core::vector3df(3.9f, pcard1->controler == 0 ? -3.4f : 4.0f, pcard1->curPos.Z), 10, -0.4f);
                     mainGame->WaitFrameSignal(20, lock);
-                    mainGame->dField.MoveCard(pcard1, irr::core::vector3df(3.9f, pcard1->controler == 0 ? -3.4f : 4.0f, 1.0f), 10);
-					mainGame->WaitFrameSignal(20, lock);
-					for(const auto& hcard : mainGame->dField.hand[1 - pcard1->controler]) {
-						auto pos = hcard->curPos;
-						mainGame->dField.MoveCard(hcard, pcard1->curPos, 8, -0.2f);
-						mainGame->WaitFrameSignal(8, lock);
-						mainGame->dField.MoveCard(hcard, pos, 8);
-						mainGame->WaitFrameSignal(8, lock);
-					}
+                    mainGame->dField.MoveCard(pcard1, irr::core::vector3df(3.9f, pcard1->controler == 0 ? -3.4f : 4.0f, 1.0f), 8);
+					mainGame->WaitFrameSignal(16, lock);
                 }
                 if(mainGame->dField.attack_target) {
                     pcard2->is_attack_disabled = true;
