@@ -151,6 +151,7 @@ void SoundManager::RefreshSoundsList() {
 		{DIRECT_ATTACK, EPRO_TEXT("./sound/directattack"sv)},
 		{ATTACK_DISABLED, EPRO_TEXT("./sound/attackdisabled"sv)},
 		{POS_CHANGE, EPRO_TEXT("./sound/poschange"sv)},
+		{LP_CHANGE, EPRO_TEXT("./sound/lpchange"sv)},
 		{DRAW, EPRO_TEXT("./sound/draw"sv)},
 		{SHUFFLE, EPRO_TEXT("./sound/shuffle"sv)},
 		{DAMAGE, EPRO_TEXT("./sound/damage"sv)},

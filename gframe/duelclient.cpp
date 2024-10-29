@@ -4984,14 +4984,19 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->lpcalpha = 0xff;
 			mainGame->lpplayer = player;
 			///////////kdiy///////////
+			// mainGame->lpcstring = epro::format(L"-{}", val);
+			// mainGame->WaitFrameSignal(30, lock);
+			// mainGame->lpframe = 10;
+			// mainGame->WaitFrameSignal(11, lock);
 			if(val >= 8888888)
-			mainGame->lpcstring = epro::format(L"-\u221E");
+			    mainGame->lpcstring = epro::format(L"-\u221E");
 			else
-			///////////kdiy///////////
-			mainGame->lpcstring = epro::format(L"-{}", val);
-			mainGame->WaitFrameSignal(30, lock);
+			    mainGame->lpcstring = epro::format(L"-{}", val);
+			mainGame->WaitFrameSignal(final == 0 ? 50 : 30, lock);
+			if(val != 0) Play(SoundManager::SFX::LP_CHANGE);
 			mainGame->lpframe = 10;
-			mainGame->WaitFrameSignal(11, lock);
+			mainGame->WaitFrameSignal(final == 0 ? 30 : 11, lock);
+			///////////kdiy///////////
 			mainGame->lpcstring = L"";
 		}
 		mainGame->dInfo.lp[player] = final;
@@ -5023,12 +5028,15 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->lpcalpha = 0xff;
 			mainGame->lpplayer = player;
 			///////////kdiy///////////
+			// mainGame->lpcstring = epro::format(L"+{}", val);
+			// mainGame->WaitFrameSignal(30, lock);
 			if(val >= 8888888)
-			mainGame->lpcstring = epro::format(L"+\u221E");
+			    mainGame->lpcstring = epro::format(L"+\u221E");
 			else
+			    mainGame->lpcstring = epro::format(L"+{}", val);
+			mainGame->WaitFrameSignal(final == 0 ? 50 : 30, lock);
+			if(val != 0) Play(SoundManager::SFX::LP_CHANGE);
 			///////////kdiy///////////
-			mainGame->lpcstring = epro::format(L"+{}", val);
-			mainGame->WaitFrameSignal(30, lock);
 			mainGame->lpframe = 10;
 			mainGame->WaitFrameSignal(11, lock);
 			mainGame->lpcstring = L"";
@@ -5074,7 +5082,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->lpd = (mainGame->dInfo.lp[player] - val) / 10;
 			mainGame->lpplayer = player;
 			mainGame->lpframe = 10;
-			mainGame->WaitFrameSignal(11, lock);
+			///////////kdiy///////////
+			//mainGame->WaitFrameSignal(11, lock);
+			if(mainGame->dInfo.lp[player] - val != 0) Play(SoundManager::SFX::LP_CHANGE);;
+			mainGame->WaitFrameSignal(val == 0 ? 30 : 11, lock);
+			///////////kdiy///////////
 		}
 		mainGame->dInfo.lp[player] = val;
 		///////////kdiy///////////
@@ -5150,14 +5162,19 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->lpcalpha = 0xff;
 			mainGame->lpplayer = player;
 			///////////kdiy///////////
+			// mainGame->lpcstring = epro::format(L"-{}", cost);
+			// mainGame->WaitFrameSignal(30, lock);
+			// mainGame->lpframe = 10;
+			//mainGame->WaitFrameSignal(11, lock);
 			if(cost >= 8888888)
-			mainGame->lpcstring = epro::format(L"-\u221E");
+			    mainGame->lpcstring = epro::format(L"-\u221E");
 			else
-			///////////kdiy///////////
-			mainGame->lpcstring = epro::format(L"-{}", cost);
-			mainGame->WaitFrameSignal(30, lock);
+			    mainGame->lpcstring = epro::format(L"-{}", cost);
+			mainGame->WaitFrameSignal(final == 0 ? 50 : 30, lock);
 			mainGame->lpframe = 10;
-			mainGame->WaitFrameSignal(11, lock);
+			if(cost != 0) Play(SoundManager::SFX::LP_CHANGE);;
+			mainGame->WaitFrameSignal(final == 0 ? 30 : 11, lock);
+			///////////kdiy///////////
 			mainGame->lpcstring = L"";
 		}
 		mainGame->dInfo.lp[player] = final;
@@ -5310,12 +5327,25 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                     mainGame->dField.MoveCard(pcard1, pcard2->curPos, 10, -0.4f);
                     mainGame->WaitFrameSignal(20, lock);
                     mainGame->dField.MoveCard(pcard1, pcard2->curPos + irr::core::vector3df(0, 0, 0.3f), 10);
+					mainGame->WaitFrameSignal(20, lock);
+					auto pos = pcard2->curPos;
+                    mainGame->dField.MoveCard(pcard2, pcard1->curPos, 8, -0.2f);
+                    mainGame->WaitFrameSignal(8, lock);
+                    mainGame->dField.MoveCard(pcard2, pos, 8);
+                    mainGame->WaitFrameSignal(8, lock);
                 } else {
                     mainGame->dField.MoveCard(pcard1, irr::core::vector3df(3.9f, info1.controler == 0 ? -3.4f : 4.0f, pcard1->curPos.Z), 10, -0.4f);
                     mainGame->WaitFrameSignal(20, lock);
                     mainGame->dField.MoveCard(pcard1, irr::core::vector3df(3.9f, info1.controler == 0 ? -3.4f : 4.0f, 1.0f), 10);
+					mainGame->WaitFrameSignal(20, lock);
+					for(const auto& hcard : mainGame->dField.hand[1 - info1.controler]) {
+						auto pos = hcard->curPos;
+						mainGame->dField.MoveCard(hcard, pcard1->curPos, 8, -0.2f);
+						mainGame->WaitFrameSignal(8, lock);
+						mainGame->dField.MoveCard(hcard, pos, 8);
+						mainGame->WaitFrameSignal(8, lock);
+					}
                 }
-                mainGame->WaitFrameSignal(20, lock);
                 mainGame->dField.MoveCard(pcard1, pcard1->attPos, 10);
                 mainGame->WaitFrameSignal(20, lock);
             }
@@ -5383,12 +5413,25 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                     mainGame->dField.MoveCard(pcard1, pcard2->curPos, 10, -0.4f);
                     mainGame->WaitFrameSignal(20, lock);
                     mainGame->dField.MoveCard(pcard1, pcard2->curPos + irr::core::vector3df(0, 0, 0.3f), 10, 0.8f);
+					mainGame->WaitFrameSignal(20, lock);
+					auto pos = pcard2->curPos;
+                    mainGame->dField.MoveCard(pcard2, pcard1->curPos, 8, -0.2f);
+                    mainGame->WaitFrameSignal(8, lock);
+                    mainGame->dField.MoveCard(pcard2, pos, 8);
+                    mainGame->WaitFrameSignal(8, lock);
                 } else {
                     mainGame->dField.MoveCard(pcard1, irr::core::vector3df(3.9f, pcard1->controler == 0 ? -3.4f : 4.0f, pcard1->curPos.Z), 10, -0.4f);
                     mainGame->WaitFrameSignal(20, lock);
                     mainGame->dField.MoveCard(pcard1, irr::core::vector3df(3.9f, pcard1->controler == 0 ? -3.4f : 4.0f, 1.0f), 10);
+					mainGame->WaitFrameSignal(20, lock);
+					for(const auto& hcard : mainGame->dField.hand[1 - pcard1->controler]) {
+						auto pos = hcard->curPos;
+						mainGame->dField.MoveCard(hcard, pcard1->curPos, 8, -0.2f);
+						mainGame->WaitFrameSignal(8, lock);
+						mainGame->dField.MoveCard(hcard, pos, 8);
+						mainGame->WaitFrameSignal(8, lock);
+					}
                 }
-                mainGame->WaitFrameSignal(20, lock);
                 if(mainGame->dField.attack_target) {
                     pcard2->is_attack_disabled = true;
                     int frames = 20;

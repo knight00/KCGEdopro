@@ -532,7 +532,9 @@ void Game::DrawCard(ClientCard* pcard) {
 			else
 				atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? -0.4f : 0.4f) * (atkdy / 4.0f + 0.35f), 0.05f));
 			driver->setTransform(irr::video::ETS_WORLD, atk);
-			if (pcard->attack >= 4500)
+			if (pcard->attack >= 10000 || pcard->defense >= 10000)
+				driver->drawVertexPrimitiveList(matManager.vAttack4, 4, matManager.iRectangle, 2);
+			else if (pcard->attack >= 4500 && pcard->position == POS_FACEUP_ATTACK)
 				driver->drawVertexPrimitiveList(matManager.vAttack3, 4, matManager.iRectangle, 2);
 			else if (pcard->attack < 1000 && (((pcard->type & TYPE_LINK) && pcard->link < 3) || ((pcard->type & TYPE_XYZ) && pcard->rank < 4) || (!(pcard->type & (TYPE_LINK | TYPE_XYZ)) && pcard->level < 4)))
 				driver->drawVertexPrimitiveList(matManager.vAttack, 4, matManager.iRectangle, 2);
