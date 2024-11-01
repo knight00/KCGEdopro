@@ -4345,7 +4345,19 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 							for (const auto& hcard : mainGame->dField.hand[current.controler])
 								mainGame->dField.MoveCard(hcard, 10);
 						} else
-							mainGame->dField.MoveCard(pcard, 10);
+						//////kdiy///
+						{
+						if(current.location == LOCATION_MZONE || current.location == LOCATION_SZONE) {
+							mainGame->dField.MoveCard(pcard, 10, irr::core::vector3df(0, -1.5f, 0));
+							mainGame->WaitFrameSignal(10, lock);
+							mainGame->WaitFrameSignal(8, lock);
+							mainGame->dField.MoveCard(pcard, 5, irr::core::vector3df(0, 0, 1.0f));
+							mainGame->WaitFrameSignal(5, lock);
+							mainGame->WaitFrameSignal(10, lock);
+						}
+						mainGame->dField.MoveCard(pcard, 10);
+						}
+						//////kdiy///
 						//////kdiy///
                         if (reason & REASON_DESTROY)
                             mainGame->dField.FadeCard(pcard, 255, 5);
@@ -4356,6 +4368,19 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 						}
 						mainGame->WaitFrameSignal(5, lock);
 						//////kdiy///
+						if(current.location == LOCATION_MZONE || current.location == LOCATION_SZONE) {
+							//other cards shaking
+							for(const auto& mcard : mainGame->dField.mzone[current.controler]) {
+								if(!mcard || mcard->sequence > 4 || mcard == pcard) continue;
+								mainGame->dField.MoveCard(mcard, mcard->curPos + irr::core::vector3df(0, (current.controler == 0 ? -1 : 1) * (((pcard->attack >= 3000 && pcard->position == POS_FACEUP_ATTACK) || (pcard->defense >= 3000 && pcard->position == POS_FACEUP_DEFENSE)) ? (mcard->sequence - current.sequence == 1 ? 0.5f : 0.3f) : 0.1f), 0), 6);
+							}
+							mainGame->WaitFrameSignal(2, lock);
+							for(const auto& mcard : mainGame->dField.mzone[current.controler]) {
+								if(!mcard || mcard->sequence > 4 || mcard == pcard) continue;
+								mainGame->dField.MoveCard(mcard, mcard->curPos + irr::core::vector3df(0, (current.controler == 0 ? 1 : -1) * (((pcard->attack >= 3000 && pcard->position == POS_FACEUP_ATTACK) || (pcard->defense >= 3000 && pcard->position == POS_FACEUP_DEFENSE)) ? (mcard->sequence - current.sequence == 1 ? 0.5f : 0.3f) : 0.3f), 0), 6);
+							}
+							mainGame->WaitFrameSignal(2, lock);
+						}
 						pcard->is_damage = false;
 						//////kdiy///
 					}
@@ -5321,13 +5346,17 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
             if(!mainGame->dInfo.isCatchingUp) {
                 if(info2.location) {
 					auto pos1 = pcard1->curPos;
+					//attack before, move backward
                     mainGame->dField.MoveCard(pcard1, pcard2->curPos, 10, -0.5f);
                     mainGame->WaitFrameSignal(20, lock);
+					//move to attack target position
                     mainGame->dField.MoveCard(pcard1, pcard2->curPos + irr::core::vector3df(0, 0, 0.3f), 8);
                     mainGame->WaitFrameSignal(16, lock);
 					auto pos2 = pcard2->curPos;
-                    mainGame->dField.MoveCard(pcard2, pos1, 8, -0.25f);
+					//attack target move backward
+                    mainGame->dField.MoveCard(pcard2, pos1, 8, ((pcard1->attack >= 3000 && pcard1->position == POS_FACEUP_ATTACK) || (pcard1->defense >= 3000 && pcard1->position == POS_FACEUP_DEFENSE)) ? -0.4f : -0.25f);
                     mainGame->WaitFrameSignal(2, lock);
+					//attack target return to its position
                     mainGame->dField.MoveCard(pcard2, pos2, 8);
                     mainGame->WaitFrameSignal(2, lock);
                 } else {
@@ -5335,6 +5364,17 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                     mainGame->WaitFrameSignal(20, lock);
                     mainGame->dField.MoveCard(pcard1, irr::core::vector3df(3.9f, info1.controler == 0 ? -3.4f : 4.0f, 1.0f), 8);
 					mainGame->WaitFrameSignal(16, lock);
+					//opponent hand cards shaking
+					for(const auto& hcard : mainGame->dField.hand[1 - pcard1->controler]) {
+						if(!hcard) continue;
+						mainGame->dField.MoveCard(hcard, hcard->curPos + irr::core::vector3df(0, (info1.controler == 0 ? -1 : 1) * (((pcard1->attack >= 3000 && pcard1->position == POS_FACEUP_ATTACK) || (pcard1->defense >= 3000 && pcard1->position == POS_FACEUP_DEFENSE)) ? 0.5f : 0.3f), 0), 8);
+					}
+					mainGame->WaitFrameSignal(2, lock);
+					for(const auto& hcard : mainGame->dField.hand[1 - pcard1->controler]) {
+						if(!hcard) continue;
+						mainGame->dField.MoveCard(hcard, hcard->curPos + irr::core::vector3df(0, (info1.controler == 0 ? 1 : -1) * (((pcard1->attack >= 3000 && pcard1->position == POS_FACEUP_ATTACK) || (pcard1->defense >= 3000 && pcard1->position == POS_FACEUP_DEFENSE)) ? 0.5f : 0.3f), 0), 8);
+					}
+					mainGame->WaitFrameSignal(2, lock);
                 }
                 mainGame->dField.MoveCard(pcard1, pcard1->attPos, 8);
                 mainGame->WaitFrameSignal(16, lock);

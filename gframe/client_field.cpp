@@ -802,7 +802,10 @@ void ClientField::RefreshHandHitboxes() {
 		for(const auto& pcard : _hand)
 			getCardScreenCoordinates(pcard);
 }
-void ClientField::GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df* t, irr::core::vector3df* r, bool setTrans) {
+////kdiy///////////
+//void ClientField::GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df* t, irr::core::vector3df* r, bool setTrans) {
+void ClientField::GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df* t, irr::core::vector3df* r, bool setTrans, irr::core::vector3df trans2) {
+////kdiy///////////
 	const int three_columns = mainGame->dInfo.HasFieldFlag(DUEL_3_COLUMNS_FIELD);
 	static const irr::core::vector3df selfATK{ 0.0f, 0.0f, 0.0f };
 	static const irr::core::vector3df selfDEF{ 0.0f, 0.0f, -irr::core::HALF_PI };
@@ -849,11 +852,14 @@ void ClientField::GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df
 		const auto pos = GetPos();
 		if(!pos)
 			return;
-		t->X = GetMiddleX(pos);
-		t->Y = GetMiddleY(pos);
-		t->Z = 0.01f;
 		////////kdiy///////////
+		// t->X = GetMiddleX(pos);
+		// t->Y = GetMiddleY(pos);
+		// t->Z = 0.01f;
 		//if(location == LOCATION_MZONE) {
+		t->X = GetMiddleX(pos) + trans2.X;
+		t->Y = GetMiddleY(pos) + trans2.Y;
+		t->Z = 0.01f + trans2.Z;
 		if((location == LOCATION_MZONE && !pcard->is_sanct) || (location == LOCATION_SZONE && pcard->is_orica)) {
 		////////kdiy///////////
 			if(controler == 0)
@@ -880,14 +886,23 @@ void ClientField::GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df
 			case LOCATION_EXTRA:
 			case LOCATION_SKILL: {
 				if(!gGameConfig->topdown_view)
-					t->Z += 0.01f * sequence;
+				    ////////kdiy///////////
+					//t->Z += 0.01f * sequence;
+					t->Z += (0.01f + trans2.Z) * sequence;
+				    ////////kdiy///////////
 				break;
 			}
 			case LOCATION_OVERLAY: {
+				////////kdiy///////////
+				// if(controler == 0)
+				// 	*t = { t->X - 0.12f + 0.06f * sequence, t->Y + 0.06f, 0.005f + pcard->sequence * 0.0001f };
+				// else
+				// 	*t = { t->X + 0.12f - 0.06f * sequence, t->Y - 0.06f, 0.005f + pcard->sequence * 0.0001f };
 				if(controler == 0)
-					*t = { t->X - 0.12f + 0.06f * sequence, t->Y + 0.06f, 0.005f + pcard->sequence * 0.0001f };
+					*t = { (t->X + trans2.X) - 0.12f + 0.06f * sequence, (t->Y + trans2.Y) + 0.06f, 0.005f + pcard->sequence * 0.0001f };
 				else
-					*t = { t->X + 0.12f - 0.06f * sequence, t->Y - 0.06f, 0.005f + pcard->sequence * 0.0001f };
+					*t = { (t->X + trans2.X) + 0.12f - 0.06f * sequence, (t->Y + trans2.Y) - 0.06f, 0.005f + pcard->sequence * 0.0001f };
+				////////kdiy///////////
 				break;
 			}
 		}
@@ -917,42 +932,64 @@ void ClientField::GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df
 		float xoff2 = (sequence * val) / (count - 1);
 		if(three_columns) xoff2 += 0.8f;
 		auto SetXCoord = [&] {
+			////////kdiy///////////
+			// if(controler == 0) {
+			// 	if(count <= max)
+			// 		t->X = 1.55f + xoff1;
+			// 	else
+			// 		t->X = 1.9f + xoff2;
+			// } else {
+			// 	if(count <= max)
+			// 		t->X = 6.25f - xoff1;
+			// 	else
+			// 		t->X = 5.9f - xoff2;
+			// 	if(gGameConfig->topdown_view)
+			// 		t->X -= 0.378f;
+			// }
+			// if(gGameConfig->topdown_view)
+			// 	t->X += 0.3f;
 			if(controler == 0) {
 				if(count <= max)
-					t->X = 1.55f + xoff1;
+					t->X = 1.55f + xoff1 + trans2.X;
 				else
-					t->X = 1.9f + xoff2;
+					t->X = 1.9f + xoff2 + trans2.X;
 			} else {
 				if(count <= max)
-					t->X = 6.25f - xoff1;
+					t->X = 6.25f - xoff1 + trans2.X;
 				else
-					t->X = 5.9f - xoff2;
+					t->X = 5.9f - xoff2 + trans2.X;
 				if(gGameConfig->topdown_view)
-					t->X -= 0.378f;
+					t->X -= 0.378f + trans2.X;
 			}
 			if(gGameConfig->topdown_view)
-				t->X += 0.3f;
+				t->X += 0.3f + trans2.X;
+			////////kdiy///////////
 		};
 		auto SetYCoord = [&] {
 			if(gGameConfig->topdown_view) {
 				static constexpr auto base_y = 2.5f;
+			////////kdiy///////////
 				if(controler == 0)
-					t->Y = base_y;
+					t->Y = base_y + trans2.Y;
 				else
-					t->Y = base_y * -1.0f;
+					t->Y = base_y * -1.0f + trans2.Y;
 				return;
 			}
 			if(controler == 0)
-				t->Y = 4.0f;
+				t->Y = 4.0f + trans2.Y;
 			else
-				t->Y = -3.4f;
+				t->Y = -3.4f + trans2.Y;
+			////////kdiy///////////
 
 		};
 		const float zoff1 = gGameConfig->topdown_view ? 3.0f : 0.5f;
 		const float zoff2 = (controler == 0) ? (0.001f * sequence) : (-0.001f * sequence);
 		SetXCoord();
 		SetYCoord();
-		t->Z = zoff1 + zoff2;
+		////////kdiy///////////
+		//t->Z = zoff1 + zoff2;
+		t->Z = zoff1 + zoff2 + trans2.Z;
+		////////kdiy///////////
 		SetHoverState();
 		if(gGameConfig->topdown_view) {
 			if(controler == 0)
@@ -975,12 +1012,19 @@ void ClientField::GetCardDrawCoordinates(ClientCard* pcard, irr::core::vector3df
 			getCardScreenCoordinates(pcard);
 	}
 }
-void ClientField::MoveCard(ClientCard* pcard, float frame) {
+////kdiy///////////
+//void ClientField::MoveCard(ClientCard* pcard, float frame) {
+void ClientField::MoveCard(ClientCard* pcard, float frame, irr::core::vector3df trans2) {
+////kdiy///////////
 	float milliseconds = frame * 1000.0f / 60.0f;
 	irr::core::vector3df trans = pcard->curPos;
 	irr::core::vector3df rot = pcard->curRot;
-    GetCardDrawCoordinates(pcard, &trans, &rot);
+	// ////kdiy///////////
+    // GetCardDrawCoordinates(pcard, &trans, &rot);
+	// pcard->dPos = (trans - pcard->curPos) / milliseconds;
+    GetCardDrawCoordinates(pcard, &trans, &rot, false, trans2);
 	pcard->dPos = (trans - pcard->curPos) / milliseconds;
+	////kdiy///////////
 	float diff = rot.X - pcard->curRot.X;
 	while (diff < 0) diff += irr::core::PI * 2;
 	while (diff > irr::core::PI * 2)
