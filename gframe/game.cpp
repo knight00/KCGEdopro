@@ -4622,7 +4622,7 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 	bool only_texture = !cd;
     ///kdiy/////////
 	// if(showingcard == code) {
-    if(showingcard == code && pcard == nullptr) {
+    if(showingcard == code && !pcard) {
     ///kdiy/////////
 		if(!resize && !cardimagetextureloading)
 			return;
@@ -5004,7 +5004,6 @@ void Game::ShowPlayerInfo(uint8_t player) {
 	}
 	while (playereffect.substr(0, 2) == L"\r\n")
         playereffect.erase(0, 2);
-    stDataInfo->setText(L"");
 	stText->setText(playereffect.data());
     RefreshCardInfoTextPositions();
 }

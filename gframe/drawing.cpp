@@ -621,7 +621,7 @@ void Game::DrawCard(ClientCard* pcard) {
 	if (pcard->is_moving)
 		return;
 	///kdiy////////
-	if(pcard->desc_hints.size() > 0) {
+	if(pcard->desc_hints.size() > 0 && ((pcard->location == LOCATION_HAND && pcard->code) || (pcard->position & POS_FACEUP))) {
 	    matManager.mTexture.setTexture(0, imageManager.tHint);
 		driver->setMaterial(matManager.mTexture);
 		irr::core::matrix4 atk;
@@ -672,12 +672,8 @@ void Game::DrawCard(ClientCard* pcard) {
 					matManager.mTexture.AmbientColor = cardcloseupcolor;
 					driver->setMaterial(matManager.mTexture);
 					irr::core::matrix4 atk;
-					auto pos = irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < size / 2 ? incre : incre2))) * (pcard->is_detached ? atk2dy2 : atkdy2), (((0.62f + 0.3f * neg / power * (i < size / 2 ? incre : incre2)))) * (pcard->is_detached ? atk2dy2 : atkdy2), pow(-1, i) * 0.2f * (pcard->is_detached ? atkdy2 : atk2dy2));
+					auto pos = irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < size / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < size / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2);
 					atk.setTranslation(pcard->curPos + pos);
-					float scale = pcard->is_detached && pos == irr::core::vector3df(0, 0, 0) ? std::min(atkdy3, 10.0f) : 1.0f;
-					if(scale < 0.0f)
-						scale = 0.0f;
-					atk.setScale(irr::core::vector3df(scale, scale, scale));
 					driver->setTransform(irr::video::ETS_WORLD, atk);
 					driver->drawVertexPrimitiveList(matManager.vXyz, 4, matManager.iRectangle, 2);
 					if(!haloNodeexist[pcard->controler][sequence][i])
@@ -704,7 +700,7 @@ void Game::DrawCard(ClientCard* pcard) {
                             ptk++;
 						}
 					}
-					haloNode[pcard->controler][sequence][i].insert(haloNode[pcard->controler][sequence][i].begin(), pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < size / 2 ? incre : incre2))) * (pcard->is_detached ? atk2dy2 : atkdy2), (((0.62f + 0.3f * neg / power * (i < size / 2 ? incre : incre2)))) * (pcard->is_detached ? atk2dy2 : atkdy2), pow(-1, i) * 0.2f * (pcard->is_detached ? atkdy2 : atk2dy2)));
+					haloNode[pcard->controler][sequence][i].insert(haloNode[pcard->controler][sequence][i].begin(), pcard->curPos + irr::core::vector3df((pow(-1, i) * (0.72f + 0.1f * neg / power * (i < size / 2 ? incre : incre2))) * atkdy2, (((0.62f + 0.3f * neg / power * (i < size / 2 ? incre : incre2)))) * atkdy2, pow(-1, i) * 0.2f * atk2dy2));
 					if(haloNode[pcard->controler][sequence][i].size() > 80)
 						haloNode[pcard->controler][sequence][i].pop_back();
 				}
@@ -859,11 +855,11 @@ void Game::DrawMisc() {
 	/////kdiy/////////
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(330, 10, 629, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(691, 10, 990, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
-	driver->draw2DImage(imageManager.tLPFrame, Resize(161, 553, 350, 640), irr::core::recti(0, 0, 494, 228), 0, 0, true);
+	driver->draw2DImage(imageManager.tLPFrame_z4, Resize(161, 553, 350, 640), irr::core::recti(0, 0, 494, 228), 0, 0, true);
 	driver->draw2DImage(mainGame->mode->isMode ? imageManager.modeHead[avataricon1] : imageManager.icon[gSoundManager->character[avataricon1]], Resize(268, 567, 318, 617), mainGame->mode->isMode ? imageManager.modehead_size[avataricon1] : imageManager.icon_size[gSoundManager->character[avataricon1]], 0, 0, true);
 	if(dField.player_desc_hints[0].size() > 0)
 	    driver->draw2DImage(imageManager.tHint, Resize(151, 550, 191, 615), irr::core::recti(0, 0, 532, 649), 0, 0, true);
-	driver->draw2DImage(imageManager.tLPFrame2, Resize(691, 48, 900, 135), irr::core::recti(0, 0, 494, 228), 0, 0, true);
+	driver->draw2DImage(imageManager.tLPFrame2_z4, Resize(691, 48, 900, 135), irr::core::recti(0, 0, 494, 228), 0, 0, true);
 	driver->draw2DImage(mainGame->mode->isMode ? imageManager.modeHead[avataricon2] : imageManager.icon[gSoundManager->character[avataricon2]], Resize(725, 62, 775, 112), mainGame->mode->isMode ? imageManager.modehead_size[avataricon2] : imageManager.icon_size[gSoundManager->character[avataricon2]], 0, 0, true);
 	if(dField.player_desc_hints[1].size() > 0)
 	    driver->draw2DImage(imageManager.tHint, Resize(681, 45, 721, 110), irr::core::recti(0, 0, 532, 649), 0, 0, true);
@@ -961,15 +957,15 @@ void Game::DrawMisc() {
 	// DrawShadowText(numFont, dInfo.strLP[0], Resize(330, 11, 629, 29), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, true);
 	// DrawShadowText(numFont, dInfo.strLP[1], Resize(691, 11, 990, 29), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, true); 161, 553, 350, 640 691, 48, 900, 135   268, 567, 318, 617 725, 62, 775, 112
 	DrawShadowText(numFont, L"LP", Resize(166, 585, 233, 604), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, false);
-	DrawShadowText(numFont, L"LP", Resize(755, 80, 822, 99), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, false);
+	DrawShadowText(numFont, L"LP", mainGame->mode->isMode || gSoundManager->character[avataricon1] > 0 ? Resize(755, 80, 822, 99) : Resize(700, 80, 767, 99), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, false);
     if(dInfo.lp[0] >= 8888888)
 	    DrawShadowText(nameFont, dInfo.strLP[0], Resize(208, 580, 248, 634), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, true);
     else
 	    DrawShadowText(lpFont, dInfo.strLP[0], Resize(208, 600, 268, 624), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, false);
     if(dInfo.lp[1] >= 8888888)
-	    DrawShadowText(nameFont, dInfo.strLP[1], Resize(797, 75, 837, 129), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, true);
+	    DrawShadowText(nameFont, dInfo.strLP[1], mainGame->mode->isMode || gSoundManager->character[avataricon1] > 0 ? Resize(797, 75, 837, 129) : Resize(748, 75, 788, 129), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, true);
     else
-	    DrawShadowText(lpFont, dInfo.strLP[1], Resize(797, 95, 857, 119), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, false);
+	    DrawShadowText(lpFont, dInfo.strLP[1], mainGame->mode->isMode || gSoundManager->character[avataricon1] > 0 ? Resize(797, 95, 857, 119) : Resize(748, 95, 808, 119), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, false);
 
 	//irr::core::recti p1size = Resize(335, 31, 629, 50);
 	//irr::core::recti p2size = Resize(986, 31, 986, 50);
@@ -1010,7 +1006,7 @@ void Game::DrawMisc() {
 		i = 0;
 		for (const auto& player : oppo) {
 			if (i++ == dInfo.current_player[1])
-				textFont->drawustring(player, Resize(783, 64, 813, 75), skin::DUELFIELD_LP_2_VAL, false, true, 0);
+				textFont->drawustring(player, mainGame->mode->isMode || gSoundManager->character[avataricon1] > 0 ? Resize(783, 64, 813, 75) : Resize(730, 64, 760, 75), skin::DUELFIELD_LP_2_VAL, false, true, 0);
 			else {
 				textFont->drawustring(player, p2size, 0xff00ff00, false, true, 0);
                 p2size += irr::core::vector2di{ 0, p2size.getHeight() + ResizeY(4) };
@@ -1668,8 +1664,8 @@ void Game::DrawSpec() {
 				DrawShadowText(lpcFont, lstr, ResizePhaseHint(661 - (9 - showcardp) * 40, 291, 960, 370, pos.Width), Resize(-1, -1, 0, 0), alpha | 0xffffff, alpha);
 			} else if(showcardp < showcarddif) {
                 ////kdiy/////////
-				DrawShadowText(lpcFont, lstr, ResizePhaseHint(661, 291, 960, 370, pos.Width), Resize(-1, -1, 0, 0), 0xffffffff);
 				DrawShadowText(lpcFont, lstr, ResizePhaseHint(661, 291, 960, 370, pos.Width), Resize(-1, -1, 0, 0), 0xff000000);
+				DrawShadowText(lpcFont, lstr, ResizePhaseHint(661, 291, 960, 370, pos.Width), Resize(-1, -1, 0, 0), 0xffffffff);
                 ////kdiy/////////
 				if(dInfo.vic_string.size() && (showcardcode == 1 || showcardcode == 2)) {
 					auto a = (291 + pos.Height + 2);
@@ -1871,7 +1867,7 @@ void Game::PopupElement(irr::gui::IGUIElement * element, int hideframe) {
 void Game::WaitFrameSignal(int frame, std::unique_lock<epro::mutex>& _lck) {
 	//kidy///////
 	//signalFrame = (gGameConfig->quick_animation && frame >= 12) ? 12 * 1000 / 60 : frame * 1000 / 60;
-	signalFrame = (gGameConfig->quick_animation && frame >= 12) ? (frame == 40 ? (30 * 1000 / 60) : (12 * 1000 / 60)) : (frame * 1000 / 60);
+	signalFrame = (gGameConfig->quick_animation && frame >= 12) ? (frame == 40 || frame == 120 ? (30 * 1000 / 60) : (12 * 1000 / 60)) : (frame * 1000 / 60);
 	//kidy///////
 	frameSignal.Wait(_lck);
 }

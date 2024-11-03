@@ -360,13 +360,6 @@ bool ImageManager::Initial() {
 	ASSERT_TEXTURE_LOADED(tNumber, "number");
 	ASSIGN_DEFAULT(tNumber);
 
-	GetRandomImage(tLPBar, TEXTURE_LP);
-	if (!tLPBar) {
-		tLPBar = loadTextureAnySize(EPRO_TEXT("lp"sv));
-        ASSIGN_DEFAULT(tLPBar);
-    }
-	ASSERT_TEXTURE_LOADED(tLPBar, "lp");
-
 	GetRandomImage(tMask, TEXTURE_MASK, 254, 254);
 	if (!tMask) {
 		tMask = loadTextureFixedSize(EPRO_TEXT("mask"sv), 254, 254);
@@ -632,10 +625,10 @@ bool ImageManager::Initial() {
     ASSIGN_DEFAULT(tButtonpress);
 	tButton2 = loadTextureFixedSize(EPRO_TEXT("button2"sv), 30, 30);
     ASSIGN_DEFAULT(tButton2);
-	tLPFrame = loadTextureAnySize(EPRO_TEXT("lpf"sv));
-    ASSIGN_DEFAULT(tLPFrame);
-	tLPFrame2 = loadTextureAnySize(EPRO_TEXT("lpf2"sv));
-    ASSIGN_DEFAULT(tLPFrame2);
+	tLPFrame_z4 = loadTextureAnySize(EPRO_TEXT("lpf_z4"sv));
+    ASSIGN_DEFAULT(tLPFrame_z4);
+	tLPFrame2_z4 = loadTextureAnySize(EPRO_TEXT("lpf2_z4"sv));
+    ASSIGN_DEFAULT(tLPFrame2_z4);
 	tStartReplay = loadTextureAnySize(EPRO_TEXT("play"sv));
     ASSIGN_DEFAULT(tStartReplay);
 	tPauseReplay = loadTextureAnySize(EPRO_TEXT("pause"sv));
@@ -694,8 +687,6 @@ void ImageManager::RefreshRandomImageList() {
 	RefreshImageDir(EPRO_TEXT("act"), TEXTURE_ACTIVATE);
 	RefreshImageDir(EPRO_TEXT("chain"), TEXTURE_CHAIN);
 	RefreshImageDir(EPRO_TEXT("negated"), TEXTURE_NEGATED);
-	RefreshImageDir(EPRO_TEXT("lp"), TEXTURE_LP);
-	RefreshImageDir(EPRO_TEXT("lpf"), TEXTURE_LPf);
 	RefreshImageDir(EPRO_TEXT("mask"), TEXTURE_MASK);
 	RefreshImageDir(EPRO_TEXT("equip"), TEXTURE_EQUIP);
 	RefreshImageDir(EPRO_TEXT("target"), TEXTURE_TARGET);
@@ -729,7 +720,7 @@ void ImageManager::RefreshRandomImageList() {
 		RefreshImageDir(epro::format(EPRO_TEXT("character/{}/damage"), gSoundManager->textcharacter[playno]), imgcharacter[playno] + CHARACTER_VOICE - 1);
 	}
 
-	for(int i = 0; i < 42 + CHARACTER_VOICE + CHARACTER_VOICE - 2; ++i)
+	for(int i = 0; i < 40 + CHARACTER_VOICE + CHARACTER_VOICE - 2; ++i)
 		saved_image_id[i] = -1;
 }
 void ImageManager::RefreshImageDir(epro::path_string path, int image_type) {
@@ -917,10 +908,6 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 	GetRandomImage(tNegated, TEXTURE_NEGATED, 128, 128);
 	if(!tNegated)
 	    REPLACE_TEXTURE_WITH_FIXED_SIZE(tNegated, "negated", 128, 128);
-	GetRandomImage(tLPBar, TEXTURE_LP);
-	if(!tLPBar)
-	    REPLACE_TEXTURE_ANY_SIZE(tLPBar, "lp");
-	GetRandomImage(tMask, TEXTURE_MASK, 254, 254);
 	if(!tMask)
 	    REPLACE_TEXTURE_WITH_FIXED_SIZE(tMask, "mask", 254, 254);
 	GetRandomImage(tEquip, TEXTURE_EQUIP);
