@@ -798,9 +798,7 @@ void Game::Initialize() {
 #ifndef EK
 	cbpics->setVisible(false);
 	cbpics->setSelected(0);
-	btnClearpics->setVisible(false);
 	btnFolder->setVisible(false);
-    btnSound->setVisible(false);
 
     height += 35;
 	offset += 35;
@@ -3284,12 +3282,14 @@ void Game::PopulateSettingsWindow() {
         defaultStrings.emplace_back(btnTut, 8003);
         btnTut2 = env->addButton(GetNextRect(), sPanel, BUTTON_TUT2, gDataManager->GetSysString(8004).data());
         defaultStrings.emplace_back(btnTut2, 8004);
-        btnClearpics = env->addButton(GetNextRect(), sPanel, BUTTON_CLEAR, gDataManager->GetSysString(8001).data());
-        defaultStrings.emplace_back(btnClearpics, 8001);
         btnFolder = env->addButton(GetNextRect(), sPanel, BUTTON_FOLDER, gDataManager->GetSysString(8007).data());
         defaultStrings.emplace_back(btnFolder, 8007);
-        btnSound = env->addButton(GetNextRect(), sPanel, BUTTON_SOUND, gDataManager->GetSysString(8041).data());
-        defaultStrings.emplace_back(btnSound, 8041);
+        btnPicDL = env->addButton(GetNextRect(), sPanel, BUTTON_PICDL, gDataManager->GetSysString(8001).data());
+        defaultStrings.emplace_back(btnPicDL, 8001);
+        btnMovieDL = env->addButton(GetNextRect(), sPanel, BUTTON_MOVIEDL, gDataManager->GetSysString(8024).data());
+        defaultStrings.emplace_back(btnMovieDL, 8024);
+        btnSoundDL = env->addButton(GetNextRect(), sPanel, BUTTON_SOUNDDL, gDataManager->GetSysString(8041).data());
+        defaultStrings.emplace_back(btnSoundDL, 8041);
     }
     {
         gSettings.system.construct(env, gSettings.tabcontrolwindow, gDataManager->GetSysString(8017).data());

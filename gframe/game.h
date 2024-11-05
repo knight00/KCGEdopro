@@ -404,13 +404,14 @@ struct host_panel_elements {
 	irr::gui::CGUIImageButton* icon[6];
     irr::gui::CGUIImageButton* icon2[6];
 	irr::gui::IGUIComboBox* cbDeck2Select;
-	irr::gui::IGUIButton* btnClearpics;
+    irr::gui::IGUIButton* btnPicDL;
+	irr::gui::IGUIButton* btnMovieDL;
+    irr::gui::IGUIButton* btnSoundDL;
 	irr::gui::IGUIButton* btnIntro;
 	irr::gui::IGUIButton* btnTut;
 	irr::gui::IGUIButton* btnTut2;
 	irr::gui::IGUIButton* btHome;
 	irr::gui::IGUIButton* btnFolder;
-    irr::gui::IGUIButton* btnSound;
     irr::gui::IGUIStaticText* stpics;
 	irr::gui::IGUIComboBox* cbpics;
 	//////////kdiy/////////

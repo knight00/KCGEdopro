@@ -2253,19 +2253,25 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
                 Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/4a2966dcbb0d11edaaa052540025c377/"), Utils::OPEN_URL);
 				break;
 			}
-            case BUTTON_SOUND: {
-                Utils::SystemOpen(EPRO_TEXT("https://www.bilibili.com/video/BV1Gu411z7C1/"), Utils::OPEN_URL);
+			case BUTTON_PICDL: {
+                Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/4a2966dcbb0d11edaaa052540025c377/"), Utils::OPEN_URL);
+#if EDOPRO_ANDROID
+				Utils::SystemOpen(EPRO_TEXT("./"), Utils::OPEN_FILE);
+#endif
 				break;
-			}	
-			case BUTTON_CLEAR: {
-                mainGame->stACMessage->setText(epro::format(gDataManager->GetSysString(8049)).data());
-                mainGame->PopupElement(mainGame->wACMessage, 90);
-				if(Utils::DeleteDirectory(EPRO_TEXT("./pics/")) && Utils::DeleteDirectory(EPRO_TEXT("./hdpics/"))) {
-					try {
-						gGameConfig->dpi_scale = static_cast<uint32_t>(std::stol(mainGame->gSettings.ebDpiScale->getText())) / 100.0;
-						mainGame->restart = true;
-					} catch(...){}
-				}
+			}
+			case BUTTON_MOVIEDL: {
+                Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/4a2966dcbb0d11edaaa052540025c377/"), Utils::OPEN_URL);
+#if EDOPRO_ANDROID
+				Utils::SystemOpen(EPRO_TEXT("./"), Utils::OPEN_FILE);
+#endif
+				break;
+			}
+            case BUTTON_SOUNDDL: {
+                Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/4a2966dcbb0d11edaaa052540025c377/"), Utils::OPEN_URL);
+#if EDOPRO_ANDROID
+				Utils::SystemOpen(EPRO_TEXT("./"), Utils::OPEN_FILE);
+#endif
 				break;
 			}
 			case BUTTON_INTRO: {
