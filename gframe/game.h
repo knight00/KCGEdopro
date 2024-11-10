@@ -23,7 +23,7 @@
 /////kdiy/////
 #include "client_card.h"
 #include "network.h"
-// #include <opencv2/opencv.hpp>
+#include <opencv2/opencv.hpp>
 /////kdiy/////
 struct unzip_payload;
 class CGUISkinSystem;
@@ -68,6 +68,9 @@ namespace ygo {
 class GitRepo;
 
 struct DuelInfo {
+    //ktest////////
+	bool isAnime = false, videostart = false;
+    //ktest////////
 	bool isInDuel;
 	bool isStarted;
 	bool isReplay;
@@ -876,15 +879,6 @@ public:
 	bool saveReplay;
 	int showcard;
 	uint32_t showcardcode;
-    ////kdiy//////
-    bool git_update = false;
-    bool git_error = false;
-    bool first_play = false;
-    uint32_t showcardalias;
-    bool chklast = true;
-	bool isEvent;//locking flow, allow left mouse click notify_one() to skip
-	epro::condition_variable* cv;//should lock thread when play mode-story sound,this cv is in duelclient.cpp
-    ////kdiy//////
 	float showcarddif;
 	float showcardp;
 	bool is_attacking;
@@ -937,11 +931,21 @@ public:
 	std::vector<epro::path_string> pic_dirs;
 	std::vector<epro::path_string> cover_dirs;
 	///kdiy////////
+    bool git_update = false;
+    bool git_error = false;
+    bool first_play = false;
+    uint32_t showcardalias;
+    bool chklast = true;
+	bool isEvent;//locking flow, allow left mouse click notify_one() to skip
+	epro::condition_variable* cv;//should lock thread when play mode-story sound,this cv is in duelclient.cpp
 	bool haloNodeexist[2][12][10];
     std::vector<irr::core::vector3df> haloNode[2][12][10];
-    //cv::VideoCapture cap;
-    irr::video::ITexture* videotexture = 0;
-    //cv::Mat frame;
+	void PlayVideo(const std::string& videoname, int step, bool loop = false);
+    void StopVideo();
+    cv::VideoCapture cap;
+    irr::video::ITexture* videotexture = nullptr;
+	cv::Mat frame;
+    double totalFrames = 0;
 	std::vector<epro::path_string> closeup_dirs;
 	///kdiy////////
 	std::vector<epro::path_string> script_dirs;

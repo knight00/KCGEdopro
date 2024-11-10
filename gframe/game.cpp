@@ -3409,9 +3409,6 @@ bool Game::MainLoop() {
 				haloNodeexist[p][i][j] = false;
 		}
     }
-    /////ktest//////
-    //mainGame->cap.open("./movies/c28649820.mp4");
-    /////ktest//////
 	/////////kdiy/////////
 	while(!restart && device->run()) {
 		DispatchQueue();
@@ -3497,8 +3494,8 @@ bool Game::MainLoop() {
 		atkdy = (float)sin(atkframe);
         //kdiy///////
 		atk2dy = (float)cos(atkframe);
-		atkdy2 = (float)sin(atkframe*0.65f);
-		atk2dy2 = (float)cos(atkframe*0.65f);
+		atkdy2 = (float)sin(atkframe * 0.65f);
+		atk2dy2 = (float)cos(atkframe * 0.65f);
 		atkdy3 = (float)tan(atkframe);
         //kdiy///////
 		driver->beginScene(true, true, irr::video::SColor(0, 0, 0, 0));
@@ -3531,7 +3528,10 @@ bool Game::MainLoop() {
 				DrawBackImage(imageManager.tBackGround_duel_topdown, resized);
 			else
 				DrawBackImage(imageManager.tBackGround, resized);
-			DrawBackGround();
+            /////ktest//////
+			if(!dInfo.isAnime)
+            /////ktest//////
+            DrawBackGround();
 			DrawCards();
 			DrawMisc();
 			///kdiy///////
@@ -3827,6 +3827,9 @@ bool Game::MainLoop() {
 		closeDoneSignal.SetNoWait(true);
 		frameSignal.SetNoWait(true);
 	}
+    /////ktest//////
+    StopVideo();
+    /////ktest//////
 	DuelClient::StopClient(true);
 	//This is set again as waitable in the above call
 	frameSignal.SetNoWait(true);
@@ -5070,6 +5073,59 @@ void Game::ClearCardInfo(int player) {
 	cardimagetextureloading = false;
 	showingcard = 0;
 }
+///ktest/////////
+void Game::PlayVideo(const std::string& videoname, int step, bool loop) {
+    if(!dInfo.videostart) {
+        if(!cap.isOpened()) {
+            cap.open(videoname);
+            if(cap.isOpened()) {
+                double vfps = cap.get(cv::CAP_PROP_FPS);
+                totalFrames = cap.get(cv::CAP_PROP_FRAME_COUNT);
+                double duration = (totalFrames / vfps) * 1000;
+                // wchar_t buffer[30];
+                // _snwprintf(buffer, sizeof(buffer) / sizeof(*buffer), L"%lf", fps);
+                // MessageBox(nullptr, buffer, TEXT("Message"), MB_OK);
+            } else StopVideo();
+            cap >> frame;
+            if(frame.empty()) StopVideo();
+            cap.set(cv::CAP_PROP_POS_FRAMES, 0); // Ensure we start from the first frame
+        }
+    }
+    dInfo.videostart = true;
+    if(step < 2) return;
+    double currentFrame = cap.get(cv::CAP_PROP_POS_FRAMES);
+    // If the current frame is close to the total frame count, reset to the beginning
+    if(loop && currentFrame >= totalFrames - 1)
+        cap.set(cv::CAP_PROP_POS_FRAMES, 0);
+	if(!loop && currentFrame >= totalFrames - 1)
+        StopVideo();
+    cap >> frame;
+    if(!frame.empty()) {
+        //cv::flip(frame, frame, 0);
+        cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
+        irr::video::IImage* irrImage = driver->createImageFromData(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, irr::core::dimension2d<irr::u32>(frame.cols, frame.rows), frame.data, true, false);
+        if(videotexture) driver->removeTexture(videotexture);
+        videotexture = driver->addTexture("video_frame", irrImage);
+        irrImage->drop();
+        if(loop) driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, frame.cols, frame.rows));
+		if(!loop) {
+			matManager.mTexture.setTexture(0, videotexture);
+			driver->setMaterial(matManager.mTexture);
+			driver->drawVertexPrimitiveList(matManager.vFieldSpell[dInfo.HasFieldFlag(DUEL_3_COLUMNS_FIELD)], 4, matManager.iRectangle, 2);
+		}
+    }
+}
+void Game::StopVideo() {
+    if(cap.isOpened()) cap.release();
+    if(videotexture) {
+        driver->removeTexture(videotexture);
+        videotexture = nullptr;
+    }
+    totalFrames = 0;
+    dInfo.videostart = false;
+    dInfo.isAnime = false;
+}
+///ktest/////////
 void Game::AddChatMsg(epro::wstringview msg, int player, int type) {
 	for(int i = 7; i > 0; --i) {
 		chatMsg[i].swap(chatMsg[i - 1]);

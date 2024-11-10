@@ -1818,6 +1818,10 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
                 if(current.position & POS_DEFENSE) extra |= 0x200;
             }
             PlayChant(SoundManager::CHANT::SUMMON, pcard, sumplayer, extra);
+            /////ktest//////
+			mainGame->dInfo.isAnime = true;
+			mainGame->PlayVideo("./movies/s1546123.mp4", 1);
+            /////ktest//////
             PlayAnime(pcard, 0);
             PlayCardBGM(pcard);
 		}
@@ -4486,18 +4490,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			event_string = gDataManager->GetSysString(1600).data();
 			mainGame->dField.MoveCard(pcard, 10);
 			mainGame->WaitFrameSignal(11, lock);
-            /////ktest//////
-			// mainGame->cap.open("./movies/c28649820.mp4");
-			// if (mainGame->cap.isOpened()) {
-			// 	mainGame->dInfo.isAnime = true;
-			// 	double fps = mainGame->cap.get(cv::CAP_PROP_FPS);
-			// 	// Get the total number of frames in the video
-			// 	double num_frames = mainGame->cap.get(cv::CAP_PROP_FRAME_COUNT);
-			// 	// Compute the duration of the video in seconds
-			// 	double duration = num_frames / mainGame->vfps;
-			// 	mainGame->WaitFrameSignal(num_frames, lock);
-			// }
-            /////ktest//////
 		}
 		return true;
 	}
