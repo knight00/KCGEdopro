@@ -3528,9 +3528,6 @@ bool Game::MainLoop() {
 				DrawBackImage(imageManager.tBackGround_duel_topdown, resized);
 			else
 				DrawBackImage(imageManager.tBackGround, resized);
-            /////ktest//////
-			if(!dInfo.isAnime)
-            /////ktest//////
             DrawBackGround();
 			DrawCards();
 			DrawMisc();
@@ -5074,31 +5071,40 @@ void Game::ClearCardInfo(int player) {
 	showingcard = 0;
 }
 ///ktest/////////
-void Game::PlayVideo(const std::string& videoname, int step, bool loop) {
-    if(!dInfo.videostart) {
+bool Game::PlayVideo(const std::string& videoname, int step, bool loop) {
+    if(!videostart) {
         if(!cap.isOpened()) {
             cap.open(videoname);
             if(cap.isOpened()) {
-                double vfps = cap.get(cv::CAP_PROP_FPS);
+                //double vfps = cap.get(cv::CAP_PROP_FPS);
                 totalFrames = cap.get(cv::CAP_PROP_FRAME_COUNT);
-                double duration = (totalFrames / vfps) * 1000;
+                //double duration = (totalFrames / vfps) * 1000;
                 // wchar_t buffer[30];
-                // _snwprintf(buffer, sizeof(buffer) / sizeof(*buffer), L"%lf", fps);
+                // _snwprintf(buffer, sizeof(buffer) / sizeof(*buffer), L"%lf", totalFrames);
                 // MessageBox(nullptr, buffer, TEXT("Message"), MB_OK);
-            } else StopVideo();
+            } else {
+                StopVideo();
+                return false;
+            }
             cap >> frame;
-            if(frame.empty()) StopVideo();
+            if(frame.empty()) {
+                StopVideo();
+                return false;
+            }
             cap.set(cv::CAP_PROP_POS_FRAMES, 0); // Ensure we start from the first frame
         }
     }
-    dInfo.videostart = true;
-    if(step < 2) return;
+    videostart = true;
+    if(step < 2) return true;
     double currentFrame = cap.get(cv::CAP_PROP_POS_FRAMES);
     // If the current frame is close to the total frame count, reset to the beginning
     if(loop && currentFrame >= totalFrames - 1)
         cap.set(cv::CAP_PROP_POS_FRAMES, 0);
-	if(!loop && currentFrame >= totalFrames - 1)
+	if(!loop && currentFrame >= totalFrames - 1) {
         StopVideo();
+        return false;
+    }
+    cap >> frame;
     cap >> frame;
     if(!frame.empty()) {
         //cv::flip(frame, frame, 0);
@@ -5107,23 +5113,23 @@ void Game::PlayVideo(const std::string& videoname, int step, bool loop) {
         if(videotexture) driver->removeTexture(videotexture);
         videotexture = driver->addTexture("video_frame", irrImage);
         irrImage->drop();
-        if(loop) driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, frame.cols, frame.rows));
-		if(!loop) {
-			matManager.mTexture.setTexture(0, videotexture);
-			driver->setMaterial(matManager.mTexture);
-			driver->drawVertexPrimitiveList(matManager.vFieldSpell[dInfo.HasFieldFlag(DUEL_3_COLUMNS_FIELD)], 4, matManager.iRectangle, 2);
-		}
+    } else if(loop) {
+        cap.set(cv::CAP_PROP_POS_FRAMES, 0);
+    } else if(!loop) {
+        StopVideo();
+        return false;
     }
 }
-void Game::StopVideo() {
+void Game::StopVideo(bool reset) {
     if(cap.isOpened()) cap.release();
     if(videotexture) {
         driver->removeTexture(videotexture);
         videotexture = nullptr;
     }
-    totalFrames = 0;
-    dInfo.videostart = false;
-    dInfo.isAnime = false;
+    if(reset) {
+        videostart = false;
+        isAnime = false;
+    }
 }
 ///ktest/////////
 void Game::AddChatMsg(epro::wstringview msg, int player, int type) {
