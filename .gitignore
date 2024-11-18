@@ -160,3 +160,5 @@ vlc-master/
 /vcpkgedo
 Edopro-KCG2.exe
 /opencv2
+/ffmpeg_old
+*.dll

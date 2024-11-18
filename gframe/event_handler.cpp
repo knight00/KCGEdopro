@@ -2254,21 +2254,21 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				break;
 			}
 			case BUTTON_PICDL: {
-                Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/4a2966dcbb0d11edaaa052540025c377/"), Utils::OPEN_URL);
+                Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/350597f2a3e711efb15f52540025c377/"), Utils::OPEN_URL);
 #if EDOPRO_ANDROID
 				Utils::SystemOpen(EPRO_TEXT("./"), Utils::OPEN_FILE);
 #endif
 				break;
 			}
 			case BUTTON_MOVIEDL: {
-                Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/4a2966dcbb0d11edaaa052540025c377/"), Utils::OPEN_URL);
+                Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/8c3fb8e8a3df11efba4752540025c377/"), Utils::OPEN_URL);
 #if EDOPRO_ANDROID
 				Utils::SystemOpen(EPRO_TEXT("./"), Utils::OPEN_FILE);
 #endif
 				break;
 			}
             case BUTTON_SOUNDDL: {
-                Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/4a2966dcbb0d11edaaa052540025c377/"), Utils::OPEN_URL);
+                Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/ad6b923aa3df11ef9a3b5254001e7c00/"), Utils::OPEN_URL);
 #if EDOPRO_ANDROID
 				Utils::SystemOpen(EPRO_TEXT("./"), Utils::OPEN_FILE);
 #endif

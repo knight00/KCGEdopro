@@ -4474,10 +4474,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         }
         pcard->is_attacked = false;
 		Play(SoundManager::SFX::POS_CHANGE);
-            /////ktest//////
-			mainGame->isAnime = true;
-			mainGame->PlayVideo("./movies/s1546123.mp4", 1);
-            /////ktest//////
+        /////ktest//////
+		//if(mainGame->PlayVideo("./movies/s1546123.mp4", 1)) mainGame->isAnime = true;
+        /////ktest//////
         /////kdiy//////
 		if((pp & POS_FACEUP) && (cp & POS_FACEDOWN)) {
 			pcard->counters.clear();

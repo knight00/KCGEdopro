@@ -23,7 +23,15 @@
 /////kdiy/////
 #include "client_card.h"
 #include "network.h"
-#include <opencv2/opencv.hpp>
+/////ktest//////
+//#include <opencv2/opencv.hpp>
+// extern "C" {
+// #include <libavcodec/avcodec.h>
+// #include <libavformat/avformat.h>
+// #include <libswscale/swscale.h>
+// #include <libswresample/swresample.h>
+// #include <libavutil/opt.h>
+// }
 /////kdiy/////
 struct unzip_payload;
 class CGUISkinSystem;
@@ -938,13 +946,16 @@ public:
 	bool haloNodeexist[2][12][10];
     std::vector<irr::core::vector3df> haloNode[2][12][10];
     //ktest////////
-	bool isAnime = false, videostart = false;
-	bool PlayVideo(const std::string& videoname, int step, bool loop = false);
-    void StopVideo(bool reset = true);
-    cv::VideoCapture cap;
-    irr::video::ITexture* videotexture = nullptr;
-	cv::Mat frame;
-    double totalFrames = 0;
+	// bool isAnime = false, videostart = false;
+	// bool PlayVideo(const char* videoname, int step, bool loop = false);
+    // void StopVideo(bool reset = true);
+    // cv::VideoCapture cap;
+    // irr::video::ITexture* videotexture = nullptr;
+	// cv::Mat frame;
+    //double totalFrames = 0;
+    // AVFormatContext* formatContext;
+    // int videoStreamIndex = -1;
+    // int audioStreamIndex = -1;
     //ktest////////
 	std::vector<epro::path_string> closeup_dirs;
 	///kdiy////////

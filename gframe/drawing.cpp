@@ -93,18 +93,18 @@ void Game::DrawBackGround() {
 
 	//draw field
     /////ktest//////
-	if(isAnime) {
-        PlayVideo("./movies/s1546123.mp4", 2);
-        DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
-    } else {
+	// if(isAnime) {
+    //     if(PlayVideo("./movies/s1546123.mp4", 2))
+    //         DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
+    // } else {
     /////kdiy//////
     if(!gGameConfig->chkField && DrawFieldSpell())
-	DrawTextureRect(matManager.vField, imageManager.tFieldTransparent[three_columns][tfield]);
+	    DrawTextureRect(matManager.vField, imageManager.tFieldTransparent[three_columns][tfield]);
     else if(gGameConfig->chkField || !gGameConfig->randomtexture || (tfield != 3 && tfield != 1))
     /////kdiy//////
 	DrawTextureRect(matManager.vField, DrawFieldSpell() ? imageManager.tFieldTransparent[three_columns][tfield] : imageManager.tField[three_columns][tfield]);
     /////ktest//////
-    }
+    //}
     /////ktest//////
 
 	driver->setMaterial(matManager.mBackLine);
@@ -1730,14 +1730,14 @@ void Game::DrawBackImage(irr::video::ITexture* texture, bool resized) {
 	if(!texture)
 		return;
     /////ktest//////
-    if(texture == imageManager.tBackGround_menu) {
-        prevbg = texture;
-        PlayVideo("./movies/s1546123.mp4", 2, true);
-        driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, frame.cols, frame.rows));
-        return;
-    } else {
-        if(!isAnime && videostart) StopVideo();
-    }
+    // if(texture == imageManager.tBackGround_menu) {
+    //     prevbg = texture;
+    //     if(PlayVideo("./movies/s6218704.mp4", 2, true))
+    //         driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, frame.cols, frame.rows));
+    //     return;
+    // } else {
+    //     if(!isAnime && videostart) StopVideo();
+    // }
     /////ktest//////
 	if(texture != prevbg) {
 		prevbg = texture;

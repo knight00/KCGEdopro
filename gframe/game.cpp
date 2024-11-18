@@ -3409,6 +3409,9 @@ bool Game::MainLoop() {
 				haloNodeexist[p][i][j] = false;
 		}
     }
+    ///ktest/////////
+    // avformat_network_init();
+    // formatContext = avformat_alloc_context();
 	/////////kdiy/////////
 	while(!restart && device->run()) {
 		DispatchQueue();
@@ -3825,7 +3828,7 @@ bool Game::MainLoop() {
 		frameSignal.SetNoWait(true);
 	}
     /////ktest//////
-    StopVideo();
+    //StopVideo();
     /////ktest//////
 	DuelClient::StopClient(true);
 	//This is set again as waitable in the above call
@@ -5071,66 +5074,142 @@ void Game::ClearCardInfo(int player) {
 	showingcard = 0;
 }
 ///ktest/////////
-bool Game::PlayVideo(const std::string& videoname, int step, bool loop) {
-    if(!videostart) {
-        if(!cap.isOpened()) {
-            cap.open(videoname);
-            if(cap.isOpened()) {
-                //double vfps = cap.get(cv::CAP_PROP_FPS);
-                totalFrames = cap.get(cv::CAP_PROP_FRAME_COUNT);
-                //double duration = (totalFrames / vfps) * 1000;
-                // wchar_t buffer[30];
-                // _snwprintf(buffer, sizeof(buffer) / sizeof(*buffer), L"%lf", totalFrames);
-                // MessageBox(nullptr, buffer, TEXT("Message"), MB_OK);
-            } else {
-                StopVideo();
-                return false;
-            }
-            cap >> frame;
-            if(frame.empty()) {
-                StopVideo();
-                return false;
-            }
-            cap.set(cv::CAP_PROP_POS_FRAMES, 0); // Ensure we start from the first frame
-        }
-    }
-    videostart = true;
-    if(step < 2) return true;
-    double currentFrame = cap.get(cv::CAP_PROP_POS_FRAMES);
-    // If the current frame is close to the total frame count, reset to the beginning
-    if(loop && currentFrame >= totalFrames - 1)
-        cap.set(cv::CAP_PROP_POS_FRAMES, 0);
-	if(!loop && currentFrame >= totalFrames - 1) {
-        StopVideo();
-        return false;
-    }
-    cap >> frame;
-    cap >> frame;
-    if(!frame.empty()) {
-        //cv::flip(frame, frame, 0);
-        cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
-        irr::video::IImage* irrImage = driver->createImageFromData(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, irr::core::dimension2d<irr::u32>(frame.cols, frame.rows), frame.data, true, false);
-        if(videotexture) driver->removeTexture(videotexture);
-        videotexture = driver->addTexture("video_frame", irrImage);
-        irrImage->drop();
-    } else if(loop) {
-        cap.set(cv::CAP_PROP_POS_FRAMES, 0);
-    } else if(!loop) {
-        StopVideo();
-        return false;
-    }
-}
-void Game::StopVideo(bool reset) {
-    if(cap.isOpened()) cap.release();
-    if(videotexture) {
-        driver->removeTexture(videotexture);
-        videotexture = nullptr;
-    }
-    if(reset) {
-        videostart = false;
-        isAnime = false;
-    }
-}
+// bool Game::PlayVideo(const char* videoname, int step, bool loop) {
+//     if(!videostart) {
+//         if (avformat_open_input(&formatContext, videoname, nullptr, nullptr) != 0) {
+//             StopVideo();
+//             return false;
+//         }
+//         if (avformat_find_stream_info(formatContext, nullptr) < 0) {
+//             StopVideo();
+//             return false;
+//         }
+//         for (unsigned int i = 0; i < formatContext->nb_streams; ++i) {
+//             if (formatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO && videoStreamIndex == -1) {
+//                 videoStreamIndex = i;
+//             } else if (formatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO && audioStreamIndex == -1) {
+//                 audioStreamIndex = i;
+//             }
+//         }
+//         if (videoStreamIndex == -1 || audioStreamIndex == -1) {
+//             StopVideo();
+//             return false;
+//         }
+//         // Video codec context
+//         AVCodecParameters* videoCodecParameters = formatContext->streams[videoStreamIndex]->codecpar;
+//         const AVCodec* videoCodec = avcodec_find_decoder(videoCodecParameters->codec_id);
+//         if (!videoCodec) {
+//             avformat_close_input(&formatContext);
+//             StopVideo();
+//             return false;
+//         }
+//         AVCodecContext* videoCodecContext = avcodec_alloc_context3(videoCodec);
+//         if (avcodec_parameters_to_context(videoCodecContext, videoCodecParameters) < 0) {
+//             avformat_close_input(&formatContext);
+//             StopVideo();
+//             return false;
+//         }
+//         if (avcodec_open2(videoCodecContext, videoCodec, nullptr) < 0) {
+//             avformat_close_input(&formatContext);
+//             StopVideo();
+//             return false;
+//         }
+//         // Audio codec context
+//         AVCodecParameters* audioCodecParameters = formatContext->streams[audioStreamIndex]->codecpar;
+//         const AVCodec* audioCodec = avcodec_find_decoder(audioCodecParameters->codec_id);
+//         if (!audioCodec) {
+//             avformat_close_input(&formatContext);
+//             StopVideo();
+//             return false;
+//         }
+//         AVCodecContext* audioCodecContext = avcodec_alloc_context3(audioCodec);
+//         if (avcodec_parameters_to_context(audioCodecContext, audioCodecParameters) < 0) {
+//             avformat_close_input(&formatContext);
+//             StopVideo();
+//             return false;
+//         }
+//         if (avcodec_open2(audioCodecContext, audioCodec, nullptr) < 0) {
+//             avformat_close_input(&formatContext);
+//             StopVideo();
+//             return false;
+//         }
+//         struct SwsContext* swsContext = sws_getContext(
+//             videoCodecContext->width, videoCodecContext->height, videoCodecContext->pix_fmt,
+//             videoCodecContext->width, videoCodecContext->height, AV_PIX_FMT_BGR24,
+//             SWS_BILINEAR, nullptr, nullptr, nullptr);
+//         SwrContext* swrContext = swr_alloc();
+//         if (!swrContext) {
+//             avformat_close_input(&formatContext);
+//             StopVideo();
+//             return false;
+//         }
+
+//         // Set options
+//         av_opt_set_int(swrContext, "in_channel_layout",  audioCodecContext->channel_layout, 0);
+//         av_opt_set_int(swrContext, "in_sample_rate",     audioCodecContext->sample_rate, 0);
+//         av_opt_set_sample_fmt(swrContext, "in_sample_fmt",  audioCodecContext->sample_fmt, 0);
+//         av_opt_set_int(swrContext, "out_channel_layout", AV_CH_LAYOUT_STEREO, 0);
+//         av_opt_set_int(swrContext, "out_sample_rate",    44100, 0);
+//         av_opt_set_sample_fmt(swrContext, "out_sample_fmt", AV_SAMPLE_FMT_S16, 0);
+
+//         // Initialize the resampling context
+//         if (swr_init(swrContext) < 0) {
+//             std::cerr << "Could not initialize the SwrContext." << std::endl;
+//             swr_free(&swrContext);
+//             return nullptr;
+//         }
+//         // if(!cap.isOpened()) {
+//         //     cap.open(videoname);
+//         //     if(!cap.isOpened()) {
+//         //         //double vfps = cap.get(cv::CAP_PROP_FPS);
+//         //         //totalFrames = cap.get(cv::CAP_PROP_FRAME_COUNT);
+//         //         //double duration = (totalFrames / vfps) * 1000;
+//         //         // wchar_t buffer[30];
+//         //         // _snwprintf(buffer, sizeof(buffer) / sizeof(*buffer), L"%lf", totalFrames);
+//         //         // MessageBox(nullptr, buffer, TEXT("Message"), MB_OK);
+//         //     // } else {
+//         //         StopVideo();
+//         //         return false;
+//         //     }
+//         //     if(!cap.read(frame)) {
+//         //         StopVideo();
+//         //         return false;
+//         //     }
+//         //     cap.set(cv::CAP_PROP_POS_FRAMES, 0); // Ensure we start from the first frame
+//         // }
+//     }
+//     videostart = true;
+//     if(step < 2) return true;
+//     // double currentFrame = cap.get(cv::CAP_PROP_POS_FRAMES);
+//     // If the current frame is close to the total frame count, reset to the beginning
+//     // if(loop && currentFrame >= totalFrames - 1)
+//     //     cap.set(cv::CAP_PROP_POS_FRAMES, 0);
+//     // bool capsuccess = cap.read(frame);
+//     // if(capsuccess) {
+//     //     //cv::flip(frame, frame, 0);
+//     //     cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
+//     //     irr::video::IImage* irrImage = driver->createImageFromData(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, irr::core::dimension2d<irr::u32>(frame.cols, frame.rows), frame.data, true, false);
+//     //     if(videotexture) driver->removeTexture(videotexture);
+//     //     videotexture = driver->addTexture("video_frame", irrImage);
+//     //     irrImage->drop();
+//     // } else if(loop) {
+//     //     cap.set(cv::CAP_PROP_POS_FRAMES, 0);
+//     // } else if(!loop) {
+//     //     StopVideo();
+//     //     return false;
+//     // }
+// }
+// void Game::StopVideo(bool reset) {
+//     // if(cap.isOpened()) cap.release();
+//     // if(videotexture) {
+//     //     driver->removeTexture(videotexture);
+//     //     videotexture = nullptr;
+//     // }
+//     // if(reset) {
+//     //     videostart = false;
+//     //     isAnime = false;
+//     // }
+// }
 ///ktest/////////
 void Game::AddChatMsg(epro::wstringview msg, int player, int type) {
 	for(int i = 7; i > 0; --i) {
@@ -6308,6 +6387,12 @@ bool Game::moviecheck() {
 		gGameConfig->enableaanime = false;
 		mainGame->stACMessage->setText(gDataManager->GetSysString(8051).data());
 		mainGame->PopupElement(mainGame->wACMessage, 90);
+#ifdef VIP
+        Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/8c3fb8e8a3df11efba4752540025c377/"), Utils::OPEN_URL);
+#if EDOPRO_ANDROID
+		Utils::SystemOpen(EPRO_TEXT("./"), Utils::OPEN_FILE);
+#endif
+#endif
 	}
 	if(gGameConfig->enablesanime || gGameConfig->enablecanime || gGameConfig->enableaanime)
 		gGameConfig->enableanime = true;
@@ -6343,6 +6428,12 @@ bool Game::chantcheck() {
 		gGameConfig->enableasound = false;
 		mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
 		mainGame->PopupElement(mainGame->wACMessage, 90);
+#ifdef VIP
+        Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/ad6b923aa3df11ef9a3b5254001e7c00/"), Utils::OPEN_URL);
+#if EDOPRO_ANDROID
+		Utils::SystemOpen(EPRO_TEXT("./"), Utils::OPEN_FILE);
+#endif
+#endif
 		for(int i = 0; i < 6; ++i) {
 			mainGame->icon[i]->setEnabled(false);
 			mainGame->icon2[i]->setEnabled(false);
