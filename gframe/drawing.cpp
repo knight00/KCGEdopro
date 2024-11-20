@@ -93,10 +93,10 @@ void Game::DrawBackGround() {
 
 	//draw field
     /////ktest//////
-	// if(isAnime) {
-    //     if(PlayVideo("./movies/s1546123.mp4", 2))
-    //         DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
-    // } else {
+	if(isAnime) {
+        if(PlayVideo("./movies/s10000000.mp4", 2))
+            DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
+    } else {
     /////kdiy//////
     if(!gGameConfig->chkField && DrawFieldSpell())
 	    DrawTextureRect(matManager.vField, imageManager.tFieldTransparent[three_columns][tfield]);
@@ -104,7 +104,7 @@ void Game::DrawBackGround() {
     /////kdiy//////
 	DrawTextureRect(matManager.vField, DrawFieldSpell() ? imageManager.tFieldTransparent[three_columns][tfield] : imageManager.tField[three_columns][tfield]);
     /////ktest//////
-    //}
+    }
     /////ktest//////
 
 	driver->setMaterial(matManager.mBackLine);

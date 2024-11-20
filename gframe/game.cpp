@@ -751,7 +751,7 @@ void Game::Initialize() {
 	mainMenuRightX = 510 + mainMenuWidth / 2;
 	////kdiy////////
 	int QQWidth = std::max(100, static_cast<int>(titleWidth / dpi_scale + 15));
-	wQQ = env->addWindow(Scale(mainMenuLeftX - 150, 200, mainMenuLeftX - 10, 450));
+	wQQ = env->addWindow(irr::core::recti(window_size.Width - 150, 20, window_size.Width - 10, 220));
 	wQQ->getCloseButton()->setVisible(false);
 	wQQ->setDraggable(false);
 	wQQ->setDrawTitlebar(false);
@@ -763,7 +763,7 @@ void Game::Initialize() {
     wQQ->setVisible(false);
 	#endif
 	//wMainMenu = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 450), false, EDOPRO_VERSION_STRING);	
-	wMainMenu = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 520), false, EDOPRO_VERSION_STRING);	
+	wMainMenu = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 520), false, EDOPRO_VERSION_STRING);
 	////kdiy////////
 	wMainMenu->getCloseButton()->setVisible(false);
 	//wMainMenu->setVisible(!is_from_discord);
@@ -3410,8 +3410,8 @@ bool Game::MainLoop() {
 		}
     }
     ///ktest/////////
-    // avformat_network_init();
-    // formatContext = avformat_alloc_context();
+    avformat_network_init();
+    formatContext = avformat_alloc_context();
 	/////////kdiy/////////
 	while(!restart && device->run()) {
 		DispatchQueue();
@@ -3476,14 +3476,19 @@ bool Game::MainLoop() {
             if(!git_update) {
                 mainGame->mode->LoadJsonInfo();
                 git_update = true;
-				if(mRepositoriesInfo->isVisible())
-				    mRepositoriesInfo->setVisible(false);
+				mRepositoriesInfo->setVisible(false);
             }
             if(first_play && git_update) {
                 mainGame->ApplyLocale(mainGame->gSettings.cbCurrentLocale->getSelected(), true);
             }
             //kdiy///////
 		}
+        //kdiy///////
+		if(git_update && !git_error)
+		    mRepositoriesInfo->setVisible(false);
+		if(!git_update || git_error)
+			wMainMenu->setVisible(false);
+        //kdiy///////
 #endif //YGOPRO_BUILD_DLL
 		frame_counter += (float)delta_time * 60.0f/1000.0f;
 		float remainder;
@@ -3735,7 +3740,7 @@ bool Game::MainLoop() {
 				PopupElement(wQuery);
 				/////kdiy/////
 #ifdef VIP
-                HideElement(mainGame->wMainMenu);
+                wMainMenu->setVisible(false);
 				btnNo->setVisible(false);
 				btnNo->setEnabled(false);
 #endif
@@ -3828,7 +3833,7 @@ bool Game::MainLoop() {
 		frameSignal.SetNoWait(true);
 	}
     /////ktest//////
-    //StopVideo();
+    StopVideo();
     /////ktest//////
 	DuelClient::StopClient(true);
 	//This is set again as waitable in the above call
@@ -5074,142 +5079,201 @@ void Game::ClearCardInfo(int player) {
 	showingcard = 0;
 }
 ///ktest/////////
-// bool Game::PlayVideo(const char* videoname, int step, bool loop) {
-//     if(!videostart) {
-//         if (avformat_open_input(&formatContext, videoname, nullptr, nullptr) != 0) {
-//             StopVideo();
-//             return false;
-//         }
-//         if (avformat_find_stream_info(formatContext, nullptr) < 0) {
-//             StopVideo();
-//             return false;
-//         }
-//         for (unsigned int i = 0; i < formatContext->nb_streams; ++i) {
-//             if (formatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO && videoStreamIndex == -1) {
-//                 videoStreamIndex = i;
-//             } else if (formatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO && audioStreamIndex == -1) {
-//                 audioStreamIndex = i;
-//             }
-//         }
-//         if (videoStreamIndex == -1 || audioStreamIndex == -1) {
-//             StopVideo();
-//             return false;
-//         }
-//         // Video codec context
-//         AVCodecParameters* videoCodecParameters = formatContext->streams[videoStreamIndex]->codecpar;
-//         const AVCodec* videoCodec = avcodec_find_decoder(videoCodecParameters->codec_id);
-//         if (!videoCodec) {
-//             avformat_close_input(&formatContext);
-//             StopVideo();
-//             return false;
-//         }
-//         AVCodecContext* videoCodecContext = avcodec_alloc_context3(videoCodec);
-//         if (avcodec_parameters_to_context(videoCodecContext, videoCodecParameters) < 0) {
-//             avformat_close_input(&formatContext);
-//             StopVideo();
-//             return false;
-//         }
-//         if (avcodec_open2(videoCodecContext, videoCodec, nullptr) < 0) {
-//             avformat_close_input(&formatContext);
-//             StopVideo();
-//             return false;
-//         }
-//         // Audio codec context
-//         AVCodecParameters* audioCodecParameters = formatContext->streams[audioStreamIndex]->codecpar;
-//         const AVCodec* audioCodec = avcodec_find_decoder(audioCodecParameters->codec_id);
-//         if (!audioCodec) {
-//             avformat_close_input(&formatContext);
-//             StopVideo();
-//             return false;
-//         }
-//         AVCodecContext* audioCodecContext = avcodec_alloc_context3(audioCodec);
-//         if (avcodec_parameters_to_context(audioCodecContext, audioCodecParameters) < 0) {
-//             avformat_close_input(&formatContext);
-//             StopVideo();
-//             return false;
-//         }
-//         if (avcodec_open2(audioCodecContext, audioCodec, nullptr) < 0) {
-//             avformat_close_input(&formatContext);
-//             StopVideo();
-//             return false;
-//         }
-//         struct SwsContext* swsContext = sws_getContext(
-//             videoCodecContext->width, videoCodecContext->height, videoCodecContext->pix_fmt,
-//             videoCodecContext->width, videoCodecContext->height, AV_PIX_FMT_BGR24,
-//             SWS_BILINEAR, nullptr, nullptr, nullptr);
-//         SwrContext* swrContext = swr_alloc();
-//         if (!swrContext) {
-//             avformat_close_input(&formatContext);
-//             StopVideo();
-//             return false;
-//         }
-
-//         // Set options
-//         av_opt_set_int(swrContext, "in_channel_layout",  audioCodecContext->channel_layout, 0);
-//         av_opt_set_int(swrContext, "in_sample_rate",     audioCodecContext->sample_rate, 0);
-//         av_opt_set_sample_fmt(swrContext, "in_sample_fmt",  audioCodecContext->sample_fmt, 0);
-//         av_opt_set_int(swrContext, "out_channel_layout", AV_CH_LAYOUT_STEREO, 0);
-//         av_opt_set_int(swrContext, "out_sample_rate",    44100, 0);
-//         av_opt_set_sample_fmt(swrContext, "out_sample_fmt", AV_SAMPLE_FMT_S16, 0);
-
-//         // Initialize the resampling context
-//         if (swr_init(swrContext) < 0) {
-//             std::cerr << "Could not initialize the SwrContext." << std::endl;
-//             swr_free(&swrContext);
-//             return nullptr;
-//         }
-//         // if(!cap.isOpened()) {
-//         //     cap.open(videoname);
-//         //     if(!cap.isOpened()) {
-//         //         //double vfps = cap.get(cv::CAP_PROP_FPS);
-//         //         //totalFrames = cap.get(cv::CAP_PROP_FRAME_COUNT);
-//         //         //double duration = (totalFrames / vfps) * 1000;
-//         //         // wchar_t buffer[30];
-//         //         // _snwprintf(buffer, sizeof(buffer) / sizeof(*buffer), L"%lf", totalFrames);
-//         //         // MessageBox(nullptr, buffer, TEXT("Message"), MB_OK);
-//         //     // } else {
-//         //         StopVideo();
-//         //         return false;
-//         //     }
-//         //     if(!cap.read(frame)) {
-//         //         StopVideo();
-//         //         return false;
-//         //     }
-//         //     cap.set(cv::CAP_PROP_POS_FRAMES, 0); // Ensure we start from the first frame
-//         // }
-//     }
-//     videostart = true;
-//     if(step < 2) return true;
-//     // double currentFrame = cap.get(cv::CAP_PROP_POS_FRAMES);
-//     // If the current frame is close to the total frame count, reset to the beginning
-//     // if(loop && currentFrame >= totalFrames - 1)
-//     //     cap.set(cv::CAP_PROP_POS_FRAMES, 0);
-//     // bool capsuccess = cap.read(frame);
-//     // if(capsuccess) {
-//     //     //cv::flip(frame, frame, 0);
-//     //     cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
-//     //     irr::video::IImage* irrImage = driver->createImageFromData(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, irr::core::dimension2d<irr::u32>(frame.cols, frame.rows), frame.data, true, false);
-//     //     if(videotexture) driver->removeTexture(videotexture);
-//     //     videotexture = driver->addTexture("video_frame", irrImage);
-//     //     irrImage->drop();
-//     // } else if(loop) {
-//     //     cap.set(cv::CAP_PROP_POS_FRAMES, 0);
-//     // } else if(!loop) {
-//     //     StopVideo();
-//     //     return false;
-//     // }
-// }
-// void Game::StopVideo(bool reset) {
-//     // if(cap.isOpened()) cap.release();
-//     // if(videotexture) {
-//     //     driver->removeTexture(videotexture);
-//     //     videotexture = nullptr;
-//     // }
-//     // if(reset) {
-//     //     videostart = false;
-//     //     isAnime = false;
-//     // }
-// }
+AVCodecContext* allocateCodecContext(AVCodecParameters* codecParameters) {
+    const AVCodec* codec = avcodec_find_decoder(codecParameters->codec_id);
+    if (!codec) {
+        return nullptr;
+    }
+    AVCodecContext* codecContext = avcodec_alloc_context3(codec);
+    if (!codecContext) {
+        return nullptr;
+    }
+    if (avcodec_parameters_to_context(codecContext, codecParameters) < 0) {
+        avcodec_free_context(&codecContext);
+        return nullptr;
+    }
+    if (avcodec_open2(codecContext, codec, nullptr) < 0) {
+        avcodec_free_context(&codecContext);
+        return nullptr;
+    }
+    return codecContext;
+}
+SwrContext* setupSwrContext(AVCodecParameters* codecParameters) {
+	SwrContext* swrCtx = swr_alloc();
+	if (!swrCtx) {
+		return nullptr;
+	}
+	av_opt_set_int(swrCtx, "in_channel_layout", codecParameters->channel_layout, 0);
+	av_opt_set_int(swrCtx, "in_sample_rate", codecParameters->sample_rate, 0);
+	av_opt_set_sample_fmt(swrCtx, "in_sample_fmt", (AVSampleFormat)codecParameters->format, 0);
+	av_opt_set_int(swrCtx, "out_channel_layout", AV_CH_LAYOUT_STEREO, 0);
+	av_opt_set_int(swrCtx, "out_sample_rate", 44100, 0);
+	av_opt_set_sample_fmt(swrCtx, "out_sample_fmt", AV_SAMPLE_FMT_S16, 0);
+	if (swr_init(swrCtx) < 0) {
+		swr_free(&swrCtx);
+		return nullptr;
+	}
+	return swrCtx;
+}
+bool Game::PlayVideo(const std::string& videoname, int step, bool loop) {
+    if(!videostart) {
+		audioStream.clearSamples();
+        if (avformat_open_input(&formatContext, videoname.c_str(), nullptr, nullptr) != 0) {
+            StopVideo();
+            return false;
+        }
+        if (avformat_find_stream_info(formatContext, nullptr) < 0) {
+			avformat_close_input(&formatContext);
+            StopVideo();
+            return false;
+        }
+        for (unsigned int i = 0; i < formatContext->nb_streams; ++i) {
+            if (formatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO && videoStreamIndex == -1) {
+                videoStreamIndex = i;
+            } else if (formatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO && audioStreamIndex == -1) {
+                audioStreamIndex = i;
+            }
+        }
+        if (videoStreamIndex == -1 || audioStreamIndex == -1) {
+			avformat_close_input(&formatContext);
+            StopVideo();
+            return false;
+        }
+        // Video codec context
+		videoCodecContext = allocateCodecContext(formatContext->streams[videoStreamIndex]->codecpar);
+		audioCodecContext = allocateCodecContext(formatContext->streams[audioStreamIndex]->codecpar);
+		if (!videoCodecContext || !audioCodecContext) {
+			avformat_close_input(&formatContext);
+            StopVideo();
+            return false;
+        }
+        swsContext = sws_getContext(
+            videoCodecContext->width, videoCodecContext->height, videoCodecContext->pix_fmt,
+            videoCodecContext->width, videoCodecContext->height, AV_PIX_FMT_BGR24,
+            SWS_BILINEAR, nullptr, nullptr, nullptr);
+		// Set up SwrContext for audio resampling
+		swrContext = setupSwrContext(formatContext->streams[audioStreamIndex]->codecpar);
+		if (!swrContext) {
+			StopVideo();
+            return false;
+        }
+		delete[] buffer;
+		buffer = new irr::u8[videoCodecContext->width * videoCodecContext->height * 3];
+		audioStream.load(audioCodecContext);
+        // if(!cap.isOpened()) {
+        //     cap.open(videoname);
+        //     if(!cap.isOpened()) {
+        //         //double vfps = cap.get(cv::CAP_PROP_FPS);
+        //         //totalFrames = cap.get(cv::CAP_PROP_FRAME_COUNT);
+        //         //double duration = (totalFrames / vfps) * 1000;
+        //         // wchar_t buffer[30];
+        //         // _snwprintf(buffer, sizeof(buffer) / sizeof(*buffer), L"%lf", totalFrames);
+        //         // MessageBox(nullptr, buffer, TEXT("Message"), MB_OK);
+        //     // } else {
+        //         StopVideo();
+        //         return false;
+        //     }
+        //     if(!cap.read(frame)) {
+        //         StopVideo();
+        //         return false;
+        //     }
+        //     cap.set(cv::CAP_PROP_POS_FRAMES, 0); // Ensure we start from the first frame
+        // }
+    }
+    videostart = true;
+    if(step < 2) return true;
+	frame = av_frame_alloc();
+    packet = av_packet_alloc();
+	//audioStream.play();
+	if (av_read_frame(formatContext, packet) >= 0) {
+		if (packet->stream_index == videoStreamIndex) {
+			// Handle video frames
+			if (avcodec_send_packet(videoCodecContext, packet) == 0) {
+				while (avcodec_receive_frame(videoCodecContext, frame) == 0) {
+					uint8_t* dest[1] = { buffer };
+					int dest_linesize[1] = { 3 * videoCodecContext->width };  // RGB24 data
+					sws_scale(swsContext, frame->data, frame->linesize, 0, videoCodecContext->height, dest, dest_linesize);
+					irr::video::IImage* img = driver->createImageFromData(irr::video::ECF_R8G8B8, irr::core::dimension2d<irr::u32>(videoCodecContext->width, videoCodecContext->height), buffer, true, false);
+					if(img) {
+						if(videotexture) driver->removeTexture(videotexture);
+						videotexture = driver->addTexture("VideoFrame", img);
+						img->drop();
+					}
+                }
+            }
+		} else if (packet->stream_index == audioStreamIndex) {
+			// // Handle audio frames
+			// if (avcodec_send_packet(audioCodecContext, packet) == 0) {
+            //     while (avcodec_receive_frame(audioCodecContext, frame) == 0) {
+            //         // Resample audio frames
+            //         int dst_nb_samples = av_rescale_rnd(swr_get_delay(swrContext, audioCodecContext->sample_rate) +
+            //             frame->nb_samples, 44100, audioCodecContext->sample_rate, AV_ROUND_UP);
+            //         std::vector<uint8_t> buffer(dst_nb_samples * 2 * av_get_bytes_per_sample(AV_SAMPLE_FMT_S16));
+            //         int len = swr_convert(swrContext, (uint8_t**)&buffer[0], dst_nb_samples,
+            //             (const uint8_t**)frame->data, frame->nb_samples);
+            //         if (len > 0) {
+            //             audioStream.addSamples(reinterpret_cast<std::int16_t*>(&buffer[0]), len * 2);
+            //         }
+            //     }
+            // }
+        }
+        av_packet_unref(packet);
+	}
+    // double currentFrame = cap.get(cv::CAP_PROP_POS_FRAMES);
+    // If the current frame is close to the total frame count, reset to the beginning
+    // if(loop && currentFrame >= totalFrames - 1)
+    //     cap.set(cv::CAP_PROP_POS_FRAMES, 0);
+    // bool capsuccess = cap.read(frame);
+    // if(capsuccess) {
+    //     //cv::flip(frame, frame, 0);
+    //     cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
+    //     irr::video::IImage* irrImage = driver->createImageFromData(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, irr::core::dimension2d<irr::u32>(frame.cols, frame.rows), frame.data, true, false);
+    //     if(videotexture) driver->removeTexture(videotexture);
+    //     videotexture = driver->addTexture("video_frame", irrImage);
+    //     irrImage->drop();
+    // } else if(loop) {
+    //     cap.set(cv::CAP_PROP_POS_FRAMES, 0);
+    // } else if(!loop) {
+    //     StopVideo();
+    //     return false;
+    // }
+	return true;
+}
+void Game::StopVideo(bool reset) {
+    // if(cap.isOpened()) cap.release();
+	audioStream.clearSamples();
+	av_frame_free(&frame);
+    av_packet_free(&packet);
+	delete[] buffer;
+	if (swsContext) {
+        sws_freeContext(swsContext);
+        swsContext = nullptr;
+    }
+    if (swrContext) {
+        swr_free(&swrContext);
+        swrContext = nullptr;
+    }
+    if (videoCodecContext) {
+        avcodec_free_context(&videoCodecContext);
+        videoCodecContext = nullptr;
+    }
+    if (audioCodecContext) {
+        avcodec_free_context(&audioCodecContext);
+        audioCodecContext = nullptr;
+    }
+    if (formatContext) {
+        avformat_close_input(&formatContext);
+        formatContext = nullptr;
+    }
+    if(videotexture) {
+        driver->removeTexture(videotexture);
+        videotexture = nullptr;
+    }
+    if(reset) {
+        videostart = false;
+        isAnime = false;
+    }
+}
 ///ktest/////////
 void Game::AddChatMsg(epro::wstringview msg, int player, int type) {
 	for(int i = 7; i > 0; --i) {
@@ -6044,7 +6108,7 @@ void Game::OnResize() {
 	#else
 	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 535));
 	#endif
-	wQQ->setRelativePosition(ResizeWin(mainMenuLeftX - 150, 200, mainMenuLeftX - 10, 450));
+	wQQ->setRelativePosition(irr::core::recti(window_size.Width - 150, 20, window_size.Width - 10, 220));
 	////////kdiy///////
 	SetCentered(wCommitsLog);
 	SetCentered(updateWindow, false);

@@ -25,13 +25,52 @@
 #include "network.h"
 /////ktest//////
 //#include <opencv2/opencv.hpp>
-// extern "C" {
-// #include <libavcodec/avcodec.h>
-// #include <libavformat/avformat.h>
-// #include <libswscale/swscale.h>
-// #include <libswresample/swresample.h>
-// #include <libavutil/opt.h>
-// }
+extern "C" {
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+#include <libswscale/swscale.h>
+#include <libswresample/swresample.h>
+#include <libavutil/opt.h>
+}
+#include <sfAudio/Audio.hpp>
+class AudioStream : public sf::SoundStream {
+public:
+    void load(const AVCodecContext* codecCtx) {
+        mSampleRate = codecCtx->sample_rate;
+        mChannels = codecCtx->channels;
+        initialize(mChannels, mSampleRate);
+    }
+    void addSamples(const std::int16_t* samples, std::size_t count) {
+        {
+            std::lock_guard<std::mutex> lock(mMutex);
+            mSamples.insert(mSamples.end(), samples, samples + count);
+        }
+        mCv.notify_one();
+    }
+    void clearSamples() {
+        std::lock_guard<std::mutex> lock(mMutex);
+        mSamples.clear();
+    }
+
+protected:
+    virtual bool onGetData(Chunk& data) {
+        std::unique_lock<std::mutex> lock(mMutex);
+        mCv.wait(lock, [this] { return !mSamples.empty(); });
+        data.sampleCount = mSamples.size();
+        data.samples = &mSamples.front();
+        mSamples.clear();
+        return true;
+    }
+
+    virtual void onSeek(sf::Time timeOffset) {}
+
+private:
+    std::vector<std::int16_t> mSamples;
+    std::mutex mMutex;
+    std::condition_variable mCv;
+    unsigned mSampleRate;
+    unsigned mChannels;
+};
 /////kdiy/////
 struct unzip_payload;
 class CGUISkinSystem;
@@ -946,16 +985,24 @@ public:
 	bool haloNodeexist[2][12][10];
     std::vector<irr::core::vector3df> haloNode[2][12][10];
     //ktest////////
-	// bool isAnime = false, videostart = false;
-	// bool PlayVideo(const char* videoname, int step, bool loop = false);
-    // void StopVideo(bool reset = true);
+	bool isAnime = false, videostart = false;
+	bool PlayVideo(const std::string& videoName, int step, bool loop = false);
+    void StopVideo(bool reset = true);
     // cv::VideoCapture cap;
-    // irr::video::ITexture* videotexture = nullptr;
+    irr::video::ITexture* videotexture = nullptr;
 	// cv::Mat frame;
     //double totalFrames = 0;
-    // AVFormatContext* formatContext;
-    // int videoStreamIndex = -1;
-    // int audioStreamIndex = -1;
+	AudioStream audioStream;
+    AVFormatContext* formatContext;
+	AVCodecContext* videoCodecContext;
+	AVCodecContext* audioCodecContext;
+	struct SwsContext* swsContext;
+	SwrContext* swrContext;
+    int videoStreamIndex = -1;
+    int audioStreamIndex = -1;
+	irr::u8* buffer = nullptr;
+	AVFrame* frame;
+	AVPacket* packet;
     //ktest////////
 	std::vector<epro::path_string> closeup_dirs;
 	///kdiy////////
