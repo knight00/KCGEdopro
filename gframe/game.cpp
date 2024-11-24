@@ -3410,8 +3410,7 @@ bool Game::MainLoop() {
 		}
     }
     ///ktest/////////
-    avformat_network_init();
-    formatContext = avformat_alloc_context();
+	avformat_network_init();
 	/////////kdiy/////////
 	while(!restart && device->run()) {
 		DispatchQueue();
@@ -5079,87 +5078,30 @@ void Game::ClearCardInfo(int player) {
 	showingcard = 0;
 }
 ///ktest/////////
-AVCodecContext* allocateCodecContext(AVCodecParameters* codecParameters) {
-    const AVCodec* codec = avcodec_find_decoder(codecParameters->codec_id);
-    if (!codec) {
-        return nullptr;
-    }
-    AVCodecContext* codecContext = avcodec_alloc_context3(codec);
-    if (!codecContext) {
-        return nullptr;
-    }
-    if (avcodec_parameters_to_context(codecContext, codecParameters) < 0) {
-        avcodec_free_context(&codecContext);
-        return nullptr;
-    }
-    if (avcodec_open2(codecContext, codec, nullptr) < 0) {
-        avcodec_free_context(&codecContext);
-        return nullptr;
-    }
-    return codecContext;
-}
-SwrContext* setupSwrContext(AVCodecParameters* codecParameters) {
-	SwrContext* swrCtx = swr_alloc();
-	if (!swrCtx) {
-		return nullptr;
-	}
-	av_opt_set_int(swrCtx, "in_channel_layout", codecParameters->channel_layout, 0);
-	av_opt_set_int(swrCtx, "in_sample_rate", codecParameters->sample_rate, 0);
-	av_opt_set_sample_fmt(swrCtx, "in_sample_fmt", (AVSampleFormat)codecParameters->format, 0);
-	av_opt_set_int(swrCtx, "out_channel_layout", AV_CH_LAYOUT_STEREO, 0);
-	av_opt_set_int(swrCtx, "out_sample_rate", 44100, 0);
-	av_opt_set_sample_fmt(swrCtx, "out_sample_fmt", AV_SAMPLE_FMT_S16, 0);
-	if (swr_init(swrCtx) < 0) {
-		swr_free(&swrCtx);
-		return nullptr;
-	}
-	return swrCtx;
-}
 bool Game::PlayVideo(const std::string& videoname, int step, bool loop) {
-    if(!videostart) {
-		audioStream.clearSamples();
-        if (avformat_open_input(&formatContext, videoname.c_str(), nullptr, nullptr) != 0) {
+    if(newVideo != currentVideo) {
+        currentVideo = newVideo;
+        formatCtx = nullptr;
+        delete[] rgbBuffer;
+        if (avformat_open_input(&formatCtx, videoname.c_str(), nullptr, nullptr) != 0) {
             StopVideo();
             return false;
         }
-        if (avformat_find_stream_info(formatContext, nullptr) < 0) {
-			avformat_close_input(&formatContext);
-            StopVideo();
-            return false;
-        }
-        for (unsigned int i = 0; i < formatContext->nb_streams; ++i) {
-            if (formatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO && videoStreamIndex == -1) {
+        for (unsigned int i = 0; i < formatCtx->nb_streams; ++i) {
+            if (formatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO && videoStreamIndex == -1) {
                 videoStreamIndex = i;
-            } else if (formatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO && audioStreamIndex == -1) {
-                audioStreamIndex = i;
+            } else if (formatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
+                //audioStream.load(formatCtx, i);
             }
         }
-        if (videoStreamIndex == -1 || audioStreamIndex == -1) {
-			avformat_close_input(&formatContext);
+        if (videoStreamIndex >= 0) {
+            rgbBuffer = videoPlayer.setupVideo(formatCtx, videoStreamIndex);
+            //audioStream.playAudio();
+        } else {
             StopVideo();
             return false;
         }
-        // Video codec context
-		videoCodecContext = allocateCodecContext(formatContext->streams[videoStreamIndex]->codecpar);
-		audioCodecContext = allocateCodecContext(formatContext->streams[audioStreamIndex]->codecpar);
-		if (!videoCodecContext || !audioCodecContext) {
-			avformat_close_input(&formatContext);
-            StopVideo();
-            return false;
-        }
-        swsContext = sws_getContext(
-            videoCodecContext->width, videoCodecContext->height, videoCodecContext->pix_fmt,
-            videoCodecContext->width, videoCodecContext->height, AV_PIX_FMT_BGR24,
-            SWS_BILINEAR, nullptr, nullptr, nullptr);
-		// Set up SwrContext for audio resampling
-		swrContext = setupSwrContext(formatContext->streams[audioStreamIndex]->codecpar);
-		if (!swrContext) {
-			StopVideo();
-            return false;
-        }
-		delete[] buffer;
-		buffer = new irr::u8[videoCodecContext->width * videoCodecContext->height * 3];
-		audioStream.load(audioCodecContext);
+        avformat_close_input(&formatCtx); // Close the format context
         // if(!cap.isOpened()) {
         //     cap.open(videoname);
         //     if(!cap.isOpened()) {
@@ -5180,45 +5122,21 @@ bool Game::PlayVideo(const std::string& videoname, int step, bool loop) {
         //     cap.set(cv::CAP_PROP_POS_FRAMES, 0); // Ensure we start from the first frame
         // }
     }
-    videostart = true;
     if(step < 2) return true;
-	frame = av_frame_alloc();
-    packet = av_packet_alloc();
-	//audioStream.play();
-	if (av_read_frame(formatContext, packet) >= 0) {
-		if (packet->stream_index == videoStreamIndex) {
-			// Handle video frames
-			if (avcodec_send_packet(videoCodecContext, packet) == 0) {
-				while (avcodec_receive_frame(videoCodecContext, frame) == 0) {
-					uint8_t* dest[1] = { buffer };
-					int dest_linesize[1] = { 3 * videoCodecContext->width };  // RGB24 data
-					sws_scale(swsContext, frame->data, frame->linesize, 0, videoCodecContext->height, dest, dest_linesize);
-					irr::video::IImage* img = driver->createImageFromData(irr::video::ECF_R8G8B8, irr::core::dimension2d<irr::u32>(videoCodecContext->width, videoCodecContext->height), buffer, true, false);
-					if(img) {
-						if(videotexture) driver->removeTexture(videotexture);
-						videotexture = driver->addTexture("VideoFrame", img);
-						img->drop();
-					}
-                }
-            }
-		} else if (packet->stream_index == audioStreamIndex) {
-			// // Handle audio frames
-			// if (avcodec_send_packet(audioCodecContext, packet) == 0) {
-            //     while (avcodec_receive_frame(audioCodecContext, frame) == 0) {
-            //         // Resample audio frames
-            //         int dst_nb_samples = av_rescale_rnd(swr_get_delay(swrContext, audioCodecContext->sample_rate) +
-            //             frame->nb_samples, 44100, audioCodecContext->sample_rate, AV_ROUND_UP);
-            //         std::vector<uint8_t> buffer(dst_nb_samples * 2 * av_get_bytes_per_sample(AV_SAMPLE_FMT_S16));
-            //         int len = swr_convert(swrContext, (uint8_t**)&buffer[0], dst_nb_samples,
-            //             (const uint8_t**)frame->data, frame->nb_samples);
-            //         if (len > 0) {
-            //             audioStream.addSamples(reinterpret_cast<std::int16_t*>(&buffer[0]), len * 2);
-            //         }
-            //     }
-            // }
-        }
-        av_packet_unref(packet);
-	}
+    irr::core::dimension2d<irr::u32> scale = videoPlayer.playVideo(formatCtx, rgbBuffer);
+    if (scale == irr::core::dimension2d<irr::u32>(0, 0)) {
+        // Handle end of video or no new frames
+        //audioStream.stopAudio(); // Stop audio stream if no frames left
+        currentVideo.clear(); // Reset current video to indicate no video is playing
+        StopVideo();
+        return false;
+    } else {
+		irr::video::IImage* img = driver->createImageFromData(irr::video::ECF_R8G8B8, scale, rgbBuffer, true, false);
+        if(videotexture) driver->removeTexture(videotexture);
+        videotexture = driver->addTexture("VideoFrame", img);
+        img->drop();
+        delete[] rgbBuffer;
+    }
     // double currentFrame = cap.get(cv::CAP_PROP_POS_FRAMES);
     // If the current frame is close to the total frame count, reset to the beginning
     // if(loop && currentFrame >= totalFrames - 1)
@@ -5241,30 +5159,7 @@ bool Game::PlayVideo(const std::string& videoname, int step, bool loop) {
 }
 void Game::StopVideo(bool reset) {
     // if(cap.isOpened()) cap.release();
-	audioStream.clearSamples();
-	av_frame_free(&frame);
-    av_packet_free(&packet);
-	delete[] buffer;
-	if (swsContext) {
-        sws_freeContext(swsContext);
-        swsContext = nullptr;
-    }
-    if (swrContext) {
-        swr_free(&swrContext);
-        swrContext = nullptr;
-    }
-    if (videoCodecContext) {
-        avcodec_free_context(&videoCodecContext);
-        videoCodecContext = nullptr;
-    }
-    if (audioCodecContext) {
-        avcodec_free_context(&audioCodecContext);
-        audioCodecContext = nullptr;
-    }
-    if (formatContext) {
-        avformat_close_input(&formatContext);
-        formatContext = nullptr;
-    }
+	avformat_close_input(&formatCtx);
     if(videotexture) {
         driver->removeTexture(videotexture);
         videotexture = nullptr;
