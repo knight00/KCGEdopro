@@ -4474,10 +4474,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         }
         pcard->is_attacked = false;
 		Play(SoundManager::SFX::POS_CHANGE);
-        /////ktest//////
-		mainGame->newVideo = "./movies/s10000000.mp4";
-		mainGame->isAnime = true;
-        /////ktest//////
         /////kdiy//////
 		if((pp & POS_FACEUP) && (cp & POS_FACEDOWN)) {
 			pcard->counters.clear();
@@ -4571,6 +4567,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		/*CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);*/		
         pcard->is_orica = true;
 		pcard->is_sanct = false;
+        /////ktest//////
+		mainGame->newVideo = "./movies/s" + std::to_string(code) + ".mp4";
+		mainGame->isAnime = true;
 		/////kdiy//////
         if(pcard->type & TYPE_TOKEN)
 			Play(SoundManager::SFX::TOKEN);

@@ -33,176 +33,6 @@ extern "C" {
 #include <libavutil/opt.h>
 }
 #include <sfAudio/Audio.hpp>
-class AudioStream : public sf::SoundStream {
-public:
-    AudioStream() : codecCtx(nullptr), formatCtx(nullptr), streamIndex(-1) {
-        audioFrame = av_frame_alloc();
-        packet = av_packet_alloc();
-        swrCtx = swr_alloc();
-    }
-
-    ~AudioStream() {
-        av_frame_free(&audioFrame);
-        av_packet_free(&packet);
-        swr_free(&swrCtx);
-    }
-
-    bool load(AVFormatContext* fmtCtx, int streamIdx) {
-        formatCtx = fmtCtx;
-        streamIndex = streamIdx;
-        // Get the codec context for the audio stream
-        AVCodecParameters* codecParams = formatCtx->streams[streamIndex]->codecpar;
-        const AVCodec* codec = avcodec_find_decoder(codecParams->codec_id);
-        if (!codec) {
-            return false;
-        }
-        codecCtx = avcodec_alloc_context3(codec);
-        if (!codecCtx) {
-            return false;
-        }
-        avcodec_parameters_to_context(codecCtx, codecParams);
-        if (avcodec_open2(codecCtx, codec, nullptr) < 0) {
-            return false;
-        }
-        // Set up the audio conversion context
-        av_opt_set_int(swrCtx, "in_channel_layout", codecCtx->channel_layout, 0);
-        av_opt_set_int(swrCtx, "in_sample_rate", codecCtx->sample_rate, 0);
-        av_opt_set_sample_fmt(swrCtx, "in_sample_fmt", codecCtx->sample_fmt, 0);
-        av_opt_set_int(swrCtx, "out_channel_layout", codecCtx->channel_layout, 0);
-        av_opt_set_int(swrCtx, "out_sample_rate", codecCtx->sample_rate, 0);
-        av_opt_set_sample_fmt(swrCtx, "out_sample_fmt", AV_SAMPLE_FMT_S16, 0);
-        swr_init(swrCtx);
-        initialize(2, codecCtx->sample_rate); // Initialize sound stream
-        return true;
-    }
-
-    void playAudio() {
-        // Start playing audio stream if not already playing
-        if (getStatus() != sf::SoundSource::Playing) {
-            loadAudio(); // Load audio samples before playback
-            play();
-        }
-    }
-
-    void loadAudio() {
-        // Load audio frames into the buffer
-        while (audioBuffer.size() < 44100) { // Load up to 1 second of audio
-            if (av_read_frame(formatCtx, packet) >= 0) {
-                if (packet->stream_index == streamIndex) {
-                    if (avcodec_send_packet(codecCtx, packet) >= 0) {
-                        while (avcodec_receive_frame(codecCtx, audioFrame) >= 0) {
-                            int dataSize = av_samples_get_buffer_size(nullptr, audioFrame->channels, audioFrame->nb_samples, AV_SAMPLE_FMT_S16, 1);
-                            std::vector<std::int16_t> tempBuffer(dataSize / sizeof(std::int16_t));
-                            uint8_t* outSamplesData = reinterpret_cast<uint8_t*>(tempBuffer.data());
-                            swr_convert(swrCtx, &outSamplesData, dataSize / sizeof(std::int16_t), (const uint8_t**)audioFrame->data, audioFrame->nb_samples);
-                            
-                            audioBuffer.insert(audioBuffer.end(), tempBuffer.begin(), tempBuffer.end());
-                        }
-                    }
-                }
-                av_packet_unref(packet);
-            } else {
-                break; // Stop if no more packets
-            }
-        }
-    }
-
-    void stopAudio() {
-        stop(); // Stop the audio stream
-        audioBuffer.clear(); // Clear audio buffer
-    }
-
-private:
-    AVCodecContext* codecCtx;
-    AVFormatContext* formatCtx;
-    int streamIndex;
-    AVFrame* audioFrame;
-    AVPacket* packet;
-    SwrContext* swrCtx;
-    std::vector<std::int16_t> audioBuffer;
-
-    bool onGetData(Chunk& data) override {
-        if (audioBuffer.empty()) {
-            return false; // No samples to provide
-        }
-        data.samples = audioBuffer.data();
-        data.sampleCount = audioBuffer.size();
-        audioBuffer.clear(); // Clear samples after providing them
-        return true;
-    }
-
-    void onSeek(sf::Time timeOffset) override {
-        // Implement seek functionality if necessary
-    }
-};
-
-class VideoPlayer {
-public:
-    VideoPlayer() : videoCodecCtx(nullptr), frame(av_frame_alloc()), packet(av_packet_alloc()), swsCtx(nullptr) {}
-
-    ~VideoPlayer() {
-        av_frame_free(&frame);
-        av_packet_free(&packet);
-        sws_freeContext(swsCtx);
-        avcodec_free_context(&videoCodecCtx);
-    }
-
-    irr::u8* setupVideo(AVFormatContext* formatCtx, int videoStreamIndex) {
-        // Initialize video codec context
-        for (unsigned int i = 0; i < formatCtx->nb_streams; ++i) {
-            if (i == videoStreamIndex) {
-                const AVCodec* codec = avcodec_find_decoder(formatCtx->streams[i]->codecpar->codec_id);
-                if (!codec) return nullptr;
-                videoCodecCtx = avcodec_alloc_context3(codec);
-                if (!codecContext) return nullptr;
-                if (avcodec_parameters_to_context(videoCodecCtx, formatCtx->streams[i]->codecpar) < 0) {
-                    avcodec_free_context(&videoCodecCtx);
-                    return nullptr;
-                }
-                if (avcodec_open2(videoCodecCtx, codec, nullptr) < 0) {
-                    avcodec_free_context(&videoCodecCtx);
-                    return nullptr;
-                }
-                swsCtx = sws_getContext(videoCodecCtx->width, videoCodecCtx->height, videoCodecCtx->pix_fmt,
-                                         videoCodecCtx->width, videoCodecCtx->height, AV_PIX_FMT_BGR24,
-                                         SWS_BILINEAR, nullptr, nullptr, nullptr);
-                irr::u8* rgbBuffer = new irr::u8[videoCodecCtx->width * videoCodecCtx->height * 3]; // Prepare buffer for RGB
-                return rgbBuffer;
-            }
-        }
-        return nullptr;
-    }
-
-    irr::core::dimension2d<irr::u32> playVideo(AVFormatContext* formatCtx, irr::u8* rgbBuffer) {
-        irr::core::dimension2d<irr::u32> scale = irr::core::dimension2d<irr::u32>(0, 0);
-        // Read video frame and return false if no more frames
-        if (av_read_frame(formatCtx, packet) >= 0) {
-            if (packet->stream_index == videoStreamIndex) {
-                if (avcodec_send_packet(videoCodecCtx, packet) >= 0) {
-                    while (avcodec_receive_frame(videoCodecCtx, frame) >= 0) {
-                        // Convert frame to RGB
-                        uint8_t* dest[1] = { rgbBuffer };
-                        int dest_linesize[1] = { 3 * videoCodecCtx->width };
-                        sws_scale(swsCtx, frame->data, frame->linesize, 0, videoCodecCtx->height, dest, dest_linesize);
-                        scale = irr::core::dimension2d<irr::u32>(videoCodecCtx->width, videoCodecCtx->height);
-                    }
-                }
-            }
-            av_packet_unref(packet);
-        }
-        return scale; // No more frames or read error
-    }
-
-private:
-    AVCodecContext* videoCodecCtx;
-    AVFormatContext* formatCtx;
-    AVFrame* frame;
-    AVPacket* packet;
-    SwsContext* swsCtx;
-    int videoStreamIndex;
-};
-extern AudioStream audioStream;
-extern VideoPlayer videoPlayer;
 /////kdiy/////
 struct unzip_payload;
 class CGUISkinSystem;
@@ -1117,20 +947,25 @@ public:
 	bool haloNodeexist[2][12][10];
     std::vector<irr::core::vector3df> haloNode[2][12][10];
     //ktest////////
-    AudioStream audioStream;
-    VideoPlayer videoPlayer;
     std::string currentVideo;
     std::string newVideo;
-	bool isAnime = false, videostart = false;
-    irr::u8* rgbBuffer;
-	bool PlayVideo(const std::string& videoName, int step, bool loop = false);
-    void StopVideo(bool reset = true);
+	bool videostart = false;
+	bool isAnime = false;
+    sf::Sound sound;
+	sf::SoundBuffer soundBuffer;
     // cv::VideoCapture cap;
     irr::video::ITexture* videotexture = nullptr;
 	// cv::Mat frame;
     //double totalFrames = 0;
     AVFormatContext* formatCtx = nullptr;
-    int videoStreamIndex = -1;
+    AVCodecContext* videoCodecCtx = nullptr;
+    AVCodecContext* audioCodecCtx = nullptr;
+	AVPacket packet;
+	AVFrame* videoFrame;
+    AVFrame* audioFrame;
+    int videoStreamIndex = -1, audioStreamIndex = -1;
+	bool PlayVideo(std::string videoName, bool loop = false);
+    void StopVideo(bool close = false, bool reset = true);
     //ktest////////
 	std::vector<epro::path_string> closeup_dirs;
 	///kdiy////////

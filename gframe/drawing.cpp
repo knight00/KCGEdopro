@@ -94,8 +94,8 @@ void Game::DrawBackGround() {
 	//draw field
     /////ktest//////
 	if(isAnime) {
-        if(PlayVideo("./movies/s10000000.mp4", 2))
-            DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
+        if(PlayVideo(newVideo))
+            if(videotexture) DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
     } else {
     /////kdiy//////
     if(!gGameConfig->chkField && DrawFieldSpell())
@@ -1730,14 +1730,17 @@ void Game::DrawBackImage(irr::video::ITexture* texture, bool resized) {
 	if(!texture)
 		return;
     /////ktest//////
-    // if(texture == imageManager.tBackGround_menu) {
-    //     prevbg = texture;
-    //     if(PlayVideo("./movies/s6218704.mp4", 2, true))
-    //         driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, frame.cols, frame.rows));
-    //     return;
-    // } else {
-    //     if(!isAnime && videostart) StopVideo();
-    // }
+    if(texture == imageManager.tBackGround_menu) {
+        prevbg = texture;
+		newVideo = "./movies/s10000000.mp4";
+        if(PlayVideo(newVideo, true))
+            if(videotexture)
+			    driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, videoFrame->width, videoFrame->height));
+			    //driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, frame.cols, frame.rows));
+        return;
+    } else {
+        if(!isAnime && videostart) StopVideo();
+    }
     /////ktest//////
 	if(texture != prevbg) {
 		prevbg = texture;

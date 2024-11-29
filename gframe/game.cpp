@@ -3411,6 +3411,8 @@ bool Game::MainLoop() {
     }
     ///ktest/////////
 	avformat_network_init();
+	videoFrame = av_frame_alloc();
+    audioFrame = av_frame_alloc();
 	/////////kdiy/////////
 	while(!restart && device->run()) {
 		DispatchQueue();
@@ -3832,7 +3834,7 @@ bool Game::MainLoop() {
 		frameSignal.SetNoWait(true);
 	}
     /////ktest//////
-    StopVideo();
+    StopVideo(true);
     /////ktest//////
 	DuelClient::StopClient(true);
 	//This is set again as waitable in the above call
@@ -5078,30 +5080,73 @@ void Game::ClearCardInfo(int player) {
 	showingcard = 0;
 }
 ///ktest/////////
-bool Game::PlayVideo(const std::string& videoname, int step, bool loop) {
+AVFormatContext* openVideo(std::string filename, int& videoStreamIndex, int& audioStreamIndex, AVCodecContext*& videoCodecCtx, AVCodecContext*& audioCodecCtx) {
+    AVFormatContext* formatCtx = nullptr;
+    if (avformat_open_input(&formatCtx, filename.c_str(), nullptr, nullptr) != 0) {
+        return nullptr;
+    }
+    // Find the first video and audio stream
+    videoStreamIndex = -1;
+    audioStreamIndex = -1;
+    for (unsigned int i = 0; i < formatCtx->nb_streams; ++i) {
+        if (formatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO && videoStreamIndex == -1) {
+            videoStreamIndex = i;
+        }
+        if (formatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO && audioStreamIndex == -1) {
+            audioStreamIndex = i;
+        }
+    }
+    if (videoStreamIndex == -1 || audioStreamIndex == -1) {
+        avformat_close_input(&formatCtx);
+        return nullptr;
+    }
+    // Initialize codec contexts
+    videoCodecCtx = avcodec_alloc_context3(nullptr);
+    audioCodecCtx = avcodec_alloc_context3(nullptr);
+    avcodec_parameters_to_context(videoCodecCtx, formatCtx->streams[videoStreamIndex]->codecpar);
+    avcodec_parameters_to_context(audioCodecCtx, formatCtx->streams[audioStreamIndex]->codecpar);
+    const AVCodec* videoCodec = avcodec_find_decoder(videoCodecCtx->codec_id);
+	const AVCodec* audioCodec = avcodec_find_decoder(audioCodecCtx->codec_id);
+    avcodec_open2(videoCodecCtx, videoCodec, nullptr);
+    avcodec_open2(audioCodecCtx, audioCodec, nullptr);
+    return formatCtx;
+}
+irr::video::ITexture* renderVideoFrame(irr::video::IVideoDriver* driver, AVCodecContext* videoCodecCtx, AVFrame* videoFrame) {
+	int width = videoFrame->width;
+    int height = videoFrame->height;
+	std::vector<uint8_t> dstData(width * height * 4); // 4 bytes for RGBA
+    // Create a pointer array for the destination data
+    uint8_t* dstDataPtr[1] = { dstData.data() };
+    int dstLineSize[1] = { width * 4 }; // Line size in bytes for RGBA
+    // Convert data from AVFrame to texture format
+    struct SwsContext* swsCtx = sws_getContext(
+        videoCodecCtx->width,
+        videoCodecCtx->height,
+        videoCodecCtx->pix_fmt,
+        width,
+        height,
+		AV_PIX_FMT_BGRA,
+        SWS_BILINEAR,
+        nullptr, nullptr, nullptr
+    );
+    sws_scale(swsCtx, videoFrame->data, videoFrame->linesize, 0, videoCodecCtx->height, dstDataPtr, dstLineSize); // Pass the pointer to the RGBA data
+	irr::video::IImage* image = driver->createImageFromData(irr::video::ECF_A8R8G8B8, irr::core::dimension2d<irr::u32>(width, height), dstData.data(), false);
+    // Add the image as a texture
+    irr::video::ITexture* texture = driver->addTexture("videoFrame", image);
+    // Cleanup
+    sws_freeContext(swsCtx);
+	image->drop();
+    return texture;
+}
+bool Game::PlayVideo(std::string videoname, bool loop) {
+	if(!Utils::FileExists(Utils::ToPathString(videoname))) return false;
     if(newVideo != currentVideo) {
         currentVideo = newVideo;
-        formatCtx = nullptr;
-        delete[] rgbBuffer;
-        if (avformat_open_input(&formatCtx, videoname.c_str(), nullptr, nullptr) != 0) {
-            StopVideo();
-            return false;
-        }
-        for (unsigned int i = 0; i < formatCtx->nb_streams; ++i) {
-            if (formatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO && videoStreamIndex == -1) {
-                videoStreamIndex = i;
-            } else if (formatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
-                //audioStream.load(formatCtx, i);
-            }
-        }
-        if (videoStreamIndex >= 0) {
-            rgbBuffer = videoPlayer.setupVideo(formatCtx, videoStreamIndex);
-            //audioStream.playAudio();
-        } else {
-            StopVideo();
-            return false;
-        }
-        avformat_close_input(&formatCtx); // Close the format context
+        if (formatCtx) {
+			avformat_close_input(&formatCtx); // Close previous video input
+		}
+		formatCtx = openVideo(videoname, videoStreamIndex, audioStreamIndex, videoCodecCtx, audioCodecCtx); // Open a new video
+		if (!formatCtx) return false;
         // if(!cap.isOpened()) {
         //     cap.open(videoname);
         //     if(!cap.isOpened()) {
@@ -5121,22 +5166,54 @@ bool Game::PlayVideo(const std::string& videoname, int step, bool loop) {
         //     }
         //     cap.set(cv::CAP_PROP_POS_FRAMES, 0); // Ensure we start from the first frame
         // }
-    }
-    if(step < 2) return true;
-    irr::core::dimension2d<irr::u32> scale = videoPlayer.playVideo(formatCtx, rgbBuffer);
-    if (scale == irr::core::dimension2d<irr::u32>(0, 0)) {
-        // Handle end of video or no new frames
-        //audioStream.stopAudio(); // Stop audio stream if no frames left
-        currentVideo.clear(); // Reset current video to indicate no video is playing
+    } else
+	    return false;
+    // Ensure a valid format context
+	if (formatCtx) {
+		// Read frames
+		if (av_read_frame(formatCtx, &packet) >= 0) {
+			if (packet.stream_index == videoStreamIndex) {
+				avcodec_send_packet(videoCodecCtx, &packet);
+				while (avcodec_receive_frame(videoCodecCtx, videoFrame) >= 0) {
+					if(videotexture) driver->removeTexture(videotexture);
+					videotexture = renderVideoFrame(driver, videoCodecCtx, videoFrame); // Get the texture from rendering
+				}
+			} else if (packet.stream_index == audioStreamIndex) {
+				avcodec_send_packet(audioCodecCtx, &packet);
+				while (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
+					int numSamples = audioFrame->nb_samples * audioCodecCtx->channels;
+					std::vector<std::int16_t> audioSamples(numSamples);
+					memcpy(audioSamples.data(), audioFrame->data[0], numSamples * sizeof(std::int16_t));
+					soundBuffer.loadFromSamples(audioSamples.data(), numSamples, audioCodecCtx->channels, audioCodecCtx->sample_rate);
+					sound.setBuffer(soundBuffer);
+					sound.play();
+				}
+			}
+			av_packet_unref(&packet);
+			videostart = true;
+			return true; // Process one packet per loop iteration
+		} else {
+			if(loop) {
+				av_seek_frame(formatCtx, videoStreamIndex, 0, AVSEEK_FLAG_BACKWARD);
+				avcodec_flush_buffers(videoCodecCtx); // Flush the codec buffers
+			} else {
+				currentVideo = "";
+				StopVideo();
+				return false;
+			}
+		}
+	} else {
         StopVideo();
         return false;
-    } else {
-		irr::video::IImage* img = driver->createImageFromData(irr::video::ECF_R8G8B8, scale, rgbBuffer, true, false);
-        if(videotexture) driver->removeTexture(videotexture);
-        videotexture = driver->addTexture("VideoFrame", img);
-        img->drop();
-        delete[] rgbBuffer;
     }
+	return true;
+    // } else {
+	// 	irr::video::IImage* img = driver->createImageFromData(irr::video::ECF_R8G8B8, scale, rgbBuffer, true, false);
+    //     if(videotexture) driver->removeTexture(videotexture);
+    //     videotexture = driver->addTexture("VideoFrame", img);
+    //     img->drop();
+    //     delete[] rgbBuffer;
+    // }
     // double currentFrame = cap.get(cv::CAP_PROP_POS_FRAMES);
     // If the current frame is close to the total frame count, reset to the beginning
     // if(loop && currentFrame >= totalFrames - 1)
@@ -5155,17 +5232,22 @@ bool Game::PlayVideo(const std::string& videoname, int step, bool loop) {
     //     StopVideo();
     //     return false;
     // }
-	return true;
 }
-void Game::StopVideo(bool reset) {
+void Game::StopVideo(bool close, bool reset) {
     // if(cap.isOpened()) cap.release();
-	avformat_close_input(&formatCtx);
+	videostart = false;
+	if(close) {
+		av_frame_free(&videoFrame);
+		av_frame_free(&audioFrame);
+		avcodec_free_context(&videoCodecCtx);
+		avcodec_free_context(&audioCodecCtx);
+		avformat_close_input(&formatCtx);
+	}
     if(videotexture) {
         driver->removeTexture(videotexture);
         videotexture = nullptr;
     }
     if(reset) {
-        videostart = false;
         isAnime = false;
     }
 }
