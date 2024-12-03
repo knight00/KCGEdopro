@@ -5080,7 +5080,7 @@ void Game::ClearCardInfo(int player) {
 	showingcard = 0;
 }
 ///ktest/////////
-AVFormatContext* openVideo(std::string filename, int& videoStreamIndex, int& audioStreamIndex, AVCodecContext*& videoCodecCtx, AVCodecContext*& audioCodecCtx) {
+AVFormatContext* openVideo(std::string filename, int& videoStreamIndex, int& audioStreamIndex, AVCodecContext*& videoCodecCtx, AVCodecContext*& audioCodecCtx, double frameDuration) {
     AVFormatContext* formatCtx = nullptr;
     if (avformat_open_input(&formatCtx, filename.c_str(), nullptr, nullptr) != 0) {
         return nullptr;
@@ -5109,6 +5109,14 @@ AVFormatContext* openVideo(std::string filename, int& videoStreamIndex, int& aud
 	const AVCodec* audioCodec = avcodec_find_decoder(audioCodecCtx->codec_id);
     avcodec_open2(videoCodecCtx, videoCodec, nullptr);
     avcodec_open2(audioCodecCtx, audioCodec, nullptr);
+	AVStream* videoStream = formatCtx->streams[videoStreamIndex];
+    // Use avg_frame_rate for a general frame rate
+    AVRational avgFrameRate = videoStream->avg_frame_rate;
+    // If avg_frame_rate is 0, use r_frame_rate as a fallback
+    if (avgFrameRate.num == 0) {
+        avgFrameRate = videoStream->r_frame_rate;
+    }
+	frameDuration = (double)avgFrameRate.den / (double)avgFrameRate.num;
     return formatCtx;
 }
 irr::video::ITexture* renderVideoFrame(irr::video::IVideoDriver* driver, AVCodecContext* videoCodecCtx, AVFrame* videoFrame) {
@@ -5145,7 +5153,7 @@ bool Game::PlayVideo(std::string videoname, bool loop) {
         if (formatCtx) {
 			avformat_close_input(&formatCtx); // Close previous video input
 		}
-		formatCtx = openVideo(videoname, videoStreamIndex, audioStreamIndex, videoCodecCtx, audioCodecCtx); // Open a new video
+		formatCtx = openVideo(videoname, videoStreamIndex, audioStreamIndex, videoCodecCtx, audioCodecCtx, frameDuration); // Open a new video
 		if (!formatCtx) return false;
         // if(!cap.isOpened()) {
         //     cap.open(videoname);
@@ -5166,29 +5174,67 @@ bool Game::PlayVideo(std::string videoname, bool loop) {
         //     }
         //     cap.set(cv::CAP_PROP_POS_FRAMES, 0); // Ensure we start from the first frame
         // }
-    } else
-	    return false;
+    }
     // Ensure a valid format context
 	if (formatCtx) {
-		// Read frames
 		if (av_read_frame(formatCtx, &packet) >= 0) {
-			if (packet.stream_index == videoStreamIndex) {
+			if (packet.stream_index == audioStreamIndex) {
+				avcodec_send_packet(audioCodecCtx, &packet);
+				while (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
+					if (audioFrame && audioFrame->data[0]) {
+						int numSamples = audioFrame->nb_samples; // Number of samples in the frame
+						if (numSamples > 0) { // Ensure there are samples to process
+						    std::vector<std::int16_t> audioSamples(numSamples * audioCodecCtx->channels);
+							// Handle different audio formats
+							if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
+								// Floating-point format
+								for (int i = 0; i < numSamples; i++) {
+									for (int ch = 0; ch < audioCodecCtx->channels; ch++) {
+										float* src = (float*)audioFrame->data[ch]; // Pointer to the channel data
+										audioSamples[i * audioCodecCtx->channels + ch] = static_cast<std::int16_t>(src[i] * 32767); // Convert from float to Int16
+									}
+								}
+							} else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
+								// Signed 16-bit format
+								for (int i = 0; i < numSamples; i++) {
+									for (int ch = 0; ch < audioCodecCtx->channels; ch++) {
+										int16_t* src = (int16_t*)audioFrame->data[ch]; // Pointer to the channel data
+										audioSamples[i * audioCodecCtx->channels + ch] = src[i]; // Copy directly
+									}
+								}
+							} else {
+								// Handle other formats or log an error
+								continue; // Skip this frame if format is unsupported
+							}
+							// Load audio samples into the sound buffer
+							soundBuffer.loadFromSamples(audioSamples.data(), audioSamples.size(), audioCodecCtx->channels, audioCodecCtx->sample_rate);
+							sound.setBuffer(soundBuffer);
+							sound.play(); // Start playback of audio
+							audioBufferSamples += numSamples * audioCodecCtx->channels; // Update the count of audio samples processed
+						}
+					}
+				}
+            } else if (packet.stream_index == videoStreamIndex) {
 				avcodec_send_packet(videoCodecCtx, &packet);
 				while (avcodec_receive_frame(videoCodecCtx, videoFrame) >= 0) {
 					if(videotexture) driver->removeTexture(videotexture);
-					videotexture = renderVideoFrame(driver, videoCodecCtx, videoFrame); // Get the texture from rendering
-				}
-			} else if (packet.stream_index == audioStreamIndex) {
-				avcodec_send_packet(audioCodecCtx, &packet);
-				while (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
-					int numSamples = audioFrame->nb_samples * audioCodecCtx->channels;
-					std::vector<std::int16_t> audioSamples(numSamples);
-					memcpy(audioSamples.data(), audioFrame->data[0], numSamples * sizeof(std::int16_t));
-					soundBuffer.loadFromSamples(audioSamples.data(), numSamples, audioCodecCtx->channels, audioCodecCtx->sample_rate);
-					sound.setBuffer(soundBuffer);
-					sound.play();
-				}
-			}
+					videotexture = renderVideoFrame(driver, videoCodecCtx, videoFrame); // Render video frame
+					// Check and sync audio to video
+					if (sound.getStatus() == sf::Sound::Playing) {
+						currentTime += frameDuration; // Update current time based on frame rate
+						// // Sync audio playback with video rendering
+						// if (currentTime < audioBufferSamples / audioCodecCtx->sample_rate) {
+						// 	sound.pause(); // Pause sound if ahead
+						// } else if (currentTime >= audioBufferSamples / audioCodecCtx->sample_rate) {
+						// 	sound.play(); // Play sound if behind
+						// 	// Ensure the audio starts in sync
+						// 	if (!sound.getStatus() == sf::Sound::Playing) {
+						// 		sound.play();
+						// 	}
+						// }
+					}
+                }
+            }
 			av_packet_unref(&packet);
 			videostart = true;
 			return true; // Process one packet per loop iteration

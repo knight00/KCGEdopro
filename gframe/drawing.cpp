@@ -1730,17 +1730,17 @@ void Game::DrawBackImage(irr::video::ITexture* texture, bool resized) {
 	if(!texture)
 		return;
     /////ktest//////
-    if(texture == imageManager.tBackGround_menu) {
-        prevbg = texture;
-		newVideo = "./movies/s10000000.mp4";
-        if(PlayVideo(newVideo, true))
-            if(videotexture)
-			    driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, videoFrame->width, videoFrame->height));
-			    //driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, frame.cols, frame.rows));
-        return;
-    } else {
-        if(!isAnime && videostart) StopVideo();
-    }
+    // if(texture == imageManager.tBackGround_menu) {
+    //     prevbg = texture;
+	// 	newVideo = "./movies/s10000000.mp4";
+    //     if(PlayVideo(newVideo, true))
+    //         if(videotexture)
+	// 		    driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, videoFrame->width, videoFrame->height));
+	// 		    //driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, frame.cols, frame.rows));
+    //     return;
+    // } else {
+    //     if(!isAnime && videostart) StopVideo();
+    // }
     /////ktest//////
 	if(texture != prevbg) {
 		prevbg = texture;
