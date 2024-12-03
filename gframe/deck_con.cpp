@@ -1561,7 +1561,17 @@ bool DeckBuilder::CheckCardProperties(const CardDataM& data) {
 static const auto& CardSetcodes(const CardDataC& data) {
 	if(data.alias) {
 		if(auto _data = gDataManager->GetCardData(data.alias); _data)
-			return _data->setcodes;
+		    ///kdiy/////////
+			//return _data->setcodes;
+			{
+				if(auto _data2 = gDataManager->GetCardData(data.code); _data2) {
+				    std::vector<uint16_t> vx;
+					vx.insert(vx.end(), _data->setcodes.begin(), _data->setcodes.end());
+					vx.insert(vx.end(), _data2->setcodes.begin(), _data2->setcodes.end());
+					return vx;
+				}
+			}
+			///kdiy/////////
 	}
 	return data.setcodes;
 }
