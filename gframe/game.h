@@ -964,8 +964,11 @@ public:
 	AVFrame* videoFrame;
     AVFrame* audioFrame;
     int videoStreamIndex = -1, audioStreamIndex = -1;
-	double frameDuration;
-	double currentTime = 0.0; // Current playback time in seconds
+	double timeAccumulate = 0.0; // Accumulate time to ensure smooth frame skipping
+	int framesToProcess;
+	double videoFrameDuration, vfps;
+	double currentTime = 0.0;
+	std::vector<std::int16_t> audioBuffer; // Vector for audio samples
     int audioBufferSamples = 0;
 	bool PlayVideo(std::string videoName, bool loop = false);
     void StopVideo(bool close = false, bool reset = true);
