@@ -835,7 +835,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
                     mainGame->ebCharacter_replay[i]->setVisible(false);
                 }
 #ifndef VIP
-                Utils::SystemOpen(EPRO_TEXT("https://afdian.com/a/Edokcg/"), Utils::OPEN_URL);
+                Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/af7099f4b5fa11ef98ba52540025c377/"), Utils::OPEN_URL);
 				break;
 #endif
 				mainGame->PopupElement(mainGame->wCharacterReplay);

@@ -94,8 +94,11 @@ void Game::DrawBackGround() {
 	//draw field
     /////ktest//////
 	if(isAnime) {
-        if(PlayVideo(newVideo))
-            if(videotexture) DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
+		if(videostart || openVideo(newVideo)) {
+			if(PlayVideo(newVideo))
+                if(videotexture) DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
+			PlayVideoAudio();
+		}
     } else {
     /////kdiy//////
     if(!gGameConfig->chkField && DrawFieldSpell())
