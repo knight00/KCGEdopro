@@ -949,7 +949,7 @@ public:
     //ktest////////
     std::string currentVideo;
     std::string newVideo;
-	bool videostart = false, videoend = false;
+	bool videostart = false;
 	bool isAnime = false;
     sf::Sound sound;
 	sf::SoundBuffer soundBuffer;
@@ -964,16 +964,11 @@ public:
 	AVFrame* videoFrame;
     AVFrame* audioFrame;
     int videoStreamIndex = -1, audioStreamIndex = -1;
-	double timeAccumulate = 0.0; // Accumulate time to ensure smooth frame skipping
-	int framesToProcess;
-	int audioPacketProcessed = 0;
-	double videoFrameDuration;
-	double currentTime = 0.0;
-	std::vector<std::int16_t> audioBuffer; // Vector for audio samples
-    int audioBufferSamples = 0;
+	double timeAccumulated = 0.0, lastAudioProcessedTime = 0.0; // Accumulate time to ensure smooth frame skipping
+	double videoFrameDuration = 1.0, audioFrameDuration = 1.0;
+	std::vector<int16_t> audioBuffer;
 	bool openVideo(std::string videoName);
-	bool PlayVideo(std::string videoName, bool loop = false);
-	void PlayVideoAudio(bool loop = false);
+	bool PlayVideo(bool loop = false);
     void StopVideo(bool close = false, bool reset = true);
     //ktest////////
 	std::vector<epro::path_string> closeup_dirs;

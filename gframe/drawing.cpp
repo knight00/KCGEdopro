@@ -93,12 +93,9 @@ void Game::DrawBackGround() {
 
 	//draw field
     /////ktest//////
-	if(isAnime) {
-		if(videostart || openVideo(newVideo)) {
-			if(PlayVideo(newVideo))
-                if(videotexture) DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
-			PlayVideoAudio();
-		}
+	if(isAnime && openVideo(newVideo)) {
+		if(PlayVideo())
+		    if(videotexture) DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
     } else {
     /////kdiy//////
     if(!gGameConfig->chkField && DrawFieldSpell())
@@ -396,6 +393,10 @@ void Game::DrawCards() {
 	}
 }
 void Game::DrawCard(ClientCard* pcard) {
+	///ktest////////
+	if(videostart && !pcard->is_anime) return;
+	if(!videostart) pcard->is_anime = false;
+	///ktest////////
 	if (pcard->aniFrame > 0) {
 		uint32_t movetime = std::min<uint32_t>(delta_time, pcard->aniFrame);
 		if (pcard->is_moving) {
@@ -1061,6 +1062,9 @@ Draws the stats of a card based on its relative position
 //void Game::DrawStatus(ClientCard* pcard) {
 void Game::DrawStatus(ClientCard* pcard, bool attackonly) {
 //kidy///////
+	///ktest////////
+	if(videostart) return;
+	///ktest////////
 	auto getcoords = [collisionmanager=device->getSceneManager()->getSceneCollisionManager()](const irr::core::vector3df& pos3d) {
 		return collisionmanager->getScreenCoordinatesFrom3DPosition(pos3d);
 	};
@@ -1328,6 +1332,9 @@ void Game::DrawStatus(ClientCard* pcard, bool attackonly) {
 Draws the pendulum scale value of a card in the pendulum zone based on its relative position
 */
 void Game::DrawPendScale(ClientCard* pcard) {
+	///ktest////////
+	if(videostart) return;
+	///ktest////////
 	int swap = (pcard->sequence > 1 && pcard->sequence != 6) ? 1 : 0;
 	float x0, y0, reverse = (pcard->controler == 0) ? 1.0f : -1.0f;
 	std::wstring scale;

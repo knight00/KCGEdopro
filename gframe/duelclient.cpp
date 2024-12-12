@@ -4570,6 +4570,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         /////ktest//////
 		mainGame->newVideo = "./movies/s" + std::to_string(code) + ".mp4";
 		mainGame->isAnime = true;
+        pcard->is_anime = true;
 		/////kdiy//////
         if(pcard->type & TYPE_TOKEN)
 			Play(SoundManager::SFX::TOKEN);
