@@ -5179,6 +5179,8 @@ irr::video::ITexture* renderVideoFrame(irr::video::IVideoDriver* driver, AVCodec
 bool Game::PlayVideo(bool loop) {
     // Ensure a valid format context
 	if (formatCtx) {
+		if(videostart) timeAccumulated += static_cast<double>(delta_time) / 1000.0;
+		else timeAccumulated = videoFrameDuration;
 		if (av_read_frame(formatCtx, &packet) < 0) {
 			if(loop) {
 				av_seek_frame(formatCtx, videoStreamIndex, 0, AVSEEK_FLAG_BACKWARD);
@@ -5190,25 +5192,22 @@ bool Game::PlayVideo(bool loop) {
 				return false;
 			}
 		}
-		if(videostart) timeAccumulated += delta_time;
-		else timeAccumulated = videoFrameDuration;
 		if (packet.stream_index == videoStreamIndex) {
-			if (timeAccumulated >= videoFrameDuration) {
+			while (timeAccumulated >= videoFrameDuration) {
 				if (avcodec_send_packet(videoCodecCtx, &packet) < 0) {
 					av_packet_unref(&packet);
 					StopVideo();
 					return false;
 				}
 				if (avcodec_receive_frame(videoCodecCtx, videoFrame) >= 0) {
-					if(videotexture) driver->removeTexture(videotexture);
-					videotexture = renderVideoFrame(driver, videoCodecCtx, videoFrame);
-					timeAccumulated -= videoFrameDuration;
+					frameReady = true;
 				}
+				timeAccumulated -= videoFrameDuration;
 			}
 		} else if (packet.stream_index == audioStreamIndex) {
 			if (lastAudioProcessedTime + audioFrameDuration <= timeAccumulated) {
 				if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
-					if (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
+					while (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
 						int numSamples = audioFrame->nb_samples;
 						int audioChannels = audioCodecCtx->channels;
 						audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
@@ -5232,6 +5231,11 @@ bool Game::PlayVideo(bool loop) {
 			}
 		}
 		av_packet_unref(&packet);
+		if (frameReady) {
+			if(videotexture) driver->removeTexture(videotexture);
+			videotexture = renderVideoFrame(driver, videoCodecCtx, videoFrame);
+			frameReady = false;
+		}
 		if (!audioBuffer.empty()) {
 			if (soundBuffer.loadFromSamples(audioBuffer.data(), audioBuffer.size(), audioCodecCtx->channels, audioCodecCtx->sample_rate)) {
 				sound.setBuffer(soundBuffer);

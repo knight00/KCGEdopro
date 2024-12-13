@@ -228,6 +228,8 @@ restart:
             mainGame->damcharacter[0] = false;
             mainGame->damcharacter[1] = false;
             gSoundManager->soundcount.clear();
+			//ktest/////
+			mainGame->StopVideo(true, true);
 			////kdiy////////
 			if(!hand_test) {
 				mainGame->ShowElement(mainGame->wSinglePlay);
@@ -380,6 +382,8 @@ restart:
         mainGame->damcharacter[0] = false;
         mainGame->damcharacter[1] = false;
         gSoundManager->soundcount.clear();
+		//ktest/////
+		mainGame->StopVideo(true, true);
 		////kdiy////////
 		if(!hand_test) {
 			mainGame->ShowElement(mainGame->wSinglePlay);

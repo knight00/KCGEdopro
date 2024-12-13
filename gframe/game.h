@@ -964,6 +964,7 @@ public:
 	AVFrame* videoFrame;
     AVFrame* audioFrame;
     int videoStreamIndex = -1, audioStreamIndex = -1;
+	bool frameReady = false;
 	double timeAccumulated = 0.0, lastAudioProcessedTime = 0.0; // Accumulate time to ensure smooth frame skipping
 	double videoFrameDuration = 1.0, audioFrameDuration = 1.0;
 	std::vector<int16_t> audioBuffer;

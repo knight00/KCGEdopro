@@ -190,6 +190,8 @@ void ReplayMode::EndDuel() {
         mainGame->damcharacter[0] = false;
         mainGame->damcharacter[1] = false;
         gSoundManager->soundcount.clear();
+		//ktest/////
+		mainGame->StopVideo(true, true);
 		////kdiy////////
 		mainGame->closeDoneSignal.Wait(lock);
 		mainGame->ShowElement(mainGame->wReplay);
@@ -217,6 +219,8 @@ void ReplayMode::Restart(bool refresh) {
     mainGame->damcharacter[0] = false;
     mainGame->damcharacter[1] = false;
     gSoundManager->soundcount.clear();
+	//ktest/////
+	mainGame->StopVideo(true, true);
 	////kdiy////////
 	if(!mainGame->dInfo.isRelay) {
 		if(mainGame->dInfo.isFirst)

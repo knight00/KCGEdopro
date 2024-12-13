@@ -1244,6 +1244,8 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->stTip->setVisible(false);
 			mainGame->device->setEventReceiver(&mainGame->menuHandler);
 			////kdiy////////
+			//ktest/////
+			mainGame->StopVideo(true, true);
             mainGame->isEvent = false;
             mainGame->wLocation->setVisible(false);
 			for(int i = 0; i < 6; ++i) {
@@ -2090,6 +2092,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				mainGame->dInfo.checkRematch = false;
 				mainGame->dInfo.isStarted = false;
                 ////kdiy////////
+				//ktest/////
+				mainGame->StopVideo(true, true);
                 mainGame->isEvent = false;
                 mainGame->damcharacter[0] = false;
                 mainGame->damcharacter[1] = false;
@@ -6294,6 +6298,8 @@ void DuelClient::ReplayPrompt(bool local_stream) {
 	mainGame->btnChainWhenAvail->setVisible(false);
 	mainGame->btnCancelOrFinish->setVisible(false);
 	////kdiy////////
+	//ktest/////
+	mainGame->StopVideo(true, true);
     mainGame->isEvent = false;
     mainGame->wChPloatBody[0]->setVisible(false);
 	mainGame->wChPloatBody[1]->setVisible(false);

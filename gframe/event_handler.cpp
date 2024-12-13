@@ -227,6 +227,8 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_LEAVE_GAME: {
 			    ////kdiy////////
+				//ktest/////
+				mainGame->StopVideo(true, true);
                 mainGame->isEvent = false;
                 mainGame->damcharacter[0] = false;
                 mainGame->damcharacter[1] = false;
@@ -1274,6 +1276,9 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				mainGame->cv->notify_one();
 				gSoundManager->StopSounds();
             }
+			//ktest/////
+			if(mainGame->isAnime)
+			    break;
             /////kdiy/////
 			if(mainGame->dInfo.isReplay)
 				break;
@@ -1324,6 +1329,9 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
                     mainGame->mode->NextPlot();
 				break;
 			}
+			//ktest/////
+			if(mainGame->isAnime)
+			    break;
 			/////kdiy/////
 			hovered_location = 0;
 			irr::core::vector2di pos = mainGame->Resize(event.MouseInput.X, event.MouseInput.Y, true);
@@ -1727,6 +1735,9 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			/////kdiy/////
 			if(mainGame->mode->isMode && mainGame->mode->isPlot)
 				break;
+			//ktest/////
+			if(mainGame->isAnime)
+			    break;
 			/////kdiy/////
 			auto x = event.MouseInput.X;
 			auto y = event.MouseInput.Y;
@@ -1748,6 +1759,9 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				break;
 			/////kdiy/////
 			if(mainGame->mode->isMode && mainGame->mode->isPlot)
+			    break;
+			//ktest/////
+			if(mainGame->isAnime)
 			    break;
 			/////kdiy/////
 			bool should_show_tip = false;
@@ -1950,6 +1964,9 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			/////kdiy/////
 			if(mainGame->mode->isMode && mainGame->mode->isPlot)
 				break;
+			//ktest/////
+			if(mainGame->isAnime)
+			    break;
 			/////kdiy/////
 			mainGame->always_chain = true;
 			mainGame->ignore_chain = false;
@@ -1963,6 +1980,9 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			/////kdiy/////
 			if(mainGame->mode->isMode && mainGame->mode->isPlot)
 				break;
+			//ktest/////
+			if(mainGame->isAnime)
+			    break;
 			/////kdiy/////
 			mainGame->ignore_chain = true;
 			mainGame->always_chain = false;
@@ -1978,6 +1998,9 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 	case irr::EET_KEY_INPUT_EVENT: {
 		/////kdiy/////
 		if(mainGame->mode->isMode && mainGame->mode->isPlot)
+			break;
+		//ktest/////
+		if(mainGame->isAnime)
 			break;
 		/////kdiy/////
 		switch(event.KeyInput.Key) {
