@@ -224,12 +224,12 @@ restart:
 			}
 			////kdiy////////
 			//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
+			//ktest/////
+			mainGame->StopVideo(true, true);
             mainGame->isEvent = false;
             mainGame->damcharacter[0] = false;
             mainGame->damcharacter[1] = false;
             gSoundManager->soundcount.clear();
-			//ktest/////
-			mainGame->StopVideo(true, true);
 			////kdiy////////
 			if(!hand_test) {
 				mainGame->ShowElement(mainGame->wSinglePlay);
@@ -378,12 +378,12 @@ restart:
 		}
 		////kdiy////////
 		//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
+		//ktest/////
+		mainGame->StopVideo(true, true);
         mainGame->isEvent = false;
         mainGame->damcharacter[0] = false;
         mainGame->damcharacter[1] = false;
         gSoundManager->soundcount.clear();
-		//ktest/////
-		mainGame->StopVideo(true, true);
 		////kdiy////////
 		if(!hand_test) {
 			mainGame->ShowElement(mainGame->wSinglePlay);

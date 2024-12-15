@@ -186,12 +186,12 @@ void ReplayMode::EndDuel() {
 		mainGame->dInfo.isOldReplay = false;
 		mainGame->closeDuelWindow = true;
         ////kdiy////////
+		//ktest/////
+		mainGame->StopVideo(true, true);
         mainGame->isEvent = false;
         mainGame->damcharacter[0] = false;
         mainGame->damcharacter[1] = false;
         gSoundManager->soundcount.clear();
-		//ktest/////
-		mainGame->StopVideo(true, true);
 		////kdiy////////
 		mainGame->closeDoneSignal.Wait(lock);
 		mainGame->ShowElement(mainGame->wReplay);
@@ -215,12 +215,12 @@ void ReplayMode::Restart(bool refresh) {
 	mainGame->dInfo.current_player[0] = 0;
 	mainGame->dInfo.current_player[1] = 0;
     ////kdiy////////
+	//ktest/////
+	mainGame->StopVideo(true, true);
     mainGame->isEvent = false;
     mainGame->damcharacter[0] = false;
     mainGame->damcharacter[1] = false;
     gSoundManager->soundcount.clear();
-	//ktest/////
-	mainGame->StopVideo(true, true);
 	////kdiy////////
 	if(!mainGame->dInfo.isRelay) {
 		if(mainGame->dInfo.isFirst)

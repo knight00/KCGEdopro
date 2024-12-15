@@ -957,7 +957,7 @@ public:
     irr::video::ITexture* videotexture = nullptr;
 	// cv::Mat frame;
     //double totalFrames = 0;
-    AVFormatContext* formatCtx = nullptr;
+    AVFormatContext* formatCtx = nullptr, * formatCtx2 = nullptr;
     AVCodecContext* videoCodecCtx = nullptr;
     AVCodecContext* audioCodecCtx = nullptr;
 	AVPacket packet;
@@ -965,7 +965,8 @@ public:
     AVFrame* audioFrame;
     int videoStreamIndex = -1, audioStreamIndex = -1;
 	bool frameReady = false;
-	double timeAccumulated = 0.0, lastAudioProcessedTime = 0.0; // Accumulate time to ensure smooth frame skipping
+	int64_t videoPTS, audioPTS;
+	double timeAccumulated = 0.0, lastAudioProcessedTime = 0.0, lastVideoFrameTime = 0.0; // Accumulate time to ensure smooth frame skipping
 	double videoFrameDuration = 1.0, audioFrameDuration = 1.0;
 	std::vector<int16_t> audioBuffer;
 	bool openVideo(std::string videoName);
