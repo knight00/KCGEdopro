@@ -69,10 +69,16 @@ void Game::DrawBackGround() {
 			return false;
 		uint32_t fieldcode1 = 0;
 		if(dField.szone[0][5] && dField.szone[0][5]->position & POS_FACEUP)
-			fieldcode1 = dField.szone[0][5]->code;
+		    /////kdiy//////
+			//fieldcode1 = dField.szone[0][5]->code;
+			fieldcode1 = dField.szone[0][5]->piccode > 0 ? dField.szone[0][5]->piccode : dField.szone[0][5]->code;
+		    /////kdiy//////
 		uint32_t fieldcode2 = 0;
 		if(dField.szone[1][5] && dField.szone[1][5]->position & POS_FACEUP)
-			fieldcode2 = dField.szone[1][5]->code;
+		    /////kdiy//////
+			//fieldcode2 = dField.szone[1][5]->code;
+			fieldcode2 = dField.szone[1][5]->piccode > 0 ? dField.szone[1][5]->piccode : dField.szone[1][5]->code;
+		    /////kdiy//////
 		auto both = fieldcode1 | fieldcode2;
 		if(both == 0)
 			return false;
@@ -422,7 +428,7 @@ void Game::DrawCard(ClientCard* pcard) {
 	///kdiy////////
     auto cd = gDataManager->GetCardData(pcard->code);
 	irr::video::ITexture* cardcloseup; irr::video::SColor cardcloseupcolor = irr::video::SColor(255, 255, 255, 0);
-	std::tie(cardcloseup, cardcloseupcolor) = imageManager.GetTextureCloseup(pcard->code, pcard->is_change && cd ? cd->alias : pcard->alias);
+	std::tie(cardcloseup, cardcloseupcolor) = imageManager.GetTextureCloseup(pcard->piccode > 0 ? pcard->piccode : pcard->code, pcard->is_change && cd ? cd->alias : pcard->alias);
 	matManager.mTexture.AmbientColor = 0xffffffff;
     auto drawLine = [&](const auto& pos0, const auto& pos1, const auto& pos2, const auto& pos3, irr::video::SColor color) -> void {
         driver->draw3DLineW(pos0, pos1, color, (pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup ? 10 : 8);
@@ -440,7 +446,10 @@ void Game::DrawCard(ClientCard* pcard) {
 	driver->setTransform(irr::video::ETS_WORLD, pcard->mTransform);
 	auto m22 = pcard->mTransform(2, 2);
 	if (m22 > -0.99 || pcard->is_moving) {
-		matManager.mCard.setTexture(0, imageManager.GetTextureCard(pcard->code, imgType::ART));
+        ///kdiy////////
+		//matManager.mCard.setTexture(0, imageManager.GetTextureCard(pcard->code, imgType::ART));
+		matManager.mCard.setTexture(0, imageManager.GetTextureCard(pcard->piccode > 0 ? pcard->piccode : pcard->code, imgType::ART));
+        ///kdiy////////
 		driver->setMaterial(matManager.mCard);
 		driver->drawVertexPrimitiveList(matManager.vCardFront, 4, matManager.iRectangle, 2);
 	}

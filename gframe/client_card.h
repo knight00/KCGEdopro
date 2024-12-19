@@ -51,6 +51,7 @@ public:
 	//uint32_t rank;
 	//uint32_t link;
 	int32_t link;
+	uint32_t piccode = 0;
 	bool is_change = false;
 	uint64_t rsetnames;
 	uint32_t rtype;
