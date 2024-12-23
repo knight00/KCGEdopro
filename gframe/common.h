@@ -341,6 +341,7 @@
 #define MSG_REMOVE_CARDS         190
 ////kdiy/////////
 #define MSG_CHANGE               200
+#define MSG_PICCHANGE            201
 ////kdiy/////////
 
 #define OLD_REPLAY_MODE          231

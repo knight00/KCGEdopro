@@ -4105,8 +4105,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		return true;
 	}
 	//////kdiy///
+	case MSG_PICCHANGE:
 	case MSG_CHANGE: {
-		const auto piccode = BufferIO::Read<uint32_t>(pbuf);
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
 		CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
         const auto setnames = BufferIO::Read<uint64_t>(pbuf);
@@ -4132,8 +4132,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		current.controler = mainGame->LocalPlayer(current.controler);
 		if(!(current.location & LOCATION_OVERLAY)) {
 			ClientCard* pcard = mainGame->dField.GetCard(current.controler, current.location, current.sequence);
-			pcard->piccode = piccode;
-			pcard->code = code;
+			if(curMsg == MSG_PICCHANGE) pcard->piccode = code;
+			else pcard->code = code;
 			pcard->is_change = true;
 			pcard->rsetnames = setnames;
 			pcard->rtype = type;
@@ -4166,8 +4166,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		} else {
 			ClientCard* olcard = mainGame->dField.GetCard(current.controler, current.location & (~LOCATION_OVERLAY) & 0xff, current.sequence);
 			ClientCard* pcard = olcard->overlayed[current.position];
-			pcard->piccode = piccode;
-			pcard->code = code;
+			if(curMsg == MSG_PICCHANGE) pcard->piccode = code;
+			else pcard->code = code;
 			pcard->is_change = true;
 			pcard->rsetnames = setnames;
 			pcard->rtype = type;
