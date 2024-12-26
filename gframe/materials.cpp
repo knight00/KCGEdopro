@@ -29,20 +29,23 @@ Materials::Materials() {
 	///////kdiy//////
 	// SetS3DVertex(vCardOutline, -0.375f, -0.54f, 0.37f, 0.54f, 0, 1, 0, 0, 1, 1);
 	// SetS3DVertex(vCardOutliner, 0.37f, -0.54f, -0.375f, 0.54f, 0, 1, 0, 0, 1, 1);
-    SetS3DVertex(vCardOutline, -0.36f, -0.52f, 0.355f, 0.52f, 0, 1, 0, 0, 1, 1);
+	// SetS3DVertex(vCardBack, 0.35f, -0.5f, -0.35f, 0.5f, 0, -1, 0, 0, 1, 1);
+	// SetS3DVertex(vSymbol, -0.35f, -0.35f, 0.35f, 0.35f, 0.01f, 1, 0, 0, 1, 1);
+	//SetS3DVertex(vNegate, -0.25f, -0.28f, 0.25f, 0.22f, 0.01f, 1, 0, 0, 1, 1);
+	SetS3DVertex(vCardFront2, -0.42f, -0.6f, 0.42f, 0.6f, 0, 1, 0, 0, 1, 1);
+	SetS3DVertex(vCardOutline, -0.36f, -0.52f, 0.355f, 0.52f, 0, 1, 0, 0, 1, 1);
 	SetS3DVertex(vCardOutliner, 0.355f, -0.52f, -0.36f, 0.52f, 0, 1, 0, 0, 1, 1);
-	///////kdiy//////
+    SetS3DVertex(vCardOutline2, -0.435f, -0.62f, 0.43f, 0.62f, 0, 1, 0, 0, 1, 1);
+	SetS3DVertex(vCardOutliner2, 0.43f, -0.62f, -0.435f, 0.62f, 0, 1, 0, 0, 1, 1);
 	SetS3DVertex(vCardBack, 0.35f, -0.5f, -0.35f, 0.5f, 0, -1, 0, 0, 1, 1);
-	SetS3DVertex(vSymbol, -0.35f, -0.35f, 0.35f, 0.35f, 0.01f, 1, 0, 0, 1, 1);
-	///////kdiy//////
-	SetS3DVertex(vPScale, -0.25f, -0.5, 0.25, 0.5f, 0.01f, 1, 0, 0, 1, 1);
+	SetS3DVertex(vCardBack2, 0.42f, -0.6f, -0.42f, 0.6f, 0, -1, 0, 0, 1, 1);
+	SetS3DVertex(vSymbol, -0.42f, -0.42f, 0.42f, 0.42f, 0.01f, 1, 0, 0, 1, 1);
+	SetS3DVertex(vPScale, -0.32f, -0.6, 0.32, 0.6f, 0.01f, 1, 0, 0, 1, 1);
     SetS3DVertex(vCloseup, 2.3f, -4.0f, 6.7f, 4.0f, 0.01f, 1, 0, 0, 1, 1);
 	SetS3DVertex(vAttack, -0.34f, -0.4f, 0.34f, 0.4f, 0.01f, 1, 0, 0, 1, 1);
 	SetS3DVertex(vAttack2, -0.58f, -0.68f, 0.58f, 0.68f, 0.01f, 1, 0, 0, 1, 1);
 	SetS3DVertex(vAttack3, -0.68f, -0.8f, 0.68f, 0.8f, 0.01f, 1, 0, 0, 1, 1);
 	SetS3DVertex(vAttack4, -0.78f, -0.92f, 0.78f, 0.92f, 0.01f, 1, 0, 0, 1, 1);
-    SetS3DVertex(vSymbol0, -0.85f, -0.85f, 0.85f, 0.85f, 0.01f, 1, 0, 0, 1, 1);
-	//SetS3DVertex(vNegate, -0.25f, -0.28f, 0.25f, 0.22f, 0.01f, 1, 0, 0, 1, 1);
     SetS3DVertex(vNegate, -0.54f, -0.57f, 0.54f, 0.57f, 0.01f, 1, 0, 0, 1, 1);
 	SetS3DVertex(vHint, -0.25f, -0.25f, 0.25f, 0.25f, 0, 1, 0, 0, 1, 1);
 	SetS3DVertex(vXyz, -0.1f, -0.1f, 0.1f, 0.1f, 0, 1, 0, 0, 1, 1);

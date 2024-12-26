@@ -5100,6 +5100,10 @@ bool Game::openVideo(std::string filename) {
 			return false;
 		}
 		avformat_open_input(&formatCtx2, filename.c_str(), nullptr, nullptr);
+		if (avformat_find_stream_info(formatCtx, nullptr) < 0) {
+			isAnime = false;
+			return false;
+		}
 		// Find the first video and audio stream
 		videoStreamIndex = -1;
 		audioStreamIndex = -1;
@@ -5194,7 +5198,6 @@ bool Game::PlayVideo(bool loop) {
 					avcodec_flush_buffers(videoCodecCtx); // Flush the codec buffers
 					avcodec_flush_buffers(audioCodecCtx);
 				} else {
-					currentVideo = "";
 					StopVideo();
 					return false;
 				}
@@ -5289,6 +5292,7 @@ void Game::StopVideo(bool close, bool reset) {
 	timeAccumulated = 0;
 	lastAudioProcessedTime = 0;
 	frameReady = false;
+	currentVideo = "";
 	if(close) {
 		av_frame_free(&videoFrame);
 		av_frame_free(&audioFrame);
