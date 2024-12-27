@@ -99,7 +99,7 @@ void Game::DrawBackGround() {
 
 	//draw field
     /////ktest//////
-	if(isAnime && openVideo(newVideo)) {
+	if(isAnime) {
 		if(PlayVideo())
 		    if(videotexture) DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
     } else {

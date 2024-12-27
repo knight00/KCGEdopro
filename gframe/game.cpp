@@ -5085,8 +5085,7 @@ bool Game::openVideo(std::string filename) {
 		isAnime = false;
 		return false;
 	}
-    if(newVideo != currentVideo) {
-        currentVideo = newVideo;
+    if(filename != currentVideo) {
         if (formatCtx) {
 			avformat_close_input(&formatCtx); // Close previous video input
 		}
@@ -5139,6 +5138,7 @@ bool Game::openVideo(std::string filename) {
 		videoFrameDuration = (double)avgFrameRate.den / (double)avgFrameRate.num;
 		timeAccumulated = 0;
 		audioFrameDuration = 1.0 / audioCodecCtx->sample_rate;
+        currentVideo = filename;
         // if(!cap.isOpened()) {
         //     cap.open(videoname);
         //     if(!cap.isOpened()) {

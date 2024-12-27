@@ -948,7 +948,6 @@ public:
     std::vector<irr::core::vector3df> haloNode[2][12][10];
     //ktest////////
     std::string currentVideo;
-    std::string newVideo;
 	bool videostart = false;
 	bool isAnime = false;
     sf::Sound sound;

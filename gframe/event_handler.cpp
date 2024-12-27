@@ -294,6 +294,11 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_RESTART_SINGLE: {
                 ////kdiy////////
+				//ktest/////
+				mainGame->StopVideo(true, true);
+                mainGame->isEvent = false;
+                mainGame->damcharacter[0] = false;
+                mainGame->damcharacter[1] = false;
                 gSoundManager->soundcount.clear();
 			    ////kdiy////////
 				if(mainGame->dInfo.isSingleMode)
@@ -1996,13 +2001,6 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 		break;
 	}
 	case irr::EET_KEY_INPUT_EVENT: {
-		/////kdiy/////
-		if(mainGame->mode->isMode && mainGame->mode->isPlot)
-			break;
-		//ktest/////
-		if(mainGame->isAnime)
-			break;
-		/////kdiy/////
 		switch(event.KeyInput.Key) {
 		case irr::KEY_KEY_A: {
 			if(!mainGame->HasFocus(irr::gui::EGUIET_EDIT_BOX)) {
