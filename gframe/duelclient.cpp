@@ -1244,7 +1244,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->device->setEventReceiver(&mainGame->menuHandler);
 			////kdiy////////
 			//ktest/////
-			mainGame->StopVideo(true, true);
+			mainGame->StopVideo(false, true);
             mainGame->isEvent = false;
             mainGame->wLocation->setVisible(false);
 			for(int i = 0; i < 6; ++i) {
@@ -1566,7 +1566,7 @@ inline bool PlayChant(SoundManager::CHANT sound, ClientCard* pcard, const uint8_
     }
 	return PlayChantcode(sound, code, code2, player, extra);
 }
-inline void PlayAnimecode(uint32_t code, uint32_t code2, uint8_t cat) {
+inline void PlayAnimecode(uint32_t code, uint32_t code2, uint8_t cat, std::unique_lock<epro::mutex> &lock) {
 #ifdef VIP
 	if(!gGameConfig->enableanime) return;
 	if(cat == 1 && !gGameConfig->enablecanime) return;
@@ -1591,6 +1591,8 @@ inline void PlayAnimecode(uint32_t code, uint32_t code2, uint8_t cat) {
 	for (const auto& str : s1List) {
 		if (mainGame->openVideo(str)) {
 			mainGame->isAnime = true;
+			mainGame->cv->wait_for(lock, std::chrono::milliseconds(mainGame->videoDuration));
+			mainGame->WaitFrameSignal(10, lock);
 			break;
 		}
 	}
@@ -1598,7 +1600,7 @@ inline void PlayAnimecode(uint32_t code, uint32_t code2, uint8_t cat) {
 	return;
 #endif
 }
-inline void PlayAnime(ClientCard* pcard, uint8_t cat) {
+inline void PlayAnime(ClientCard* pcard, uint8_t cat, std::unique_lock<epro::mutex> &lock) {
 #ifdef VIP
 	if(!gGameConfig->enableanime) return;
 	if(cat == 1 && !gGameConfig->enablecanime) return;
@@ -1610,7 +1612,6 @@ inline void PlayAnime(ClientCard* pcard, uint8_t cat) {
 	uint32_t code2 = 0;
 	if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
 	/////ktest//////
-			mainGame->dInfo.strLP[0] = std::to_wstring(code);
 	std::string s1 = "./movies/", s2 = "./movies/", s11 = "./movies/", s21 = "./movies/";
 	if(cat == 0) {
 		s1 += "s" + std::to_string(code) + ".mp4";
@@ -1635,6 +1636,8 @@ inline void PlayAnime(ClientCard* pcard, uint8_t cat) {
 		if(mainGame->openVideo(str)) {
 			mainGame->isAnime = true;
 			pcard->is_anime = true;
+			mainGame->cv->wait_for(lock, std::chrono::milliseconds(mainGame->videoDuration));
+			mainGame->WaitFrameSignal(10, lock);
 		    break;
 		}
     }
@@ -1642,7 +1645,7 @@ inline void PlayAnime(ClientCard* pcard, uint8_t cat) {
 	return;
 #endif
 }
-inline void PlayAnimeC(std::string text) {
+inline void PlayAnimeC(std::string text, std::unique_lock<epro::mutex> &lock) {
 #ifdef VIP
 	if(!gGameConfig->enableanime) return;
 	std::string s1 = "./movies/custom/";
@@ -1654,6 +1657,8 @@ inline void PlayAnimeC(std::string text) {
 	for (size_t i = 0; i < s1List.size(); ++i) {
 		if(mainGame->openVideo(s1List[i])) {
 			mainGame->isAnime = true;
+			mainGame->cv->wait_for(lock, std::chrono::milliseconds(mainGame->videoDuration));
+			mainGame->WaitFrameSignal(10, lock);
 		    break;
 		}
     }
@@ -1941,6 +1946,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		uint8_t player = BufferIO::Read<uint8_t>(pbuf);
 		uint8_t type = BufferIO::Read<uint8_t>(pbuf);
         player = mainGame->LocalPlayer(player);
+		mainGame->StopVideo(false, true);
 		mainGame->isEvent = false;
 		mainGame->mode->isModeEvent = false;
         if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
@@ -2066,7 +2072,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				mainGame->dInfo.isStarted = false;
                 ////kdiy////////
 				//ktest/////
-				mainGame->StopVideo(true, true);
+				mainGame->StopVideo(false, true);
                 mainGame->isEvent = false;
                 mainGame->damcharacter[0] = false;
                 mainGame->damcharacter[1] = false;
@@ -2199,15 +2205,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			if(cd && (cd->type & TYPE_MONSTER)) extra |= 0x800;
 			PlayChantcode(SoundManager::CHANT::ACTIVATE, data, code2, player, extra);
             std::unique_lock<epro::mutex> lock(mainGame->gMutex);
+			PlayAnimecode(data, code2, 1, lock);
 			/////kdiy//////
 			Play(SoundManager::SFX::ACTIVATE);			
 			mainGame->WaitFrameSignal(30, lock);
-			/////kdiy//////
-			if(!mainGame->dInfo.isCatchingUp) {
-				PlayAnimecode(data, code2, 1);
-				mainGame->WaitFrameSignal(5, lock);
-			}
-			/////kdiy//////
 			break;
 		}
 		case HINT_ZONE: {
@@ -2265,10 +2266,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		case HINT_ANIME: {
 			auto text = gDataManager->GetDesc(data, mainGame->dInfo.compat_mode).data();
 			auto lock = LockIf();
-			if(!mainGame->dInfo.isCatchingUp) {
-				PlayAnimeC(Utils::ToUTF8IfNeeded(text));
-				mainGame->WaitFrameSignal(5, lock);
-			}
+			PlayAnimeC(Utils::ToUTF8IfNeeded(text), lock);
 			break;
 		}
 		case HINT_BGM: {
@@ -4226,12 +4224,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					frames = 12;
 				mainGame->dField.FadeCard(pcard, 255, frames);
 				mainGame->WaitFrameSignal(frames, lock);
-				////kdiy///////////
-				if(reason & (REASON_SUMMON | REASON_SPSUMMON)) {
-					PlayAnime(pcard, 0);
-					mainGame->WaitFrameSignal(5, lock);
-				}
-				////kdiy///////////
 			}
 		} else if (current.location == 0) {
 			ClientCard* pcard = nullptr;
@@ -4354,12 +4346,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 						pcard->is_damage = false;
 						//////kdiy///
 					}
-					////kdiy///////////
-					if(reason & (REASON_SUMMON | REASON_SPSUMMON)) {
-						PlayAnime(pcard, 0);
-						mainGame->WaitFrameSignal(5, lock);
-					}
-					////kdiy///////////
 				}
 			} else if (!(previous.location & LOCATION_OVERLAY)) {
 				ClientCard* pcard = mainGame->dField.GetCard(previous.controler, previous.location, previous.sequence);
@@ -4425,12 +4411,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					mainGame->WaitFrameSignal(5, lock);
 					mainGame->dField.MoveCard(pcard, 10);
 					mainGame->WaitFrameSignal(5, lock);
-					////kdiy///////////
-					if(reason & (REASON_SUMMON | REASON_SPSUMMON)) {
-						PlayAnime(pcard, 0);
-						mainGame->WaitFrameSignal(5, lock);
-					}
-					////kdiy///////////
 				}
 			} else {
 				ClientCard* olcard1 = mainGame->dField.GetCard(previous.controler, previous.location & (~LOCATION_OVERLAY) & 0xff, previous.sequence);
@@ -4598,6 +4578,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 			////kdiy///////////
 			//event_string = epro::sprintf(gDataManager->GetSysString(1603), gDataManager->GetName(code));
+			PlayAnime(pcard, 0, lock);
 			event_string = epro::sprintf(gDataManager->GetSysString(1603), gDataManager->GetName(pcard));
 			uint32_t code2 = 0;
 			if(pcard->alias && pcard->alias > 0) code2 = pcard->alias;
@@ -4746,6 +4727,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		}
 		if(!mainGame->dInfo.isCatchingUp) {
             /////kdiy//////
+			PlayAnime(pcard, 1, lock);
 			uint32_t code2 = 0;
 			if(pcard->alias && pcard->alias > 0) code2 = pcard->alias;
             mainGame->showcardalias = code2;
@@ -4772,10 +4754,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			/////kdiy//////
 			//pcard->is_highlighting = false;
 			pcard->is_activable = false;
-			if(!mainGame->dInfo.isCatchingUp) {
-				PlayAnime(pcard, 1);
-				mainGame->WaitFrameSignal(5, lock);
-			}
 			/////kdiy//////
 		}
 		mainGame->dField.current_chain.chain_card = pcard;
@@ -5246,8 +5224,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		info2.controler = mainGame->LocalPlayer(info2.controler);
 		std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 		/////kdiy//////
-		PlayAnime(mainGame->dField.attacker, 2);
-		mainGame->WaitFrameSignal(5, lock);
+		PlayAnime(mainGame->dField.attacker, 2, lock);
 		/////kdiy//////
 		float sy;
 		float xa = mainGame->dField.attacker->curPos.X;
@@ -6306,7 +6283,7 @@ void DuelClient::ReplayPrompt(bool local_stream) {
 	mainGame->btnCancelOrFinish->setVisible(false);
 	////kdiy////////
 	//ktest/////
-	mainGame->StopVideo(true, true);
+	mainGame->StopVideo(false, true);
     mainGame->isEvent = false;
     mainGame->wChPloatBody[0]->setVisible(false);
 	mainGame->wChPloatBody[1]->setVisible(false);

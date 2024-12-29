@@ -102,10 +102,12 @@ void Game::DrawBackGround() {
 	if(isAnime) {
 		if(PlayVideo())
 		    if(videotexture) DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
+			// driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, videoFrame->width, videoFrame->height));
     } else {
     /////kdiy//////
     if(!gGameConfig->chkField && DrawFieldSpell())
 	    DrawTextureRect(matManager.vField, imageManager.tFieldTransparent[three_columns][tfield]);
+	    //DrawFieldSpell();
     else if(gGameConfig->chkField || !gGameConfig->randomtexture || (tfield != 3 && tfield != 1))
     /////kdiy//////
 	DrawTextureRect(matManager.vField, DrawFieldSpell() ? imageManager.tFieldTransparent[three_columns][tfield] : imageManager.tField[three_columns][tfield]);
@@ -220,6 +222,9 @@ void Game::DrawBackGround() {
 	driver->drawVertexPrimitiveList(vertex, 4, matManager.iRectangle, 2);
 }
 void Game::DrawLinkedZones(ClientCard* pcard) {
+	///ktest////////
+	if(videostart) return;
+	///ktest////////
 	auto CheckMutual = [&](ClientCard* pcard, int mark)->bool {
 		driver->setMaterial(matManager.mLinkedField);
 		if(pcard && pcard->type & TYPE_LINK && pcard->link_marker & mark) {
@@ -1373,6 +1378,9 @@ void Game::DrawPendScale(ClientCard* pcard) {
 Draws the text in the middle of the bottom side of the zone
 */
 void Game::DrawStackIndicator(epro::wstringview text, const Materials::QuadVertex v, bool opponent) {
+	///ktest////////
+	if(videostart) return;
+	///ktest////////
 	const irr::core::ustring utext(text);
 	const auto dim = textFont->getDimensionustring(utext) / 2;
 	//int width = dim.Width / 2, height = dim.Height / 2;
@@ -1756,13 +1764,13 @@ void Game::DrawBackImage(irr::video::ITexture* texture, bool resized) {
 		return;
     /////ktest//////
     // if(texture == imageManager.tBackGround_menu) {
-    //     prevbg = texture;
-	// 	newVideo = "./movies/s10000000.mp4";
-    //     if(PlayVideo(newVideo, true))
-    //         if(videotexture)
+    //     if(openVideo("./movies/SlifervsObelisk.mp4")) {
+	// 	    if(PlayVideo(true))
+    //             if(videotexture)
 	// 		    driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, videoFrame->width, videoFrame->height));
 	// 		    //driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, frame.cols, frame.rows));
-    //     return;
+    //         return;
+	//     }
     // } else {
     //     if(!isAnime && videostart) StopVideo();
     // }

@@ -265,7 +265,7 @@ bool ImageManager::Initial() {
 	// tSettings = loadTextureAnySize(EPRO_TEXT("settings"sv));
 	// ASSERT_TEXTURE_LOADED(tSettings, "settings");
 	// ASSIGN_DEFAULT(tSettings);
-    QQ = driver->getTexture(EPRO_TEXT("./textures/QQ.jpg"));
+    QQ = driver->getTexture(EPRO_TEXT("./textures/QQ.png"));
     ASSERT_TEXTURE_LOADED(QQ, "QQ");
 	for(uint8_t i = 0; i < 6; i++) {
         modeHead[i] = driver->getTexture(0);

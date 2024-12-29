@@ -225,7 +225,7 @@ restart:
 			////kdiy////////
 			//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
 			//ktest/////
-			mainGame->StopVideo(true, true);
+			mainGame->StopVideo(false, true);
             mainGame->isEvent = false;
             mainGame->damcharacter[0] = false;
             mainGame->damcharacter[1] = false;
@@ -379,7 +379,7 @@ restart:
 		////kdiy////////
 		//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
 		//ktest/////
-		mainGame->StopVideo(true, true);
+		mainGame->StopVideo(false, true);
         mainGame->isEvent = false;
         mainGame->damcharacter[0] = false;
         mainGame->damcharacter[1] = false;

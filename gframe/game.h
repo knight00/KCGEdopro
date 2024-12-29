@@ -348,6 +348,7 @@ struct host_creation_panel_elements {
 	irr::gui::IGUIButton* btnSimpleJoinHost;
 	irr::gui::IGUIButton* btnHostConfirm2;
 	irr::gui::IGUIButton* btnHostCancel2;
+    irr::gui::IGUIWindow* wRandomTexture;
 	uint8_t character[6] = {0,0,0,0,0,0};
 	uint8_t choose_player = -1; //0-5th players
 	irr::gui::IGUIWindow* wCharacter;
@@ -964,9 +965,9 @@ public:
     AVFrame* audioFrame;
     int videoStreamIndex = -1, audioStreamIndex = -1;
 	bool frameReady = false;
-	int64_t videoPTS, audioPTS;
-	double timeAccumulated = 0.0, lastAudioProcessedTime = 0.0, lastVideoFrameTime = 0.0; // Accumulate time to ensure smooth frame skipping
+	double timeAccumulated = 0.0, timeAccumulated2 = 0.0, lastAudioProcessedTime = 0.0, lastVideoFrameTime = 0.0; // Accumulate time to ensure smooth frame skipping
 	double videoFrameDuration = 1.0, audioFrameDuration = 1.0;
+	int64_t videoDuration;
 	std::vector<int16_t> audioBuffer;
 	bool openVideo(std::string videoName);
 	bool PlayVideo(bool loop = false);

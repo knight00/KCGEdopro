@@ -750,13 +750,13 @@ void Game::Initialize() {
 	mainMenuLeftX = 510 - mainMenuWidth / 2;
 	mainMenuRightX = 510 + mainMenuWidth / 2;
 	////kdiy////////
-	wQQ = env->addWindow(Scale(10, 320, 150, 570));
+	wQQ = env->addWindow(Scale(10, 438, 100, 570));
 	wQQ->getCloseButton()->setVisible(false);
 	wQQ->setDraggable(false);
 	wQQ->setDrawTitlebar(false);
 	wQQ->setDrawBackground(false);
-	btnQQ = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 140, 250), wQQ, BUTTON_QQ);
-	btnQQ->setImageSize(Scale(0, 0, 140, 250).getSize());
+	btnQQ = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 90, 130), wQQ, BUTTON_QQ);
+	btnQQ->setImageSize(Scale(0, 0, 90, 130).getSize());
 	btnQQ->setImage(imageManager.QQ);
 	#ifndef EK
     wQQ->setVisible(false);
@@ -2058,8 +2058,8 @@ void Game::Initialize() {
 	////kdiy/////////
 	LoadLocalServers();
 #ifdef EK
-	auto predefined_md5 = "1bcfe096dbf8b5f91ab53bac6c07b219";
-	auto new_md5 = calculate_file_md5("textures/QQ.jpg");
+	auto predefined_md5 = "32fac7564eeb09198aa5712a9058c3cc";
+	auto new_md5 = calculate_file_md5("textures/QQ.png");
     if(strcmp(predefined_md5, new_md5)) {
 		btnLanMode->setEnabled(false);
 		btnOnlineMode->setEnabled(false);
@@ -3314,6 +3314,44 @@ void Game::PopulateSettingsWindow() {
 		defaultStrings.emplace_back(gSettings.chkPainting, 8058);
         IncrementXorY();
     }
+    wRandomTexture = env->addWindow(Scale(220, 100, 880, 500), false, gDataManager->GetSysString(8015).data());
+	defaultStrings.emplace_back(wRandomTexture, 8015);
+    wRandomTexture->getCloseButton()->setVisible(false);
+	wRandomTexture->setVisible(false);
+	auto GetNextRand = [&cur_y, &cur_x, &IncrementXorY, this] {
+		auto cury = cur_y;
+		auto curx = cur_x;
+		IncrementXorY();
+		return Scale<irr::s32>(curx, cury, curx + 305, cury + 25);
+	};
+	for(int i = 0; i < 6; ++i) {
+		randomtexture[i] = env->addCheckBox(gGameConfig->randomtexture, GetNextRand(), wRandomTexture, CHECKBOX_TEXTURE + i, gDataManager->GetSysString(8042 + i).data());
+		defaultStrings.emplace_back(gSettings.chkRandomtexture, 8042);
+        ebName_replay[i] = env->addEditBox(L"", Scale(65, 45 + i * 25, 165, 65 + i * 25), true, wCharacterReplay, EDITBOX_REPLAYNAME);
+        ebName_replay[i]->setVisible(false);
+        btnCharacterSelect_replayreset[i] = env->addButton(Scale(168, 45 + i * 25, 248, 65 + i * 25), wCharacterReplay, BUTTON_NAMERESET_REPLAY, gDataManager->GetSysString(8065).data());
+        defaultStrings.emplace_back(btnCharacterSelect_replayreset[i], 8065);
+        btnCharacterSelect_replayreset[i]->setVisible(false);
+        ebCharacter_replay[i] = AddComboBox(env, Scale(251, 45 + i * 25, 351, 65 + i * 25), wCharacterReplay, COMBOBOX_CHARACTER);
+        ebCharacter_replay[i]->clear();
+        ebCharacter_replay[i]->addItem(gDataManager->GetSysString(8047).data());
+        for (auto j = 9000; j < 9000 + CHARACTER_VOICE - 1; ++j)
+            ebCharacter_replay[i]->addItem(gDataManager->GetSysString(j).data());
+        ebCharacter_replay[i]->setSelected(0);
+        ebCharacter_replay[i]->setMaxSelectionRows(10);
+        ebCharacter_replay[i]->setVisible(false);
+	}
+    btnCharacter_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(420, 45, 620, 345), wCharacterReplay, BUTTON_CHARACTER);
+	btnCharacter_replay->setDrawBorder(false);
+	btnCharacter_replay->setImageSize(Scale(0, 0, 200, 300).getSize());
+	btnCharacterSelect1_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(420, 345, 440, 370), wCharacterReplay, BUTTON_CHARACTER_SELECT);
+	btnCharacterSelect1_replay->setDrawBorder(false);
+	btnCharacterSelect1_replay->setImageSize(Scale(0, 0, 20, 20).getSize());
+	btnCharacterSelect1_replay->setImage(imageManager.tcharacterselect);
+	btnCharacterSelect2_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(600, 345, 620, 370), wCharacterReplay, BUTTON_CHARACTER_SELECT2);
+	btnCharacterSelect2_replay->setDrawBorder(false);
+	btnCharacterSelect2_replay->setImageSize(Scale(0, 0, 20, 20).getSize());
+	btnCharacterSelect2_replay->setImage(imageManager.tcharacterselect2);
     /////kdiy////////////
 }
 #undef WStr
@@ -5128,6 +5166,7 @@ bool Game::openVideo(std::string filename) {
 		const AVCodec* audioCodec = avcodec_find_decoder(audioCodecCtx->codec_id);
 		avcodec_open2(videoCodecCtx, videoCodec, nullptr);
 		avcodec_open2(audioCodecCtx, audioCodec, nullptr);
+		videoDuration = formatCtx->duration;
 		AVStream* videoStream = formatCtx->streams[videoStreamIndex];
 		// Use avg_frame_rate for a general frame rate
 		AVRational avgFrameRate = videoStream->avg_frame_rate;
@@ -5136,9 +5175,12 @@ bool Game::openVideo(std::string filename) {
 			avgFrameRate = videoStream->r_frame_rate;
 		}
 		videoFrameDuration = (double)avgFrameRate.den / (double)avgFrameRate.num;
-		timeAccumulated = 0;
-		audioFrameDuration = 1.0 / audioCodecCtx->sample_rate;
+		timeAccumulated = 0; timeAccumulated2 = 0;
+		audioFrameDuration = 1.0 / (formatCtx->streams[audioStreamIndex]->codecpar->sample_rate);
         currentVideo = filename;
+		// wchar_t buffer[30];
+		// _snwprintf(buffer, sizeof(buffer) / sizeof(*buffer), L"%lf", (formatCtx->streams[audioStreamIndex]->codecpar->sample_rate));
+		// MessageBox(nullptr, buffer, TEXT("Message"), MB_OK);
         // if(!cap.isOpened()) {
         //     cap.open(videoname);
         //     if(!cap.isOpened()) {
@@ -5191,7 +5233,7 @@ bool Game::PlayVideo(bool loop) {
 	if (formatCtx) {
 		if(videostart) timeAccumulated += static_cast<double>(delta_time) / 1000.0;
 		else timeAccumulated = videoFrameDuration;
-		while (timeAccumulated >= videoFrameDuration - 0.45) {
+		while (timeAccumulated >= videoFrameDuration - 0.98) {
 			if (av_read_frame(formatCtx, &packet) < 0) {
 				if(loop) {
 					av_seek_frame(formatCtx, videoStreamIndex, 0, AVSEEK_FLAG_BACKWARD);
@@ -5221,8 +5263,14 @@ bool Game::PlayVideo(bool loop) {
 			videotexture = renderVideoFrame(driver, videoCodecCtx, videoFrame); // Render the frame
 			frameReady = false;
 		}
-		//if (lastAudioProcessedTime + audioFrameDuration <= timeAccumulated) {
-			while (av_read_frame(formatCtx2, &packet) >= 0) {
+		videostart = true;
+		if(loop) {
+			return true;
+		}
+		if(videostart) timeAccumulated2 += static_cast<double>(delta_time) / 1000.0;
+		else timeAccumulated2 = audioFrameDuration;
+		while (timeAccumulated2 >= audioFrameDuration - 0.98) {
+			if (av_read_frame(formatCtx2, &packet) >= 0) {
 			if (packet.stream_index == audioStreamIndex) {
 				if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
 					while (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
@@ -5246,7 +5294,8 @@ bool Game::PlayVideo(bool loop) {
             }
 			av_packet_unref(&packet); // Clean up the packet
 			}
-		//}
+			timeAccumulated2 -= audioFrameDuration;
+		}
 		if (!audioBuffer.empty()) {
 			if (soundBuffer.loadFromSamples(audioBuffer.data(), audioBuffer.size(), audioCodecCtx->channels, audioCodecCtx->sample_rate)) {
 				sound.setBuffer(soundBuffer);
@@ -5254,7 +5303,6 @@ bool Game::PlayVideo(bool loop) {
 			}
 			audioBuffer.clear();
 		}
-		videostart = true;
 	} else {
 		StopVideo();
 		return false;
@@ -5287,12 +5335,13 @@ bool Game::PlayVideo(bool loop) {
     // }
 }
 void Game::StopVideo(bool close, bool reset) {
-    // if(cap.isOpened()) cap.release();
 	videostart = false;
-	timeAccumulated = 0;
+	timeAccumulated = 0; timeAccumulated2 = 0;
 	lastAudioProcessedTime = 0;
 	frameReady = false;
 	currentVideo = "";
+	if(isAnime)
+	    mainGame->cv->notify_one();
 	if(close) {
 		av_frame_free(&videoFrame);
 		av_frame_free(&audioFrame);
@@ -5305,9 +5354,11 @@ void Game::StopVideo(bool close, bool reset) {
         driver->removeTexture(videotexture);
         videotexture = nullptr;
     }
+	sound.stop();
     if(reset) {
         isAnime = false;
     }
+    // if(cap.isOpened()) cap.release();
 }
 ///ktest/////////
 void Game::AddChatMsg(epro::wstringview msg, int player, int type) {
@@ -6143,7 +6194,7 @@ void Game::OnResize() {
 	#else
 	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 535));
 	#endif
-	wQQ->setRelativePosition(ResizeWin(10, 320, 150, 570));
+	wQQ->setRelativePosition(ResizeWin(10, 438, 100, 570));
 	////////kdiy///////
 	SetCentered(wCommitsLog);
 	SetCentered(updateWindow, false);
