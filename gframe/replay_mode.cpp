@@ -99,7 +99,7 @@ int ReplayMode::ReplayThread() {
     /////kdiy///////
 	// mainGame->dInfo.selfnames.assign(names.begin(), first_oppo_player);
 	// mainGame->dInfo.opponames.assign(first_oppo_player, names.end());
-	auto names2 = cur_replay.playersC;
+	auto& names2 = cur_replay.playersC;
     if(names2.empty() || names2.size() < 2) {
         mainGame->dInfo.selfnames.assign(names.begin(), first_oppo_player);
         mainGame->dInfo.opponames.assign(first_oppo_player, names.end());
@@ -187,7 +187,7 @@ void ReplayMode::EndDuel() {
 		mainGame->closeDuelWindow = true;
         ////kdiy////////
 		//ktest/////
-		mainGame->StopVideo(true, true);
+		mainGame->StopVideo(false, true);
         mainGame->isEvent = false;
         mainGame->damcharacter[0] = false;
         mainGame->damcharacter[1] = false;
@@ -216,7 +216,7 @@ void ReplayMode::Restart(bool refresh) {
 	mainGame->dInfo.current_player[1] = 0;
     ////kdiy////////
 	//ktest/////
-	mainGame->StopVideo(true, true);
+	mainGame->StopVideo(false, true);
     mainGame->isEvent = false;
     mainGame->damcharacter[0] = false;
     mainGame->damcharacter[1] = false;
