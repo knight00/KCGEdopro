@@ -2285,6 +2285,15 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
                 Utils::SystemOpen(EPRO_TEXT("https://www.bilibili.com/video/BV1a54y127Xx?p=2"), Utils::OPEN_URL);
 				break;
 			}
+			case BUTTON_TEXTURE: {
+				break;
+			}
+			case BUTTON_TEXTURE_SELECT2: {
+				break;
+			}
+			case BUTTON_TEXTURE_SELECT: {
+				break;
+			}
 			//////kdiy///////
 			case BUTTON_APPLY_RESTART: {
 				try {
@@ -2402,23 +2411,6 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
                     mainGame->moviecheck();
 				return true;
 			}
-			/////kdiy/////////
-			case CHECKBOX_QUICK_ANIMATION: {
-				gGameConfig->quick_animation = mainGame->tabSettings.chkQuickAnimation->isChecked();
-				return true;
-			}
-			case CHECKBOX_ALTERNATIVE_PHASE_LAYOUT: {
-				gGameConfig->alternative_phase_layout = mainGame->tabSettings.chkAlternativePhaseLayout->isChecked();
-				mainGame->SetPhaseButtons(true);
-				return true;
-			}
-			case CHECKBOX_HIDE_ARCHETYPES: {
-				gGameConfig->chkHideSetname = mainGame->gSettings.chkHideSetname->isChecked();
-				mainGame->stSetName->setVisible(!gGameConfig->chkHideSetname);
-				mainGame->RefreshCardInfoTextPositions();
-				return true;
-			}
-			/////kdiy/////
 			case CHECKBOX_HIDE_NAME_TAG:{
 				gGameConfig->chkHideNameTag = mainGame->gSettings.chkHideNameTag->isChecked();
 				return true;
@@ -2426,9 +2418,22 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
             case CHECKBOX_RANDOM_TEXTURE:{
 				gGameConfig->randomtexture = mainGame->gSettings.chkRandomtexture->isChecked();
 				if(!gGameConfig->randomtexture) {
-					mainGame->PopupElement(mainGame->wCharacterReplay);
-					mainGame->env->setFocus(mainGame->wCharacterReplay);
+					mainGame->HideElement(mainGame->gSettings.window);
+					mainGame->ShowElement(mainGame->gSettings.wRandomTexture);
 				}
+				return true;
+			}
+            case CHECKBOX_TEXTURE0:{
+				gGameConfig->randomact = mainGame->gSettings.randomtexture[0]->isChecked();
+				mainGame->gSettings.cbName_texture[0]->setVisible(!gGameConfig->randomact);
+				if(!gGameConfig->randomact) {
+					int selected = mainGame->gSettings.cbName_texture[0]->getSelected();
+					if (selected < 0) return true;
+					if(mainGame->imageManager.tAct) mainGame->driver->removeTexture(mainGame->imageManager.tAct);
+					mainGame->imageManager.tAct = mainGame->driver->getTexture((epro::format(EPRO_TEXT("textures/act/{}"), gGameConfig->randomacttexture)).c_str());
+					mainGame->gSettings.btnrandomtexture->setImage(mainGame->imageManager.tAct);
+				} else
+					mainGame->gSettings.btnrandomtexture->setImage(0);
 				return true;
 			}
             case CHECKBOX_CLOSEUP:{
@@ -2449,7 +2454,22 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			// 	mainGame->RefreshCardInfoTextPositions();
 			// 	return true;
 			// }
-			/////kdiy/////
+			/////kdiy/////////
+			case CHECKBOX_QUICK_ANIMATION: {
+				gGameConfig->quick_animation = mainGame->tabSettings.chkQuickAnimation->isChecked();
+				return true;
+			}
+			case CHECKBOX_ALTERNATIVE_PHASE_LAYOUT: {
+				gGameConfig->alternative_phase_layout = mainGame->tabSettings.chkAlternativePhaseLayout->isChecked();
+				mainGame->SetPhaseButtons(true);
+				return true;
+			}
+			case CHECKBOX_HIDE_ARCHETYPES: {
+				gGameConfig->chkHideSetname = mainGame->gSettings.chkHideSetname->isChecked();
+				mainGame->stSetName->setVisible(!gGameConfig->chkHideSetname);
+				mainGame->RefreshCardInfoTextPositions();
+				return true;
+			}
 			case CHECKBOX_SHOW_SCOPE_LABEL: {
 				gGameConfig->showScopeLabel = mainGame->gSettings.chkShowScopeLabel->isChecked();
 				return true;
@@ -2627,6 +2647,15 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				int selected = mainGame->gSettings.cbCurrentFont->getSelected();
 				if (selected < 0) return true;
 				gGameConfig->textfont.font = Utils::ToPathString(epro::format(L"fonts/{}", mainGame->gSettings.cbCurrentFont->getItem(selected)));
+				return true;
+			}
+			case COMBOBOX_TEXTURE0: {
+				int selected = mainGame->gSettings.cbName_texture[0]->getSelected();
+				if (selected < 0) return true;
+				gGameConfig->randomacttexture = epro::format(EPRO_TEXT("{}"), mainGame->gSettings.cbName_texture[0]->getItem(selected));
+				if(mainGame->imageManager.tAct) mainGame->driver->removeTexture(mainGame->imageManager.tAct);
+				mainGame->imageManager.tAct = mainGame->driver->getTexture((epro::format(EPRO_TEXT("textures/act/{}"), gGameConfig->randomacttexture)).c_str());
+				mainGame->gSettings.btnrandomtexture->setImage(mainGame->imageManager.tAct);
 				return true;
 			}
 			///kdiy///////

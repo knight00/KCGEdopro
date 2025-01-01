@@ -348,7 +348,6 @@ struct host_creation_panel_elements {
 	irr::gui::IGUIButton* btnSimpleJoinHost;
 	irr::gui::IGUIButton* btnHostConfirm2;
 	irr::gui::IGUIButton* btnHostCancel2;
-    irr::gui::IGUIWindow* wRandomTexture;
 	uint8_t character[6] = {0,0,0,0,0,0};
 	uint8_t choose_player = -1; //0-5th players
 	irr::gui::IGUIWindow* wCharacter;
@@ -772,6 +771,7 @@ public:
 	void LoadLocalServers();
 	void ReloadLocalCBDuelRule();
 	void ReloadLocalCBRule();
+	void ReloadTexture();
 	//void ShowCardInfo(uint32_t code, bool resize = false, imgType type = imgType::ART);
     void ShowCardInfo(uint32_t code, bool resize = false, imgType type = imgType::ART, ClientCard* pcard = nullptr);
     void ShowPlayerInfo(uint8_t player);

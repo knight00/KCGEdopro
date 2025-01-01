@@ -2873,7 +2873,10 @@ void Game::PopulateSettingsWindow() {
 	defaultStrings.emplace_back(gSettings.window, 1273);
 	gSettings.window->setVisible(false);
 
-	irr::s32 cur_y = 5;
+	/////kdiy/////
+	//irr::s32 cur_y = 5;
+	irr::s32 cur_y = 15;
+	/////kdiy/////
 	irr::s32 cur_x = 15;
 	constexpr auto y_incr = 30;
 	constexpr auto x_incr = 325;
@@ -3314,44 +3317,31 @@ void Game::PopulateSettingsWindow() {
 		defaultStrings.emplace_back(gSettings.chkPainting, 8058);
         IncrementXorY();
     }
-    wRandomTexture = env->addWindow(Scale(220, 100, 880, 500), false, gDataManager->GetSysString(8015).data());
-	defaultStrings.emplace_back(wRandomTexture, 8015);
-    wRandomTexture->getCloseButton()->setVisible(false);
-	wRandomTexture->setVisible(false);
+	gSettings.wRandomTexture = env->addWindow(Scale(220, 100, 880, 500), false, gDataManager->GetSysString(8015).data());
+	defaultStrings.emplace_back(gSettings.wRandomTexture, 8015);
+	gSettings.wRandomTexture->setVisible(false);
+	gSettings.wRandomTexture->getCloseButton()->setVisible(false);
 	auto GetNextRand = [&cur_y, &cur_x, &IncrementXorY, this] {
 		auto cury = cur_y;
 		auto curx = cur_x;
 		IncrementXorY();
-		return Scale<irr::s32>(curx, cury, curx + 305, cury + 25);
+		return Scale<irr::s32>(curx, cury, curx + 155, cury + 25);
 	};
-	for(int i = 0; i < 6; ++i) {
-		randomtexture[i] = env->addCheckBox(gGameConfig->randomtexture, GetNextRand(), wRandomTexture, CHECKBOX_TEXTURE + i, gDataManager->GetSysString(8042 + i).data());
-		defaultStrings.emplace_back(gSettings.chkRandomtexture, 8042);
-        ebName_replay[i] = env->addEditBox(L"", Scale(65, 45 + i * 25, 165, 65 + i * 25), true, wCharacterReplay, EDITBOX_REPLAYNAME);
-        ebName_replay[i]->setVisible(false);
-        btnCharacterSelect_replayreset[i] = env->addButton(Scale(168, 45 + i * 25, 248, 65 + i * 25), wCharacterReplay, BUTTON_NAMERESET_REPLAY, gDataManager->GetSysString(8065).data());
-        defaultStrings.emplace_back(btnCharacterSelect_replayreset[i], 8065);
-        btnCharacterSelect_replayreset[i]->setVisible(false);
-        ebCharacter_replay[i] = AddComboBox(env, Scale(251, 45 + i * 25, 351, 65 + i * 25), wCharacterReplay, COMBOBOX_CHARACTER);
-        ebCharacter_replay[i]->clear();
-        ebCharacter_replay[i]->addItem(gDataManager->GetSysString(8047).data());
-        for (auto j = 9000; j < 9000 + CHARACTER_VOICE - 1; ++j)
-            ebCharacter_replay[i]->addItem(gDataManager->GetSysString(j).data());
-        ebCharacter_replay[i]->setSelected(0);
-        ebCharacter_replay[i]->setMaxSelectionRows(10);
-        ebCharacter_replay[i]->setVisible(false);
-	}
-    btnCharacter_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(420, 45, 620, 345), wCharacterReplay, BUTTON_CHARACTER);
-	btnCharacter_replay->setDrawBorder(false);
-	btnCharacter_replay->setImageSize(Scale(0, 0, 200, 300).getSize());
-	btnCharacterSelect1_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(420, 345, 440, 370), wCharacterReplay, BUTTON_CHARACTER_SELECT);
-	btnCharacterSelect1_replay->setDrawBorder(false);
-	btnCharacterSelect1_replay->setImageSize(Scale(0, 0, 20, 20).getSize());
-	btnCharacterSelect1_replay->setImage(imageManager.tcharacterselect);
-	btnCharacterSelect2_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(600, 345, 620, 370), wCharacterReplay, BUTTON_CHARACTER_SELECT2);
-	btnCharacterSelect2_replay->setDrawBorder(false);
-	btnCharacterSelect2_replay->setImageSize(Scale(0, 0, 20, 20).getSize());
-	btnCharacterSelect2_replay->setImage(imageManager.tcharacterselect2);
+	ResetXandY();
+    gSettings.randomtexture[0] = env->addCheckBox(gGameConfig->randomact, GetNextRand(), gSettings.wRandomTexture, CHECKBOX_TEXTURE0, gDataManager->GetSysString(8042).data());
+	defaultStrings.emplace_back(gSettings.chkRandomtexture, 8042);
+	gSettings.cbName_texture[0] = AddComboBox(env, GetNextRand(), gSettings.wRandomTexture, COMBOBOX_TEXTURE0);
+	gSettings.cbName_texture[0]->setVisible(!gGameConfig->randomact);
+	gSettings.cbName_texture[0]->setMaxSelectionRows(10);
+	ReloadTexture();
+	gSettings.btnrandomtexture = env->addButton(Scale(420, 45, 620, 345), gSettings.wRandomTexture, BUTTON_TEXTURE);
+	gSettings.btnrandomtexture->setDrawBorder(false);
+	gSettings.btnrandomtextureSelect1 = env->addButton(Scale(420, 345, 440, 370), gSettings.wRandomTexture, BUTTON_TEXTURE_SELECT);
+	gSettings.btnrandomtextureSelect1->setDrawBorder(false);
+	gSettings.btnrandomtextureSelect1->setImage(imageManager.tcharacterselect);
+	gSettings.btnrandomtextureSelect2 = env->addButton(Scale(600, 345, 620, 370), gSettings.wRandomTexture, BUTTON_TEXTURE_SELECT2);
+	gSettings.btnrandomtextureSelect2->setDrawBorder(false);
+	gSettings.btnrandomtextureSelect2->setImage(imageManager.tcharacterselect2);
     /////kdiy////////////
 }
 #undef WStr
@@ -6011,6 +6001,20 @@ void Game::ReloadLocalCBRule() {
 	    cbRule2->addItem(gDataManager->GetSysString(i).data());
 	}
 }
+void Game::ReloadTexture() {
+	gSettings.cbName_texture[0]->clear();
+	for(auto num : imageManager.ImageList[TEXTURE_ACTIVATE]) {
+		auto file = epro::format(EPRO_TEXT("./textures/{}"), num);
+		auto filename = Utils::GetFileName(file, true).data();
+		uint32_t j = gSettings.cbName_texture[0]->addItem(filename);
+		if(gGameConfig->randomacttexture == filename) {
+			gSettings.cbName_texture[0]->setSelected(j);
+			if(imageManager.tAct) driver->removeTexture(imageManager.tAct);
+			imageManager.tAct = driver->getTexture((epro::format(EPRO_TEXT("textures/act/{}"), gGameConfig->randomacttexture)).c_str());
+		} else
+			gSettings.cbName_texture[0]->setSelected(0);
+	}
+}
 /////kdiy////////////
 void Game::ReloadCBCurrentSkin() {
 	gSettings.cbCurrentSkin->clear();
@@ -6195,6 +6199,7 @@ void Game::OnResize() {
 	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 535));
 	#endif
 	wQQ->setRelativePosition(ResizeWin(10, 438, 100, 570));
+	gSettings.wRandomTexture->setRelativePosition(ResizeWin(220, 100, 880, 500));
 	////////kdiy///////
 	SetCentered(wCommitsLog);
 	SetCentered(updateWindow, false);

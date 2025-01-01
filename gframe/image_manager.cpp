@@ -329,13 +329,14 @@ bool ImageManager::Initial() {
 	ASSERT_TEXTURE_LOADED(tUnknown, "unknown");
 
 	GetRandomImage(tAct, TEXTURE_ACTIVATE);
-	GetRandomImage(tAttack, TEXTURE_ATTACK);
 	if (!tAct) {
-		tAct = loadTextureAnySize(EPRO_TEXT("act"sv));
+	    tAct = loadTextureAnySize(epro::format(EPRO_TEXT("act/{}"sv), gGameConfig->randomacttexture));
+		if (!tAct) tAct = loadTextureAnySize(EPRO_TEXT("act"sv));
         ASSIGN_DEFAULT(tAct);
     }
 	ASSERT_TEXTURE_LOADED(tAct, "act");
 
+	GetRandomImage(tAttack, TEXTURE_ATTACK);
 	if (!tAttack) {
 		tAttack = loadTextureAnySize(EPRO_TEXT("attack"sv));
         ASSIGN_DEFAULT(tAttack);
