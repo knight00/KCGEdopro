@@ -24,15 +24,6 @@ public:
 	std::vector<epro::path_stringview> GetSupportedMusicExtensions() const override {
 		return m_BaseBackend->GetSupportedMusicExtensions();
 	}
-	//kdiy//////////
-	virtual bool PlaySound(char* buff, const std::string& filename, long length) override;
-	virtual int32_t GetSoundDuration(const std::string& name) override {
-		return m_BaseBackend->GetSoundDuration(name);
-	}
-	virtual int32_t GetSoundDuration(char* buff, const std::string& filename, long length) override {
-		return m_BaseBackend->GetSoundDuration(buff, filename, length);
-	}
-	//kdiy//////////
 protected:
 	explicit SoundThreadedBackend(std::unique_ptr<SoundBackend>&&);
 private:
@@ -41,9 +32,6 @@ private:
 		SET_MUSIC_VOLUME,
 		PLAY_MUSIC,
 		PLAY_SOUND,
-		///kdiy/////////
-		PLAY_SOUNDZ,
-		///kdiy/////////
 		STOP_SOUNDS,
 		STOP_MUSIC,
 		PAUSE_MUSIC,
@@ -64,11 +52,6 @@ private:
 		struct {
 			Response* response;
 			const std::string* name;
-			///kdiy//////
-			char* buff;
-			const std::string* filename;
-			long length;
-			///kdiy//////
 		} play_sound;
 		struct {
 			Response* response;

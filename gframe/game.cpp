@@ -3571,6 +3571,10 @@ bool Game::MainLoop() {
 			///kdiy///////
             if(mainGame->wLocation->isVisible())
 			    DrawDeckBd();
+			if(mainGame->isEvent && chantsound.getStatus() != sf::Sound::Playing) {
+				mainGame->isEvent = false;
+				mainGame->cv->notify_one();
+            }
 			///kdiy///////
 			smgr->drawAll();
 			driver->setMaterial(irr::video::IdentityMaterial);
@@ -5287,9 +5291,9 @@ bool Game::PlayVideo(bool loop) {
 			timeAccumulated2 -= audioFrameDuration;
 		}
 		if (!audioBuffer.empty()) {
-			if (soundBuffer.loadFromSamples(audioBuffer.data(), audioBuffer.size(), audioCodecCtx->channels, audioCodecCtx->sample_rate)) {
-				sound.setBuffer(soundBuffer);
-				sound.play();
+			if (videosoundBuffer.loadFromSamples(audioBuffer.data(), audioBuffer.size(), audioCodecCtx->channels, audioCodecCtx->sample_rate)) {
+				videosound.setBuffer(videosoundBuffer);
+				videosound.play();
 			}
 			audioBuffer.clear();
 		}
@@ -5344,7 +5348,7 @@ void Game::StopVideo(bool close, bool reset) {
         driver->removeTexture(videotexture);
         videotexture = nullptr;
     }
-	sound.stop();
+	videosound.stop();
     if(reset) {
         isAnime = false;
     }
@@ -6009,8 +6013,8 @@ void Game::ReloadTexture() {
 		uint32_t j = gSettings.cbName_texture[0]->addItem(filename);
 		if(gGameConfig->randomacttexture == filename) {
 			gSettings.cbName_texture[0]->setSelected(j);
-			if(imageManager.tAct) driver->removeTexture(imageManager.tAct);
-			imageManager.tAct = driver->getTexture((epro::format(EPRO_TEXT("textures/act/{}"), gGameConfig->randomacttexture)).c_str());
+			if(imageManager.tTexture[TEXTURE_ACTIVATE]) driver->removeTexture(imageManager.tTexture[TEXTURE_ACTIVATE]);
+			imageManager.tTexture[TEXTURE_ACTIVATE] = driver->getTexture((epro::format(EPRO_TEXT("textures/{}/{}"), imageManager.ImageFolder[TEXTURE_ACTIVATE], gGameConfig->randomacttexture)).c_str());
 		} else
 			gSettings.cbName_texture[0]->setSelected(0);
 	}

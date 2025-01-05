@@ -948,11 +948,13 @@ public:
 	bool haloNodeexist[2][12][10];
     std::vector<irr::core::vector3df> haloNode[2][12][10];
     //ktest////////
+	sf::Sound chantsound;
+	sf::SoundBuffer soundBuffer;
     std::string currentVideo;
 	bool videostart = false;
 	bool isAnime = false;
-    sf::Sound sound;
-	sf::SoundBuffer soundBuffer;
+    sf::Sound videosound;
+	sf::SoundBuffer videosoundBuffer;
     // cv::VideoCapture cap;
     irr::video::ITexture* videotexture = nullptr;
 	// cv::Mat frame;

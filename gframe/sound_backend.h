@@ -22,11 +22,6 @@ public:
 	virtual std::vector<epro::path_stringview> GetSupportedMusicExtensions() const {
 		return { EPRO_TEXT("mp3"), EPRO_TEXT("ogg"), EPRO_TEXT("wav"), EPRO_TEXT("flac") };
 	};
-	//kdiy//////////
-	virtual int32_t GetSoundDuration(const std::string& name) = 0;
-	virtual bool PlaySound(char* buff, const std::string& filename, long length) = 0;
-	virtual int32_t GetSoundDuration(char* buff, const std::string& filename, long length) = 0;
-	//kdiy//////////
 };
 
 #endif //SOUND_BACKEND_H

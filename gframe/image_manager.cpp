@@ -427,7 +427,7 @@ bool ImageManager::Initial() {
     }
 	ASSERT_TEXTURE_LOADED(tBackGround, "bg");
 
-	GetRandomImage(tBackGround_menu, TEXTURE_BACKGROUND_MENU);
+	GetRandomImage(tBackGround_menu, TEXTURE_MENU);
 	if (!tBackGround_menu)
 		tBackGround_menu = loadTextureAnySize(EPRO_TEXT("bg_menu"sv));
 	if(!tBackGround_menu) {
@@ -435,7 +435,7 @@ bool ImageManager::Initial() {
         ASSIGN_DEFAULT(tBackGround_menu);
     }
 
-	GetRandomImage(tBackGround_deck, TEXTURE_BACKGROUND_DECK);
+	GetRandomImage(tBackGround_deck, TEXTURE_DECK);
 	if (!tBackGround_deck)
 		tBackGround_deck = loadTextureAnySize(EPRO_TEXT("bg_deck"sv));
 	if(!tBackGround_deck) {
@@ -678,6 +678,7 @@ void ImageManager::SetAvatar(int player, const wchar_t *avatar) {
     }
 }
 void ImageManager::RefreshRandomImageList() {
+	RefreshImageDir(EPRO_TEXT("bg"), TEXTURE_BACKGROUND);
 	RefreshImageDir(EPRO_TEXT("bg_deck"), TEXTURE_DECK);
 	RefreshImageDir(EPRO_TEXT("bg_menu"), TEXTURE_MENU);
 	RefreshImageDir(EPRO_TEXT("cover"), TEXTURE_COVERS);
@@ -693,9 +694,6 @@ void ImageManager::RefreshRandomImageList() {
 	RefreshImageDir(EPRO_TEXT("target"), TEXTURE_TARGET);
 	RefreshImageDir(EPRO_TEXT("chaintarget"), TEXTURE_CHAINTARGET);
 	RefreshImageDirf();
-	RefreshImageDir(EPRO_TEXT("bg"), TEXTURE_BACKGROUND);
-	RefreshImageDir(EPRO_TEXT("bg_menu"), TEXTURE_BACKGROUND_MENU);
-	RefreshImageDir(EPRO_TEXT("bg_deck"), TEXTURE_BACKGROUND_DECK);
 	RefreshImageDir(EPRO_TEXT("field2"), TEXTURE_field2);
 	RefreshImageDir(EPRO_TEXT("field-transparent2"), TEXTURE_field_transparent2);
 	RefreshImageDir(EPRO_TEXT("field3"), TEXTURE_field3);
@@ -721,14 +719,18 @@ void ImageManager::RefreshRandomImageList() {
 		RefreshImageDir(epro::format(EPRO_TEXT("character/{}/damage"), gSoundManager->textcharacter[playno]), imgcharacter[playno] + CHARACTER_VOICE - 1);
 	}
 
-	for(int i = 0; i < 40 + CHARACTER_VOICE + CHARACTER_VOICE - 2; ++i)
+	for(int i = 0; i < 36 + CHARACTER_VOICE + CHARACTER_VOICE - 2; ++i)
 		saved_image_id[i] = -1;
 }
 void ImageManager::RefreshImageDir(epro::path_string path, int image_type) {
-	for(auto file : Utils::FindFiles(BASE_PATH + path, { EPRO_TEXT("jpg"), EPRO_TEXT("png") }))
+	for(auto file : Utils::FindFiles(BASE_PATH + path, { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
 		ImageList[image_type].push_back(epro::format(EPRO_TEXT("{}/{}"), path, file));
+		if(image_type < 36)
+		    ImageFolder[image_type] = path;
+	}
 }
 void ImageManager::RefreshImageDirf() {
+	ImageFolder[TEXTURE_F1] = EPRO_TEXT("morra");
 	for(auto& _folder : Utils::FindSubfolders(epro::format(EPRO_TEXT("{}morra/"), BASE_PATH), 1, false)) {
         bool f1 = false; bool f2 = false; bool f3 = false;
 		auto folder = epro::format(EPRO_TEXT("morra/{}/"), _folder);
@@ -745,6 +747,7 @@ void ImageManager::RefreshImageDirf() {
 	}
 }
 void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, bool force_random) {
+	if(image_type < 36) tTexture[image_type] = src;
     int count = ImageList[image_type].size();
 	if((!gGameConfig->randomtexture && !force_random) || count <= 0) {
         src = nullptr;
@@ -764,6 +767,7 @@ void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, bo
 	src = tmp;
 }
 void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, int width, int height, bool force_random) {
+	if(image_type < 36) tTexture[image_type] = src;
 	int count = ImageList[image_type].size();
 	if((!gGameConfig->randomtexture && !force_random) || count <= 0) {
         src = nullptr;
@@ -936,14 +940,14 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 	GetRandomImage(tBackGround, TEXTURE_BACKGROUND);
 	if(!tBackGround)
 	    REPLACE_TEXTURE_ANY_SIZE(tBackGround, "bg");
-	GetRandomImage(tBackGround_menu, TEXTURE_BACKGROUND_MENU);
+	GetRandomImage(tBackGround_menu, TEXTURE_MENU);
 	if (!tBackGround_menu)
 		tBackGround_menu = loadTextureAnySize(EPRO_TEXT("bg_menu"sv));
 	if(!tBackGround_menu) {
 		tBackGround_menu = tBackGround;
     }
 
-	GetRandomImage(tBackGround_deck, TEXTURE_BACKGROUND_DECK);
+	GetRandomImage(tBackGround_deck, TEXTURE_DECK);
 	if (!tBackGround_deck)
 		tBackGround_deck = loadTextureAnySize(EPRO_TEXT("bg_deck"sv));
 	if(!tBackGround_deck) {

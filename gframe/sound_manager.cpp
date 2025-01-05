@@ -459,23 +459,11 @@ void SoundManager::RefreshChantsList() {
 #endif	
 }
 /////kdiy/////
-int32_t SoundManager::GetSoundDuration(std::string name) {
-#ifdef BACKEND
-    if(mixer && soundsEnabled)
-		return mixer->GetSoundDuration(name);
-	else return 1000;
-#else
-	return 1000;
-#endif
-}
-int32_t SoundManager::GetSoundDuration(char* buff, const std::string& filename, long length) {
-#ifdef BACKEND
-	if (mixer && soundsEnabled)
-		return mixer->GetSoundDuration(buff, filename, length);
-	else return 1000;
-#else
-	return 1000;
-#endif
+int32_t SoundManager::GetSoundDuration() {
+	std::size_t sampleCount = mainGame->soundBuffer.getSampleCount();
+    unsigned int sampleRate = mainGame->soundBuffer.getSampleRate();
+    float duration = static_cast<float>(sampleCount) / sampleRate;
+	return static_cast<int32_t>(duration * 1000);
 }
 int SoundManager::PlayModeSound(bool lock) {
 #ifdef BACKEND
@@ -500,8 +488,9 @@ void SoundManager::PlayMode(bool lock) {
         return;
     }
     std::string file = epro::format("./mode/story/story{}/soundDialog/{}.mp3", mainGame->mode->chapter, mainGame->mode->plotIndex);
+	if(!Utils::FileExists(Utils::ToPathString(file))) return;
     std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-	auto wait = std::max(std::chrono::milliseconds(GetSoundDuration(file)), std::chrono::milliseconds(1000));
+	auto wait = std::chrono::milliseconds(GetSoundDuration());
     mainGame->cv->wait_for(lck, wait);
 }
 /////kdiy/////
@@ -619,13 +608,15 @@ void SoundManager::PlayCustomMusic(std::string num) {
 	if(soundsEnabled) {
 		const auto extensions = mixer->GetSupportedSoundExtensions();
 		for(const auto& ext : extensions) {
-			const auto filename = epro::format("./sound/custom/{}.{}", num, Utils::ToUTF8IfNeeded(ext));
-			if(Utils::FileExists(Utils::ToPathString(filename))) {
-				if(mixer->PlaySound(filename)) {
+			const auto file = epro::format("./sound/custom/{}.{}", num, Utils::ToUTF8IfNeeded(ext));
+			if(Utils::FileExists(Utils::ToPathString(file))) {
+				if (mainGame->soundBuffer.loadFromFile(file)) {
+					mainGame->chantsound.setBuffer(mainGame->soundBuffer);
+					mainGame->chantsound.play();
 					mainGame->isEvent = true;
 					if(mainGame->dInfo.isInDuel && gGameConfig->pauseduel) {
 						std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-						auto wait = std::max(std::chrono::milliseconds(GetSoundDuration(filename)), std::chrono::milliseconds(1000));
+						auto wait = std::chrono::milliseconds(GetSoundDuration());
 						mainGame->cv->wait_for(lck, wait);
 					}
 					mainGame->isEvent = false;
@@ -851,15 +842,18 @@ bool SoundManager::PlayZipChants(CHANT chant, std::string file, std::vector<std:
 					}
 					sound.push_back(file);
 				}
-				mixer->PlaySound(buff, filename, length);
-				if(chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN) {
-					mainGame->isEvent = true;
-					if(mainGame->dInfo.isInDuel && gGameConfig->pauseduel && character[player] > 0) {
-						std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-						auto wait = std::max(std::chrono::milliseconds(GetSoundDuration(buff, filename, length)), std::chrono::milliseconds(1000));
-						mainGame->cv->wait_for(lck, wait);
+				if (mainGame->soundBuffer.loadFromMemory(buff, length)) {
+					mainGame->chantsound.setBuffer(mainGame->soundBuffer);
+					mainGame->chantsound.play();
+					if(chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN) {
+						mainGame->isEvent = true;
+						if(mainGame->dInfo.isInDuel && gGameConfig->pauseduel && character[player] > 0) {
+							std::unique_lock<epro::mutex> lck(mainGame->gMutex);
+							auto wait = std::chrono::milliseconds(GetSoundDuration());
+							mainGame->cv->wait_for(lck, wait);
+						}
+						mainGame->isEvent = false;
 					}
-					mainGame->isEvent = false;
 				}
 			}
 			reader->drop();
@@ -880,12 +874,14 @@ bool SoundManager::PlayChants(CHANT chant, std::string file, std::vector<std::st
 			sound.push_back(file);
 		}
 		StopSounds();
-		if(mixer->PlaySound(file)) {
+		if (mainGame->soundBuffer.loadFromFile(file)) {
+			mainGame->chantsound.setBuffer(mainGame->soundBuffer);
+			mainGame->chantsound.play();
 			if(chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN) {
 				mainGame->isEvent = true;
 				if(mainGame->dInfo.isInDuel && gGameConfig->pauseduel && character[player] > 0) {
 					std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-					auto wait = std::max(std::chrono::milliseconds(GetSoundDuration(file)), std::chrono::milliseconds(1000));
+					auto wait = std::chrono::milliseconds(GetSoundDuration());
 					mainGame->cv->wait_for(lck, wait);
 				}
 				mainGame->isEvent = false;

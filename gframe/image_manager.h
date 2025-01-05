@@ -89,8 +89,10 @@ public:
 	bool Initial();
 	/////kdiy/////
     void SetAvatar(int player, const wchar_t *avatar);
-	std::vector<epro::path_string> ImageList[40+CHARACTER_VOICE+CHARACTER_VOICE-2];
-	int saved_image_id[40+CHARACTER_VOICE+CHARACTER_VOICE-2];
+	epro::path_string ImageFolder[36];
+	irr::video::ITexture* tTexture[36];
+	std::vector<epro::path_string> ImageList[36+CHARACTER_VOICE+CHARACTER_VOICE-2];
+	int saved_image_id[36+CHARACTER_VOICE+CHARACTER_VOICE-2];
 	//random image
 	void GetRandomImage(irr::video::ITexture*& src, int image_type, bool force_random=false);
 	void GetRandomImage(irr::video::ITexture*& src, int image_type, int width, int height, bool force_random = false);
@@ -134,46 +136,42 @@ private:
 	std::unordered_map<uint32_t, irr::video::ITexture*> tFields;
 	texture_map tCovers;
 	/////////kdiy////
-#define TEXTURE_DECK				0
-#define TEXTURE_MENU				1
-#define TEXTURE_COVERS				2
-#define TEXTURE_COVERS2				3
-#define TEXTURE_ATTACK				4
-#define TEXTURE_ACTIVATE			5
-#define TEXTURE_CHAIN			    6
-#define TEXTURE_NEGATED			    7
-#define TEXTURE_MASK		        8
-#define TEXTURE_EQUIP		        9
-#define TEXTURE_TARGET		        10
-#define TEXTURE_CHAINTARGET		    11
-#define TEXTURE_F1		            12
-#define TEXTURE_F2		            13
-#define TEXTURE_F3		            14
-#define TEXTURE_BACKGROUND		    15
-#define TEXTURE_BACKGROUND_MENU		16
-#define TEXTURE_BACKGROUND_DECK		17
-#define TEXTURE_field2		        18
-#define TEXTURE_field_transparent2	19
-#define TEXTURE_field3		        20
-#define TEXTURE_field_transparent3	21
-#define TEXTURE_field		        22
-#define TEXTURE_field_transparent	23
-#define TEXTURE_field4		        24
-#define TEXTURE_field_transparent4	25
-#define TEXTURE_field_fieldSP2	    26
-#define TEXTURE_field_transparentSP2 27
-#define TEXTURE_fieldSP3            28
-#define TEXTURE_field_transparentSP3 29
-#define TEXTURE_fieldSP             30
-#define TEXTURE_field_transparentSP 31
-#define TEXTURE_fieldSP4            32
-#define TEXTURE_field_transparentSP4 33
-#define TEXTURE_UNKNOWN             34
-#define TEXTURE_LIM                 35
-#define TEXTURE_OT                  36
-#define TEXTURE_COVERS3				37
-#define TEXTURE_COVERS4				38
-#define TEXTURE_SETTING             39
+#define TEXTURE_BACKGROUND		    0
+#define TEXTURE_DECK				1
+#define TEXTURE_MENU				2
+#define TEXTURE_COVERS				3
+#define TEXTURE_COVERS2				4
+#define TEXTURE_ATTACK				5
+#define TEXTURE_ACTIVATE			6
+#define TEXTURE_CHAIN			    7
+#define TEXTURE_NEGATED			    8
+#define TEXTURE_MASK		        9
+#define TEXTURE_EQUIP		        10
+#define TEXTURE_TARGET		        11
+#define TEXTURE_CHAINTARGET		    12
+#define TEXTURE_F1		            13
+#define TEXTURE_field2		        14
+#define TEXTURE_field_transparent2	15
+#define TEXTURE_field3		        16
+#define TEXTURE_field_transparent3	17
+#define TEXTURE_field		        18
+#define TEXTURE_field_transparent	19
+#define TEXTURE_field4		        20
+#define TEXTURE_field_transparent4	21
+#define TEXTURE_field_fieldSP2	    22
+#define TEXTURE_field_transparentSP2 23
+#define TEXTURE_fieldSP3            24
+#define TEXTURE_field_transparentSP3 25
+#define TEXTURE_fieldSP             26
+#define TEXTURE_field_transparentSP 27
+#define TEXTURE_fieldSP4            28
+#define TEXTURE_field_transparentSP4 29
+#define TEXTURE_UNKNOWN             30
+#define TEXTURE_LIM                 31
+#define TEXTURE_OT                  32
+#define TEXTURE_COVERS3				33
+#define TEXTURE_COVERS4				34
+#define TEXTURE_SETTING             35
 
 	std::vector<uint8_t> imgcharacter;
 	std::unordered_map<uint32_t, irr::video::ITexture*> tCloseup;
