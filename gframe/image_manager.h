@@ -89,8 +89,8 @@ public:
 	bool Initial();
 	/////kdiy/////
     void SetAvatar(int player, const wchar_t *avatar);
-	epro::path_string ImageFolder[36];
-	irr::video::ITexture* tTexture[36];
+	epro::path_string ImageFolder[20];
+	irr::video::ITexture* tTexture[20];
 	std::vector<epro::path_string> ImageList[36+CHARACTER_VOICE+CHARACTER_VOICE-2];
 	int saved_image_id[36+CHARACTER_VOICE+CHARACTER_VOICE-2];
 	//random image
@@ -149,29 +149,29 @@ private:
 #define TEXTURE_EQUIP		        10
 #define TEXTURE_TARGET		        11
 #define TEXTURE_CHAINTARGET		    12
-#define TEXTURE_F1		            13
-#define TEXTURE_field2		        14
-#define TEXTURE_field_transparent2	15
-#define TEXTURE_field3		        16
-#define TEXTURE_field_transparent3	17
-#define TEXTURE_field		        18
-#define TEXTURE_field_transparent	19
-#define TEXTURE_field4		        20
-#define TEXTURE_field_transparent4	21
-#define TEXTURE_field_fieldSP2	    22
-#define TEXTURE_field_transparentSP2 23
-#define TEXTURE_fieldSP3            24
-#define TEXTURE_field_transparentSP3 25
-#define TEXTURE_fieldSP             26
-#define TEXTURE_field_transparentSP 27
-#define TEXTURE_fieldSP4            28
-#define TEXTURE_field_transparentSP4 29
-#define TEXTURE_UNKNOWN             30
-#define TEXTURE_LIM                 31
-#define TEXTURE_OT                  32
-#define TEXTURE_COVERS3				33
-#define TEXTURE_COVERS4				34
-#define TEXTURE_SETTING             35
+#define TEXTURE_UNKNOWN             13
+#define TEXTURE_LIM                 14
+#define TEXTURE_OT                  15
+#define TEXTURE_COVERS3				16
+#define TEXTURE_COVERS4				17
+#define TEXTURE_SETTING             18
+#define TEXTURE_F1		            19
+#define TEXTURE_field2		        20
+#define TEXTURE_field_transparent2	21
+#define TEXTURE_field3		        22
+#define TEXTURE_field_transparent3	23
+#define TEXTURE_field		        24
+#define TEXTURE_field_transparent	25
+#define TEXTURE_field4		        26
+#define TEXTURE_field_transparent4	27
+#define TEXTURE_field_fieldSP2	    28
+#define TEXTURE_field_transparentSP2 29
+#define TEXTURE_fieldSP3            30
+#define TEXTURE_field_transparentSP3 31
+#define TEXTURE_fieldSP             32
+#define TEXTURE_field_transparentSP 33
+#define TEXTURE_fieldSP4            34
+#define TEXTURE_field_transparentSP4 35
 
 	std::vector<uint8_t> imgcharacter;
 	std::unordered_map<uint32_t, irr::video::ITexture*> tCloseup;

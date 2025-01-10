@@ -91,7 +91,7 @@ irr::video::ITexture* ImageManager::loadTextureAnySize(epro::path_stringview tex
 bool ImageManager::Initial() {
 	/////kdiy/////
     for(uint8_t playno = 0; playno < CHARACTER_VOICE - 1; playno++)
-		imgcharacter.push_back(TEXTURE_SETTING + playno + 1);
+		imgcharacter.push_back(TEXTURE_field_transparentSP4 + playno + 1);
 	Utils::MakeDirectory(EPRO_TEXT("./textures/character"));
 	std::vector<epro::path_string> searchPath;
 	for(uint8_t playno = 0; playno < CHARACTER_VOICE - 1; playno++)
@@ -725,12 +725,11 @@ void ImageManager::RefreshRandomImageList() {
 void ImageManager::RefreshImageDir(epro::path_string path, int image_type) {
 	for(auto file : Utils::FindFiles(BASE_PATH + path, { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
 		ImageList[image_type].push_back(epro::format(EPRO_TEXT("{}/{}"), path, file));
-		if(image_type < 36)
+		if(image_type < 20)
 		    ImageFolder[image_type] = path;
 	}
 }
 void ImageManager::RefreshImageDirf() {
-	ImageFolder[TEXTURE_F1] = EPRO_TEXT("morra");
 	for(auto& _folder : Utils::FindSubfolders(epro::format(EPRO_TEXT("{}morra/"), BASE_PATH), 1, false)) {
         bool f1 = false; bool f2 = false; bool f3 = false;
 		auto folder = epro::format(EPRO_TEXT("morra/{}/"), _folder);
@@ -747,7 +746,7 @@ void ImageManager::RefreshImageDirf() {
 	}
 }
 void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, bool force_random) {
-	if(image_type < 36) tTexture[image_type] = src;
+	if(image_type < 20) tTexture[image_type] = src;
     int count = ImageList[image_type].size();
 	if((!gGameConfig->randomtexture && !force_random) || count <= 0) {
         src = nullptr;
@@ -767,7 +766,7 @@ void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, bo
 	src = tmp;
 }
 void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, int width, int height, bool force_random) {
-	if(image_type < 36) tTexture[image_type] = src;
+	if(image_type < 20) tTexture[image_type] = src;
 	int count = ImageList[image_type].size();
 	if((!gGameConfig->randomtexture && !force_random) || count <= 0) {
         src = nullptr;
@@ -787,6 +786,7 @@ void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, in
 	src = tmp;
 }
 void ImageManager::GetRandomImagef(int width, int height) {
+	ImageFolder[TEXTURE_F1] = EPRO_TEXT("morra");
 	int count = ImageList[TEXTURE_F1].size();
 	if(!gGameConfig->randomtexture || count <= 0) {
 		tHand[0] = nullptr;

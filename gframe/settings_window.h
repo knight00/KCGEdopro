@@ -109,8 +109,8 @@ struct SettingsWindow {
     irr::gui::IGUICheckBox* chkPauseduel;
     irr::gui::IGUIWindow* wRandomTexture;
 	irr::gui::IGUICheckBox* chkRandomtexture;
-	irr::gui::IGUICheckBox* randomtexture[6];
-	irr::gui::IGUIComboBox* cbName_texture[6];
+	irr::gui::IGUICheckBox* chktexture[20];
+	irr::gui::IGUIComboBox* cbName_texture[20];
 	irr::gui::IGUIButton* btnrandomtexture;
 	irr::gui::IGUIButton* btnrandomtextureSelect1;
 	irr::gui::IGUIButton* btnrandomtextureSelect2;
