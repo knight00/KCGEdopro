@@ -308,29 +308,41 @@ bool ImageManager::Initial() {
     tcharacterselect = loadTextureFixedSize(EPRO_TEXT("character/left"sv), 25, 25);
 	tcharacterselect2 = loadTextureFixedSize(EPRO_TEXT("character/right"sv), 25, 25);
     GetRandomImage(tCover[0], TEXTURE_COVERS, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
-    GetRandomImage(tCover[1], TEXTURE_COVERS2, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
-    GetRandomImage(tCover[2], TEXTURE_COVERS3, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
-    GetRandomImage(tCover[3], TEXTURE_COVERS4, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
-    if (!tCover[0])
-	    tCover[0] = loadTextureFixedSize(EPRO_TEXT("cover"sv), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+    if (!tCover[0]) {
+	    tCover[0] = driver->getTexture(epro::format(EPRO_TEXT("{}cover/{}"), textures_path, gGameConfig->randomcovertexture).data());
+		if (!tCover[0]) tCover[0] = loadTextureFixedSize(EPRO_TEXT("cover"sv), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+	}
 	ASSERT_TEXTURE_LOADED(tCover[0], "cover");
-	if (!tCover[1])
-		tCover[1] = loadTextureFixedSize(EPRO_TEXT("cover2"sv), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+    GetRandomImage(tCover[1], TEXTURE_COVERS2, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+	if (!tCover[1]) {
+	    tCover[1] = driver->getTexture(epro::format(EPRO_TEXT("{}cover/{}"), textures_path, gGameConfig->randomcoverextratexture).data());
+		if (!tCover[1]) tCover[1] = loadTextureFixedSize(EPRO_TEXT("cover2"sv), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+	}
     if (!tCover[1])
 	    tCover[1] = tCover[0];
-    if (!tCover[2])
+    GetRandomImage(tCover[2], TEXTURE_COVERS3, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+    if (!tCover[2]) {
+	    tCover[2] = driver->getTexture(epro::format(EPRO_TEXT("{}cover/{}"), textures_path, gGameConfig->randomcover2texture).data());
+	}
+	if (!tCover[2])
 	    tCover[2] = tCover[0];
-    if (!tCover[3])
+    GetRandomImage(tCover[3], TEXTURE_COVERS4, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+    if (!tCover[3]) {
+	    tCover[3] = driver->getTexture(epro::format(EPRO_TEXT("{}cover/{}"), textures_path, gGameConfig->randomcover2extratexture).data());
+	}
+	if (!tCover[3])
 	    tCover[3] = tCover[0];
 
 	GetRandomImage(tUnknown, TEXTURE_UNKNOWN, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
-	if (!tUnknown)
-		tUnknown = loadTextureFixedSize(EPRO_TEXT("unknown"sv), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+	if (!tUnknown) {
+	    tUnknown = driver->getTexture(epro::format(EPRO_TEXT("{}unknown/{}"), textures_path, gGameConfig->randomunknowntexture).data());
+		if (!tUnknown) tUnknown = loadTextureFixedSize(EPRO_TEXT("unknown"sv), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+	}
 	ASSERT_TEXTURE_LOADED(tUnknown, "unknown");
 
 	GetRandomImage(tAct, TEXTURE_ACTIVATE);
 	if (!tAct) {
-	    tAct = loadTextureAnySize(epro::format(EPRO_TEXT("act/{}"sv), gGameConfig->randomacttexture));
+	    tAct = driver->getTexture(epro::format(EPRO_TEXT("{}act/{}"), textures_path, gGameConfig->randomacttexture).data());
 		if (!tAct) tAct = loadTextureAnySize(EPRO_TEXT("act"sv));
         ASSIGN_DEFAULT(tAct);
     }
@@ -338,21 +350,24 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tAttack, TEXTURE_ATTACK);
 	if (!tAttack) {
-		tAttack = loadTextureAnySize(EPRO_TEXT("attack"sv));
+		tAttack = driver->getTexture(epro::format(EPRO_TEXT("{}act/{}"), textures_path, gGameConfig->randomattacktexture).data());
+		if (!tAttack) tAttack = loadTextureAnySize(EPRO_TEXT("attack"sv));
         ASSIGN_DEFAULT(tAttack);
     }
 	ASSERT_TEXTURE_LOADED(tAttack, "attack");
 
 	GetRandomImage(tChain, TEXTURE_CHAIN);
 	if (!tChain) {
-		tChain = loadTextureAnySize(EPRO_TEXT("chain"sv));
+		tChain = driver->getTexture(epro::format(EPRO_TEXT("{}chain/{}"), textures_path, gGameConfig->randomchaintexture).data());
+		if (!tChain) tChain = loadTextureAnySize(EPRO_TEXT("chain"sv));
         ASSIGN_DEFAULT(tChain);
     }
 	ASSERT_TEXTURE_LOADED(tChain, "chain");
 
 	GetRandomImage(tNegated, TEXTURE_NEGATED, 128, 128);
 	if (!tNegated) {
-		tNegated = loadTextureFixedSize(EPRO_TEXT("negated"sv), 128, 128);
+		tNegated = driver->getTexture(epro::format(EPRO_TEXT("{}negated/{}"), textures_path, gGameConfig->randomnegatetexture).data());
+		if (!tNegated) tNegated = loadTextureFixedSize(EPRO_TEXT("negated"sv), 128, 128);
         ASSIGN_DEFAULT(tNegated);
     }
 	ASSERT_TEXTURE_LOADED(tNegated, "negated");
@@ -363,81 +378,95 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tMask, TEXTURE_MASK, 254, 254);
 	if (!tMask) {
-		tMask = loadTextureFixedSize(EPRO_TEXT("mask"sv), 254, 254);
+		tMask = driver->getTexture(epro::format(EPRO_TEXT("{}mask/{}"), textures_path, gGameConfig->randommasktexture).data());
+		if (!tMask) tMask = loadTextureFixedSize(EPRO_TEXT("mask"sv), 254, 254);
         ASSIGN_DEFAULT(tMask);
     }
 	ASSERT_TEXTURE_LOADED(tMask, "mask");
 
 	GetRandomImage(tEquip, TEXTURE_EQUIP);
 	if (!tEquip) {
-		tEquip = loadTextureAnySize(EPRO_TEXT("equip"sv));
+		tEquip = driver->getTexture(epro::format(EPRO_TEXT("{}equip/{}"), textures_path, gGameConfig->randomequiptexture).data());
+		if (!tEquip) tEquip = loadTextureAnySize(EPRO_TEXT("equip"sv));
         ASSIGN_DEFAULT(tEquip);
     }
 	ASSERT_TEXTURE_LOADED(tEquip, "equip");
 
 	GetRandomImage(tTarget, TEXTURE_TARGET);
 	if (!tTarget) {
-		tTarget = loadTextureAnySize(EPRO_TEXT("target"sv));
+		tTarget = driver->getTexture(epro::format(EPRO_TEXT("{}target/{}"), textures_path, gGameConfig->randomtargettexture).data());
+		if (!tTarget) tTarget = loadTextureAnySize(EPRO_TEXT("target"sv));
         ASSIGN_DEFAULT(tTarget);
     }
 	ASSERT_TEXTURE_LOADED(tTarget, "target");
 
 	GetRandomImage(tChainTarget, TEXTURE_CHAINTARGET);
 	if (!tChainTarget) {
-		tChainTarget = loadTextureAnySize(EPRO_TEXT("chaintarget"sv));
+		tChainTarget = driver->getTexture(epro::format(EPRO_TEXT("{}chaintarget/{}"), textures_path, gGameConfig->randomchaintargettexture).data());
+		if (!tChainTarget) tChainTarget = loadTextureAnySize(EPRO_TEXT("chaintarget"sv));
         ASSIGN_DEFAULT(tChainTarget);
     }
 	ASSERT_TEXTURE_LOADED(tChainTarget, "chaintarget");
 
 	GetRandomImage(tLim, TEXTURE_LIM);
 	if (!tLim) {
-		tLim = loadTextureAnySize(EPRO_TEXT("lim"sv));
+		tLim = driver->getTexture(epro::format(EPRO_TEXT("{}lim/{}"), textures_path, gGameConfig->randomlimtexture).data());
+		if (!tLim) tLim = loadTextureAnySize(EPRO_TEXT("lim"sv));
         ASSIGN_DEFAULT(tLim);
     }
 	ASSERT_TEXTURE_LOADED(tLim, "lim");
 
 	GetRandomImage(tOT, TEXTURE_OT);
 	if (!tOT) {
-	    tOT = loadTextureAnySize(EPRO_TEXT("ot"sv));
+	    tOT = driver->getTexture(epro::format(EPRO_TEXT("{}ot/{}"), textures_path, gGameConfig->randomottexture).data());
+		if (!tOT) tOT = loadTextureAnySize(EPRO_TEXT("ot"sv));
         ASSIGN_DEFAULT(tOT);
     }
 	ASSERT_TEXTURE_LOADED(tOT, "ot");
 
 	GetRandomImagef(89, 128);
 	if (!tHand[0]) {
-		tHand[0] = loadTextureFixedSize(EPRO_TEXT("f1"sv), 89, 128);
+		tHand[0] = loadTextureAnySize(epro::format(EPRO_TEXT("morra/{}/f1"sv), gGameConfig->randommorratexture).data());
+		if (!tHand[0]) tHand[0] = loadTextureFixedSize(EPRO_TEXT("f1"sv), 89, 128);
         ASSIGN_DEFAULT(tHand[0]);
     }
 	ASSERT_TEXTURE_LOADED(tHand[0], "f1");
 	if (!tHand[1]) {
-		tHand[1] = loadTextureFixedSize(EPRO_TEXT("f2"sv), 89, 128);
+		tHand[1] = loadTextureAnySize(epro::format(EPRO_TEXT("morra/{}/f2"sv), gGameConfig->randommorratexture).data());
+		if (!tHand[1]) tHand[1] = loadTextureFixedSize(EPRO_TEXT("f2"sv), 89, 128);
         ASSIGN_DEFAULT(tHand[1]);
     }
 	ASSERT_TEXTURE_LOADED(tHand[1], "f2");
 	if (!tHand[2]) {
-		tHand[2] = loadTextureFixedSize(EPRO_TEXT("f3"sv), 89, 128);
+		tHand[2] = loadTextureAnySize(epro::format(EPRO_TEXT("morra/{}/f3"sv), gGameConfig->randommorratexture).data());
+		if (!tHand[2]) tHand[2] = loadTextureFixedSize(EPRO_TEXT("f3"sv), 89, 128);
         ASSIGN_DEFAULT(tHand[2]);
     }
 	ASSERT_TEXTURE_LOADED(tHand[2], "f3");
 
 	GetRandomImage(tBackGround, TEXTURE_BACKGROUND);
 	if (!tBackGround) {
-		tBackGround = loadTextureAnySize(EPRO_TEXT("bg"sv));
+		tBackGround = driver->getTexture(epro::format(EPRO_TEXT("{}bg/{}"), textures_path, gGameConfig->randombgtexture).data());
+		if (!tBackGround) tBackGround = loadTextureAnySize(EPRO_TEXT("bg"sv));
         ASSIGN_DEFAULT(tBackGround);
     }
 	ASSERT_TEXTURE_LOADED(tBackGround, "bg");
 
 	GetRandomImage(tBackGround_menu, TEXTURE_MENU);
-	if (!tBackGround_menu)
-		tBackGround_menu = loadTextureAnySize(EPRO_TEXT("bg_menu"sv));
+	if (!tBackGround_menu) {
+		tBackGround_menu = driver->getTexture(epro::format(EPRO_TEXT("{}bg_menu/{}"), textures_path, gGameConfig->randombgmenutexture).data());
+		if (!tBackGround_menu) tBackGround_menu = loadTextureAnySize(EPRO_TEXT("bg_menu"sv));
+	}
 	if(!tBackGround_menu) {
 		tBackGround_menu = tBackGround;
         ASSIGN_DEFAULT(tBackGround_menu);
     }
 
 	GetRandomImage(tBackGround_deck, TEXTURE_DECK);
-	if (!tBackGround_deck)
-		tBackGround_deck = loadTextureAnySize(EPRO_TEXT("bg_deck"sv));
+	if (!tBackGround_deck){
+		tBackGround_deck = driver->getTexture(epro::format(EPRO_TEXT("{}bg_deck/{}"), textures_path, gGameConfig->randombgdecktexture).data());
+		if (!tBackGround_deck) tBackGround_deck = loadTextureAnySize(EPRO_TEXT("bg_deck"sv));
+	}
 	if(!tBackGround_deck) {
 		tBackGround_deck = tBackGround;
         ASSIGN_DEFAULT(tBackGround_deck);
@@ -563,7 +592,8 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tSettings, TEXTURE_SETTING);
 	if (!tSettings) {
-	    tSettings = loadTextureAnySize(EPRO_TEXT("settings"sv));
+	    tSettings = driver->getTexture(epro::format(EPRO_TEXT("{}settings/{}"), textures_path, gGameConfig->randomattacktexture).data());
+		if (!tSettings) tSettings = loadTextureAnySize(EPRO_TEXT("settings"sv));
         ASSIGN_DEFAULT(tSettings);
     }
 	ASSERT_TEXTURE_LOADED(tSettings, "settings");
@@ -746,7 +776,6 @@ void ImageManager::RefreshImageDirf() {
 	}
 }
 void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, bool force_random) {
-	if(image_type < 20) tTexture[image_type] = src;
     int count = ImageList[image_type].size();
 	if((!gGameConfig->randomtexture && !force_random) || count <= 0) {
         src = nullptr;
@@ -766,7 +795,6 @@ void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, bo
 	src = tmp;
 }
 void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, int width, int height, bool force_random) {
-	if(image_type < 20) tTexture[image_type] = src;
 	int count = ImageList[image_type].size();
 	if((!gGameConfig->randomtexture && !force_random) || count <= 0) {
         src = nullptr;
@@ -828,6 +856,122 @@ void ImageManager::RefreshKCGImage() {
         if(!characterd[playno])
             characterd[playno] = character[playno];
     }
+}
+irr::video::ITexture* ImageManager::UpdatetTexture(int i, std::wstring filepath) {
+	auto file = epro::format(EPRO_TEXT("./textures/{}/{}"), ImageFolder[i], filepath);
+	if (i < TEXTURE_F1 && !Utils::FileExists(file)) return nullptr;
+	if(i == TEXTURE_BACKGROUND) {
+		return mainGame->driver->getTexture(file.c_str());
+	}
+	if(i == TEXTURE_DECK) {
+		return mainGame->driver->getTexture(file.c_str());
+	}
+	if(i == TEXTURE_MENU) {
+		return mainGame->driver->getTexture(file.c_str());
+	}
+	if(i == TEXTURE_COVERS) {
+		if(tCover[0]) mainGame->driver->removeTexture(tCover[0]);
+		tCover[0] = mainGame->driver->getTexture(file.c_str());
+		return tCover[0];
+	}
+	if(i == TEXTURE_COVERS2) {
+		if(tCover[1]) mainGame->driver->removeTexture(tCover[1]);
+		tCover[1] = mainGame->driver->getTexture(file.c_str());
+		return tCover[1];
+	}
+	if(i == TEXTURE_ATTACK) {
+		if(tAttack) mainGame->driver->removeTexture(tAttack);
+		tAttack = mainGame->driver->getTexture(file.c_str());
+		return tAttack;
+	}
+	if(i == TEXTURE_ACTIVATE) {
+		if(tAct) mainGame->driver->removeTexture(tAct);
+		tAct = mainGame->driver->getTexture(file.c_str());
+		return tAct;
+	}
+	if(i == TEXTURE_CHAIN) {
+		if(tChain) mainGame->driver->removeTexture(tChain);
+		tChain = mainGame->driver->getTexture(file.c_str());
+		return tChain;
+	}
+	if(i == TEXTURE_NEGATED) {
+		if(tNegated) mainGame->driver->removeTexture(tNegated);
+		tNegated = mainGame->driver->getTexture(file.c_str());
+		return tNegated;
+	}
+	if(i == TEXTURE_MASK) {
+		if(tMask) mainGame->driver->removeTexture(tMask);
+		tMask = mainGame->driver->getTexture(file.c_str());
+		return tMask;
+	}
+	if(i == TEXTURE_EQUIP) {
+		if(tEquip) mainGame->driver->removeTexture(tEquip);
+		tEquip = mainGame->driver->getTexture(file.c_str());
+		return tEquip;
+	}
+	if(i == TEXTURE_TARGET) {
+		if(tTarget) mainGame->driver->removeTexture(tTarget);
+		tTarget = mainGame->driver->getTexture(file.c_str());
+		return tTarget;
+	}
+	if(i == TEXTURE_CHAINTARGET) {
+		if(tChainTarget) mainGame->driver->removeTexture(tChainTarget);
+		tChainTarget = mainGame->driver->getTexture(file.c_str());
+		return tChainTarget;
+	}
+	if(i == TEXTURE_UNKNOWN) {
+		if(tUnknown) mainGame->driver->removeTexture(tUnknown);
+		tUnknown = mainGame->driver->getTexture(file.c_str());
+		return tUnknown;
+	}
+	if(i == TEXTURE_LIM) {
+		if(tLim) mainGame->driver->removeTexture(tLim);
+		tLim = mainGame->driver->getTexture(file.c_str());
+		return tLim;
+	}
+	if(i == TEXTURE_OT) {
+		if(tOT) mainGame->driver->removeTexture(tOT);
+		tOT = mainGame->driver->getTexture(file.c_str());
+		return tOT;
+	}
+	if(i == TEXTURE_COVERS3) {
+		if(tCover[2]) mainGame->driver->removeTexture(tCover[2]);
+		tCover[2] = mainGame->driver->getTexture(file.c_str());
+		return tCover[2];
+	}
+	if(i == TEXTURE_COVERS4) {
+		if(tCover[3]) mainGame->driver->removeTexture(tCover[3]);
+		tCover[3] = mainGame->driver->getTexture(file.c_str());
+		return tCover[3];
+	}
+	if(i == TEXTURE_SETTING) {
+		return mainGame->driver->getTexture(file.c_str());
+	}
+	if(i == TEXTURE_F1) {
+		file = epro::format(EPRO_TEXT("./textures/{}/{}/"), ImageFolder[i], filepath);
+		bool f1 = false; bool f2 = false; bool f3 = false;
+		for(auto _file : Utils::FindFiles(file, { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
+			if(Utils::ToUTF8IfNeeded(Utils::GetFileName(_file)) == epro::format("f1")) {
+				f1 = true;
+				if(tHand[0]) mainGame->driver->removeTexture(tHand[0]);
+				tHand[0] = mainGame->driver->getTexture(epro::format(EPRO_TEXT("{}{}"), file, _file).c_str());
+			}
+			if(Utils::ToUTF8IfNeeded(Utils::GetFileName(_file)) == epro::format("f2")) {
+				f2 = true;
+				if(tHand[1]) mainGame->driver->removeTexture(tHand[1]);
+				tHand[1] = mainGame->driver->getTexture(_file.c_str());
+			}
+			if(Utils::ToUTF8IfNeeded(Utils::GetFileName(_file)) == epro::format("f3")) {
+				f3 = true;
+				if(tHand[2]) mainGame->driver->removeTexture(tHand[2]);
+				tHand[2] = mainGame->driver->getTexture(_file.c_str());
+			}
+		}
+		if(f1 && f2 && f3)
+		    return tHand[0];
+		else
+		    return nullptr;
+	}
 }
 //////kdiy//////
 void ImageManager::replaceTextureLoadingFixedSize(irr::video::ITexture*& texture, irr::video::ITexture* fallback, epro::path_stringview texture_name, int width, int height) {

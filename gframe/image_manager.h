@@ -90,7 +90,6 @@ public:
 	/////kdiy/////
     void SetAvatar(int player, const wchar_t *avatar);
 	epro::path_string ImageFolder[20];
-	irr::video::ITexture* tTexture[20];
 	std::vector<epro::path_string> ImageList[36+CHARACTER_VOICE+CHARACTER_VOICE-2];
 	int saved_image_id[36+CHARACTER_VOICE+CHARACTER_VOICE-2];
 	//random image
@@ -101,6 +100,7 @@ public:
 	void RefreshImageDir(epro::path_string path, int image_type);
 	void RefreshImageDirf();
     void RefreshKCGImage();
+	irr::video::ITexture* UpdatetTexture(int i, std::wstring filepath);
 	irr::core::rect<irr::s32> head_size[CHARACTER_STORY+1]; //story icon dimension
 	irr::core::rect<irr::s32> modehead_size[6];
 	irr::core::rect<irr::s32> icon_size[CHARACTER_VOICE];

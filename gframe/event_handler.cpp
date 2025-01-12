@@ -2289,50 +2289,40 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				break;
 			}
 			case BUTTON_TEXTURE_SELECT2: {
-				int k = 0;
-				for(int i = 0; i < 20; i++) {
-					if(!mainGame->gSettings.chktexture[i]->isChecked()) {
-						k = i;
-						break;
-					}
-				}
-				int selected = mainGame->gSettings.cbName_texture[k]->getSelected();
-				if (selected < 0) {
-					selected = 0;
-					mainGame->gSettings.cbName_texture[k]->setSelected(0);
-				}
-				if(mainGame->gSettings.cbName_texture[k]->getItemCount() < 2) break;
-				if(selected >= mainGame->gSettings.cbName_texture[k]->getItemCount()) selected = 0;
+				if(mainGame->gSettings.clickedindex < 0) break;
+				int selected = mainGame->gSettings.cbName_texture[mainGame->gSettings.clickedindex]->getSelected();
+				if(mainGame->gSettings.cbName_texture[mainGame->gSettings.clickedindex]->getItemCount() < 2) break;
+				if(selected >= mainGame->gSettings.cbName_texture[mainGame->gSettings.clickedindex]->getItemCount() - 1) selected = 0;
 				else selected++;
-				mainGame->gSettings.cbName_texture[k]->setSelected(selected);
-				std::wstring filepath = epro::format(EPRO_TEXT("{}"), mainGame->gSettings.cbName_texture[k]->getItem(selected));
-				if(k != 19) {
-					auto file = epro::format(EPRO_TEXT("./textures/{}/{}"), mainGame->imageManager.ImageFolder[k], filepath);
-					if(!Utils::FileExists(file)) return true;
-					if(mainGame->imageManager.tTexture[k]) mainGame->driver->removeTexture(mainGame->imageManager.tTexture[k]);
-					mainGame->imageManager.tTexture[k] = mainGame->driver->getTexture(file.c_str());
-					mainGame->gSettings.btnrandomtexture->setImage(mainGame->imageManager.tTexture[k]);
-				} else {
-					auto folder = epro::format(EPRO_TEXT("./textures/{}/{}"), mainGame->imageManager.ImageFolder[k], filepath);
-					for(auto file : Utils::FindFiles(folder, { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
-						if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f1")) {
-							if(mainGame->imageManager.tHand[0]) mainGame->driver->removeTexture(mainGame->imageManager.tHand[0]);
-							mainGame->imageManager.tHand[0] = mainGame->driver->getTexture(file.c_str());
-							mainGame->gSettings.btnrandomtexture->setImage(mainGame->imageManager.tTexture[k]);
-						}
-						if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f2")) {
-							if(mainGame->imageManager.tHand[1]) mainGame->driver->removeTexture(mainGame->imageManager.tHand[1]);
-							mainGame->imageManager.tHand[1] = mainGame->driver->getTexture(file.c_str());
-						}
-						if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f2")) {
-							if(mainGame->imageManager.tHand[2]) mainGame->driver->removeTexture(mainGame->imageManager.tHand[2]);
-							mainGame->imageManager.tHand[2] = mainGame->driver->getTexture(file.c_str());
-						}
-					}
+				mainGame->gSettings.cbName_texture[mainGame->gSettings.clickedindex]->setSelected(selected);
+				std::wstring filepath = epro::format(EPRO_TEXT("{}"), mainGame->gSettings.cbName_texture[mainGame->gSettings.clickedindex]->getItem(selected));
+				auto tTexture = mainGame->imageManager.UpdatetTexture(mainGame->gSettings.clickedindex, filepath);
+				if(tTexture != nullptr) {
+					mainGame->gSettings.btnrandomtexture->setImage(tTexture);
+					mainGame->driver->removeTexture(tTexture);
+					tTexture = nullptr;
 				}
 				break;
 			}
 			case BUTTON_TEXTURE_SELECT: {
+				if(mainGame->gSettings.clickedindex < 0) break;
+				int selected = mainGame->gSettings.cbName_texture[mainGame->gSettings.clickedindex]->getSelected();
+				if(mainGame->gSettings.cbName_texture[mainGame->gSettings.clickedindex]->getItemCount() < 2) break;
+				if(selected == 0) selected = mainGame->gSettings.cbName_texture[mainGame->gSettings.clickedindex]->getItemCount() - 1;
+				else selected--;
+				mainGame->gSettings.cbName_texture[mainGame->gSettings.clickedindex]->setSelected(selected);
+				std::wstring filepath = epro::format(EPRO_TEXT("{}"), mainGame->gSettings.cbName_texture[mainGame->gSettings.clickedindex]->getItem(selected));
+				auto tTexture = mainGame->imageManager.UpdatetTexture(mainGame->gSettings.clickedindex, filepath);
+				if(tTexture != nullptr) {
+					mainGame->gSettings.btnrandomtexture->setImage(tTexture);
+					mainGame->driver->removeTexture(tTexture);
+					tTexture = nullptr;
+				}
+				break;
+			}
+			case BUTTON_TEXTURE_OK: {
+				mainGame->HideElement(mainGame->gSettings.wRandomTexture);
+				mainGame->ShowElement(mainGame->gSettings.window);
 				break;
 			}
 			//////kdiy///////
@@ -2465,6 +2455,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				return true;
 			}
             case CHECKBOX_TEXTURE:{
+				mainGame->gSettings.clickedchkbox = true;
 				auto checkboxtexture = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller);
 				int k = 0;
 				bool visible = false;
@@ -2473,108 +2464,109 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 					if(mainGame->gSettings.chktexture[i] == checkboxtexture) {
 					    k = i;
 						if(i == 0) {
-							gGameConfig->randombg = mainGame->gSettings.chktexture[0]->isChecked();
+							gGameConfig->randombg = mainGame->gSettings.chktexture[i]->isChecked();
 							visible = gGameConfig->randombg;
 							filepath = gGameConfig->randombgtexture;
 						}
 						if(i == 1) {
-							gGameConfig->randombgdeck = mainGame->gSettings.chktexture[1]->isChecked();
+							gGameConfig->randombgdeck = mainGame->gSettings.chktexture[i]->isChecked();
 							visible = gGameConfig->randombgdeck;
 							filepath = gGameConfig->randombgdecktexture;
 						}
 						if(i == 2) {
-							gGameConfig->randombgmenu = mainGame->gSettings.chktexture[2]->isChecked();
+							gGameConfig->randombgmenu = mainGame->gSettings.chktexture[i]->isChecked();
 							visible = gGameConfig->randombgmenu;
 							filepath = gGameConfig->randombgmenutexture;
 						}
 						if(i == 3) {
-							gGameConfig->randomcover = mainGame->gSettings.chktexture[3]->isChecked();
+							gGameConfig->randomcover = mainGame->gSettings.chktexture[i]->isChecked();
 							visible = gGameConfig->randomcover;
 							filepath = gGameConfig->randomcovertexture;
 						}
 						if(i == 4) {
-							gGameConfig->randomcoverextra = mainGame->gSettings.chktexture[4]->isChecked();
-							visible = gGameConfig->randomcoverextra;
-							filepath = gGameConfig->randomcoverextratexture;
-						}
-						if(i == 5) {
-							gGameConfig->randomcover2 = mainGame->gSettings.chktexture[5]->isChecked();
-							visible = gGameConfig->randomcover2;
-							filepath = gGameConfig->randomcover2texture;
-						}
-						if(i == 6) {
-							gGameConfig->randomcover2extra = mainGame->gSettings.chktexture[6]->isChecked();
+							gGameConfig->randomcover2extra = mainGame->gSettings.chktexture[i]->isChecked();
 							visible = gGameConfig->randomcover2extra;
 							filepath = gGameConfig->randomcover2extratexture;
 						}
-						if(i == 7) {
-							gGameConfig->randomattack = mainGame->gSettings.chktexture[7]->isChecked();
+						if(i == 5) {
+							gGameConfig->randomattack = mainGame->gSettings.chktexture[i]->isChecked();
 							visible = gGameConfig->randomattack;
 							filepath = gGameConfig->randomattacktexture;
 						}
-						if(i == 8) {
-							gGameConfig->randomact = mainGame->gSettings.chktexture[8]->isChecked();
+						if(i == 6) {
+							gGameConfig->randomact = mainGame->gSettings.chktexture[i]->isChecked();
 							visible = gGameConfig->randomact;
 							filepath = gGameConfig->randomacttexture;
 						}
-						if(i == 9) {
-							gGameConfig->randomchain = mainGame->gSettings.chktexture[9]->isChecked();
+						if(i == 7) {
+							gGameConfig->randomchain = mainGame->gSettings.chktexture[i]->isChecked();
 							visible = gGameConfig->randomchain;
 							filepath = gGameConfig->randomchaintexture;
 						}
-						if(i == 10) {
-							gGameConfig->randomnegate = mainGame->gSettings.chktexture[10]->isChecked();
+						if(i == 8) {
+							gGameConfig->randomnegate = mainGame->gSettings.chktexture[i]->isChecked();
 							visible = gGameConfig->randomnegate;
 							filepath = gGameConfig->randomnegatetexture;
 						}
-						if(i == 11) {
-							gGameConfig->randommask = mainGame->gSettings.chktexture[11]->isChecked();
+						if(i == 9) {
+							gGameConfig->randommask = mainGame->gSettings.chktexture[i]->isChecked();
 							visible = gGameConfig->randommask;
 							filepath = gGameConfig->randommasktexture;
 						}
-						if(i == 12) {
-							gGameConfig->randomequip = mainGame->gSettings.chktexture[12]->isChecked();
+						if(i == 10) {
+							gGameConfig->randomequip = mainGame->gSettings.chktexture[i]->isChecked();
 							visible = gGameConfig->randomequip;
 							filepath = gGameConfig->randomequiptexture;
 						}
-						if(i == 13) {
-							gGameConfig->randomtarget = mainGame->gSettings.chktexture[13]->isChecked();
+						if(i == 11) {
+							gGameConfig->randomtarget = mainGame->gSettings.chktexture[i]->isChecked();
 							visible = gGameConfig->randomtarget;
 							filepath = gGameConfig->randomtargettexture;
 						}
-						if(i == 14) {
-							gGameConfig->randomchaintarget = mainGame->gSettings.chktexture[14]->isChecked();
+						if(i == 12) {
+							gGameConfig->randomchaintarget = mainGame->gSettings.chktexture[i]->isChecked();
 							visible = gGameConfig->randomchaintarget;
 							filepath = gGameConfig->randomchaintargettexture;
 						}
-						if(i == 15) {
-							gGameConfig->randommorra = mainGame->gSettings.chktexture[15]->isChecked();
-							visible = gGameConfig->randommorra;
-							filepath = gGameConfig->randommorratexture;
-						}
-						if(i == 16) {
-							gGameConfig->randomunknown = mainGame->gSettings.chktexture[16]->isChecked();
+						if(i == 13) {
+							gGameConfig->randomunknown = mainGame->gSettings.chktexture[i]->isChecked();
 							visible = gGameConfig->randomunknown;
 							filepath = gGameConfig->randomunknowntexture;
 						}
-						if(i == 17) {
-							gGameConfig->randomlim = mainGame->gSettings.chktexture[17]->isChecked();
+						if(i == 14) {
+							gGameConfig->randomlim = mainGame->gSettings.chktexture[i]->isChecked();
 							visible = gGameConfig->randomlim;
 							filepath = gGameConfig->randomlimtexture;
 						}
-						if(i == 18) {
-							gGameConfig->randomot = mainGame->gSettings.chktexture[18]->isChecked();
+						if(i == 15) {
+							gGameConfig->randomot = mainGame->gSettings.chktexture[i]->isChecked();
 							visible = gGameConfig->randomot;
 							filepath = gGameConfig->randomottexture;
 						}
-						if(i == 19) {
-							gGameConfig->randommsetting = mainGame->gSettings.chktexture[19]->isChecked();
+						if(i == 16) {
+							gGameConfig->randomcoverextra = mainGame->gSettings.chktexture[i]->isChecked();
+							visible = gGameConfig->randomcoverextra;
+							filepath = gGameConfig->randomcoverextratexture;
+						}
+						if(i == 17) {
+							gGameConfig->randomcover2 = mainGame->gSettings.chktexture[i]->isChecked();
+							visible = gGameConfig->randomcover2;
+							filepath = gGameConfig->randomcover2texture;
+						}
+						if(i == 18) {
+							gGameConfig->randommsetting = mainGame->gSettings.chktexture[i]->isChecked();
 							visible = gGameConfig->randommsetting;
 							filepath = gGameConfig->randommsettingtexture;
+						}
+						if(i == 19) {
+							gGameConfig->randommorra = mainGame->gSettings.chktexture[i]->isChecked();
+							visible = gGameConfig->randommorra;
+							filepath = gGameConfig->randommorratexture;
 						}
 						break;
 					}
 				}
+				mainGame->gSettings.clickedindex = k;
 				mainGame->gSettings.cbName_texture[k]->setVisible(!visible);
 				if(!visible) {
 					int selected = mainGame->gSettings.cbName_texture[k]->getSelected();
@@ -2582,29 +2574,12 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 						selected = 0;
 						mainGame->gSettings.cbName_texture[k]->setSelected(0);
 					}
-					if(k != 19) {
-						auto file = epro::format(EPRO_TEXT("./textures/{}/{}"), mainGame->imageManager.ImageFolder[k], filepath);
-						if(!Utils::FileExists(file)) return true;
-						if(mainGame->imageManager.tTexture[k]) mainGame->driver->removeTexture(mainGame->imageManager.tTexture[k]);
-						mainGame->imageManager.tTexture[k] = mainGame->driver->getTexture(file.c_str());
-						mainGame->gSettings.btnrandomtexture->setImage(mainGame->imageManager.tTexture[k]);
-					} else {
-						auto folder = epro::format(EPRO_TEXT("./textures/{}/{}"), mainGame->imageManager.ImageFolder[k], filepath);
-						for(auto file : Utils::FindFiles(folder, { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
-							if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f1")) {
-								if(mainGame->imageManager.tHand[0]) mainGame->driver->removeTexture(mainGame->imageManager.tHand[0]);
-								mainGame->imageManager.tHand[0] = mainGame->driver->getTexture(file.c_str());
-								mainGame->gSettings.btnrandomtexture->setImage(mainGame->imageManager.tTexture[k]);
-							}
-							if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f2")) {
-								if(mainGame->imageManager.tHand[1]) mainGame->driver->removeTexture(mainGame->imageManager.tHand[1]);
-								mainGame->imageManager.tHand[1] = mainGame->driver->getTexture(file.c_str());
-							}
-							if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f2")) {
-								if(mainGame->imageManager.tHand[2]) mainGame->driver->removeTexture(mainGame->imageManager.tHand[2]);
-								mainGame->imageManager.tHand[2] = mainGame->driver->getTexture(file.c_str());
-							}
-						}
+					if(filepath == L"") filepath = epro::format(EPRO_TEXT("{}"), mainGame->gSettings.cbName_texture[k]->getItem(0));
+					auto tTexture = mainGame->imageManager.UpdatetTexture(k, filepath);
+					if(tTexture != nullptr) {
+						mainGame->gSettings.btnrandomtexture->setImage(tTexture);
+						mainGame->driver->removeTexture(tTexture);
+						tTexture = nullptr;
 					}
 				} else
 				    mainGame->gSettings.btnrandomtexture->setImage(0);
@@ -2824,6 +2799,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				return true;
 			}
 			case COMBOBOX_TEXTURE: {
+				mainGame->gSettings.clickedchkbox = false;
 				auto comboboxtexture = static_cast<irr::gui::IGUIComboBox*>(event.GUIEvent.Caller);
 				int k = 0;
 				bool visible = false;
@@ -2858,91 +2834,74 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 							gGameConfig->randomcoverextratexture = filepath;
 						}
 						if(i == 5) {
-							visible = gGameConfig->randomcover2;
-							gGameConfig->randomcover2texture = filepath;
-						}
-						if(i == 6) {
-							visible = gGameConfig->randomcover2extra;
-							gGameConfig->randomcover2extratexture = filepath;
-						}
-						if(i == 7) {
 							visible = gGameConfig->randomattack;
 							gGameConfig->randomattacktexture = filepath;
 						}
-						if(i == 8) {
+						if(i == 6) {
 							visible = gGameConfig->randomact;
 							gGameConfig->randomacttexture = filepath;
 						}
-						if(i == 9) {
+						if(i == 7) {
 							visible = gGameConfig->randomchain;
 							gGameConfig->randomchaintexture = filepath;
 						}
-						if(i == 10) {
+						if(i == 8) {
 							visible = gGameConfig->randomnegate;
 							gGameConfig->randomnegatetexture = filepath;
 						}
-						if(i == 11) {
+						if(i == 9) {
 							visible = gGameConfig->randommask;
 							gGameConfig->randommasktexture = filepath;
 						}
-						if(i == 12) {
+						if(i == 10) {
 							visible = gGameConfig->randomequip;
 							gGameConfig->randomequiptexture = filepath;
 						}
-						if(i == 13) {
+						if(i == 11) {
 							visible = gGameConfig->randomtarget;
 							gGameConfig->randomtargettexture = filepath;
 						}
-						if(i == 14) {
+						if(i == 12) {
 							visible = gGameConfig->randomchaintarget;
 							gGameConfig->randomchaintargettexture = filepath;
 						}
-						if(i == 15) {
-							visible = gGameConfig->randommorra;
-							gGameConfig->randommorratexture = filepath;
-						}
-						if(i == 16) {
+						if(i == 13) {
 							visible = gGameConfig->randomunknown;
 							gGameConfig->randomunknowntexture = filepath;
 						}
-						if(i == 17) {
+						if(i == 14) {
 							visible = gGameConfig->randomlim;
 							gGameConfig->randomlimtexture = filepath;
 						}
-						if(i == 18) {
+						if(i == 15) {
 							visible = gGameConfig->randomot;
 							gGameConfig->randomottexture = filepath;
 						}
-						if(i == 19) {
+						if(i == 16) {
+							visible = gGameConfig->randomcover2;
+							gGameConfig->randomcover2texture = filepath;
+						}
+						if(i == 17) {
+							visible = gGameConfig->randomcover2extra;
+							gGameConfig->randomcover2extratexture = filepath;
+						}
+						if(i == 18) {
 							visible = gGameConfig->randommsetting;
 							gGameConfig->randommsettingtexture = filepath;
+						}
+						if(i == 19) {
+							visible = gGameConfig->randommorra;
+							gGameConfig->randommorratexture = filepath;
 						}
 						break;
 					}
 				}
-				if(k != 19) {
-					auto file = epro::format(EPRO_TEXT("./textures/{}/{}"), mainGame->imageManager.ImageFolder[k], filepath);
-					if(!Utils::FileExists(file)) return true;
-					if(mainGame->imageManager.tTexture[k]) mainGame->driver->removeTexture(mainGame->imageManager.tTexture[k]);
-					mainGame->imageManager.tTexture[k] = mainGame->driver->getTexture(file.c_str());
-					mainGame->gSettings.btnrandomtexture->setImage(mainGame->imageManager.tTexture[k]);
-				} else {
-					auto folder = epro::format(EPRO_TEXT("./textures/{}/{}"), mainGame->imageManager.ImageFolder[k], filepath);
-					for(auto file : Utils::FindFiles(folder, { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
-						if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f1")) {
-							if(mainGame->imageManager.tHand[0]) mainGame->driver->removeTexture(mainGame->imageManager.tHand[0]);
-							mainGame->imageManager.tHand[0] = mainGame->driver->getTexture(file.c_str());
-							mainGame->gSettings.btnrandomtexture->setImage(mainGame->imageManager.tTexture[k]);
-						}
-						if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f2")) {
-							if(mainGame->imageManager.tHand[1]) mainGame->driver->removeTexture(mainGame->imageManager.tHand[1]);
-							mainGame->imageManager.tHand[1] = mainGame->driver->getTexture(file.c_str());
-						}
-						if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f2")) {
-							if(mainGame->imageManager.tHand[2]) mainGame->driver->removeTexture(mainGame->imageManager.tHand[2]);
-							mainGame->imageManager.tHand[2] = mainGame->driver->getTexture(file.c_str());
-						}
-					}
+				mainGame->gSettings.clickedindex = k;
+				auto tTexture = mainGame->imageManager.UpdatetTexture(k, filepath);
+				if(tTexture != nullptr) {
+					mainGame->gSettings.btnrandomtexture->setImage(tTexture);
+					mainGame->driver->removeTexture(tTexture);
+					tTexture = nullptr;
 				}
 				return true;
 			}

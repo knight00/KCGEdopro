@@ -14,6 +14,9 @@ class IGUIEditBox;
 class IGUIEnvironment;
 class IGUITab;
 class Panel;
+/////kdiy/////
+class CGUIImageButton;
+/////kdiy/////
 }
 }
 
@@ -111,9 +114,12 @@ struct SettingsWindow {
 	irr::gui::IGUICheckBox* chkRandomtexture;
 	irr::gui::IGUICheckBox* chktexture[20];
 	irr::gui::IGUIComboBox* cbName_texture[20];
-	irr::gui::IGUIButton* btnrandomtexture;
-	irr::gui::IGUIButton* btnrandomtextureSelect1;
-	irr::gui::IGUIButton* btnrandomtextureSelect2;
+	irr::gui::CGUIImageButton* btnrandomtexture;
+	bool clickedchkbox = false;
+	int clickedindex = -1;
+	irr::gui::CGUIImageButton* btnrandomtextureSelect1;
+	irr::gui::CGUIImageButton* btnrandomtextureSelect2;
+    irr::gui::IGUIButton* btnrandomtexture_close;
 	irr::gui::IGUICheckBox* chkCloseup;
 	irr::gui::IGUICheckBox* chkPainting;
 	irr::gui::IGUICheckBox* chktField;

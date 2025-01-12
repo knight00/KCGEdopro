@@ -3317,19 +3317,24 @@ void Game::PopulateSettingsWindow() {
 		defaultStrings.emplace_back(gSettings.chkPainting, 8058);
         IncrementXorY();
     }
-	gSettings.wRandomTexture = env->addWindow(Scale(220, 100, 880, 500), false, gDataManager->GetSysString(8015).data());
+	gSettings.wRandomTexture = env->addWindow(Scale(120, 15, 980, 635), false, gDataManager->GetSysString(8015).data());
 	defaultStrings.emplace_back(gSettings.wRandomTexture, 8015);
 	gSettings.wRandomTexture->setVisible(false);
 	gSettings.wRandomTexture->getCloseButton()->setVisible(false);
 	ReloadTexture();
-	gSettings.btnrandomtexture = env->addButton(Scale(420, 45, 620, 345), gSettings.wRandomTexture, BUTTON_TEXTURE);
+	gSettings.btnrandomtexture = irr::gui::CGUIImageButton::addImageButton(env, Scale(420, 45, 840, 545), gSettings.wRandomTexture, BUTTON_TEXTURE);
 	gSettings.btnrandomtexture->setDrawBorder(false);
-	gSettings.btnrandomtextureSelect1 = env->addButton(Scale(420, 345, 440, 370), gSettings.wRandomTexture, BUTTON_TEXTURE_SELECT);
+	gSettings.btnrandomtexture->setImageSize(Scale(0, 0, 430, 500).getSize());
+	gSettings.btnrandomtextureSelect1 = irr::gui::CGUIImageButton::addImageButton(env, Scale(420, 550, 440, 570), gSettings.wRandomTexture, BUTTON_TEXTURE_SELECT);
 	gSettings.btnrandomtextureSelect1->setDrawBorder(false);
+	gSettings.btnrandomtextureSelect1->setImageSize(Scale(0, 0, 20, 20).getSize());
 	gSettings.btnrandomtextureSelect1->setImage(imageManager.tcharacterselect);
-	gSettings.btnrandomtextureSelect2 = env->addButton(Scale(600, 345, 620, 370), gSettings.wRandomTexture, BUTTON_TEXTURE_SELECT2);
+	gSettings.btnrandomtextureSelect2 = irr::gui::CGUIImageButton::addImageButton(env, Scale(820, 550, 840, 570), gSettings.wRandomTexture, BUTTON_TEXTURE_SELECT2);
 	gSettings.btnrandomtextureSelect2->setDrawBorder(false);
+	gSettings.btnrandomtextureSelect2->setImageSize(Scale(0, 0, 20, 20).getSize());
 	gSettings.btnrandomtextureSelect2->setImage(imageManager.tcharacterselect2);
+    gSettings.btnrandomtexture_close = env->addButton(Scale(790, 580, 840, 605), gSettings.wRandomTexture, BUTTON_TEXTURE_OK, gDataManager->GetSysString(1211).data());
+	defaultStrings.emplace_back(gSettings.btnrandomtexture_close, 1211);
     /////kdiy////////////
 }
 #undef WStr
@@ -5994,10 +5999,10 @@ void Game::ReloadLocalCBRule() {
 	}
 }
 void Game::ReloadTexture() {
-	auto cur_y = 30;
+	auto cur_y = 20;
 	auto cur_x = 15;
 	constexpr auto y_incr = 30;
-	constexpr auto x_incr = 225;
+	constexpr auto x_incr = 200;
 	auto IncrementXorY = [&cur_y, y_incr, &cur_x, x_incr] {
 		if(cur_x > x_incr) {
 			cur_x -= x_incr;
@@ -6009,7 +6014,7 @@ void Game::ReloadTexture() {
 		auto cury = cur_y;
 		auto curx = cur_x;
 		IncrementXorY();
-		return Scale<irr::s32>(curx, cury, curx + 155, cury + 25);
+		return Scale<irr::s32>(curx, cury, curx + 180, cury + 25);
 	};
 	for(int i = 0; i < 20; i++) {
 		bool visible = false;
@@ -6035,80 +6040,98 @@ void Game::ReloadTexture() {
 			filepath = gGameConfig->randomcoverextratexture;
 		}
 		if(i == 5) {
-			visible = gGameConfig->randomcover2;
-			filepath = gGameConfig->randomcover2texture;
-		}
-		if(i == 6) {
-			visible = gGameConfig->randomcover2extra;
-			filepath = gGameConfig->randomcover2extratexture;
-		}
-		if(i == 7) {
 			visible = gGameConfig->randomattack;
 			filepath = gGameConfig->randomattacktexture;
 		}
-		if(i == 8) {
+		if(i == 6) {
 			visible = gGameConfig->randomact;
 			filepath = gGameConfig->randomacttexture;
 		}
-		if(i == 9) {
+		if(i == 7) {
 			visible = gGameConfig->randomchain;
 			filepath = gGameConfig->randomchaintexture;
 		}
-		if(i == 10) {
+		if(i == 8) {
 			visible = gGameConfig->randomnegate;
 			filepath = gGameConfig->randomnegatetexture;
 		}
-		if(i == 11) {
+		if(i == 9) {
 			visible = gGameConfig->randommask;
 			filepath = gGameConfig->randommasktexture;
 		}
-		if(i == 12) {
+		if(i == 10) {
 			visible = gGameConfig->randomequip;
 			filepath = gGameConfig->randomequiptexture;
 		}
-		if(i == 13) {
+		if(i == 11) {
 			visible = gGameConfig->randomtarget;
 			filepath = gGameConfig->randomtargettexture;
 		}
-		if(i == 14) {
+		if(i == 12) {
 			visible = gGameConfig->randomchaintarget;
 			filepath = gGameConfig->randomchaintargettexture;
 		}
-		if(i == 15) {
-			visible = gGameConfig->randommorra;
-			filepath = gGameConfig->randommorratexture;
-		}
-		if(i == 16) {
+		if(i == 13) {
 			visible = gGameConfig->randomunknown;
 			filepath = gGameConfig->randomunknowntexture;
 		}
-		if(i == 17) {
+		if(i == 14) {
 			visible = gGameConfig->randomlim;
 			filepath = gGameConfig->randomlimtexture;
 		}
-		if(i == 18) {
+		if(i == 15) {
 			visible = gGameConfig->randomot;
 			filepath = gGameConfig->randomottexture;
 		}
-		if(i == 19) {
+		if(i == 16) {
+			visible = gGameConfig->randomcover2;
+			filepath = gGameConfig->randomcover2texture;
+		}
+		if(i == 17) {
+			visible = gGameConfig->randomcover2extra;
+			filepath = gGameConfig->randomcover2extratexture;
+		}
+		if(i == 18) {
 			visible = gGameConfig->randommsetting;
 			filepath = gGameConfig->randommsettingtexture;
 		}
-		gSettings.chktexture[i] = env->addCheckBox(visible, GetNextRand(), gSettings.wRandomTexture, CHECKBOX_TEXTURE, gDataManager->GetSysString(8042).data());
-		defaultStrings.emplace_back(gSettings.chktexture[i], 8042);
+		if(i == 19) {
+			visible = gGameConfig->randommorra;
+			filepath = gGameConfig->randommorratexture;
+		}
+		gSettings.chktexture[i] = env->addCheckBox(visible, GetNextRand(), gSettings.wRandomTexture, CHECKBOX_TEXTURE, gDataManager->GetSysString(8071 + i).data());
+		defaultStrings.emplace_back(gSettings.chktexture[i], 8071 + i);
 		gSettings.cbName_texture[i] = AddComboBox(env, GetNextRand(), gSettings.wRandomTexture, COMBOBOX_TEXTURE);
 		gSettings.cbName_texture[i]->setVisible(!visible);
 		gSettings.cbName_texture[i]->setMaxSelectionRows(10);
 		gSettings.cbName_texture[i]->clear();
-		for(auto num : imageManager.ImageList[i]) {
-			auto file = epro::format(EPRO_TEXT("./textures/{}"), num);
-			if(!Utils::FileExists(file)) continue;
-			auto filename = Utils::GetFileName(file, true).data();
-			uint32_t j = gSettings.cbName_texture[i]->addItem(filename);
-			if(filepath == filename)
-				gSettings.cbName_texture[i]->setSelected(j);
-			else
-			    gSettings.cbName_texture[i]->setSelected(0);
+		if(i != 19) {
+			for(auto num : imageManager.ImageList[i]) {
+				auto file = epro::format(EPRO_TEXT("./textures/{}"), num);
+				if(!Utils::FileExists(file)) continue;
+				auto filename = Utils::GetFileName(file, true).data();
+				uint32_t j = gSettings.cbName_texture[i]->addItem(filename);
+				if(filepath == filename)
+				    gSettings.cbName_texture[i]->setSelected(j);
+			}
+		} else {
+			for(auto& _folder : Utils::FindSubfolders(epro::format(EPRO_TEXT("./textures/{}/"), imageManager.ImageFolder[i]), 1, false)) {
+				bool f1 = false; bool f2 = false; bool f3 = false;
+				auto folder = epro::format(EPRO_TEXT("./textures/{}/{}/"), imageManager.ImageFolder[i], _folder);
+				for(auto file : Utils::FindFiles(folder, { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
+					if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f1"))
+					    f1 = true;
+					if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f2"))
+					    f2 = true;
+				    if(Utils::ToUTF8IfNeeded(Utils::GetFileName(file)) == epro::format("f3"))
+					    f3 = true;
+				}
+				if(f1 && f2 && f3) {
+					uint32_t j = gSettings.cbName_texture[i]->addItem(_folder.data());
+					if(filepath == _folder)
+				        gSettings.cbName_texture[i]->setSelected(j);
+				}
+			}
 		}
 	}
 }
@@ -6296,7 +6319,8 @@ void Game::OnResize() {
 	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 535));
 	#endif
 	wQQ->setRelativePosition(ResizeWin(10, 438, 100, 570));
-	gSettings.wRandomTexture->setRelativePosition(ResizeWin(220, 100, 880, 500));
+	gSettings.wRandomTexture->setRelativePosition(ResizeWin(120, 15, 980, 635));
+	SetCentered(gSettings.wRandomTexture, false);
 	////////kdiy///////
 	SetCentered(wCommitsLog);
 	SetCentered(updateWindow, false);
