@@ -41,9 +41,6 @@ class IReadFile;
 
 #define TYPE_SKILL       0x8000000
 #define TYPE_ACTION      0x10000000
-/////zdiy/////
-#define TYPE_ZCG         0x100000000
-/////zdiy/////
 
 struct OCG_CardData;
 

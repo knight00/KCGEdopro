@@ -4727,6 +4727,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		}
 		if(!mainGame->dInfo.isCatchingUp) {
             /////kdiy//////
+			mainGame->showcardcode = mainGame->LocalPlayer(info.controler);
+			mainGame->showcarddif = 0;
+			mainGame->showcard = 11;
+			mainGame->WaitFrameSignal(30, lock);
 			PlayAnime(pcard, 1, lock);
 			uint32_t code2 = 0;
 			if(pcard->alias && pcard->alias > 0) code2 = pcard->alias;

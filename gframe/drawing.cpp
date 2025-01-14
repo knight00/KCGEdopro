@@ -1662,6 +1662,17 @@ void Game::DrawSpec() {
 			}
 			break;
 		}
+        //////kdiy//////////
+		case 11: {
+			driver->draw2DImage(imageManager.character[3], ResizeWin(324, 350, 324 + (showcarddif > 300 ? 300 : showcarddif), 500),
+								irr::core::recti(0, 0, 512, 256), 0, 0, true);
+			showcarddif += (2600.0f / 1000.0f) * (float)delta_time;
+			if(showcarddif >= 256 * 3) {
+				showcard = 0;
+			}
+			break;
+		}
+        //////kdiy//////////
 		case 100: {
 			if(showcardp < 60) {
 				driver->draw2DImage(imageManager.tHand[(showcardcode >> 16) & 0x3], Resize(615, showcarddif));
