@@ -3045,6 +3045,7 @@ void Game::PopulateSettingsWindow() {
 		//////kdiy///////////
         gSettings.chktField = env->addCheckBox(gGameConfig->chkField, GetNextRect(), sPanel, CHECKBOX_NO_CHAIN_DELAY, gDataManager->GetSysString(8066).data());
 		defaultStrings.emplace_back(gSettings.chktField, 8066);
+        IncrementXorY();
 		gSettings.chkEnableAnime = env->addCheckBox(gGameConfig->enableanime, GetNextRect(), sPanel, CHECKBOX_ENABLE_ANIME, gDataManager->GetSysString(8008).data());
 		defaultStrings.emplace_back(gSettings.chkEnableAnime, 8008);
         gSettings.stSound = env->addStaticText(gDataManager->GetSysString(8015).data(), GetCurrentRectWithXOffset(15, 90), false, false, sPanel);
@@ -3069,6 +3070,8 @@ void Game::PopulateSettingsWindow() {
             gSettings.chkEnableAttackSound = env->addCheckBox(gGameConfig->enableasound, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_ENABLE_ASOUND, gDataManager->GetSysString(8012).data());
 	        defaultStrings.emplace_back(gSettings.chkEnableAttackSound, 8012);
             IncrementXorY();
+			gSettings.chkAnimeFull = env->addCheckBox(gGameConfig->animefull, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_ANIME_FULL, gDataManager->GetSysString(8093).data());
+			defaultStrings.emplace_back(gSettings.chkAnimeFull, 8093);
             IncrementXorY();
             gSettings.chkPauseduel = env->addCheckBox(gGameConfig->pauseduel, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_PAUSE_DUEL, gDataManager->GetSysString(8052).data());
             defaultStrings.emplace_back(gSettings.chkPauseduel, 8052);
@@ -3310,12 +3313,18 @@ void Game::PopulateSettingsWindow() {
 		gSettings.chkRandomtexture = env->addCheckBox(gGameConfig->randomtexture, GetNextRect(), sPanel, CHECKBOX_RANDOM_TEXTURE, gDataManager->GetSysString(8042).data());
 		defaultStrings.emplace_back(gSettings.chkRandomtexture, 8042);
 
+		gSettings.chkVideowallpaper = env->addCheckBox(gGameConfig->videowallpaper, GetNextRect(), sPanel, CHECKBOX_VWALLPAPER, gDataManager->GetSysString(8091).data());
+		defaultStrings.emplace_back(gSettings.chkVideowallpaper, 8091);
+		IncrementXorY();
+		gSettings.chkRandomVideowallpaper = env->addCheckBox(gGameConfig->randomvideowallpaper, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_RANDOM_VWALLPAPER, gDataManager->GetSysString(8092).data());
+		defaultStrings.emplace_back(gSettings.chkRandomVideowallpaper, 8092);
+		IncrementXorY();
+		IncrementXorY();
+
 		gSettings.chkCloseup = env->addCheckBox(gGameConfig->closeup, GetNextRect(), sPanel, CHECKBOX_CLOSEUP, gDataManager->GetSysString(8043).data());
 		defaultStrings.emplace_back(gSettings.chkCloseup, 8043);
-
 		gSettings.chkPainting = env->addCheckBox(gGameConfig->painting, GetNextRect(), sPanel, CHECKBOX_PAINTING, gDataManager->GetSysString(8058).data());
 		defaultStrings.emplace_back(gSettings.chkPainting, 8058);
-        IncrementXorY();
     }
 	gSettings.wRandomTexture = env->addWindow(Scale(120, 15, 980, 635), false, gDataManager->GetSysString(8015).data());
 	defaultStrings.emplace_back(gSettings.wRandomTexture, 8015);
@@ -3430,10 +3439,10 @@ bool Game::MainLoop() {
 		}
     }
     ///ktest/////////
-	avformat_network_init();
-	videoFrame = av_frame_alloc();
-    audioFrame = av_frame_alloc();
-	audioBuffer.reserve(4096);
+	// avformat_network_init();
+	// videoFrame = av_frame_alloc();
+    // audioFrame = av_frame_alloc();
+	// audioBuffer.reserve(4096);
 	/////////kdiy/////////
 	while(!restart && device->run()) {
 		DispatchQueue();
@@ -5106,194 +5115,194 @@ void Game::ClearCardInfo(int player) {
 }
 ///ktest/////////
 bool Game::openVideo(std::string filename) {
-	if(!Utils::FileExists(Utils::ToPathString(filename))) {
-		isAnime = false;
-		return false;
-	}
-    if(filename != currentVideo) {
-        if (formatCtx) {
-			avformat_close_input(&formatCtx); // Close previous video input
-		}
-		formatCtx = nullptr;
-        if (formatCtx2) {
-			avformat_close_input(&formatCtx2); // Close previous video input
-		}
-		formatCtx2 = nullptr;
-		if (avformat_open_input(&formatCtx, filename.c_str(), nullptr, nullptr) != 0) {
-			isAnime = false;
-			return false;
-		}
-		avformat_open_input(&formatCtx2, filename.c_str(), nullptr, nullptr);
-		if (avformat_find_stream_info(formatCtx, nullptr) < 0) {
-			isAnime = false;
-			return false;
-		}
-		// Find the first video and audio stream
-		videoStreamIndex = -1;
-		audioStreamIndex = -1;
-		for (unsigned int i = 0; i < formatCtx->nb_streams; ++i) {
-			if (formatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO && videoStreamIndex == -1) {
-				videoStreamIndex = i;
-			}
-			if (formatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO && audioStreamIndex == -1) {
-				audioStreamIndex = i;
-			}
-		}
-		if (videoStreamIndex == -1 || audioStreamIndex == -1) {
-			avformat_close_input(&formatCtx);
-			isAnime = false;
-			return false;
-		}
-		// Initialize codec contexts
-		videoCodecCtx = avcodec_alloc_context3(nullptr);
-		audioCodecCtx = avcodec_alloc_context3(nullptr);
-		avcodec_parameters_to_context(videoCodecCtx, formatCtx->streams[videoStreamIndex]->codecpar);
-		avcodec_parameters_to_context(audioCodecCtx, formatCtx2->streams[audioStreamIndex]->codecpar);
-		const AVCodec* videoCodec = avcodec_find_decoder(videoCodecCtx->codec_id);
-		const AVCodec* audioCodec = avcodec_find_decoder(audioCodecCtx->codec_id);
-		avcodec_open2(videoCodecCtx, videoCodec, nullptr);
-		avcodec_open2(audioCodecCtx, audioCodec, nullptr);
-		videoDuration = formatCtx->duration;
-		AVStream* videoStream = formatCtx->streams[videoStreamIndex];
-		// Use avg_frame_rate for a general frame rate
-		AVRational avgFrameRate = videoStream->avg_frame_rate;
-		// If avg_frame_rate is 0, use r_frame_rate as a fallback
-		if (avgFrameRate.num == 0) {
-			avgFrameRate = videoStream->r_frame_rate;
-		}
-		videoFrameDuration = (double)avgFrameRate.den / (double)avgFrameRate.num;
-		timeAccumulated = 0; timeAccumulated2 = 0;
-		audioFrameDuration = 1.0 / (formatCtx->streams[audioStreamIndex]->codecpar->sample_rate);
-        currentVideo = filename;
-		// wchar_t buffer[30];
-		// _snwprintf(buffer, sizeof(buffer) / sizeof(*buffer), L"%lf", (formatCtx->streams[audioStreamIndex]->codecpar->sample_rate));
-		// MessageBox(nullptr, buffer, TEXT("Message"), MB_OK);
-        // if(!cap.isOpened()) {
-        //     cap.open(videoname);
-        //     if(!cap.isOpened()) {
-        //         //double vfps = cap.get(cv::CAP_PROP_FPS);
-        //         //totalFrames = cap.get(cv::CAP_PROP_FRAME_COUNT);
-        //         //double duration = (totalFrames / vfps) * 1000;
-        //     // } else {
-        //         StopVideo();
-        //         return false;
-        //     }
-        //     if(!cap.read(frame)) {
-        //         StopVideo();
-        //         return false;
-        //     }
-        //     cap.set(cv::CAP_PROP_POS_FRAMES, 0); // Ensure we start from the first frame
-        // }
-    }
-	frameReady = false;
+	// if(!Utils::FileExists(Utils::ToPathString(filename))) {
+	// 	isAnime = false;
+	// 	return false;
+	// }
+    // if(filename != currentVideo) {
+    //     if (formatCtx) {
+	// 		avformat_close_input(&formatCtx); // Close previous video input
+	// 	}
+	// 	formatCtx = nullptr;
+    //     if (formatCtx2) {
+	// 		avformat_close_input(&formatCtx2); // Close previous video input
+	// 	}
+	// 	formatCtx2 = nullptr;
+	// 	if (avformat_open_input(&formatCtx, filename.c_str(), nullptr, nullptr) != 0) {
+	// 		isAnime = false;
+	// 		return false;
+	// 	}
+	// 	avformat_open_input(&formatCtx2, filename.c_str(), nullptr, nullptr);
+	// 	if (avformat_find_stream_info(formatCtx, nullptr) < 0) {
+	// 		isAnime = false;
+	// 		return false;
+	// 	}
+	// 	// Find the first video and audio stream
+	// 	videoStreamIndex = -1;
+	// 	audioStreamIndex = -1;
+	// 	for (unsigned int i = 0; i < formatCtx->nb_streams; ++i) {
+	// 		if (formatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO && videoStreamIndex == -1) {
+	// 			videoStreamIndex = i;
+	// 		}
+	// 		if (formatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO && audioStreamIndex == -1) {
+	// 			audioStreamIndex = i;
+	// 		}
+	// 	}
+	// 	if (videoStreamIndex == -1 || audioStreamIndex == -1) {
+	// 		avformat_close_input(&formatCtx);
+	// 		isAnime = false;
+	// 		return false;
+	// 	}
+	// 	// Initialize codec contexts
+	// 	videoCodecCtx = avcodec_alloc_context3(nullptr);
+	// 	audioCodecCtx = avcodec_alloc_context3(nullptr);
+	// 	avcodec_parameters_to_context(videoCodecCtx, formatCtx->streams[videoStreamIndex]->codecpar);
+	// 	avcodec_parameters_to_context(audioCodecCtx, formatCtx2->streams[audioStreamIndex]->codecpar);
+	// 	const AVCodec* videoCodec = avcodec_find_decoder(videoCodecCtx->codec_id);
+	// 	const AVCodec* audioCodec = avcodec_find_decoder(audioCodecCtx->codec_id);
+	// 	avcodec_open2(videoCodecCtx, videoCodec, nullptr);
+	// 	avcodec_open2(audioCodecCtx, audioCodec, nullptr);
+	// 	videoDuration = formatCtx->duration;
+	// 	AVStream* videoStream = formatCtx->streams[videoStreamIndex];
+	// 	// Use avg_frame_rate for a general frame rate
+	// 	AVRational avgFrameRate = videoStream->avg_frame_rate;
+	// 	// If avg_frame_rate is 0, use r_frame_rate as a fallback
+	// 	if (avgFrameRate.num == 0) {
+	// 		avgFrameRate = videoStream->r_frame_rate;
+	// 	}
+	// 	videoFrameDuration = (double)avgFrameRate.den / (double)avgFrameRate.num;
+	// 	timeAccumulated = 0; timeAccumulated2 = 0;
+	// 	audioFrameDuration = 1.0 / (formatCtx->streams[audioStreamIndex]->codecpar->sample_rate);
+    //     currentVideo = filename;
+	// 	// wchar_t buffer[30];
+	// 	// _snwprintf(buffer, sizeof(buffer) / sizeof(*buffer), L"%lf", (formatCtx->streams[audioStreamIndex]->codecpar->sample_rate));
+	// 	// MessageBox(nullptr, buffer, TEXT("Message"), MB_OK);
+    //     // if(!cap.isOpened()) {
+    //     //     cap.open(videoname);
+    //     //     if(!cap.isOpened()) {
+    //     //         //double vfps = cap.get(cv::CAP_PROP_FPS);
+    //     //         //totalFrames = cap.get(cv::CAP_PROP_FRAME_COUNT);
+    //     //         //double duration = (totalFrames / vfps) * 1000;
+    //     //     // } else {
+    //     //         StopVideo();
+    //     //         return false;
+    //     //     }
+    //     //     if(!cap.read(frame)) {
+    //     //         StopVideo();
+    //     //         return false;
+    //     //     }
+    //     //     cap.set(cv::CAP_PROP_POS_FRAMES, 0); // Ensure we start from the first frame
+    //     // }
+    // }
+	// frameReady = false;
 	return true;
 }
-irr::video::ITexture* renderVideoFrame(irr::video::IVideoDriver* driver, AVCodecContext* videoCodecCtx, AVFrame* videoFrame) {
-	int width = videoFrame->width;
-    int height = videoFrame->height;
-	std::vector<uint8_t> dstData(width * height * 4); // 4 bytes for RGBA
-    // Create a pointer array for the destination data
-    uint8_t* dstDataPtr[1] = { dstData.data() };
-    int dstLineSize[1] = { width * 4 }; // Line size in bytes for RGBA
-    // Convert data from AVFrame to texture format
-    struct SwsContext* swsCtx = sws_getContext(
-        videoCodecCtx->width,
-        videoCodecCtx->height,
-        videoCodecCtx->pix_fmt,
-        width,
-        height,
-		AV_PIX_FMT_BGRA,
-        SWS_BILINEAR,
-        nullptr, nullptr, nullptr
-    );
-    sws_scale(swsCtx, videoFrame->data, videoFrame->linesize, 0, videoCodecCtx->height, dstDataPtr, dstLineSize); // Pass the pointer to the RGBA data
-	irr::video::IImage* image = driver->createImageFromData(irr::video::ECF_A8R8G8B8, irr::core::dimension2d<irr::u32>(width, height), dstData.data(), false);
-    // Add the image as a texture
-    irr::video::ITexture* texture = driver->addTexture("videoFrame", image);
-    // Cleanup
-    sws_freeContext(swsCtx);
-	image->drop();
-    return texture;
-}
+// irr::video::ITexture* renderVideoFrame(irr::video::IVideoDriver* driver, AVCodecContext* videoCodecCtx, AVFrame* videoFrame) {
+// 	int width = videoFrame->width;
+//     int height = videoFrame->height;
+// 	std::vector<uint8_t> dstData(width * height * 4); // 4 bytes for RGBA
+//     // Create a pointer array for the destination data
+//     uint8_t* dstDataPtr[1] = { dstData.data() };
+//     int dstLineSize[1] = { width * 4 }; // Line size in bytes for RGBA
+//     // Convert data from AVFrame to texture format
+//     struct SwsContext* swsCtx = sws_getContext(
+//         videoCodecCtx->width,
+//         videoCodecCtx->height,
+//         videoCodecCtx->pix_fmt,
+//         width,
+//         height,
+// 		AV_PIX_FMT_BGRA,
+//         SWS_BILINEAR,
+//         nullptr, nullptr, nullptr
+//     );
+//     sws_scale(swsCtx, videoFrame->data, videoFrame->linesize, 0, videoCodecCtx->height, dstDataPtr, dstLineSize); // Pass the pointer to the RGBA data
+// 	irr::video::IImage* image = driver->createImageFromData(irr::video::ECF_A8R8G8B8, irr::core::dimension2d<irr::u32>(width, height), dstData.data(), false);
+//     // Add the image as a texture
+//     irr::video::ITexture* texture = driver->addTexture("videoFrame", image);
+//     // Cleanup
+//     sws_freeContext(swsCtx);
+// 	image->drop();
+//     return texture;
+// }
 bool Game::PlayVideo(bool loop) {
     // Ensure a valid format context
-	if (formatCtx) {
-		if(videostart) timeAccumulated += static_cast<double>(delta_time) / 1000.0;
-		else timeAccumulated = videoFrameDuration;
-		while (timeAccumulated >= videoFrameDuration - 0.98) {
-			if (av_read_frame(formatCtx, &packet) < 0) {
-				if(loop) {
-					av_seek_frame(formatCtx, videoStreamIndex, 0, AVSEEK_FLAG_BACKWARD);
-					avcodec_flush_buffers(videoCodecCtx); // Flush the codec buffers
-					avcodec_flush_buffers(audioCodecCtx);
-				} else {
-					StopVideo();
-					return false;
-				}
-			}
-			if (packet.stream_index == videoStreamIndex) {
-				if (avcodec_send_packet(videoCodecCtx, &packet) < 0) {
-					av_packet_unref(&packet);
-					StopVideo();
-					return false;
-				}
-				if (avcodec_receive_frame(videoCodecCtx, videoFrame) >= 0) {
-					frameReady = true;
-					lastVideoFrameTime += videoFrameDuration; // Keep track of when this frame will be displayed
-				}
-			}
-			av_packet_unref(&packet); // Clean up the packet
-			timeAccumulated -= videoFrameDuration;
-		}
-		if (frameReady) {
-			if (videotexture) driver->removeTexture(videotexture); // Remove previous texture if it exists
-			videotexture = renderVideoFrame(driver, videoCodecCtx, videoFrame); // Render the frame
-			frameReady = false;
-		}
-		videostart = true;
-		if(loop) {
-			return true;
-		}
-		if(videostart) timeAccumulated2 += static_cast<double>(delta_time) / 1000.0;
-		else timeAccumulated2 = audioFrameDuration;
-		while (timeAccumulated2 >= audioFrameDuration - 0.98) {
-			if (av_read_frame(formatCtx2, &packet) >= 0) {
-			if (packet.stream_index == audioStreamIndex) {
-				if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
-					while (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
-                        int numSamples = audioFrame->nb_samples;
-						int audioChannels = audioCodecCtx->channels;
-						audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
-						for (int i = 0; i < numSamples; i++) {
-							for (int ch = 0; ch < audioChannels; ch++) {
-								if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
-									float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
-									audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767)); // Convert float samples to Int16
-								} else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
-									int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
-									audioBuffer.push_back(src[i]); // Copy directly
-								}
-							}
-						}
-					}
-					lastAudioProcessedTime += audioFrameDuration;
-				}
-            }
-			av_packet_unref(&packet); // Clean up the packet
-			}
-			timeAccumulated2 -= audioFrameDuration;
-		}
-		if (!audioBuffer.empty()) {
-			if (videosoundBuffer.loadFromSamples(audioBuffer.data(), audioBuffer.size(), audioCodecCtx->channels, audioCodecCtx->sample_rate)) {
-				videosound.setBuffer(videosoundBuffer);
-				videosound.play();
-			}
-			audioBuffer.clear();
-		}
-	} else {
-		StopVideo();
-		return false;
-	}
+	// if (formatCtx) {
+	// 	if(videostart) timeAccumulated += static_cast<double>(delta_time) / 1000.0;
+	// 	else timeAccumulated = videoFrameDuration;
+	// 	while (timeAccumulated >= videoFrameDuration - 0.98) {
+	// 		if (av_read_frame(formatCtx, &packet) < 0) {
+	// 			if(loop) {
+	// 				av_seek_frame(formatCtx, videoStreamIndex, 0, AVSEEK_FLAG_BACKWARD);
+	// 				avcodec_flush_buffers(videoCodecCtx); // Flush the codec buffers
+	// 				avcodec_flush_buffers(audioCodecCtx);
+	// 			} else {
+	// 				StopVideo();
+	// 				return false;
+	// 			}
+	// 		}
+	// 		if (packet.stream_index == videoStreamIndex) {
+	// 			if (avcodec_send_packet(videoCodecCtx, &packet) < 0) {
+	// 				av_packet_unref(&packet);
+	// 				StopVideo();
+	// 				return false;
+	// 			}
+	// 			if (avcodec_receive_frame(videoCodecCtx, videoFrame) >= 0) {
+	// 				frameReady = true;
+	// 				lastVideoFrameTime += videoFrameDuration; // Keep track of when this frame will be displayed
+	// 			}
+	// 		}
+	// 		av_packet_unref(&packet); // Clean up the packet
+	// 		timeAccumulated -= videoFrameDuration;
+	// 	}
+	// 	if (frameReady) {
+	// 		if (videotexture) driver->removeTexture(videotexture); // Remove previous texture if it exists
+	// 		videotexture = renderVideoFrame(driver, videoCodecCtx, videoFrame); // Render the frame
+	// 		frameReady = false;
+	// 	}
+	// 	videostart = true;
+	// 	if(loop) {
+	// 		return true;
+	// 	}
+	// 	if(videostart) timeAccumulated2 += static_cast<double>(delta_time) / 1000.0;
+	// 	else timeAccumulated2 = audioFrameDuration;
+	// 	while (timeAccumulated2 >= audioFrameDuration - 0.98) {
+	// 		if (av_read_frame(formatCtx2, &packet) >= 0) {
+	// 		if (packet.stream_index == audioStreamIndex) {
+	// 			if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
+	// 				while (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
+    //                     int numSamples = audioFrame->nb_samples;
+	// 					int audioChannels = audioCodecCtx->channels;
+	// 					audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
+	// 					for (int i = 0; i < numSamples; i++) {
+	// 						for (int ch = 0; ch < audioChannels; ch++) {
+	// 							if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
+	// 								float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
+	// 								audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767)); // Convert float samples to Int16
+	// 							} else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
+	// 								int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
+	// 								audioBuffer.push_back(src[i]); // Copy directly
+	// 							}
+	// 						}
+	// 					}
+	// 				}
+	// 				lastAudioProcessedTime += audioFrameDuration;
+	// 			}
+    //         }
+	// 		av_packet_unref(&packet); // Clean up the packet
+	// 		}
+	// 		timeAccumulated2 -= audioFrameDuration;
+	// 	}
+	// 	if (!audioBuffer.empty()) {
+	// 		if (videosoundBuffer.loadFromSamples(audioBuffer.data(), audioBuffer.size(), audioCodecCtx->channels, audioCodecCtx->sample_rate)) {
+	// 			videosound.setBuffer(videosoundBuffer);
+	// 			videosound.play();
+	// 		}
+	// 		audioBuffer.clear();
+	// 	}
+	// } else {
+	// 	StopVideo();
+	// 	return false;
+	// }
 	return true;
     // } else {
 	// 	irr::video::IImage* img = driver->createImageFromData(irr::video::ECF_R8G8B8, scale, rgbBuffer, true, false);
@@ -5327,16 +5336,16 @@ void Game::StopVideo(bool close, bool reset) {
 	lastAudioProcessedTime = 0;
 	frameReady = false;
 	currentVideo = "";
-	if(isAnime)
-	    mainGame->cv->notify_one();
-	if(close) {
-		av_frame_free(&videoFrame);
-		av_frame_free(&audioFrame);
-		avcodec_free_context(&videoCodecCtx);
-		avcodec_free_context(&audioCodecCtx);
-		avformat_close_input(&formatCtx);
-		avformat_close_input(&formatCtx2);
-	}
+	// if(isAnime)
+	//     mainGame->cv->notify_one();
+	// if(close) {
+	// 	av_frame_free(&videoFrame);
+	// 	av_frame_free(&audioFrame);
+	// 	avcodec_free_context(&videoCodecCtx);
+	// 	avcodec_free_context(&audioCodecCtx);
+	// 	avformat_close_input(&formatCtx);
+	// 	avformat_close_input(&formatCtx2);
+	// }
     if(videotexture) {
         driver->removeTexture(videotexture);
         videotexture = nullptr;

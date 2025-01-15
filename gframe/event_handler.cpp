@@ -2442,6 +2442,10 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
                     mainGame->moviecheck();
 				return true;
 			}
+			case CHECKBOX_ANIME_FULL: {
+				gGameConfig->animefull = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
+				return true;
+			}
 			case CHECKBOX_HIDE_NAME_TAG:{
 				gGameConfig->chkHideNameTag = mainGame->gSettings.chkHideNameTag->isChecked();
 				return true;
@@ -2583,6 +2587,14 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 					}
 				} else
 				    mainGame->gSettings.btnrandomtexture->setImage(0);
+				return true;
+			}
+            case CHECKBOX_VWALLPAPER:{
+				gGameConfig->randomtexture = mainGame->gSettings.chkVideowallpaper->isChecked();
+				return true;
+			}
+            case CHECKBOX_RANDOM_VWALLPAPER:{
+				gGameConfig->randomvideowallpaper = mainGame->gSettings.chkRandomVideowallpaper->isChecked();
 				return true;
 			}
             case CHECKBOX_CLOSEUP:{
