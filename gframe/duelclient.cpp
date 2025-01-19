@@ -735,12 +735,6 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->HideElement(mainGame->wPosSelect);
 		if(mainGame->wCardSelect->isVisible())
 			mainGame->HideElement(mainGame->wCardSelect);
-        //////////kdiy/////////
-        for(int i = 0; i < 5; ++i)
-            mainGame->selectedcard[i]->setVisible(false);
-		mainGame->damcharacter[0] = false;
-		mainGame->damcharacter[1] = false;
-        //////////kdiy/////////
 		if(mainGame->wCardDisplay->isVisible())
 			mainGame->HideElement(mainGame->wCardDisplay);
 		if(mainGame->wANNumber->isVisible())
@@ -755,6 +749,12 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		mainGame->btnChainWhenAvail->setVisible(false);
 		mainGame->btnCancelOrFinish->setVisible(false);
 		////kdiy////////
+		mainGame->StopVideo(false, true);
+        for(int i = 0; i < 5; ++i)
+            mainGame->selectedcard[i]->setVisible(false);
+		mainGame->damcharacter[0] = false;
+		mainGame->damcharacter[1] = false;
+		mainGame->wBtnShowCard->setVisible(false);
         mainGame->wLocation->setVisible(false);
         mainGame->wChPloatBody[0]->setVisible(false);
         mainGame->wChPloatBody[1]->setVisible(false);
@@ -1112,9 +1112,6 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 	}
 	case STOC_DUEL_START: {
 		std::unique_lock<epro::mutex> lock(mainGame->gMutex);
-        /////kdiy/////
-		mainGame->HideElement(mainGame->wEntertainmentPlay);
-        /////kdiy/////
 		mainGame->HideElement(mainGame->wHostPrepare);
 		mainGame->HideElement(mainGame->gBot.window);
 		mainGame->HideElement(mainGame->wHostPrepareL);
@@ -1140,9 +1137,11 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		mainGame->wCardImg->setVisible(true);
 		/////kdiy/////
         //mainGame->wInfos->setVisible(true);
+		mainGame->HideElement(mainGame->wEntertainmentPlay);
 		mainGame->damcharacter[0] = false;
 		mainGame->damcharacter[1] = false;
         mainGame->replayswap = false;
+		mainGame->wBtnShowCard->setVisible(true);
 		/////kdiy/////
 		mainGame->wPhase->setVisible(true);
 		mainGame->btnSideOK->setVisible(false);
@@ -1215,10 +1214,6 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 				mainGame->HideElement(mainGame->wPosSelect);
 			if(mainGame->wCardSelect->isVisible())
 				mainGame->HideElement(mainGame->wCardSelect);
-            //////////kdiy/////////
-            for(int i = 0; i < 5; ++i)
-                mainGame->selectedcard[i]->setVisible(false);
-            //////////kdiy/////////
 			if(mainGame->wCardDisplay->isVisible())
 				mainGame->HideElement(mainGame->wCardDisplay);
 			if(mainGame->wANNumber->isVisible())
@@ -1246,6 +1241,8 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			//ktest/////
 			mainGame->StopVideo(false, true);
             mainGame->isEvent = false;
+            for(int i = 0; i < 5; ++i)
+                mainGame->selectedcard[i]->setVisible(false);
             mainGame->wLocation->setVisible(false);
 			for(int i = 0; i < 6; ++i) {
 				mainGame->imageManager.modeHead[i] = mainGame->imageManager.head[0];
@@ -2443,6 +2440,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		else
 			mainGame->dInfo.startlp = 8000;
 		///////////kdiy///////////
+		mainGame->wBtnShowCard->setVisible(true);
 		if (mainGame->dInfo.lp[0] >= 8888888) {
             mainGame->dInfo.lp[0] = 8888888;
 			mainGame->dInfo.strLP[0] = L"\u221E";
@@ -6289,6 +6287,8 @@ void DuelClient::ReplayPrompt(bool local_stream) {
 	//ktest/////
 	mainGame->StopVideo(false, true);
     mainGame->isEvent = false;
+	mainGame->wBtnShowCard->setVisible(false);
+    mainGame->wLocation->setVisible(false);
     mainGame->wChPloatBody[0]->setVisible(false);
 	mainGame->wChPloatBody[1]->setVisible(false);
     ////kdiy////////

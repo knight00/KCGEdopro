@@ -24,14 +24,14 @@
 #include "client_card.h"
 #include "network.h"
 /////ktest//////
-//#include <opencv2/opencv.hpp>
-// extern "C" {
-// #include <libavcodec/avcodec.h>
-// #include <libavformat/avformat.h>
-// #include <libswscale/swscale.h>
-// #include <libswresample/swresample.h>
-// #include <libavutil/opt.h>
-// }
+// #include <opencv2/opencv.hpp>
+extern "C" {
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+#include <libswscale/swscale.h>
+#include <libswresample/swresample.h>
+#include <libavutil/opt.h>
+}
 #include <sfAudio/Audio.hpp>
 /////kdiy/////
 struct unzip_payload;
@@ -958,13 +958,13 @@ public:
     // cv::VideoCapture cap;
     irr::video::ITexture* videotexture = nullptr;
 	// cv::Mat frame;
-    //double totalFrames = 0;
-    // AVFormatContext* formatCtx = nullptr, * formatCtx2 = nullptr;
-    // AVCodecContext* videoCodecCtx = nullptr;
-    // AVCodecContext* audioCodecCtx = nullptr;
-	// AVPacket packet;
-	// AVFrame* videoFrame;
-    // AVFrame* audioFrame;
+    double totalFrames = 0;
+    AVFormatContext* formatCtx = nullptr, * formatCtx2 = nullptr;
+    AVCodecContext* videoCodecCtx = nullptr;
+    AVCodecContext* audioCodecCtx = nullptr;
+	AVPacket packet;
+	AVFrame* videoFrame;
+    AVFrame* audioFrame;
     int videoStreamIndex = -1, audioStreamIndex = -1;
 	bool frameReady = false;
 	double timeAccumulated = 0.0, timeAccumulated2 = 0.0, lastAudioProcessedTime = 0.0, lastVideoFrameTime = 0.0; // Accumulate time to ensure smooth frame skipping
@@ -974,6 +974,7 @@ public:
 	bool openVideo(std::string videoName);
 	bool PlayVideo(bool loop = false);
     void StopVideo(bool close = false, bool reset = true);
+	bool showcardinfo = false, showchat = false, showloc = false;
     //ktest////////
 	std::vector<epro::path_string> closeup_dirs;
 	///kdiy////////

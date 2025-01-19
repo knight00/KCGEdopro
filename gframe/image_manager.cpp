@@ -100,6 +100,16 @@ bool ImageManager::Initial() {
 		Utils::MakeDirectory(path);
 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/icon"), path));
 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/damage"), path));
+		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/advantage"), path));
+		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin"), path));
+		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin/happy"), path));
+		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin/anger"), path));
+		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin/surprise"), path));
+		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp"), path));
+		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/normal"), path));
+		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/happy"), path));
+		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/anger"), path));
+		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/surprise"), path));
 	}
 	RefreshRandomImageList();
 	/////kdiy/////
@@ -861,13 +871,19 @@ irr::video::ITexture* ImageManager::UpdatetTexture(int i, std::wstring filepath)
 	auto file = epro::format(EPRO_TEXT("./textures/{}/{}"), ImageFolder[i], filepath);
 	if (i < TEXTURE_F1 && !Utils::FileExists(file)) return nullptr;
 	if(i == TEXTURE_BACKGROUND) {
-		return mainGame->driver->getTexture(file.c_str());
+		if(tBackGround) mainGame->driver->removeTexture(tBackGround);
+		tBackGround = mainGame->driver->getTexture(file.c_str());
+		return tBackGround;
 	}
 	if(i == TEXTURE_DECK) {
-		return mainGame->driver->getTexture(file.c_str());
+		if(tBackGround_deck) mainGame->driver->removeTexture(tBackGround_deck);
+		tBackGround_deck = mainGame->driver->getTexture(file.c_str());
+		return tBackGround_deck;
 	}
 	if(i == TEXTURE_MENU) {
-		return mainGame->driver->getTexture(file.c_str());
+		if(tBackGround_menu) mainGame->driver->removeTexture(tBackGround_menu);
+		tBackGround_menu = mainGame->driver->getTexture(file.c_str());
+		return tBackGround_menu;
 	}
 	if(i == TEXTURE_COVERS) {
 		if(tCover[0]) mainGame->driver->removeTexture(tCover[0]);
@@ -945,7 +961,9 @@ irr::video::ITexture* ImageManager::UpdatetTexture(int i, std::wstring filepath)
 		return tCover[3];
 	}
 	if(i == TEXTURE_SETTING) {
-		return mainGame->driver->getTexture(file.c_str());
+		if(tSettings) mainGame->driver->removeTexture(tSettings);
+		tSettings = mainGame->driver->getTexture(file.c_str());
+		return tSettings;
 	}
 	if(i == TEXTURE_F1) {
 		file = epro::format(EPRO_TEXT("./textures/{}/{}/"), ImageFolder[i], filepath);

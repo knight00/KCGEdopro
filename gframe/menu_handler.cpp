@@ -90,6 +90,7 @@ static void LoadReplay() {
 	/////kdiy/////
     //mainGame->wInfos->setVisible(true);
 	mainGame->btnLeaveGame->setVisible(true);
+	mainGame->wBtnShowCard->setVisible(true);
 	/////kdiy/////
 	mainGame->wReplay->setVisible(true);
 	mainGame->wReplayControl->setVisible(true);

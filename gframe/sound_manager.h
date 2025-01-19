@@ -116,7 +116,8 @@ public:
 	void PlayCustomBGM(std::string num);
     bool PlayFieldSound();
 	//bool PlayChant(CHANT chant, uint32_t code);
-	void AddtoChantSPList(CHANT chant, uint16_t extra, std::vector<std::string>& chantlist, std::vector<std::string>& list);
+	void AddtoZipChantSPList(CHANT chant, uint16_t extra, std::vector<std::string>& chantlist, std::vector<std::string>& list);
+	void AddtoChantSPList(CHANT chant, uint16_t extra, uint8_t player, size_t j, std::vector<std::string>& chantlist, std::vector<std::string>& list);
 	void AddtoZipChantList(std::string file, int i, std::vector<std::string>& list, std::vector<std::string>& list2);
 	void AddtoChantList(std::string file, int i, std::vector<std::string>& list, std::vector<std::string>& list2);
 	bool PlayZipChants(CHANT chant, std::string file, std::vector<std::string>& sound, uint8_t player);
@@ -153,7 +154,7 @@ private:
 	std::map<std::pair<CHANT, uint32_t>, std::string> ChantsList[CHARACTER_VOICE + CHARACTER_STORY_ONLY];
 	std::map<std::pair<CHANT, uint32_t>, std::string> ChantsList2[CHARACTER_VOICE + CHARACTER_STORY_ONLY];
 	std::vector<std::string> ChantSPList[20][CHARACTER_VOICE + CHARACTER_STORY_ONLY];
-	std::vector<std::string> ChantSPList2[20][CHARACTER_VOICE + CHARACTER_STORY_ONLY];
+	std::vector<std::string> ChantSPList2[20][CHARACTER_VOICE + CHARACTER_STORY_ONLY][13][CHARACTER_VOICE + CHARACTER_STORY_ONLY];
 	std::string bgm_now = "";
 	////////kdiy////
 	int bgm_scene{ -1 };

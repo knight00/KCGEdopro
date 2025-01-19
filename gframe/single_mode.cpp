@@ -247,6 +247,7 @@ restart:
 				mainGame->btnRestartSingle->setVisible(false);
 				mainGame->wPhase->setVisible(false);
 				////kdiy////////
+				mainGame->wBtnShowCard->setVisible(false);
                 mainGame->wLocation->setVisible(false);
 				////kdiy////////
 				mainGame->deckBuilder.Initialize(false);
@@ -274,6 +275,7 @@ restart:
 	////kdiy////
 	//mainGame->btnLeaveGame->setText(gDataManager->GetSysString(1210).data());
 	mainGame->btnLeaveGame->setToolTipText(gDataManager->GetSysString(1210).data());
+	mainGame->wBtnShowCard->setVisible(true);
 	////kdiy////
 	mainGame->btnRestartSingle->setVisible(true);
 	mainGame->wPhase->setVisible(true);
@@ -401,6 +403,7 @@ restart:
 			mainGame->btnRestartSingle->setVisible(false);
 			mainGame->wPhase->setVisible(false);
 			////kdiy////////
+			mainGame->wBtnShowCard->setVisible(false);
             mainGame->wLocation->setVisible(false);
 			////kdiy////////
 			mainGame->deckBuilder.Initialize(false);

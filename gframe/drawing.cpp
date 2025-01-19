@@ -101,8 +101,10 @@ void Game::DrawBackGround() {
     /////ktest//////
 	if(isAnime) {
 		if(PlayVideo())
-		    if(videotexture) DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
-			// driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, videoFrame->width, videoFrame->height));
+		    if(videotexture) {
+				if(gGameConfig->animefull) driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, videoFrame->width, videoFrame->height));
+				else DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
+			}
     } else {
     /////kdiy//////
     if(!gGameConfig->chkField && DrawFieldSpell())

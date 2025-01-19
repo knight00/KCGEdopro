@@ -264,6 +264,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					///////kdiy///////
 					for(int i = 0; i < 8; i++)
 					    mainGame->CardInfo[i]->setVisible(false);
+					mainGame->wBtnShowCard->setVisible(false);
                     mainGame->wLocation->setVisible(false);
 					///////kdiy///////
 					mainGame->btnSpectatorSwap->setVisible(false);
@@ -2299,6 +2300,12 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				auto tTexture = mainGame->imageManager.UpdatetTexture(mainGame->gSettings.clickedindex, filepath);
 				if(tTexture != nullptr) {
 					mainGame->gSettings.btnrandomtexture->setImage(tTexture);
+					if(mainGame->gSettings.clickedindex == 18) mainGame->btnSettings->setImage(mainGame->imageManager.tSettings);
+					if(mainGame->gSettings.clickedindex == 19) {
+						mainGame->btnHand[0]->setImage(mainGame->imageManager.tHand[0]);
+						mainGame->btnHand[1]->setImage(mainGame->imageManager.tHand[1]);
+						mainGame->btnHand[2]->setImage(mainGame->imageManager.tHand[2]);
+					}
 					mainGame->driver->removeTexture(tTexture);
 					tTexture = nullptr;
 				}
@@ -2315,6 +2322,12 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				auto tTexture = mainGame->imageManager.UpdatetTexture(mainGame->gSettings.clickedindex, filepath);
 				if(tTexture != nullptr) {
 					mainGame->gSettings.btnrandomtexture->setImage(tTexture);
+					if(mainGame->gSettings.clickedindex == 18) mainGame->btnSettings->setImage(mainGame->imageManager.tSettings);
+					if(mainGame->gSettings.clickedindex == 19) {
+						mainGame->btnHand[0]->setImage(mainGame->imageManager.tHand[0]);
+						mainGame->btnHand[1]->setImage(mainGame->imageManager.tHand[1]);
+						mainGame->btnHand[2]->setImage(mainGame->imageManager.tHand[2]);
+					}
 					mainGame->driver->removeTexture(tTexture);
 					tTexture = nullptr;
 				}
@@ -2582,6 +2595,12 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 					auto tTexture = mainGame->imageManager.UpdatetTexture(k, filepath);
 					if(tTexture != nullptr) {
 						mainGame->gSettings.btnrandomtexture->setImage(tTexture);
+						if(k == 18) mainGame->btnSettings->setImage(mainGame->imageManager.tSettings);
+						if(k == 19) {
+							mainGame->btnHand[0]->setImage(mainGame->imageManager.tHand[0]);
+							mainGame->btnHand[1]->setImage(mainGame->imageManager.tHand[1]);
+							mainGame->btnHand[2]->setImage(mainGame->imageManager.tHand[2]);
+						}
 						mainGame->driver->removeTexture(tTexture);
 						tTexture = nullptr;
 					}
@@ -2910,6 +2929,12 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				}
 				mainGame->gSettings.clickedindex = k;
 				auto tTexture = mainGame->imageManager.UpdatetTexture(k, filepath);
+				if(k == 18) mainGame->btnSettings->setImage(mainGame->imageManager.tSettings);
+				if(k == 19) {
+					mainGame->btnHand[0]->setImage(mainGame->imageManager.tHand[0]);
+					mainGame->btnHand[1]->setImage(mainGame->imageManager.tHand[1]);
+					mainGame->btnHand[2]->setImage(mainGame->imageManager.tHand[2]);
+				}
 				if(tTexture != nullptr) {
 					mainGame->gSettings.btnrandomtexture->setImage(tTexture);
 					mainGame->driver->removeTexture(tTexture);

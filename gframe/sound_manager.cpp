@@ -282,17 +282,6 @@ void SoundManager::RefreshChantsList() {
 	for(uint8_t playno = 0; playno < CHARACTER_VOICE - 1; playno++)
 		Utils::MakeDirectory(epro::format(EPRO_TEXT("./sound/character/{}"), textcharacter[playno]));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character/darksiner"));
-	ChantsBGMList.clear();
-	for(auto list : ChantsList)
-		list.clear();
-    for(auto list : ChantsList2)
-		list.clear();
-	for(int i = 0; i < 20; i++) {
-		for(uint8_t playno = 0; playno < CHARACTER_VOICE + CHARACTER_STORY_ONLY; playno++) {
-			ChantSPList[i][playno].clear();
-			ChantSPList2[i][playno].clear();
-		}
-	}
 
 	for (auto& file : Utils::FindFiles(EPRO_TEXT("./sound/BGM/card"), mixer->GetSupportedSoundExtensions())) {
 		auto scode = Utils::GetFileName(file);
@@ -344,7 +333,7 @@ void SoundManager::RefreshChantsList() {
 		if(chantType.first == CHANT::LOSE) i = 19;
 		if(i == -1) continue;
 		for(int x = 0; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
-		if(chantType.first == CHANT::SUMMON) {
+			if(chantType.first == CHANT::SUMMON) {
 				RefreshZipChants(searchPath[x] + EPRO_TEXT("/fusion"), ChantSPList[i][x]);
 				RefreshZipChants(searchPath[x] + EPRO_TEXT("/synchro"), ChantSPList[i][x]);
 				RefreshZipChants(searchPath[x] + EPRO_TEXT("/xyz"), ChantSPList[i][x]);
@@ -385,39 +374,42 @@ void SoundManager::RefreshChantsList() {
 				RefreshZipCards(epro::format(EPRO_TEXT("{}"), searchPath[x]), ChantsList[x], chantType.first);
 
 			if(chantType.first == CHANT::SUMMON) {
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/fusion"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/synchro"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/xyz"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/link"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/ritual"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/pendulum"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/summon"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/spsummon"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/attack"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/defense"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/advance"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/summon"), ChantSPList2[i][x][0][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/fusion"), ChantSPList2[i][x][1][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/synchro"), ChantSPList2[i][x][2][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/xyz"), ChantSPList2[i][x][3][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/link"), ChantSPList2[i][x][4][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/ritual"), ChantSPList2[i][x][5][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/pendulum"), ChantSPList2[i][x][6][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/spsummon"), ChantSPList2[i][x][7][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/attack"), ChantSPList2[i][x][8][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/defense"), ChantSPList2[i][x][9][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/advance"), ChantSPList2[i][x][10][0]);
 			} else if(chantType.first == CHANT::ATTACK) {
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/attack"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/monster"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/directattack"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/attack"), ChantSPList2[i][x][0][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/monster"), ChantSPList2[i][x][1][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/directattack"), ChantSPList2[i][x][2][0]);
 			} else if(chantType.first == CHANT::ACTIVATE) {
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/activate"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/fromhand"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/monster"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/quickspell"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/continuousspell"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/equip"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/ritual"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/normaltrap"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/continuoustrap"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/countertrap"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/flip"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/field"), ChantSPList2[i][x]);
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/action"), ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/activate"), ChantSPList2[i][x][0][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/fromhand"), ChantSPList2[i][x][1][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/monster"), ChantSPList2[i][x][2][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/quickspell"), ChantSPList2[i][x][3][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/continuousspell"), ChantSPList2[i][x][4][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/equip"), ChantSPList2[i][x][5][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/ritual"), ChantSPList2[i][x][6][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/normaltrap"), ChantSPList2[i][x][7][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/continuoustrap"), ChantSPList2[i][x][8][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/countertrap"), ChantSPList2[i][x][9][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/flip"), ChantSPList2[i][x][10][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/field"), ChantSPList2[i][x][11][0]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/action"), ChantSPList2[i][x][12][0]);
 			} else if(chantType.first == CHANT::PENDULUM) {
-				RefreshChants(searchPath2[x] + EPRO_TEXT("/activate"), ChantSPList2[i][x]);
-			} else if(chantType.first != CHANT::WIN)
-				RefreshChants(searchPath2[x], ChantSPList2[i][x]);
+				RefreshChants(searchPath2[x] + EPRO_TEXT("/activate"), ChantSPList2[i][x][0][0]);
+			} else if(chantType.first != CHANT::WIN) {
+			    RefreshChants(searchPath2[x], ChantSPList2[i][x][0][0]);
+				for(int playno = 0; playno < CHARACTER_VOICE - 1; playno++)
+				    RefreshChants(epro::format(EPRO_TEXT("{}/{}"), searchPath2[x], textcharacter[playno]), ChantSPList2[i][x][0][playno + 1]);
+			}
 
 			if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM) {
 				for(auto& file : Utils::FindFiles(searchPath2[x] + EPRO_TEXT("/card"), mixer->GetSupportedSoundExtensions())) {
@@ -661,7 +653,7 @@ bool SoundManager::PlayFieldSound() {
 #endif
     return false;
 }
-void SoundManager::AddtoChantSPList(CHANT chant, uint16_t extra, std::vector<std::string>& chantlist, std::vector<std::string>& list) {
+void SoundManager::AddtoZipChantSPList(CHANT chant, uint16_t extra, std::vector<std::string>& chantlist, std::vector<std::string>& list) {
 	for(size_t j = 0; j < chantlist.size(); j++) {
 		std::string sound = chantlist[j];
 		if(chant == CHANT::SUMMON) {
@@ -688,6 +680,103 @@ void SoundManager::AddtoChantSPList(CHANT chant, uint16_t extra, std::vector<std
 			if((extra & 0x400) && sound.find("summon/advance/") != std::string::npos)
 				list.push_back(sound);
             if((extra == 0) && sound.find("summon/summon/") != std::string::npos)
+				list.push_back(sound);
+		} else if(chant == CHANT::ATTACK) {
+			if((extra & 0x1) && sound.find("attack/attack/") != std::string::npos)
+				list.push_back(sound);
+			if((extra & 0x2) && sound.find("attack/monster/") != std::string::npos)
+				list.push_back(sound);
+			if((extra & 0x4) && sound.find("attack/directattack/") != std::string::npos)
+				list.push_back(sound);
+		} else if(chant == CHANT::ACTIVATE) {
+			if((extra & 0x1) && sound.find("activate/activate/") != std::string::npos)
+				list.push_back(sound);
+			if((extra & 0x2) && sound.find("activate/fromhand/") != std::string::npos)
+				list.push_back(sound);
+			if((extra & 0x4) && sound.find("activate/normalspell/") != std::string::npos)
+				list.push_back(sound);
+			if((extra & 0x8) && sound.find("activate/quickspell/") != std::string::npos)
+				list.push_back(sound);
+			if((extra & 0x10) && sound.find("activate/continuousspell/") != std::string::npos)
+				list.push_back(sound);
+			if((extra & 0x20) && sound.find("activate/equip/") != std::string::npos)
+				list.push_back(sound);
+			if((extra & 0x40) && sound.find("activate/ritual/") != std::string::npos)
+				list.push_back(sound);
+			if((extra & 0x80) && sound.find("activate/normaltrap/") != std::string::npos)
+				list.push_back(sound);
+			if((extra & 0x100) && sound.find("activate/continuoustrap/") != std::string::npos)
+				list.push_back(sound);
+			if((extra & 0x200) && sound.find("activate/countertrap/") != std::string::npos)
+				list.push_back(sound);
+			if((extra & 0x400) && sound.find("activate/flip/") != std::string::npos)
+				list.push_back(sound);
+			if((extra & 0x800) && sound.find("activate/monster/") != std::string::npos)
+				list.push_back(sound);
+			if((extra & 0x1000) && sound.find("activate/field/") != std::string::npos)
+				list.push_back(sound);
+			if((extra & 0x4000) && sound.find("activate/action/") != std::string::npos)
+				list.push_back(sound);
+		} else if(chant == CHANT::PENDULUM) {
+			if((extra & 0x1) && sound.find("pendulum/activate/") != std::string::npos)
+				list.push_back(sound);
+		} else if(chant == CHANT::DRAW) {
+			if((extra & 0x1) && sound.find("draw/disadvantage/") != std::string::npos)
+				list.push_back(sound);
+			else if((extra & 0x2) && sound.find("draw/advantage/") != std::string::npos)
+				list.push_back(sound);
+			else if(sound.find("draw/") != std::string::npos && sound.find("draw/disadvantage/") == std::string::npos && sound.find("draw/advantage/") == std::string::npos)
+				list.push_back(sound);
+		} else if(chant == CHANT::SET) {
+			if((extra & 0x1) && sound.find("set/monster/") != std::string::npos)
+				list.push_back(sound);
+			else if(sound.find("set/") != std::string::npos && sound.find("set/monster/") == std::string::npos)
+				list.push_back(sound);
+		} else if(chant == CHANT::DAMAGE) {
+			if((extra & 0x1) && sound.find("damage/cost/") != std::string::npos)
+				list.push_back(sound);
+			else if((extra & 0x2) && sound.find("damage/minor/") != std::string::npos)
+				list.push_back(sound);
+			else if((extra & 0x4) && sound.find("damage/major/") != std::string::npos)
+				list.push_back(sound);
+			else if(sound.find("damage/") != std::string::npos && sound.find("damage/cost/") == std::string::npos && sound.find("damage/minor/") == std::string::npos && sound.find("damage/major/") == std::string::npos)
+				list.push_back(sound);
+		}
+	}
+}
+void SoundManager::AddtoChantSPList(CHANT chant, uint16_t extra, uint8_t player, size_t j, std::vector<std::string>& chantlist, std::vector<std::string>& list) {
+	for(size_t k = 0; k < chantlist.size(); k++) {
+		std::string sound = chantlist[k];
+		if(mainGame->dInfo.isInDuel) {
+            for(auto file : gSoundManager->soundcount) {
+				if(sound == file)
+				    continue;
+			}
+		}
+		if(chant == CHANT::SUMMON) {
+			if((extra & 0x1) && j == 1)
+				list.push_back(sound);
+			if((extra & 0x2) && j == 2)
+				list.push_back(sound);
+			if((extra & 0x4) && j == 3)
+				list.push_back(sound);
+			if((extra & 0x8) && j == 4)
+				list.push_back(sound);
+			if((extra & 0x10) && j == 5)
+				list.push_back(sound);
+			if((extra & 0x20) && j == 6)
+				list.push_back(sound);
+			if((extra & 0x80) && j == 0)
+				list.push_back(sound);
+			if((extra & 0x40) && j == 7)
+				list.push_back(sound);
+			if((extra & 0x100) && j == 8)
+				list.push_back(sound);
+			if((extra & 0x200) && j == 9)
+				list.push_back(sound);
+			if((extra & 0x400) && j == 10)
+				list.push_back(sound);
+            if((extra == 0) && j == 0)
 				list.push_back(sound);
 		} else if(chant == CHANT::ATTACK) {
 			if((extra & 0x1) && sound.find("attack/attack/") != std::string::npos)
@@ -832,17 +921,17 @@ bool SoundManager::PlayZipChants(CHANT chant, std::string file, std::vector<std:
 			const auto& name = reader->getFileName();
 			const std::string filename = Utils::ToUTF8IfNeeded({ name.c_str(), name.size() });
 			if(filename == file) {
-				StopSounds();
-				//record this chant as played
-				if(mainGame->dInfo.isInDuel && chant != CHANT::DRAW && chant != CHANT::STARTUP && chant != CHANT::WIN && chant != CHANT::LOSE) {
-					if(std::find(sound.begin(), sound.end(), file) != sound.end()) {
-						reader->drop();
-						delete[] buff;
-						return false;
-					}
-					sound.push_back(file);
-				}
 				if (mainGame->soundBuffer.loadFromMemory(buff, length)) {
+					//record this chant as played
+					if(mainGame->dInfo.isInDuel && chant != CHANT::DRAW && chant != CHANT::STARTUP && chant != CHANT::WIN && chant != CHANT::LOSE) {
+						if(std::find(sound.begin(), sound.end(), file) != sound.end()) {
+							reader->drop();
+							delete[] buff;
+							return false;
+						}
+						sound.push_back(file);
+					}
+					StopSounds();
 					mainGame->chantsound.setBuffer(mainGame->soundBuffer);
 					mainGame->chantsound.play();
 					if(chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN) {
@@ -868,13 +957,13 @@ bool SoundManager::PlayZipChants(CHANT chant, std::string file, std::vector<std:
 bool SoundManager::PlayChants(CHANT chant, std::string file, std::vector<std::string>& sound, uint8_t player) {
 #ifdef BACKEND
 	if(Utils::FileExists(Utils::ToPathString(file))) {
-		if(mainGame->dInfo.isInDuel && chant != CHANT::DRAW && chant != CHANT::STARTUP && chant != CHANT::WIN && chant != CHANT::LOSE) {
-			if(std::find(sound.begin(), sound.end(), file) != sound.end())
-				return false;
-			sound.push_back(file);
-		}
-		StopSounds();
 		if (mainGame->soundBuffer.loadFromFile(file)) {
+			if(mainGame->dInfo.isInDuel && chant != CHANT::DRAW && chant != CHANT::STARTUP && chant != CHANT::WIN && chant != CHANT::LOSE) {
+				if(std::find(sound.begin(), sound.end(), file) != sound.end())
+				    return false;
+				sound.push_back(file);
+		    }
+			StopSounds();
 			mainGame->chantsound.setBuffer(mainGame->soundBuffer);
 			mainGame->chantsound.play();
 			if(chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN) {
@@ -928,7 +1017,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 	if(i == -1) return false;
 	if(code == 0) {
         std::vector<std::string> chantlist = ChantSPList[i][character[player]];
-        std::vector<std::string> chantlist2 = ChantSPList2[i][character[player]];
+        std::vector<std::string> chantlist2 = ChantSPList2[i][character[player]][0][10];
         //not play again for same chant
         if(mainGame->dInfo.isInDuel && chant != CHANT::DRAW && chant != CHANT::STARTUP && chant != CHANT::WIN && chant != CHANT::LOSE) {
             for(auto file : gSoundManager->soundcount) {
@@ -949,7 +1038,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 		auto key = std::make_pair(chant, code);
 		auto key2 = std::make_pair(chant, code2);
         std::vector<std::string> chantlist = ChantSPList[i][character[player]];
-        std::vector<std::string> chantlist2 = ChantSPList2[i][character[player]];
+        auto chantlist2 = ChantSPList2;
 		std::vector<std::string> list;
         std::vector<std::string> list2;
 		auto chant_it = ChantsList[character[player]].find(key);
@@ -961,18 +1050,18 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 
 		if(chant_it2 == ChantsList[character[player]].end() && _chant_it2 == ChantsList2[character[player]].end()) {
 			if(chant_it == ChantsList[character[player]].end() && _chant_it == ChantsList2[character[player]].end()) {
-                if(mainGame->dInfo.isInDuel) {
-                    for(auto file : gSoundManager->soundcount) {
-                        chantlist.erase(std::remove(chantlist.begin(), chantlist.end(), file), chantlist.end());
-                        chantlist2.erase(std::remove(chantlist2.begin(), chantlist2.end(), file), chantlist2.end());
-                    }
-                }
+                // if(mainGame->dInfo.isInDuel) {
+                //     for(auto file : gSoundManager->soundcount) {
+                //         chantlist.erase(std::remove(chantlist.begin(), chantlist.end(), file), chantlist.end());
+                //     }
+                // }
                 int count = chantlist.size();
-                int _count = chantlist2.size();
 				if(count > 0)
-					AddtoChantSPList(chant, extra, chantlist, list);
-				else if(_count > 0)
-					AddtoChantSPList(chant, extra, chantlist2, _list);
+					AddtoZipChantSPList(chant, extra, chantlist, list);
+				for(size_t j = 0; j < 13; j++) {
+					for(int x = 0; x < CHARACTER_VOICE; x++)
+					    AddtoChantSPList(chant, extra, player, j, chantlist2[i][character[player]][j][x], _list);
+				}
 			} else {
 				if(chant_it != ChantsList[character[player]].end())
 					AddtoZipChantList(chant_it->second, i, list, list2);
