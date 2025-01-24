@@ -510,7 +510,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_CHARACTER: {
 #ifdef VIP
-				gSoundManager->PlayChant(SoundManager::CHANT::STARTUP, 0, 0, mainGame->choose_player);
+				gSoundManager->PlayChant(SoundManager::CHANT::STARTUP, 0, 0, mainGame->choose_player, 0, 1 - mainGame->choose_player);
 #endif
                 auto elem = static_cast<irr::gui::CGUIImageButton*>(event.GUIEvent.Caller);
                 if(elem == mainGame->btnCharacter) {

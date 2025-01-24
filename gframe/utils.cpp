@@ -524,7 +524,7 @@ namespace ygo {
 			///kdiy///////////
 			// if(std::count(name.data(), name.data() + name.size(), EPRO_TEXT('/')) > subdirectorylayers)
 			// 	continue;
-           if (std::count(name.data(), name.data() + name.size(), EPRO_TEXT('/')) - std::count(path.data(), path.data() + path.size(), EPRO_TEXT('/')) > subdirectorylayers)
+           if(std::count(name.data(), name.data() + name.size(), EPRO_TEXT('/')) - std::count(path.data(), path.data() + path.size(), EPRO_TEXT('/')) > subdirectorylayers)
 				continue;
 			epro::path_string filename = Utils::ToPathString({ name.data(), name.size() });
 			if(filename.find(Utils::ToPathString(path)) == epro::path_string::npos)
@@ -539,16 +539,16 @@ namespace ygo {
 	std::vector<epro::path_string> Utils::FindFileNames(irr::io::IFileArchive* archive, epro::path_stringview path, const std::vector<epro::path_stringview>& extensions, int subdirectorylayers) {
         std::vector<epro::path_string> res;
         auto list = archive->getFileList();
-        for (irr::u32 i = 0; i < list->getFileCount(); i++) {
-		    if (list->isDirectory(i))
+        for(irr::u32 i = 0; i < list->getFileCount(); i++) {
+		    if(list->isDirectory(i))
 			    continue;
 		    const auto name = list->getFullFileName(i);
-		    if (std::count(name.data(), name.data() + name.size(), EPRO_TEXT('/')) - std::count(path.data(), path.data() + path.size(), EPRO_TEXT('/')) > subdirectorylayers)
+		    if(std::count(name.data(), name.data() + name.size(), EPRO_TEXT('/')) - std::count(path.data(), path.data() + path.size(), EPRO_TEXT('/')) > subdirectorylayers)
 			    continue;
 			epro::path_string filename = Utils::ToPathString({ name.data(), name.size() });
-			if (filename.find(Utils::ToPathString(path)) == epro::path_string::npos)
+			if(filename.find(Utils::ToPathString(path)) == epro::path_string::npos)
 			    continue;
-		    if (extensions.empty() || std::find(extensions.begin(), extensions.end(), Utils::GetFileExtension(name)) != extensions.end())
+		    if(extensions.empty() || std::find(extensions.begin(), extensions.end(), Utils::GetFileExtension(name)) != extensions.end())
 			    res.push_back(filename);
 	}
 	return res;

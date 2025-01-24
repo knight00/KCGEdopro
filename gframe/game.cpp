@@ -6739,7 +6739,7 @@ bool Game::moviecheck() {
 }
 bool Game::chantcheck() {
 	bool filechk = false;
-	if(Utils::FileExists(EPRO_TEXT("./expansions/kcgchant.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
+	if(Utils::FileExists(EPRO_TEXT("./sound/character/atem.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
 		filechk = true;
 #ifndef VIP
 	filechk = false;
@@ -6789,7 +6789,7 @@ void Game::charactselect(uint8_t player, int sel) {
 		mainGame->btnCharacter_replay->setImage(mainGame->imageManager.character[player]);
 		if(mainGame->choose_player == 0)
             mainGame->ebCharacterDeck->setSelected(player);
-		gSoundManager->PlayChant(SoundManager::CHANT::STARTUP, 0, 0, mainGame->choose_player);
+		gSoundManager->PlayChant(SoundManager::CHANT::STARTUP, 0, 0, mainGame->choose_player, 0, 1 - mainGame->choose_player);
 	}
 }
 /////kdiy/////
