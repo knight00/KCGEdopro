@@ -134,6 +134,16 @@ void DataHandler::LoadZipArchives() {
 			Utils::archives.emplace_back(tmp_archive);
 		}
 	}
+	for(auto& file : Utils::FindFiles(EPRO_TEXT("./sound/character/"), { EPRO_TEXT("zip") })) {
+#if defined(Zip)
+		filesystem->addFileArchive(epro::format(EPRO_TEXT("./sound/character/{}"), file).data(), false, false, irr::io::EFAT_ZIP, Zip, &tmp_archive);
+#else
+		filesystem->addFileArchive(epro::format(EPRO_TEXT("./sound/character/{}"), file).data(), false, false, irr::io::EFAT_ZIP, "", &tmp_archive);
+#endif
+		if(tmp_archive) {
+			Utils::archives.emplace_back(tmp_archive);
+		}
+	}
 }
 ////////kdiy////////
 void DataHandler::LoadKZipArchives() {

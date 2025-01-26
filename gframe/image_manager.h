@@ -96,6 +96,7 @@ public:
 	void GetRandomImage(irr::video::ITexture*& src, int image_type, bool force_random=false);
 	void GetRandomImage(irr::video::ITexture*& src, int image_type, int width, int height, bool force_random = false);
 	void GetRandomImagef(int width, int height);
+	void GetRandomCharacter(irr::video::ITexture*& src, std::vector<epro::path_string>& list);
 	void RefreshRandomImageList();
 	void RefreshImageDir(epro::path_string path, int image_type);
 	void RefreshImageDirf();
@@ -104,6 +105,9 @@ public:
 	irr::core::rect<irr::s32> head_size[CHARACTER_STORY+1]; //story icon dimension
 	irr::core::rect<irr::s32> modehead_size[6];
 	irr::core::rect<irr::s32> icon_size[CHARACTER_VOICE];
+	bool GetTextureCardHD(uint32_t code);
+	std::tuple<irr::video::ITexture*, irr::video::SColor> GetTextureCloseup(uint32_t code, uint32_t alias = 0, bool is_closeup=false);
+	std::tuple<irr::video::ITexture*, irr::video::SColor> GetTextureCloseupCode(uint32_t code, bool is_closeup=false);
 	/////kdiy/////
 
 	void ChangeTextures(epro::path_stringview path);
@@ -118,11 +122,6 @@ public:
 	irr::video::ITexture* GetTextureFromFile(const irr::io::path& file, int width, int height);
 	irr::video::ITexture* GetTextureCard(uint32_t code, imgType type, bool wait = false, bool fit = false, int* chk = nullptr);
 	irr::video::ITexture* GetTextureField(uint32_t code);
-	////////kdiy////
-	bool GetTextureCardHD(uint32_t code);
-	std::tuple<irr::video::ITexture*, irr::video::SColor> GetTextureCloseup(uint32_t code, uint32_t alias = 0, bool is_closeup=false);
-	std::tuple<irr::video::ITexture*, irr::video::SColor> GetTextureCloseupCode(uint32_t code, bool is_closeup=false);
-	////////kdiy////
 	irr::video::ITexture* GetCheckboxScaledTexture(float scale);
 	irr::video::ITexture* guiScalingResizeCached(irr::video::ITexture* src, const irr::core::rect<irr::s32>& srcrect,
 												 const irr::core::rect<irr::s32> &destrect);
@@ -173,7 +172,7 @@ private:
 #define TEXTURE_fieldSP4            34
 #define TEXTURE_field_transparentSP4 35
 
-	std::vector<uint8_t> imgcharacter;
+	std::vector<epro::path_string> imgcharacter[CHARACTER_VOICE][3][3];
 	std::unordered_map<uint32_t, irr::video::ITexture*> tCloseup;
     std::unordered_map<uint32_t, irr::video::SColor> tCloseupcolor;
 	/////////kdiy////

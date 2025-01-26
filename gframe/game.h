@@ -713,7 +713,7 @@ public:
 	void ReloadCBpic();
 	bool moviecheck();
 	bool chantcheck();
-	void charactselect(uint8_t player, int sel);
+	void charactcomboselect(uint8_t player, int box, int sel); //box: 1=ebCharacter, 2= ebCharacter_replay, 3= ebCharacterDeck
     std::vector<std::wstring>& GetPlayerReplayNames();
 	bool damcharacter[2] = { false,false };
 	int replay_player[2];

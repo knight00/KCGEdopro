@@ -195,10 +195,11 @@ void SoundManager::RefreshBGMDir(epro::path_stringview path, BGM scene) {
 /////kdiy///////
 void SoundManager::RefreshZipChants(epro::path_stringview folder, std::vector<std::string>& list, int character) {
 #ifdef BACKEND
+    if(character < 1) return;
     for(auto& archive : Utils::archives) {
-		if(Utils::ToUTF8IfNeeded({ archive.archive->getArchiveName().c_str(), archive.archive->getArchiveName().size() }).find(Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("/sound/character/{}"), textcharacter[character]))) == std::string::npos)
+		if(Utils::ToUTF8IfNeeded({ archive.archive->getArchiveName().c_str(), archive.archive->getArchiveName().size() }).find(Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("/sound/character/{}.zip"), textcharacter[character - 1][0]))) == std::string::npos)
 			continue;
-        for(auto& file : Utils::FindFileNames(archive.archive, folder, mixer->GetSupportedSoundExtensions())) {
+        for(auto& file : Utils::FindFileNames(archive.archive, folder, mixer->GetSupportedSoundExtensions(), 1)) {
             auto filename = Utils::GetFileName(file);
 		    list.push_back(Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/{}"), folder, filename)));
 		}
@@ -216,10 +217,11 @@ void SoundManager::RefreshChants(epro::path_stringview folder, std::vector<std::
 }
 void SoundManager::RefreshZipCards(epro::path_stringview folder, std::map<std::pair<CHANT, uint32_t>, std::vector<std::string>>& list, CHANT chant, int character) {
 #ifdef BACKEND
-	for(auto& archive : Utils::archives) {
-		if(Utils::ToUTF8IfNeeded({ archive.archive->getArchiveName().c_str(), archive.archive->getArchiveName().size() }).find(Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("/sound/character/{}"), textcharacter[character]))) == std::string::npos)
+    if(character < 1) return;
+    for(auto& archive : Utils::archives) {
+		if(Utils::ToUTF8IfNeeded({ archive.archive->getArchiveName().c_str(), archive.archive->getArchiveName().size() }).find(Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("/sound/character/{}.zip"), textcharacter[character - 1][0]))) == std::string::npos)
 			continue;
-		for(auto& file : Utils::FindFileNames(archive.archive, folder, mixer->GetSupportedSoundExtensions())) {
+		for(auto& file : Utils::FindFileNames(archive.archive, folder, mixer->GetSupportedSoundExtensions(), 1)) {
 			auto filename = Utils::GetFileName(file);
 			size_t pos = filename.find_first_of(EPRO_TEXT("+_"));
 			size_t pos_sub = filename.find_first_of(EPRO_TEXT("_"));
@@ -309,7 +311,7 @@ void SoundManager::RefreshChantsList() {
         // }
 	Utils::MakeDirectory(EPRO_TEXT("./sound/character"));
 	for(uint8_t playno = 0; playno < CHARACTER_VOICE + CHARACTER_STORY_ONLY - 1; playno++)
-		Utils::MakeDirectory(epro::format(EPRO_TEXT("./sound/character/{}"), textcharacter[playno]));
+		Utils::MakeDirectory(epro::format(EPRO_TEXT("./sound/character/{}"), textcharacter[playno][0]));
 
 	for (auto& file : Utils::FindFiles(EPRO_TEXT("./sound/BGM/card"), mixer->GetSupportedSoundExtensions())) {
 		auto scode = Utils::GetFileName(file);
@@ -328,7 +330,7 @@ void SoundManager::RefreshChantsList() {
 		std::vector<epro::path_string> searchPath2;
 		searchPath2.push_back(epro::format(EPRO_TEXT("./sound/{}"), chantType.second));
 		for(uint8_t playno = 0; playno < CHARACTER_VOICE + CHARACTER_STORY_ONLY - 1; playno++) {
-			searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/{}/{}"), textcharacter[playno], chantType.second));
+			searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/{}/{}"), textcharacter[playno][0], chantType.second));
 		}
 		for(auto path : searchPath2)
 			Utils::MakeDirectory(path);
@@ -403,7 +405,7 @@ void SoundManager::RefreshChantsList() {
 			} else if(chantType.first != CHANT::WIN) {
 				RefreshZipChants(epro::format(EPRO_TEXT("{}"), chantType.second), Chantaction[i][x][0][0], x);
 				for(int playno = 0; playno < CHARACTER_VOICE - 1; playno++)
-				    RefreshZipChants(epro::format(EPRO_TEXT("{}/{}"), chantType.second, textcharacter[playno]), Chantaction[i][x][0][playno + 1], x);
+				    RefreshZipChants(epro::format(EPRO_TEXT("{}/{}"), chantType.second, textcharacter[playno][0]), Chantaction[i][x][0][playno + 1], x);
 			}
 
 			if(chantType.first == CHANT::SUMMON) {
@@ -453,7 +455,7 @@ void SoundManager::RefreshChantsList() {
 			} else if(chantType.first != CHANT::WIN) {
 			    RefreshChants(searchPath2[x], Chantaction2[i][x][0][0]);
 				for(int playno = 0; playno < CHARACTER_VOICE - 1; playno++)
-				    RefreshChants(epro::format(EPRO_TEXT("{}/{}"), searchPath2[x], textcharacter[playno]), Chantaction2[i][x][0][playno + 1]);
+				    RefreshChants(epro::format(EPRO_TEXT("{}/{}"), searchPath2[x], textcharacter[playno][0]), Chantaction2[i][x][0][playno + 1]);
 			}
 
 			if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM) {
@@ -672,109 +674,531 @@ bool SoundManager::PlayFieldSound() {
 #endif
     return false;
 }
-void SoundManager::AddtoChantSPList(CHANT chant, uint16_t extra, size_t j, std::vector<std::string>& chantlist, std::vector<std::string>& list) {
-	for(size_t k = 0; k < chantlist.size(); k++) {
-		std::string sound = chantlist[k];
-		if(mainGame->dInfo.isInDuel) {
-            for(auto file : gSoundManager->soundcount) {
-				if(sound == file)
-				    continue;
+void SoundManager::AddtoZipChantSPList(CHANT chant, uint16_t extra, size_t j, std::vector<std::string>& chantlist, std::vector<std::string>& list, std::vector<std::string>& list2, int character) {
+    if(character < 1) return;
+    for(auto& archive : Utils::archives) {
+		if(Utils::ToUTF8IfNeeded({ archive.archive->getArchiveName().c_str(), archive.archive->getArchiveName().size() }).find(Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("/sound/character/{}.zip"), textcharacter[character - 1][0]))) == std::string::npos)
+			continue;
+		for(size_t k = 0; k < chantlist.size(); k++) {
+			std::string sound = chantlist[k];
+			for(auto& findfile : Utils::FindFileNames(archive.archive, Utils::ToPathString(sound), mixer->GetSupportedSoundExtensions())) {
+				auto file = Utils::ToUTF8IfNeeded(findfile);
+				if(mainGame->dInfo.isInDuel) {
+					for(auto playedfile : gSoundManager->soundcount) {
+						if(playedfile == file)
+				            continue;
+				    }
+			    }
+				if(chant == CHANT::SUMMON) {
+					if((extra & 0x1) && j == 1) {
+					    if(sound.find("+") == std::string::npos)
+		                    list.push_back(file);
+		                else
+			                list2.push_back(file);
+				    }
+					if((extra & 0x2) && j == 2) {
+						if(sound.find("+") == std::string::npos)
+		                    list.push_back(file);
+		                else
+			                list2.push_back(file);
+					}
+			    	if((extra & 0x4) && j == 3) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x8) && j == 4) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x10) && j == 5) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x20) && j == 6) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x80) && j == 0) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x40) && j == 7) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x100) && j == 8) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x200) && j == 9) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x400) && j == 10) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+                	if((extra == 0) && j == 0) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+		    	} else if(chant == CHANT::ATTACK) {
+			    	if((extra & 0x1) && j == 0) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x2) && j == 1) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x4) && j == 2) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+		    	} else if(chant == CHANT::ACTIVATE) {
+			    	if((extra & 0x1) && j == 0) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x2) && j == 1) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x800) && j == 2) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x4) && j == 3) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x8) && j == 4) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x10) && j == 5) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x20) && j == 6) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x40) && j == 7) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x80) && j == 8) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x100) && j == 9) {
+				   		if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x200) && j == 10) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x400) && j == 11) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x1000) && j == 12) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	if((extra & 0x4000) && j == 13) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+		    	} else if(chant == CHANT::DRAW) {
+			    	if((extra & 0x2) && j == 1) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	else if(j == 0) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+		    	} else if(chant == CHANT::SET) {
+			    	if((extra & 0x1) && j == 1) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	else if(j == 0) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+		    	} else if(chant == CHANT::DAMAGE) {
+			    	if((extra & 0x1) && j == 1) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	else if((extra & 0x2) && j == 2) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	else if((extra & 0x4) && j == 3) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+			    	else if(j == 0) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+		   	 	} else if(chant == CHANT::PENDULUM) {
+			    	if((extra & 0x1) && j == 0) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else
+			            	list2.push_back(file);
+					}
+		    	} else {
+					if(sound.find("+") == std::string::npos)
+		            	list.push_back(file);
+		        	else
+			        	list2.push_back(file);
+				}
 			}
 		}
-		if(chant == CHANT::SUMMON) {
-			if((extra & 0x1) && j == 1)
-				list.push_back(sound);
-			if((extra & 0x2) && j == 2)
-				list.push_back(sound);
-			if((extra & 0x4) && j == 3)
-				list.push_back(sound);
-			if((extra & 0x8) && j == 4)
-				list.push_back(sound);
-			if((extra & 0x10) && j == 5)
-				list.push_back(sound);
-			if((extra & 0x20) && j == 6)
-				list.push_back(sound);
-			if((extra & 0x80) && j == 0)
-				list.push_back(sound);
-			if((extra & 0x40) && j == 7)
-				list.push_back(sound);
-			if((extra & 0x100) && j == 8)
-				list.push_back(sound);
-			if((extra & 0x200) && j == 9)
-				list.push_back(sound);
-			if((extra & 0x400) && j == 10)
-				list.push_back(sound);
-            if((extra == 0) && j == 0)
-				list.push_back(sound);
-		} else if(chant == CHANT::ATTACK) {
-			if((extra & 0x1) && j == 0)
-				list.push_back(sound);
-			if((extra & 0x2) && j == 1)
-				list.push_back(sound);
-			if((extra & 0x4) && j == 2)
-				list.push_back(sound);
-		} else if(chant == CHANT::ACTIVATE) {
-			if((extra & 0x1) && j == 0)
-				list.push_back(sound);
-			if((extra & 0x2) && j == 1)
-				list.push_back(sound);
-			if((extra & 0x800) && j == 2)
-				list.push_back(sound);
-			if((extra & 0x4) && j == 3)
-				list.push_back(sound);
-			if((extra & 0x8) && j == 4)
-				list.push_back(sound);
-			if((extra & 0x10) && j == 5)
-				list.push_back(sound);
-			if((extra & 0x20) && j == 6)
-				list.push_back(sound);
-			if((extra & 0x40) && j == 7)
-				list.push_back(sound);
-			if((extra & 0x80) && j == 8)
-				list.push_back(sound);
-			if((extra & 0x100) && j == 9)
-				list.push_back(sound);
-			if((extra & 0x200) && j == 10)
-				list.push_back(sound);
-			if((extra & 0x400) && j == 11)
-				list.push_back(sound);
-			if((extra & 0x1000) && j == 12)
-				list.push_back(sound);
-			if((extra & 0x4000) && j == 13)
-				list.push_back(sound);
-		} else if(chant == CHANT::DRAW) {
-			if((extra & 0x2) && j == 1)
-				list.push_back(sound);
-			else if(j == 0)
-				list.push_back(sound);
-		} else if(chant == CHANT::SET) {
-			if((extra & 0x1) && j == 1)
-				list.push_back(sound);
-			else if(j == 0)
-				list.push_back(sound);
-		} else if(chant == CHANT::DAMAGE) {
-			if((extra & 0x1) && j == 1)
-				list.push_back(sound);
-			else if((extra & 0x2) && j == 2)
-				list.push_back(sound);
-			else if((extra & 0x4) && j == 3)
-				list.push_back(sound);
-			else if(j == 0)
-				list.push_back(sound);
-		} else if(chant == CHANT::PENDULUM) {
-			if((extra & 0x1) && j == 0)
-				list.push_back(sound);
-		} else
-			list.push_back(sound);
+	}
+}
+void SoundManager::AddtoChantSPList(CHANT chant, uint16_t extra, size_t j, std::vector<std::string>& chantlist, std::vector<std::string>& list, std::vector<std::string>& list2) {
+	for(size_t k = 0; k < chantlist.size(); k++) {
+		std::string sound = chantlist[k];
+		for(const auto& ext : mixer->GetSupportedSoundExtensions()) {
+			const auto file = epro::format("{}.{}", sound, Utils::ToUTF8IfNeeded(ext));
+			if(!Utils::FileExists(Utils::ToPathString(file)))
+		        continue;
+			if(mainGame->dInfo.isInDuel) {
+				for(auto playedfile : gSoundManager->soundcount) {
+					if(playedfile == file)
+				        continue;
+				}
+			}
+		    if(chant == CHANT::SUMMON) {
+				if((extra & 0x1) && j == 1) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x2) && j == 2) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x4) && j == 3) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x8) && j == 4) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x10) && j == 5) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x20) && j == 6) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x80) && j == 0) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x40) && j == 7) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x100) && j == 8) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x200) && j == 9) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x400) && j == 10) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+                if((extra == 0) && j == 0) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+		    } else if(chant == CHANT::ATTACK) {
+			    if((extra & 0x1) && j == 0) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x2) && j == 1) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x4) && j == 2) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+		    } else if(chant == CHANT::ACTIVATE) {
+			    if((extra & 0x1) && j == 0) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x2) && j == 1) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x800) && j == 2) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x4) && j == 3) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x8) && j == 4) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x10) && j == 5) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x20) && j == 6) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x40) && j == 7) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x80) && j == 8) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x100) && j == 9) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x200) && j == 10) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x400) && j == 11) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x1000) && j == 12) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    if((extra & 0x4000) && j == 13) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+		    } else if(chant == CHANT::DRAW) {
+			    if((extra & 0x2) && j == 1) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    else if(j == 0) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+		    } else if(chant == CHANT::SET) {
+			    if((extra & 0x1) && j == 1) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    else if(j == 0) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+		    } else if(chant == CHANT::DAMAGE) {
+			    if((extra & 0x1) && j == 1) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    else if((extra & 0x2) && j == 2) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    else if((extra & 0x4) && j == 3) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+			    else if(j == 0) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+		    } else if(chant == CHANT::PENDULUM) {
+			    if((extra & 0x1) && j == 0) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else
+			            list2.push_back(file);
+				}
+		    } else {
+				if(sound.find("+") == std::string::npos)
+		            list.push_back(file);
+		        else
+			        list2.push_back(file);
+			}
+		}
 	}
 }
 void SoundManager::AddtoZipChantList(std::vector<std::string>& chantlist, int i, std::vector<std::string>& list, std::vector<std::string>& list2, int character) {
 #ifdef BACKEND
-	for(auto& archive : Utils::archives) {
-		if(Utils::ToUTF8IfNeeded({ archive.archive->getArchiveName().c_str(), archive.archive->getArchiveName().size() }).find(Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("/sound/character/{}"), textcharacter[character]))) == std::string::npos)
+    if(character < 1) return;
+    for(auto& archive : Utils::archives) {
+		if(Utils::ToUTF8IfNeeded({ archive.archive->getArchiveName().c_str(), archive.archive->getArchiveName().size() }).find(Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("/sound/character/{}.zip"), textcharacter[character - 1][0]))) == std::string::npos)
 			continue;
 		for(auto file : chantlist) {
-			for(auto& findfile : Utils::FindFileNames(archive.archive, Utils::ToPathString(file), mixer->GetSupportedSoundExtensions())) {
+			for(auto& findfile : Utils::FindFileNames(archive.archive, Utils::ToPathString(file), mixer->GetSupportedSoundExtensions(), 1)) {
 				auto filename = Utils::GetFileName(findfile);
 				if(filename.find(EPRO_TEXT("+")) == std::wstring::npos)
 			        list.push_back(file);
@@ -787,23 +1211,26 @@ void SoundManager::AddtoZipChantList(std::vector<std::string>& chantlist, int i,
 }
 void SoundManager::AddtoChantList(std::vector<std::string>& chantlist, int i, std::vector<std::string>& list, std::vector<std::string>& list2) {
 #ifdef BACKEND
-    for(auto file : chantlist) {
-		if(!Utils::FileExists(Utils::ToPathString(file)))
-		    continue;
-		auto filename = Utils::GetFileName(file);
-		if(filename.find("+") == std::string::npos)
-		    list.push_back(file);
-		else
-			list2.push_back(file);
+    for(auto chantfile : chantlist) {
+		for(const auto& ext : mixer->GetSupportedSoundExtensions()) {
+			const auto file = epro::format("{}.{}", chantfile, Utils::ToUTF8IfNeeded(ext));
+			if(!Utils::FileExists(Utils::ToPathString(file)))
+		        continue;
+			if(chantfile.find("+") == std::string::npos)
+		        list.push_back(file);
+		    else
+			    list2.push_back(file);
+		}
 	}
 #endif
 }
 bool SoundManager::PlayZipChants(CHANT chant, std::string file, std::vector<std::string>& sound, uint8_t player) {
 #ifdef BACKEND
-	for(auto& archive : Utils::archives) {
-		if(Utils::ToUTF8IfNeeded({ archive.archive->getArchiveName().c_str(), archive.archive->getArchiveName().size() }).find(Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("/sound/character/{}"), textcharacter[character[player]]))) == std::string::npos)
+    if(character[player] < 1) return false;
+    for(auto& archive : Utils::archives) {
+		if(Utils::ToUTF8IfNeeded({ archive.archive->getArchiveName().c_str(), archive.archive->getArchiveName().size() }).find(Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("/sound/character/{}.zip"), textcharacter[character[player] - 1][0]))) == std::string::npos)
 			continue;
-		for(auto& index : Utils::FindFiles(archive.archive, Utils::ToPathString(file), mixer->GetSupportedSoundExtensions(), 1)) {
+		for(auto& index : Utils::FindFiles(archive.archive, Utils::ToPathString(file), mixer->GetSupportedSoundExtensions())) {
 			auto reader = archive.archive->createAndOpenFile(index);
 			if(reader == nullptr)
 				continue;
@@ -841,7 +1268,7 @@ bool SoundManager::PlayZipChants(CHANT chant, std::string file, std::vector<std:
 					}
 
 					for(int j = 1; j < 6; j++) {
-						auto files = Utils::FindFileNames(archive.archive, epro::format(EPRO_TEXT("{}_{}"), Utils::ToPathString(file), j), mixer->GetSupportedSoundExtensions(), 1);
+						auto files = Utils::FindFileNames(archive.archive, epro::format(EPRO_TEXT("{}_{}"), Utils::ToPathString(file), j), mixer->GetSupportedSoundExtensions());
 						for(auto& file : files) {
 						}
 					}
@@ -911,6 +1338,10 @@ bool SoundManager::PlayChants(CHANT chant, std::string file, std::vector<std::st
 #endif
 	return false;
 }
+void SoundManager::PlayStartupChant(uint8_t player, std::vector<uint8_t> team) {
+	int playerno = (std::uniform_int_distribution<>(0, team.size() - 1))(rnd);
+	PlayChant(CHANT::STARTUP, 0, 0, player, 0, team[playerno]);
+}
 //bool SoundManager::PlayChant(CHANT chant, uint32_t code) {
 bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t player, uint16_t extra, uint8_t player2) {
 ///////kdiy//////
@@ -960,10 +1391,12 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 		if(chant_it == Chantcard[character[player]].end() && _chant_it == Chantcard2[character[player]].end()) {
 			//not find chant for this code
             for(int j = 0; j < 14; j++) {
-				AddtoChantSPList(chant, extra, j, Chantaction[i][character[player]][j][character[player2]], list);
-				AddtoChantSPList(chant, extra, j, Chantaction[i][character[player]][j][0], list);
-				AddtoChantSPList(chant, extra, j, Chantaction2[i][character[player]][j][character[player2]], _list);
-				AddtoChantSPList(chant, extra, j, Chantaction2[i][character[player]][j][0], _list);
+				if(character[player2] > 0)
+				    AddtoZipChantSPList(chant, extra, j, Chantaction[i][character[player]][j][character[player2]], list, list2, character[player]);
+				AddtoZipChantSPList(chant, extra, j, Chantaction[i][character[player]][j][0], list, list2, character[player]);
+				if(character[player2] > 0)
+				    AddtoChantSPList(chant, extra, j, Chantaction2[i][character[player]][j][character[player2]], _list, _list2);
+				AddtoChantSPList(chant, extra, j, Chantaction2[i][character[player]][j][0], _list, _list2);
 			}
 		} else {
 			//found chant card code
@@ -979,13 +1412,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, uint8_t
 		else if(_chant_it2 != Chantcard2[character[player]].end())
 			AddtoChantList(_chant_it2->second, i, _list, _list2);
 	}
-
-	if(mainGame->dInfo.isInDuel) {
-        for(auto file : gSoundManager->soundcount) {
-            list.erase(std::remove(list.begin(), list.end(), file), list.end());
-            _list.erase(std::remove(_list.begin(), _list.end(), file), _list.end());
-        }
-	}
+	
 	int count2 = list.size();
 	int _count2 = _list.size();
 	if(count2 > 0) {

@@ -649,7 +649,7 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
 				if(!filechk)
 					break;
                 int sel = mainGame->ebCharacterDeck->getSelected();
-				mainGame->charactselect(0, sel);
+				mainGame->charactcomboselect(0, 3, sel);
 				break;
 			}
 			case COMBOBOX_HTDECKS2: {

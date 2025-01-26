@@ -509,14 +509,22 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			case BUTTON_CHARACTER: {
-#ifdef VIP
-				gSoundManager->PlayChant(SoundManager::CHANT::STARTUP, 0, 0, mainGame->choose_player, 0, 1 - mainGame->choose_player);
-#endif
                 auto elem = static_cast<irr::gui::CGUIImageButton*>(event.GUIEvent.Caller);
+				auto& replay = ReplayMode::cur_replay;
+                std::vector<uint8_t> team1, team2;
+				int team1count = mainGame->dInfo.team1, team2count = mainGame->dInfo.team2;
                 if(elem == mainGame->btnCharacter) {
                     mainGame->choose_player = -1;
                     mainGame->wCharacter->setVisible(false);
-                }
+                } else {
+				    team1count = replay.GetPlayersCount(0);
+				    team2count = replay.GetPlayersCount(1);
+				}
+				for(uint8_t i = 0; i < team1count; i++)
+				    team1.push_back(i);
+				for(uint8_t i = team1count; i < team1count + team2count; i++)
+				    team2.push_back(i);
+				gSoundManager->PlayStartupChant(mainGame->choose_player, (mainGame->choose_player > team1count - 1) ? team1 : team2);
 				break;
 			}
 			case BUTTON_CHARACTER_SELECT2: {
@@ -534,6 +542,20 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
                 mainGame->ebCharacter_replay[mainGame->choose_player]->setSelected(gSoundManager->character[mainGame->choose_player]);
 				if(mainGame->choose_player == 0)
                     mainGame->ebCharacterDeck->setSelected(player);
+
+ 				auto elem = static_cast<irr::gui::CGUIImageButton*>(event.GUIEvent.Caller);
+				auto& replay = ReplayMode::cur_replay;
+                std::vector<uint8_t> team1, team2;
+				int team1count = mainGame->dInfo.team1, team2count = mainGame->dInfo.team2;
+                if(elem == mainGame->btnCharacterSelect2_replay) {
+					team1count = replay.GetPlayersCount(0);
+					team2count = replay.GetPlayersCount(1);
+				}
+				for(uint8_t i = 0; i < team1count; i++)
+					team1.push_back(i);
+				for(uint8_t i = team1count; i < team1count + team2count; i++)
+					team2.push_back(i);
+				gSoundManager->PlayStartupChant(mainGame->choose_player, (mainGame->choose_player > team1count - 1) ? team1 : team2);
 				break;
 			}
 			case BUTTON_CHARACTER_SELECT: {
@@ -551,6 +573,20 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
                 mainGame->ebCharacter_replay[mainGame->choose_player]->setSelected(gSoundManager->character[mainGame->choose_player]);
 				if(mainGame->choose_player == 0)
                     mainGame->ebCharacterDeck->setSelected(player);
+
+ 				auto elem = static_cast<irr::gui::CGUIImageButton*>(event.GUIEvent.Caller);
+				auto& replay = ReplayMode::cur_replay;
+                std::vector<uint8_t> team1, team2;
+				int team1count = mainGame->dInfo.team1, team2count = mainGame->dInfo.team2;
+                if(elem == mainGame->btnCharacterSelect1_replay) {
+					team1count = replay.GetPlayersCount(0);
+					team2count = replay.GetPlayersCount(1);
+				}
+				for(uint8_t i = 0; i < team1count; i++)
+					team1.push_back(i);
+				for(uint8_t i = team1count; i < team1count + team2count; i++)
+					team2.push_back(i);
+				gSoundManager->PlayStartupChant(mainGame->choose_player, (mainGame->choose_player > team1count - 1) ? team1 : team2);
 				break;
 			}
 			case BUTTON_PW: {
@@ -1765,11 +1801,11 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				for(int i = 0; i < 6; ++i) {
                     if(elem == mainGame->ebCharacter[i]) {
                         int sel = mainGame->ebCharacter[i]->getSelected();
-                        mainGame->charactselect(i, sel);
+                        mainGame->charactcomboselect(i, 1, sel);
                     }
                     if(elem == mainGame->ebCharacter_replay[i]) {
                         int sel = mainGame->ebCharacter_replay[i]->getSelected();
-                        mainGame->charactselect(i, sel);
+                        mainGame->charactcomboselect(i, 2, sel);
                     }
                 }
 				break;

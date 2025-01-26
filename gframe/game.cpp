@@ -6774,22 +6774,38 @@ bool Game::chantcheck() {
 	gSettings.chkEnableAttackSound->setChecked(gGameConfig->enableasound);
 	return filechk;
 }
-void Game::charactselect(uint8_t player, int sel) {
+void Game::charactcomboselect(uint8_t player, int box, int sel) {
 	if(sel >= 0) {
-		mainGame->choose_player = player;
-        if(gSoundManager->character[mainGame->choose_player] > CHARACTER_VOICE - 1)
+		choose_player = player;
+        if(gSoundManager->character[choose_player] > CHARACTER_VOICE - 1)
 			sel = 0;
-		gSoundManager->character[mainGame->choose_player] = sel;
-		int player = gSoundManager->character[mainGame->choose_player];
-		mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
-		mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
-		mainGame->ebCharacter[mainGame->choose_player]->setSelected(player);
-		mainGame->ebCharacter_replay[mainGame->choose_player]->setSelected(player);
-		mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
-		mainGame->btnCharacter_replay->setImage(mainGame->imageManager.character[player]);
-		if(mainGame->choose_player == 0)
-            mainGame->ebCharacterDeck->setSelected(player);
-		gSoundManager->PlayChant(SoundManager::CHANT::STARTUP, 0, 0, mainGame->choose_player, 0, 1 - mainGame->choose_player);
+		gSoundManager->character[choose_player] = sel;
+		int player = gSoundManager->character[choose_player];
+		icon[choose_player]->setImage(imageManager.icon[player]);
+		icon2[choose_player]->setImage(imageManager.icon[player]);
+		ebCharacter[choose_player]->setSelected(player);
+		ebCharacter_replay[choose_player]->setSelected(player);
+		btnCharacter->setImage(imageManager.character[player]);
+		btnCharacter_replay->setImage(imageManager.character[player]);
+		if(choose_player == 0)
+            ebCharacterDeck->setSelected(player);
+
+		auto& replay = ReplayMode::cur_replay;
+		std::vector<uint8_t> team1, team2;
+		int team1count = dInfo.team1, team2count = dInfo.team2;
+        if(box == 2) {
+			team1count = replay.GetPlayersCount(0);
+			team2count = replay.GetPlayersCount(1);
+		} else if (box == 3) {
+			team1.push_back(0);
+			gSoundManager->PlayStartupChant(0, team1);
+			return;
+		}
+		for(uint8_t i = 0; i < team1count; i++)
+			team1.push_back(i);
+		for(uint8_t i = team1count; i < team1count + team2count; i++)
+			team2.push_back(i);
+		gSoundManager->PlayStartupChant(choose_player, (choose_player > team1count - 1) ? team1 : team2);
 	}
 }
 /////kdiy/////
