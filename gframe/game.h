@@ -349,7 +349,7 @@ struct host_creation_panel_elements {
 	irr::gui::IGUIButton* btnHostConfirm2;
 	irr::gui::IGUIButton* btnHostCancel2;
 	uint8_t character[6] = {0,0,0,0,0,0};
-	uint8_t choose_player = -1; //0-5th players
+	uint8_t choose_player = 0; //0-5th players
 	irr::gui::IGUIWindow* wCharacter;
 	irr::gui::CGUIImageButton* btnCharacter;
 	irr::gui::CGUIImageButton* btnCharacterSelect;

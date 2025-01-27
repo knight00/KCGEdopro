@@ -1583,27 +1583,26 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(wCharacterReplay, 8015);
     wCharacterReplay->getCloseButton()->setVisible(false);
 	wCharacterReplay->setVisible(false);
-    stCharacterReplay = env->addStaticText(L"===VS===", Scale(0, 0, 10, 10), false, true, wCharacterReplay);
-    btnCharacterSelect_replayclose = env->addButton(Scale(170, 45, 220, 70), wCharacterReplay, BUTTON_CHARACTEROK_REPLAY, gDataManager->GetSysString(1211).data());
+    stCharacterReplay = env->addStaticText(L"===VS===", Scale(40, 45, 50, 55), false, true, wCharacterReplay);
+    btnCharacterSelect_replayclose = env->addButton(Scale(40, 65, 90, 90), wCharacterReplay, BUTTON_CHARACTEROK_REPLAY, gDataManager->GetSysString(1211).data());
 	defaultStrings.emplace_back(btnCharacterSelect_replayclose, 1211);
     for(int i = 0; i < 6; ++i) {
-		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 25, 60, 65 + i * 25), wCharacterReplay, -1);
-		icon2[i]->setDrawBorder(false);
-		icon2[i]->setImageSize(Scale(0, 0, 20, 20).getSize());
+		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 35, 70, 75 + i * 35), wCharacterReplay, -1);
+		icon2[i]->setDrawBorder(true);
+		icon2[i]->setImageSize(Scale(0, 0, 30, 30).getSize());
 		icon2[i]->setImage(0);
         icon2[i]->setVisible(false);
-        ebName_replay[i] = env->addEditBox(L"", Scale(65, 45 + i * 25, 165, 65 + i * 25), true, wCharacterReplay, EDITBOX_REPLAYNAME);
+        ebName_replay[i] = env->addEditBox(L"", Scale(80, 50 + i * 35, 160, 70 + i * 35), true, wCharacterReplay, EDITBOX_REPLAYNAME);
         ebName_replay[i]->setVisible(false);
-        btnCharacterSelect_replayreset[i] = env->addButton(Scale(168, 45 + i * 25, 248, 65 + i * 25), wCharacterReplay, BUTTON_NAMERESET_REPLAY, gDataManager->GetSysString(8065).data());
+        btnCharacterSelect_replayreset[i] = env->addButton(Scale(165, 50 + i * 35, 225, 70 + i * 35), wCharacterReplay, BUTTON_NAMERESET_REPLAY, gDataManager->GetSysString(8065).data());
         defaultStrings.emplace_back(btnCharacterSelect_replayreset[i], 8065);
         btnCharacterSelect_replayreset[i]->setVisible(false);
-        ebCharacter_replay[i] = AddComboBox(env, Scale(251, 45 + i * 25, 351, 65 + i * 25), wCharacterReplay, COMBOBOX_CHARACTER);
+        ebCharacter_replay[i] = AddComboBox(env, Scale(230, 50 + i * 35, 330, 70 + i * 35), wCharacterReplay, COMBOBOX_CHARACTER);
         ebCharacter_replay[i]->clear();
 #ifdef VIP
         ebCharacter_replay[i]->addItem(gDataManager->GetSysString(8047).data());
 #else
         ebCharacter_replay[i]->addItem(gDataManager->GetSysString(8048).data());
-        ebCharacter_replay[i]->setEnabled(false);
 #endif
         for (auto j = 9000; j < 9000 + CHARACTER_VOICE - 1; ++j)
             ebCharacter_replay[i]->addItem(gDataManager->GetSysString(j).data());
@@ -6781,8 +6780,8 @@ void Game::charactcomboselect(uint8_t player, int box, int sel) {
 			sel = 0;
 		gSoundManager->character[choose_player] = sel;
 		int player = gSoundManager->character[choose_player];
-		icon[choose_player]->setImage(imageManager.icon[player]);
-		icon2[choose_player]->setImage(imageManager.icon[player]);
+		icon[choose_player]->setImage(imageManager.icon[player][0]);
+		icon2[choose_player]->setImage(imageManager.icon[player][0]);
 		ebCharacter[choose_player]->setSelected(player);
 		ebCharacter_replay[choose_player]->setSelected(player);
 		btnCharacter->setImage(imageManager.character[player]);

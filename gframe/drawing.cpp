@@ -870,11 +870,11 @@ void Game::DrawMisc() {
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(330, 10, 629, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(691, 10, 990, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
 	driver->draw2DImage(imageManager.tLPFrame_z4, Resize(161, 553, 350, 640), irr::core::recti(0, 0, 494, 228), 0, 0, true);
-	driver->draw2DImage(mainGame->mode->isMode ? imageManager.modeHead[avataricon1] : imageManager.icon[gSoundManager->character[avataricon1]], Resize(268, 567, 318, 617), mainGame->mode->isMode ? imageManager.modehead_size[avataricon1] : imageManager.icon_size[gSoundManager->character[avataricon1]], 0, 0, true);
+	driver->draw2DImage(mainGame->mode->isMode ? imageManager.modeHead[avataricon1] : imageManager.icon[gSoundManager->character[avataricon1]][0], Resize(268, 567, 318, 617), mainGame->mode->isMode ? imageManager.modehead_size[avataricon1] : imageManager.icon_size[gSoundManager->character[avataricon1]][0], 0, 0, true);
 	if(dField.player_desc_hints[0].size() > 0)
 	    driver->draw2DImage(imageManager.tHint, Resize(151, 550, 191, 615), irr::core::recti(0, 0, 532, 649), 0, 0, true);
 	driver->draw2DImage(imageManager.tLPFrame2_z4, Resize(691, 48, 900, 135), irr::core::recti(0, 0, 494, 228), 0, 0, true);
-	driver->draw2DImage(mainGame->mode->isMode ? imageManager.modeHead[avataricon2] : imageManager.icon[gSoundManager->character[avataricon2]], Resize(725, 62, 775, 112), mainGame->mode->isMode ? imageManager.modehead_size[avataricon2] : imageManager.icon_size[gSoundManager->character[avataricon2]], 0, 0, true);
+	driver->draw2DImage(mainGame->mode->isMode ? imageManager.modeHead[avataricon2] : imageManager.icon[gSoundManager->character[avataricon2]][0], Resize(725, 62, 775, 112), mainGame->mode->isMode ? imageManager.modehead_size[avataricon2] : imageManager.icon_size[gSoundManager->character[avataricon2]][0], 0, 0, true);
 	if(dField.player_desc_hints[1].size() > 0)
 	    driver->draw2DImage(imageManager.tHint, Resize(681, 45, 721, 110), irr::core::recti(0, 0, 532, 649), 0, 0, true);
 	/////kdiy/////////

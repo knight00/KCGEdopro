@@ -355,7 +355,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					if(gSoundManager->character[i] > CHARACTER_VOICE - 1)
 					    gSoundManager->character[i] = 0;
 					mainGame->ebCharacter[i]->setSelected(gSoundManager->character[i]);
-				    mainGame->icon[i]->setImage(mainGame->imageManager.icon[gSoundManager->character[i]]);
+				    mainGame->icon[i]->setImage(mainGame->imageManager.icon[gSoundManager->character[i]][0]);
                 }
 				///////kdiy///////
 				if(mainGame->isHostingOnline) {
@@ -536,8 +536,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				int player = gSoundManager->character[mainGame->choose_player];
 				mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
 				mainGame->btnCharacter_replay->setImage(mainGame->imageManager.character[player]);
-				mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
-                mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+				mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player][0]);
+                mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player][0]);
                 mainGame->ebCharacter[mainGame->choose_player]->setSelected(gSoundManager->character[mainGame->choose_player]);
                 mainGame->ebCharacter_replay[mainGame->choose_player]->setSelected(gSoundManager->character[mainGame->choose_player]);
 				if(mainGame->choose_player == 0)
@@ -567,8 +567,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				int player = gSoundManager->character[mainGame->choose_player];
 				mainGame->btnCharacter->setImage(mainGame->imageManager.character[player]);
 				mainGame->btnCharacter_replay->setImage(mainGame->imageManager.character[player]);
-				mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
-                mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+				mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player][0]);
+                mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player][0]);
                 mainGame->ebCharacter[mainGame->choose_player]->setSelected(gSoundManager->character[mainGame->choose_player]);
                 mainGame->ebCharacter_replay[mainGame->choose_player]->setSelected(gSoundManager->character[mainGame->choose_player]);
 				if(mainGame->choose_player == 0)
@@ -884,37 +884,37 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
                     names.assign(names1.begin(), names1.end());
 				for(int i = 0; i < replay.GetPlayersCount(0); i++) {
                     if(gSoundManager->character[i] > CHARACTER_VOICE - 1)
-					    mainGame->imageManager.icon[gSoundManager->character[i]] = 0;
+					    mainGame->imageManager.icon[gSoundManager->character[i]][0] = 0;
                     mainGame->icon2[i]->setVisible(true);
-                    mainGame->icon2[i]->setRelativePosition(mainGame->Resize(40, 45 + i * 25, 60, 65 + i * 25));
-				    mainGame->icon2[i]->setImage(mainGame->imageManager.icon[gSoundManager->character[i]]);
+                    mainGame->icon2[i]->setRelativePosition(mainGame->Resize(40, 45 + i * 35, 70, 75 + i * 35));
+				    mainGame->icon2[i]->setImage(mainGame->imageManager.icon[gSoundManager->character[i]][0]);
                     mainGame->ebName_replay[i]->setVisible(true);
-                    mainGame->ebName_replay[i]->setRelativePosition(mainGame->Resize(65, 45 + i * 25, 165, 65 + i * 25));
+                    mainGame->ebName_replay[i]->setRelativePosition(mainGame->Resize(80, 50 + i * 35, 160, 70 + i * 35));
                     mainGame->ebName_replay[i]->setText(Utils::ToUnicodeIfNeeded(names[i]).c_str());
                     mainGame->btnCharacterSelect_replayreset[i]->setVisible(true);
-                    mainGame->btnCharacterSelect_replayreset[i]->setRelativePosition(mainGame->Resize(168, 45 + i * 25, 248, 65 + i * 25));
+                    mainGame->btnCharacterSelect_replayreset[i]->setRelativePosition(mainGame->Resize(165, 50 + i * 35, 225, 70 + i * 35));
                     mainGame->ebCharacter_replay[i]->setVisible(true);
-                    mainGame->ebCharacter_replay[i]->setRelativePosition(mainGame->Resize(251, 45 + i * 25, 351, 65 + i * 25));
+					mainGame->ebCharacter_replay[i]->setRelativePosition(mainGame->Resize(230, 50 + i * 35, 330, 70 + i * 35));
 				}
-                int height = 65 + 15 + (replay.GetPlayersCount(0) - 1) * 25;
-                mainGame->stCharacterReplay->setRelativePosition(mainGame->Resize(65, height, 165, height + 20));
+                int height = 65 + 15 + (replay.GetPlayersCount(0) - 1) * 35;
+                mainGame->stCharacterReplay->setRelativePosition(mainGame->Resize(80, height, 180, height + 20));
                 height = height + 20 + 15;
 				for(int i = 0; i < replay.GetPlayersCount(1); i++) {
                     int j = i + replay.GetPlayersCount(0);
                     if(gSoundManager->character[j] > CHARACTER_VOICE - 1)
-					    mainGame->imageManager.icon[gSoundManager->character[j]] = 0;
+					    mainGame->imageManager.icon[gSoundManager->character[j]][0] = 0;
                     mainGame->icon2[j]->setVisible(true);
-                    mainGame->icon2[j]->setRelativePosition(mainGame->Resize(40, height + i * 25, 60, height + 20 + i * 25));
-				    mainGame->icon2[j]->setImage(mainGame->imageManager.icon[gSoundManager->character[j]]);
+                    mainGame->icon2[j]->setRelativePosition(mainGame->Resize(40, height + i * 35, 70, height + 30 + i * 35));
+				    mainGame->icon2[j]->setImage(mainGame->imageManager.icon[gSoundManager->character[j]][0]);
                     mainGame->ebName_replay[j]->setVisible(true);
-                    mainGame->ebName_replay[j]->setRelativePosition(mainGame->Resize(65, height + i * 25, 165, height + 20 + i * 25));
+                    mainGame->ebName_replay[j]->setRelativePosition(mainGame->Resize(80, height + i * 35 + 5, 160, height + 30 + i * 35 - 5));
                     mainGame->ebName_replay[j]->setText(Utils::ToUnicodeIfNeeded(names[j]).c_str());
                     mainGame->btnCharacterSelect_replayreset[j]->setVisible(true);
-                    mainGame->btnCharacterSelect_replayreset[j]->setRelativePosition(mainGame->Resize(168, height + i * 25, 248, height + 20 + i * 25));
+                    mainGame->btnCharacterSelect_replayreset[j]->setRelativePosition(mainGame->Resize(165, height + i * 35 + 5, 225, height + 30 + i * 35 - 5));
                     mainGame->ebCharacter_replay[j]->setVisible(true);
-                    mainGame->ebCharacter_replay[j]->setRelativePosition(mainGame->Resize(251, height + i * 25, 351, height + 20 + i * 25));
+                    mainGame->ebCharacter_replay[j]->setRelativePosition(mainGame->Resize(230, height + i * 35 + 5, 330, height + 30 + i * 35 - 5));
 				}
-                mainGame->btnCharacterSelect_replayclose->setRelativePosition(mainGame->Resize(65, height + 20 + 15 + (replay.GetPlayersCount(1) - 1) * 25, 165, height + 20 + 15 + 20 + (replay.GetPlayersCount(1) - 1) * 25));
+                mainGame->btnCharacterSelect_replayclose->setRelativePosition(mainGame->Resize(80, height + 20 + 15 + (replay.GetPlayersCount(1) - 1) * 35, 180, height + 20 + 15 + 20 + (replay.GetPlayersCount(1) - 1) * 35));
                 break;
 			}
             case BUTTON_NAMERESET_REPLAY: {

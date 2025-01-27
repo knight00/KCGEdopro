@@ -100,11 +100,10 @@ public:
 	void RefreshRandomImageList();
 	void RefreshImageDir(epro::path_string path, int image_type);
 	void RefreshImageDirf();
-    void RefreshKCGImage();
 	irr::video::ITexture* UpdatetTexture(int i, std::wstring filepath);
 	irr::core::rect<irr::s32> head_size[CHARACTER_STORY+1]; //story icon dimension
 	irr::core::rect<irr::s32> modehead_size[6];
-	irr::core::rect<irr::s32> icon_size[CHARACTER_VOICE];
+	irr::core::rect<irr::s32> icon_size[CHARACTER_VOICE][3];
 	bool GetTextureCardHD(uint32_t code);
 	std::tuple<irr::video::ITexture*, irr::video::SColor> GetTextureCloseup(uint32_t code, uint32_t alias = 0, bool is_closeup=false);
 	std::tuple<irr::video::ITexture*, irr::video::SColor> GetTextureCloseupCode(uint32_t code, bool is_closeup=false);
@@ -212,7 +211,7 @@ public:
 	/////////kdiy////
 	A(tRScale[14])
 	A(tLScale[14])
-	A(icon[CHARACTER_VOICE])
+	A(icon[CHARACTER_VOICE][3])
 	A(character[CHARACTER_VOICE])
 	A(characterd[CHARACTER_VOICE])
 	A(cardchant0)

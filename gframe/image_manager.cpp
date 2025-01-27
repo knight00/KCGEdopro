@@ -97,7 +97,7 @@ bool ImageManager::Initial() {
 		Utils::MakeDirectory(path);
 		if(size > 1) {
 			for(int i = 0; i < size - 1; i++) {
-				path = epro::format(EPRO_TEXT("./textures/character/{}"), gSoundManager->textcharacter[playno][i + 1]);
+				path = epro::format(EPRO_TEXT("./textures/character/{}"), gSoundManager->textcharacter[playno][i+1]);
 				Utils::MakeDirectory(path);
 				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/icon"), path));
 				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/damage"), path));
@@ -114,7 +114,6 @@ bool ImageManager::Initial() {
 			}
 		}
 	}
-	RefreshRandomImageList();
 	/////kdiy/////
 	timestamp_id = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	textures_path = BASE_PATH;
@@ -278,8 +277,6 @@ bool ImageManager::Initial() {
 	// tSettings = loadTextureAnySize(EPRO_TEXT("settings"sv));
 	// ASSERT_TEXTURE_LOADED(tSettings, "settings");
 	// ASSIGN_DEFAULT(tSettings);
-    QQ = driver->getTexture(EPRO_TEXT("./textures/QQ.png"));
-    ASSERT_TEXTURE_LOADED(QQ, "QQ");
 	for(uint8_t i = 0; i < 6; i++) {
         modeHead[i] = driver->getTexture(0);
 		modehead_size[i] = irr::core::rect<irr::s32>(0,0,0,0);
@@ -298,20 +295,17 @@ bool ImageManager::Initial() {
 		else
 		    head_size[i] = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(head[i]->getOriginalSize()));
     }
-    icon[0] = loadTextureAnySize(EPRO_TEXT("character/player/mini_icon"sv));
-	icon_size[0] = irr::core::rect<irr::s32>(0,0,0,0);
+    icon[0][0] = loadTextureAnySize(EPRO_TEXT("character/player/mini_icon"sv));
+	if(icon[0][0] == nullptr)
+		icon_size[0][0] = irr::core::rect<irr::s32>(0,0,0,0);
+	else
+		icon_size[0][0] = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(icon[0][0]->getOriginalSize()));
 	character[0] = driver->getTexture(0);
 	characterd[0] = driver->getTexture(0);
-#ifdef VIP
-    RefreshKCGImage();
-#else
-    for(uint8_t playno = 0; playno < CHARACTER_VOICE; playno++) {
-		icon[playno] = driver->getTexture(0);
-		icon_size[playno] = irr::core::rect<irr::s32>(0,0,0,0);
-	    character[playno] = driver->getTexture(0);
-	    characterd[playno] = driver->getTexture(0);
-	}
-#endif
+	RefreshRandomImageList();
+
+    QQ = driver->getTexture(EPRO_TEXT("./textures/QQ.png"));
+    ASSERT_TEXTURE_LOADED(QQ, "QQ");
     cardchant0 = loadTextureFixedSize(EPRO_TEXT("summon_chant"sv), 15, 15);
     cardchant1 = loadTextureFixedSize(EPRO_TEXT("attack_chant"sv), 15, 15);
     cardchant2 = loadTextureFixedSize(EPRO_TEXT("activate_chant"sv), 15, 15);
@@ -757,22 +751,40 @@ void ImageManager::RefreshRandomImageList() {
 	RefreshImageDir(EPRO_TEXT("ot"), TEXTURE_OT);
 	RefreshImageDir(EPRO_TEXT("settings"), TEXTURE_SETTING);
 
-	for(uint8_t playno = 0; playno < CHARACTER_VOICE - 1; playno++) {
-		int size = gSoundManager->textcharacter[playno].size();
-		auto path = gSoundManager->textcharacter[playno][0];
+	for(int i = 0; i < 36 + CHARACTER_VOICE + CHARACTER_VOICE - 2; ++i)
+		saved_image_id[i] = -1;
+
+#ifdef VIP
+	for(uint8_t playno = 1; playno < CHARACTER_VOICE; playno++) {
+		int size = gSoundManager->textcharacter[playno-1].size();
+		auto path = gSoundManager->textcharacter[playno-1][0];
 		if(size > 1) {
 			for(int i = 0; i < size - 1; i++) {
-				path = gSoundManager->textcharacter[playno][i];
+				path = gSoundManager->textcharacter[playno-1][i+1];
+				icon[playno][i] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/mini_icon"sv), path));
+				if(icon[playno][i] == nullptr)
+		    		icon_size[playno][i] = irr::core::rect<irr::s32>(0,0,0,0);
+				else
+		    		icon_size[playno][i] = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(icon[playno][i]->getOriginalSize()));
+
 				for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/icon"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
-					auto filename = Utils::GetFileName(file);
+					auto filename = Utils::GetFileName(file, true);
 					imgcharacter[playno][i][0].push_back(epro::format(EPRO_TEXT("{}/icon/{}"), path, filename));
 				}
 				for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/damage"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
-					auto filename = Utils::GetFileName(file);
+					auto filename = Utils::GetFileName(file, true);
 					imgcharacter[playno][i][1].push_back(epro::format(EPRO_TEXT("{}/damage/{}"), path, filename));
 				}
 			}
+        	GetRandomCharacter(character[playno], imgcharacter[playno][0][0]);
+       	 	GetRandomCharacter(characterd[playno], imgcharacter[playno][0][1]);
 		} else {
+        	icon[playno][0] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/mini_icon"sv), path));
+			if(icon[playno][0] == nullptr)
+		    	icon_size[playno][0] = irr::core::rect<irr::s32>(0,0,0,0);
+			else
+		    	icon_size[playno][0] = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(icon[playno][0]->getOriginalSize()));
+
 			for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/icon"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
 				auto filename = Utils::GetFileName(file, true);
 				imgcharacter[playno][0][0].push_back(epro::format(EPRO_TEXT("{}/icon/{}"), path, filename));
@@ -781,10 +793,22 @@ void ImageManager::RefreshRandomImageList() {
 				auto filename = Utils::GetFileName(file, true);
 				imgcharacter[playno][0][1].push_back(epro::format(EPRO_TEXT("{}/damage/{}"), path, filename));
 			}
+        	GetRandomCharacter(character[playno], imgcharacter[playno][0][0]);
+       	 	GetRandomCharacter(characterd[playno], imgcharacter[playno][0][1]);
 		}
+        if(!characterd[playno])
+            characterd[playno] = character[playno];
+    }
+#else
+    for(uint8_t playno = 0; playno < CHARACTER_VOICE; playno++) {
+    	for(int i = 0; i < 3; i++) {
+			icon[playno][i] = driver->getTexture(0);
+			icon_size[playno][i] = irr::core::rect<irr::s32>(0,0,0,0);
+		}
+	    character[playno] = driver->getTexture(0);
+	    characterd[playno] = driver->getTexture(0);
 	}
-	for(int i = 0; i < 36 + CHARACTER_VOICE + CHARACTER_VOICE - 2; ++i)
-		saved_image_id[i] = -1;
+#endif
 }
 void ImageManager::RefreshImageDir(epro::path_string path, int image_type) {
 	for(auto file : Utils::FindFiles(BASE_PATH + path, { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
@@ -878,23 +902,12 @@ void ImageManager::GetRandomImagef(int width, int height) {
         }
 	}
 }
-void ImageManager::RefreshKCGImage() {
-	for(uint8_t playno = 1; playno < CHARACTER_VOICE; playno++) {
-        icon[playno] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/mini_icon"sv), gSoundManager->textcharacter[playno-1][0]));
-		if(icon[playno] == nullptr)
-		    icon_size[playno] = irr::core::rect<irr::s32>(0,0,0,0);
-		else
-		    icon_size[playno] = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(icon[playno]->getOriginalSize()));
-        GetRandomCharacter(character[playno], imgcharacter[playno-1][0][0]);
-        //GetRandomCharacter(characterd[playno], imgcharacter[playno-1][0][1]);
-        if(!characterd[playno])
-            characterd[playno] = character[playno];
-    }
-	//GetRandomCharacter(character[1], imgcharacter[0][0][0]);
-	//GetRandomCharacter(character[CHARACTER_VOICE - 1], imgcharacter[CHARACTER_VOICE-2][0][0]);
-}
 void ImageManager::GetRandomCharacter(irr::video::ITexture*& src, std::vector<epro::path_string>& list) {
 	int size = list.size();
+	if(size < 1) {
+        src = nullptr;
+		return;
+	}
 	int num = rand() % size;
 	auto name = list[num];
 	irr::video::ITexture* tmp = driver->getTexture((epro::format(EPRO_TEXT("./textures/character/{}"), name)).c_str());
@@ -1099,9 +1112,6 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 	// REPLACE_TEXTURE_ANY_SIZE(tField[1][3], "fieldSP4");
 	// REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][3], "field-transparentSP4");
 	// REPLACE_TEXTURE_ANY_SIZE(tSettings, "settings");
-#ifdef VIP
-    RefreshKCGImage();
-#endif
     GetRandomImage(tAct, TEXTURE_ACTIVATE);
 	if(!tAct)
 	    REPLACE_TEXTURE_ANY_SIZE(tAct, "act");
