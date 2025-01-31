@@ -478,7 +478,7 @@ int32_t SoundManager::GetSoundDuration() {
     float duration = static_cast<float>(sampleCount) / sampleRate;
 	return static_cast<int32_t>(duration * 1000);
 }
-int SoundManager::PlayModeSound(bool lock) {
+int SoundManager::PlayModeSound() {
 #ifdef BACKEND
 	if(!soundsEnabled) return 0;
 	if(!mainGame->mode->isMode) return 0;
@@ -487,10 +487,13 @@ int SoundManager::PlayModeSound(bool lock) {
         return 0;
     if(std::find(gSoundManager->soundcount.begin(), gSoundManager->soundcount.end(), file) != gSoundManager->soundcount.end())
         return 2;
-    gSoundManager->soundcount.push_back(file);
-	gSoundManager->StopSounds();
-	mixer->PlaySound(file);
-    return 1;
+	if(mainGame->soundBuffer.loadFromFile(file)) {
+    	gSoundManager->soundcount.push_back(file);
+		StopSounds();
+		mainGame->chantsound.setBuffer(mainGame->soundBuffer);
+		mainGame->chantsound.play();
+    	return 1;
+	}
 #endif
     return 0;
 }
@@ -502,9 +505,11 @@ void SoundManager::PlayMode(bool lock) {
     }
     std::string file = epro::format("./mode/story/story{}/soundDialog/{}.mp3", mainGame->mode->chapter, mainGame->mode->plotIndex);
 	if(!Utils::FileExists(Utils::ToPathString(file))) return;
+	mainGame->isEvent = true;
     std::unique_lock<epro::mutex> lck(mainGame->gMutex);
 	auto wait = std::chrono::milliseconds(GetSoundDuration());
     mainGame->cv->wait_for(lck, wait);
+	mainGame->isEvent = false;
 }
 /////kdiy/////
 void SoundManager::PlaySoundEffect(SFX sound) {
