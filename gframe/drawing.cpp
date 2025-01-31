@@ -417,7 +417,7 @@ void Game::DrawCard(ClientCard* pcard) {
 			pcard->curRot += (pcard->dRot * movetime);
 			pcard->mTransform.setTranslation(pcard->curPos);
             ///kdiy////////
-            if (!pcard->is_attacking)
+            if(!pcard->is_attacking)
             ///kdiy////////
 			pcard->mTransform.setRotationRadians(pcard->curRot);
 		}
@@ -485,14 +485,12 @@ void Game::DrawCard(ClientCard* pcard) {
 	}
 	///kdiy////////
 	if (pcard->is_attack && (pcard->location & LOCATION_ONFIELD)) {
-		float sy;
 		float xa = pcard->attPos.X;
 		float ya = pcard->attPos.Y;
 		float xd, yd;
 		xd = pcard->attdPos.X;
 		yd = pcard->attdPos.Y;
-		sy = std::sqrt((xa - xd) * (xa - xd) + (ya - yd) * (ya - yd)) / 2.0f;
-		irr::core::vector3df atkr = irr::core::vector3df(0, 0, -std::atan((xd - xa) / (yd - ya)));
+		irr::core::vector3df atkr = irr::core::vector3df(0, 0, pcard->controler == 0 ? -std::atan((xd - xa) / (yd - ya)) : irr::core::PI -std::atan((xd - xa) / (yd - ya)));
 		pcard->mTransform.setRotationRadians(atkr);
 	} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->location & LOCATION_SZONE) && (pcard->sequence == dInfo.GetPzoneIndex(0)) && !pcard->is_orica && pcard->is_pzone && !pcard->equipTarget
 		&& !gGameConfig->topdown_view) {
@@ -870,11 +868,11 @@ void Game::DrawMisc() {
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(330, 10, 629, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(691, 10, 990, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
 	driver->draw2DImage(imageManager.tLPFrame_z4, Resize(161, 553, 350, 640), irr::core::recti(0, 0, 494, 228), 0, 0, true);
-	driver->draw2DImage(mainGame->mode->isMode ? imageManager.modeHead[avataricon1] : imageManager.icon[gSoundManager->character[avataricon1]][0], Resize(268, 567, 318, 617), mainGame->mode->isMode ? imageManager.modehead_size[avataricon1] : imageManager.icon_size[gSoundManager->character[avataricon1]][0], 0, 0, true);
+	driver->draw2DImage(mainGame->mode->isMode ? imageManager.modeHead[avataricon1] : imageManager.lpicon[gSoundManager->character[avataricon1]][0], Resize(268, 567, 318, 617), mainGame->mode->isMode ? imageManager.modehead_size[avataricon1] : irr::core::recti(0, 0, 240, 240), 0, 0, true);
 	if(dField.player_desc_hints[0].size() > 0)
 	    driver->draw2DImage(imageManager.tHint, Resize(151, 550, 191, 615), irr::core::recti(0, 0, 532, 649), 0, 0, true);
 	driver->draw2DImage(imageManager.tLPFrame2_z4, Resize(691, 48, 900, 135), irr::core::recti(0, 0, 494, 228), 0, 0, true);
-	driver->draw2DImage(mainGame->mode->isMode ? imageManager.modeHead[avataricon2] : imageManager.icon[gSoundManager->character[avataricon2]][0], Resize(725, 62, 775, 112), mainGame->mode->isMode ? imageManager.modehead_size[avataricon2] : imageManager.icon_size[gSoundManager->character[avataricon2]][0], 0, 0, true);
+	driver->draw2DImage(mainGame->mode->isMode ? imageManager.modeHead[avataricon2] : imageManager.lpicon[gSoundManager->character[avataricon2]][0], Resize(725, 62, 775, 112), mainGame->mode->isMode ? imageManager.modehead_size[avataricon2] : irr::core::recti(0, 0, 240, 240), 0, 0, true);
 	if(dField.player_desc_hints[1].size() > 0)
 	    driver->draw2DImage(imageManager.tHint, Resize(681, 45, 721, 110), irr::core::recti(0, 0, 532, 649), 0, 0, true);
 	/////kdiy/////////
@@ -1666,7 +1664,7 @@ void Game::DrawSpec() {
 		}
         //////kdiy//////////
 		case 11: {
-			driver->draw2DImage(imageManager.character[3], ResizeWin(324, 350, 324 + (showcarddif > 300 ? 300 : showcarddif), 500),
+			driver->draw2DImage(imageManager.bodycharacter[3][0][0], ResizeWin(324, 350, 324 + (showcarddif > 300 ? 300 : showcarddif), 500),
 								irr::core::recti(0, 0, 512, 256), 0, 0, true);
 			showcarddif += (2600.0f / 1000.0f) * (float)delta_time;
 			if(showcarddif >= 256 * 3) {

@@ -1945,7 +1945,6 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         player = mainGame->LocalPlayer(player);
 		mainGame->StopVideo(false, true);
 		mainGame->isEvent = false;
-		mainGame->mode->isModeEvent = false;
         if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
             mainGame->mode->isDuelEnd = true;
             for(uint8_t index = 1; index < mainGame->mode->modePloats[chapter - 1]->size(); index++) {

@@ -90,7 +90,6 @@ Mode::Mode() {
 	modeTexts = new std::vector<ModeText>;
 	isMode = false;
 	isPlot = false;
-    isModeEvent = false;
     isStoryStart = false;
 	isStartEvent = false;
 	isStartDuel = false;
@@ -114,11 +113,8 @@ std::wstring Mode::GetPloat(uint32_t code) {
 void Mode::PlayNextPlot(uint32_t code) {
     int i = modePloats[chapter - 1]->at(plotIndex).control;
 	if(i < 0 || i > 5) i = 0;
-    isModeEvent = true;
-    //mainGame->stChPloatInfo[i]->setText(std::to_wstring(plotIndex).data());
-    int playmode = gSoundManager->PlayModeSound(mainGame->dInfo.isStarted);
+    int playmode = gSoundManager->PlayModeSound();
     if(playmode < 2) {
-        gSoundManager->PauseMusic(true);
         mainGame->ShowElement(mainGame->wChPloatBody[i]);
         mainGame->stChPloatInfo[i]->setText(GetPloat(code).data());
     } else
@@ -201,9 +197,7 @@ void Mode::NextPlot(uint8_t step, uint32_t code) {
 	}
     isPlot = false;
 	isStartEvent = false;
-    isModeEvent = false;
     isStoryStart = true;
-    gSoundManager->PauseMusic(false);
     mainGame->stChPloatInfo[0]->setText(L"");
 	mainGame->stChPloatInfo[1]->setText(L"");
     if(mainGame->wChPloatBody[0]->isVisible())
@@ -266,7 +260,6 @@ bool Mode::LoadWindBot(int port, epro::wstringview pass) {
 void Mode::InitializeMode() {
 	isMode = true;
 	isPlot = false;
-    isModeEvent = false;
     isStoryStart = false;
 	isStartEvent = false;
 	isStartDuel = false;
@@ -1621,6 +1614,17 @@ void Game::Initialize() {
 	btnCharacterSelect2_replay->setDrawBorder(false);
 	btnCharacterSelect2_replay->setImageSize(Scale(0, 0, 20, 20).getSize());
 	btnCharacterSelect2_replay->setImage(imageManager.tcharacterselect2);
+	btnsubCharacterSelect_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(620, 45, 645, 70), wCharacterReplay, BUTTON_SUBCHARACTER_SELECT);
+	btnsubCharacterSelect_replay->setDrawBorder(true);
+	btnsubCharacterSelect_replay->setImageSize(Scale(0, 0, 25, 25).getSize());
+	btnsubCharacterSelect_replay->setImage(imageManager.tcharacterselect2);
+    //btnsubCharacterSelect_replay->setVisible(false);
+	btnsubCharacterSelect2_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(620, 70, 645, 95), wCharacterReplay, BUTTON_SUBCHARACTER_SELECT2);
+	btnsubCharacterSelect2_replay->setDrawBorder(true);
+	btnsubCharacterSelect2_replay->setImageSize(Scale(0, 0, 25, 25).getSize());
+	btnsubCharacterSelect2_replay->setImage(imageManager.tcharacterselect2);
+    //btnsubCharacterSelect2_replay->setVisible(false);
+
 
 	//main meun
 	wEntertainmentPlay = env->addWindow(Scale(220, 100, 800, 520), false, gDataManager->GetSysString(1205).data());
@@ -3670,12 +3674,12 @@ bool Game::MainLoop() {
 		for(int i = 0; i < 6; ++i) {
 			if(gSoundManager->character[i] > CHARACTER_VOICE - 1) {
 				gSoundManager->character[i] = 0;
-			    imageManager.character[gSoundManager->character[i]] = 0;
-			    imageManager.characterd[gSoundManager->character[i]] = 0;
+			    imageManager.bodycharacter[gSoundManager->character[i]][gSoundManager->subcharacter[gSoundManager->character[i]]][0] = 0;
+			    imageManager.bodycharacter[gSoundManager->character[i]][gSoundManager->subcharacter[gSoundManager->character[i]]][1] = 0;
             }
 		}
-		avatarbutton[0]->setImage(damcharacter[0] == false ? imageManager.character[gSoundManager->character[avataricon1]] : imageManager.characterd[gSoundManager->character[avataricon1]]);
-		avatarbutton[1]->setImage(damcharacter[1] == false ? imageManager.character[gSoundManager->character[avataricon2]] : imageManager.characterd[gSoundManager->character[avataricon2]]);
+		avatarbutton[0]->setImage(damcharacter[0] == false ? imageManager.bodycharacter[gSoundManager->character[avataricon1]][gSoundManager->subcharacter[gSoundManager->character[avataricon1]]][0] : imageManager.bodycharacter[gSoundManager->character[avataricon1]][gSoundManager->subcharacter[gSoundManager->character[avataricon1]]][1]);
+		avatarbutton[1]->setImage(damcharacter[1] == false ? imageManager.bodycharacter[gSoundManager->character[avataricon2]][gSoundManager->subcharacter[gSoundManager->character[avataricon2]]][0] : imageManager.bodycharacter[gSoundManager->character[avataricon2]][gSoundManager->subcharacter[gSoundManager->character[avataricon2]]][1]);
 #ifdef VIP
         if((dInfo.isInDuel || is_building) && !mode->isMode) {
             if(gSoundManager->character[avataricon1] > 0)
@@ -6780,12 +6784,12 @@ void Game::charactcomboselect(uint8_t player, int box, int sel) {
 			sel = 0;
 		gSoundManager->character[choose_player] = sel;
 		int player = gSoundManager->character[choose_player];
-		icon[choose_player]->setImage(imageManager.icon[player][0]);
-		icon2[choose_player]->setImage(imageManager.icon[player][0]);
+		icon[choose_player]->setImage(imageManager.icon[player][gSoundManager->subcharacter[player]]);
+		icon2[choose_player]->setImage(imageManager.icon[player][gSoundManager->subcharacter[player]]);
 		ebCharacter[choose_player]->setSelected(player);
 		ebCharacter_replay[choose_player]->setSelected(player);
-		btnCharacter->setImage(imageManager.character[player]);
-		btnCharacter_replay->setImage(imageManager.character[player]);
+		btnCharacter->setImage(imageManager.bodycharacter[player][gSoundManager->subcharacter[player]][0]);
+		btnCharacter_replay->setImage(imageManager.bodycharacter[player][gSoundManager->subcharacter[player]][0]);
 		if(choose_player == 0)
             ebCharacterDeck->setSelected(player);
 

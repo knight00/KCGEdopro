@@ -177,7 +177,6 @@ public:
 	int modeIndex;//decide to play what kind of mode rule,from meun-list getSelected
 	bool isMode;//the duel is mode?
 	bool isPlot;//is showing ploat, ignore mouse/keyboard inputs
-    bool isModeEvent;
 	bool isStartEvent;//ploating, locking flow, allow left mouse click notify_one() to skip continuous ploat
 	bool isStartDuel, isDuelEnd, isStoryStart;
 	bool flag_100000155;//card 100000155 play sound
@@ -359,6 +358,9 @@ struct host_creation_panel_elements {
 	irr::gui::CGUIImageButton* btnCharacter_replay;
 	irr::gui::CGUIImageButton* btnCharacterSelect1_replay;
 	irr::gui::CGUIImageButton* btnCharacterSelect2_replay;
+	irr::gui::CGUIImageButton* btnsubCharacterSelect_replay;
+	irr::gui::CGUIImageButton* btnsubCharacterSelect2_replay;
+	irr::gui::CGUIImageButton* btnsubCharacterSelect3_replay;
     irr::gui::IGUIButton* btnCharacterSelect_replayclose;
     irr::gui::IGUIButton* btnCharacterSelect_replayreset[6];
     irr::gui::IGUIComboBox* ebCharacter_replay[6];
