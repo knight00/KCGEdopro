@@ -498,12 +498,55 @@ void Mode::LoadJsonInfo() {
             if(!LoadJson(epro::format(EPRO_TEXT("./mode/languages/Chs/ploat{}.json"), chapter), 1, chapter) && !LoadJson(epro::format(EPRO_TEXT("./config/languages/Chs/ploat{}.json"), chapter), 1, chapter))
 			    break;
         }
-    } else {
+    } else if(gGameConfig->locale == EPRO_TEXT("Cht")) {
         LoadJson(EPRO_TEXT("./config/languages/Cht/mode.json"), 0);
         LoadJson(EPRO_TEXT("./mode/languages/Cht/mode.json"), 0);
         for(uint8_t chapter = 1; chapter <= modeTexts->size() - PLAY_MODE; chapter++) {
 			if(!LoadJson(epro::format(EPRO_TEXT("./mode/languages/Cht/ploat{}.json"), chapter), 1, chapter) && !LoadJson(epro::format(EPRO_TEXT("./config/languages/Cht/ploat{}.json"), chapter), 1, chapter))
 			    break;
+        }
+    }
+}
+bool Game::LoadJson(epro::path_string path, uint8_t character) {
+    if(!Utils::FileExists(path)) return false;
+	std::ifstream jsonInfo(path);
+	if (jsonInfo.good()) {
+		nlohmann::json j;
+		try {
+			jsonInfo >> j;
+		}
+		catch (const std::exception& e) {
+			ErrorLog("Failed to load dialog json: {}", e.what());
+			return false;
+		}
+		if (j.is_array()) {
+			Ploats[character].clear();
+			for (auto& obj : j) {
+				try {
+					Ploat ploat;
+                    if(obj.find("file") == obj.end())
+                        continue;
+					ploat.file = obj.at("file").get_ref<std::string&>();
+					ploat.text = BufferIO::DecodeUTF8(obj.at("text").get_ref<std::string&>());
+					Ploats[character][ploat.file] = ploat.text;
+				}
+				catch (const std::exception& e) {
+					ErrorLog("Failed to parse dialog json entry: {}", e.what());
+				}
+			}
+		}
+	} else {
+		ErrorLog("Failed to load dialog json!");
+		return false;
+	}
+	return true;
+}
+void Game::LoadJsonInfo() {
+	for(uint8_t i = 0; i < CHARACTER_VOICE-1; i++) {
+    	if(gGameConfig->locale == EPRO_TEXT("Chs")) {
+        	LoadJson(epro::format(EPRO_TEXT("./config/languages/Chs/{}.json"), gSoundManager->textcharacter[i][0]), i);
+        } else if(gGameConfig->locale == EPRO_TEXT("Cht")) {
+			LoadJson(epro::format(EPRO_TEXT("./config/languages/Cht/{}.json"), gSoundManager->textcharacter[i][0]), i);
         }
     }
 }
@@ -580,7 +623,8 @@ void Game::Initialize() {
 	cv = nullptr;
 	isEvent = false;
     if(Utils::FileExists(EPRO_TEXT("./config/user_configs.json"))) {
-		mainGame->mode->LoadJsonInfo();
+		LoadJsonInfo();
+		mode->LoadJsonInfo();
         git_update = true;
     }
     if(!Utils::FileExists(EPRO_TEXT("./cdb/cards.cdb")))
@@ -925,7 +969,7 @@ void Game::Initialize() {
 	avatarbutton[0] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 100, 180), wAvatar[0], BUTTON_AVATAR_BORED0));
     avatarbutton[0]->setImageSize(Scale(0, 0, 100, 180).getSize());
 	avatarbutton[0]->setDrawBorder(false);
-	wAvatar[1] = AlignElementWithParent(env->addWindow(Scale(886, 12, 966, 156)));
+	wAvatar[1] = AlignElementWithParent(env->addWindow(Scale(886, 100, 966, 244)));
 	wAvatar[1]->getCloseButton()->setVisible(false);
 	wAvatar[1]->setDraggable(false);
 	wAvatar[1]->setDrawTitlebar(false);
@@ -1682,7 +1726,7 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(btnPloat, 1215);
 
 	//second  head 0 player + info
-	wChPloatBody[0] = env->addWindow(Scale(250, 458, 600, 558));
+	wChPloatBody[0] = env->addWindow(Scale(300, 400, 650, 530));
 	wChPloatBody[0]->getCloseButton()->setVisible(false);
 	wChPloatBody[0]->setDraggable(false);
 	wChPloatBody[0]->setDrawTitlebar(false);
@@ -1692,7 +1736,7 @@ void Game::Initialize() {
 	stChPloatInfo[0]->setWordWrap(true);
 
 	//second  head 1 player + info
-	wChPloatBody[1] = env->addWindow(Scale(500, 140, 850, 240));
+	wChPloatBody[1] = env->addWindow(Scale(550, 140, 900, 240));
 	wChPloatBody[1]->getCloseButton()->setVisible(false);
 	wChPloatBody[1]->setDraggable(false);
 	wChPloatBody[1]->setDrawTitlebar(false);
@@ -3509,7 +3553,8 @@ bool Game::MainLoop() {
 			coreJustLoaded = false;
             //kdiy///////
             if(!git_update) {
-                mainGame->mode->LoadJsonInfo();
+				LoadJsonInfo();
+                mode->LoadJsonInfo();
                 git_update = true;
 				mRepositoriesInfo->setVisible(false);
             }
@@ -6428,8 +6473,8 @@ void Game::OnResize() {
     wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 880, 500));
     wBody->setRelativePosition(ResizeWin(370, 175, 570, 475));
     wPloat->setRelativePosition(ResizeWin(520, 100, 775, 400));
-    wChPloatBody[0]->setRelativePosition(ResizeWin(250, 458, 600, 558));
-    wChPloatBody[1]->setRelativePosition(ResizeWin(500, 140, 850, 240));
+    wChPloatBody[0]->setRelativePosition(ResizeWin(300, 400, 650, 530));
+    wChPloatBody[1]->setRelativePosition(ResizeWin(550, 140, 900, 240));
     ////kdiy/////////
 	wSinglePlay->setRelativePosition(ResizeWin(220, 100, 800, 520));
     ////kdiy/////////

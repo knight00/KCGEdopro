@@ -1679,15 +1679,18 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		mainGame->damcharacter[0] = false;
 		mainGame->damcharacter[1] = false;
 		switch (phase) {
-            case PHASE_DRAW:
-            PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, player, 0, player2);
-            break;
-			case PHASE_BATTLE_START:
-			PlayChant(SoundManager::CHANT::BATTLEPHASE, nullptr, player, 0, player2);
-			break;
-            case PHASE_END:
-            PlayChant(SoundManager::CHANT::TURNEND, nullptr, player, 0, player2);
-            break;
+            case PHASE_DRAW: {
+				PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, player, 0, player2);
+				break;
+			}
+			case PHASE_BATTLE_START: {
+				PlayChant(SoundManager::CHANT::BATTLEPHASE, nullptr, player, 0, player2);
+				break;
+			}
+            case PHASE_END: {
+				PlayChant(SoundManager::CHANT::TURNEND, nullptr, player, 0, player2);
+				break;
+			}
 		}
 		break;
 	}
