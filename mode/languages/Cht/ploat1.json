@@ -57,6 +57,7 @@
         "icon": 2,
 		"ploat": "哼哼，我將用我場上的怪獸黑暗同調！",
         "sextramonster": true,
+        "music": true,
         "code": 94515289
 	},
 	{
@@ -64,6 +65,7 @@
 		"title": "不動遊星",
 		"control": 0,
         "icon": 1,
+        "music": true,
 		"ploat": "怎麼回事，星星變成黑暗的了！"
 	},
 	{
@@ -71,6 +73,7 @@
 		"title": "暗迪克皮塔",
 		"control": 1,
         "icon": 2,
+        "music": true,
 		"ploat": "對，光明變成了黑暗，黑暗同調，是從同調怪獸以外的1只怪獸的等級減去黑暗同調怪獸的等級後可以同調召喚等級與此數量相同的同調怪獸。"
 	},
 	{
@@ -78,6 +81,7 @@
 		"title": "不動遊星",
 		"control": 0,
         "icon": 1,
+        "music": true,
 		"ploat": "難道，怎麼可能會有這種事，LV3減去LV8的話......"
 	},
 	{
@@ -85,6 +89,7 @@
 		"title": "暗迪克皮塔",
 		"control": 1,
         "icon": 2,
+        "music": true,
 		"ploat": "有的，在我們的黑暗世界，有LV-5的怪獸。"
 	},
 	{
@@ -92,6 +97,7 @@
 		"title": "不動遊星",
 		"control": 0,
         "icon": 1,
+        "music": true,
 		"ploat": "不可能!!"
 	},
 	{
@@ -99,6 +105,7 @@
 		"title": "暗迪克皮塔",
 		"control": 1,
         "icon": 2,
+        "music": true,
 		"ploat": "黑暗與黑暗重疊之時，冥府之門將被打開，去那無光世界吧！黑暗同調！出現吧！{}！",
         "isStartEvent": false
 	},
@@ -107,6 +114,7 @@
 		"title": "不動遊星",
 		"control": 0,
         "icon": 1,
+        "music": true,
 		"ploat": "將魔法卡{}發動，從卡組把1只調整怪獸加入手卡，並從卡組中將那張卡的等級數的卡送去墓地。",
         "isStartEvent": false,
         "activate": true,
@@ -117,6 +125,7 @@
 		"title": "不動遊星",
 		"control": 0,
         "icon": 1,
+        "music": true,
 		"ploat": "{}召喚成功時，可以將墓地中存在的1只LV2以下的怪獸以守備表示特殊召喚。",
         "isStartEvent": false,
         "activate": true,
@@ -127,6 +136,7 @@
 		"title": "不動遊星",
 		"control": 0,
         "icon": 1,
+        "music": true,
 		"ploat": "聚集的群星將喚醒新生的力量，成為光芒閃耀的道路吧！同調召喚！出來吧！{}！",
         "isStartEvent": false,
         "activate": true,
@@ -157,6 +167,7 @@
 		"title": "暗迪克皮塔",
 		"control": 1,
         "icon": 2,
+        "music": true,
 		"ploat": "魔法卡{}發動，選擇我方場上存在的1只LV3以下的水屬性怪獸，從卡組中將與那怪獸相同的怪獸特殊召喚。",
         "isStartEvent": false,
         "activate": true,

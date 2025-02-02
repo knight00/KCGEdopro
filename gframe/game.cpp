@@ -113,18 +113,7 @@ std::wstring Mode::GetPloat(uint32_t code) {
 void Mode::PlayNextPlot(uint32_t code) {
     int i = modePloats[chapter - 1]->at(plotIndex).control;
 	if(i < 0 || i > 5) i = 0;
-    int playmode = gSoundManager->PlayModeSound();
-    if(playmode < 2) {
-        mainGame->ShowElement(mainGame->wChPloatBody[i]);
-        mainGame->stChPloatInfo[i]->setText(GetPloat(code).data());
-    } else
-        return;
-    if(mainGame->dInfo.isStarted) {
-        if(playmode == 0)
-            gSoundManager->PlayMode();
-        else
-            gSoundManager->PlayMode(true);
-    }
+    gSoundManager->PlayModeSound(i, code);
 }
 void Mode::NextPlot(uint8_t step, uint32_t code) {
 	if(step != 0) plotStep = step;
@@ -444,6 +433,10 @@ bool Mode::LoadJson(epro::path_string path, uint8_t index, uint8_t chapter) {
 							modePloat.isStartDuel = obj.at("isStartDuel").get<bool>();
                         else
                             modePloat.isStartDuel = false;
+						if(obj.find("music") != obj.end() && obj.find("music")->is_boolean())
+                            modePloat.music = obj.at("music").get<bool>();
+                        else
+                            modePloat.music = false;
 						if(obj.find("isWinDuel") != obj.end() && obj.find("isWinDuel")->is_boolean())
 							modePloat.isWinDuel = obj.at("isWinDuel").get<bool>();
                         else
@@ -524,11 +517,11 @@ bool Game::LoadJson(epro::path_string path, uint8_t character) {
 			for (auto& obj : j) {
 				try {
 					Ploat ploat;
-                    if(obj.find("file") == obj.end())
+                    if(obj.find("dialog") == obj.end())
                         continue;
-					ploat.file = obj.at("file").get_ref<std::string&>();
+					ploat.dialog = obj.at("dialog").get_ref<std::string&>();
 					ploat.text = BufferIO::DecodeUTF8(obj.at("text").get_ref<std::string&>());
-					Ploats[character][ploat.file] = ploat.text;
+					Ploats[character][ploat.dialog] = ploat.text;
 				}
 				catch (const std::exception& e) {
 					ErrorLog("Failed to parse dialog json entry: {}", e.what());
@@ -1726,23 +1719,23 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(btnPloat, 1215);
 
 	//second  head 0 player + info
-	wChPloatBody[0] = env->addWindow(Scale(300, 400, 650, 530));
+	wChPloatBody[0] = env->addWindow(Scale(300, 400, 610, 495));
 	wChPloatBody[0]->getCloseButton()->setVisible(false);
 	wChPloatBody[0]->setDraggable(false);
 	wChPloatBody[0]->setDrawTitlebar(false);
 	wChPloatBody[0]->setDrawBackground(true);
 	wChPloatBody[0]->setVisible(false);
-	stChPloatInfo[0] = irr::gui::CGUICustomText::addCustomText(L"", false, env, wChPloatBody[0], -1, Scale(5, 15, 300, 80));
+	stChPloatInfo[0] = irr::gui::CGUICustomText::addCustomText(L"", false, env, wChPloatBody[0], -1, Scale(10, 15, 300, 80));
 	stChPloatInfo[0]->setWordWrap(true);
 
 	//second  head 1 player + info
-	wChPloatBody[1] = env->addWindow(Scale(550, 140, 900, 240));
+	wChPloatBody[1] = env->addWindow(Scale(590, 140, 900, 235));
 	wChPloatBody[1]->getCloseButton()->setVisible(false);
 	wChPloatBody[1]->setDraggable(false);
 	wChPloatBody[1]->setDrawTitlebar(false);
 	wChPloatBody[1]->setDrawBackground(true);
 	wChPloatBody[1]->setVisible(false);
-	stChPloatInfo[1] = irr::gui::CGUICustomText::addCustomText(L"", false, env, wChPloatBody[1], -1, Scale(5, 15, 300, 80));
+	stChPloatInfo[1] = irr::gui::CGUICustomText::addCustomText(L"", false, env, wChPloatBody[1], -1, Scale(10, 15, 300, 80));
 	stChPloatInfo[1]->setWordWrap(true);
     ////kdiy////////
 	chkYrp = env->addCheckBox(false, Scale(360, 250, 560, 270), wReplay, -1, gDataManager->GetSysString(1356).data());
@@ -6473,8 +6466,8 @@ void Game::OnResize() {
     wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 880, 500));
     wBody->setRelativePosition(ResizeWin(370, 175, 570, 475));
     wPloat->setRelativePosition(ResizeWin(520, 100, 775, 400));
-    wChPloatBody[0]->setRelativePosition(ResizeWin(300, 400, 650, 530));
-    wChPloatBody[1]->setRelativePosition(ResizeWin(550, 140, 900, 240));
+    wChPloatBody[0]->setRelativePosition(ResizeWin(300, 400, 610, 495));
+    wChPloatBody[1]->setRelativePosition(ResizeWin(590, 140, 900, 235));
     ////kdiy/////////
 	wSinglePlay->setRelativePosition(ResizeWin(220, 100, 800, 520));
     ////kdiy/////////

@@ -1276,18 +1276,6 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 		}();
 		switch(event.MouseInput.Event) {
 		case irr::EMIE_LMOUSE_DOUBLE_CLICK: {
-            /////kdiy/////
-            if(mainGame->isEvent) {
-				mainGame->isEvent = false;
-				mainGame->cv->notify_one();
-				gSoundManager->StopSounds();
-            }
-			//ktest/////
-			if(mainGame->isAnime) {
-				mainGame->StopVideo(false, true);
-			    break;
-			}
-            /////kdiy/////
 			if(mainGame->dInfo.isReplay)
 				break;
 			if(mainGame->dInfo.player_type == 7)
@@ -1297,14 +1285,20 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			if(mainGame->wCardDisplay->isVisible())
 				break;
 			/////kdiy/////
+			//ktest/////
+			if(mainGame->isAnime) {
+				mainGame->StopVideo(false, true);
+			    break;
+			}
+            if(mainGame->isEvent) {
+				mainGame->isEvent = false;
+				mainGame->cv->notify_one();
+				gSoundManager->StopSounds();
+            }
 			if(mainGame->mode->isMode && mainGame->mode->isPlot) {
 				if(mainGame->mode->plotStep < 1) break;
                 if(!mainGame->dInfo.isStarted)
 				    mainGame->mode->isStartDuel = true;
-                else if(!mainGame->mode->isDuelEnd) {
-                    mainGame->cv->notify_one();
-                    gSoundManager->StopSounds();
-                }
 				mainGame->mode->NextPlot(2); //skip continuous ploat
 				break;
 			}
@@ -1331,6 +1325,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			if(mainGame->mode->isMode && mainGame->mode->isPlot){
 				if(mainGame->mode->plotStep < 1) break;
                 if(mainGame->dInfo.isStarted) {
+					mainGame->isEvent = false;
                     mainGame->cv->notify_one();
                     gSoundManager->StopSounds();
                 } else if(!(mainGame->dInfo.isStarted && mainGame->mode->isStartEvent))

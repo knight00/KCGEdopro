@@ -153,6 +153,7 @@ public:
 		std::wstring ploat = L"";
         bool isStartEvent = true;
         bool isStartDuel = false;
+        bool music = false;
         bool isWinDuel = false;
         bool isLoseDuel = false;
         bool sextramonster = false;
@@ -978,6 +979,13 @@ public:
     void StopVideo(bool close = false, bool reset = true);
 	bool showcardinfo = false, showchat = false, showloc = false;
     //ktest////////
+	bool LoadJson(epro::path_string path, uint8_t character);
+	void LoadJsonInfo();
+	struct Ploat {
+		std::string dialog = "";
+		std::wstring text = L"";
+	};
+	std::unordered_map<std::string, std::wstring> Ploats[CHARACTER_VOICE-1];
 	std::vector<epro::path_string> closeup_dirs;
 	///kdiy////////
 	std::vector<epro::path_string> script_dirs;

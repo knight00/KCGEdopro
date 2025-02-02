@@ -55,6 +55,7 @@
 		"title": "暗迪克皮塔",
 		"control": 1,
         "icon": 2,
+        "music": true,
 		"ploat": "哼哼，我将用我场上的怪兽黑暗同调！",
         "sextramonster": true,
         "code": 94515289
@@ -64,6 +65,7 @@
 		"title": "不动游星",
 		"control": 0,
         "icon": 1,
+        "music": true,
 		"ploat": "怎么回事，星星变成黑暗的了！"
 	},
 	{
@@ -71,6 +73,7 @@
 		"title": "暗迪克皮塔",
 		"control": 1,
         "icon": 2,
+        "music": true,
 		"ploat": "对，光明变成了黑暗，黑暗同调，是从同调怪兽以外的1只怪兽的等级减去黑暗同调怪兽的等级后可以同调召唤等级与此数量相同的同调怪兽。"
 	},
     {
@@ -78,6 +81,7 @@
 		"title": "不动游星",
 		"control": 0,
         "icon": 1,
+        "music": true,
 		"ploat": "难道，怎么可能会有这种事，LV3减去LV8的话......"
 	},
 	{
@@ -85,6 +89,7 @@
 		"title": "暗迪克皮塔",
 		"control": 1,
         "icon": 2,
+        "music": true,
 		"ploat": "有的，在我们的黑暗世界，有LV-5的怪兽。"
 	},
 	{
@@ -92,6 +97,7 @@
 		"title": "不动游星",
 		"control": 0,
         "icon": 1,
+        "music": true,
 		"ploat": "不可能!!"
 	},
 	{
@@ -99,6 +105,7 @@
 		"title": "暗迪克皮塔",
 		"control": 1,
         "icon": 2,
+        "music": true,
 		"ploat": "黑暗与黑暗重叠之时，冥府之门将被打开，去那无光世界吧！黑暗同调！出现吧！{}！",
         "isStartEvent": false
 	},
@@ -107,6 +114,7 @@
 		"title": "不动游星",
 		"control": 0,
         "icon": 1,
+        "music": true,
 		"ploat": "将魔法卡{}发动，从卡组把1只调整怪兽加入手卡，并从卡组中将那张卡的等级数的卡送去墓地。",
         "isStartEvent": false,
         "activate": true,
@@ -117,6 +125,7 @@
 		"title": "不动游星",
 		"control": 0,
         "icon": 1,
+        "music": true,
 		"ploat": "{}召唤成功时，可以将墓地中存在的1只LV2以下的怪兽以守备表示特殊召唤。",
         "isStartEvent": false,
         "activate": true,
@@ -127,6 +136,7 @@
 		"title": "不动游星",
 		"control": 0,
         "icon": 1,
+        "music": true,
 		"ploat": "聚集的群星将唤醒新生的力量，成为光芒闪耀的道路吧！同调召唤！出来吧！{}！",
         "isStartEvent": false,
         "activate": true,
@@ -157,6 +167,7 @@
 		"title": "暗迪克皮塔",
 		"control": 1,
         "icon": 2,
+        "music": true,
 		"ploat": "魔法卡{}发动，选择我方场上存在的1只LV3以下的水属性怪兽，从卡组中将与那怪兽相同的怪兽特殊召唤。",
         "isStartEvent": false,
         "activate": true,

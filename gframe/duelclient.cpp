@@ -1547,7 +1547,7 @@ inline bool PlayChantcode(SoundManager::CHANT sound, uint32_t code, uint32_t cod
 	if(sound == SoundManager::CHANT::SUMMON && !gGameConfig->enablessound) return false;
 	if(sound == SoundManager::CHANT::ATTACK && !gGameConfig->enableasound) return false;
 	if(!mainGame->dInfo.isCatchingUp)
-		return gSoundManager->PlayChant(sound, code, code2, player == 0 ? mainGame->avataricon1 : mainGame->avataricon2, extra, player2);
+		return gSoundManager->PlayChant(sound, code, code2, player, player == 0 ? mainGame->avataricon1 : mainGame->avataricon2, extra, player2);
 	return true;
 #else
     return false;
@@ -2408,6 +2408,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		const auto playertype = BufferIO::Read<uint8_t>(pbuf);
 		if(mainGame->dInfo.compat_mode)
 			/*duel_rule = */BufferIO::Read<uint8_t>(pbuf);
+		///////////kdiy///////////
+		PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, mainGame->LocalPlayer(0), 0, mainGame->LocalPlayer(1));
+		PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, mainGame->LocalPlayer(1), 0, mainGame->LocalPlayer(0));
+		///////////kdiy///////////
 		auto lock = LockIf();
 		mainGame->wPhase->setVisible(true);
 		if(!mainGame->dInfo.isCatchingUp) {

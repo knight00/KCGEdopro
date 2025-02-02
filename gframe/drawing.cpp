@@ -975,9 +975,9 @@ void Game::DrawMisc() {
     else
 	    DrawShadowText(lpFont, dInfo.strLP[0], Resize(208, 600, 268, 624), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, false);
     if(dInfo.lp[1] >= 8888888)
-	    DrawShadowText(nameFont, dInfo.strLP[1], mainGame->mode->isMode || gSoundManager->character[avataricon1] > 0 ? Resize(917, 45, 957, 999) : Resize(868, 45, 908, 89), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, true);
+	    DrawShadowText(nameFont, dInfo.strLP[1], mainGame->mode->isMode || gSoundManager->character[avataricon1] > 0 ? Resize(917, 45, 957, 89) : Resize(868, 45, 908, 89), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, true);
     else
-	    DrawShadowText(lpFont, dInfo.strLP[1], mainGame->mode->isMode || gSoundManager->character[avataricon1] > 0 ? Resize(917, 65, 977, 89) : Resize(868, 65, 808, 79), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, false);
+	    DrawShadowText(lpFont, dInfo.strLP[1], mainGame->mode->isMode || gSoundManager->character[avataricon1] > 0 ? Resize(917, 65, 977, 89) : Resize(868, 65, 928, 89), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, false);
 
 	//irr::core::recti p1size = Resize(335, 31, 629, 50);
 	//irr::core::recti p2size = Resize(986, 31, 986, 50);
@@ -1002,9 +1002,9 @@ void Game::DrawMisc() {
 	// 			textFont->drawustring(utext, p2size, 0xff808080, false, false, 0);
 	// 		p2size += irr::core::vector2di{ 0, p2size.getHeight() + ResizeY(4) };
 	// 	}
-	// }
-	irr::core::recti p1size = Resize(355, 585, 375, 604);
-	irr::core::recti p2size = Resize(643, 80, 664, 99);
+	// }691, 48, 900, 135    811, 18, 1020, 105
+	irr::core::recti p1size = Resize(355, 578, 375, 597);
+	irr::core::recti p2size = Resize(719, 30, 737, 49);
 	{
 		int i = 0;
 		for (const auto& player : self) {
