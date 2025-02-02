@@ -103,13 +103,13 @@ bool ImageManager::Initial() {
 				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/damage"), path));
 				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/advantage"), path));
 				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin"), path));
-				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin/happy"), path));
-				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin/anger"), path));
+				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin/advantage"), path));
+				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin/damage"), path));
 				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin/surprise"), path));
 				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp"), path));
 				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/normal"), path));
-				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/happy"), path));
-				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/anger"), path));
+				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/advantage"), path));
+				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/damage"), path));
 				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/surprise"), path));
 			}
 		}
@@ -296,12 +296,6 @@ bool ImageManager::Initial() {
 		    head_size[i] = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(head[i]->getOriginalSize()));
     }
     icon[0][0] = loadTextureAnySize(EPRO_TEXT("character/player/mini_icon"sv));
-	if(icon[0][0] == nullptr)
-		icon_size[0][0] = irr::core::rect<irr::s32>(0,0,0,0);
-	else
-		icon_size[0][0] = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(icon[0][0]->getOriginalSize()));
-	character[0] = driver->getTexture(0);
-	characterd[0] = driver->getTexture(0);
 	RefreshRandomImageList();
 
     QQ = driver->getTexture(EPRO_TEXT("./textures/QQ.png"));
@@ -706,12 +700,12 @@ bool ImageManager::Initial() {
 void ImageManager::SetAvatar(int player, const wchar_t *avatar) {
     auto* tmp = loadTextureAnySize(epro::format(EPRO_TEXT("character/custom/{}"sv), Utils::ToPathString(avatar)));
     if(tmp != nullptr) {
-        if (mainGame->imageManager.character[gSoundManager->character[player]])
-            driver->removeTexture(mainGame->imageManager.character[gSoundManager->character[player]]);
-        mainGame->imageManager.character[gSoundManager->character[player]] = tmp;
-        if (mainGame->imageManager.characterd[gSoundManager->character[player]])
-            driver->removeTexture(mainGame->imageManager.characterd[gSoundManager->character[player]]);
-	    mainGame->imageManager.characterd[gSoundManager->character[player]] = tmp;
+        if (mainGame->imageManager.bodycharacter[gSoundManager->character[player]][gSoundManager->subcharacter[gSoundManager->character[player]]][0])
+            driver->removeTexture(mainGame->imageManager.bodycharacter[gSoundManager->character[player]][gSoundManager->subcharacter[gSoundManager->character[player]]][0]);
+        mainGame->imageManager.bodycharacter[gSoundManager->character[player]][gSoundManager->subcharacter[gSoundManager->character[player]]][0] = tmp;
+        if (mainGame->imageManager.bodycharacter[gSoundManager->character[player]][gSoundManager->subcharacter[gSoundManager->character[player]]][1])
+            driver->removeTexture(mainGame->imageManager.bodycharacter[gSoundManager->character[player]][gSoundManager->subcharacter[gSoundManager->character[player]]][1]);
+	    mainGame->imageManager.bodycharacter[gSoundManager->character[player]][gSoundManager->subcharacter[gSoundManager->character[player]]][1] = tmp;
     }
 }
 void ImageManager::RefreshRandomImageList() {
@@ -762,10 +756,13 @@ void ImageManager::RefreshRandomImageList() {
 				path = gSoundManager->textcharacter[playno-1][i+1];
 #ifdef VIP
 				icon[playno][i] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/mini_icon"sv), path));
-				if(icon[playno][i] == nullptr)
-		    		icon_size[playno][i] = irr::core::rect<irr::s32>(0,0,0,0);
-				else
-		    		icon_size[playno][i] = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(icon[playno][i]->getOriginalSize()));
+				
+				for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/lp/normal"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
+					auto filename = Utils::GetFileName(file, true);
+					lpcharacter[playno][i][0].push_back(epro::format(EPRO_TEXT("{}/lp/normal/{}"), path, filename));
+				}
+        		GetRandomCharacter(lpicon[playno][i][0], lpcharacter[playno][i][0]);
+       	 		GetRandomCharacter(lpicon[playno][i][1], lpcharacter[playno][i][1]);
 
 				for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/icon"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
 					auto filename = Utils::GetFileName(file, true);
@@ -775,22 +772,28 @@ void ImageManager::RefreshRandomImageList() {
 					auto filename = Utils::GetFileName(file, true);
 					imgcharacter[playno][i][1].push_back(epro::format(EPRO_TEXT("{}/damage/{}"), path, filename));
 				}
+				GetRandomCharacter(bodycharacter[playno][i][0], imgcharacter[playno][i][0]);
+				GetRandomCharacter(bodycharacter[playno][i][1], imgcharacter[playno][i][1]);
+				if(!bodycharacter[playno][i][1])
+				    bodycharacter[playno][i][1] = bodycharacter[playno][i][0];
 #else
                 icon[playno][i] = driver->getTexture(0);
-				icon_size[playno][i] = irr::core::rect<irr::s32>(0,0,0,0);
+                lpicon[playno][i][0] = driver->getTexture(0);
 #endif
 				vs[playno][i] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/vs"sv), path));
 				name[playno][i] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/name"sv), path));
 			}
-        	GetRandomCharacter(character[playno], imgcharacter[playno][0][0]);
-       	 	GetRandomCharacter(characterd[playno], imgcharacter[playno][0][1]);
 		} else {
 #ifdef VIP
         	icon[playno][0] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/mini_icon"sv), path));
-			if(icon[playno][0] == nullptr)
-		    	icon_size[playno][0] = irr::core::rect<irr::s32>(0,0,0,0);
-			else
-		    	icon_size[playno][0] = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(icon[playno][0]->getOriginalSize()));
+			
+        	for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/lp/normal"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
+				auto filename = Utils::GetFileName(file, true);
+				lpcharacter[playno][0][0].push_back(epro::format(EPRO_TEXT("{}/lp/normal/{}"), path, filename));
+			}
+        	GetRandomCharacter(lpicon[playno][0][0], lpcharacter[playno][0][0]);
+       	 	GetRandomCharacter(lpicon[playno][0][1], lpcharacter[playno][0][1]);
+
 			for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/icon"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
 				auto filename = Utils::GetFileName(file, true);
 				imgcharacter[playno][0][0].push_back(epro::format(EPRO_TEXT("{}/icon/{}"), path, filename));
@@ -799,17 +802,22 @@ void ImageManager::RefreshRandomImageList() {
 				auto filename = Utils::GetFileName(file, true);
 				imgcharacter[playno][0][1].push_back(epro::format(EPRO_TEXT("{}/damage/{}"), path, filename));
 			}
+        	GetRandomCharacter(bodycharacter[playno][0][0], imgcharacter[playno][0][0]);
+			bodycharacter[playno][1][0] = bodycharacter[playno][0][0];
+			bodycharacter[playno][2][0] = bodycharacter[playno][0][0];
+       	 	GetRandomCharacter(bodycharacter[playno][0][1], imgcharacter[playno][0][1]);
+			if(!bodycharacter[playno][0][1]) {
+                bodycharacter[playno][0][1] = bodycharacter[playno][0][0];
+                bodycharacter[playno][1][1] = bodycharacter[playno][0][0];
+                bodycharacter[playno][2][1] = bodycharacter[playno][0][0];
+			}
 #else
-            icon[playno][0] = driver->getTexture(0);
-			icon_size[playno][0] = irr::core::rect<irr::s32>(0,0,0,0);
+            icon[playno][0] = driver->getTexture(0);p
+            lpicon[playno][0][0] = driver->getTexture(0);
 #endif
 			vs[playno][0] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/vs"sv), path));
 			name[playno][0] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/name"sv), path));
-        	GetRandomCharacter(character[playno], imgcharacter[playno][0][0]);
-       	 	GetRandomCharacter(characterd[playno], imgcharacter[playno][0][1]);
 		}
-        if(!characterd[playno])
-            characterd[playno] = character[playno];
     }
 }
 void ImageManager::RefreshImageDir(epro::path_string path, int image_type) {

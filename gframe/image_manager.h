@@ -101,10 +101,10 @@ public:
 	void RefreshImageDir(epro::path_string path, int image_type);
 	void RefreshImageDirf();
 	irr::video::ITexture* UpdatetTexture(int i, std::wstring filepath);
-	irr::core::rect<irr::s32> head_size[CHARACTER_STORY+1]; //story icon dimension
+	irr::core::rect<irr::s32> head_size[CHARACTER_STORY+1]; //story icon
 	irr::core::rect<irr::s32> modehead_size[6];
-	irr::core::rect<irr::s32> icon_size[CHARACTER_VOICE][3];
-	irr::core::rect<irr::s32> lp_size[CHARACTER_VOICE][3];
+	std::vector<epro::path_string> lpcharacter[CHARACTER_VOICE][3][4]; //lpicon path, 1st: character(0=no character), 2nd: subcharacter, 3rd: emotion(0=normal, 1=damage, 2=advan, 3=surprise)
+	std::vector<epro::path_string> imgcharacter[CHARACTER_VOICE][3][2]; //bodycharacter path
 	bool GetTextureCardHD(uint32_t code);
 	std::tuple<irr::video::ITexture*, irr::video::SColor> GetTextureCloseup(uint32_t code, uint32_t alias = 0, bool is_closeup=false);
 	std::tuple<irr::video::ITexture*, irr::video::SColor> GetTextureCloseupCode(uint32_t code, bool is_closeup=false);
@@ -172,7 +172,6 @@ private:
 #define TEXTURE_fieldSP4            34
 #define TEXTURE_field_transparentSP4 35
 
-	std::vector<epro::path_string> imgcharacter[CHARACTER_VOICE][3][3];
 	std::unordered_map<uint32_t, irr::video::ITexture*> tCloseup;
     std::unordered_map<uint32_t, irr::video::SColor> tCloseupcolor;
 	/////////kdiy////
@@ -215,9 +214,8 @@ public:
 	A(icon[CHARACTER_VOICE][3])
 	A(vs[CHARACTER_VOICE][3])
 	A(name[CHARACTER_VOICE][3])
-	A(lp[CHARACTER_VOICE][4])
-	A(character[CHARACTER_VOICE])
-	A(characterd[CHARACTER_VOICE])
+	A(lpicon[CHARACTER_VOICE][3][4])
+	A(bodycharacter[CHARACTER_VOICE][3][3])
 	A(cardchant0)
 	A(cardchant1)
 	A(cardchant2)
