@@ -113,7 +113,7 @@ std::wstring Mode::GetPloat(uint32_t code) {
 void Mode::PlayNextPlot(uint32_t code) {
     int i = modePloats[chapter - 1]->at(plotIndex).control;
 	if(i < 0 || i > 5) i = 0;
-    gSoundManager->PlayModeSound(i, code);
+    gSoundManager->PlayModeSound(i, code, modePloats[chapter - 1]->at(plotIndex).music);
 }
 void Mode::NextPlot(uint8_t step, uint32_t code) {
 	if(step != 0) plotStep = step;
@@ -3613,11 +3613,12 @@ bool Game::MainLoop() {
 			DrawCards();
 			DrawMisc();
 			///kdiy///////
-            if(mainGame->wLocation->isVisible())
+            if(wLocation->isVisible())
 			    DrawDeckBd();
-			if(mainGame->isEvent && chantsound.getStatus() != sf::Sound::Playing) {
-				mainGame->isEvent = false;
-				mainGame->cv->notify_one();
+			if(isEvent && chantsound.getStatus() != sf::Sound::Playing) {
+				isEvent = false;
+				cv->notify_one();
+				chantsound.stop();
             }
 			///kdiy///////
 			smgr->drawAll();
@@ -3910,6 +3911,8 @@ bool Game::MainLoop() {
 	}
     /////ktest//////
     StopVideo(true, true);
+	isEvent = false;
+	chantsound.stop();
     /////ktest//////
 	DuelClient::StopClient(true);
 	//This is set again as waitable in the above call

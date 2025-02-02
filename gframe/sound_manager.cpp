@@ -499,7 +499,7 @@ void SoundManager::PlayModeSound(int i, uint32_t code, bool music) {
     if(std::find(soundcount.begin(), soundcount.end(), file) != soundcount.end())
         return;
 	if(soundsEnabled && Utils::FileExists(Utils::ToPathString(file)) && mainGame->soundBuffer.loadFromFile(file)) {
-    	gSoundManager->soundcount.push_back(file);
+    	soundcount.push_back(file);
 		if(music) PauseMusic(true);
 		StopSounds();
 		mainGame->chantsound.setBuffer(mainGame->soundBuffer);
@@ -613,14 +613,22 @@ bool SoundManager::PlayCardBGM(uint32_t code, uint32_t code2) {
 				}
 			}
 		}
-        for(auto file : gSoundManager->soundcount)
-			list.erase(std::remove(list.begin(), list.end(), file), list.end());
+		for(auto playedfile : soundcount) {
+			for(auto it = list.begin(); it != list.end(); /* NOTHING */) {
+				if(playedfile == *it)
+					it = list.erase(it);
+				else
+					++it;
+			}
+		}
+        for(auto playedfile : soundcount)
+			list.erase(std::remove(list.begin(), list.end(), playedfile), list.end());
 		int count = list.size();
 		if(count > 0) {
 			int soundno = (std::uniform_int_distribution<>(0, count - 1))(rnd);
-            if(std::find(gSoundManager->soundcount.begin(), gSoundManager->soundcount.end(), list[soundno]) != gSoundManager->soundcount.end())
+            if(std::find(soundcount.begin(), soundcount.end(), list[soundno]) != soundcount.end())
                 return false;
-            gSoundManager->soundcount.push_back(list[soundno]);
+            soundcount.push_back(list[soundno]);
 			if(mixer->MusicPlaying())
 		 	    mixer->StopMusic();
 			if(mixer->PlayMusic(list[soundno], gGameConfig->loopMusic))
@@ -701,10 +709,8 @@ void SoundManager::AddtoZipChantSPList(CHANT chant, uint16_t extra, size_t j, st
 			for(auto& findfile : Utils::FindFileNames(archive.archive, Utils::ToPathString(sound), mixer->GetSupportedSoundExtensions())) {
 				auto file = Utils::ToUTF8IfNeeded(findfile);
 				if(mainGame->dInfo.isInDuel) {
-					for(auto playedfile : gSoundManager->soundcount) {
-						if(playedfile == file)
-				            continue;
-				    }
+					if(std::find(soundcount.begin(), soundcount.end(), file) != soundcount.end())
+		        		continue;
 			    }
 				if(chant == CHANT::SUMMON) {
 					if((extra & 0x1) && j == 1) {
@@ -1037,10 +1043,8 @@ void SoundManager::AddtoChantSPList(CHANT chant, uint16_t extra, size_t j, std::
 			if(!Utils::FileExists(Utils::ToPathString(epro::format("./sound/character/{}", file))))
 		        continue;
 			if(mainGame->dInfo.isInDuel) {
-				for(auto playedfile : gSoundManager->soundcount) {
-					if(playedfile == file)
-				        continue;
-				}
+				if(std::find(soundcount.begin(), soundcount.end(), file) != soundcount.end())
+		        	continue;
 			}
 		    if(chant == CHANT::SUMMON) {
 				if((extra & 0x1) && j == 1) {
@@ -1374,10 +1378,8 @@ void SoundManager::AddtoZipChantList(std::vector<std::string>& chantlist, std::v
 			std::string sound = chantlist[k];
 			for(auto& findfile : Utils::FindFileNames(archive.archive, Utils::ToPathString(sound), mixer->GetSupportedSoundExtensions())) {
 				auto file = Utils::ToUTF8IfNeeded(findfile);
-				for(auto playedfile : gSoundManager->soundcount) {
-					if(playedfile == file)
-				        continue;
-				}
+				if(std::find(soundcount.begin(), soundcount.end(), file) != soundcount.end())
+		        	continue;
 				if(sound.find("+") == std::string::npos)
 		            list.push_back(file);
 		        else if(sound.find("+2") == std::string::npos)
@@ -1397,10 +1399,8 @@ void SoundManager::AddtoChantList(std::vector<std::string>& chantlist, std::vect
 			const auto file = epro::format("{}.{}", sound, Utils::ToUTF8IfNeeded(ext));
 			if(!Utils::FileExists(Utils::ToPathString(epro::format("./sound/character/{}", file))))
 		        continue;
-			for(auto playedfile : gSoundManager->soundcount) {
-				if(playedfile == file)
-				     continue;
-			}
+			if(std::find(soundcount.begin(), soundcount.end(), file) != soundcount.end())
+		        continue;
 			if(sound.find("+") == std::string::npos)
 		        list.push_back(file);
 		    else if(sound.find("+2") == std::string::npos)
@@ -1434,7 +1434,7 @@ bool SoundManager::PlayZipChants(CHANT chant, std::string file, const uint8_t si
 				if (mainGame->soundBuffer.loadFromMemory(buff, length)) {
 					//record this chant as played
 					if(mainGame->dInfo.isInDuel && chant != CHANT::DRAW && chant != CHANT::STARTUP && chant != CHANT::WIN && chant != CHANT::LOSE) {
-						gSoundManager->soundcount.push_back(file);
+						soundcount.push_back(file);
 					}
 					StopSounds();
 					mainGame->chantsound.setBuffer(mainGame->soundBuffer);
@@ -1472,7 +1472,7 @@ bool SoundManager::PlayChants(CHANT chant, std::string file, const uint8_t side,
 	if(Utils::FileExists(Utils::ToPathString(filepath))) {
 		if (mainGame->soundBuffer.loadFromFile(filepath)) {
 			if(mainGame->dInfo.isInDuel && chant != CHANT::DRAW && chant != CHANT::STARTUP && chant != CHANT::WIN && chant != CHANT::LOSE) {
-				gSoundManager->soundcount.push_back(file);
+				soundcount.push_back(file);
 		    }
 			StopSounds();
 			mainGame->chantsound.setBuffer(mainGame->soundBuffer);

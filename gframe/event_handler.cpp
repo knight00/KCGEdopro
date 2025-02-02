@@ -298,6 +298,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				//ktest/////
 				mainGame->StopVideo(false, true);
                 mainGame->isEvent = false;
+				mainGame->chantsound.stop();
                 mainGame->damcharacter[0] = false;
                 mainGame->damcharacter[1] = false;
                 gSoundManager->soundcount.clear();
@@ -1293,7 +1294,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
             if(mainGame->isEvent) {
 				mainGame->isEvent = false;
 				mainGame->cv->notify_one();
-				gSoundManager->StopSounds();
+				mainGame->chantsound.stop();
             }
 			if(mainGame->mode->isMode && mainGame->mode->isPlot) {
 				if(mainGame->mode->plotStep < 1) break;
@@ -1327,7 +1328,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
                 if(mainGame->dInfo.isStarted) {
 					mainGame->isEvent = false;
                     mainGame->cv->notify_one();
-                    gSoundManager->StopSounds();
+					mainGame->chantsound.stop();
                 } else if(!(mainGame->dInfo.isStarted && mainGame->mode->isStartEvent))
                     mainGame->mode->NextPlot();
 				break;
