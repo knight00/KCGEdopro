@@ -933,25 +933,6 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(btnHostConfirm2, 1211);
 	btnHostCancel2 = env->addButton(Scale(260, 385, 370, 410), wCreateHost2, BUTTON_LOCAL_HOST_CANCEL, gDataManager->GetSysString(1212).data());
 	defaultStrings.emplace_back(btnHostCancel2, 1212);
-
-	wCharacter = env->addWindow(Scale(20, 120, 220, 440));
-	wCharacter->getCloseButton()->setVisible(false);
-	wCharacter->setDraggable(false);
-	wCharacter->setDrawTitlebar(false);
-	wCharacter->setVisible(false);
-	btnCharacter = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 200, 300), wCharacter, BUTTON_CHARACTER);
-	btnCharacter->setDrawBorder(true);
-	btnCharacter->setImageSize(Scale(0, 0, 200, 300).getSize());
-
-	btnCharacterSelect = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 300, 20, 320), wCharacter, BUTTON_CHARACTER_SELECT);
-	btnCharacterSelect->setImageSize(Scale(0, 0, 20, 20).getSize());
-	btnCharacterSelect->setImage(imageManager.tcharacterselect);
-	btnCharacterSelect->setDrawBorder(true);
-	btnCharacterSelect2 = irr::gui::CGUIImageButton::addImageButton(env, Scale(180, 300, 200, 320), wCharacter, BUTTON_CHARACTER_SELECT2);
-	btnCharacterSelect2->setImageSize(Scale(0, 0, 20, 20).getSize());
-	btnCharacterSelect2->setImage(imageManager.tcharacterselect2);
-	btnCharacterSelect2->setDrawBorder(true);
-	irr::core::dimension2di avatarsize = { Scale<irr::s32>(CARD_IMG_WIDTH * 0.5f), Scale<irr::s32>(CARD_IMG_HEIGHT * 0.5f) };
 	
 	wAvatar[0] = AlignElementWithParent(env->addWindow(Scale(215, 340, 315, 580)));
 	wAvatar[0]->getCloseButton()->setVisible(false);
@@ -2510,6 +2491,17 @@ void Game::PopulateGameHostWindows() {
 		chkHostPrepReady[i]->setEnabled(false);
 	}
 	///////kdiy/////////
+	btnCharacter = irr::gui::CGUIImageButton::addImageButton(env, Scale(520, 10, 720, 310), wHostPrepare, BUTTON_CHARACTER);
+	btnCharacter->setDrawBorder(true);
+	btnCharacter->setImageSize(Scale(0, 0, 200, 300).getSize());
+	btnCharacterSelect = irr::gui::CGUIImageButton::addImageButton(env, Scale(520, 310, 540, 330), wHostPrepare, BUTTON_CHARACTER_SELECT);
+	btnCharacterSelect->setImageSize(Scale(0, 0, 20, 20).getSize());
+	btnCharacterSelect->setImage(imageManager.tcharacterselect);
+	btnCharacterSelect->setDrawBorder(true);
+	btnCharacterSelect2 = irr::gui::CGUIImageButton::addImageButton(env, Scale(700, 310, 720, 330), wHostPrepare, BUTTON_CHARACTER_SELECT2);
+	btnCharacterSelect2->setImageSize(Scale(0, 0, 20, 20).getSize());
+	btnCharacterSelect2->setImage(imageManager.tcharacterselect2);
+	btnCharacterSelect2->setDrawBorder(true);
 	//btnHostPrepOB = env->addButton(Scale(10, 180, 110, 205), wHostPrepare, BUTTON_HP_OBSERVER, gDataManager->GetSysString(1252).data());
 	btnHostPrepOB = env->addButton(Scale(10, 230, 110, 255), wHostPrepare, BUTTON_HP_OBSERVER, gDataManager->GetSysString(1252).data());
 	///////kdiy/////////
@@ -3741,6 +3733,15 @@ bool Game::MainLoop() {
 		wBtnSettings->setVisible(!open_file);
         wBtnSettings->setRelativePosition(Resize(10, 580, 50, 620));
         btnLeaveGame->setRelativePosition(Resize(60, 580, 100, 620));
+		if(dInfo.opponames.size() + dInfo.selfnames.size() >= 5) {
+			wHostPrepare->setRelativePosition(ResizeWin(220, 120, gSoundManager->character[choose_player] > 0 ? 950 : 730, 580));
+        	wHostPrepareR->setRelativePosition(ResizeWin(gSoundManager->character[choose_player] > 0 ? 930 : 700, 120, gSoundManager->character[choose_player] > 0 ? 1130 : 900, 580));
+			wHostPrepareL->setRelativePosition(ResizeWin(20, 120, 220, 580));
+		} else {
+        	wHostPrepare->setRelativePosition(ResizeWin(220, 120, gSoundManager->character[choose_player] > 0 ? 950 : 730, 520));
+			wHostPrepareR->setRelativePosition(ResizeWin(gSoundManager->character[choose_player] > 0 ? 930 : 700, 120, gSoundManager->character[choose_player] > 0 ? 1130 : 900, 520));
+			wHostPrepareL->setRelativePosition(ResizeWin(20, 120, 220, 520));
+		}
 		/////kdiy//////////
 		EnableMaterial2D(true);
 		DrawGUI();
@@ -5572,7 +5573,6 @@ void Game::CloseDuelWindow() {
 		CardInfo[i]->setVisible(false);
 	wBtnShowCard->setVisible(false);
     wLocation->setVisible(false);
-	wCharacter->setVisible(false);
 	wAvatar[0]->setVisible(false);
 	wAvatar[1]->setVisible(false);
     //////kdiy///////
@@ -6442,30 +6442,19 @@ void Game::OnResize() {
 	SetCentered(wCreateHost, false);
 	/////kdiy/////
 	SetCentered(wCreateHost2, false);
-	/////kdiy/////
-	if(dInfo.opponames.size() + dInfo.selfnames.size() >= 5) {
-        ////kdiy////////////
+	// if(dInfo.opponames.size() + dInfo.selfnames.size() >= 5) {
 		//wHostPrepare->setRelativePosition(ResizeWin(270, 120, 750, 500));
 		// wHostPrepareR->setRelativePosition(ResizeWin(750, 120, 950, 500));
 		// wHostPrepareL->setRelativePosition(ResizeWin(70, 120, 270, 500));
-        wHostPrepare->setRelativePosition(ResizeWin(220, 120, 730, 580));
-        wHostPrepareR->setRelativePosition(ResizeWin(730, 120, 930, 580));
-		wHostPrepareL->setRelativePosition(ResizeWin(20, 120, 220, 580));
-        ////kdiy////////////
-	} else {
-        ////kdiy////////////
+	// } else {
 		//wHostPrepare->setRelativePosition(ResizeWin(270, 120, 750, 440));
 		// wHostPrepareR->setRelativePosition(ResizeWin(750, 120, 950, 440));
 		// wHostPrepareL->setRelativePosition(ResizeWin(70, 120, 270, 440));
-        wHostPrepare->setRelativePosition(ResizeWin(220, 120, 730, 520));
-		wHostPrepareR->setRelativePosition(ResizeWin(730, 120, 930, 520));
-		wHostPrepareL->setRelativePosition(ResizeWin(20, 120, 220, 520));
-        ////kdiy////////////
-	}
+	// }
+	/////kdiy/////
 	wRules->setRelativePosition(ResizeWin(630, 100, 1000, 310));
 	wReplay->setRelativePosition(ResizeWin(220, 100, 800, 520));
     ////kdiy////////////
-    wCharacter->setRelativePosition(ResizeWin(20, 120, 220, 440));
     wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 880, 500));
     wBody->setRelativePosition(ResizeWin(370, 175, 570, 475));
     wPloat->setRelativePosition(ResizeWin(520, 100, 775, 400));

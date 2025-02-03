@@ -385,9 +385,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			case BUTTON_HOST_CANCEL: {
-				///////kdiy///////
-				mainGame->wCharacter->setVisible(false);
-				///////kdiy///////
 				if(DuelClient::IsConnected())
 					break;
 				mainGame->dInfo.isInLobby = false;
@@ -497,7 +494,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				bool filechk = mainGame->chantcheck();
 				if(!filechk)
 				    break;
-                mainGame->wCharacter->setVisible(true);
                 auto elem = static_cast<irr::gui::CGUIImageButton*>(event.GUIEvent.Caller);
 				for(int i = 0; i < 6; ++i) {
                     if(elem == mainGame->icon[i])
@@ -515,7 +511,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				int team1count = mainGame->dInfo.team1, team2count = mainGame->dInfo.team2;
                 if(elem == mainGame->btnCharacter) {
                     mainGame->choose_player = -1;
-                    mainGame->wCharacter->setVisible(false);
                 } else {
 				    team1count = replay.GetPlayersCount(0);
 				    team2count = replay.GetPlayersCount(1);
@@ -688,16 +683,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			case BUTTON_HP_START: {
-				///////kdiy///////
-				mainGame->wCharacter->setVisible(false);
-				//////kdiy/////
 				DuelClient::SendPacketToServer(CTOS_HS_START);
 				break;
 			}
 			case BUTTON_HP_CANCEL: {
-				///////kdiy///////
-				mainGame->wCharacter->setVisible(false);
-				///////kdiy///////
 				DuelClient::StopClient();
 				mainGame->dInfo.isInLobby = false;
 				mainGame->btnCreateHost->setEnabled(mainGame->coreloaded);
@@ -970,7 +959,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
             case BUTTON_CHARACTEROK_REPLAY: {
 				mainGame->HideElement(mainGame->wCharacterReplay);
-                mainGame->wCharacter->setVisible(false);
 				break;
 			}
             ////kdiy////////
