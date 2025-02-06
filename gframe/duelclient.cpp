@@ -1787,21 +1787,26 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		//extra parameter
         const auto sumtype = BufferIO::Read<uint32_t>(pbuf);
         const auto sumplayer = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
+        const auto reincarnate = BufferIO::Read<bool>(pbuf);
         if((current.location & LOCATION_MZONE) && (current.position & POS_FACEUP) && sumplayer >= 0) {
             uint16_t extra = 0;
-            if(sumtype == SUMMON_TYPE_PENDULUM || sumtype == SUMMON_TYPE_LINK || sumtype == SUMMON_TYPE_XYZ || sumtype == SUMMON_TYPE_SYNCHRO || sumtype == SUMMON_TYPE_FUSION || sumtype == SUMMON_TYPE_RITUAL) {
+            if(sumtype == SUMMON_TYPE_PENDULUM || sumtype == SUMMON_TYPE_LINK || sumtype == SUMMON_TYPE_XYZ || sumtype == SUMMON_TYPE_SYNCHRO || sumtype == SUMMON_TYPE_FUSION || sumtype == SUMMON_TYPE_RITUAL || sumtype == SUMMON_TYPE_MAXIMUM) {
                 if(sumtype == SUMMON_TYPE_PENDULUM) extra |= 0x20;
                 else if(sumtype == SUMMON_TYPE_LINK) extra |= 0x8;
                 else if(sumtype == SUMMON_TYPE_XYZ) extra |= 0x4;
                 else if(sumtype == SUMMON_TYPE_SYNCHRO) extra |= 0x2;
                 else if(sumtype == SUMMON_TYPE_FUSION) extra |= 0x1;
                 else if(sumtype == SUMMON_TYPE_RITUAL) extra |= 0x10;
+                else if(sumtype == SUMMON_TYPE_MAXIMUM) extra |= 0x800;
             } else {
                 extra = 0x40;
                 if(current.position & POS_ATTACK) extra |= 0x100;
                 if(current.position & POS_DEFENSE) extra |= 0x200;
             }
-            PlayChant(SoundManager::CHANT::SUMMON, pcard, sumplayer, extra, 1 - sumplayer);
+			if(reincarnate)
+				extra |= 0x1000;
+            if(reincarnate && !PlayChant(SoundManager::CHANT::REINCARNATE, pcard, sumplayer, extra, 1 - sumplayer))
+            	PlayChant(SoundManager::CHANT::SUMMON, pcard, sumplayer, extra, 1 - sumplayer);
             PlayCardBGM(pcard);
 		}
 		break;

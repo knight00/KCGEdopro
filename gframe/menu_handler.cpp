@@ -551,6 +551,16 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				for(uint8_t i = team1count; i < team1count + team2count; i++)
 					team2.push_back(i);
 				gSoundManager->PlayStartupChant(mainGame->choose_player, (mainGame->choose_player > team1count - 1) ? team1 : team2);
+
+				if(mainGame->dInfo.opponames.size() + mainGame->dInfo.selfnames.size() >= 5) {
+					mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(220, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 950 : 730, 580));
+        			mainGame->wHostPrepareR->setRelativePosition(mainGame->ResizeWin(gSoundManager->character[mainGame->choose_player] > 0 ? 930 : 700, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 1130 : 900, 580));
+					mainGame->wHostPrepareL->setRelativePosition(mainGame->ResizeWin(20, 120, 220, 580));
+				} else {
+        			mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(220, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 950 : 730, 520));
+					mainGame->wHostPrepareR->setRelativePosition(mainGame->ResizeWin(gSoundManager->character[mainGame->choose_player] > 0 ? 930 : 700, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 1130 : 900, 520));
+					mainGame->wHostPrepareL->setRelativePosition(mainGame->ResizeWin(20, 120, 220, 520));
+				}
 				break;
 			}
 			case BUTTON_CHARACTER_SELECT: {
@@ -582,6 +592,16 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				for(uint8_t i = team1count; i < team1count + team2count; i++)
 					team2.push_back(i);
 				gSoundManager->PlayStartupChant(mainGame->choose_player, (mainGame->choose_player > team1count - 1) ? team1 : team2);
+
+				if(mainGame->dInfo.opponames.size() + mainGame->dInfo.selfnames.size() >= 5) {
+					mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(220, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 950 : 730, 580));
+        			mainGame->wHostPrepareR->setRelativePosition(mainGame->ResizeWin(gSoundManager->character[mainGame->choose_player] > 0 ? 930 : 700, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 1130 : 900, 580));
+					mainGame->wHostPrepareL->setRelativePosition(mainGame->ResizeWin(20, 120, 220, 580));
+				} else {
+        			mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(220, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 950 : 730, 520));
+					mainGame->wHostPrepareR->setRelativePosition(mainGame->ResizeWin(gSoundManager->character[mainGame->choose_player] > 0 ? 930 : 700, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 1130 : 900, 520));
+					mainGame->wHostPrepareL->setRelativePosition(mainGame->ResizeWin(20, 120, 220, 520));
+				}
 				break;
 			}
 			case BUTTON_SUBCHARACTER_SELECT: {
@@ -1820,6 +1840,16 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
                         mainGame->charactcomboselect(i, 2, sel);
                     }
                 }
+
+				if(mainGame->dInfo.opponames.size() + mainGame->dInfo.selfnames.size() >= 5) {
+					mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(220, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 950 : 730, 580));
+        			mainGame->wHostPrepareR->setRelativePosition(mainGame->ResizeWin(gSoundManager->character[mainGame->choose_player] > 0 ? 930 : 700, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 1130 : 900, 580));
+					mainGame->wHostPrepareL->setRelativePosition(mainGame->ResizeWin(20, 120, 220, 580));
+				} else {
+        			mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(220, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 950 : 730, 520));
+					mainGame->wHostPrepareR->setRelativePosition(mainGame->ResizeWin(gSoundManager->character[mainGame->choose_player] > 0 ? 930 : 700, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 1130 : 900, 520));
+					mainGame->wHostPrepareL->setRelativePosition(mainGame->ResizeWin(20, 120, 220, 520));
+				}
 				break;
 			}
 			case COMBOBOX_PICS: {

@@ -96,6 +96,7 @@ public:
         TURNEND,
 		WIN,
 		LOSE,
+		REINCARNATE,
 		//////kdiy/////
 		SUMMON,
 		ATTACK,

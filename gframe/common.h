@@ -92,6 +92,7 @@
 #define SUMMON_TYPE_XYZ      0x49000000
 #define SUMMON_TYPE_PENDULUM 0x4a000000
 #define SUMMON_TYPE_LINK     0x4c000000
+#define SUMMON_TYPE_MAXIMUM  0x4e000000
 ////kdiy//////////
 
 //Attributes

@@ -298,6 +298,7 @@ void SoundManager::RefreshChantsList() {
 		{CHANT::TURNEND,  EPRO_TEXT("turnend"sv)},
 		{CHANT::WIN,  EPRO_TEXT("cardwin"sv)},
 		{CHANT::LOSE,  EPRO_TEXT("lose"sv)},
+		{CHANT::REINCARNATE,    EPRO_TEXT("summon/reincarnate"sv)},
 		/////kdiy///////
 		{CHANT::SUMMON,    EPRO_TEXT("summon"sv)},
 		{CHANT::ATTACK,    EPRO_TEXT("attack"sv)},
@@ -365,6 +366,7 @@ void SoundManager::RefreshChantsList() {
 		if(chantType.first == CHANT::TURNEND) i = 17;
 		if(chantType.first == CHANT::WIN) i = 18;
 		if(chantType.first == CHANT::LOSE) i = 19;
+		if(chantType.first == CHANT::REINCARNATE) i = 20;
 		if(i == -1) continue;
 		for(int x = 1; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
 			int size = textcharacter[x-1].size();
@@ -382,7 +384,10 @@ void SoundManager::RefreshChantsList() {
 					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/attack"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][8][0], x);
 					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/defense"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][9][0], x);
 					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/advance"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][10][0], x);
-				} else if(chantType.first == CHANT::ATTACK) {
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/max"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][11][0], x);
+				} else if(chantType.first == CHANT::REINCARNATE)
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}"), textcharacter[x-1][j], chantType.second), Chantaction[8][x][12][0], x);
+				else if(chantType.first == CHANT::ATTACK) {
 					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/attack"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][0][0], x);
 					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/monster"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][1][0], x);
 					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/directattack"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][2][0], x);
@@ -419,7 +424,7 @@ void SoundManager::RefreshChantsList() {
 					for(int playno = 0; playno < CHARACTER_VOICE - 1; playno++)
 				    	RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/{}"), textcharacter[x-1][j], chantType.second, textcharacter[playno][0]), Chantaction[i][x][0][playno + 1], x);
 				}
-				if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM)
+				if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM || chantType.first == CHANT::REINCARNATE)
 					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card"), textcharacter[x-1][j], chantType.second), Chantcard[x], chantType.first, x);
 				if(chantType.first == CHANT::WIN)
 					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}"), textcharacter[x-1][j], chantType.second), Chantcard[x], chantType.first, x);
@@ -436,7 +441,10 @@ void SoundManager::RefreshChantsList() {
 					RefreshChants(epro::format(EPRO_TEXT("{}/{}/attack"), textcharacter[x-1][j], chantType.second), Chantaction2[i][x][8][0]);
 					RefreshChants(epro::format(EPRO_TEXT("{}/{}/defense"), textcharacter[x-1][j], chantType.second), Chantaction2[i][x][9][0]);
 					RefreshChants(epro::format(EPRO_TEXT("{}/{}/advance"), textcharacter[x-1][j], chantType.second), Chantaction2[i][x][10][0]);
-				} else if(chantType.first == CHANT::ATTACK) {
+					RefreshChants(epro::format(EPRO_TEXT("{}/{}/max"), textcharacter[x-1][j], chantType.second), Chantaction2[i][x][11][0]);
+				} else if(chantType.first == CHANT::REINCARNATE)
+					RefreshChants(epro::format(EPRO_TEXT("{}/{}"), textcharacter[x-1][j], chantType.second), Chantaction2[8][x][12][0]);
+				else if(chantType.first == CHANT::ATTACK) {
 					RefreshChants(epro::format(EPRO_TEXT("{}/{}/attack"), textcharacter[x-1][j], chantType.second), Chantaction2[i][x][0][0]);
 					RefreshChants(epro::format(EPRO_TEXT("{}/{}/monster"), textcharacter[x-1][j], chantType.second), Chantaction2[i][x][1][0]);
 					RefreshChants(epro::format(EPRO_TEXT("{}/{}/directattack"), textcharacter[x-1][j], chantType.second), Chantaction2[i][x][2][0]);
@@ -474,7 +482,7 @@ void SoundManager::RefreshChantsList() {
 				    	RefreshChants(epro::format(EPRO_TEXT("{}/{}/{}"), textcharacter[x-1][j], chantType.second, textcharacter[playno][0]), Chantaction2[i][x][0][playno + 1]);
 				}
 
-				if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM)
+				if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM || chantType.first == CHANT::REINCARNATE)
 					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card"), textcharacter[x-1][j], chantType.second), Chantcard2[x], chantType.first);
 				if(chantType.first == CHANT::WIN)
 					RefreshCards(epro::format(EPRO_TEXT("{}/{}"), textcharacter[x-1][j], chantType.second), Chantcard2[x], chantType.first);
@@ -761,7 +769,7 @@ void SoundManager::AddtoZipChantSPList(CHANT chant, uint16_t extra, size_t j, st
 		    			else
 			    			list3.push_back(file);
 					}
-			    	if((extra & 0x80) && j == 0) {
+			    	if((extra & 0x40) && j == 7) {
 				    	if(sound.find("+") == std::string::npos)
 		                	list.push_back(file);
 		            	else if(sound.find("+2") == std::string::npos)
@@ -769,7 +777,7 @@ void SoundManager::AddtoZipChantSPList(CHANT chant, uint16_t extra, size_t j, st
 		    			else
 			    			list3.push_back(file);
 					}
-			    	if((extra & 0x40) && j == 7) {
+			    	if((extra & 0x80) && j == 0) {
 				    	if(sound.find("+") == std::string::npos)
 		                	list.push_back(file);
 		            	else if(sound.find("+2") == std::string::npos)
@@ -801,7 +809,24 @@ void SoundManager::AddtoZipChantSPList(CHANT chant, uint16_t extra, size_t j, st
 		    			else
 			    			list3.push_back(file);
 					}
+			    	if((extra & 0x800) && j == 11) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else if(sound.find("+2") == std::string::npos)
+			    			list2.push_back(file);
+		    			else
+			    			list3.push_back(file);
+					}
                 	if((extra == 0) && j == 0) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else if(sound.find("+2") == std::string::npos)
+			    			list2.push_back(file);
+		    			else
+			    			list3.push_back(file);
+					}
+				} else if(chant == CHANT::REINCARNATE) {
+			    	if((extra & 0x1000) && j == 12) {
 				    	if(sound.find("+") == std::string::npos)
 		                	list.push_back(file);
 		            	else if(sound.find("+2") == std::string::npos)
@@ -844,14 +869,6 @@ void SoundManager::AddtoZipChantSPList(CHANT chant, uint16_t extra, size_t j, st
 			    			list3.push_back(file);
 					}
 			    	if((extra & 0x2) && j == 1) {
-				    	if(sound.find("+") == std::string::npos)
-		                	list.push_back(file);
-		            	else if(sound.find("+2") == std::string::npos)
-			    			list2.push_back(file);
-		    			else
-			    			list3.push_back(file);
-					}
-			    	if((extra & 0x800) && j == 2) {
 				    	if(sound.find("+") == std::string::npos)
 		                	list.push_back(file);
 		            	else if(sound.find("+2") == std::string::npos)
@@ -924,6 +941,14 @@ void SoundManager::AddtoZipChantSPList(CHANT chant, uint16_t extra, size_t j, st
 			    			list3.push_back(file);
 					}
 			    	if((extra & 0x400) && j == 11) {
+				    	if(sound.find("+") == std::string::npos)
+		                	list.push_back(file);
+		            	else if(sound.find("+2") == std::string::npos)
+			    			list2.push_back(file);
+		    			else
+			    			list3.push_back(file);
+					}
+			    	if((extra & 0x800) && j == 2) {
 				    	if(sound.find("+") == std::string::npos)
 		                	list.push_back(file);
 		            	else if(sound.find("+2") == std::string::npos)
@@ -1095,7 +1120,7 @@ void SoundManager::AddtoChantSPList(CHANT chant, uint16_t extra, size_t j, std::
 		    		else
 			    		list3.push_back(file);
 				}
-			    if((extra & 0x80) && j == 0) {
+			    if((extra & 0x40) && j == 7) {
 				    if(sound.find("+") == std::string::npos)
 		                list.push_back(file);
 		            else if(sound.find("+2") == std::string::npos)
@@ -1103,7 +1128,7 @@ void SoundManager::AddtoChantSPList(CHANT chant, uint16_t extra, size_t j, std::
 		    		else
 			    		list3.push_back(file);
 				}
-			    if((extra & 0x40) && j == 7) {
+			    if((extra & 0x80) && j == 0) {
 				    if(sound.find("+") == std::string::npos)
 		                list.push_back(file);
 		            else if(sound.find("+2") == std::string::npos)
@@ -1135,7 +1160,24 @@ void SoundManager::AddtoChantSPList(CHANT chant, uint16_t extra, size_t j, std::
 		    		else
 			    		list3.push_back(file);
 				}
+			    if((extra & 0x800) && j == 11) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else if(sound.find("+2") == std::string::npos)
+			    		list2.push_back(file);
+		    		else
+			    		list3.push_back(file);
+				}
                 if((extra == 0) && j == 0) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else if(sound.find("+2") == std::string::npos)
+			    		list2.push_back(file);
+		    		else
+			    		list3.push_back(file);
+				}
+			} else if(chant == CHANT::REINCARNATE) {
+			    if((extra & 0x1000) && j == 12) {
 				    if(sound.find("+") == std::string::npos)
 		                list.push_back(file);
 		            else if(sound.find("+2") == std::string::npos)
@@ -1178,14 +1220,6 @@ void SoundManager::AddtoChantSPList(CHANT chant, uint16_t extra, size_t j, std::
 			    		list3.push_back(file);
 				}
 			    if((extra & 0x2) && j == 1) {
-				    if(sound.find("+") == std::string::npos)
-		                list.push_back(file);
-		            else if(sound.find("+2") == std::string::npos)
-			    		list2.push_back(file);
-		    		else
-			    		list3.push_back(file);
-				}
-			    if((extra & 0x800) && j == 2) {
 				    if(sound.find("+") == std::string::npos)
 		                list.push_back(file);
 		            else if(sound.find("+2") == std::string::npos)
@@ -1258,6 +1292,14 @@ void SoundManager::AddtoChantSPList(CHANT chant, uint16_t extra, size_t j, std::
 			    		list3.push_back(file);
 				}
 			    if((extra & 0x400) && j == 11) {
+				    if(sound.find("+") == std::string::npos)
+		                list.push_back(file);
+		            else if(sound.find("+2") == std::string::npos)
+			    		list2.push_back(file);
+		    		else
+			    		list3.push_back(file);
+				}
+			    if((extra & 0x800) && j == 2) {
 				    if(sound.find("+") == std::string::npos)
 		                list.push_back(file);
 		            else if(sound.find("+2") == std::string::npos)
@@ -1538,6 +1580,7 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, const u
 	if(chant == CHANT::TURNEND) i = 17;
 	if(chant == CHANT::WIN) i = 18;
 	if(chant == CHANT::LOSE) i = 19;
+	if(chant == CHANT::REINCARNATE) i = 20;
 	if(i == -1) return false;
 	auto key = std::make_pair(chant, code);
 	auto key2 = std::make_pair(chant, code2);
