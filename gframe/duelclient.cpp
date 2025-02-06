@@ -952,8 +952,13 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		mainGame->btnHostPrepNotReady->setRelativePosition(mainGame->Scale<irr::s32>(170, 230 + x, 270, 255 + x));
 		mainGame->btnHostPrepStart->setRelativePosition(mainGame->Scale<irr::s32>(230, 330 + x, 340, 355 + x));
 		mainGame->btnHostPrepCancel->setRelativePosition(mainGame->Scale<irr::s32>(350, 330 + x, 460, 355 + x));
-		mainGame->wHostPrepareR->setRelativePosition(mainGame->ResizeWin(730, 120, 930, 520 + x));
-		mainGame->wHostPrepareL->setRelativePosition(mainGame->ResizeWin(20, 120, 220, 520 + x));
+		if(pkt.info.team1 + pkt.info.team2 >= 5) {
+			mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(120, 120, 850, 580));
+		} else {
+        	mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(120, 120, 850, 520));
+		}
+		mainGame->wHostPrepareR->setRelativePosition(irr::core::vector2di(mainGame->wHostPrepare->getAbsolutePosition().LowerRightCorner.X, mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
+		mainGame->wHostPrepareL->setRelativePosition(irr::core::vector2di(mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.X - 200, mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
         mainGame->gBot.window->setRelativePosition(irr::core::vector2di(mainGame->wHostPrepare->getAbsolutePosition().LowerRightCorner.X - 210, mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
 		//////kdiy/////////
 		for(int i = 0; i < 6; i++) {

@@ -2433,16 +2433,22 @@ void Game::PopulateGameHostWindows() {
 	//host(single)
     /////kdiy//////
 	//wHostPrepare = env->addWindow(Scale(270, 120, 750, 440), false, gDataManager->GetSysString(1250).data());
-	wHostPrepare = env->addWindow(Scale(220, 120, 730, 520), false, gDataManager->GetSysString(1250).data());
+	wHostPrepare = env->addWindow(Scale(120, 120, 850, 520), false, gDataManager->GetSysString(1250).data());
     /////kdiy//////
 	defaultStrings.emplace_back(wHostPrepare, 1250);
 	wHostPrepare->getCloseButton()->setVisible(false);
 	wHostPrepare->setVisible(false);
-	wHostPrepareR = env->addWindow(Scale(750, 120, 950, 440), false, gDataManager->GetSysString(1625).data());
+    /////kdiy//////
+	//wHostPrepareR = env->addWindow(Scale(750, 120, 950, 440), false, gDataManager->GetSysString(1625).data());
+	wHostPrepareR = env->addWindow(Scale(850, 120, 1050, 520), false, gDataManager->GetSysString(1625).data());
+    /////kdiy//////
 	defaultStrings.emplace_back(wHostPrepareR, 1625);
 	wHostPrepareR->getCloseButton()->setVisible(false);
 	wHostPrepareR->setVisible(false);
-	wHostPrepareL = env->addWindow(Scale(70, 120, 270, 440), false, gDataManager->GetSysString(1628).data());
+    /////kdiy//////
+	//wHostPrepareL = env->addWindow(Scale(70, 120, 270, 440), false, gDataManager->GetSysString(1628).data());
+	wHostPrepareL = env->addWindow(Scale(0, 120, 120, 520), false, gDataManager->GetSysString(1628).data());
+    /////kdiy//////
 	defaultStrings.emplace_back(wHostPrepareL, 1628);
 	wHostPrepareL->getCloseButton()->setVisible(false);
 	wHostPrepareL->setVisible(false);
@@ -2491,14 +2497,14 @@ void Game::PopulateGameHostWindows() {
 		chkHostPrepReady[i]->setEnabled(false);
 	}
 	///////kdiy/////////
-	btnCharacter = irr::gui::CGUIImageButton::addImageButton(env, Scale(520, 10, 720, 310), wHostPrepare, BUTTON_CHARACTER);
+	btnCharacter = irr::gui::CGUIImageButton::addImageButton(env, Scale(520, 40, 720, 340), wHostPrepare, BUTTON_CHARACTER);
 	btnCharacter->setDrawBorder(false);
 	btnCharacter->setImageSize(Scale(0, 0, 200, 300).getSize());
-	btnCharacterSelect = irr::gui::CGUIImageButton::addImageButton(env, Scale(520, 310, 540, 330), wHostPrepare, BUTTON_CHARACTER_SELECT);
+	btnCharacterSelect = irr::gui::CGUIImageButton::addImageButton(env, Scale(520, 340, 540, 370), wHostPrepare, BUTTON_CHARACTER_SELECT);
 	btnCharacterSelect->setImageSize(Scale(0, 0, 20, 20).getSize());
 	btnCharacterSelect->setImage(imageManager.tcharacterselect);
 	btnCharacterSelect->setDrawBorder(false);
-	btnCharacterSelect2 = irr::gui::CGUIImageButton::addImageButton(env, Scale(700, 310, 720, 330), wHostPrepare, BUTTON_CHARACTER_SELECT2);
+	btnCharacterSelect2 = irr::gui::CGUIImageButton::addImageButton(env, Scale(700, 340, 720, 370), wHostPrepare, BUTTON_CHARACTER_SELECT2);
 	btnCharacterSelect2->setImageSize(Scale(0, 0, 20, 20).getSize());
 	btnCharacterSelect2->setImage(imageManager.tcharacterselect2);
 	btnCharacterSelect2->setDrawBorder(false);
@@ -6443,14 +6449,12 @@ void Game::OnResize() {
 		// wHostPrepareL->setRelativePosition(ResizeWin(70, 120, 270, 440));
 	// }
 	if(dInfo.opponames.size() + dInfo.selfnames.size() >= 5) {
-		wHostPrepare->setRelativePosition(ResizeWin(220, 120, gSoundManager->character[choose_player] > 0 ? 950 : 730, 580));
-        wHostPrepareR->setRelativePosition(ResizeWin(gSoundManager->character[choose_player] > 0 ? 930 : 700, 120, gSoundManager->character[choose_player] > 0 ? 1130 : 900, 580));
-		wHostPrepareL->setRelativePosition(ResizeWin(20, 120, 220, 580));
+		wHostPrepare->setRelativePosition(ResizeWin(120, 120, 850, 580));
 	} else {
-        wHostPrepare->setRelativePosition(ResizeWin(220, 120, gSoundManager->character[choose_player] > 0 ? 950 : 730, 520));
-		wHostPrepareR->setRelativePosition(ResizeWin(gSoundManager->character[choose_player] > 0 ? 930 : 700, 120, gSoundManager->character[choose_player] > 0 ? 1130 : 900, 520));
-		wHostPrepareL->setRelativePosition(ResizeWin(20, 120, 220, 520));
+        wHostPrepare->setRelativePosition(ResizeWin(120, 120, 850, 520));
 	}
+	wHostPrepareR->setRelativePosition(irr::core::vector2di(wHostPrepare->getAbsolutePosition().LowerRightCorner.X, wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
+	wHostPrepareL->setRelativePosition(irr::core::vector2di(wHostPrepare->getAbsolutePosition().UpperLeftCorner.X - 200, wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
 	/////kdiy/////
 	wRules->setRelativePosition(ResizeWin(630, 100, 1000, 310));
 	wReplay->setRelativePosition(ResizeWin(220, 100, 800, 520));

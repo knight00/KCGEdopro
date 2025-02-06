@@ -553,14 +553,12 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				gSoundManager->PlayStartupChant(mainGame->choose_player, (mainGame->choose_player > team1count - 1) ? team1 : team2);
 
 				if(mainGame->dInfo.opponames.size() + mainGame->dInfo.selfnames.size() >= 5) {
-					mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(220, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 950 : 730, 580));
-        			mainGame->wHostPrepareR->setRelativePosition(mainGame->ResizeWin(gSoundManager->character[mainGame->choose_player] > 0 ? 930 : 700, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 1130 : 900, 580));
-					mainGame->wHostPrepareL->setRelativePosition(mainGame->ResizeWin(20, 120, 220, 580));
+					mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(120, 120, 850, 580));
 				} else {
-        			mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(220, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 950 : 730, 520));
-					mainGame->wHostPrepareR->setRelativePosition(mainGame->ResizeWin(gSoundManager->character[mainGame->choose_player] > 0 ? 930 : 700, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 1130 : 900, 520));
-					mainGame->wHostPrepareL->setRelativePosition(mainGame->ResizeWin(20, 120, 220, 520));
+        			mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(120, 120, 850, 520));
 				}
+				mainGame->wHostPrepareR->setRelativePosition(irr::core::vector2di(mainGame->wHostPrepare->getAbsolutePosition().LowerRightCorner.X, mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
+				mainGame->wHostPrepareL->setRelativePosition(irr::core::vector2di(mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.X - 200, mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
 				break;
 			}
 			case BUTTON_CHARACTER_SELECT: {
@@ -594,14 +592,12 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				gSoundManager->PlayStartupChant(mainGame->choose_player, (mainGame->choose_player > team1count - 1) ? team1 : team2);
 
 				if(mainGame->dInfo.opponames.size() + mainGame->dInfo.selfnames.size() >= 5) {
-					mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(220, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 950 : 730, 580));
-        			mainGame->wHostPrepareR->setRelativePosition(mainGame->ResizeWin(gSoundManager->character[mainGame->choose_player] > 0 ? 930 : 700, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 1130 : 900, 580));
-					mainGame->wHostPrepareL->setRelativePosition(mainGame->ResizeWin(20, 120, 220, 580));
+					mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(120, 120, 850, 580));
 				} else {
-        			mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(220, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 950 : 730, 520));
-					mainGame->wHostPrepareR->setRelativePosition(mainGame->ResizeWin(gSoundManager->character[mainGame->choose_player] > 0 ? 930 : 700, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 1130 : 900, 520));
-					mainGame->wHostPrepareL->setRelativePosition(mainGame->ResizeWin(20, 120, 220, 520));
+        			mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(120, 120, 850, 520));
 				}
+				mainGame->wHostPrepareR->setRelativePosition(irr::core::vector2di(mainGame->wHostPrepare->getAbsolutePosition().LowerRightCorner.X, mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
+				mainGame->wHostPrepareL->setRelativePosition(irr::core::vector2di(mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.X - 200, mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
 				break;
 			}
 			case BUTTON_SUBCHARACTER_SELECT: {
@@ -1841,15 +1837,14 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
                     }
                 }
 
+				int player = gSoundManager->character[mainGame->choose_player];
 				if(mainGame->dInfo.opponames.size() + mainGame->dInfo.selfnames.size() >= 5) {
-					mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(220, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 950 : 730, 580));
-        			mainGame->wHostPrepareR->setRelativePosition(mainGame->ResizeWin(gSoundManager->character[mainGame->choose_player] > 0 ? 930 : 700, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 1130 : 900, 580));
-					mainGame->wHostPrepareL->setRelativePosition(mainGame->ResizeWin(20, 120, 220, 580));
+					mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(120, 120, 850, 580));
 				} else {
-        			mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(220, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 950 : 730, 520));
-					mainGame->wHostPrepareR->setRelativePosition(mainGame->ResizeWin(gSoundManager->character[mainGame->choose_player] > 0 ? 930 : 700, 120, gSoundManager->character[mainGame->choose_player] > 0 ? 1130 : 900, 520));
-					mainGame->wHostPrepareL->setRelativePosition(mainGame->ResizeWin(20, 120, 220, 520));
+        			mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(120, 120, 850, 520));
 				}
+				mainGame->wHostPrepareR->setRelativePosition(irr::core::vector2di(mainGame->wHostPrepare->getAbsolutePosition().LowerRightCorner.X, mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
+				mainGame->wHostPrepareL->setRelativePosition(irr::core::vector2di(mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.X - 200, mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
 				break;
 			}
 			case COMBOBOX_PICS: {
