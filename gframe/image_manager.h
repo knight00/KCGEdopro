@@ -104,7 +104,8 @@ public:
 	irr::core::rect<irr::s32> head_size[CHARACTER_STORY+1]; //story icon
 	irr::core::rect<irr::s32> modehead_size[6];
 	std::vector<epro::path_string> lpcharacter[CHARACTER_VOICE][3][4]; //lpicon path, 1st: character(0=no character), 2nd: subcharacter, 3rd: emotion(0=normal, 1=damage, 2=advan, 3=surprise)
-	std::vector<epro::path_string> imgcharacter[CHARACTER_VOICE][3][2]; //bodycharacter path
+	std::vector<epro::path_string> cutincharacter[CHARACTER_VOICE][3][3]; //cutin path, 1st: character(0=no character), 2nd: subcharacter, 3rd: emotion(0=damage, 1=advan, 2=surprise)
+	std::vector<epro::path_string> imgcharacter[CHARACTER_VOICE][3][2]; //bodycharacter path, 1st: character(0=no character), 2nd: subcharacter, 3rd: emotion(0=normal, 1=damage)
 	bool GetTextureCardHD(uint32_t code);
 	std::tuple<irr::video::ITexture*, irr::video::SColor> GetTextureCloseup(uint32_t code, uint32_t alias = 0, bool is_closeup=false);
 	std::tuple<irr::video::ITexture*, irr::video::SColor> GetTextureCloseupCode(uint32_t code, bool is_closeup=false);
@@ -216,6 +217,7 @@ public:
 	A(name[CHARACTER_VOICE][3])
 	A(lpicon[CHARACTER_VOICE][3][4])
 	A(bodycharacter[CHARACTER_VOICE][3][3])
+	A(cutin[CHARACTER_VOICE][3][3])
 	A(cardchant0)
 	A(cardchant1)
 	A(cardchant2)
@@ -224,6 +226,9 @@ public:
 	A(cardchant02)
 	A(tcharacterselect)
 	A(tcharacterselect2)
+	A(tsubcharacterselect)
+	A(tsubcharacterselect2)
+	A(tsubcharacterselect3)
 	A(QQ)
 	A(modeBody[CHAPTER])
     A(head[CHARACTER_STORY+1]) //story icon

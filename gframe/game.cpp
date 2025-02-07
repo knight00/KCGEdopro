@@ -1635,13 +1635,18 @@ void Game::Initialize() {
 	btnsubCharacterSelect_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(620, 45, 645, 70), wCharacterReplay, BUTTON_SUBCHARACTER_SELECT);
 	btnsubCharacterSelect_replay->setDrawBorder(true);
 	btnsubCharacterSelect_replay->setImageSize(Scale(0, 0, 25, 25).getSize());
-	btnsubCharacterSelect_replay->setImage(imageManager.tcharacterselect2);
-    //btnsubCharacterSelect_replay->setVisible(false);
-	btnsubCharacterSelect2_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(620, 70, 645, 95), wCharacterReplay, BUTTON_SUBCHARACTER_SELECT2);
+	btnsubCharacterSelect_replay->setImage(imageManager.tsubcharacterselect);
+    btnsubCharacterSelect_replay->setVisible(false);
+	btnsubCharacterSelect2_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(620, 75, 645, 100), wCharacterReplay, BUTTON_SUBCHARACTER_SELECT2);
 	btnsubCharacterSelect2_replay->setDrawBorder(true);
 	btnsubCharacterSelect2_replay->setImageSize(Scale(0, 0, 25, 25).getSize());
-	btnsubCharacterSelect2_replay->setImage(imageManager.tcharacterselect2);
-    //btnsubCharacterSelect2_replay->setVisible(false);
+	btnsubCharacterSelect2_replay->setImage(imageManager.tsubcharacterselect2);
+    btnsubCharacterSelect2_replay->setVisible(false);
+	btnsubCharacterSelect3_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(620, 105, 645, 130), wCharacterReplay, BUTTON_SUBCHARACTER_SELECT3);
+	btnsubCharacterSelect3_replay->setDrawBorder(true);
+	btnsubCharacterSelect3_replay->setImageSize(Scale(0, 0, 25, 25).getSize());
+	btnsubCharacterSelect3_replay->setImage(imageManager.tsubcharacterselect3);
+    btnsubCharacterSelect3_replay->setVisible(false);
 
 
 	//main meun

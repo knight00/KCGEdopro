@@ -551,14 +551,19 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				for(uint8_t i = team1count; i < team1count + team2count; i++)
 					team2.push_back(i);
 				gSoundManager->PlayStartupChant(mainGame->choose_player, (mainGame->choose_player > team1count - 1) ? team1 : team2);
-
-				if(mainGame->dInfo.opponames.size() + mainGame->dInfo.selfnames.size() >= 5) {
-					mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(120, 120, 850, 580));
+				
+				if(player > 0 && gSoundManager->textcharacter[player].size() > 1) {
+					mainGame->btnsubCharacterSelect_replay->setVisible(true);
+					mainGame->btnsubCharacterSelect2_replay->setVisible(true);
+					if(gSoundManager->textcharacter[player].size() > 2)
+						mainGame->btnsubCharacterSelect3_replay->setVisible(true);
+					else
+						mainGame->btnsubCharacterSelect3_replay->setVisible(false);
 				} else {
-        			mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(120, 120, 850, 520));
+					mainGame->btnsubCharacterSelect_replay->setVisible(false);
+					mainGame->btnsubCharacterSelect2_replay->setVisible(false);
+					mainGame->btnsubCharacterSelect3_replay->setVisible(false);
 				}
-				mainGame->wHostPrepareR->setRelativePosition(irr::core::vector2di(mainGame->wHostPrepare->getAbsolutePosition().LowerRightCorner.X, mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
-				mainGame->wHostPrepareL->setRelativePosition(irr::core::vector2di(mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.X - 200, mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
 				break;
 			}
 			case BUTTON_CHARACTER_SELECT: {
@@ -590,14 +595,19 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				for(uint8_t i = team1count; i < team1count + team2count; i++)
 					team2.push_back(i);
 				gSoundManager->PlayStartupChant(mainGame->choose_player, (mainGame->choose_player > team1count - 1) ? team1 : team2);
-
-				if(mainGame->dInfo.opponames.size() + mainGame->dInfo.selfnames.size() >= 5) {
-					mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(120, 120, 850, 580));
+				
+				if(player > 0 && gSoundManager->textcharacter[player].size() > 1) {
+					mainGame->btnsubCharacterSelect_replay->setVisible(true);
+					mainGame->btnsubCharacterSelect2_replay->setVisible(true);
+					if(gSoundManager->textcharacter[player].size() > 2)
+						mainGame->btnsubCharacterSelect3_replay->setVisible(true);
+					else
+						mainGame->btnsubCharacterSelect3_replay->setVisible(false);
 				} else {
-        			mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(120, 120, 850, 520));
+					mainGame->btnsubCharacterSelect_replay->setVisible(false);
+					mainGame->btnsubCharacterSelect2_replay->setVisible(false);
+					mainGame->btnsubCharacterSelect3_replay->setVisible(false);
 				}
-				mainGame->wHostPrepareR->setRelativePosition(irr::core::vector2di(mainGame->wHostPrepare->getAbsolutePosition().LowerRightCorner.X, mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
-				mainGame->wHostPrepareL->setRelativePosition(irr::core::vector2di(mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.X - 200, mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
 				break;
 			}
 			case BUTTON_SUBCHARACTER_SELECT: {
@@ -1838,13 +1848,18 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
                 }
 
 				int player = gSoundManager->character[mainGame->choose_player];
-				if(mainGame->dInfo.opponames.size() + mainGame->dInfo.selfnames.size() >= 5) {
-					mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(120, 120, 850, 580));
+				if(player > 0 && gSoundManager->textcharacter[player].size() > 1) {
+					mainGame->btnsubCharacterSelect_replay->setVisible(true);
+					mainGame->btnsubCharacterSelect2_replay->setVisible(true);
+					if(gSoundManager->textcharacter[player].size() > 2)
+						mainGame->btnsubCharacterSelect3_replay->setVisible(true);
+					else
+						mainGame->btnsubCharacterSelect3_replay->setVisible(false);
 				} else {
-        			mainGame->wHostPrepare->setRelativePosition(mainGame->ResizeWin(120, 120, 850, 520));
+					mainGame->btnsubCharacterSelect_replay->setVisible(false);
+					mainGame->btnsubCharacterSelect2_replay->setVisible(false);
+					mainGame->btnsubCharacterSelect3_replay->setVisible(false);
 				}
-				mainGame->wHostPrepareR->setRelativePosition(irr::core::vector2di(mainGame->wHostPrepare->getAbsolutePosition().LowerRightCorner.X, mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
-				mainGame->wHostPrepareL->setRelativePosition(irr::core::vector2di(mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.X - 200, mainGame->wHostPrepare->getAbsolutePosition().UpperLeftCorner.Y));
 				break;
 			}
 			case COMBOBOX_PICS: {
