@@ -227,8 +227,13 @@ restart:
 			//ktest/////
 			mainGame->StopVideo(false, true);
             mainGame->isEvent = false;
-            mainGame->damcharacter[0] = false;
-            mainGame->damcharacter[1] = false;
+        	mainGame->bodycharacter[0] = 0;
+        	mainGame->bodycharacter[1] = 0;
+        	mainGame->cutincharacter[0] = 0;
+        	mainGame->cutincharacter[1] = 0;
+        	mainGame->lpcharacter[0] = 0;
+        	mainGame->lpcharacter[1] = 0;
+			mainGame->chantsound.stop();
             gSoundManager->soundcount.clear();
 			////kdiy////////
 			if(!hand_test) {
@@ -383,8 +388,13 @@ restart:
 		//ktest/////
 		mainGame->StopVideo(false, true);
         mainGame->isEvent = false;
-        mainGame->damcharacter[0] = false;
-        mainGame->damcharacter[1] = false;
+        mainGame->bodycharacter[0] = 0;
+        mainGame->bodycharacter[1] = 0;
+        mainGame->cutincharacter[0] = 0;
+        mainGame->cutincharacter[1] = 0;
+        mainGame->lpcharacter[0] = 0;
+        mainGame->lpcharacter[1] = 0;
+		mainGame->chantsound.stop();
         gSoundManager->soundcount.clear();
 		////kdiy////////
 		if(!hand_test) {

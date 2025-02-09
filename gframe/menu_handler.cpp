@@ -498,6 +498,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				for(int i = 0; i < 6; ++i) {
                     if(elem == mainGame->icon[i])
                         mainGame->choose_player = i;
+                    if(elem == mainGame->icon2[i])
+                        mainGame->choose_player = i;
                 }
 				int player = gSoundManager->character[mainGame->choose_player];
 				mainGame->btnCharacter->setImage(mainGame->imageManager.bodycharacter[player][gSoundManager->subcharacter[player]][0]);
@@ -509,9 +511,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				auto& replay = ReplayMode::cur_replay;
                 std::vector<uint8_t> team1, team2;
 				int team1count = mainGame->dInfo.team1, team2count = mainGame->dInfo.team2;
-                if(elem == mainGame->btnCharacter) {
-                    mainGame->choose_player = -1;
-                } else {
+                if(elem != mainGame->btnCharacter) {
 				    team1count = replay.GetPlayersCount(0);
 				    team2count = replay.GetPlayersCount(1);
 				}
@@ -552,10 +552,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					team2.push_back(i);
 				gSoundManager->PlayStartupChant(mainGame->choose_player, (mainGame->choose_player > team1count - 1) ? team1 : team2);
 				
-				if(player > 0 && gSoundManager->textcharacter[player].size() > 1) {
+				if(player > 0 && gSoundManager->textcharacter[player-1].size() > 1) {
 					mainGame->btnsubCharacterSelect_replay->setVisible(true);
 					mainGame->btnsubCharacterSelect2_replay->setVisible(true);
-					if(gSoundManager->textcharacter[player].size() > 2)
+					if(gSoundManager->textcharacter[player-1].size() > 2)
 						mainGame->btnsubCharacterSelect3_replay->setVisible(true);
 					else
 						mainGame->btnsubCharacterSelect3_replay->setVisible(false);
@@ -596,10 +596,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					team2.push_back(i);
 				gSoundManager->PlayStartupChant(mainGame->choose_player, (mainGame->choose_player > team1count - 1) ? team1 : team2);
 				
-				if(player > 0 && gSoundManager->textcharacter[player].size() > 1) {
+				if(player > 0 && gSoundManager->textcharacter[player-1].size() > 1) {
 					mainGame->btnsubCharacterSelect_replay->setVisible(true);
 					mainGame->btnsubCharacterSelect2_replay->setVisible(true);
-					if(gSoundManager->textcharacter[player].size() > 2)
+					if(gSoundManager->textcharacter[player-1].size() > 2)
 						mainGame->btnsubCharacterSelect3_replay->setVisible(true);
 					else
 						mainGame->btnsubCharacterSelect3_replay->setVisible(false);
@@ -1848,10 +1848,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
                 }
 
 				int player = gSoundManager->character[mainGame->choose_player];
-				if(player > 0 && gSoundManager->textcharacter[player].size() > 1) {
+				if(player > 0 && gSoundManager->textcharacter[player-1].size() > 1) {
 					mainGame->btnsubCharacterSelect_replay->setVisible(true);
 					mainGame->btnsubCharacterSelect2_replay->setVisible(true);
-					if(gSoundManager->textcharacter[player].size() > 2)
+					if(gSoundManager->textcharacter[player-1].size() > 2)
 						mainGame->btnsubCharacterSelect3_replay->setVisible(true);
 					else
 						mainGame->btnsubCharacterSelect3_replay->setVisible(false);

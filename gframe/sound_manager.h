@@ -42,6 +42,7 @@ public:
         NEGATE,
         ATTACK_DISABLED,
         POS_CHANGE,
+		CUTIN,
         ///kdiy////////
 		ACTIVATE,
 		SET,

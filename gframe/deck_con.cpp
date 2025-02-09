@@ -844,13 +844,13 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
                     if(type & TYPE_FUSION) extra |= 0x1;
                     if(type & TYPE_RITUAL) extra |= 0x10;
 					if((pointer->level >= 5) && !(type & (TYPE_PENDULUM | TYPE_LINK | TYPE_XYZ | TYPE_SYNCHRO | TYPE_FUSION | TYPE_RITUAL | TYPE_SPSUMMON))) extra |= 0x400;
-                    gSoundManager->PlayChant(SoundManager::CHANT::SUMMON, hovered_code, code2, 0, extra);
+                    gSoundManager->PlayChant(SoundManager::CHANT::SUMMON, hovered_code, code2, 0, 0, extra);
                 } else if(mainGame->cardbutton[1]->isPressed()) {
                     extra = 0x1;
-				    gSoundManager->PlayChant(SoundManager::CHANT::ATTACK, hovered_code, code2, 0, extra);
+				    gSoundManager->PlayChant(SoundManager::CHANT::ATTACK, hovered_code, code2, 0, 0, extra);
                 } else if(mainGame->cardbutton[2]->isPressed()) {
                     extra = 0x801;
-                    gSoundManager->PlayChant(SoundManager::CHANT::ACTIVATE, hovered_code, code2, 0, extra);
+                    gSoundManager->PlayChant(SoundManager::CHANT::ACTIVATE, hovered_code, code2, 0, 0, extra);
                 }
             } else if(mainGame->cardbutton[2]->isPressed()) {
                 extra = 0x1;
@@ -868,7 +868,7 @@ bool DeckBuilder::OnEvent(const irr::SEvent& event) {
                     if(pointer->type & TYPE_CONTINUOUS) extra |= 0x100;
                     if(pointer->type & TYPE_COUNTER) extra |= 0x200;
                 }
-				gSoundManager->PlayChant(SoundManager::CHANT::ACTIVATE, hovered_code, code2, 0, extra);
+				gSoundManager->PlayChant(SoundManager::CHANT::ACTIVATE, hovered_code, code2, 0, 0, extra);
             }
 			break;
 		}

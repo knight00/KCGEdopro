@@ -1598,7 +1598,7 @@ void Game::Initialize() {
     btnCharacterSelect_replayclose = env->addButton(Scale(40, 65, 90, 90), wCharacterReplay, BUTTON_CHARACTEROK_REPLAY, gDataManager->GetSysString(1211).data());
 	defaultStrings.emplace_back(btnCharacterSelect_replayclose, 1211);
     for(int i = 0; i < 6; ++i) {
-		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 35, 70, 75 + i * 35), wCharacterReplay, -1);
+		icon2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(40, 45 + i * 35, 70, 75 + i * 35), wCharacterReplay, BUTTON_ICON);
 		icon2[i]->setDrawBorder(true);
 		icon2[i]->setImageSize(Scale(0, 0, 30, 30).getSize());
 		icon2[i]->setImage(0);
@@ -3720,8 +3720,8 @@ bool Game::MainLoop() {
 			    imageManager.bodycharacter[gSoundManager->character[i]][gSoundManager->subcharacter[gSoundManager->character[i]]][1] = 0;
             }
 		}
-		avatarbutton[0]->setImage(damcharacter[0] == false ? imageManager.bodycharacter[gSoundManager->character[avataricon1]][gSoundManager->subcharacter[gSoundManager->character[avataricon1]]][0] : imageManager.bodycharacter[gSoundManager->character[avataricon1]][gSoundManager->subcharacter[gSoundManager->character[avataricon1]]][1]);
-		avatarbutton[1]->setImage(damcharacter[1] == false ? imageManager.bodycharacter[gSoundManager->character[avataricon2]][gSoundManager->subcharacter[gSoundManager->character[avataricon2]]][0] : imageManager.bodycharacter[gSoundManager->character[avataricon2]][gSoundManager->subcharacter[gSoundManager->character[avataricon2]]][1]);
+		avatarbutton[0]->setImage(imageManager.bodycharacter[gSoundManager->character[avataricon1]][gSoundManager->subcharacter[gSoundManager->character[avataricon1]]][bodycharacter[0] > 2 ? 0 : bodycharacter[0]]);
+		avatarbutton[1]->setImage(imageManager.bodycharacter[gSoundManager->character[avataricon2]][gSoundManager->subcharacter[gSoundManager->character[avataricon2]]][bodycharacter[1] > 2 ? 0 : bodycharacter[1]]);
 #ifdef VIP
         if((dInfo.isInDuel || is_building) && !mode->isMode) {
             if(gSoundManager->character[avataricon1] > 0)
@@ -6203,9 +6203,9 @@ void Game::ReloadTexture() {
 			for(auto num : imageManager.ImageList[i]) {
 				auto file = epro::format(EPRO_TEXT("./textures/{}"), num);
 				if(!Utils::FileExists(file)) continue;
-				auto filename = Utils::GetFileName(file, true).data();
+				const wchar_t* filename = Utils::ToUnicodeIfNeeded(Utils::GetFileName(file, true)).data();
 				uint32_t j = gSettings.cbName_texture[i]->addItem(filename);
-				if(filepath == filename)
+				if(filepath == std::wstring(filename))
 				    gSettings.cbName_texture[i]->setSelected(j);
 			}
 		} else {
@@ -6221,8 +6221,8 @@ void Game::ReloadTexture() {
 					    f3 = true;
 				}
 				if(f1 && f2 && f3) {
-					uint32_t j = gSettings.cbName_texture[i]->addItem(_folder.data());
-					if(filepath == _folder)
+					uint32_t j = gSettings.cbName_texture[i]->addItem(Utils::ToUnicodeIfNeeded(_folder).data());
+					if(filepath == Utils::ToUnicodeIfNeeded(_folder))
 				        gSettings.cbName_texture[i]->setSelected(j);
 				}
 			}

@@ -125,7 +125,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 #endif
 				int character = mainGame->dInfo.current_player[0];
 				if(!mainGame->dInfo.isTeam1) character = mainGame->dInfo.current_player[0] + mainGame->dInfo.team1;
-				gSoundManager->PlayChant(SoundManager::CHANT::BORED, 0, 0, character, 0, 1 - character);
+				gSoundManager->PlayChant(SoundManager::CHANT::BORED, 0, 0, 0, character, 0, 1 - character);
 				break;
 			}
 			case BUTTON_AVATAR_BORED1: {
@@ -134,7 +134,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 #endif
 				int character = mainGame->dInfo.current_player[1];
 				if(mainGame->dInfo.isTeam1) character = mainGame->dInfo.current_player[1] + mainGame->dInfo.team1;
-				gSoundManager->PlayChant(SoundManager::CHANT::BORED, 0, 0, character, 0, 1 - character);
+				gSoundManager->PlayChant(SoundManager::CHANT::BORED, 0, 0, 1, character, 0, 1 - character);
 				break;
 			}
 			case BUTTON_ENTERTAUNMENT_PLOAT_CLOSE: { //story start after click ok
@@ -230,8 +230,13 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				//ktest/////
 				mainGame->StopVideo(false, true);
                 mainGame->isEvent = false;
-                mainGame->damcharacter[0] = false;
-                mainGame->damcharacter[1] = false;
+        		mainGame->bodycharacter[0] = 0;
+        		mainGame->bodycharacter[1] = 0;
+        		mainGame->cutincharacter[0] = 0;
+        		mainGame->cutincharacter[1] = 0;
+        		mainGame->lpcharacter[0] = 0;
+        		mainGame->lpcharacter[1] = 0;
+				mainGame->chantsound.stop();
                 gSoundManager->soundcount.clear();
 				if(mainGame->dInfo.isReplay) {
 					ReplayMode::StopReplay();
@@ -298,9 +303,13 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				//ktest/////
 				mainGame->StopVideo(false, true);
                 mainGame->isEvent = false;
+        		mainGame->bodycharacter[0] = 0;
+        		mainGame->bodycharacter[1] = 0;
+        		mainGame->cutincharacter[0] = 0;
+        		mainGame->cutincharacter[1] = 0;
+        		mainGame->lpcharacter[0] = 0;
+        		mainGame->lpcharacter[1] = 0;
 				mainGame->chantsound.stop();
-                mainGame->damcharacter[0] = false;
-                mainGame->damcharacter[1] = false;
                 gSoundManager->soundcount.clear();
 			    ////kdiy////////
 				if(mainGame->dInfo.isSingleMode)
@@ -2292,7 +2301,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				if(selected >= mainGame->gSettings.cbName_texture[mainGame->gSettings.clickedindex]->getItemCount() - 1) selected = 0;
 				else selected++;
 				mainGame->gSettings.cbName_texture[mainGame->gSettings.clickedindex]->setSelected(selected);
-				std::wstring filepath = epro::format(EPRO_TEXT("{}"), mainGame->gSettings.cbName_texture[mainGame->gSettings.clickedindex]->getItem(selected));
+				std::wstring filepath = std::wstring(mainGame->gSettings.cbName_texture[mainGame->gSettings.clickedindex]->getItem(selected));
 				auto tTexture = mainGame->imageManager.UpdatetTexture(mainGame->gSettings.clickedindex, filepath);
 				if(tTexture != nullptr) {
 					mainGame->gSettings.btnrandomtexture->setImage(tTexture);
@@ -2314,7 +2323,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				if(selected == 0) selected = mainGame->gSettings.cbName_texture[mainGame->gSettings.clickedindex]->getItemCount() - 1;
 				else selected--;
 				mainGame->gSettings.cbName_texture[mainGame->gSettings.clickedindex]->setSelected(selected);
-				std::wstring filepath = epro::format(EPRO_TEXT("{}"), mainGame->gSettings.cbName_texture[mainGame->gSettings.clickedindex]->getItem(selected));
+				std::wstring filepath = std::wstring(mainGame->gSettings.cbName_texture[mainGame->gSettings.clickedindex]->getItem(selected));
 				auto tTexture = mainGame->imageManager.UpdatetTexture(mainGame->gSettings.clickedindex, filepath);
 				if(tTexture != nullptr) {
 					mainGame->gSettings.btnrandomtexture->setImage(tTexture);
@@ -2587,7 +2596,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 						selected = 0;
 						mainGame->gSettings.cbName_texture[k]->setSelected(0);
 					}
-					if(filepath == L"") filepath = epro::format(EPRO_TEXT("{}"), mainGame->gSettings.cbName_texture[k]->getItem(0));
+					if(filepath == L"") filepath = std::wstring(mainGame->gSettings.cbName_texture[k]->getItem(0));
 					auto tTexture = mainGame->imageManager.UpdatetTexture(k, filepath);
 					if(tTexture != nullptr) {
 						mainGame->gSettings.btnrandomtexture->setImage(tTexture);
@@ -2839,7 +2848,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 							selected = 0;
 							mainGame->gSettings.cbName_texture[k]->setSelected(0);
 						}
-						filepath = epro::format(EPRO_TEXT("{}"), mainGame->gSettings.cbName_texture[i]->getItem(selected));
+						filepath = std::wstring(mainGame->gSettings.cbName_texture[i]->getItem(selected));
 						if(i == 0) {
 							visible = gGameConfig->randombg;
 							gGameConfig->randombgtexture = filepath;

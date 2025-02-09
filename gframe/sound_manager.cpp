@@ -163,6 +163,7 @@ void SoundManager::RefreshSoundsList() {
 		{NEXT_TURN, EPRO_TEXT("./sound/nextturn"sv)},
 		{PHASE, EPRO_TEXT("./sound/phase"sv)},
 		{PLAYER_ENTER, EPRO_TEXT("./sound/playerenter"sv)},
+		{CUTIN, EPRO_TEXT("./sound/cutin"sv)},
 		{CHAT, EPRO_TEXT("./sound/chatmessage"sv)}
         /////kdiy///////
 	};
@@ -1544,7 +1545,7 @@ bool SoundManager::PlayChants(CHANT chant, std::string file, const uint8_t side,
 }
 void SoundManager::PlayStartupChant(uint8_t player, std::vector<uint8_t> team) {
 	int playerno = (std::uniform_int_distribution<>(0, team.size() - 1))(rnd);
-	PlayChant(CHANT::STARTUP, 0, 0, player, 0, team[playerno]);
+	PlayChant(CHANT::STARTUP, 0, 0, 0, player, 0, team[playerno]);
 }
 //bool SoundManager::PlayChant(CHANT chant, uint32_t code) {
 bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, const uint8_t side, uint8_t player, uint16_t extra, uint8_t player2) {

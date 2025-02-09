@@ -484,8 +484,15 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 				mainGame->dField.Clear();
 				mainGame->is_building = false;
                 ////kdiy////////
-                mainGame->damcharacter[0] = false;
-                mainGame->damcharacter[1] = false;
+				mainGame->StopVideo(false, true);
+            	mainGame->isEvent = false;
+        		mainGame->bodycharacter[0] = 0;
+        		mainGame->bodycharacter[1] = 0;
+        		mainGame->cutincharacter[0] = 0;
+        		mainGame->cutincharacter[1] = 0;
+        		mainGame->lpcharacter[0] = 0;
+        		mainGame->lpcharacter[1] = 0;
+				mainGame->chantsound.stop();
                 gSoundManager->soundcount.clear();
                 ////kdiy////////
 				mainGame->device->setEventReceiver(&mainGame->menuHandler);
@@ -752,8 +759,12 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		mainGame->StopVideo(false, true);
         for(int i = 0; i < 5; ++i)
             mainGame->selectedcard[i]->setVisible(false);
-		mainGame->damcharacter[0] = false;
-		mainGame->damcharacter[1] = false;
+        mainGame->bodycharacter[0] = 0;
+        mainGame->bodycharacter[1] = 0;
+        mainGame->cutincharacter[0] = 0;
+        mainGame->cutincharacter[1] = 0;
+        mainGame->lpcharacter[0] = 0;
+        mainGame->lpcharacter[1] = 0;
 		mainGame->wBtnShowCard->setVisible(false);
         mainGame->wLocation->setVisible(false);
         mainGame->wChPloatBody[0]->setVisible(false);
@@ -1142,8 +1153,12 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		/////kdiy/////
         //mainGame->wInfos->setVisible(true);
 		mainGame->HideElement(mainGame->wEntertainmentPlay);
-		mainGame->damcharacter[0] = false;
-		mainGame->damcharacter[1] = false;
+        mainGame->bodycharacter[0] = 0;
+        mainGame->bodycharacter[1] = 0;
+        mainGame->cutincharacter[0] = 0;
+        mainGame->cutincharacter[1] = 0;
+        mainGame->lpcharacter[0] = 0;
+        mainGame->lpcharacter[1] = 0;
         mainGame->replayswap = false;
 		mainGame->wBtnShowCard->setVisible(true);
 		/////kdiy/////
@@ -1252,8 +1267,13 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 				mainGame->imageManager.modeHead[i] = mainGame->imageManager.head[0];
 				mainGame->imageManager.modehead_size[i] = irr::core::rect<irr::s32>(0,0,0,0);
 			}
-			mainGame->damcharacter[0] = false;
-			mainGame->damcharacter[1] = false;
+        	mainGame->bodycharacter[0] = 0;
+        	mainGame->bodycharacter[1] = 0;
+        	mainGame->cutincharacter[0] = 0;
+        	mainGame->cutincharacter[1] = 0;
+        	mainGame->lpcharacter[0] = 0;
+        	mainGame->lpcharacter[1] = 0;
+			mainGame->chantsound.stop();
             gSoundManager->soundcount.clear();
 			////kdiy////////
 			if(mainGame->isHostingOnline) {
@@ -1465,6 +1485,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		if(mainGame->wANCard->isVisible())
 			mainGame->HideElement(mainGame->wANCard);
         /////kdiy//////
+		mainGame->chantsound.stop();
         gSoundManager->soundcount.clear();
         //not send rematch for stroy mode
 		if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
@@ -1680,8 +1701,6 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto phase = BufferIO::Read<uint16_t>(pbuf);
 		uint8_t player = 1 - ((mainGame->dInfo.turn % 2 && mainGame->dInfo.isFirst) || (!(mainGame->dInfo.turn % 2) && !mainGame->dInfo.isFirst));
 		uint8_t player2 = ((mainGame->dInfo.turn % 2 && mainGame->dInfo.isFirst) || (!(mainGame->dInfo.turn % 2) && !mainGame->dInfo.isFirst));
-		mainGame->damcharacter[0] = false;
-		mainGame->damcharacter[1] = false;
 		switch (phase) {
             case PHASE_DRAW: {
 				PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, player, 0, player2);
@@ -1867,6 +1886,15 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		if(!mode) {
 			uint16_t extra = 0;
             if(desc != 1160) {
+				if(mainGame->cutincharacter[cc] != 2) {
+					auto lock = LockIf();
+					Play(SoundManager::SFX::CUTIN);
+					mainGame->cutincharacter[cc] = 2;
+					mainGame->showcardcode = cc;
+					mainGame->showcarddif = 0;
+					mainGame->showcard = 11;
+					mainGame->WaitFrameSignal(20, lock, true);
+				}
                 extra |= 0x1;
                 if(info.location & LOCATION_HAND)
 			        extra |= 0x2;
@@ -1890,6 +1918,11 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
                     PlayChantcode(SoundManager::CHANT::PENDULUM, code, code2, cc, extra);
 			    else
 				    PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, cc, extra);
+				if(mainGame->cutincharacter[cc] != 2) {
+					auto lock = LockIf();
+					mainGame->showcard = 0;
+					mainGame->WaitFrameSignal(5, lock, true);
+				}
             }
         }
         break;
@@ -1900,8 +1933,28 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto cc = mainGame->dField.chains[ct].controler;
 		const auto pc = mainGame->dField.chains[ct - 1].controler;
 		if(cc != pc) {
+			int prev_bodycharacter = mainGame->bodycharacter[pc];
+			int prev_lpcharacter = mainGame->lpcharacter[pc];
+			mainGame->bodycharacter[pc] = 3;
+			mainGame->lpcharacter[pc] = 3;
+			if(mainGame->cutincharacter[pc] != 3) {
+				auto lock = LockIf();
+				Play(SoundManager::SFX::CUTIN);
+				mainGame->cutincharacter[pc] = 3;
+				mainGame->showcardcode = pc;
+				mainGame->showcarddif = 0;
+				mainGame->showcard = 11;
+				mainGame->WaitFrameSignal(20, lock, true);
+			}
             PlayChant(SoundManager::CHANT::SELFCOUNTER, nullptr, cc, 0, 1- cc);
             PlayChant(SoundManager::CHANT::OPPCOUNTER, nullptr, pc, 0, 1- pc);
+			mainGame->bodycharacter[pc] = ((mainGame->dInfo.lp[pc] > 0 && mainGame->dInfo.lp[pc] >= mainGame->dInfo.lp[1 - pc] * 2) && prev_bodycharacter == 2) ? 2 : 0;
+			mainGame->lpcharacter[pc] = ((mainGame->dInfo.lp[pc] > 0 && mainGame->dInfo.lp[pc] >= mainGame->dInfo.lp[1 - pc] * 2) && prev_lpcharacter == 2) ? 2 : 0;
+			if(mainGame->cutincharacter[pc] != 3) {
+				auto lock = LockIf();
+				mainGame->showcard = 0;
+				mainGame->WaitFrameSignal(5, lock, true);
+			}
         }
 		break;
 	}
@@ -1917,17 +1970,37 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto val = BufferIO::Read<uint32_t>(pbuf);
 		//extra parameter
 		const auto reason = BufferIO::Read<uint32_t>(pbuf);
-		if(!(reason & REASON_COST))
-            mainGame->damcharacter[player] = true;
+		int prev_bodycharacter = mainGame->bodycharacter[player];
+		int prev_lpcharacterr = mainGame->lpcharacter[player];
+		mainGame->bodycharacter[player] = 1;
+		mainGame->lpcharacter[player] = 1;
+		if(!(reason & REASON_COST) && mainGame->cutincharacter[player] != 1) {
+			auto lock = LockIf();
+			Play(SoundManager::SFX::CUTIN);
+			mainGame->cutincharacter[player] = 1;
+			mainGame->showcardcode = player;
+			mainGame->showcarddif = 0;
+			mainGame->showcard = 11;
+			mainGame->WaitFrameSignal(20, lock, true);
+		}
 		uint16_t extra = 0;
 		if(reason & REASON_COST) extra = 0x1;
 		else if((mainGame->dInfo.lp[player] > 0 && mainGame->dInfo.lp[player] >= mainGame->dInfo.lp[1 - player] * 2) || val >= 4000) extra = 0x4;
 		else extra = 0x2;
 		PlayChant(SoundManager::CHANT::DAMAGE, nullptr, player, extra, 1 - player);
+		mainGame->bodycharacter[player] = (((mainGame->dInfo.lp[player] > 0 && mainGame->dInfo.lp[player] >= mainGame->dInfo.lp[1 - player] * 2) || val >= 4000) && prev_bodycharacter == 2) ? 2 : 0;
+		mainGame->lpcharacter[player] = (((mainGame->dInfo.lp[player] > 0 && mainGame->dInfo.lp[player] >= mainGame->dInfo.lp[1 - player] * 2) || val >= 4000) && prev_lpcharacterr == 2) ? 2 : 0;
+		if(!(reason & REASON_COST) && mainGame->cutincharacter[player] != 1) {
+			auto lock = LockIf();
+			mainGame->showcard = 0;
+			mainGame->WaitFrameSignal(5, lock, true);
+		}
         break;
     }
     case MSG_RECOVER: {
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
+		mainGame->lpcharacter[player] = 2;
+		mainGame->bodycharacter[player] = 2;
 		PlayChant(SoundManager::CHANT::RECOVER, nullptr, player, 0, 1 - player);
         break;
     }
@@ -2082,8 +2155,13 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				//ktest/////
 				mainGame->StopVideo(false, true);
                 mainGame->isEvent = false;
-                mainGame->damcharacter[0] = false;
-                mainGame->damcharacter[1] = false;
+        		mainGame->bodycharacter[0] = 0;
+        		mainGame->bodycharacter[1] = 0;
+        		mainGame->cutincharacter[0] = 0;
+        		mainGame->cutincharacter[1] = 0;
+        		mainGame->lpcharacter[0] = 0;
+        		mainGame->lpcharacter[1] = 0;
+				mainGame->chantsound.stop();
                 gSoundManager->soundcount.clear();
                 ////kdiy////////
 				mainGame->btnCreateHost->setEnabled(mainGame->coreloaded);
@@ -2289,7 +2367,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			} else {
                 mainGame->imageManager.SetAvatar(mainGame->avataricon2, text);
 			}
-			mainGame->damcharacter[player] = false;
+        	mainGame->bodycharacter[0] = 0;
+        	mainGame->bodycharacter[1] = 0;
+        	mainGame->cutincharacter[0] = 0;
+        	mainGame->cutincharacter[1] = 0;
+        	mainGame->lpcharacter[0] = 0;
+        	mainGame->lpcharacter[1] = 0;
 			break;
 		}
 		//////kdiy////////
@@ -4740,10 +4823,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		}
 		if(!mainGame->dInfo.isCatchingUp) {
             /////kdiy//////
-			mainGame->showcardcode = mainGame->LocalPlayer(info.controler);
-			mainGame->showcarddif = 0;
-			mainGame->showcard = 11;
-			mainGame->WaitFrameSignal(30, lock);
 			PlayAnime(pcard, 1, lock);
 			uint32_t code2 = 0;
 			if(pcard->alias && pcard->alias > 0) code2 = pcard->alias;
@@ -6306,6 +6385,14 @@ void DuelClient::ReplayPrompt(bool local_stream) {
     mainGame->wLocation->setVisible(false);
     mainGame->wChPloatBody[0]->setVisible(false);
 	mainGame->wChPloatBody[1]->setVisible(false);
+	mainGame->bodycharacter[0] = 0;
+    mainGame->bodycharacter[1] = 0;
+    mainGame->cutincharacter[0] = 0;
+    mainGame->cutincharacter[1] = 0;
+    mainGame->lpcharacter[0] = 0;
+    mainGame->lpcharacter[1] = 0;
+	mainGame->chantsound.stop();
+    gSoundManager->soundcount.clear();
     ////kdiy////////
 	auto now = std::time(nullptr);
 	mainGame->PopupSaveWindow(gDataManager->GetSysString(1340), epro::format(L"{:%Y-%m-%d %H-%M-%S}", fmt::localtime(now)), gDataManager->GetSysString(1342));

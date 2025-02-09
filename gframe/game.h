@@ -717,7 +717,9 @@ public:
 	bool chantcheck();
 	void charactcomboselect(uint8_t player, int box, int sel); //box: 1=ebCharacter, 2= ebCharacter_replay, 3= ebCharacterDeck
     std::vector<std::wstring>& GetPlayerReplayNames();
-	bool damcharacter[2] = { false,false };
+	int bodycharacter[2] = { 0,0 };
+	int cutincharacter[2] = { 0,0 };
+	int lpcharacter[2] = { 0,0 };
 	int replay_player[2];
     int replay_team1;
     int replay_team2;
@@ -745,7 +747,10 @@ public:
 	void ShowElement(irr::gui::IGUIElement* element, int autoframe = 0);
 	void HideElement(irr::gui::IGUIElement* element, bool set_action = false);
 	void PopupElement(irr::gui::IGUIElement* element, int hideframe = 0);
-    void WaitFrameSignal(int frame, std::unique_lock<epro::mutex>& _lck);
+	//kidy///////
+    //void WaitFrameSignal(int frame, std::unique_lock<epro::mutex>& _lck);
+    void WaitFrameSignal(int frame, std::unique_lock<epro::mutex>& _lck, bool forced = true);
+	//kidy///////
 	void DrawThumb(const CardDataC* cp, irr::core::vector2di pos, LFList* lflist, bool drag = false, const irr::core::recti* cliprect = nullptr, bool loadimage = true);
 	//kidy///////
 	void DrawThumb2(uint32_t code, irr::core::vector2di pos);

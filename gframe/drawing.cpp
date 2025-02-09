@@ -1662,15 +1662,26 @@ void Game::DrawSpec() {
 			}
 			break;
 		}
-        //////kdiy//////////s
+        //////kdiy//////////
 		case 11: {
-			//ktobefinished/////
-			driver->draw2DImage(imageManager.cutin[3][0][0], ResizeWin(324, 350, 324 + (showcarddif > 300 ? 300 : showcarddif), 500),
-								irr::core::recti(0, 0, 512, 256), 0, 0, true);
-			showcarddif += (2600.0f / 1000.0f) * (float)delta_time;
-			if(showcarddif >= 256 * 3) {
-				showcard = 0;
+			if(cutincharacter[0] > 0) {
+				auto size = imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][gSoundManager->subcharacter[gSoundManager->character[showcardcode]]][cutincharacter[0]-1];
+				auto width = size.getWidth();
+				auto height = size.getHeight();
+				driver->draw2DImage(imageManager.cutin[gSoundManager->character[showcardcode]][gSoundManager->subcharacter[gSoundManager->character[showcardcode]]][cutincharacter[0]-1], ResizeWin(324, 300, 324 + (showcarddif > width/1.333 ? width/1.333 : showcarddif), 300 + height/1.6),
+					imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][gSoundManager->subcharacter[gSoundManager->character[showcardcode]]][cutincharacter[0]-1], 0, 0, true);
 			}
+			if(cutincharacter[1] > 0) {
+				auto size = imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][gSoundManager->subcharacter[gSoundManager->character[showcardcode]]][cutincharacter[1]-1];
+				auto width = size.getWidth();
+				auto height = size.getHeight();
+				driver->draw2DImage(imageManager.cutin[gSoundManager->character[showcardcode]][gSoundManager->subcharacter[gSoundManager->character[showcardcode]]][cutincharacter[1]-1], ResizeWin(924 - (showcarddif > width/1.333 ? width/1.333 : showcarddif), 100, 924, 100 + height/1.6),
+					imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][gSoundManager->subcharacter[gSoundManager->character[showcardcode]]][cutincharacter[1]-1], 0, 0, true);
+			}
+			showcarddif += (2600.0f / 1000.0f) * (float)delta_time;
+			// if(showcarddif >= 240 * 3) {
+			// 	showcard = 0;
+			// }
 			break;
 		}
         //////kdiy//////////
@@ -1900,11 +1911,12 @@ void Game::PopupElement(irr::gui::IGUIElement * element, int hideframe) {
 		ShowElement(element);
 	else ShowElement(element, hideframe);
 }
-void Game::WaitFrameSignal(int frame, std::unique_lock<epro::mutex>& _lck) {
-	//kidy///////
+//kidy///////
+//void Game::WaitFrameSignal(int frame, std::unique_lock<epro::mutex>& _lck) {
+void Game::WaitFrameSignal(int frame, std::unique_lock<epro::mutex>& _lck, bool forced) {
 	//signalFrame = (gGameConfig->quick_animation && frame >= 12) ? 12 * 1000 / 60 : frame * 1000 / 60;
-	signalFrame = (gGameConfig->quick_animation && frame >= 12) ? (frame == 40 || frame == 120 ? (30 * 1000 / 60) : (12 * 1000 / 60)) : (frame * 1000 / 60);
-	//kidy///////
+	signalFrame = (gGameConfig->quick_animation && frame >= 12 && !forced) ? (frame == 40 || frame == 120 ? (30 * 1000 / 60) : (12 * 1000 / 60)) : (frame * 1000 / 60);
+//kidy///////
 	frameSignal.Wait(_lck);
 }
 void Game::DrawThumb(const CardDataC* cp, irr::core::vector2di pos, LFList* lflist, bool drag, const irr::core::recti* cliprect, bool load_image) {
