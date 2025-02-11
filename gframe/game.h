@@ -713,8 +713,8 @@ public:
 	void RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder=false);
 	void* ReadCardDataToCore();
 	void ReloadCBpic();
-	bool moviecheck();
-	bool chantcheck();
+	bool moviecheck(bool initial = false);
+	bool chantcheck(bool initial = false);
 	void charactcomboselect(uint8_t player, int box, int sel); //box: 1=ebCharacter, 2= ebCharacter_replay, 3= ebCharacterDeck
     std::vector<std::wstring>& GetPlayerReplayNames();
 	int bodycharacter[2] = { 0,0 };

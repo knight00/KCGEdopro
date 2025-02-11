@@ -3119,6 +3119,8 @@ void Game::PopulateSettingsWindow() {
             IncrementXorY();
             gSettings.chkPauseduel = env->addCheckBox(gGameConfig->pauseduel, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_PAUSE_DUEL, gDataManager->GetSysString(8052).data());
             defaultStrings.emplace_back(gSettings.chkPauseduel, 8052);
+			moviecheck(true);
+			chantcheck(true);
 #ifndef VIP
             gSettings.chkPauseduel->setEnabled(false);
 #endif
@@ -6729,7 +6731,7 @@ void* Game::ReadCardDataToCore() {
 	}
 	return cards_data;
 }
-bool Game::moviecheck() {
+bool Game::moviecheck(bool initial) {
 	bool filechk = false;
 	for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./movies/")), { EPRO_TEXT("mp4") })) {
 		if(Utils::FileExists(EPRO_TEXT("./movies/") + file)) {
@@ -6738,10 +6740,6 @@ bool Game::moviecheck() {
 		}
 	}
 #ifndef VIP
-	filechk = false;
-	Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/af7099f4b5fa11ef98ba52540025c377/"), Utils::OPEN_URL);
-#endif
-#if !EDOPRO_WINDOWS
 	filechk = false;
 #endif
     if(!gGameConfig->system_engine)
@@ -6752,13 +6750,14 @@ bool Game::moviecheck() {
 		gGameConfig->enablecanime = false;
 		gGameConfig->enableaanime = false;
 		mainGame->stACMessage->setText(gDataManager->GetSysString(8051).data());
-		mainGame->PopupElement(mainGame->wACMessage, 90);
+		if(!initial) {
+			mainGame->PopupElement(mainGame->wACMessage, 90);
 #ifdef VIP
-        Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/8c3fb8e8a3df11efba4752540025c377/"), Utils::OPEN_URL);
-#if EDOPRO_ANDROID
-		Utils::SystemOpen(EPRO_TEXT("./"), Utils::OPEN_FILE);
+        	Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/8c3fb8e8a3df11efba4752540025c377/"), Utils::OPEN_URL);
+#else
+			Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/af7099f4b5fa11ef98ba52540025c377/"), Utils::OPEN_URL);
 #endif
-#endif
+		}
 	}
 	if(gGameConfig->enablesanime || gGameConfig->enablecanime || gGameConfig->enableaanime)
 		gGameConfig->enableanime = true;
@@ -6779,27 +6778,27 @@ bool Game::moviecheck() {
 	gSettings.chkEnableAttackAnime->setChecked(gGameConfig->enableaanime);
 	return filechk;
 }
-bool Game::chantcheck() {
+bool Game::chantcheck(bool initial) {
 	bool filechk = false;
 	if(Utils::FileExists(EPRO_TEXT("./sound/character/atem.zip")) || Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))
 		filechk = true;
 #ifndef VIP
 	filechk = false;
-	Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/af7099f4b5fa11ef98ba52540025c377/"), Utils::OPEN_URL);
 #endif
 	if(!filechk) {
 		gGameConfig->enablessound = false;
 		gGameConfig->enablessound = false;
 		gGameConfig->enablecsound = false;
 		gGameConfig->enableasound = false;
-		mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
-		mainGame->PopupElement(mainGame->wACMessage, 90);
+		if(!initial) {
+			mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
+			mainGame->PopupElement(mainGame->wACMessage, 90);
 #ifdef VIP
-        Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/ad6b923aa3df11ef9a3b5254001e7c00/"), Utils::OPEN_URL);
-#if EDOPRO_ANDROID
-		Utils::SystemOpen(EPRO_TEXT("./"), Utils::OPEN_FILE);
+        	Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/ad6b923aa3df11ef9a3b5254001e7c00/"), Utils::OPEN_URL);
+#else
+			Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/af7099f4b5fa11ef98ba52540025c377/"), Utils::OPEN_URL);
 #endif
-#endif
+		}
 		for(int i = 0; i < 6; ++i) {
 			mainGame->icon[i]->setEnabled(false);
 			mainGame->icon2[i]->setEnabled(false);
