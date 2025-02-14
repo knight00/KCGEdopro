@@ -103,10 +103,10 @@ public:
 	irr::video::ITexture* UpdatetTexture(int i, std::wstring filepath);
 	irr::core::rect<irr::s32> head_size[CHARACTER_STORY+1]; //story icon
 	irr::core::rect<irr::s32> modehead_size[6];
-	std::vector<epro::path_string> lpcharacter[CHARACTER_VOICE][3][4]; //lpicon path, 1st: character(0=no character), 2nd: subcharacter, 3rd: emotion(0=normal, 1=damage, 2=advan, 3=surprise)
-	irr::core::rect<irr::s32> cutincharacter_size[CHARACTER_VOICE][3][3];
-	std::vector<epro::path_string> cutincharacter[CHARACTER_VOICE][3][3]; //cutin path, 1st: character(0=no character), 2nd: subcharacter, 3rd: emotion(0=damage, 1=advan, 2=surprise)
-	std::vector<epro::path_string> imgcharacter[CHARACTER_VOICE][3][3]; //bodycharacter path, 1st: character(0=no character), 2nd: subcharacter, 3rd: emotion(0=normal, 1=damage, 2=advan)
+	std::vector<epro::path_string> lpcharacter[CHARACTER_VOICE][6][4]; //lpicon path, 1st: character(0=no character), 2nd: subcharacter, 3rd: emotion(0=normal, 1=damage, 2=advan, 3=surprise)
+	irr::core::rect<irr::s32> cutincharacter_size[CHARACTER_VOICE][6][3];
+	std::vector<epro::path_string> cutincharacter[CHARACTER_VOICE][6][3]; //cutin path, 1st: character(0=no character), 2nd: subcharacter, 3rd: emotion(0=damage, 1=advan, 2=surprise)
+	std::vector<epro::path_string> imgcharacter[CHARACTER_VOICE][6][3]; //bodycharacter path, 1st: character(0=no character), 2nd: subcharacter, 3rd: emotion(0=normal, 1=damage, 2=advan)
 	bool GetTextureCardHD(uint32_t code);
 	std::tuple<irr::video::ITexture*, irr::video::SColor> GetTextureCloseup(uint32_t code, uint32_t alias = 0, bool is_closeup=false);
 	std::tuple<irr::video::ITexture*, irr::video::SColor> GetTextureCloseupCode(uint32_t code, bool is_closeup=false);
@@ -137,24 +137,24 @@ private:
 	std::unordered_map<uint32_t, irr::video::ITexture*> tFields;
 	texture_map tCovers;
 	/////////kdiy////
-#define TEXTURE_BACKGROUND		    0
-#define TEXTURE_DECK				1
-#define TEXTURE_MENU				2
+#define TEXTURE_MENU				0
+#define TEXTURE_BACKGROUND		    1
+#define TEXTURE_DECK				2
 #define TEXTURE_COVERS				3
 #define TEXTURE_COVERS2				4
-#define TEXTURE_ATTACK				5
-#define TEXTURE_ACTIVATE			6
-#define TEXTURE_CHAIN			    7
-#define TEXTURE_NEGATED			    8
-#define TEXTURE_MASK		        9
-#define TEXTURE_EQUIP		        10
-#define TEXTURE_TARGET		        11
-#define TEXTURE_CHAINTARGET		    12
-#define TEXTURE_UNKNOWN             13
-#define TEXTURE_LIM                 14
-#define TEXTURE_OT                  15
-#define TEXTURE_COVERS3				16
-#define TEXTURE_COVERS4				17
+#define TEXTURE_COVERS3				5
+#define TEXTURE_COVERS4				6
+#define TEXTURE_UNKNOWN             7
+#define TEXTURE_ATTACK				8
+#define TEXTURE_ACTIVATE			9
+#define TEXTURE_CHAIN			    10
+#define TEXTURE_NEGATED			    11
+#define TEXTURE_MASK		        12
+#define TEXTURE_EQUIP		        13
+#define TEXTURE_TARGET		        14
+#define TEXTURE_CHAINTARGET		    15
+#define TEXTURE_LIM                 16
+#define TEXTURE_OT                  17
 #define TEXTURE_SETTING             18
 #define TEXTURE_F1		            19
 #define TEXTURE_field2		        20
@@ -213,12 +213,12 @@ public:
 	/////////kdiy////
 	A(tRScale[14])
 	A(tLScale[14])
-	A(icon[CHARACTER_VOICE][3])
-	A(vs[CHARACTER_VOICE][3])
-	A(name[CHARACTER_VOICE][3])
-	A(lpicon[CHARACTER_VOICE][3][4])
-	A(bodycharacter[CHARACTER_VOICE][3][3])
-	A(cutin[CHARACTER_VOICE][3][3])
+	A(icon[CHARACTER_VOICE][6])
+	A(vs[CHARACTER_VOICE][6])
+	A(name[CHARACTER_VOICE][6])
+	A(lpicon[CHARACTER_VOICE][6][4])
+	A(bodycharacter[CHARACTER_VOICE][6][3])
+	A(cutin[CHARACTER_VOICE][6][3])
 	A(cardchant0)
 	A(cardchant1)
 	A(cardchant2)
@@ -230,6 +230,8 @@ public:
 	A(tsubcharacterselect)
 	A(tsubcharacterselect2)
 	A(tsubcharacterselect3)
+	A(tsubcharacterselect4)
+	A(tsubcharacterselect5)
 	A(QQ)
 	A(modeBody[CHAPTER])
     A(head[CHARACTER_STORY+1]) //story icon

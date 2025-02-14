@@ -227,7 +227,6 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_LEAVE_GAME: {
 			    ////kdiy////////
-				//ktest/////
 				mainGame->StopVideo(false, true);
                 mainGame->isEvent = false;
         		mainGame->bodycharacter[0] = 0;
@@ -300,7 +299,6 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_RESTART_SINGLE: {
                 ////kdiy////////
-				//ktest/////
 				mainGame->StopVideo(false, true);
                 mainGame->isEvent = false;
         		mainGame->bodycharacter[0] = 0;
@@ -1295,7 +1293,6 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			if(mainGame->wCardDisplay->isVisible())
 				break;
 			/////kdiy/////
-			//ktest/////
 			if(mainGame->isAnime) {
 				mainGame->StopVideo(false, true);
 			    break;
@@ -2305,6 +2302,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				auto tTexture = mainGame->imageManager.UpdatetTexture(mainGame->gSettings.clickedindex, filepath);
 				if(tTexture != nullptr) {
 					mainGame->gSettings.btnrandomtexture->setImage(tTexture);
+					mainGame->gSettings.btnrandomtexture2->setImage(tTexture);
 					if(mainGame->gSettings.clickedindex == 18) mainGame->btnSettings->setImage(mainGame->imageManager.tSettings);
 					if(mainGame->gSettings.clickedindex == 19) {
 						mainGame->btnHand[0]->setImage(mainGame->imageManager.tHand[0]);
@@ -2327,6 +2325,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				auto tTexture = mainGame->imageManager.UpdatetTexture(mainGame->gSettings.clickedindex, filepath);
 				if(tTexture != nullptr) {
 					mainGame->gSettings.btnrandomtexture->setImage(tTexture);
+					mainGame->gSettings.btnrandomtexture2->setImage(tTexture);
 					if(mainGame->gSettings.clickedindex == 18) mainGame->btnSettings->setImage(mainGame->imageManager.tSettings);
 					if(mainGame->gSettings.clickedindex == 19) {
 						mainGame->btnHand[0]->setImage(mainGame->imageManager.tHand[0]);
@@ -2340,6 +2339,11 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			}
 			case BUTTON_TEXTURE_OK: {
 				mainGame->HideElement(mainGame->gSettings.wRandomTexture);
+				mainGame->ShowElement(mainGame->gSettings.window);
+				break;
+			}
+			case BUTTON_TEXTURE_OK2: {
+				mainGame->HideElement(mainGame->gSettings.wRandomWallpaper);
 				mainGame->ShowElement(mainGame->gSettings.window);
 				break;
 			}
@@ -2476,6 +2480,14 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				}
 				return true;
 			}
+            case CHECKBOX_RANDOM_WALLPAPER:{
+				gGameConfig->randomwallpaper = mainGame->gSettings.chkRandomwallpaper->isChecked();
+				if(!gGameConfig->randomwallpaper) {
+					mainGame->HideElement(mainGame->gSettings.window);
+					mainGame->ShowElement(mainGame->gSettings.wRandomWallpaper);
+				}
+				return true;
+			}
             case CHECKBOX_TEXTURE:{
 				mainGame->gSettings.clickedchkbox = true;
 				auto checkboxtexture = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller);
@@ -2485,106 +2497,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				for(int i = 0; i < 20; i++) {
 					if(mainGame->gSettings.chktexture[i] == checkboxtexture) {
 					    k = i;
-						if(i == 0) {
-							gGameConfig->randombg = mainGame->gSettings.chktexture[i]->isChecked();
-							visible = gGameConfig->randombg;
-							filepath = gGameConfig->randombgtexture;
-						}
-						if(i == 1) {
-							gGameConfig->randombgdeck = mainGame->gSettings.chktexture[i]->isChecked();
-							visible = gGameConfig->randombgdeck;
-							filepath = gGameConfig->randombgdecktexture;
-						}
-						if(i == 2) {
-							gGameConfig->randombgmenu = mainGame->gSettings.chktexture[i]->isChecked();
-							visible = gGameConfig->randombgmenu;
-							filepath = gGameConfig->randombgmenutexture;
-						}
-						if(i == 3) {
-							gGameConfig->randomcover = mainGame->gSettings.chktexture[i]->isChecked();
-							visible = gGameConfig->randomcover;
-							filepath = gGameConfig->randomcovertexture;
-						}
-						if(i == 4) {
-							gGameConfig->randomcover2extra = mainGame->gSettings.chktexture[i]->isChecked();
-							visible = gGameConfig->randomcover2extra;
-							filepath = gGameConfig->randomcover2extratexture;
-						}
-						if(i == 5) {
-							gGameConfig->randomattack = mainGame->gSettings.chktexture[i]->isChecked();
-							visible = gGameConfig->randomattack;
-							filepath = gGameConfig->randomattacktexture;
-						}
-						if(i == 6) {
-							gGameConfig->randomact = mainGame->gSettings.chktexture[i]->isChecked();
-							visible = gGameConfig->randomact;
-							filepath = gGameConfig->randomacttexture;
-						}
-						if(i == 7) {
-							gGameConfig->randomchain = mainGame->gSettings.chktexture[i]->isChecked();
-							visible = gGameConfig->randomchain;
-							filepath = gGameConfig->randomchaintexture;
-						}
-						if(i == 8) {
-							gGameConfig->randomnegate = mainGame->gSettings.chktexture[i]->isChecked();
-							visible = gGameConfig->randomnegate;
-							filepath = gGameConfig->randomnegatetexture;
-						}
-						if(i == 9) {
-							gGameConfig->randommask = mainGame->gSettings.chktexture[i]->isChecked();
-							visible = gGameConfig->randommask;
-							filepath = gGameConfig->randommasktexture;
-						}
-						if(i == 10) {
-							gGameConfig->randomequip = mainGame->gSettings.chktexture[i]->isChecked();
-							visible = gGameConfig->randomequip;
-							filepath = gGameConfig->randomequiptexture;
-						}
-						if(i == 11) {
-							gGameConfig->randomtarget = mainGame->gSettings.chktexture[i]->isChecked();
-							visible = gGameConfig->randomtarget;
-							filepath = gGameConfig->randomtargettexture;
-						}
-						if(i == 12) {
-							gGameConfig->randomchaintarget = mainGame->gSettings.chktexture[i]->isChecked();
-							visible = gGameConfig->randomchaintarget;
-							filepath = gGameConfig->randomchaintargettexture;
-						}
-						if(i == 13) {
-							gGameConfig->randomunknown = mainGame->gSettings.chktexture[i]->isChecked();
-							visible = gGameConfig->randomunknown;
-							filepath = gGameConfig->randomunknowntexture;
-						}
-						if(i == 14) {
-							gGameConfig->randomlim = mainGame->gSettings.chktexture[i]->isChecked();
-							visible = gGameConfig->randomlim;
-							filepath = gGameConfig->randomlimtexture;
-						}
-						if(i == 15) {
-							gGameConfig->randomot = mainGame->gSettings.chktexture[i]->isChecked();
-							visible = gGameConfig->randomot;
-							filepath = gGameConfig->randomottexture;
-						}
-						if(i == 16) {
-							gGameConfig->randomcoverextra = mainGame->gSettings.chktexture[i]->isChecked();
-							visible = gGameConfig->randomcoverextra;
-							filepath = gGameConfig->randomcoverextratexture;
-						}
-						if(i == 17) {
-							gGameConfig->randomcover2 = mainGame->gSettings.chktexture[i]->isChecked();
-							visible = gGameConfig->randomcover2;
-							filepath = gGameConfig->randomcover2texture;
-						}
-						if(i == 18) {
-							gGameConfig->randommsetting = mainGame->gSettings.chktexture[i]->isChecked();
-							visible = gGameConfig->randommsetting;
-							filepath = gGameConfig->randommsettingtexture;
-						}
-						if(i == 19) {
-							gGameConfig->randommorra = mainGame->gSettings.chktexture[i]->isChecked();
-							visible = gGameConfig->randommorra;
-							filepath = gGameConfig->randommorratexture;
-						}
+						std::tie(visible, filepath) = mainGame->SetRandTexture(i, 1);
 						break;
 					}
 				}
@@ -2600,6 +2513,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 					auto tTexture = mainGame->imageManager.UpdatetTexture(k, filepath);
 					if(tTexture != nullptr) {
 						mainGame->gSettings.btnrandomtexture->setImage(tTexture);
+						mainGame->gSettings.btnrandomtexture2->setImage(tTexture);
 						if(k == 18) mainGame->btnSettings->setImage(mainGame->imageManager.tSettings);
 						if(k == 19) {
 							mainGame->btnHand[0]->setImage(mainGame->imageManager.tHand[0]);
@@ -2609,12 +2523,14 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 						mainGame->driver->removeTexture(tTexture);
 						tTexture = nullptr;
 					}
-				} else
+				} else {
 				    mainGame->gSettings.btnrandomtexture->setImage(0);
+					mainGame->gSettings.btnrandomtexture2->setImage(0);
+				}
 				return true;
 			}
             case CHECKBOX_VWALLPAPER:{
-				gGameConfig->randomtexture = mainGame->gSettings.chkVideowallpaper->isChecked();
+				gGameConfig->videowallpaper = mainGame->gSettings.chkVideowallpaper->isChecked();
 				return true;
 			}
             case CHECKBOX_RANDOM_VWALLPAPER:{
@@ -2839,7 +2755,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				auto comboboxtexture = static_cast<irr::gui::IGUIComboBox*>(event.GUIEvent.Caller);
 				int k = 0;
 				bool visible = false;
-				std::wstring filepath = L"";
+				std::wstring setfilepath = L"", filepath = L"";
 				for(int i = 0; i < 20; i++) {
 					if(mainGame->gSettings.cbName_texture[i] == comboboxtexture) {
 						k = i;
@@ -2848,87 +2764,8 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 							selected = 0;
 							mainGame->gSettings.cbName_texture[k]->setSelected(0);
 						}
-						filepath = std::wstring(mainGame->gSettings.cbName_texture[i]->getItem(selected));
-						if(i == 0) {
-							visible = gGameConfig->randombg;
-							gGameConfig->randombgtexture = filepath;
-						}
-						if(i == 1) {
-							visible = gGameConfig->randombgdeck;
-							gGameConfig->randombgdecktexture = filepath;
-						}
-						if(i == 2) {
-							visible = gGameConfig->randombgmenu;
-							gGameConfig->randombgmenutexture = filepath;
-						}
-						if(i == 3) {
-							visible = gGameConfig->randomcover;
-							gGameConfig->randomcovertexture = filepath;
-						}
-						if(i == 4) {
-							visible = gGameConfig->randomcoverextra;
-							gGameConfig->randomcoverextratexture = filepath;
-						}
-						if(i == 5) {
-							visible = gGameConfig->randomattack;
-							gGameConfig->randomattacktexture = filepath;
-						}
-						if(i == 6) {
-							visible = gGameConfig->randomact;
-							gGameConfig->randomacttexture = filepath;
-						}
-						if(i == 7) {
-							visible = gGameConfig->randomchain;
-							gGameConfig->randomchaintexture = filepath;
-						}
-						if(i == 8) {
-							visible = gGameConfig->randomnegate;
-							gGameConfig->randomnegatetexture = filepath;
-						}
-						if(i == 9) {
-							visible = gGameConfig->randommask;
-							gGameConfig->randommasktexture = filepath;
-						}
-						if(i == 10) {
-							visible = gGameConfig->randomequip;
-							gGameConfig->randomequiptexture = filepath;
-						}
-						if(i == 11) {
-							visible = gGameConfig->randomtarget;
-							gGameConfig->randomtargettexture = filepath;
-						}
-						if(i == 12) {
-							visible = gGameConfig->randomchaintarget;
-							gGameConfig->randomchaintargettexture = filepath;
-						}
-						if(i == 13) {
-							visible = gGameConfig->randomunknown;
-							gGameConfig->randomunknowntexture = filepath;
-						}
-						if(i == 14) {
-							visible = gGameConfig->randomlim;
-							gGameConfig->randomlimtexture = filepath;
-						}
-						if(i == 15) {
-							visible = gGameConfig->randomot;
-							gGameConfig->randomottexture = filepath;
-						}
-						if(i == 16) {
-							visible = gGameConfig->randomcover2;
-							gGameConfig->randomcover2texture = filepath;
-						}
-						if(i == 17) {
-							visible = gGameConfig->randomcover2extra;
-							gGameConfig->randomcover2extratexture = filepath;
-						}
-						if(i == 18) {
-							visible = gGameConfig->randommsetting;
-							gGameConfig->randommsettingtexture = filepath;
-						}
-						if(i == 19) {
-							visible = gGameConfig->randommorra;
-							gGameConfig->randommorratexture = filepath;
-						}
+						setfilepath = std::wstring(mainGame->gSettings.cbName_texture[i]->getItem(selected));
+						std::tie(visible, filepath) = mainGame->SetRandTexture(i, 2, setfilepath);
 						break;
 					}
 				}
@@ -2942,6 +2779,7 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				}
 				if(tTexture != nullptr) {
 					mainGame->gSettings.btnrandomtexture->setImage(tTexture);
+					mainGame->gSettings.btnrandomtexture2->setImage(tTexture);
 					mainGame->driver->removeTexture(tTexture);
 					tTexture = nullptr;
 				}

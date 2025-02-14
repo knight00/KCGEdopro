@@ -1632,21 +1632,31 @@ void Game::Initialize() {
 	btnCharacterSelect2_replay->setDrawBorder(false);
 	btnCharacterSelect2_replay->setImageSize(Scale(0, 0, 20, 20).getSize());
 	btnCharacterSelect2_replay->setImage(imageManager.tcharacterselect2);
-	btnsubCharacterSelect_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(620, 45, 645, 70), wCharacterReplay, BUTTON_SUBCHARACTER_SELECT);
-	btnsubCharacterSelect_replay->setDrawBorder(true);
-	btnsubCharacterSelect_replay->setImageSize(Scale(0, 0, 25, 25).getSize());
-	btnsubCharacterSelect_replay->setImage(imageManager.tsubcharacterselect);
-    btnsubCharacterSelect_replay->setVisible(false);
-	btnsubCharacterSelect2_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(620, 75, 645, 100), wCharacterReplay, BUTTON_SUBCHARACTER_SELECT2);
-	btnsubCharacterSelect2_replay->setDrawBorder(true);
-	btnsubCharacterSelect2_replay->setImageSize(Scale(0, 0, 25, 25).getSize());
-	btnsubCharacterSelect2_replay->setImage(imageManager.tsubcharacterselect2);
-    btnsubCharacterSelect2_replay->setVisible(false);
-	btnsubCharacterSelect3_replay = irr::gui::CGUIImageButton::addImageButton(env, Scale(620, 105, 645, 130), wCharacterReplay, BUTTON_SUBCHARACTER_SELECT3);
-	btnsubCharacterSelect3_replay->setDrawBorder(true);
-	btnsubCharacterSelect3_replay->setImageSize(Scale(0, 0, 25, 25).getSize());
-	btnsubCharacterSelect3_replay->setImage(imageManager.tsubcharacterselect3);
-    btnsubCharacterSelect3_replay->setVisible(false);
+	btnsubCharacterSelect_replay[0] = irr::gui::CGUIImageButton::addImageButton(env, Scale(620, 45, 645, 70), wCharacterReplay, BUTTON_SUBCHARACTER_SELECT);
+	btnsubCharacterSelect_replay[0]->setDrawBorder(true);
+	btnsubCharacterSelect_replay[0]->setImageSize(Scale(0, 0, 25, 25).getSize());
+	btnsubCharacterSelect_replay[0]->setImage(imageManager.tsubcharacterselect);
+    btnsubCharacterSelect_replay[0]->setVisible(false);
+	btnsubCharacterSelect_replay[1] = irr::gui::CGUIImageButton::addImageButton(env, Scale(620, 75, 645, 100), wCharacterReplay, BUTTON_SUBCHARACTER_SELECT);
+	btnsubCharacterSelect_replay[1]->setDrawBorder(true);
+	btnsubCharacterSelect_replay[1]->setImageSize(Scale(0, 0, 25, 25).getSize());
+	btnsubCharacterSelect_replay[1]->setImage(imageManager.tsubcharacterselect2);
+    btnsubCharacterSelect_replay[1]->setVisible(false);
+	btnsubCharacterSelect_replay[2] = irr::gui::CGUIImageButton::addImageButton(env, Scale(620, 105, 645, 130), wCharacterReplay, BUTTON_SUBCHARACTER_SELECT);
+	btnsubCharacterSelect_replay[2]->setDrawBorder(true);
+	btnsubCharacterSelect_replay[2]->setImageSize(Scale(0, 0, 25, 25).getSize());
+	btnsubCharacterSelect_replay[2]->setImage(imageManager.tsubcharacterselect3);
+    btnsubCharacterSelect_replay[2]->setVisible(false);
+	btnsubCharacterSelect_replay[3] = irr::gui::CGUIImageButton::addImageButton(env, Scale(620, 135, 645, 160), wCharacterReplay, BUTTON_SUBCHARACTER_SELECT);
+	btnsubCharacterSelect_replay[3]->setDrawBorder(true);
+	btnsubCharacterSelect_replay[3]->setImageSize(Scale(0, 0, 25, 25).getSize());
+	btnsubCharacterSelect_replay[3]->setImage(imageManager.tsubcharacterselect4);
+    btnsubCharacterSelect_replay[3]->setVisible(false);
+	btnsubCharacterSelect_replay[4] = irr::gui::CGUIImageButton::addImageButton(env, Scale(620, 165, 645, 180), wCharacterReplay, BUTTON_SUBCHARACTER_SELECT);
+	btnsubCharacterSelect_replay[4]->setDrawBorder(true);
+	btnsubCharacterSelect_replay[4]->setImageSize(Scale(0, 0, 25, 25).getSize());
+	btnsubCharacterSelect_replay[4]->setImage(imageManager.tsubcharacterselect5);
+    btnsubCharacterSelect_replay[4]->setVisible(false);
 
 
 	//main meun
@@ -3119,8 +3129,6 @@ void Game::PopulateSettingsWindow() {
             IncrementXorY();
             gSettings.chkPauseduel = env->addCheckBox(gGameConfig->pauseduel, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_PAUSE_DUEL, gDataManager->GetSysString(8052).data());
             defaultStrings.emplace_back(gSettings.chkPauseduel, 8052);
-			moviecheck(true);
-			chantcheck(true);
 #ifndef VIP
             gSettings.chkPauseduel->setEnabled(false);
 #endif
@@ -3358,13 +3366,20 @@ void Game::PopulateSettingsWindow() {
 
 		gSettings.chkRandomtexture = env->addCheckBox(gGameConfig->randomtexture, GetNextRect(), sPanel, CHECKBOX_RANDOM_TEXTURE, gDataManager->GetSysString(8042).data());
 		defaultStrings.emplace_back(gSettings.chkRandomtexture, 8042);
+		gSettings.chkRandomwallpaper = env->addCheckBox(gGameConfig->randomwallpaper, GetNextRect(), sPanel, CHECKBOX_RANDOM_WALLPAPER, gDataManager->GetSysString(8094).data());
+		defaultStrings.emplace_back(gSettings.chkRandomwallpaper, 8094);
 
 		gSettings.chkVideowallpaper = env->addCheckBox(gGameConfig->videowallpaper, GetNextRect(), sPanel, CHECKBOX_VWALLPAPER, gDataManager->GetSysString(8091).data());
 		defaultStrings.emplace_back(gSettings.chkVideowallpaper, 8091);
 		IncrementXorY();
 		gSettings.chkRandomVideowallpaper = env->addCheckBox(gGameConfig->randomvideowallpaper, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_RANDOM_VWALLPAPER, gDataManager->GetSysString(8092).data());
 		defaultStrings.emplace_back(gSettings.chkRandomVideowallpaper, 8092);
-		IncrementXorY();
+		///ktemp//////
+		gSettings.chkVideowallpaper->setEnabled(false);
+		gSettings.chkVideowallpaper->setChecked(false);
+		gSettings.chkRandomVideowallpaper->setEnabled(false);
+		gSettings.chkRandomVideowallpaper->setChecked(false);
+		///ktemp//////
 		IncrementXorY();
 
 		gSettings.chkCloseup = env->addCheckBox(gGameConfig->closeup, GetNextRect(), sPanel, CHECKBOX_CLOSEUP, gDataManager->GetSysString(8043).data());
@@ -3372,24 +3387,45 @@ void Game::PopulateSettingsWindow() {
 		gSettings.chkPainting = env->addCheckBox(gGameConfig->painting, GetNextRect(), sPanel, CHECKBOX_PAINTING, gDataManager->GetSysString(8058).data());
 		defaultStrings.emplace_back(gSettings.chkPainting, 8058);
     }
-	gSettings.wRandomTexture = env->addWindow(Scale(120, 15, 980, 635), false, gDataManager->GetSysString(8015).data());
-	defaultStrings.emplace_back(gSettings.wRandomTexture, 8015);
+	gSettings.wRandomTexture = env->addWindow(Scale(120, 30, 830, 450), false, gDataManager->GetSysString(8042).data());
+	defaultStrings.emplace_back(gSettings.wRandomTexture, 8042);
 	gSettings.wRandomTexture->setVisible(false);
 	gSettings.wRandomTexture->getCloseButton()->setVisible(false);
-	ReloadTexture();
-	gSettings.btnrandomtexture = irr::gui::CGUIImageButton::addImageButton(env, Scale(420, 45, 840, 545), gSettings.wRandomTexture, BUTTON_TEXTURE);
+	gSettings.btnrandomtexture = irr::gui::CGUIImageButton::addImageButton(env, Scale(420, 45, 690, 345), gSettings.wRandomTexture, BUTTON_TEXTURE);
 	gSettings.btnrandomtexture->setDrawBorder(false);
-	gSettings.btnrandomtexture->setImageSize(Scale(0, 0, 430, 500).getSize());
-	gSettings.btnrandomtextureSelect1 = irr::gui::CGUIImageButton::addImageButton(env, Scale(420, 550, 440, 570), gSettings.wRandomTexture, BUTTON_TEXTURE_SELECT);
+	gSettings.btnrandomtexture->setImageSize(Scale(0, 0, 270, 300).getSize());
+	gSettings.btnrandomtextureSelect1 = irr::gui::CGUIImageButton::addImageButton(env, Scale(420, 345, 440, 365), gSettings.wRandomTexture, BUTTON_TEXTURE_SELECT);
 	gSettings.btnrandomtextureSelect1->setDrawBorder(false);
 	gSettings.btnrandomtextureSelect1->setImageSize(Scale(0, 0, 20, 20).getSize());
 	gSettings.btnrandomtextureSelect1->setImage(imageManager.tcharacterselect);
-	gSettings.btnrandomtextureSelect2 = irr::gui::CGUIImageButton::addImageButton(env, Scale(820, 550, 840, 570), gSettings.wRandomTexture, BUTTON_TEXTURE_SELECT2);
+	gSettings.btnrandomtextureSelect2 = irr::gui::CGUIImageButton::addImageButton(env, Scale(670, 345, 690, 365), gSettings.wRandomTexture, BUTTON_TEXTURE_SELECT2);
 	gSettings.btnrandomtextureSelect2->setDrawBorder(false);
 	gSettings.btnrandomtextureSelect2->setImageSize(Scale(0, 0, 20, 20).getSize());
 	gSettings.btnrandomtextureSelect2->setImage(imageManager.tcharacterselect2);
-    gSettings.btnrandomtexture_close = env->addButton(Scale(790, 580, 840, 605), gSettings.wRandomTexture, BUTTON_TEXTURE_OK, gDataManager->GetSysString(1211).data());
+    gSettings.btnrandomtexture_close = env->addButton(Scale(640, 375, 690, 400), gSettings.wRandomTexture, BUTTON_TEXTURE_OK, gDataManager->GetSysString(1211).data());
 	defaultStrings.emplace_back(gSettings.btnrandomtexture_close, 1211);
+	
+	gSettings.wRandomWallpaper = env->addWindow(Scale(120, 30, 830, 450), false, gDataManager->GetSysString(8094).data());
+	defaultStrings.emplace_back(gSettings.wRandomWallpaper, 8094);
+	gSettings.wRandomWallpaper->setVisible(false);
+	gSettings.wRandomWallpaper->getCloseButton()->setVisible(false);
+	gSettings.btnrandomtexture2 = irr::gui::CGUIImageButton::addImageButton(env, Scale(420, 45, 690, 345), gSettings.wRandomWallpaper, BUTTON_TEXTURE);
+	gSettings.btnrandomtexture2->setDrawBorder(false);
+	gSettings.btnrandomtexture2->setImageSize(Scale(0, 0, 430, 500).getSize());
+	gSettings.btnrandomtextureSelect12 = irr::gui::CGUIImageButton::addImageButton(env, Scale(420, 345, 440, 365), gSettings.wRandomWallpaper, BUTTON_TEXTURE_SELECT);
+	gSettings.btnrandomtextureSelect12->setDrawBorder(false);
+	gSettings.btnrandomtextureSelect12->setImageSize(Scale(0, 0, 20, 20).getSize());
+	gSettings.btnrandomtextureSelect12->setImage(imageManager.tcharacterselect);
+	gSettings.btnrandomtextureSelect22 = irr::gui::CGUIImageButton::addImageButton(env, Scale(670, 345, 690, 365), gSettings.wRandomWallpaper, BUTTON_TEXTURE_SELECT2);
+	gSettings.btnrandomtextureSelect22->setDrawBorder(false);
+	gSettings.btnrandomtextureSelect22->setImageSize(Scale(0, 0, 20, 20).getSize());
+	gSettings.btnrandomtextureSelect22->setImage(imageManager.tcharacterselect2);
+    gSettings.btnrandomtexture_close2 = env->addButton(Scale(640, 375, 690, 400), gSettings.wRandomWallpaper, BUTTON_TEXTURE_OK2, gDataManager->GetSysString(1211).data());
+	defaultStrings.emplace_back(gSettings.btnrandomtexture_close2, 1211);
+	
+	ReloadTexture();
+	moviecheck(true);
+	chantcheck(true);
     /////kdiy////////////
 }
 #undef WStr
@@ -3484,7 +3520,6 @@ bool Game::MainLoop() {
 				haloNodeexist[p][i][j] = false;
 		}
     }
-    ///ktest/////////
 	avformat_network_init();
 	videoFrame = av_frame_alloc();
     audioFrame = av_frame_alloc();
@@ -3554,19 +3589,16 @@ bool Game::MainLoop() {
 				LoadJsonInfo();
                 mode->LoadJsonInfo();
                 git_update = true;
-				mRepositoriesInfo->setVisible(false);
+				if(!git_error) {
+		    		mRepositoriesInfo->setVisible(false);
+					wMainMenu->setVisible(true);
+				}
             }
             if(first_play && git_update) {
                 mainGame->ApplyLocale(mainGame->gSettings.cbCurrentLocale->getSelected(), true);
             }
             //kdiy///////
 		}
-        //kdiy///////
-		if(git_update && !git_error)
-		    mRepositoriesInfo->setVisible(false);
-		if(!git_update || git_error)
-			wMainMenu->setVisible(false);
-        //kdiy///////
 #endif //YGOPRO_BUILD_DLL
 		frame_counter += (float)delta_time * 60.0f/1000.0f;
 		float remainder;
@@ -3914,11 +3946,11 @@ bool Game::MainLoop() {
 		closeDoneSignal.SetNoWait(true);
 		frameSignal.SetNoWait(true);
 	}
-    /////ktest//////
+    /////kdiy//////
     StopVideo(true, true);
 	isEvent = false;
 	chantsound.stop();
-    /////ktest//////
+    /////kdiy//////
 	DuelClient::StopClient(true);
 	//This is set again as waitable in the above call
 	frameSignal.SetNoWait(true);
@@ -4392,6 +4424,7 @@ void Game::SaveConfig() {
 	TrySaveInt(gGameConfig->localtimeLimit, ebTimeLimit2);
 	gGameConfig->duelrule = cbDuelRule2->getSelected();
 	gGameConfig->randomtexture = gSettings.chkRandomtexture->isChecked();
+	gGameConfig->randomwallpaper = gSettings.chkRandomwallpaper->isChecked();
 	gGameConfig->closeup = gSettings.chkCloseup->isChecked();
 	gGameConfig->painting = gSettings.chkPainting->isChecked();
 	gGameConfig->chkField = gSettings.chktField->isChecked();
@@ -5162,7 +5195,7 @@ void Game::ClearCardInfo(int player) {
 	cardimagetextureloading = false;
 	showingcard = 0;
 }
-///ktest/////////
+///kdiy/////////
 bool Game::openVideo(std::string filename) {
 	if(!Utils::FileExists(Utils::ToPathString(filename))) {
 		isAnime = false;
@@ -5445,7 +5478,7 @@ void Game::StopVideo(bool close, bool reset) {
     }
     // if(cap.isOpened()) cap.release();
 }
-///ktest/////////
+///kdiy/////////
 void Game::AddChatMsg(epro::wstringview msg, int player, int type) {
 	for(int i = 7; i > 0; --i) {
 		chatMsg[i].swap(chatMsg[i - 1]);
@@ -6094,9 +6127,134 @@ void Game::ReloadLocalCBRule() {
 	    cbRule2->addItem(gDataManager->GetSysString(i).data());
 	}
 }
+std::tuple<bool, std::wstring> Game::SetRandTexture(int i, int set, std::wstring setfilepath) {
+	bool visible = false;
+	std::wstring filepath = L"";
+	if(i == 0) {
+		if(set == 1) gGameConfig->randombgmenu = mainGame->gSettings.chktexture[i]->isChecked();
+		if(set == 2) gGameConfig->randombgmenutexture = setfilepath;
+		visible = gGameConfig->randombgmenu;
+		filepath = gGameConfig->randombgmenutexture;
+	}
+	if(i == 1) {
+		if(set == 1) gGameConfig->randombg = mainGame->gSettings.chktexture[i]->isChecked();
+		if(set == 2) gGameConfig->randombgtexture = setfilepath;
+		visible = gGameConfig->randombg;
+		filepath = gGameConfig->randombgtexture;
+	}
+	if(i == 2) {
+		if(set == 1) gGameConfig->randombgdeck = mainGame->gSettings.chktexture[i]->isChecked();
+		if(set == 2) gGameConfig->randombgdecktexture = setfilepath;
+		visible = gGameConfig->randombgdeck;
+		filepath = gGameConfig->randombgdecktexture;
+	}
+	if(i == 3) {
+		if(set == 1) gGameConfig->randomcover = mainGame->gSettings.chktexture[i]->isChecked();
+		if(set == 2) gGameConfig->randomcovertexture = setfilepath;
+		visible = gGameConfig->randomcover;
+		filepath = gGameConfig->randomcovertexture;
+	}
+	if(i == 4) {
+		if(set == 1) gGameConfig->randomcoverextra = mainGame->gSettings.chktexture[i]->isChecked();
+		if(set == 2) gGameConfig->randomcoverextratexture = setfilepath;
+		visible = gGameConfig->randomcoverextra;
+		filepath = gGameConfig->randomcoverextratexture;
+	}
+	if(i == 5) {
+		if(set == 1) gGameConfig->randomcover2 = mainGame->gSettings.chktexture[i]->isChecked();
+		if(set == 2) gGameConfig->randomcover2texture = setfilepath;
+		visible = gGameConfig->randomcover2;
+		filepath = gGameConfig->randomcover2texture;
+	}
+	if(i == 6) {
+		if(set == 1) gGameConfig->randomcover2extra = mainGame->gSettings.chktexture[i]->isChecked();
+		if(set == 2) gGameConfig->randomcover2extratexture = setfilepath;
+		visible = gGameConfig->randomcover2extra;
+		filepath = gGameConfig->randomcover2extratexture;
+	}
+	if(i == 7) {
+		if(set == 1) gGameConfig->randomunknown = mainGame->gSettings.chktexture[i]->isChecked();
+		if(set == 2) gGameConfig->randomunknowntexture = setfilepath;
+		visible = gGameConfig->randomunknown;
+		filepath = gGameConfig->randomunknowntexture;
+	}
+	if(i == 8) {
+		if(set == 1) gGameConfig->randomattack = mainGame->gSettings.chktexture[i]->isChecked();
+		if(set == 2) gGameConfig->randomattacktexture = setfilepath;
+		visible = gGameConfig->randomattack;
+		filepath = gGameConfig->randomattacktexture;
+	}
+	if(i == 9) {
+		if(set == 1) gGameConfig->randomact = mainGame->gSettings.chktexture[i]->isChecked();
+		if(set == 2) gGameConfig->randomacttexture = setfilepath;
+		visible = gGameConfig->randomact;
+		filepath = gGameConfig->randomacttexture;
+	}
+	if(i == 10) {
+		if(set == 1) gGameConfig->randomchain = mainGame->gSettings.chktexture[i]->isChecked();
+		if(set == 2) gGameConfig->randomchaintexture = setfilepath;
+		visible = gGameConfig->randomchain;
+		filepath = gGameConfig->randomchaintexture;
+	}
+	if(i == 11) {
+		if(set == 1) gGameConfig->randomnegate = mainGame->gSettings.chktexture[i]->isChecked();
+		if(set == 2) gGameConfig->randomnegatetexture = setfilepath;
+		visible = gGameConfig->randomnegate;
+		filepath = gGameConfig->randomnegatetexture;
+	}
+	if(i == 12) {
+		if(set == 1) gGameConfig->randommask = mainGame->gSettings.chktexture[i]->isChecked();
+		if(set == 2) gGameConfig->randommasktexture = setfilepath;
+		visible = gGameConfig->randommask;
+		filepath = gGameConfig->randommasktexture;
+	}
+	if(i == 13) {
+		if(set == 1) gGameConfig->randomequip = mainGame->gSettings.chktexture[i]->isChecked();
+		if(set == 2) gGameConfig->randomequiptexture = setfilepath;
+		visible = gGameConfig->randomequip;
+		filepath = gGameConfig->randomequiptexture;
+	}
+	if(i == 14) {
+		if(set == 1) gGameConfig->randomtarget = mainGame->gSettings.chktexture[i]->isChecked();
+		if(set == 2) gGameConfig->randomtargettexture = setfilepath;
+		visible = gGameConfig->randomtarget;
+		filepath = gGameConfig->randomtargettexture;
+	}
+	if(i == 15) {
+		if(set == 1) gGameConfig->randomchaintarget = mainGame->gSettings.chktexture[i]->isChecked();
+		if(set == 2) gGameConfig->randomchaintargettexture = setfilepath;
+		visible = gGameConfig->randomchaintarget;
+		filepath = gGameConfig->randomchaintargettexture;
+	}
+	if(i == 16) {
+		if(set == 1) gGameConfig->randomlim = mainGame->gSettings.chktexture[i]->isChecked();
+		if(set == 2) gGameConfig->randomlimtexture = setfilepath;
+		visible = gGameConfig->randomlim;
+		filepath = gGameConfig->randomlimtexture;
+	}
+	if(i == 17) {
+		if(set == 1) gGameConfig->randomot = mainGame->gSettings.chktexture[i]->isChecked();
+		if(set == 2) gGameConfig->randomottexture = setfilepath;
+		visible = gGameConfig->randomot;
+		filepath = gGameConfig->randomottexture;
+	}
+	if(i == 18) {
+		if(set == 1) gGameConfig->randommsetting = mainGame->gSettings.chktexture[i]->isChecked();
+		if(set == 2) gGameConfig->randommsettingtexture = setfilepath;
+		visible = gGameConfig->randommsetting;
+		filepath = gGameConfig->randommsettingtexture;
+	}
+	if(i == 19) {
+		if(set == 1) gGameConfig->randommorra = mainGame->gSettings.chktexture[i]->isChecked();
+		if(set == 2) gGameConfig->randommorratexture = setfilepath;
+		visible = gGameConfig->randommorra;
+		filepath = gGameConfig->randommorratexture;
+	}
+	return { visible, filepath };
+}
 void Game::ReloadTexture() {
-	auto cur_y = 20;
-	auto cur_x = 15;
+	auto cur_y = 20, cur_y2 = 20;
+	auto cur_x = 15, cur_x2 = 15;
 	constexpr auto y_incr = 30;
 	constexpr auto x_incr = 200;
 	auto IncrementXorY = [&cur_y, y_incr, &cur_x, x_incr] {
@@ -6112,92 +6270,26 @@ void Game::ReloadTexture() {
 		IncrementXorY();
 		return Scale<irr::s32>(curx, cury, curx + 180, cury + 25);
 	};
+	auto IncrementXorY2 = [&cur_y2, y_incr, &cur_x2, x_incr] {
+		if(cur_x2 > x_incr) {
+			cur_x2 -= x_incr;
+			cur_y2 += y_incr;
+		} else
+			cur_x2 += x_incr;
+	};
+	auto GetNextRand2 = [&cur_y2, &cur_x2, &IncrementXorY2, this] {
+		auto cury = cur_y2;
+		auto curx = cur_x2;
+		IncrementXorY2();
+		return Scale<irr::s32>(curx, cury, curx + 180, cury + 25);
+	};
 	for(int i = 0; i < 20; i++) {
 		bool visible = false;
 		std::wstring filepath = L"";
-		if(i == 0) {
-			visible = gGameConfig->randombg;
-			filepath = gGameConfig->randombgtexture;
-		}
-		if(i == 1) {
-			visible = gGameConfig->randombgdeck;
-			filepath = gGameConfig->randombgdecktexture;
-		}
-		if(i == 2) {
-			visible = gGameConfig->randombgmenu;
-			filepath = gGameConfig->randombgmenutexture;
-		}
-		if(i == 3) {
-			visible = gGameConfig->randomcover;
-			filepath = gGameConfig->randomcovertexture;
-		}
-		if(i == 4) {
-			visible = gGameConfig->randomcoverextra;
-			filepath = gGameConfig->randomcoverextratexture;
-		}
-		if(i == 5) {
-			visible = gGameConfig->randomattack;
-			filepath = gGameConfig->randomattacktexture;
-		}
-		if(i == 6) {
-			visible = gGameConfig->randomact;
-			filepath = gGameConfig->randomacttexture;
-		}
-		if(i == 7) {
-			visible = gGameConfig->randomchain;
-			filepath = gGameConfig->randomchaintexture;
-		}
-		if(i == 8) {
-			visible = gGameConfig->randomnegate;
-			filepath = gGameConfig->randomnegatetexture;
-		}
-		if(i == 9) {
-			visible = gGameConfig->randommask;
-			filepath = gGameConfig->randommasktexture;
-		}
-		if(i == 10) {
-			visible = gGameConfig->randomequip;
-			filepath = gGameConfig->randomequiptexture;
-		}
-		if(i == 11) {
-			visible = gGameConfig->randomtarget;
-			filepath = gGameConfig->randomtargettexture;
-		}
-		if(i == 12) {
-			visible = gGameConfig->randomchaintarget;
-			filepath = gGameConfig->randomchaintargettexture;
-		}
-		if(i == 13) {
-			visible = gGameConfig->randomunknown;
-			filepath = gGameConfig->randomunknowntexture;
-		}
-		if(i == 14) {
-			visible = gGameConfig->randomlim;
-			filepath = gGameConfig->randomlimtexture;
-		}
-		if(i == 15) {
-			visible = gGameConfig->randomot;
-			filepath = gGameConfig->randomottexture;
-		}
-		if(i == 16) {
-			visible = gGameConfig->randomcover2;
-			filepath = gGameConfig->randomcover2texture;
-		}
-		if(i == 17) {
-			visible = gGameConfig->randomcover2extra;
-			filepath = gGameConfig->randomcover2extratexture;
-		}
-		if(i == 18) {
-			visible = gGameConfig->randommsetting;
-			filepath = gGameConfig->randommsettingtexture;
-		}
-		if(i == 19) {
-			visible = gGameConfig->randommorra;
-			filepath = gGameConfig->randommorratexture;
-		}
-		gSettings.chktexture[i] = env->addCheckBox(visible, GetNextRand(), gSettings.wRandomTexture, CHECKBOX_TEXTURE, gDataManager->GetSysString(8071 + i).data());
+		std::tie(visible, filepath) = SetRandTexture(i, 0);
+		gSettings.chktexture[i] = env->addCheckBox(visible, i < 8 ? GetNextRand() : GetNextRand2(), i < 8 ? gSettings.wRandomWallpaper : gSettings.wRandomTexture, CHECKBOX_TEXTURE, gDataManager->GetSysString(8071 + i).data());
 		defaultStrings.emplace_back(gSettings.chktexture[i], 8071 + i);
-		gSettings.cbName_texture[i] = AddComboBox(env, GetNextRand(), gSettings.wRandomTexture, COMBOBOX_TEXTURE);
+		gSettings.cbName_texture[i] = AddComboBox(env, i < 8 ? GetNextRand() : GetNextRand2(), i < 8 ? gSettings.wRandomWallpaper : gSettings.wRandomTexture, COMBOBOX_TEXTURE);
 		gSettings.cbName_texture[i]->setVisible(!visible);
 		gSettings.cbName_texture[i]->setMaxSelectionRows(10);
 		gSettings.cbName_texture[i]->clear();
@@ -6415,8 +6507,10 @@ void Game::OnResize() {
 	wMainMenu->setRelativePosition(ResizeWin(mainMenuLeftX, 200, mainMenuRightX, 535));
 	#endif
 	wQQ->setRelativePosition(ResizeWin(10, 438, 100, 570));
-	gSettings.wRandomTexture->setRelativePosition(ResizeWin(120, 15, 980, 635));
+	gSettings.wRandomTexture->setRelativePosition(ResizeWin(120, 30, 830, 450));
 	SetCentered(gSettings.wRandomTexture, false);
+	gSettings.wRandomWallpaper->setRelativePosition(ResizeWin(120, 30, 830, 450));
+	SetCentered(gSettings.wRandomWallpaper, false);
 	////////kdiy///////
 	SetCentered(wCommitsLog);
 	SetCentered(updateWindow, false);
@@ -6741,6 +6835,7 @@ bool Game::moviecheck(bool initial) {
 	}
 #ifndef VIP
 	filechk = false;
+	Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/af7099f4b5fa11ef98ba52540025c377/"), Utils::OPEN_URL);
 #endif
     if(!gGameConfig->system_engine)
         filechk = false;
@@ -6749,15 +6844,15 @@ bool Game::moviecheck(bool initial) {
 		gGameConfig->enablesanime = false;
 		gGameConfig->enablecanime = false;
 		gGameConfig->enableaanime = false;
-		mainGame->stACMessage->setText(gDataManager->GetSysString(8051).data());
+		gGameConfig->videowallpaper = false;
+
 		if(!initial) {
+			mainGame->stACMessage->setText(gDataManager->GetSysString(8051).data());
 			mainGame->PopupElement(mainGame->wACMessage, 90);
-#ifdef VIP
-        	Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/8c3fb8e8a3df11efba4752540025c377/"), Utils::OPEN_URL);
-#else
-			Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/af7099f4b5fa11ef98ba52540025c377/"), Utils::OPEN_URL);
-#endif
 		}
+#ifdef VIP
+        Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/8c3fb8e8a3df11efba4752540025c377/"), Utils::OPEN_URL);
+#endif
 	}
 	if(gGameConfig->enablesanime || gGameConfig->enablecanime || gGameConfig->enableaanime)
 		gGameConfig->enableanime = true;
@@ -6776,6 +6871,7 @@ bool Game::moviecheck(bool initial) {
 	gSettings.chkEnableSummonAnime->setChecked(gGameConfig->enablesanime);
 	gSettings.chkEnableActivateAnime->setChecked(gGameConfig->enablecanime);
 	gSettings.chkEnableAttackAnime->setChecked(gGameConfig->enableaanime);
+	gSettings.chkVideowallpaper->setChecked(gGameConfig->videowallpaper);
 	return filechk;
 }
 bool Game::chantcheck(bool initial) {
@@ -6784,6 +6880,7 @@ bool Game::chantcheck(bool initial) {
 		filechk = true;
 #ifndef VIP
 	filechk = false;
+	Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/af7099f4b5fa11ef98ba52540025c377/"), Utils::OPEN_URL);
 #endif
 	if(!filechk) {
 		gGameConfig->enablessound = false;
@@ -6793,12 +6890,10 @@ bool Game::chantcheck(bool initial) {
 		if(!initial) {
 			mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
 			mainGame->PopupElement(mainGame->wACMessage, 90);
-#ifdef VIP
-        	Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/ad6b923aa3df11ef9a3b5254001e7c00/"), Utils::OPEN_URL);
-#else
-			Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/af7099f4b5fa11ef98ba52540025c377/"), Utils::OPEN_URL);
-#endif
 		}
+#ifdef VIP
+        Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/ad6b923aa3df11ef9a3b5254001e7c00/"), Utils::OPEN_URL);
+#endif
 		for(int i = 0; i < 6; ++i) {
 			mainGame->icon[i]->setEnabled(false);
 			mainGame->icon2[i]->setEnabled(false);

@@ -1257,7 +1257,6 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->stTip->setVisible(false);
 			mainGame->device->setEventReceiver(&mainGame->menuHandler);
 			////kdiy////////
-			//ktest/////
 			mainGame->StopVideo(false, true);
             mainGame->isEvent = false;
             for(int i = 0; i < 5; ++i)
@@ -1595,7 +1594,6 @@ inline void PlayAnimecode(uint32_t code, uint32_t code2, uint8_t cat, std::uniqu
 	if(cat == 2 && !gGameConfig->enableaanime) return;
 	if(cat == 0 && !gGameConfig->enablesanime) return;
     if(code < 1) return;
-	/////ktest//////
 	std::string s1 = "./movies/", s11 = "./movies/";
 	if(cat == 0) {
 		s1 += "s" + std::to_string(code) + ".mp4";
@@ -1633,7 +1631,6 @@ inline void PlayAnime(ClientCard* pcard, uint8_t cat, std::unique_lock<epro::mut
 	auto cd = gDataManager->GetCardData(code);
 	uint32_t code2 = 0;
 	if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
-	/////ktest//////
 	std::string s1 = "./movies/", s2 = "./movies/", s11 = "./movies/", s21 = "./movies/";
 	if(cat == 0) {
 		s1 += "s" + std::to_string(code) + ".mp4";
@@ -2152,7 +2149,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				mainGame->dInfo.checkRematch = false;
 				mainGame->dInfo.isStarted = false;
                 ////kdiy////////
-				//ktest/////
 				mainGame->StopVideo(false, true);
                 mainGame->isEvent = false;
         		mainGame->bodycharacter[0] = 0;
@@ -6378,7 +6374,6 @@ void DuelClient::ReplayPrompt(bool local_stream) {
 	mainGame->btnChainWhenAvail->setVisible(false);
 	mainGame->btnCancelOrFinish->setVisible(false);
 	////kdiy////////
-	//ktest/////
 	mainGame->StopVideo(false, true);
     mainGame->isEvent = false;
 	mainGame->wBtnShowCard->setVisible(false);

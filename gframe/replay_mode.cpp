@@ -186,7 +186,6 @@ void ReplayMode::EndDuel() {
 		mainGame->dInfo.isOldReplay = false;
 		mainGame->closeDuelWindow = true;
         ////kdiy////////
-		//ktest/////
 		mainGame->StopVideo(false, true);
         mainGame->isEvent = false;
         mainGame->bodycharacter[0] = 0;
@@ -220,7 +219,6 @@ void ReplayMode::Restart(bool refresh) {
 	mainGame->dInfo.current_player[0] = 0;
 	mainGame->dInfo.current_player[1] = 0;
     ////kdiy////////
-	//ktest/////
 	mainGame->StopVideo(false, true);
     mainGame->isEvent = false;
     mainGame->bodycharacter[0] = 0;

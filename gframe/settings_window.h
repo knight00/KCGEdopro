@@ -113,6 +113,8 @@ struct SettingsWindow {
     irr::gui::IGUICheckBox* chkPauseduel;
     irr::gui::IGUIWindow* wRandomTexture;
 	irr::gui::IGUICheckBox* chkRandomtexture;
+    irr::gui::IGUIWindow* wRandomWallpaper;
+	irr::gui::IGUICheckBox* chkRandomwallpaper;
 	irr::gui::IGUICheckBox* chkVideowallpaper;
 	irr::gui::IGUICheckBox* chkRandomVideowallpaper;
 	irr::gui::IGUICheckBox* chktexture[20];
@@ -123,6 +125,10 @@ struct SettingsWindow {
 	irr::gui::CGUIImageButton* btnrandomtextureSelect1;
 	irr::gui::CGUIImageButton* btnrandomtextureSelect2;
     irr::gui::IGUIButton* btnrandomtexture_close;
+	irr::gui::CGUIImageButton* btnrandomtexture2;
+	irr::gui::CGUIImageButton* btnrandomtextureSelect12;
+	irr::gui::CGUIImageButton* btnrandomtextureSelect22;
+    irr::gui::IGUIButton* btnrandomtexture_close2;
 	irr::gui::IGUICheckBox* chkCloseup;
 	irr::gui::IGUICheckBox* chkPainting;
 	irr::gui::IGUICheckBox* chktField;

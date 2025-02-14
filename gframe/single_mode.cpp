@@ -224,7 +224,6 @@ restart:
 			}
 			////kdiy////////
 			//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
-			//ktest/////
 			mainGame->StopVideo(false, true);
             mainGame->isEvent = false;
         	mainGame->bodycharacter[0] = 0;
@@ -385,7 +384,6 @@ restart:
 		}
 		////kdiy////////
 		//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
-		//ktest/////
 		mainGame->StopVideo(false, true);
         mainGame->isEvent = false;
         mainGame->bodycharacter[0] = 0;

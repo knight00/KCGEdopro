@@ -90,30 +90,30 @@ irr::video::ITexture* ImageManager::loadTextureAnySize(epro::path_stringview tex
 }
 bool ImageManager::Initial() {
 	/////kdiy/////
-	Utils::MakeDirectory(EPRO_TEXT("./textures/character"));
-	for(uint8_t playno = 0; playno < CHARACTER_VOICE - 1; playno++) {
-		int size = gSoundManager->textcharacter[playno].size();
-		auto path = epro::format(EPRO_TEXT("./textures/character/{}"), gSoundManager->textcharacter[playno][0]);
-		Utils::MakeDirectory(path);
-		if(size > 1) {
-			for(int i = 0; i < size - 1; i++) {
-				path = epro::format(EPRO_TEXT("./textures/character/{}"), gSoundManager->textcharacter[playno][i+1]);
-				Utils::MakeDirectory(path);
-				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/icon"), path));
-				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/damage"), path));
-				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/advantage"), path));
-				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin"), path));
-				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin/advantage"), path));
-				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin/damage"), path));
-				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin/surprise"), path));
-				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp"), path));
-				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/normal"), path));
-				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/advantage"), path));
-				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/damage"), path));
-				Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/surprise"), path));
-			}
-		}
-	}
+	// Utils::MakeDirectory(EPRO_TEXT("./textures/character"));
+	// for(uint8_t playno = 0; playno < CHARACTER_VOICE - 1; playno++) {
+	// 	int size = gSoundManager->textcharacter[playno].size();
+	// 	auto path = epro::format(EPRO_TEXT("./textures/character/{}"), gSoundManager->textcharacter[playno][0]);
+		// Utils::MakeDirectory(path);
+		// if(size > 1) {
+		// 	for(int i = 0; i < size - 1; i++) {
+		// 		path = epro::format(EPRO_TEXT("./textures/character/{}"), gSoundManager->textcharacter[playno][i+1]);
+		// 		Utils::MakeDirectory(path);
+		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/icon"), path));
+		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/damage"), path));
+		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/advantage"), path));
+		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin"), path));
+		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin/advantage"), path));
+		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin/damage"), path));
+		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin/surprise"), path));
+		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp"), path));
+		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/normal"), path));
+		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/advantage"), path));
+		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/damage"), path));
+		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/surprise"), path));
+		// 	}
+		// }
+	// }
 	/////kdiy/////
 	timestamp_id = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	textures_path = BASE_PATH;
@@ -311,42 +311,44 @@ bool ImageManager::Initial() {
     tsubcharacterselect = loadTextureFixedSize(EPRO_TEXT("character/1"sv), 25, 25);
     tsubcharacterselect2 = loadTextureFixedSize(EPRO_TEXT("character/2"sv), 25, 25);
     tsubcharacterselect3 = loadTextureFixedSize(EPRO_TEXT("character/3"sv), 25, 25);
+    tsubcharacterselect4 = loadTextureFixedSize(EPRO_TEXT("character/4"sv), 25, 25);
+    tsubcharacterselect5 = loadTextureFixedSize(EPRO_TEXT("character/5"sv), 25, 25);
     GetRandomImage(tCover[0], TEXTURE_COVERS, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
     if (!tCover[0]) {
-	    tCover[0] = GetTextureFromFile(epro::format(EPRO_TEXT("{}cover/{}"), textures_path, Utils::ToPathString(gGameConfig->randomcovertexture)).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+	    tCover[0] = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/cover/{}"), gGameConfig->randomcovertexture).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 		if (!tCover[0]) tCover[0] = loadTextureFixedSize(EPRO_TEXT("cover"sv), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	}
 	ASSERT_TEXTURE_LOADED(tCover[0], "cover");
     GetRandomImage(tCover[1], TEXTURE_COVERS2, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	if (!tCover[1]) {
-	    tCover[1] = GetTextureFromFile(epro::format(EPRO_TEXT("{}cover/{}"), textures_path, Utils::ToPathString(gGameConfig->randomcoverextratexture)).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+	    tCover[1] = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/cover/{}"), gGameConfig->randomcoverextratexture).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 		if (!tCover[1]) tCover[1] = loadTextureFixedSize(EPRO_TEXT("cover2"sv), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	}
     if (!tCover[1])
 	    tCover[1] = tCover[0];
     GetRandomImage(tCover[2], TEXTURE_COVERS3, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
     if (!tCover[2]) {
-	    tCover[2] = GetTextureFromFile(epro::format(EPRO_TEXT("{}cover/{}"), textures_path, Utils::ToPathString(gGameConfig->randomcover2texture)).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+	    tCover[2] = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/cover/{}"), gGameConfig->randomcover2texture).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	}
 	if (!tCover[2])
 	    tCover[2] = tCover[0];
     GetRandomImage(tCover[3], TEXTURE_COVERS4, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
     if (!tCover[3]) {
-	    tCover[3] = GetTextureFromFile(epro::format(EPRO_TEXT("{}cover/{}"), textures_path, Utils::ToPathString(gGameConfig->randomcover2extratexture)).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+	    tCover[3] = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/cover/{}"), gGameConfig->randomcover2extratexture).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	}
 	if (!tCover[3])
 	    tCover[3] = tCover[0];
 
 	GetRandomImage(tUnknown, TEXTURE_UNKNOWN, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	if (!tUnknown) {
-	    tUnknown = GetTextureFromFile(epro::format(EPRO_TEXT("{}unknown/{}"), textures_path, Utils::ToPathString(gGameConfig->randomunknowntexture)).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+	    tUnknown = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/unknown/{}"), gGameConfig->randomunknowntexture).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 		if (!tUnknown) tUnknown = loadTextureFixedSize(EPRO_TEXT("unknown"sv), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	}
 	ASSERT_TEXTURE_LOADED(tUnknown, "unknown");
 
 	GetRandomImage(tAct, TEXTURE_ACTIVATE);
 	if (!tAct) {
-	    tAct = driver->getTexture(epro::format(EPRO_TEXT("{}act/{}"), textures_path, Utils::ToPathString(gGameConfig->randomacttexture)).data());
+	    tAct = driver->getTexture(epro::format(EPRO_TEXT("./textures/act/{}"), gGameConfig->randomacttexture).data());
 		if (!tAct) tAct = loadTextureAnySize(EPRO_TEXT("act"sv));
         ASSIGN_DEFAULT(tAct);
     }
@@ -354,7 +356,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tAttack, TEXTURE_ATTACK);
 	if (!tAttack) {
-		tAttack = driver->getTexture(epro::format(EPRO_TEXT("{}act/{}"), textures_path, Utils::ToPathString(gGameConfig->randomattacktexture)).data());
+		tAttack = driver->getTexture(epro::format(EPRO_TEXT("./textures/act/{}"), gGameConfig->randomattacktexture).data());
 		if (!tAttack) tAttack = loadTextureAnySize(EPRO_TEXT("attack"sv));
         ASSIGN_DEFAULT(tAttack);
     }
@@ -362,7 +364,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tChain, TEXTURE_CHAIN);
 	if (!tChain) {
-		tChain = driver->getTexture(epro::format(EPRO_TEXT("{}chain/{}"), textures_path, Utils::ToPathString(gGameConfig->randomchaintexture)).data());
+		tChain = driver->getTexture(epro::format(EPRO_TEXT("./textures/chain/{}"), gGameConfig->randomchaintexture).data());
 		if (!tChain) tChain = loadTextureAnySize(EPRO_TEXT("chain"sv));
         ASSIGN_DEFAULT(tChain);
     }
@@ -370,7 +372,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tNegated, TEXTURE_NEGATED, 128, 128);
 	if (!tNegated) {
-		tNegated = driver->getTexture(epro::format(EPRO_TEXT("{}negated/{}"), textures_path, Utils::ToPathString(gGameConfig->randomnegatetexture)).data());
+		tNegated = driver->getTexture(epro::format(EPRO_TEXT("{}negated/{}"), textures_path,gGameConfig->randomnegatetexture).data());
 		if (!tNegated) tNegated = loadTextureFixedSize(EPRO_TEXT("negated"sv), 128, 128);
         ASSIGN_DEFAULT(tNegated);
     }
@@ -382,7 +384,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tMask, TEXTURE_MASK, 254, 254);
 	if (!tMask) {
-		tMask = driver->getTexture(epro::format(EPRO_TEXT("{}mask/{}"), textures_path, Utils::ToPathString(gGameConfig->randommasktexture)).data());
+		tMask = driver->getTexture(epro::format(EPRO_TEXT("./textures/mask/{}"), gGameConfig->randommasktexture).data());
 		if (!tMask) tMask = loadTextureFixedSize(EPRO_TEXT("mask"sv), 254, 254);
         ASSIGN_DEFAULT(tMask);
     }
@@ -390,7 +392,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tEquip, TEXTURE_EQUIP);
 	if (!tEquip) {
-		tEquip = driver->getTexture(epro::format(EPRO_TEXT("{}equip/{}"), textures_path, Utils::ToPathString(gGameConfig->randomequiptexture)).data());
+		tEquip = driver->getTexture(epro::format(EPRO_TEXT("./textures/equip/{}"), gGameConfig->randomequiptexture).data());
 		if (!tEquip) tEquip = loadTextureAnySize(EPRO_TEXT("equip"sv));
         ASSIGN_DEFAULT(tEquip);
     }
@@ -398,7 +400,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tTarget, TEXTURE_TARGET);
 	if (!tTarget) {
-		tTarget = driver->getTexture(epro::format(EPRO_TEXT("{}target/{}"), textures_path, Utils::ToPathString(gGameConfig->randomtargettexture)).data());
+		tTarget = driver->getTexture(epro::format(EPRO_TEXT("./textures/target/{}"), gGameConfig->randomtargettexture).data());
 		if (!tTarget) tTarget = loadTextureAnySize(EPRO_TEXT("target"sv));
         ASSIGN_DEFAULT(tTarget);
     }
@@ -406,7 +408,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tChainTarget, TEXTURE_CHAINTARGET);
 	if (!tChainTarget) {
-		tChainTarget = driver->getTexture(epro::format(EPRO_TEXT("{}chaintarget/{}"), textures_path, Utils::ToPathString(gGameConfig->randomchaintargettexture)).data());
+		tChainTarget = driver->getTexture(epro::format(EPRO_TEXT("./textures/chaintarget/{}"), gGameConfig->randomchaintargettexture).data());
 		if (!tChainTarget) tChainTarget = loadTextureAnySize(EPRO_TEXT("chaintarget"sv));
         ASSIGN_DEFAULT(tChainTarget);
     }
@@ -414,7 +416,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tLim, TEXTURE_LIM);
 	if (!tLim) {
-		tLim = driver->getTexture(epro::format(EPRO_TEXT("{}lim/{}"), textures_path, Utils::ToPathString(gGameConfig->randomlimtexture)).data());
+		tLim = driver->getTexture(epro::format(EPRO_TEXT("./textures/lim/{}"), gGameConfig->randomlimtexture).data());
 		if (!tLim) tLim = loadTextureAnySize(EPRO_TEXT("lim"sv));
         ASSIGN_DEFAULT(tLim);
     }
@@ -422,7 +424,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tOT, TEXTURE_OT);
 	if (!tOT) {
-	    tOT = driver->getTexture(epro::format(EPRO_TEXT("{}ot/{}"), textures_path, Utils::ToPathString(gGameConfig->randomottexture)).data());
+	    tOT = driver->getTexture(epro::format(EPRO_TEXT("./textures/ot/{}"), gGameConfig->randomottexture).data());
 		if (!tOT) tOT = loadTextureAnySize(EPRO_TEXT("ot"sv));
         ASSIGN_DEFAULT(tOT);
     }
@@ -430,19 +432,19 @@ bool ImageManager::Initial() {
 
 	GetRandomImagef(89, 128);
 	if (!tHand[0]) {
-		tHand[0] = loadTextureAnySize(epro::format(EPRO_TEXT("morra/{}/f1"sv), Utils::ToUTF8IfNeeded(gGameConfig->randommorratexture)));
+		tHand[0] = loadTextureAnySize(epro::format(EPRO_TEXT("morra/{}/f1"sv), gGameConfig->randommorratexture));
 		if (!tHand[0]) tHand[0] = loadTextureFixedSize(EPRO_TEXT("f1"sv), 89, 128);
         ASSIGN_DEFAULT(tHand[0]);
     }
 	ASSERT_TEXTURE_LOADED(tHand[0], "f1");
 	if (!tHand[1]) {
-		tHand[1] = loadTextureAnySize(epro::format(EPRO_TEXT("morra/{}/f2"sv), Utils::ToUTF8IfNeeded(gGameConfig->randommorratexture)));
+		tHand[1] = loadTextureAnySize(epro::format(EPRO_TEXT("morra/{}/f2"sv), gGameConfig->randommorratexture));
 		if (!tHand[1]) tHand[1] = loadTextureFixedSize(EPRO_TEXT("f2"sv), 89, 128);
         ASSIGN_DEFAULT(tHand[1]);
     }
 	ASSERT_TEXTURE_LOADED(tHand[1], "f2");
 	if (!tHand[2]) {
-		tHand[2] = loadTextureAnySize(epro::format(EPRO_TEXT("morra/{}/f3"sv), Utils::ToUTF8IfNeeded(gGameConfig->randommorratexture)));
+		tHand[2] = loadTextureAnySize(epro::format(EPRO_TEXT("morra/{}/f3"sv), gGameConfig->randommorratexture));
 		if (!tHand[2]) tHand[2] = loadTextureFixedSize(EPRO_TEXT("f3"sv), 89, 128);
         ASSIGN_DEFAULT(tHand[2]);
     }
@@ -450,7 +452,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tBackGround, TEXTURE_BACKGROUND);
 	if (!tBackGround) {
-		tBackGround = driver->getTexture(epro::format(EPRO_TEXT("{}bg/{}"), textures_path, Utils::ToPathString(gGameConfig->randombgtexture)).data());
+		tBackGround = driver->getTexture(epro::format(EPRO_TEXT("./textures/bg/{}"), gGameConfig->randombgtexture).data());
 		if (!tBackGround) tBackGround = loadTextureAnySize(EPRO_TEXT("bg"sv));
         ASSIGN_DEFAULT(tBackGround);
     }
@@ -458,7 +460,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tBackGround_menu, TEXTURE_MENU);
 	if (!tBackGround_menu) {
-		tBackGround_menu = driver->getTexture(epro::format(EPRO_TEXT("{}bg_menu/{}"), textures_path, Utils::ToPathString(gGameConfig->randombgmenutexture)).data());
+		tBackGround_menu = driver->getTexture(epro::format(EPRO_TEXT("./textures/bg_menu/{}"), gGameConfig->randombgmenutexture).data());
 		if (!tBackGround_menu) tBackGround_menu = loadTextureAnySize(EPRO_TEXT("bg_menu"sv));
 	}
 	if(!tBackGround_menu) {
@@ -468,7 +470,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tBackGround_deck, TEXTURE_DECK);
 	if (!tBackGround_deck){
-		tBackGround_deck = driver->getTexture(epro::format(EPRO_TEXT("{}bg_deck/{}"), textures_path, Utils::ToPathString(gGameConfig->randombgdecktexture)).data());
+		tBackGround_deck = driver->getTexture(epro::format(EPRO_TEXT("./textures/bg_deck/{}"), gGameConfig->randombgdecktexture).data());
 		if (!tBackGround_deck) tBackGround_deck = loadTextureAnySize(EPRO_TEXT("bg_deck"sv));
 	}
 	if(!tBackGround_deck) {
@@ -596,7 +598,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tSettings, TEXTURE_SETTING);
 	if (!tSettings) {
-	    tSettings = driver->getTexture(epro::format(EPRO_TEXT("{}settings/{}"), textures_path, Utils::ToPathString(gGameConfig->randomattacktexture)).data());
+	    tSettings = driver->getTexture(epro::format(EPRO_TEXT("./textures/settings/{}"), gGameConfig->randomattacktexture).data());
 		if (!tSettings) tSettings = loadTextureAnySize(EPRO_TEXT("settings"sv));
         ASSIGN_DEFAULT(tSettings);
     }
@@ -756,7 +758,7 @@ void ImageManager::RefreshRandomImageList() {
 		auto path = gSoundManager->textcharacter[playno-1][0];
 		if(size > 1) {
 			for(int i = 0; i < size - 1; i++) {
-				path = gSoundManager->textcharacter[playno-1][i+1];
+				path = epro::format(EPRO_TEXT("{}/{}"), gSoundManager->textcharacter[playno-1][0], gSoundManager->textcharacter[playno-1][i+1]);
 #ifdef VIP
 				icon[playno][i] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/mini_icon"sv), path));
 				
@@ -859,7 +861,7 @@ void ImageManager::RefreshRandomImageList() {
         		GetRandomCharacter(lpicon[playno][0][j], lpcharacter[playno][0][j]);
 				if(!lpicon[playno][0][j])
 					lpicon[playno][0][j] = lpicon[playno][0][0];
-				for(int k = 1; k < 3; k++)
+				for(int k = 1; k < 6; k++)
 					lpicon[playno][k][j] = lpicon[playno][0][j];
 			}
 
@@ -879,7 +881,7 @@ void ImageManager::RefreshRandomImageList() {
         		GetRandomCharacter(bodycharacter[playno][0][j], imgcharacter[playno][0][j]);
 				if(!bodycharacter[playno][0][j])
 					bodycharacter[playno][0][j] = bodycharacter[playno][0][0];
-				for(int k = 1; k < 3; k++)
+				for(int k = 1; k < 6; k++)
 					bodycharacter[playno][k][j] = bodycharacter[playno][0][j];
 			}
 			
@@ -903,7 +905,7 @@ void ImageManager::RefreshRandomImageList() {
 				    cutincharacter_size[playno][0][j] = irr::core::rect<irr::s32>(0,0,0,0);
 				else
 					cutincharacter_size[playno][0][j] = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cutin[playno][0][j]->getOriginalSize()));
-				for(int k = 1; k < 3; k++) {
+				for(int k = 1; k < 6; k++) {
 					cutin[playno][k][j] = cutin[playno][0][j];
 					if(cutin[playno][k][j] == nullptr)
 				    	cutincharacter_size[playno][k][j] = irr::core::rect<irr::s32>(0,0,0,0);
@@ -915,11 +917,11 @@ void ImageManager::RefreshRandomImageList() {
             for(int j = 0; j < 2; j++)
 				icon[playno][j] = driver->getTexture(0);
 			for(int j = 0; j < 4; j++) {
-				for(int k = 0; k < 3; k++)
+				for(int k = 0; k < 6; k++)
 					lpicon[playno][k][j] = driver->getTexture(0);
 			}
 			for(int j = 0; j < 3; j++) {
-				for(int k = 0; k < 3; k++)
+				for(int k = 0; k < 6; k++)
 					bodycharacter[playno][k][j] = driver->getTexture(0);
 			}
 			for(int j = 0; j < 3; j++) {
@@ -959,7 +961,7 @@ void ImageManager::RefreshImageDirf() {
 }
 void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, bool force_random) {
     int count = ImageList[image_type].size();
-	if((!gGameConfig->randomtexture && !force_random) || count <= 0) {
+	if((!((gGameConfig->randomtexture && image_type > 7) || (gGameConfig->randomwallpaper && image_type < 8)) && !force_random) || count <= 0) {
         src = nullptr;
         return;
     }
@@ -978,7 +980,7 @@ void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, bo
 }
 void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, int width, int height, bool force_random) {
 	int count = ImageList[image_type].size();
-	if((!gGameConfig->randomtexture && !force_random) || count <= 0) {
+	if((!((gGameConfig->randomtexture && image_type > 7) || (gGameConfig->randomwallpaper && image_type < 8)) && !force_random) || count <= 0) {
         src = nullptr;
         return;
     }
@@ -998,7 +1000,7 @@ void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, in
 void ImageManager::GetRandomImagef(int width, int height) {
 	ImageFolder[TEXTURE_F1] = EPRO_TEXT("morra");
 	int count = ImageList[TEXTURE_F1].size();
-	if(!gGameConfig->randomtexture || count <= 0) {
+	if(!gGameConfig->randommorra || count <= 0) {
 		tHand[0] = nullptr;
 		tHand[1] = nullptr;
 		tHand[2] = nullptr;

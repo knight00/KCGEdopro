@@ -23,7 +23,6 @@
 /////kdiy/////
 #include "client_card.h"
 #include "network.h"
-/////ktest//////
 // #include <opencv2/opencv.hpp>
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -358,9 +357,7 @@ struct host_creation_panel_elements {
 	irr::gui::CGUIImageButton* btnCharacter_replay;
 	irr::gui::CGUIImageButton* btnCharacterSelect1_replay;
 	irr::gui::CGUIImageButton* btnCharacterSelect2_replay;
-	irr::gui::CGUIImageButton* btnsubCharacterSelect_replay;
-	irr::gui::CGUIImageButton* btnsubCharacterSelect2_replay;
-	irr::gui::CGUIImageButton* btnsubCharacterSelect3_replay;
+	irr::gui::CGUIImageButton* btnsubCharacterSelect_replay[5];
     irr::gui::IGUIButton* btnCharacterSelect_replayclose;
     irr::gui::IGUIButton* btnCharacterSelect_replayreset[6];
     irr::gui::IGUIComboBox* ebCharacter_replay[6];
@@ -778,6 +775,7 @@ public:
 	void LoadLocalServers();
 	void ReloadLocalCBDuelRule();
 	void ReloadLocalCBRule();
+	std::tuple<bool, std::wstring> SetRandTexture(int i, int set, std::wstring setfilepath = L""); //set=0: not set config, 1: set by checkbox, 2: set by combobox
 	void ReloadTexture();
 	//void ShowCardInfo(uint32_t code, bool resize = false, imgType type = imgType::ART);
     void ShowCardInfo(uint32_t code, bool resize = false, imgType type = imgType::ART, ClientCard* pcard = nullptr);
@@ -954,7 +952,6 @@ public:
 	epro::condition_variable* cv;//should lock thread when play mode-story sound,this cv is in duelclient.cpp
 	bool haloNodeexist[2][12][10];
     std::vector<irr::core::vector3df> haloNode[2][12][10];
-    //ktest////////
 	sf::Sound chantsound;
 	sf::SoundBuffer soundBuffer;
     std::string currentVideo;
@@ -982,7 +979,6 @@ public:
 	bool PlayVideo(bool loop = false);
     void StopVideo(bool close = false, bool reset = true);
 	bool showcardinfo = false, showchat = false, showloc = false;
-    //ktest////////
 	bool LoadJson(epro::path_string path, uint8_t character);
 	void LoadJsonInfo();
 	struct Ploat {

@@ -98,7 +98,7 @@ void Game::DrawBackGround() {
 	};
 
 	//draw field
-    /////ktest//////
+    /////kdiy//////
 	if(isAnime) {
 		if(PlayVideo())
 		    if(videotexture) {
@@ -106,16 +106,15 @@ void Game::DrawBackGround() {
 				else DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
 			}
     } else {
-    /////kdiy//////
     if(!gGameConfig->chkField && DrawFieldSpell())
 	    DrawTextureRect(matManager.vField, imageManager.tFieldTransparent[three_columns][tfield]);
 	    //DrawFieldSpell();
     else if(gGameConfig->chkField || !gGameConfig->randombgdeck || (tfield != 3 && tfield != 1))
     /////kdiy//////
 	DrawTextureRect(matManager.vField, DrawFieldSpell() ? imageManager.tFieldTransparent[three_columns][tfield] : imageManager.tField[three_columns][tfield]);
-    /////ktest//////
+    /////kdiy//////
     }
-    /////ktest//////
+    /////kdiy//////
 
 	driver->setMaterial(matManager.mBackLine);
 	//select field
@@ -224,9 +223,9 @@ void Game::DrawBackGround() {
 	driver->drawVertexPrimitiveList(vertex, 4, matManager.iRectangle, 2);
 }
 void Game::DrawLinkedZones(ClientCard* pcard) {
-	///ktest////////
+	///kdiy////////
 	if(videostart) return;
-	///ktest////////
+	///kdiy////////
 	auto CheckMutual = [&](ClientCard* pcard, int mark)->bool {
 		driver->setMaterial(matManager.mLinkedField);
 		if(pcard && pcard->type & TYPE_LINK && pcard->link_marker & mark) {
@@ -406,10 +405,10 @@ void Game::DrawCards() {
 	}
 }
 void Game::DrawCard(ClientCard* pcard) {
-	///ktest////////
+	///kdiy////////
 	if(videostart && !pcard->is_anime) return;
 	if(!videostart) pcard->is_anime = false;
-	///ktest////////
+	///kdiy////////
 	if (pcard->aniFrame > 0) {
 		uint32_t movetime = std::min<uint32_t>(delta_time, pcard->aniFrame);
 		if (pcard->is_moving) {
@@ -1082,9 +1081,9 @@ Draws the stats of a card based on its relative position
 //void Game::DrawStatus(ClientCard* pcard) {
 void Game::DrawStatus(ClientCard* pcard, bool attackonly) {
 //kidy///////
-	///ktest////////
+	///kdiy////////
 	if(videostart) return;
-	///ktest////////
+	///kdiy////////
 	auto getcoords = [collisionmanager=device->getSceneManager()->getSceneCollisionManager()](const irr::core::vector3df& pos3d) {
 		return collisionmanager->getScreenCoordinatesFrom3DPosition(pos3d);
 	};
@@ -1352,9 +1351,9 @@ void Game::DrawStatus(ClientCard* pcard, bool attackonly) {
 Draws the pendulum scale value of a card in the pendulum zone based on its relative position
 */
 void Game::DrawPendScale(ClientCard* pcard) {
-	///ktest////////
+	///kdiy////////
 	if(videostart) return;
-	///ktest////////
+	///kdiy////////
 	int swap = (pcard->sequence > 1 && pcard->sequence != 6) ? 1 : 0;
 	float x0, y0, reverse = (pcard->controler == 0) ? 1.0f : -1.0f;
 	std::wstring scale;
@@ -1378,9 +1377,9 @@ void Game::DrawPendScale(ClientCard* pcard) {
 Draws the text in the middle of the bottom side of the zone
 */
 void Game::DrawStackIndicator(epro::wstringview text, const Materials::QuadVertex v, bool opponent) {
-	///ktest////////
+	///kdiy////////
 	if(videostart) return;
-	///ktest////////
+	///kdiy////////
 	const irr::core::ustring utext(text);
 	const auto dim = textFont->getDimensionustring(utext) / 2;
 	//int width = dim.Width / 2, height = dim.Height / 2;
@@ -1785,7 +1784,7 @@ void Game::DrawBackImage(irr::video::ITexture* texture, bool resized) {
 		prevbg = nullptr;
 	if(!texture)
 		return;
-    /////ktest//////
+    /////ktemp//////
     // if(texture == imageManager.tBackGround_menu) {
     //     if(openVideo("./movies/SlifervsObelisk.mp4")) {
 	// 	    if(PlayVideo(true))
@@ -1797,7 +1796,7 @@ void Game::DrawBackImage(irr::video::ITexture* texture, bool resized) {
     // } else {
     //     if(!isAnime && videostart) StopVideo();
     // }
-    /////ktest//////
+    /////ktemp//////
 	if(texture != prevbg) {
 		prevbg = texture;
 		dest_size = Resize(0, 0, 1024, 640);
