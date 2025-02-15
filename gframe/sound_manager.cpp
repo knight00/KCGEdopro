@@ -204,8 +204,8 @@ void SoundManager::RefreshZipChants(epro::path_stringview folder, std::vector<st
             	auto filename = Utils::GetFileName(file);
 		    	list.push_back(Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/{}"), folder, filename)));
 			}
+			break;
 		}
-        break;
     }
 #endif
 }
@@ -321,9 +321,6 @@ void SoundManager::RefreshChantsList() {
         //         continue;
         //     }
         // }
-	Utils::MakeDirectory(EPRO_TEXT("./sound/character"));
-	for(uint8_t playno = 0; playno < CHARACTER_VOICE - 1; playno++)
-		Utils::MakeDirectory(epro::format(EPRO_TEXT("./sound/character/{}"), textcharacter[playno][0]));
 
 	for (auto& file : Utils::FindFiles(EPRO_TEXT("./sound/BGM/card"), mixer->GetSupportedSoundExtensions())) {
 		auto scode = Utils::GetFileName(file);
@@ -339,13 +336,6 @@ void SoundManager::RefreshChantsList() {
 	}
 
 	for(const auto& chantType : types) {
-		// std::vector<epro::path_string> searchPath2;
-		// for(uint8_t playno = 0; playno < CHARACTER_VOICE + CHARACTER_STORY_ONLY - 1; playno++) {
-		// 	searchPath2.push_back(epro::format(EPRO_TEXT("./sound/character/{}/{}"), textcharacter[playno][0], chantType.second));
-		// }
-		// for(auto path : searchPath2)
-		// 	Utils::MakeDirectory(path);
-
 		int i = -1;
 		if(chantType.first == CHANT::SET) i = 0;
 		if(chantType.first == CHANT::DESTROY) i = 1;
@@ -373,65 +363,65 @@ void SoundManager::RefreshChantsList() {
 			int size = textcharacter[x-1].size();
 			for(int j = 0; j < size; j++) {
 				if(size > 1 && j == 0) continue;
+				auto character_name = textcharacter[x-1][j];
 				if(chantType.first == CHANT::SUMMON) {
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/fusion"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][0][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/synchro"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][1][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/xyz"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][2][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/link"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][3][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/ritual"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][4][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/pendulum"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][5][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/summon"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][6][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/spsummon"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][7][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/attack"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][8][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/defense"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][9][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/advance"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][10][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/max"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][11][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/fusion"), character_name, chantType.second), Chantaction[i][x][0][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/synchro"), character_name, chantType.second), Chantaction[i][x][1][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/xyz"), character_name, chantType.second), Chantaction[i][x][2][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/link"), character_name, chantType.second), Chantaction[i][x][3][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/ritual"), character_name, chantType.second), Chantaction[i][x][4][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/pendulum"), character_name, chantType.second), Chantaction[i][x][5][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/summon"), character_name, chantType.second), Chantaction[i][x][6][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/spsummon"), character_name, chantType.second), Chantaction[i][x][7][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/attack"), character_name, chantType.second), Chantaction[i][x][8][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/defense"), character_name, chantType.second), Chantaction[i][x][9][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/advance"), character_name, chantType.second), Chantaction[i][x][10][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/max"), character_name, chantType.second), Chantaction[i][x][11][0], x);
 				} else if(chantType.first == CHANT::REINCARNATE)
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}"), textcharacter[x-1][j], chantType.second), Chantaction[8][x][12][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}"), character_name, chantType.second), Chantaction[8][x][12][0], x);
 				else if(chantType.first == CHANT::ATTACK) {
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/attack"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][0][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/monster"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][1][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/directattack"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][2][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/attack"), character_name, chantType.second), Chantaction[i][x][0][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/monster"), character_name, chantType.second), Chantaction[i][x][1][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/directattack"), character_name, chantType.second), Chantaction[i][x][2][0], x);
 				} else if(chantType.first == CHANT::ACTIVATE) {
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/activate"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][0][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/fromhand"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][1][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/monster"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][2][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/normalspell"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][3][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/quickspell"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][4][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/continuousspell"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][5][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/equip"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][6][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/ritual"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][7][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/normaltrap"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][8][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/continuoustrap"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][9][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/countertrap"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][10][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/flip"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][11][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/field"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][12][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/action"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][13][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/activate"), character_name, chantType.second), Chantaction[i][x][0][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/fromhand"), character_name, chantType.second), Chantaction[i][x][1][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/monster"), character_name, chantType.second), Chantaction[i][x][2][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/normalspell"), character_name, chantType.second), Chantaction[i][x][3][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/quickspell"), character_name, chantType.second), Chantaction[i][x][4][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/continuousspell"), character_name, chantType.second), Chantaction[i][x][5][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/equip"), character_name, chantType.second), Chantaction[i][x][6][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/ritual"), character_name, chantType.second), Chantaction[i][x][7][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/normaltrap"), character_name, chantType.second), Chantaction[i][x][8][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/continuoustrap"), character_name, chantType.second), Chantaction[i][x][9][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/countertrap"), character_name, chantType.second), Chantaction[i][x][10][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/flip"), character_name, chantType.second), Chantaction[i][x][11][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/field"), character_name, chantType.second), Chantaction[i][x][12][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/action"), character_name, chantType.second), Chantaction[i][x][13][0], x);
 				} else if(chantType.first == CHANT::DRAW) {
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/advantage"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][0][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/disadvantage"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][1][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/advantage"), character_name, chantType.second), Chantaction[i][x][0][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/disadvantage"), character_name, chantType.second), Chantaction[i][x][1][0], x);
 				} else if(chantType.first == CHANT::SET) {
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][0][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/monster"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][1][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}"), character_name, chantType.second), Chantaction[i][x][0][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/monster"), character_name, chantType.second), Chantaction[i][x][1][0], x);
 				} else if(chantType.first == CHANT::DAMAGE) {
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][0][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/cost"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][1][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/minor"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][2][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/major"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][3][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}"), character_name, chantType.second), Chantaction[i][x][0][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/cost"), character_name, chantType.second), Chantaction[i][x][1][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/minor"), character_name, chantType.second), Chantaction[i][x][2][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/major"), character_name, chantType.second), Chantaction[i][x][3][0], x);
 				} else if(chantType.first == CHANT::PENDULUM) {
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/activate"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][0][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/activate"), character_name, chantType.second), Chantaction[i][x][0][0], x);
 				} else if(chantType.first != CHANT::WIN) {
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}"), textcharacter[x-1][j], chantType.second), Chantaction[i][x][0][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}"), character_name, chantType.second), Chantaction[i][x][0][0], x);
 					for(int playno = 0; playno < CHARACTER_VOICE - 1; playno++)
-				    	RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/{}"), textcharacter[x-1][j], chantType.second, textcharacter[playno][0]), Chantaction[i][x][0][playno + 1], x);
+				    	RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/{}"), character_name, chantType.second, textcharacter[playno][0]), Chantaction[i][x][0][playno + 1], x);
 				}
 				if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM || chantType.first == CHANT::REINCARNATE)
-					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card"), textcharacter[x-1][j], chantType.second), Chantcard[x], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card"), character_name, chantType.second), Chantcard[x], chantType.first, x);
 				if(chantType.first == CHANT::WIN)
-					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}"), textcharacter[x-1][j], chantType.second), Chantcard[x], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}"), character_name, chantType.second), Chantcard[x], chantType.first, x);
 
-				epro::path_stringview character_name = textcharacter[x-1][j];
-				if(size > 1) character_name = epro::format(EPRO_TEXT("{}/{}"), textcharacter[x-1][0], character_name);
+				if(size > 1) character_name = epro::format(EPRO_TEXT("{}/{}"), textcharacter[x-1][0], textcharacter[x-1][j]);
 				if(chantType.first == CHANT::SUMMON) {
 					RefreshChants(epro::format(EPRO_TEXT("{}/{}/summon"), character_name, chantType.second), Chantaction2[i][x][0][0]);
 					RefreshChants(epro::format(EPRO_TEXT("{}/{}/fusion"), character_name, chantType.second), Chantaction2[i][x][1][0]);

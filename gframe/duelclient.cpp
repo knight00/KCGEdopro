@@ -1610,6 +1610,7 @@ inline void PlayAnimecode(uint32_t code, uint32_t code2, uint8_t cat, std::uniqu
 	std::vector<std::string> s1List = {s1, s11};
 	for (const auto& str : s1List) {
 		if (mainGame->openVideo(str)) {
+			mainGame->WaitFrameSignal(12, lock);
 			mainGame->isAnime = true;
 			mainGame->cv->wait_for(lock, std::chrono::milliseconds(mainGame->videoDuration));
 			mainGame->WaitFrameSignal(10, lock);
@@ -1653,6 +1654,7 @@ inline void PlayAnime(ClientCard* pcard, uint8_t cat, std::unique_lock<epro::mut
 	std::vector<std::string> s1List = {s1, s11, s2, s21};
 	for(const auto& str : s1List) {
 		if(mainGame->openVideo(str)) {
+			mainGame->WaitFrameSignal(12, lock);
 			mainGame->isAnime = true;
 			pcard->is_anime = true;
 			mainGame->cv->wait_for(lock, std::chrono::milliseconds(mainGame->videoDuration));
@@ -1675,6 +1677,7 @@ inline void PlayAnimeC(std::string text, std::unique_lock<epro::mutex> &lock) {
 	std::vector<std::string> s1List = {s1, s11};
 	for (size_t i = 0; i < s1List.size(); ++i) {
 		if(mainGame->openVideo(s1List[i])) {
+			mainGame->WaitFrameSignal(12, lock);
 			mainGame->isAnime = true;
 			mainGame->cv->wait_for(lock, std::chrono::milliseconds(mainGame->videoDuration));
 			mainGame->WaitFrameSignal(10, lock);

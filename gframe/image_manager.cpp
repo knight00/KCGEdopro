@@ -89,32 +89,6 @@ irr::video::ITexture* ImageManager::loadTextureAnySize(epro::path_stringview tex
 	return ret;
 }
 bool ImageManager::Initial() {
-	/////kdiy/////
-	// Utils::MakeDirectory(EPRO_TEXT("./textures/character"));
-	// for(uint8_t playno = 0; playno < CHARACTER_VOICE - 1; playno++) {
-	// 	int size = gSoundManager->textcharacter[playno].size();
-	// 	auto path = epro::format(EPRO_TEXT("./textures/character/{}"), gSoundManager->textcharacter[playno][0]);
-		// Utils::MakeDirectory(path);
-		// if(size > 1) {
-		// 	for(int i = 0; i < size - 1; i++) {
-		// 		path = epro::format(EPRO_TEXT("./textures/character/{}"), gSoundManager->textcharacter[playno][i+1]);
-		// 		Utils::MakeDirectory(path);
-		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/icon"), path));
-		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/damage"), path));
-		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/advantage"), path));
-		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin"), path));
-		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin/advantage"), path));
-		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin/damage"), path));
-		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin/surprise"), path));
-		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp"), path));
-		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/normal"), path));
-		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/advantage"), path));
-		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/damage"), path));
-		// 		Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/surprise"), path));
-		// 	}
-		// }
-	// }
-	/////kdiy/////
 	timestamp_id = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	textures_path = BASE_PATH;
 
@@ -277,6 +251,33 @@ bool ImageManager::Initial() {
 	// tSettings = loadTextureAnySize(EPRO_TEXT("settings"sv));
 	// ASSERT_TEXTURE_LOADED(tSettings, "settings");
 	// ASSIGN_DEFAULT(tSettings);
+	
+	Utils::MakeDirectory(EPRO_TEXT("./textures/character"));
+	//ktobefinished///////
+	// for(uint8_t playno = 0; playno < CHARACTER_VOICE - 1; playno++) {
+	// 	int size = gSoundManager->textcharacter[playno].size();
+	// 	auto path = epro::format(EPRO_TEXT("./textures/character/{}"), gSoundManager->textcharacter[playno][0]);
+	// 	Utils::MakeDirectory(path);
+	// 	if(size > 1) {
+	// 		for(int i = 0; i < size - 1; i++) {
+	// 			path = epro::format(EPRO_TEXT("./textures/character/{}"), gSoundManager->textcharacter[playno][i+1]);
+	// 			Utils::MakeDirectory(path);
+	// 			Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/icon"), path));
+	// 			Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/damage"), path));
+	// 			Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/advantage"), path));
+	// 			Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin"), path));
+	// 			Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin/advantage"), path));
+	// 			Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin/damage"), path));
+	// 			Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/cutin/surprise"), path));
+	// 			Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp"), path));
+	// 			Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/normal"), path));
+	// 			Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/advantage"), path));
+	// 			Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/damage"), path));
+	// 			Utils::MakeDirectory(epro::format(EPRO_TEXT("{}/lp/surprise"), path));
+	// 		}
+	// 	}
+	// }
+
 	for(uint8_t i = 0; i < 6; i++) {
         modeHead[i] = driver->getTexture(0);
 		modehead_size[i] = irr::core::rect<irr::s32>(0,0,0,0);
@@ -315,40 +316,40 @@ bool ImageManager::Initial() {
     tsubcharacterselect5 = loadTextureFixedSize(EPRO_TEXT("character/5"sv), 25, 25);
     GetRandomImage(tCover[0], TEXTURE_COVERS, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
     if (!tCover[0]) {
-	    tCover[0] = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/cover/{}"), gGameConfig->randomcovertexture).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+	    tCover[0] = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/cover/{}"), Utils::ToPathString(gGameConfig->randomcovertexture)).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 		if (!tCover[0]) tCover[0] = loadTextureFixedSize(EPRO_TEXT("cover"sv), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	}
 	ASSERT_TEXTURE_LOADED(tCover[0], "cover");
     GetRandomImage(tCover[1], TEXTURE_COVERS2, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	if (!tCover[1]) {
-	    tCover[1] = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/cover/{}"), gGameConfig->randomcoverextratexture).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+	    tCover[1] = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/cover/{}"), Utils::ToPathString(gGameConfig->randomcoverextratexture)).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 		if (!tCover[1]) tCover[1] = loadTextureFixedSize(EPRO_TEXT("cover2"sv), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	}
     if (!tCover[1])
 	    tCover[1] = tCover[0];
     GetRandomImage(tCover[2], TEXTURE_COVERS3, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
     if (!tCover[2]) {
-	    tCover[2] = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/cover/{}"), gGameConfig->randomcover2texture).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+	    tCover[2] = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/cover/{}"), Utils::ToPathString(gGameConfig->randomcover2texture)).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	}
 	if (!tCover[2])
 	    tCover[2] = tCover[0];
     GetRandomImage(tCover[3], TEXTURE_COVERS4, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
     if (!tCover[3]) {
-	    tCover[3] = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/cover/{}"), gGameConfig->randomcover2extratexture).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+	    tCover[3] = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/cover/{}"), Utils::ToPathString(gGameConfig->randomcover2extratexture)).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	}
 	if (!tCover[3])
 	    tCover[3] = tCover[0];
 
 	GetRandomImage(tUnknown, TEXTURE_UNKNOWN, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	if (!tUnknown) {
-	    tUnknown = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/unknown/{}"), gGameConfig->randomunknowntexture).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+	    tUnknown = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/unknown/{}"), Utils::ToPathString(gGameConfig->randomunknowntexture)).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 		if (!tUnknown) tUnknown = loadTextureFixedSize(EPRO_TEXT("unknown"sv), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	}
 	ASSERT_TEXTURE_LOADED(tUnknown, "unknown");
 
 	GetRandomImage(tAct, TEXTURE_ACTIVATE);
 	if (!tAct) {
-	    tAct = driver->getTexture(epro::format(EPRO_TEXT("./textures/act/{}"), gGameConfig->randomacttexture).data());
+	    tAct = driver->getTexture(epro::format(EPRO_TEXT("./textures/act/{}"), Utils::ToPathString(gGameConfig->randomacttexture)).data());
 		if (!tAct) tAct = loadTextureAnySize(EPRO_TEXT("act"sv));
         ASSIGN_DEFAULT(tAct);
     }
@@ -356,7 +357,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tAttack, TEXTURE_ATTACK);
 	if (!tAttack) {
-		tAttack = driver->getTexture(epro::format(EPRO_TEXT("./textures/act/{}"), gGameConfig->randomattacktexture).data());
+		tAttack = driver->getTexture(epro::format(EPRO_TEXT("./textures/act/{}"), Utils::ToPathString(gGameConfig->randomattacktexture)).data());
 		if (!tAttack) tAttack = loadTextureAnySize(EPRO_TEXT("attack"sv));
         ASSIGN_DEFAULT(tAttack);
     }
@@ -364,7 +365,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tChain, TEXTURE_CHAIN);
 	if (!tChain) {
-		tChain = driver->getTexture(epro::format(EPRO_TEXT("./textures/chain/{}"), gGameConfig->randomchaintexture).data());
+		tChain = driver->getTexture(epro::format(EPRO_TEXT("./textures/chain/{}"), Utils::ToPathString(gGameConfig->randomchaintexture)).data());
 		if (!tChain) tChain = loadTextureAnySize(EPRO_TEXT("chain"sv));
         ASSIGN_DEFAULT(tChain);
     }
@@ -372,7 +373,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tNegated, TEXTURE_NEGATED, 128, 128);
 	if (!tNegated) {
-		tNegated = driver->getTexture(epro::format(EPRO_TEXT("{}negated/{}"), textures_path,gGameConfig->randomnegatetexture).data());
+		tNegated = driver->getTexture(epro::format(EPRO_TEXT("./textures/negated/{}"), Utils::ToPathString(gGameConfig->randomnegatetexture)).data());
 		if (!tNegated) tNegated = loadTextureFixedSize(EPRO_TEXT("negated"sv), 128, 128);
         ASSIGN_DEFAULT(tNegated);
     }
@@ -384,7 +385,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tMask, TEXTURE_MASK, 254, 254);
 	if (!tMask) {
-		tMask = driver->getTexture(epro::format(EPRO_TEXT("./textures/mask/{}"), gGameConfig->randommasktexture).data());
+		tMask = driver->getTexture(epro::format(EPRO_TEXT("./textures/mask/{}"), Utils::ToPathString(gGameConfig->randommasktexture)).data());
 		if (!tMask) tMask = loadTextureFixedSize(EPRO_TEXT("mask"sv), 254, 254);
         ASSIGN_DEFAULT(tMask);
     }
@@ -392,7 +393,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tEquip, TEXTURE_EQUIP);
 	if (!tEquip) {
-		tEquip = driver->getTexture(epro::format(EPRO_TEXT("./textures/equip/{}"), gGameConfig->randomequiptexture).data());
+		tEquip = driver->getTexture(epro::format(EPRO_TEXT("./textures/equip/{}"), Utils::ToPathString(gGameConfig->randomequiptexture)).data());
 		if (!tEquip) tEquip = loadTextureAnySize(EPRO_TEXT("equip"sv));
         ASSIGN_DEFAULT(tEquip);
     }
@@ -400,7 +401,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tTarget, TEXTURE_TARGET);
 	if (!tTarget) {
-		tTarget = driver->getTexture(epro::format(EPRO_TEXT("./textures/target/{}"), gGameConfig->randomtargettexture).data());
+		tTarget = driver->getTexture(epro::format(EPRO_TEXT("./textures/target/{}"), Utils::ToPathString(gGameConfig->randomtargettexture)).data());
 		if (!tTarget) tTarget = loadTextureAnySize(EPRO_TEXT("target"sv));
         ASSIGN_DEFAULT(tTarget);
     }
@@ -408,7 +409,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tChainTarget, TEXTURE_CHAINTARGET);
 	if (!tChainTarget) {
-		tChainTarget = driver->getTexture(epro::format(EPRO_TEXT("./textures/chaintarget/{}"), gGameConfig->randomchaintargettexture).data());
+		tChainTarget = driver->getTexture(epro::format(EPRO_TEXT("./textures/chaintarget/{}"), Utils::ToPathString(gGameConfig->randomchaintargettexture)).data());
 		if (!tChainTarget) tChainTarget = loadTextureAnySize(EPRO_TEXT("chaintarget"sv));
         ASSIGN_DEFAULT(tChainTarget);
     }
@@ -416,7 +417,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tLim, TEXTURE_LIM);
 	if (!tLim) {
-		tLim = driver->getTexture(epro::format(EPRO_TEXT("./textures/lim/{}"), gGameConfig->randomlimtexture).data());
+		tLim = driver->getTexture(epro::format(EPRO_TEXT("./textures/lim/{}"), Utils::ToPathString(gGameConfig->randomlimtexture)).data());
 		if (!tLim) tLim = loadTextureAnySize(EPRO_TEXT("lim"sv));
         ASSIGN_DEFAULT(tLim);
     }
@@ -424,7 +425,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tOT, TEXTURE_OT);
 	if (!tOT) {
-	    tOT = driver->getTexture(epro::format(EPRO_TEXT("./textures/ot/{}"), gGameConfig->randomottexture).data());
+	    tOT = driver->getTexture(epro::format(EPRO_TEXT("./textures/ot/{}"), Utils::ToPathString(gGameConfig->randomottexture)).data());
 		if (!tOT) tOT = loadTextureAnySize(EPRO_TEXT("ot"sv));
         ASSIGN_DEFAULT(tOT);
     }
@@ -432,19 +433,19 @@ bool ImageManager::Initial() {
 
 	GetRandomImagef(89, 128);
 	if (!tHand[0]) {
-		tHand[0] = loadTextureAnySize(epro::format(EPRO_TEXT("morra/{}/f1"sv), gGameConfig->randommorratexture));
+		tHand[0] = loadTextureAnySize(epro::format(EPRO_TEXT("morra/{}/f1"sv), Utils::ToPathString(gGameConfig->randommorratexture)).data());
 		if (!tHand[0]) tHand[0] = loadTextureFixedSize(EPRO_TEXT("f1"sv), 89, 128);
         ASSIGN_DEFAULT(tHand[0]);
     }
 	ASSERT_TEXTURE_LOADED(tHand[0], "f1");
 	if (!tHand[1]) {
-		tHand[1] = loadTextureAnySize(epro::format(EPRO_TEXT("morra/{}/f2"sv), gGameConfig->randommorratexture));
+		tHand[1] = loadTextureAnySize(epro::format(EPRO_TEXT("morra/{}/f2"sv), Utils::ToPathString(gGameConfig->randommorratexture)).data());
 		if (!tHand[1]) tHand[1] = loadTextureFixedSize(EPRO_TEXT("f2"sv), 89, 128);
         ASSIGN_DEFAULT(tHand[1]);
     }
 	ASSERT_TEXTURE_LOADED(tHand[1], "f2");
 	if (!tHand[2]) {
-		tHand[2] = loadTextureAnySize(epro::format(EPRO_TEXT("morra/{}/f3"sv), gGameConfig->randommorratexture));
+		tHand[2] = loadTextureAnySize(epro::format(EPRO_TEXT("morra/{}/f3"sv), Utils::ToPathString(gGameConfig->randommorratexture)).data());
 		if (!tHand[2]) tHand[2] = loadTextureFixedSize(EPRO_TEXT("f3"sv), 89, 128);
         ASSIGN_DEFAULT(tHand[2]);
     }
@@ -452,7 +453,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tBackGround, TEXTURE_BACKGROUND);
 	if (!tBackGround) {
-		tBackGround = driver->getTexture(epro::format(EPRO_TEXT("./textures/bg/{}"), gGameConfig->randombgtexture).data());
+		tBackGround = driver->getTexture(epro::format(EPRO_TEXT("./textures/bg/{}"), Utils::ToPathString(gGameConfig->randombgtexture)).data());
 		if (!tBackGround) tBackGround = loadTextureAnySize(EPRO_TEXT("bg"sv));
         ASSIGN_DEFAULT(tBackGround);
     }
@@ -460,7 +461,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tBackGround_menu, TEXTURE_MENU);
 	if (!tBackGround_menu) {
-		tBackGround_menu = driver->getTexture(epro::format(EPRO_TEXT("./textures/bg_menu/{}"), gGameConfig->randombgmenutexture).data());
+		tBackGround_menu = driver->getTexture(epro::format(EPRO_TEXT("./textures/bg_menu/{}"), Utils::ToPathString(gGameConfig->randombgmenutexture)).data());
 		if (!tBackGround_menu) tBackGround_menu = loadTextureAnySize(EPRO_TEXT("bg_menu"sv));
 	}
 	if(!tBackGround_menu) {
@@ -470,7 +471,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tBackGround_deck, TEXTURE_DECK);
 	if (!tBackGround_deck){
-		tBackGround_deck = driver->getTexture(epro::format(EPRO_TEXT("./textures/bg_deck/{}"), gGameConfig->randombgdecktexture).data());
+		tBackGround_deck = driver->getTexture(epro::format(EPRO_TEXT("./textures/bg_deck/{}"), Utils::ToPathString(gGameConfig->randombgdecktexture)).data());
 		if (!tBackGround_deck) tBackGround_deck = loadTextureAnySize(EPRO_TEXT("bg_deck"sv));
 	}
 	if(!tBackGround_deck) {
@@ -598,7 +599,7 @@ bool ImageManager::Initial() {
 
 	GetRandomImage(tSettings, TEXTURE_SETTING);
 	if (!tSettings) {
-	    tSettings = driver->getTexture(epro::format(EPRO_TEXT("./textures/settings/{}"), gGameConfig->randomattacktexture).data());
+	    tSettings = driver->getTexture(epro::format(EPRO_TEXT("./textures/settings/{}"), Utils::ToPathString(gGameConfig->randomattacktexture)).data());
 		if (!tSettings) tSettings = loadTextureAnySize(EPRO_TEXT("settings"sv));
         ASSIGN_DEFAULT(tSettings);
     }
@@ -756,183 +757,86 @@ void ImageManager::RefreshRandomImageList() {
 	for(uint8_t playno = 1; playno < CHARACTER_VOICE; playno++) {
 		int size = gSoundManager->textcharacter[playno-1].size();
 		auto path = gSoundManager->textcharacter[playno-1][0];
-		if(size > 1) {
-			for(int i = 0; i < size - 1; i++) {
-				path = epro::format(EPRO_TEXT("{}/{}"), gSoundManager->textcharacter[playno-1][0], gSoundManager->textcharacter[playno-1][i+1]);
+		if(size > 1) size = size - 1;
+		for(int i = 0; i < size; i++) {
+			if(size > 1) path = epro::format(EPRO_TEXT("{}/{}"), gSoundManager->textcharacter[playno-1][0], gSoundManager->textcharacter[playno-1][i+1]);
 #ifdef VIP
-				icon[playno][i] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/mini_icon"sv), path));
+			icon[playno][i] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/mini_icon"sv), path));
 				
-				for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/lp/normal"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
-					auto filename = Utils::GetFileName(file, true);
-					lpcharacter[playno][i][0].push_back(epro::format(EPRO_TEXT("{}/lp/normal/{}"), path, filename));
-				}
-				for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/lp/damage"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
-					auto filename = Utils::GetFileName(file, true);
-					lpcharacter[playno][i][1].push_back(epro::format(EPRO_TEXT("{}/lp/damage/{}"), path, filename));
-				}
-				for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/lp/advantage"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
-					auto filename = Utils::GetFileName(file, true);
-					lpcharacter[playno][i][2].push_back(epro::format(EPRO_TEXT("{}/lp/advantage/{}"), path, filename));
-				}
-				for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/lp/surprise"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
-					auto filename = Utils::GetFileName(file, true);
-					lpcharacter[playno][i][3].push_back(epro::format(EPRO_TEXT("{}/lp/surprise/{}"), path, filename));
-				}
-				for(int j = 0; j < 4; j++) {
-        			GetRandomCharacter(lpicon[playno][i][j], lpcharacter[playno][i][0]);
-					if(j > 0 && !lpicon[playno][i][j])
-				    	lpicon[playno][i][j] = lpicon[playno][i][0];
-				}
-
-				for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/icon"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
-					auto filename = Utils::GetFileName(file, true);
-					imgcharacter[playno][i][0].push_back(epro::format(EPRO_TEXT("{}/icon/{}"), path, filename));
-				}
-				for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/damage"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
-					auto filename = Utils::GetFileName(file, true);
-					imgcharacter[playno][i][1].push_back(epro::format(EPRO_TEXT("{}/damage/{}"), path, filename));
-				}
-				for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/advantage"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
-					auto filename = Utils::GetFileName(file, true);
-					imgcharacter[playno][i][2].push_back(epro::format(EPRO_TEXT("{}/advantage/{}"), path, filename));
-				}
-				for(int j = 0; j < 3; j++) {
-					GetRandomCharacter(bodycharacter[playno][i][j], imgcharacter[playno][i][j]);
-					if(j > 0 && !bodycharacter[playno][i][j])
-				    	bodycharacter[playno][i][j] = bodycharacter[playno][i][0];
-				}
-
-				for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/cutin/damage"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
-					auto filename = Utils::GetFileName(file, true);
-					cutincharacter[playno][i][0].push_back(epro::format(EPRO_TEXT("{}/cutin/damage/{}"), path, filename));
-				}
-				for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/cutin/advantage"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
-					auto filename = Utils::GetFileName(file, true);
-					cutincharacter[playno][i][1].push_back(epro::format(EPRO_TEXT("{}/cutin/advantage/{}"), path, filename));
-				}
-				for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/cutin/surprise"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
-					auto filename = Utils::GetFileName(file, true);
-					cutincharacter[playno][i][2].push_back(epro::format(EPRO_TEXT("{}/cutin/surprise/{}"), path, filename));
-				}
-				for(int j = 0; j < 3; j++) {
-					GetRandomCharacter(cutin[playno][i][j], cutincharacter[playno][i][j]);
-					if(j > 0 && !cutin[playno][i][j])
-				    	cutin[playno][i][j] = cutin[playno][i][0];
-					if(cutin[playno][i][j] == nullptr)
-				    	cutincharacter_size[playno][i][j] = irr::core::rect<irr::s32>(0,0,0,0);
-					else
-						cutincharacter_size[playno][i][j] = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cutin[playno][i][j]->getOriginalSize()));
-				}
-#else
-                icon[playno][i] = driver->getTexture(0);
-				for(int j = 0; j < 4; j++)
-                	lpicon[playno][i][j] = driver->getTexture(0);
-				for(int j = 0; j < 3; j++)
-                	bodycharacter[playno][i][j] = driver->getTexture(0);
-				for(int j = 0; 3; j++) {
-                	cutin[playno][i][j] = driver->getTexture(0);
-				    cutincharacter_size[playno][i][j] = irr::core::rect<irr::s32>(0,0,0,0);
-				}
-#endif
-				vs[playno][i] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/vs"sv), path));
-				name[playno][i] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/name"sv), path));
-			}
-		} else {
-#ifdef VIP
-        	icon[playno][0] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/mini_icon"sv), path));
-			
-        	for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/lp/normal"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
+			for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/lp/normal"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
 				auto filename = Utils::GetFileName(file, true);
-				lpcharacter[playno][0][0].push_back(epro::format(EPRO_TEXT("{}/lp/normal/{}"), path, filename));
+				lpcharacter[playno][i][0].push_back(epro::format(EPRO_TEXT("{}/lp/normal/{}"), path, filename));
 			}
-        	for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/lp/damage"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
+			for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/lp/damage"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
 				auto filename = Utils::GetFileName(file, true);
-				lpcharacter[playno][0][1].push_back(epro::format(EPRO_TEXT("{}/lp/damage/{}"), path, filename));
+				lpcharacter[playno][i][1].push_back(epro::format(EPRO_TEXT("{}/lp/damage/{}"), path, filename));
 			}
-        	for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/lp/advantage"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
+			for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/lp/advantage"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
 				auto filename = Utils::GetFileName(file, true);
-				lpcharacter[playno][0][2].push_back(epro::format(EPRO_TEXT("{}/lp/advantage/{}"), path, filename));
+				lpcharacter[playno][i][2].push_back(epro::format(EPRO_TEXT("{}/lp/advantage/{}"), path, filename));
 			}
-        	for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/lp/surprise"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
+			for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/lp/surprise"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
 				auto filename = Utils::GetFileName(file, true);
-				lpcharacter[playno][0][3].push_back(epro::format(EPRO_TEXT("{}/lp/surprise/{}"), path, filename));
+				lpcharacter[playno][i][3].push_back(epro::format(EPRO_TEXT("{}/lp/surprise/{}"), path, filename));
 			}
 			for(int j = 0; j < 4; j++) {
-        		GetRandomCharacter(lpicon[playno][0][j], lpcharacter[playno][0][j]);
-				if(!lpicon[playno][0][j])
-					lpicon[playno][0][j] = lpicon[playno][0][0];
-				for(int k = 1; k < 6; k++)
-					lpicon[playno][k][j] = lpicon[playno][0][j];
+        		GetRandomCharacter(lpicon[playno][i][j], lpcharacter[playno][i][0]);
+				if(j > 0 && !lpicon[playno][i][j])
+				    lpicon[playno][i][j] = lpicon[playno][i][0];
 			}
 
 			for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/icon"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
 				auto filename = Utils::GetFileName(file, true);
-				imgcharacter[playno][0][0].push_back(epro::format(EPRO_TEXT("{}/icon/{}"), path, filename));
+				imgcharacter[playno][i][0].push_back(epro::format(EPRO_TEXT("{}/icon/{}"), path, filename));
 			}
 			for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/damage"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
 				auto filename = Utils::GetFileName(file, true);
-				imgcharacter[playno][0][1].push_back(epro::format(EPRO_TEXT("{}/damage/{}"), path, filename));
+				imgcharacter[playno][i][1].push_back(epro::format(EPRO_TEXT("{}/damage/{}"), path, filename));
 			}
 			for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/advantage"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
 				auto filename = Utils::GetFileName(file, true);
-				imgcharacter[playno][0][2].push_back(epro::format(EPRO_TEXT("{}/advantage/{}"), path, filename));
+				imgcharacter[playno][i][2].push_back(epro::format(EPRO_TEXT("{}/advantage/{}"), path, filename));
 			}
 			for(int j = 0; j < 3; j++) {
-        		GetRandomCharacter(bodycharacter[playno][0][j], imgcharacter[playno][0][j]);
-				if(!bodycharacter[playno][0][j])
-					bodycharacter[playno][0][j] = bodycharacter[playno][0][0];
-				for(int k = 1; k < 6; k++)
-					bodycharacter[playno][k][j] = bodycharacter[playno][0][j];
+				GetRandomCharacter(bodycharacter[playno][i][j], imgcharacter[playno][i][j]);
+				if(j > 0 && !bodycharacter[playno][i][j])
+				    bodycharacter[playno][i][j] = bodycharacter[playno][i][0];
 			}
-			
-        	for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/cutin/damage"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
+
+			for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/cutin/damage"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
 				auto filename = Utils::GetFileName(file, true);
-				cutincharacter[playno][0][0].push_back(epro::format(EPRO_TEXT("{}/cutin/damage/{}"), path, filename));
+				cutincharacter[playno][i][0].push_back(epro::format(EPRO_TEXT("{}/cutin/damage/{}"), path, filename));
 			}
-        	for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/cutin/advantage"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
+			for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/cutin/advantage"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
 				auto filename = Utils::GetFileName(file, true);
-				cutincharacter[playno][0][1].push_back(epro::format(EPRO_TEXT("{}/cutin/advantage/{}"), path, filename));
+				cutincharacter[playno][i][1].push_back(epro::format(EPRO_TEXT("{}/cutin/advantage/{}"), path, filename));
 			}
-        	for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/cutin/surprise"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
+			for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/cutin/surprise"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
 				auto filename = Utils::GetFileName(file, true);
-				cutincharacter[playno][0][2].push_back(epro::format(EPRO_TEXT("{}/cutin/surprise/{}"), path, filename));
+				cutincharacter[playno][i][2].push_back(epro::format(EPRO_TEXT("{}/cutin/surprise/{}"), path, filename));
 			}
 			for(int j = 0; j < 3; j++) {
-        		GetRandomCharacter(cutin[playno][0][j], cutincharacter[playno][0][j]);
-				if(!cutin[playno][0][j])
-					cutin[playno][0][j] = cutin[playno][0][0];
-				if(cutin[playno][0][j] == nullptr)
-				    cutincharacter_size[playno][0][j] = irr::core::rect<irr::s32>(0,0,0,0);
+				GetRandomCharacter(cutin[playno][i][j], cutincharacter[playno][i][j]);
+				if(j > 0 && !cutin[playno][i][j])
+				    cutin[playno][i][j] = cutin[playno][i][0];
+				if(cutin[playno][i][j] == nullptr)
+				    cutincharacter_size[playno][i][j] = irr::core::rect<irr::s32>(0,0,0,0);
 				else
-					cutincharacter_size[playno][0][j] = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cutin[playno][0][j]->getOriginalSize()));
-				for(int k = 1; k < 6; k++) {
-					cutin[playno][k][j] = cutin[playno][0][j];
-					if(cutin[playno][k][j] == nullptr)
-				    	cutincharacter_size[playno][k][j] = irr::core::rect<irr::s32>(0,0,0,0);
-					else
-						cutincharacter_size[playno][k][j] = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cutin[playno][k][j]->getOriginalSize()));
-				}
+					cutincharacter_size[playno][i][j] = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cutin[playno][i][j]->getOriginalSize()));
 			}
 #else
-            for(int j = 0; j < 2; j++)
-				icon[playno][j] = driver->getTexture(0);
-			for(int j = 0; j < 4; j++) {
-				for(int k = 0; k < 6; k++)
-					lpicon[playno][k][j] = driver->getTexture(0);
-			}
-			for(int j = 0; j < 3; j++) {
-				for(int k = 0; k < 6; k++)
-					bodycharacter[playno][k][j] = driver->getTexture(0);
-			}
-			for(int j = 0; j < 3; j++) {
-				for(int k = 0; k < 3; k++) {
-					cutin[playno][k][j] = driver->getTexture(0);
-					cutincharacter_size[playno][k][j] = irr::core::rect<irr::s32>(0,0,0,0);
-				}
+            icon[playno][i] = driver->getTexture(0);
+			for(int j = 0; j < 4; j++)
+                lpicon[playno][i][j] = driver->getTexture(0);
+			for(int j = 0; j < 3; j++)
+                bodycharacter[playno][i][j] = driver->getTexture(0);
+			for(int j = 0; 3; j++) {
+                cutin[playno][i][j] = driver->getTexture(0);
+				cutincharacter_size[playno][i][j] = irr::core::rect<irr::s32>(0,0,0,0);
 			}
 #endif
-			vs[playno][0] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/vs"sv), path));
-			name[playno][0] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/name"sv), path));
+			vs[playno][i] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/vs"sv), path));
+			name[playno][i] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/name"sv), path));
 		}
     }
 }
@@ -1036,7 +940,7 @@ void ImageManager::GetRandomCharacter(irr::video::ITexture*& src, std::vector<ep
 	}
 	int num = rand() % size;
 	auto name = list[num];
-	irr::video::ITexture* tmp = driver->getTexture((epro::format(EPRO_TEXT("./textures/character/{}"), name)).c_str());
+	irr::video::ITexture* tmp = driver->getTexture(Utils::ToUnicodeIfNeeded(epro::format(EPRO_TEXT("./textures/character/{}"), name)).c_str());
     if(tmp == nullptr) {
         src = nullptr;
         return;
