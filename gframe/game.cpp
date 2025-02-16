@@ -2512,17 +2512,42 @@ void Game::PopulateGameHostWindows() {
 		chkHostPrepReady[i]->setEnabled(false);
 	}
 	///////kdiy/////////
-	btnCharacter = irr::gui::CGUIImageButton::addImageButton(env, Scale(520, 40, 720, 340), wHostPrepare, BUTTON_CHARACTER);
+	btnCharacter = irr::gui::CGUIImageButton::addImageButton(env, Scale(500, 40, 700, 340), wHostPrepare, BUTTON_CHARACTER);
 	btnCharacter->setDrawBorder(false);
 	btnCharacter->setImageSize(Scale(0, 0, 200, 300).getSize());
-	btnCharacterSelect = irr::gui::CGUIImageButton::addImageButton(env, Scale(520, 340, 540, 370), wHostPrepare, BUTTON_CHARACTER_SELECT);
+	btnCharacterSelect = irr::gui::CGUIImageButton::addImageButton(env, Scale(500, 340, 520, 370), wHostPrepare, BUTTON_CHARACTER_SELECT);
 	btnCharacterSelect->setImageSize(Scale(0, 0, 20, 20).getSize());
 	btnCharacterSelect->setImage(imageManager.tcharacterselect);
 	btnCharacterSelect->setDrawBorder(false);
-	btnCharacterSelect2 = irr::gui::CGUIImageButton::addImageButton(env, Scale(700, 340, 720, 370), wHostPrepare, BUTTON_CHARACTER_SELECT2);
+	btnCharacterSelect2 = irr::gui::CGUIImageButton::addImageButton(env, Scale(680, 340, 700, 370), wHostPrepare, BUTTON_CHARACTER_SELECT2);
 	btnCharacterSelect2->setImageSize(Scale(0, 0, 20, 20).getSize());
 	btnCharacterSelect2->setImage(imageManager.tcharacterselect2);
 	btnCharacterSelect2->setDrawBorder(false);
+	btnsubCharacterSelect[0] = irr::gui::CGUIImageButton::addImageButton(env, Scale(700, 40, 725, 65), wHostPrepare, BUTTON_SUBCHARACTER_SELECT);
+	btnsubCharacterSelect[0]->setDrawBorder(true);
+	btnsubCharacterSelect[0]->setImageSize(Scale(0, 0, 25, 25).getSize());
+	btnsubCharacterSelect[0]->setImage(imageManager.tsubcharacterselect);
+    btnsubCharacterSelect[0]->setVisible(false);
+	btnsubCharacterSelect[1] = irr::gui::CGUIImageButton::addImageButton(env, Scale(700, 70, 725, 95), wHostPrepare, BUTTON_SUBCHARACTER_SELECT);
+	btnsubCharacterSelect[1]->setDrawBorder(true);
+	btnsubCharacterSelect[1]->setImageSize(Scale(0, 0, 25, 25).getSize());
+	btnsubCharacterSelect[1]->setImage(imageManager.tsubcharacterselect2);
+    btnsubCharacterSelect[1]->setVisible(false);
+	btnsubCharacterSelect[2] = irr::gui::CGUIImageButton::addImageButton(env, Scale(700, 100, 725, 125), wHostPrepare, BUTTON_SUBCHARACTER_SELECT);
+	btnsubCharacterSelect[2]->setDrawBorder(true);
+	btnsubCharacterSelect[2]->setImageSize(Scale(0, 0, 25, 25).getSize());
+	btnsubCharacterSelect[2]->setImage(imageManager.tsubcharacterselect3);
+    btnsubCharacterSelect[2]->setVisible(false);
+	btnsubCharacterSelect[3] = irr::gui::CGUIImageButton::addImageButton(env, Scale(700, 130, 725, 155), wHostPrepare, BUTTON_SUBCHARACTER_SELECT);
+	btnsubCharacterSelect[3]->setDrawBorder(true);
+	btnsubCharacterSelect[3]->setImageSize(Scale(0, 0, 25, 25).getSize());
+	btnsubCharacterSelect[3]->setImage(imageManager.tsubcharacterselect4);
+    btnsubCharacterSelect[3]->setVisible(false);
+	btnsubCharacterSelect[4] = irr::gui::CGUIImageButton::addImageButton(env, Scale(700, 160, 725, 175), wHostPrepare, BUTTON_SUBCHARACTER_SELECT);
+	btnsubCharacterSelect[4]->setDrawBorder(true);
+	btnsubCharacterSelect[4]->setImageSize(Scale(0, 0, 25, 25).getSize());
+	btnsubCharacterSelect[4]->setImage(imageManager.tsubcharacterselect5);
+    btnsubCharacterSelect[4]->setVisible(false);
 	//btnHostPrepOB = env->addButton(Scale(10, 180, 110, 205), wHostPrepare, BUTTON_HP_OBSERVER, gDataManager->GetSysString(1252).data());
 	btnHostPrepOB = env->addButton(Scale(10, 230, 110, 255), wHostPrepare, BUTTON_HP_OBSERVER, gDataManager->GetSysString(1252).data());
 	///////kdiy/////////

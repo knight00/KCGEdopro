@@ -524,7 +524,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_CHARACTER_SELECT2: {
 #ifndef VIP
-				    break;
+				break;
 #endif
 				if(gSoundManager->character[mainGame->choose_player] == CHARACTER_VOICE - 1) gSoundManager->character[mainGame->choose_player] = 0;
 				else gSoundManager->character[mainGame->choose_player] ++;
@@ -553,22 +553,28 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				gSoundManager->PlayStartupChant(mainGame->choose_player, (mainGame->choose_player > team1count - 1) ? team1 : team2);
 				
 				if(player > 0 && gSoundManager->textcharacter[player-1].size() > 2) {
+					mainGame->btnsubCharacterSelect[0]->setVisible(true);
 					mainGame->btnsubCharacterSelect_replay[0]->setVisible(true);
 					for(int i = 2; i < 6; i++) {
-						if(gSoundManager->textcharacter[player-1].size() > i)
+						if(gSoundManager->textcharacter[player-1].size() > i) {
+							mainGame->btnsubCharacterSelect[i-1]->setVisible(true);
 							mainGame->btnsubCharacterSelect_replay[i-1]->setVisible(true);
-						else
+						} else {
+							mainGame->btnsubCharacterSelect[i-1]->setVisible(false);
 							mainGame->btnsubCharacterSelect_replay[i-1]->setVisible(false);
+						}
 					}
 				} else {
-					for(int i = 0; i < 6; i++)
+					for(int i = 0; i < 5; i++) {
+						mainGame->btnsubCharacterSelect[i]->setVisible(false);
 						mainGame->btnsubCharacterSelect_replay[i]->setVisible(false);
+					}
 				}
 				break;
 			}
 			case BUTTON_CHARACTER_SELECT: {
 #ifndef VIP
-				    break;
+				break;
 #endif
 				if(gSoundManager->character[mainGame->choose_player] == 0) gSoundManager->character[mainGame->choose_player] = CHARACTER_VOICE - 1;
 				else gSoundManager->character[mainGame->choose_player] --;
@@ -597,16 +603,22 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				gSoundManager->PlayStartupChant(mainGame->choose_player, (mainGame->choose_player > team1count - 1) ? team1 : team2);
 				
 				if(player > 0 && gSoundManager->textcharacter[player-1].size() > 2) {
+					mainGame->btnsubCharacterSelect[0]->setVisible(true);
 					mainGame->btnsubCharacterSelect_replay[0]->setVisible(true);
 					for(int i = 2; i < 6; i++) {
-						if(gSoundManager->textcharacter[player-1].size() > i)
+						if(gSoundManager->textcharacter[player-1].size() > i) {
+							mainGame->btnsubCharacterSelect[i-1]->setVisible(true);
 							mainGame->btnsubCharacterSelect_replay[i-1]->setVisible(true);
-						else
+						} else {
+							mainGame->btnsubCharacterSelect[i-1]->setVisible(false);
 							mainGame->btnsubCharacterSelect_replay[i-1]->setVisible(false);
+						}
 					}
 				} else {
-					for(int i = 0; i < 6; i++)
+					for(int i = 0; i < 5; i++) {
+						mainGame->btnsubCharacterSelect[i]->setVisible(false);
 						mainGame->btnsubCharacterSelect_replay[i]->setVisible(false);
+					}
 				}
 				break;
 			}
@@ -617,7 +629,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				auto elem = static_cast<irr::gui::CGUIImageButton*>(event.GUIEvent.Caller);
 				int player = gSoundManager->character[mainGame->choose_player];
 				for(int i = 0; i < 5; ++i) {
-                    if(elem == mainGame->btnsubCharacterSelect_replay[i]) {
+                    if(elem == mainGame->btnsubCharacterSelect[i] || elem == mainGame->btnsubCharacterSelect_replay[i]) {
 						gSoundManager->subcharacter[player] = i;
 						mainGame->btnCharacter->setImage(mainGame->imageManager.bodycharacter[player][i][0]);
 						mainGame->btnCharacter_replay->setImage(mainGame->imageManager.bodycharacter[player][i][0]);
@@ -1842,16 +1854,22 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 
 				int player = gSoundManager->character[mainGame->choose_player];
 				if(player > 0 && gSoundManager->textcharacter[player-1].size() > 2) {
+					mainGame->btnsubCharacterSelect[0]->setVisible(true);
 					mainGame->btnsubCharacterSelect_replay[0]->setVisible(true);
 					for(int i = 2; i < 6; i++) {
-						if(gSoundManager->textcharacter[player-1].size() > i)
+						if(gSoundManager->textcharacter[player-1].size() > i) {
+							mainGame->btnsubCharacterSelect[i-1]->setVisible(true);
 							mainGame->btnsubCharacterSelect_replay[i-1]->setVisible(true);
-						else
+						} else {
+							mainGame->btnsubCharacterSelect[i-1]->setVisible(false);
 							mainGame->btnsubCharacterSelect_replay[i-1]->setVisible(false);
+						}
 					}
 				} else {
-					for(int i = 0; i < 6; i++)
+					for(int i = 0; i < 5; i++) {
+						mainGame->btnsubCharacterSelect[i]->setVisible(false);
 						mainGame->btnsubCharacterSelect_replay[i]->setVisible(false);
+					}
 				}
 				break;
 			}

@@ -253,7 +253,7 @@ bool ImageManager::Initial() {
 	// ASSIGN_DEFAULT(tSettings);
 	
 	Utils::MakeDirectory(EPRO_TEXT("./textures/character"));
-	//ktobefinished///////
+	//ktemp///////
 	// for(uint8_t playno = 0; playno < CHARACTER_VOICE - 1; playno++) {
 	// 	int size = gSoundManager->textcharacter[playno].size();
 	// 	auto path = epro::format(EPRO_TEXT("./textures/character/{}"), gSoundManager->textcharacter[playno][0]);

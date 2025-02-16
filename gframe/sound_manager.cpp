@@ -1531,7 +1531,7 @@ bool SoundManager::PlayChants(CHANT chant, std::string file, const uint8_t side,
 					mainGame->isEvent = false;
 				}
 			}
-			//ktobefinished/////
+			//ktemp/////
 			return true;
 		}
 	}

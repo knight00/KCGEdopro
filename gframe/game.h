@@ -352,6 +352,7 @@ struct host_creation_panel_elements {
 	irr::gui::CGUIImageButton* btnCharacter;
 	irr::gui::CGUIImageButton* btnCharacterSelect;
 	irr::gui::CGUIImageButton* btnCharacterSelect2;
+	irr::gui::CGUIImageButton* btnsubCharacterSelect[5];
     irr::gui::IGUIWindow* wCharacterReplay;
 	irr::gui::IGUIButton* btnCharacterSelect_replay;
 	irr::gui::CGUIImageButton* btnCharacter_replay;
