@@ -1703,6 +1703,8 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		uint8_t player2 = ((mainGame->dInfo.turn % 2 && mainGame->dInfo.isFirst) || (!(mainGame->dInfo.turn % 2) && !mainGame->dInfo.isFirst));
 		switch (phase) {
             case PHASE_DRAW: {
+				mainGame->cutincharacter[0] = 0;
+				mainGame->cutincharacter[1] = 0;
 				PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, player, 0, player2);
 				break;
 			}

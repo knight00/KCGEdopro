@@ -793,6 +793,7 @@ void Game::Initialize() {
 	#endif
 	//wMainMenu = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 450), false, EDOPRO_VERSION_STRING);	
 	wMainMenu = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 520), false, EDOPRO_VERSION_STRING);
+	wMainMenu->setVisible(false);
 	////kdiy////////
 	wMainMenu->getCloseButton()->setVisible(false);
 	//wMainMenu->setVisible(!is_from_discord);
@@ -2165,6 +2166,8 @@ void Game::Initialize() {
 	stHandTestSettings->setEnabled(coreloaded);
 	//kdiy///////
 	btnEntertainmentMode->setEnabled(coreloaded);
+	moviecheck(true);
+	chantcheck(true);
 	//kdiy///////
 	RefreshUICoreVersion();
 	ApplySkin(EPRO_TEXT(""), true);
@@ -3449,8 +3452,6 @@ void Game::PopulateSettingsWindow() {
 	defaultStrings.emplace_back(gSettings.btnrandomtexture_close2, 1211);
 	
 	ReloadTexture();
-	moviecheck(true);
-	chantcheck(true);
     /////kdiy////////////
 }
 #undef WStr
@@ -6860,7 +6861,7 @@ bool Game::moviecheck(bool initial) {
 	}
 #ifndef VIP
 	filechk = false;
-	Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/af7099f4b5fa11ef98ba52540025c377/"), Utils::OPEN_URL);
+	if(!initial) Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/af7099f4b5fa11ef98ba52540025c377/"), Utils::OPEN_URL);
 #endif
     if(!gGameConfig->system_engine)
         filechk = false;
@@ -6874,10 +6875,10 @@ bool Game::moviecheck(bool initial) {
 		if(!initial) {
 			mainGame->stACMessage->setText(gDataManager->GetSysString(8051).data());
 			mainGame->PopupElement(mainGame->wACMessage, 90);
-		}
 #ifdef VIP
-        Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/8c3fb8e8a3df11efba4752540025c377/"), Utils::OPEN_URL);
+        	Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/8c3fb8e8a3df11efba4752540025c377/"), Utils::OPEN_URL);
 #endif
+		}
 	}
 	if(gGameConfig->enablesanime || gGameConfig->enablecanime || gGameConfig->enableaanime)
 		gGameConfig->enableanime = true;
@@ -6905,7 +6906,7 @@ bool Game::chantcheck(bool initial) {
 		filechk = true;
 #ifndef VIP
 	filechk = false;
-	Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/af7099f4b5fa11ef98ba52540025c377/"), Utils::OPEN_URL);
+	if(!initial) Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/af7099f4b5fa11ef98ba52540025c377/"), Utils::OPEN_URL);
 #endif
 	if(!filechk) {
 		gGameConfig->enablessound = false;
@@ -6913,22 +6914,22 @@ bool Game::chantcheck(bool initial) {
 		gGameConfig->enablecsound = false;
 		gGameConfig->enableasound = false;
 		if(!initial) {
-			mainGame->stACMessage->setText(gDataManager->GetSysString(8050).data());
-			mainGame->PopupElement(mainGame->wACMessage, 90);
-		}
+			stACMessage->setText(gDataManager->GetSysString(8050).data());
+			PopupElement(wACMessage, 90);
 #ifdef VIP
-        Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/ad6b923aa3df11ef9a3b5254001e7c00/"), Utils::OPEN_URL);
+        	Utils::SystemOpen(EPRO_TEXT("https://afdian.com/p/ad6b923aa3df11ef9a3b5254001e7c00/"), Utils::OPEN_URL);
 #endif
-		for(int i = 0; i < 6; ++i) {
-			mainGame->icon[i]->setEnabled(false);
-			mainGame->icon2[i]->setEnabled(false);
-			mainGame->ebCharacter[i]->setSelected(0);
-			mainGame->ebCharacter[i]->setEnabled(false);
-			mainGame->ebCharacter_replay[i]->setSelected(0);
-			mainGame->ebCharacter_replay[i]->setEnabled(false);
 		}
-		mainGame->ebCharacterDeck->setSelected(0);
-		mainGame->ebCharacterDeck->setEnabled(false);
+		for(int i = 0; i < 6; ++i) {
+			icon[i]->setEnabled(false);
+			icon2[i]->setEnabled(false);
+			ebCharacter[i]->setSelected(0);
+			ebCharacter[i]->setEnabled(false);
+			ebCharacter_replay[i]->setSelected(0);
+			ebCharacter_replay[i]->setEnabled(false);
+		}
+		ebCharacterDeck->setSelected(0);
+		ebCharacterDeck->setEnabled(false);
 	}
 	gSettings.chkEnableSummonSound->setChecked(gGameConfig->enablessound);
     gSettings.chkEnableActivateSound->setChecked(gGameConfig->enablecsound);
