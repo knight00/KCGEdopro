@@ -97,6 +97,7 @@ public:
         TURNEND,
 		WIN,
 		LOSE,
+		TAGSWITCH,
 		REINCARNATE,
 		//////kdiy/////
 		SUMMON,
@@ -129,7 +130,112 @@ public:
 	void PlayStartupChant(uint8_t player, std::vector<uint8_t> team);
 	uint8_t character[6] = {0,0,0,0,0,0}; //0: empty, 1: muto, 2: atem,...
 	uint8_t subcharacter[CHARACTER_VOICE] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	std::vector <std::vector<epro::path_string>> textcharacter = { {EPRO_TEXT("muto")},{EPRO_TEXT("atem")},{EPRO_TEXT("kaiba"),EPRO_TEXT("kaiba_dm"),EPRO_TEXT("kaiba_dsod")},{EPRO_TEXT("joey"),EPRO_TEXT("joey_dm"),EPRO_TEXT("joey_controlled"),EPRO_TEXT("joey_dsod")},{EPRO_TEXT("anzu")},{EPRO_TEXT("mai")},{EPRO_TEXT("pegasus")},{EPRO_TEXT("marik")},{EPRO_TEXT("dartz")},{EPRO_TEXT("bakura")},{EPRO_TEXT("aigami")},{EPRO_TEXT("honda")},{EPRO_TEXT("solomon")},{EPRO_TEXT("mokuba")},{EPRO_TEXT("ryuji")},{EPRO_TEXT("haga")},{EPRO_TEXT("lyuzaki")},{EPRO_TEXT("ryota")},{EPRO_TEXT("keith")},{EPRO_TEXT("maze")},{EPRO_TEXT("psychic")},{EPRO_TEXT("ghost")},{EPRO_TEXT("pandora")},{EPRO_TEXT("ishizu")},{EPRO_TEXT("odion")},{EPRO_TEXT("shalla")},{EPRO_TEXT("judai")},{EPRO_TEXT("manjome")},{EPRO_TEXT("asuka")},{EPRO_TEXT("kaisa")},{EPRO_TEXT("phoenix")},{EPRO_TEXT("john")},{EPRO_TEXT("cronos")},{EPRO_TEXT("sartorius")},{EPRO_TEXT("yubel")},{EPRO_TEXT("darkness")},{EPRO_TEXT("yusei")},{EPRO_TEXT("jack")},{EPRO_TEXT("arki")},{EPRO_TEXT("lua")},{EPRO_TEXT("luka")},{EPRO_TEXT("crow")},{EPRO_TEXT("kiryu")},{EPRO_TEXT("carly")},{EPRO_TEXT("rex")},{EPRO_TEXT("apolia")},{EPRO_TEXT("paradox")},{EPRO_TEXT("antinomy")},{EPRO_TEXT("zone")},{EPRO_TEXT("yuma")},{EPRO_TEXT("shark")},{EPRO_TEXT("kaito")},{EPRO_TEXT("iii")},{EPRO_TEXT("iv")},{EPRO_TEXT("v")},{EPRO_TEXT("anna")},{EPRO_TEXT("rio")},{EPRO_TEXT("DonThousand")},{EPRO_TEXT("yuya")},{EPRO_TEXT("declan")},{EPRO_TEXT("shay")},{EPRO_TEXT("sora")},{EPRO_TEXT("yuzu")},{EPRO_TEXT("playmaker")},{EPRO_TEXT("soulburner")},{EPRO_TEXT("blueangel")},{EPRO_TEXT("gore")}, {EPRO_TEXT("darksiner")} }; //total 68
+	std::vector <std::vector<epro::path_string>> textcharacter = { 
+		{EPRO_TEXT("muto"),EPRO_TEXT("muto_dm"),EPRO_TEXT("muto_dsod")},
+		{EPRO_TEXT("atem")},
+		{EPRO_TEXT("kaiba"),EPRO_TEXT("kaiba_dm"),EPRO_TEXT("kaiba_dsod")},
+		{EPRO_TEXT("joey"),EPRO_TEXT("joey_dm"),EPRO_TEXT("joey_controlled"),EPRO_TEXT("joey_dsod")},
+		{EPRO_TEXT("anzu"),EPRO_TEXT("anzu_dm"),EPRO_TEXT("anzu_dsod")},
+		{EPRO_TEXT("mai")},
+		{EPRO_TEXT("honda")},
+		{EPRO_TEXT("solomon")},
+		{EPRO_TEXT("mokuba"),EPRO_TEXT("mokuba_dm"),EPRO_TEXT("mokuba_dsod")},
+		{EPRO_TEXT("ryuji")},
+		{EPRO_TEXT("haga")},
+		{EPRO_TEXT("lyuzaki")},
+		{EPRO_TEXT("ryota")},
+		{EPRO_TEXT("keith")},
+		{EPRO_TEXT("maze"),EPRO_TEXT("maze_1"),EPRO_TEXT("maze_2"),EPRO_TEXT("maze_1+2")},
+		{EPRO_TEXT("psychic")},
+		{EPRO_TEXT("ghost")},
+		{EPRO_TEXT("mask"),EPRO_TEXT("mask_light"),EPRO_TEXT("mask_dark"),EPRO_TEXT("mask_light+dark")},
+		{EPRO_TEXT("pandora")},
+		{EPRO_TEXT("ishizu")},
+		{EPRO_TEXT("odion")},
+		{EPRO_TEXT("shalla"),EPRO_TEXT("shalla_human"),EPRO_TEXT("shalla_masked")},
+		{EPRO_TEXT("pegasus")},
+		{EPRO_TEXT("marik")},
+		{EPRO_TEXT("dartz")},
+		{EPRO_TEXT("bakura"),EPRO_TEXT("bakura_dm"),EPRO_TEXT("bakura_dsod")},
+		{EPRO_TEXT("aigami")},
+
+		{EPRO_TEXT("judai"),EPRO_TEXT("judai_1"),EPRO_TEXT("judai_2"),EPRO_TEXT("judai_supreme")},
+		{EPRO_TEXT("manjome")},
+		{EPRO_TEXT("asuka")},
+		{EPRO_TEXT("daichi")},
+		{EPRO_TEXT("kaisa")},
+		{EPRO_TEXT("phoenix")},
+		{EPRO_TEXT("john")},
+		{EPRO_TEXT("sho")},
+		{EPRO_TEXT("kenzan")},
+		{EPRO_TEXT("lei")},
+		{EPRO_TEXT("jim")},
+		{EPRO_TEXT("obrian")},
+		{EPRO_TEXT("cronos")},
+		{EPRO_TEXT("sartorius")},
+		{EPRO_TEXT("yubel")},
+		{EPRO_TEXT("darkness")},
+		
+		{EPRO_TEXT("yusei")},
+		{EPRO_TEXT("jack")},
+		{EPRO_TEXT("arki")},
+		{EPRO_TEXT("lua")},
+		{EPRO_TEXT("luka")},
+		{EPRO_TEXT("crow")},
+		{EPRO_TEXT("ushio")},
+		{EPRO_TEXT("kiryu"),EPRO_TEXT("kiryu_darksiner"),EPRO_TEXT("kiryu_death")},
+		{EPRO_TEXT("carly"),EPRO_TEXT("carly_human"),EPRO_TEXT("carly_darksiner")},
+		{EPRO_TEXT("sherry")},
+		{EPRO_TEXT("rex")},
+		{EPRO_TEXT("meklord"),EPRO_TEXT("placido"),EPRO_TEXT("apolia")},
+		{EPRO_TEXT("paradox")},
+		{EPRO_TEXT("antinomy")},
+		{EPRO_TEXT("zone")},
+		
+		{EPRO_TEXT("yuma"),EPRO_TEXT("yuma_human"),EPRO_TEXT("ZEXAL")},
+		{EPRO_TEXT("shark")},
+		{EPRO_TEXT("kaito")},
+		{EPRO_TEXT("tori")},
+		{EPRO_TEXT("tetsuo")},
+		{EPRO_TEXT("iii")},
+		{EPRO_TEXT("iv")},
+		{EPRO_TEXT("v")},
+		{EPRO_TEXT("anna")},
+		{EPRO_TEXT("dorube"),EPRO_TEXT("dorube_human"),EPRO_TEXT("dorube_seventh")},
+		{EPRO_TEXT("rio")},
+		{EPRO_TEXT("alit"),EPRO_TEXT("alit_human"),EPRO_TEXT("alit_seventh")},
+		{EPRO_TEXT("girag"),EPRO_TEXT("girag_human"),EPRO_TEXT("girag_seventh")},
+		{EPRO_TEXT("mizarel"),EPRO_TEXT("mizarel_human"),EPRO_TEXT("mizarel_seventh")},
+		{EPRO_TEXT("DonThousand")},
+		
+		{EPRO_TEXT("yuya"),EPRO_TEXT("yuya_main"),EPRO_TEXT("yugo"),EPRO_TEXT("yuto")},
+		{EPRO_TEXT("declan")},
+		{EPRO_TEXT("shay")},
+		{EPRO_TEXT("sora")},
+		{EPRO_TEXT("yuzu"),EPRO_TEXT("yuzu_main"),EPRO_TEXT("selina"),EPRO_TEXT("ruri"),EPRO_TEXT("rin")},
+		{EPRO_TEXT("gongenzaka")},
+		{EPRO_TEXT("sawatari")},
+		{EPRO_TEXT("dennis")},
+		
+		{EPRO_TEXT("playmaker")},
+		{EPRO_TEXT("revolver")},
+		{EPRO_TEXT("soulburner")},
+		{EPRO_TEXT("blueangel")},
+		{EPRO_TEXT("gore")},
+		{EPRO_TEXT("ghostgirl")},
+		{EPRO_TEXT("spectre")},
+		{EPRO_TEXT("bravemax")},
+		{EPRO_TEXT("hanoi")},
+
+		{EPRO_TEXT("yuuga")},
+		{EPRO_TEXT("luke")},
+		{EPRO_TEXT("romin")},
+		{EPRO_TEXT("gakuto")},
+		{EPRO_TEXT("mimi")},
+		
+		{EPRO_TEXT("guider")},
+		
+		{EPRO_TEXT("darksiner")} }; //total 97
 	std::vector<std::string> soundcount;
 	int32_t GetSoundDuration();
 	void PlayModeSound(int i, uint32_t code, bool music = false);
@@ -157,8 +263,8 @@ private:
 	std::map<std::pair<CHANT, uint32_t>, std::vector<std::string>> Chantcard[CHARACTER_VOICE + CHARACTER_STORY_ONLY];
 	std::map<std::pair<CHANT, uint32_t>, std::vector<std::string>> Chantcard2[CHARACTER_VOICE + CHARACTER_STORY_ONLY];
 	//action chant, Chantaction2 for zipped
-	std::vector<std::string> Chantaction[20][CHARACTER_VOICE + CHARACTER_STORY_ONLY][14][CHARACTER_VOICE + CHARACTER_STORY_ONLY]; //1st: action no., 2nd: character(0=no character), 3rd: subaction, 4th: opponent character
-	std::vector<std::string> Chantaction2[20][CHARACTER_VOICE + CHARACTER_STORY_ONLY][14][CHARACTER_VOICE + CHARACTER_STORY_ONLY];
+	std::vector<std::string> Chantaction[21][CHARACTER_VOICE + CHARACTER_STORY_ONLY][14][CHARACTER_VOICE + CHARACTER_STORY_ONLY]; //1st: action no., 2nd: character(0=no character), 3rd: subaction, 4th: opponent character
+	std::vector<std::string> Chantaction2[21][CHARACTER_VOICE + CHARACTER_STORY_ONLY][14][CHARACTER_VOICE + CHARACTER_STORY_ONLY];
 	std::string bgm_now = "";
 	////////kdiy////
 	int bgm_scene{ -1 };

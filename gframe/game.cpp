@@ -793,7 +793,7 @@ void Game::Initialize() {
 	#endif
 	//wMainMenu = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 450), false, EDOPRO_VERSION_STRING);	
 	wMainMenu = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 520), false, EDOPRO_VERSION_STRING);
-	wMainMenu->setVisible(false);
+	wMainMenu->setVisible(git_update);
 	////kdiy////////
 	wMainMenu->getCloseButton()->setVisible(false);
 	//wMainMenu->setVisible(!is_from_discord);

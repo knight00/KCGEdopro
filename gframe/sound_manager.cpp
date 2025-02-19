@@ -290,6 +290,7 @@ void SoundManager::RefreshChantsList() {
 		{CHANT::NEXTTURN,  EPRO_TEXT("nextturn"sv)},
 		{CHANT::STARTUP,  EPRO_TEXT("startup"sv)},
 		{CHANT::BORED,  EPRO_TEXT("bored"sv)},
+		{CHANT::TAGSWITCH,  EPRO_TEXT("tagswitch"sv)},
 		{CHANT::PENDULUM,  EPRO_TEXT("pendulum"sv)},
 		{CHANT::PSCALE,  EPRO_TEXT("activate/pendulum"sv)},
 		{CHANT::OPPCOUNTER,  EPRO_TEXT("oppcounter"sv)},
@@ -357,7 +358,8 @@ void SoundManager::RefreshChantsList() {
 		if(chantType.first == CHANT::TURNEND) i = 17;
 		if(chantType.first == CHANT::WIN) i = 18;
 		if(chantType.first == CHANT::LOSE) i = 19;
-		if(chantType.first == CHANT::REINCARNATE) i = 20;
+		if(chantType.first == CHANT::TAGSWITCH) i = 20;
+		if(chantType.first == CHANT::REINCARNATE) i = 21;
 		if(i == -1) continue;
 		for(int x = 1; x < CHARACTER_VOICE + CHARACTER_STORY_ONLY; x++) {
 			int size = textcharacter[x-1].size();
@@ -1576,7 +1578,8 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, const u
 	if(chant == CHANT::TURNEND) i = 17;
 	if(chant == CHANT::WIN) i = 18;
 	if(chant == CHANT::LOSE) i = 19;
-	if(chant == CHANT::REINCARNATE) i = 20;
+	if(chant == CHANT::TAGSWITCH) i = 20;
+	if(chant == CHANT::REINCARNATE) i = 21;
 	if(i == -1) return false;
 	auto key = std::make_pair(chant, code);
 	auto key2 = std::make_pair(chant, code2);

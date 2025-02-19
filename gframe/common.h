@@ -482,7 +482,7 @@
 #define MODE_RULE_ZCG_NO_RANDOM 0x3
 #define MODE_STORY              0x4
 #define PLAY_MODE               1
-#define CHARACTER_VOICE         68
+#define CHARACTER_VOICE         96
 #define CHARACTER_STORY_ONLY    1
 #define CHARACTER_STORY         3
 #define CHAPTER                 2
