@@ -132,10 +132,10 @@ void Mode::NextPlot(uint8_t step, uint32_t code) {
         for(int i = 0; i < 6; ++i)
             character[i] = 0;
         if(chapter == 1) {
-            gSoundManager->character[0] = 37; //Player 1 voice: Yusei
+            gSoundManager->character[0] = 43; //Player 1 voice: Yusei
             gSoundManager->character[1] = CHARACTER_VOICE; //Player 2 voice: Dark Siner
         } else {
-            gSoundManager->character[0] = 37; //Player 1 voice: Yusei
+            gSoundManager->character[0] = 43; //Player 1 voice: Yusei
             gSoundManager->character[1] = CHARACTER_VOICE; //Player 2 voice: Dark Siner
         }
 		for(uint8_t i = 0; i < mainGame->dInfo.team1 + mainGame->dInfo.team2; ++i) {

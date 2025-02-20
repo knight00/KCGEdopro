@@ -129,8 +129,8 @@ public:
 	bool PlayChant(CHANT chant, uint32_t code, uint32_t code2, const uint8_t side, uint8_t player, uint16_t extra = 0, uint8_t player2 = 0);
 	void PlayStartupChant(uint8_t player, std::vector<uint8_t> team);
 	uint8_t character[6] = {0,0,0,0,0,0}; //0: empty, 1: muto, 2: atem,...
-	uint8_t subcharacter[CHARACTER_VOICE] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	std::vector <std::vector<epro::path_string>> textcharacter = { 
+	uint8_t subcharacter[CHARACTER_VOICE] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	std::vector<epro::path_string> textcharacter[CHARACTER_VOICE-1+CHARACTER_STORY_ONLY] = {
 		{EPRO_TEXT("muto"),EPRO_TEXT("muto_dm"),EPRO_TEXT("muto_dsod")},
 		{EPRO_TEXT("atem")},
 		{EPRO_TEXT("kaiba"),EPRO_TEXT("kaiba_dm"),EPRO_TEXT("kaiba_dsod")},
@@ -157,7 +157,7 @@ public:
 		{EPRO_TEXT("marik")},
 		{EPRO_TEXT("dartz")},
 		{EPRO_TEXT("bakura"),EPRO_TEXT("bakura_dm"),EPRO_TEXT("bakura_dsod")},
-		{EPRO_TEXT("aigami")},
+		{EPRO_TEXT("aigami")}, //27
 
 		{EPRO_TEXT("judai"),EPRO_TEXT("judai_1"),EPRO_TEXT("judai_2"),EPRO_TEXT("judai_supreme")},
 		{EPRO_TEXT("manjome")},
@@ -174,7 +174,7 @@ public:
 		{EPRO_TEXT("cronos")},
 		{EPRO_TEXT("sartorius")},
 		{EPRO_TEXT("yubel")},
-		{EPRO_TEXT("darkness")},
+		{EPRO_TEXT("darkness")}, //43
 		
 		{EPRO_TEXT("yusei")},
 		{EPRO_TEXT("jack")},
@@ -190,7 +190,7 @@ public:
 		{EPRO_TEXT("meklord"),EPRO_TEXT("placido"),EPRO_TEXT("apolia")},
 		{EPRO_TEXT("paradox")},
 		{EPRO_TEXT("antinomy")},
-		{EPRO_TEXT("zone")},
+		{EPRO_TEXT("zone")}, //58
 		
 		{EPRO_TEXT("yuma"),EPRO_TEXT("yuma_human"),EPRO_TEXT("ZEXAL")},
 		{EPRO_TEXT("shark")},
@@ -206,7 +206,7 @@ public:
 		{EPRO_TEXT("alit"),EPRO_TEXT("alit_human"),EPRO_TEXT("alit_seventh")},
 		{EPRO_TEXT("girag"),EPRO_TEXT("girag_human"),EPRO_TEXT("girag_seventh")},
 		{EPRO_TEXT("mizarel"),EPRO_TEXT("mizarel_human"),EPRO_TEXT("mizarel_seventh")},
-		{EPRO_TEXT("DonThousand")},
+		{EPRO_TEXT("DonThousand")}, //73
 		
 		{EPRO_TEXT("yuya"),EPRO_TEXT("yuya_main"),EPRO_TEXT("yugo"),EPRO_TEXT("yuto")},
 		{EPRO_TEXT("declan")},
@@ -215,7 +215,7 @@ public:
 		{EPRO_TEXT("yuzu"),EPRO_TEXT("yuzu_main"),EPRO_TEXT("selina"),EPRO_TEXT("ruri"),EPRO_TEXT("rin")},
 		{EPRO_TEXT("gongenzaka")},
 		{EPRO_TEXT("sawatari")},
-		{EPRO_TEXT("dennis")},
+		{EPRO_TEXT("dennis")}, //81
 		
 		{EPRO_TEXT("playmaker")},
 		{EPRO_TEXT("revolver")},
@@ -225,13 +225,13 @@ public:
 		{EPRO_TEXT("ghostgirl")},
 		{EPRO_TEXT("spectre")},
 		{EPRO_TEXT("bravemax")},
-		{EPRO_TEXT("hanoi")},
+		{EPRO_TEXT("hanoi")}, //90
 
 		{EPRO_TEXT("yuuga")},
 		{EPRO_TEXT("luke")},
 		{EPRO_TEXT("romin")},
 		{EPRO_TEXT("gakuto")},
-		{EPRO_TEXT("mimi")},
+		{EPRO_TEXT("mimi")}, //95
 		
 		{EPRO_TEXT("guider")},
 		
