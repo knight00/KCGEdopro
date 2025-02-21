@@ -867,11 +867,11 @@ void Game::DrawMisc() {
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(330, 10, 629, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(691, 10, 990, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
 	driver->draw2DImage(imageManager.tLPFrame_z4, Resize(161, 553, 350, 640), irr::core::recti(0, 0, 494, 228), 0, 0, true);
-	driver->draw2DImage(mainGame->mode->isMode ? imageManager.modeHead[avataricon1] : imageManager.lpicon[gSoundManager->character[avataricon1]][gSoundManager->subcharacter[gSoundManager->character[avataricon1]]][0], Resize(268, 567, 318, 617), mainGame->mode->isMode ? imageManager.modehead_size[avataricon1] : irr::core::recti(0, 0, 240, 240), 0, 0, true);
+	driver->draw2DImage(mainGame->mode->isMode ? imageManager.modeHead[avataricon1] : imageManager.lpicon[gSoundManager->character[avataricon1]][0], Resize(268, 567, 318, 617), mainGame->mode->isMode ? imageManager.modehead_size[avataricon1] : irr::core::recti(0, 0, 240, 240), 0, 0, true);
 	if(dField.player_desc_hints[0].size() > 0)
 	    driver->draw2DImage(imageManager.tHint, Resize(151, 550, 191, 615), irr::core::recti(0, 0, 532, 649), 0, 0, true);
 	driver->draw2DImage(imageManager.tLPFrame2_z4, Resize(811, 18, 1020, 105), irr::core::recti(0, 0, 494, 228), 0, 0, true);
-	driver->draw2DImage(mainGame->mode->isMode ? imageManager.modeHead[avataricon2] : imageManager.lpicon[gSoundManager->character[avataricon2]][gSoundManager->subcharacter[gSoundManager->character[avataricon2]]][0], Resize(845, 32, 895, 82), mainGame->mode->isMode ? imageManager.modehead_size[avataricon2] : irr::core::recti(0, 0, 240, 240), 0, 0, true);
+	driver->draw2DImage(mainGame->mode->isMode ? imageManager.modeHead[avataricon2] : imageManager.lpicon[gSoundManager->character[avataricon2]][0], Resize(845, 32, 895, 82), mainGame->mode->isMode ? imageManager.modehead_size[avataricon2] : irr::core::recti(0, 0, 240, 240), 0, 0, true);
 	if(dField.player_desc_hints[1].size() > 0)
 	    driver->draw2DImage(imageManager.tHint, Resize(801, 15, 841, 80), irr::core::recti(0, 0, 532, 649), 0, 0, true);
 	/////kdiy/////////
@@ -1664,18 +1664,18 @@ void Game::DrawSpec() {
         //////kdiy//////////
 		case 11: {
 			if(cutincharacter[0] > 0) {
-				auto size = imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][gSoundManager->subcharacter[gSoundManager->character[showcardcode]]][cutincharacter[0]-1];
+				auto size = imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][cutincharacter[0]-1];
 				auto width = size.getWidth();
 				auto height = size.getHeight();
-				driver->draw2DImage(imageManager.cutin[gSoundManager->character[showcardcode]][gSoundManager->subcharacter[gSoundManager->character[showcardcode]]][cutincharacter[0]-1], ResizeWin(324, 300, 324 + (showcarddif > width/1.333 ? width/1.333 : showcarddif), 300 + height/1.6),
-					imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][gSoundManager->subcharacter[gSoundManager->character[showcardcode]]][cutincharacter[0]-1], 0, 0, true);
+				driver->draw2DImage(imageManager.cutin[gSoundManager->character[showcardcode]][cutincharacter[0]-1], ResizeWin(324, 300, 324 + (showcarddif > width/1.333 ? width/1.333 : showcarddif), 300 + height/1.6),
+					imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][cutincharacter[0]-1], 0, 0, true);
 			}
 			if(cutincharacter[1] > 0) {
-				auto size = imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][gSoundManager->subcharacter[gSoundManager->character[showcardcode]]][cutincharacter[1]-1];
+				auto size = imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][cutincharacter[1]-1];
 				auto width = size.getWidth();
 				auto height = size.getHeight();
-				driver->draw2DImage(imageManager.cutin[gSoundManager->character[showcardcode]][gSoundManager->subcharacter[gSoundManager->character[showcardcode]]][cutincharacter[1]-1], ResizeWin(924 - (showcarddif > width/1.333 ? width/1.333 : showcarddif), 100, 924, 100 + height/1.6),
-					imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][gSoundManager->subcharacter[gSoundManager->character[showcardcode]]][cutincharacter[1]-1], 0, 0, true);
+				driver->draw2DImage(imageManager.cutin[gSoundManager->character[showcardcode]][cutincharacter[1]-1], ResizeWin(924 - (showcarddif > width/1.333 ? width/1.333 : showcarddif), 100, 924, 100 + height/1.6),
+					imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][cutincharacter[1]-1], 0, 0, true);
 			}
 			showcarddif += (2600.0f / 1000.0f) * (float)delta_time;
 			// if(showcarddif >= 240 * 3) {

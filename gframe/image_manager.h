@@ -104,7 +104,7 @@ public:
 	irr::core::rect<irr::s32> head_size[CHARACTER_STORY+1]; //story icon
 	irr::core::rect<irr::s32> modehead_size[6];
 	std::vector<epro::path_string> lpcharacter[CHARACTER_VOICE][6][4]; //lpicon path, 1st: character(0=no character), 2nd: subcharacter, 3rd: emotion(0=normal, 1=damage, 2=advan, 3=surprise)
-	irr::core::rect<irr::s32> cutincharacter_size[CHARACTER_VOICE][6][3];
+	irr::core::rect<irr::s32> cutincharacter_size[CHARACTER_VOICE][3];
 	std::vector<epro::path_string> cutincharacter[CHARACTER_VOICE][6][3]; //cutin path, 1st: character(0=no character), 2nd: subcharacter, 3rd: emotion(0=damage, 1=advan, 2=surprise)
 	std::vector<epro::path_string> imgcharacter[CHARACTER_VOICE][6][3]; //bodycharacter path, 1st: character(0=no character), 2nd: subcharacter, 3rd: emotion(0=normal, 1=damage, 2=advan)
 	bool GetTextureCardHD(uint32_t code);
@@ -213,12 +213,12 @@ public:
 	/////////kdiy////
 	A(tRScale[14])
 	A(tLScale[14])
-	A(icon[CHARACTER_VOICE][6])
-	A(vs[CHARACTER_VOICE][6])
-	A(name[CHARACTER_VOICE][6])
-	A(lpicon[CHARACTER_VOICE][6][4])
-	A(bodycharacter[CHARACTER_VOICE][6][3])
-	A(cutin[CHARACTER_VOICE][6][3])
+	A(icon[CHARACTER_VOICE])
+	A(vs[CHARACTER_VOICE])
+	A(name[CHARACTER_VOICE])
+	A(lpicon[CHARACTER_VOICE][4])
+	A(bodycharacter[CHARACTER_VOICE][3])
+	A(cutin[CHARACTER_VOICE][3])
 	A(cardchant0)
 	A(cardchant1)
 	A(cardchant2)

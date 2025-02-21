@@ -3773,15 +3773,8 @@ bool Game::MainLoop() {
         } else if(is_building) {
             avataricon1 = 0;
         }
-		for(int i = 0; i < 6; ++i) {
-			if(gSoundManager->character[i] > CHARACTER_VOICE - 1) {
-				gSoundManager->character[i] = 0;
-			    imageManager.bodycharacter[gSoundManager->character[i]][gSoundManager->subcharacter[gSoundManager->character[i]]][0] = 0;
-			    imageManager.bodycharacter[gSoundManager->character[i]][gSoundManager->subcharacter[gSoundManager->character[i]]][1] = 0;
-            }
-		}
-		avatarbutton[0]->setImage(imageManager.bodycharacter[gSoundManager->character[avataricon1]][gSoundManager->subcharacter[gSoundManager->character[avataricon1]]][bodycharacter[0] > 2 ? 0 : bodycharacter[0]]);
-		avatarbutton[1]->setImage(imageManager.bodycharacter[gSoundManager->character[avataricon2]][gSoundManager->subcharacter[gSoundManager->character[avataricon2]]][bodycharacter[1] > 2 ? 0 : bodycharacter[1]]);
+		avatarbutton[0]->setImage(imageManager.bodycharacter[gSoundManager->character[avataricon1]][bodycharacter[0] > 2 ? 0 : bodycharacter[0]]);
+		avatarbutton[1]->setImage(imageManager.bodycharacter[gSoundManager->character[avataricon2]][bodycharacter[1] > 2 ? 0 : bodycharacter[1]]);
 #ifdef VIP
         if((dInfo.isInDuel || is_building) && !mode->isMode) {
             if(gSoundManager->character[avataricon1] > 0)
@@ -6943,12 +6936,12 @@ void Game::charactcomboselect(uint8_t player, int box, int sel) {
 			sel = 0;
 		gSoundManager->character[choose_player] = sel;
 		int player = gSoundManager->character[choose_player];
-		icon[choose_player]->setImage(imageManager.icon[player][gSoundManager->subcharacter[player]]);
-		icon2[choose_player]->setImage(imageManager.icon[player][gSoundManager->subcharacter[player]]);
+		icon[choose_player]->setImage(imageManager.icon[player]);
+		icon2[choose_player]->setImage(imageManager.icon[player]);
 		ebCharacter[choose_player]->setSelected(player);
 		ebCharacter_replay[choose_player]->setSelected(player);
-		btnCharacter->setImage(imageManager.bodycharacter[player][gSoundManager->subcharacter[player]][0]);
-		btnCharacter_replay->setImage(imageManager.bodycharacter[player][gSoundManager->subcharacter[player]][0]);
+		btnCharacter->setImage(imageManager.bodycharacter[player][0]);
+		btnCharacter_replay->setImage(imageManager.bodycharacter[player][0]);
 		if(choose_player == 0)
             ebCharacterDeck->setSelected(player);
 
@@ -6960,14 +6953,14 @@ void Game::charactcomboselect(uint8_t player, int box, int sel) {
 			team2count = replay.GetPlayersCount(1);
 		} else if (box == 3) {
 			team1.push_back(0);
-			gSoundManager->PlayStartupChant(0, team1);
+			// gSoundManager->PlayStartupChant(0, team1);
 			return;
 		}
 		for(uint8_t i = 0; i < team1count; i++)
 			team1.push_back(i);
 		for(uint8_t i = team1count; i < team1count + team2count; i++)
 			team2.push_back(i);
-		gSoundManager->PlayStartupChant(choose_player, (choose_player > team1count - 1) ? team1 : team2);
+		// gSoundManager->PlayStartupChant(choose_player, (choose_player > team1count - 1) ? team1 : team2);
 	}
 }
 /////kdiy/////

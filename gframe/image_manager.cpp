@@ -297,7 +297,7 @@ bool ImageManager::Initial() {
 		else
 		    head_size[i] = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(head[i]->getOriginalSize()));
     }
-    icon[0][0] = loadTextureAnySize(EPRO_TEXT("character/player/mini_icon"sv));
+    icon[0] = loadTextureAnySize(EPRO_TEXT("character/player/mini_icon"sv));
 	RefreshRandomImageList();
 
     QQ = driver->getTexture(EPRO_TEXT("./textures/QQ.png"));
@@ -707,12 +707,12 @@ bool ImageManager::Initial() {
 void ImageManager::SetAvatar(int player, const wchar_t *avatar) {
     auto* tmp = loadTextureAnySize(epro::format(EPRO_TEXT("character/custom/{}"sv), Utils::ToPathString(avatar)));
     if(tmp != nullptr) {
-        if (mainGame->imageManager.bodycharacter[gSoundManager->character[player]][gSoundManager->subcharacter[gSoundManager->character[player]]][0])
-            driver->removeTexture(mainGame->imageManager.bodycharacter[gSoundManager->character[player]][gSoundManager->subcharacter[gSoundManager->character[player]]][0]);
-        mainGame->imageManager.bodycharacter[gSoundManager->character[player]][gSoundManager->subcharacter[gSoundManager->character[player]]][0] = tmp;
-        if (mainGame->imageManager.bodycharacter[gSoundManager->character[player]][gSoundManager->subcharacter[gSoundManager->character[player]]][1])
-            driver->removeTexture(mainGame->imageManager.bodycharacter[gSoundManager->character[player]][gSoundManager->subcharacter[gSoundManager->character[player]]][1]);
-	    mainGame->imageManager.bodycharacter[gSoundManager->character[player]][gSoundManager->subcharacter[gSoundManager->character[player]]][1] = tmp;
+        if (mainGame->imageManager.bodycharacter[gSoundManager->character[player]][0])
+            driver->removeTexture(mainGame->imageManager.bodycharacter[gSoundManager->character[player]][0]);
+        mainGame->imageManager.bodycharacter[gSoundManager->character[player]][0] = tmp;
+        if (mainGame->imageManager.bodycharacter[gSoundManager->character[player]][1])
+            driver->removeTexture(mainGame->imageManager.bodycharacter[gSoundManager->character[player]][1]);
+	    mainGame->imageManager.bodycharacter[gSoundManager->character[player]][1] = tmp;
     }
 }
 void ImageManager::RefreshRandomImageList() {
@@ -758,12 +758,14 @@ void ImageManager::RefreshRandomImageList() {
 	for(uint8_t playno = 1; playno < CHARACTER_VOICE; playno++) {
 		int size = gSoundManager->textcharacter[playno-1].size();
 		auto path = gSoundManager->textcharacter[playno-1][0];
+		if(size > 1) path = epro::format(EPRO_TEXT("{}/{}"), gSoundManager->textcharacter[playno-1][0], gSoundManager->textcharacter[playno-1][1]);
+		icon[playno] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/mini_icon"sv), path));
+		vs[playno] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/vs"sv), path));
+		name[playno] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/name"sv), path));
 		if(size > 1) size = size - 1;
 		for(int i = 0; i < size; i++) {
 			if(size > 1) path = epro::format(EPRO_TEXT("{}/{}"), gSoundManager->textcharacter[playno-1][0], gSoundManager->textcharacter[playno-1][i+1]);
 #ifdef VIP
-			icon[playno][i] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/mini_icon"sv), path));
-				
 			for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/lp/normal"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
 				auto filename = Utils::GetFileName(file, true);
 				lpcharacter[playno][i][0].push_back(epro::format(EPRO_TEXT("{}/lp/normal/{}"), path, filename));
@@ -780,10 +782,12 @@ void ImageManager::RefreshRandomImageList() {
 				auto filename = Utils::GetFileName(file, true);
 				lpcharacter[playno][i][3].push_back(epro::format(EPRO_TEXT("{}/lp/surprise/{}"), path, filename));
 			}
-			for(int j = 0; j < 4; j++) {
-        		GetRandomCharacter(lpicon[playno][i][j], lpcharacter[playno][i][0]);
-				if(j > 0 && !lpicon[playno][i][j])
-				    lpicon[playno][i][j] = lpicon[playno][i][0];
+			if(i == 0) {
+				for(int j = 0; j < 4; j++) {
+        			GetRandomCharacter(lpicon[playno][j], lpcharacter[playno][i][0]);
+					if(j > 0 && !lpicon[playno][j])
+				    	lpicon[playno][j] = lpicon[playno][0];
+				}
 			}
 
 			for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/icon"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
@@ -798,10 +802,12 @@ void ImageManager::RefreshRandomImageList() {
 				auto filename = Utils::GetFileName(file, true);
 				imgcharacter[playno][i][2].push_back(epro::format(EPRO_TEXT("{}/advantage/{}"), path, filename));
 			}
-			for(int j = 0; j < 3; j++) {
-				GetRandomCharacter(bodycharacter[playno][i][j], imgcharacter[playno][i][j]);
-				if(j > 0 && !bodycharacter[playno][i][j])
-				    bodycharacter[playno][i][j] = bodycharacter[playno][i][0];
+			if(i == 0) {
+				for(int j = 0; j < 3; j++) {
+					GetRandomCharacter(bodycharacter[playno][j], imgcharacter[playno][i][j]);
+					if(j > 0 && !bodycharacter[playno][j])
+				    	bodycharacter[playno][j] = bodycharacter[playno][0];
+				}
 			}
 
 			for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/cutin/damage"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
@@ -816,31 +822,32 @@ void ImageManager::RefreshRandomImageList() {
 				auto filename = Utils::GetFileName(file, true);
 				cutincharacter[playno][i][2].push_back(epro::format(EPRO_TEXT("{}/cutin/surprise/{}"), path, filename));
 			}
-			for(int j = 0; j < 3; j++) {
-				GetRandomCharacter(cutin[playno][i][j], cutincharacter[playno][i][j]);
-				if(j > 0 && !cutin[playno][i][j])
-				    cutin[playno][i][j] = cutin[playno][i][0];
-				if(cutin[playno][i][j] == nullptr)
-				    cutincharacter_size[playno][i][j] = irr::core::rect<irr::s32>(0,0,0,0);
-				else
-					cutincharacter_size[playno][i][j] = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cutin[playno][i][j]->getOriginalSize()));
+			if(i == 0) {
+				for(int j = 0; j < 3; j++) {
+					GetRandomCharacter(cutin[playno][j], cutincharacter[playno][i][j]);
+					if(j > 0 && !cutin[playno][j])
+				    	cutin[playno][j] = cutin[playno][0];
+					if(cutin[playno][j] == nullptr)
+				    	cutincharacter_size[playno][j] = irr::core::rect<irr::s32>(0,0,0,0);
+					else
+						cutincharacter_size[playno][j] = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cutin[playno][j]->getOriginalSize()));
+				}
 			}
-#else
-            icon[playno][i] = driver->getTexture(0);
-			for(int j = 0; j < 4; j++)
-                lpicon[playno][i][j] = driver->getTexture(0);
-			for(int j = 0; j < 3; j++)
-                bodycharacter[playno][i][j] = driver->getTexture(0);
-			for(int j = 0; 3; j++) {
-                cutin[playno][i][j] = driver->getTexture(0);
-				cutincharacter_size[playno][i][j] = irr::core::rect<irr::s32>(0,0,0,0);
-			}
-#endif
-			vs[playno][i] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/vs"sv), path));
-			name[playno][i] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/name"sv), path));
 		}
+#else
+		for(int j = 0; j < 4; j++)
+            lpicon[playno][j] = driver->getTexture(0);
+		for(int j = 0; j < 3; j++)
+            bodycharacter[playno][j] = driver->getTexture(0);
+		for(int j = 0; 3; j++) {
+            cutin[playno][j] = driver->getTexture(0);
+			cutincharacter_size[playno][j] = irr::core::rect<irr::s32>(0,0,0,0);
+		}
+#endif
     }
 }
+//void ImageManager::UpdateSubCharacter(irr::video::ITexture*& src, std::vector<epro::path_string>& list) {
+//}
 void ImageManager::RefreshImageDir(epro::path_string path, int image_type) {
 	for(auto file : Utils::FindFiles(BASE_PATH + path, { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
 		ImageList[image_type].push_back(epro::format(EPRO_TEXT("{}/{}"), path, file));
