@@ -367,13 +367,13 @@ void SoundManager::RefreshChantsList() {
 				if(size > 1 && j == 0) continue;
 				auto character_name = textcharacter[x-1][j];
 				if(chantType.first == CHANT::SUMMON) {
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/fusion"), character_name, chantType.second), Chantaction[i][x][0][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/synchro"), character_name, chantType.second), Chantaction[i][x][1][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/xyz"), character_name, chantType.second), Chantaction[i][x][2][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/link"), character_name, chantType.second), Chantaction[i][x][3][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/ritual"), character_name, chantType.second), Chantaction[i][x][4][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/pendulum"), character_name, chantType.second), Chantaction[i][x][5][0], x);
-					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/summon"), character_name, chantType.second), Chantaction[i][x][6][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/summon"), character_name, chantType.second), Chantaction[i][x][0][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/fusion"), character_name, chantType.second), Chantaction[i][x][1][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/synchro"), character_name, chantType.second), Chantaction[i][x][2][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/xyz"), character_name, chantType.second), Chantaction[i][x][3][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/link"), character_name, chantType.second), Chantaction[i][x][4][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/ritual"), character_name, chantType.second), Chantaction[i][x][5][0], x);
+					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/pendulum"), character_name, chantType.second), Chantaction[i][x][6][0], x);
 					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/spsummon"), character_name, chantType.second), Chantaction[i][x][7][0], x);
 					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/attack"), character_name, chantType.second), Chantaction[i][x][8][0], x);
 					RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/defense"), character_name, chantType.second), Chantaction[i][x][9][0], x);

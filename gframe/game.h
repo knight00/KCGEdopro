@@ -716,7 +716,7 @@ public:
 	void charactcomboselect(uint8_t player, int box, int sel); //box: 1=ebCharacter, 2= ebCharacter_replay, 3= ebCharacterDeck
     std::vector<std::wstring>& GetPlayerReplayNames();
 	int bodycharacter[2] = { 0,0 };
-	int cutincharacter[2] = { 0,0 };
+	int cutincharacter[2][3] = { {0,0,0},{0,0,0} };
 	int lpcharacter[2] = { 0,0 };
 	int replay_player[2];
     int replay_team1;
@@ -983,7 +983,7 @@ public:
 	bool LoadJson(epro::path_string path, uint8_t character);
 	void LoadJsonInfo();
 	struct Ploat {
-		std::string dialog = "";
+		std::string file_path = "";
 		std::wstring text = L"";
 	};
 	std::unordered_map<std::string, std::wstring> Ploats[CHARACTER_VOICE-1];

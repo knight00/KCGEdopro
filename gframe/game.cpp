@@ -517,11 +517,11 @@ bool Game::LoadJson(epro::path_string path, uint8_t character) {
 			for (auto& obj : j) {
 				try {
 					Ploat ploat;
-                    if(obj.find("dialog") == obj.end())
+                    if(obj.find("file_path") == obj.end())
                         continue;
-					ploat.dialog = obj.at("dialog").get_ref<std::string&>();
+					ploat.file_path = obj.at("file_path").get_ref<std::string&>();
 					ploat.text = BufferIO::DecodeUTF8(obj.at("text").get_ref<std::string&>());
-					Ploats[character][ploat.dialog] = ploat.text;
+					Ploats[character][ploat.file_path] = ploat.text;
 				}
 				catch (const std::exception& e) {
 					ErrorLog("Failed to parse dialog json entry: {}", e.what());
@@ -1716,7 +1716,7 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(btnPloat, 1215);
 
 	//second  head 0 player + info
-	wChPloatBody[0] = env->addWindow(Scale(300, 400, 610, 495));
+	wChPloatBody[0] = env->addWindow(Scale(160, 450, 470, 545));
 	wChPloatBody[0]->getCloseButton()->setVisible(false);
 	wChPloatBody[0]->setDraggable(false);
 	wChPloatBody[0]->setDrawTitlebar(false);
@@ -1726,7 +1726,7 @@ void Game::Initialize() {
 	stChPloatInfo[0]->setWordWrap(true);
 
 	//second  head 1 player + info
-	wChPloatBody[1] = env->addWindow(Scale(590, 140, 900, 235));
+	wChPloatBody[1] = env->addWindow(Scale(730, 250, 1040, 345));
 	wChPloatBody[1]->getCloseButton()->setVisible(false);
 	wChPloatBody[1]->setDraggable(false);
 	wChPloatBody[1]->setDrawTitlebar(false);
@@ -3162,25 +3162,17 @@ void Game::PopulateSettingsWindow() {
 #endif
             IncrementXorY();
 		}
-#if !EDOPRO_WINDOWS
-        gSettings.chkEnableAnime->setChecked(false);
-    	gSettings.chkEnableAnime->setEnabled(false);
-	    gSettings.chkEnableSummonAnime->setChecked(false);
-	    gSettings.chkEnableSummonAnime->setEnabled(false);
-	    gSettings.chkEnableActivateAnime->setChecked(false);
-	    gSettings.chkEnableActivateAnime->setEnabled(false);
-	    gSettings.chkEnableAttackAnime->setChecked(false);
-	    gSettings.chkEnableAttackAnime->setEnabled(false);
-#endif
 #ifndef VIP
 		gGameConfig->enableanime = false;
 		gGameConfig->enablesanime = false;
 		gGameConfig->enablecanime = false;
 		gGameConfig->enableaanime = false;
+		gGameConfig->animefull = false;
 		gGameConfig->enablessound = false;
 		gGameConfig->enablessound = false;
 		gGameConfig->enablecsound = false;
 		gGameConfig->enableasound = false;
+		gGameConfig->pauseduel = false;
         gSettings.chkEnableAnime->setChecked(false);
         defaultStrings.emplace_back(gSettings.chkEnableAnime, 8053);
         gSettings.chkEnableSummonAnime->setChecked(false);
@@ -3195,6 +3187,8 @@ void Game::PopulateSettingsWindow() {
         defaultStrings.emplace_back(gSettings.chkEnableAttackAnime, 8055);
         gSettings.chkEnableAttackSound->setChecked(false);
         defaultStrings.emplace_back(gSettings.chkEnableAttackSound, 8022);
+        gSettings.chkAnimeFull->setChecked(false);
+        gSettings.chkPauseduel->setChecked(false);
 #endif
         //////kdiy///////////
 	}
@@ -6582,8 +6576,8 @@ void Game::OnResize() {
     wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 880, 500));
     wBody->setRelativePosition(ResizeWin(370, 175, 570, 475));
     wPloat->setRelativePosition(ResizeWin(520, 100, 775, 400));
-    wChPloatBody[0]->setRelativePosition(ResizeWin(300, 400, 610, 495));
-    wChPloatBody[1]->setRelativePosition(ResizeWin(590, 140, 900, 235));
+    wChPloatBody[0]->setRelativePosition(ResizeWin(160, 450, 470, 545));
+    wChPloatBody[1]->setRelativePosition(ResizeWin(730, 250, 1040, 345));
     ////kdiy/////////
 	wSinglePlay->setRelativePosition(ResizeWin(220, 100, 800, 520));
     ////kdiy/////////
@@ -6863,6 +6857,7 @@ bool Game::moviecheck(bool initial) {
 		gGameConfig->enablesanime = false;
 		gGameConfig->enablecanime = false;
 		gGameConfig->enableaanime = false;
+		gGameConfig->animefull = false;
 		gGameConfig->videowallpaper = false;
 
 		if(!initial) {
@@ -6890,6 +6885,7 @@ bool Game::moviecheck(bool initial) {
 	gSettings.chkEnableSummonAnime->setChecked(gGameConfig->enablesanime);
 	gSettings.chkEnableActivateAnime->setChecked(gGameConfig->enablecanime);
 	gSettings.chkEnableAttackAnime->setChecked(gGameConfig->enableaanime);
+	gSettings.chkAnimeFull->setChecked(gGameConfig->animefull);
 	gSettings.chkVideowallpaper->setChecked(gGameConfig->videowallpaper);
 	return filechk;
 }
@@ -6906,6 +6902,7 @@ bool Game::chantcheck(bool initial) {
 		gGameConfig->enablessound = false;
 		gGameConfig->enablecsound = false;
 		gGameConfig->enableasound = false;
+		gGameConfig->pauseduel = false;
 		if(!initial) {
 			stACMessage->setText(gDataManager->GetSysString(8050).data());
 			PopupElement(wACMessage, 90);
@@ -6927,6 +6924,7 @@ bool Game::chantcheck(bool initial) {
 	gSettings.chkEnableSummonSound->setChecked(gGameConfig->enablessound);
     gSettings.chkEnableActivateSound->setChecked(gGameConfig->enablecsound);
 	gSettings.chkEnableAttackSound->setChecked(gGameConfig->enableasound);
+	gSettings.chkPauseduel->setChecked(gGameConfig->pauseduel);
 	return filechk;
 }
 void Game::charactcomboselect(uint8_t player, int box, int sel) {
@@ -6936,6 +6934,7 @@ void Game::charactcomboselect(uint8_t player, int box, int sel) {
 			sel = 0;
 		gSoundManager->character[choose_player] = sel;
 		int player = gSoundManager->character[choose_player];
+		imageManager.LoadCharacter(player, gSoundManager->subcharacter[player]);
 		icon[choose_player]->setImage(imageManager.icon[player]);
 		icon2[choose_player]->setImage(imageManager.icon[player]);
 		ebCharacter[choose_player]->setSelected(player);

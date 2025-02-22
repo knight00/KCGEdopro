@@ -190,8 +190,10 @@ void ReplayMode::EndDuel() {
         mainGame->isEvent = false;
         mainGame->bodycharacter[0] = 0;
         mainGame->bodycharacter[1] = 0;
-        mainGame->cutincharacter[0] = 0;
-        mainGame->cutincharacter[1] = 0;
+		for(int i = 0; i < 3; i++) {
+			mainGame->cutincharacter[0][i] = 0;
+			mainGame->cutincharacter[1][i] = 0;
+		}
         mainGame->lpcharacter[0] = 0;
         mainGame->lpcharacter[1] = 0;
 		mainGame->chantsound.stop();
@@ -223,8 +225,10 @@ void ReplayMode::Restart(bool refresh) {
     mainGame->isEvent = false;
     mainGame->bodycharacter[0] = 0;
     mainGame->bodycharacter[1] = 0;
-    mainGame->cutincharacter[0] = 0;
-    mainGame->cutincharacter[1] = 0;
+	for(int i = 0; i < 3; i++) {
+		mainGame->cutincharacter[0][i] = 0;
+		mainGame->cutincharacter[1][i] = 0;
+	}
     mainGame->lpcharacter[0] = 0;
     mainGame->lpcharacter[1] = 0;
 	mainGame->chantsound.stop();

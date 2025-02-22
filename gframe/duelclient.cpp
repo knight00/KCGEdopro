@@ -488,8 +488,10 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
             	mainGame->isEvent = false;
         		mainGame->bodycharacter[0] = 0;
         		mainGame->bodycharacter[1] = 0;
-        		mainGame->cutincharacter[0] = 0;
-        		mainGame->cutincharacter[1] = 0;
+				for(int i = 0; i < 3; i++) {
+        			mainGame->cutincharacter[0][i] = 0;
+        			mainGame->cutincharacter[1][i] = 0;
+				}
         		mainGame->lpcharacter[0] = 0;
         		mainGame->lpcharacter[1] = 0;
 				mainGame->chantsound.stop();
@@ -761,8 +763,10 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
             mainGame->selectedcard[i]->setVisible(false);
         mainGame->bodycharacter[0] = 0;
         mainGame->bodycharacter[1] = 0;
-        mainGame->cutincharacter[0] = 0;
-        mainGame->cutincharacter[1] = 0;
+		for(int i = 0; i < 3; i++) {
+			mainGame->cutincharacter[0][i] = 0;
+			mainGame->cutincharacter[1][i] = 0;
+		}
         mainGame->lpcharacter[0] = 0;
         mainGame->lpcharacter[1] = 0;
 		mainGame->wBtnShowCard->setVisible(false);
@@ -1155,8 +1159,10 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		mainGame->HideElement(mainGame->wEntertainmentPlay);
         mainGame->bodycharacter[0] = 0;
         mainGame->bodycharacter[1] = 0;
-        mainGame->cutincharacter[0] = 0;
-        mainGame->cutincharacter[1] = 0;
+		for(int i = 0; i < 3; i++) {
+			mainGame->cutincharacter[0][i] = 0;
+			mainGame->cutincharacter[1][i] = 0;
+		}
         mainGame->lpcharacter[0] = 0;
         mainGame->lpcharacter[1] = 0;
         mainGame->replayswap = false;
@@ -1268,8 +1274,10 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			}
         	mainGame->bodycharacter[0] = 0;
         	mainGame->bodycharacter[1] = 0;
-        	mainGame->cutincharacter[0] = 0;
-        	mainGame->cutincharacter[1] = 0;
+			for(int i = 0; i < 3; i++) {
+				mainGame->cutincharacter[0][i] = 0;
+				mainGame->cutincharacter[1][i] = 0;
+			}
         	mainGame->lpcharacter[0] = 0;
         	mainGame->lpcharacter[1] = 0;
 			mainGame->chantsound.stop();
@@ -1703,8 +1711,10 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		uint8_t player2 = ((mainGame->dInfo.turn % 2 && mainGame->dInfo.isFirst) || (!(mainGame->dInfo.turn % 2) && !mainGame->dInfo.isFirst));
 		switch (phase) {
             case PHASE_DRAW: {
-				mainGame->cutincharacter[0] = 0;
-				mainGame->cutincharacter[1] = 0;
+				for(int i = 0; i < 3; i++) {
+        			mainGame->cutincharacter[0][i] = 0;
+        			mainGame->cutincharacter[1][i] = 0;
+				}
 				PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, player, 0, player2);
 				break;
 			}
@@ -1888,10 +1898,10 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		if(!mode) {
 			uint16_t extra = 0;
             if(desc != 1160) {
-				if(mainGame->cutincharacter[cc] != 2 && mainGame->imageManager.cutin[gSoundManager->character[cc == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][2-1]) {
+				if(mainGame->cutincharacter[cc][1] == 0 && mainGame->imageManager.cutin[gSoundManager->character[cc == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][1]) {
 					auto lock = LockIf();
 					Play(SoundManager::SFX::CUTIN);
-					mainGame->cutincharacter[cc] = 2;
+					mainGame->cutincharacter[cc][1] = 1;
 					mainGame->showcardcode = cc;
 					mainGame->showcarddif = 0;
 					mainGame->showcard = 11;
@@ -1920,7 +1930,8 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
                     PlayChantcode(SoundManager::CHANT::PENDULUM, code, code2, cc, extra);
 			    else
 				    PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, cc, extra);
-				if(mainGame->cutincharacter[cc] != 2 && mainGame->imageManager.cutin[gSoundManager->character[cc == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][2-1]) {
+				if(mainGame->imageManager.cutin[gSoundManager->character[cc == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][1]) {
+					mainGame->cutincharacter[cc][1] = 2;
 					auto lock = LockIf();
 					mainGame->showcard = 0;
 					mainGame->WaitFrameSignal(5, lock, true);
@@ -1939,10 +1950,10 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 			int prev_lpcharacter = mainGame->lpcharacter[pc];
 			mainGame->bodycharacter[pc] = 3;
 			mainGame->lpcharacter[pc] = 3;
-			if(mainGame->cutincharacter[pc] != 3 && mainGame->imageManager.cutin[gSoundManager->character[pc == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][3-1]) {
+			if(mainGame->cutincharacter[pc][2] == 0 && mainGame->imageManager.cutin[gSoundManager->character[pc == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][2]) {
 				auto lock = LockIf();
 				Play(SoundManager::SFX::CUTIN);
-				mainGame->cutincharacter[pc] = 3;
+				mainGame->cutincharacter[pc][2] = 1;
 				mainGame->showcardcode = pc;
 				mainGame->showcarddif = 0;
 				mainGame->showcard = 11;
@@ -1952,7 +1963,8 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
             PlayChant(SoundManager::CHANT::OPPCOUNTER, nullptr, pc, 0, 1- pc);
 			mainGame->bodycharacter[pc] = ((mainGame->dInfo.lp[pc] > 0 && mainGame->dInfo.lp[pc] >= mainGame->dInfo.lp[1 - pc] * 2) && prev_bodycharacter == 2) ? 2 : 0;
 			mainGame->lpcharacter[pc] = ((mainGame->dInfo.lp[pc] > 0 && mainGame->dInfo.lp[pc] >= mainGame->dInfo.lp[1 - pc] * 2) && prev_lpcharacter == 2) ? 2 : 0;
-			if(mainGame->cutincharacter[pc] != 3 && mainGame->imageManager.cutin[gSoundManager->character[pc == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][3-1]) {
+			if(mainGame->imageManager.cutin[gSoundManager->character[pc == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][2]) {
+				mainGame->cutincharacter[cc][2] = 2;
 				auto lock = LockIf();
 				mainGame->showcard = 0;
 				mainGame->WaitFrameSignal(5, lock, true);
@@ -1976,10 +1988,10 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		int prev_lpcharacterr = mainGame->lpcharacter[player];
 		mainGame->bodycharacter[player] = 1;
 		mainGame->lpcharacter[player] = 1;
-		if(!(reason & REASON_COST) && mainGame->cutincharacter[player] != 1 && mainGame->imageManager.cutin[gSoundManager->character[player == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][1-1]) {
+		if(!(reason & REASON_COST) && mainGame->cutincharacter[player][0] == 0 && mainGame->imageManager.cutin[gSoundManager->character[player == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][0]) {
 			auto lock = LockIf();
 			Play(SoundManager::SFX::CUTIN);
-			mainGame->cutincharacter[player] = 1;
+			mainGame->cutincharacter[player][0] = 1;
 			mainGame->showcardcode = player;
 			mainGame->showcarddif = 0;
 			mainGame->showcard = 11;
@@ -1992,7 +2004,8 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		PlayChant(SoundManager::CHANT::DAMAGE, nullptr, player, extra, 1 - player);
 		mainGame->bodycharacter[player] = (((mainGame->dInfo.lp[player] > 0 && mainGame->dInfo.lp[player] >= mainGame->dInfo.lp[1 - player] * 2) || val >= 4000) && prev_bodycharacter == 2) ? 2 : 0;
 		mainGame->lpcharacter[player] = (((mainGame->dInfo.lp[player] > 0 && mainGame->dInfo.lp[player] >= mainGame->dInfo.lp[1 - player] * 2) || val >= 4000) && prev_lpcharacterr == 2) ? 2 : 0;
-		if(!(reason & REASON_COST) && mainGame->cutincharacter[player] != 1 && mainGame->imageManager.cutin[gSoundManager->character[player == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][1-1]) {
+		if(!(reason & REASON_COST) && mainGame->imageManager.cutin[gSoundManager->character[player == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][0]) {
+			mainGame->cutincharacter[player][0] = 2;
 			auto lock = LockIf();
 			mainGame->showcard = 0;
 			mainGame->WaitFrameSignal(5, lock, true);
@@ -2196,8 +2209,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                 mainGame->isEvent = false;
         		mainGame->bodycharacter[0] = 0;
         		mainGame->bodycharacter[1] = 0;
-        		mainGame->cutincharacter[0] = 0;
-        		mainGame->cutincharacter[1] = 0;
+				for(int i = 0; i < 3; i++) {
+        			mainGame->cutincharacter[0][i] = 0;
+        			mainGame->cutincharacter[1][i] = 0;
+				}
         		mainGame->lpcharacter[0] = 0;
         		mainGame->lpcharacter[1] = 0;
 				mainGame->chantsound.stop();
@@ -2408,8 +2423,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			}
         	mainGame->bodycharacter[0] = 0;
         	mainGame->bodycharacter[1] = 0;
-        	mainGame->cutincharacter[0] = 0;
-        	mainGame->cutincharacter[1] = 0;
+			for(int i = 0; i < 3; i++) {
+				mainGame->cutincharacter[0][i] = 0;
+				mainGame->cutincharacter[1][i] = 0;
+			}
         	mainGame->lpcharacter[0] = 0;
         	mainGame->lpcharacter[1] = 0;
 			break;
@@ -6425,8 +6442,10 @@ void DuelClient::ReplayPrompt(bool local_stream) {
 	mainGame->wChPloatBody[1]->setVisible(false);
 	mainGame->bodycharacter[0] = 0;
     mainGame->bodycharacter[1] = 0;
-    mainGame->cutincharacter[0] = 0;
-    mainGame->cutincharacter[1] = 0;
+	for(int i = 0; i < 3; i++) {
+		mainGame->cutincharacter[0][i] = 0;
+		mainGame->cutincharacter[1][i] = 0;
+	}
     mainGame->lpcharacter[0] = 0;
     mainGame->lpcharacter[1] = 0;
 	mainGame->chantsound.stop();
