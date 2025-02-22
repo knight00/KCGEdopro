@@ -502,8 +502,8 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
                         mainGame->choose_player = i;
                 }
 				int player = gSoundManager->character[mainGame->choose_player];
-				//mainGame->btnCharacter->setImage(mainGame->imageManager.bodycharacter[player][gSoundManager->subcharacter[player]][0]);
-				//mainGame->btnCharacter_replay->setImage(mainGame->imageManager.bodycharacter[player][gSoundManager->subcharacter[player]][0]);
+				mainGame->btnCharacter->setImage(mainGame->imageManager.bodycharacter[player][0]);
+				mainGame->btnCharacter_replay->setImage(mainGame->imageManager.bodycharacter[player][0]);
 				break;
 			}
 			case BUTTON_CHARACTER: {
@@ -529,10 +529,11 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				if(gSoundManager->character[mainGame->choose_player] == CHARACTER_VOICE - 1) gSoundManager->character[mainGame->choose_player] = 0;
 				else gSoundManager->character[mainGame->choose_player] ++;
 				int player = gSoundManager->character[mainGame->choose_player];
-				//mainGame->btnCharacter->setImage(mainGame->imageManager.bodycharacter[player][gSoundManager->subcharacter[player]][0]);
-				//mainGame->btnCharacter_replay->setImage(mainGame->imageManager.bodycharacter[player][gSoundManager->subcharacter[player]][0]);
-				//mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player][gSoundManager->subcharacter[player]]);
-                //mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player][gSoundManager->subcharacter[player]]);
+				mainGame->imageManager.LoadCharacter(player, gSoundManager->subcharacter[player]);
+				mainGame->btnCharacter->setImage(mainGame->imageManager.bodycharacter[player][0]);
+				mainGame->btnCharacter_replay->setImage(mainGame->imageManager.bodycharacter[player][0]);
+				mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
                 mainGame->ebCharacter[mainGame->choose_player]->setSelected(gSoundManager->character[mainGame->choose_player]);
                 mainGame->ebCharacter_replay[mainGame->choose_player]->setSelected(gSoundManager->character[mainGame->choose_player]);
 				if(mainGame->choose_player == 0)
@@ -579,10 +580,11 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				if(gSoundManager->character[mainGame->choose_player] == 0) gSoundManager->character[mainGame->choose_player] = CHARACTER_VOICE - 1;
 				else gSoundManager->character[mainGame->choose_player] --;
 				int player = gSoundManager->character[mainGame->choose_player];
-				//mainGame->btnCharacter->setImage(mainGame->imageManager.bodycharacter[player][gSoundManager->subcharacter[player]][0]);
-				//mainGame->btnCharacter_replay->setImage(mainGame->imageManager.bodycharacter[player][gSoundManager->subcharacter[player]][0]);
-				//mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player][gSoundManager->subcharacter[player]]);
-                //mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player][gSoundManager->subcharacter[player]]);
+				mainGame->imageManager.LoadCharacter(player, gSoundManager->subcharacter[player]);
+				mainGame->btnCharacter->setImage(mainGame->imageManager.bodycharacter[player][0]);
+				mainGame->btnCharacter_replay->setImage(mainGame->imageManager.bodycharacter[player][0]);
+				mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
                 mainGame->ebCharacter[mainGame->choose_player]->setSelected(gSoundManager->character[mainGame->choose_player]);
                 mainGame->ebCharacter_replay[mainGame->choose_player]->setSelected(gSoundManager->character[mainGame->choose_player]);
 				if(mainGame->choose_player == 0)
@@ -630,11 +632,11 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				int player = gSoundManager->character[mainGame->choose_player];
 				for(int i = 0; i < 5; ++i) {
                     if(elem == mainGame->btnsubCharacterSelect[i] || elem == mainGame->btnsubCharacterSelect_replay[i]) {
-						gSoundManager->subcharacter[player] = i;
-						//mainGame->btnCharacter->setImage(mainGame->imageManager.bodycharacter[player][i][0]);
-						//mainGame->btnCharacter_replay->setImage(mainGame->imageManager.bodycharacter[player][i][0]);
-						//mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player][i]);
-                		//mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player][i]);
+						mainGame->imageManager.LoadCharacter(player, i);
+						mainGame->btnCharacter->setImage(mainGame->imageManager.bodycharacter[player][0]);
+						mainGame->btnCharacter_replay->setImage(mainGame->imageManager.bodycharacter[player][0]);
+						mainGame->icon[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
+                		mainGame->icon2[mainGame->choose_player]->setImage(mainGame->imageManager.icon[player]);
 					}
 				}
 				break;

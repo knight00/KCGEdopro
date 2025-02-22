@@ -97,13 +97,13 @@ public:
 	void GetRandomImage(irr::video::ITexture*& src, int image_type, int width, int height, bool force_random = false);
 	void GetRandomImagef(int width, int height);
 	void GetRandomCharacter(irr::video::ITexture*& src, std::vector<epro::path_string>& list);
+	void LoadCharacter(int player, int subcharacter);
 	void RefreshRandomImageList();
 	void RefreshImageDir(epro::path_string path, int image_type);
 	void RefreshImageDirf();
 	irr::video::ITexture* UpdatetTexture(int i, std::wstring filepath);
 	irr::core::rect<irr::s32> head_size[CHARACTER_STORY+1]; //story icon
 	irr::core::rect<irr::s32> modehead_size[6];
-	std::vector<epro::path_string> lpcharacter[CHARACTER_VOICE][6][4]; //lpicon path, 1st: character(0=no character), 2nd: subcharacter, 3rd: emotion(0=normal, 1=damage, 2=advan, 3=surprise)
 	irr::core::rect<irr::s32> cutincharacter_size[CHARACTER_VOICE][3];
 	std::vector<epro::path_string> cutincharacter[CHARACTER_VOICE][6][3]; //cutin path, 1st: character(0=no character), 2nd: subcharacter, 3rd: emotion(0=damage, 1=advan, 2=surprise)
 	std::vector<epro::path_string> imgcharacter[CHARACTER_VOICE][6][3]; //bodycharacter path, 1st: character(0=no character), 2nd: subcharacter, 3rd: emotion(0=normal, 1=damage, 2=advan)
@@ -216,7 +216,7 @@ public:
 	A(icon[CHARACTER_VOICE])
 	A(vs[CHARACTER_VOICE])
 	A(name[CHARACTER_VOICE])
-	A(lpicon[CHARACTER_VOICE][4])
+	A(lpicon[CHARACTER_VOICE])
 	A(bodycharacter[CHARACTER_VOICE][3])
 	A(cutin[CHARACTER_VOICE][3])
 	A(cardchant0)
