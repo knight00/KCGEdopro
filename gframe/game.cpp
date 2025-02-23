@@ -5324,7 +5324,7 @@ bool Game::PlayVideo(bool loop) {
 	if (formatCtx) {
 		if(videostart) timeAccumulated += static_cast<double>(delta_time) / 1000.0;
 		else timeAccumulated = videoFrameDuration;
-		while (timeAccumulated >= videoFrameDuration - 0.98) {
+		while (timeAccumulated >= videoFrameDuration - 0.95) {
 			if (av_read_frame(formatCtx, &packet) < 0) {
 				if(loop) {
 					av_seek_frame(formatCtx, videoStreamIndex, 0, AVSEEK_FLAG_BACKWARD);
@@ -5380,7 +5380,7 @@ bool Game::PlayVideo(bool loop) {
 		}
 		if(videostart) timeAccumulated2 += static_cast<double>(delta_time) / 1000.0;
 		else timeAccumulated2 = audioFrameDuration;
-		while (timeAccumulated2 >= audioFrameDuration - 0.98) {
+		while (timeAccumulated2 >= audioFrameDuration + 0.12) {
 			if (av_read_frame(formatCtx2, &packet) >= 0) {
 			if (packet.stream_index == audioStreamIndex) {
 				if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {

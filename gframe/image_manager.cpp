@@ -253,12 +253,11 @@ bool ImageManager::Initial() {
 	// ASSIGN_DEFAULT(tSettings);
 	
 	Utils::MakeDirectory(EPRO_TEXT("./textures/character"));
-	//ktemp///////
 	for(uint8_t playno = 0; playno < CHARACTER_VOICE - 1; playno++) {
+		auto path = epro::format(EPRO_TEXT("./textures/character/{}"), gSoundManager->textcharacter[playno][0]);
+		Utils::MakeDirectory(path);
 		int size = gSoundManager->textcharacter[playno].size();
 		for(int i = 0; i < size; i++) {
-			auto path = epro::format(EPRO_TEXT("./textures/character/{}"), gSoundManager->textcharacter[playno][0]);
-			Utils::MakeDirectory(path);
 			if(size > 1 && i == 0) continue;
 			if(size > 1) {
 				path = epro::format(EPRO_TEXT("./textures/character/{}/{}"), gSoundManager->textcharacter[playno][0], gSoundManager->textcharacter[playno][i]);

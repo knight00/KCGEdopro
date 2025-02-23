@@ -3685,10 +3685,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			pcard->rrscale = 0;
 			pcard->rlink_marker = 0;
 			pcard->is_real = false;
-			pcard->realchange = 0;
-			pcard->realsetcode = 0;
-			pcard->realname = 0;
 			pcard->effcode = 0;
+			pcard->namecode = 0;
 			pcard->desc_hints.clear();
 			pcard->text_hints.clear();
 		}
@@ -3718,10 +3716,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					pcard->rrscale = rcard.rrscale;
 					pcard->rlink_marker = rcard.rlink_marker;
 					pcard->is_real = rcard.is_real;
-					pcard->realchange = rcard.realchange;
-					pcard->realsetcode = rcard.realsetcode;
-					pcard->realname = rcard.realname;
 					pcard->effcode = rcard.effcode;
+					pcard->namecode = rcard.namecode;
 					pcard->text_hints = rcard.text_hints;
 					deck_real.erase(deck_real.begin() + i);
 					break;
@@ -3804,10 +3800,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			pcard->rrscale = 0;
 			pcard->rlink_marker = 0;
 			pcard->is_real = false;
-			pcard->realchange = 0;
-			pcard->realsetcode = 0;
-			pcard->realname = 0;
 			pcard->effcode = 0;
+			pcard->namecode = 0;
 			pcard->desc_hints.clear();
 			pcard->text_hints.clear();
 		}
@@ -3831,10 +3825,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					pcard->rrscale = rcard.rrscale;
 					pcard->rlink_marker = rcard.rlink_marker;
 					pcard->is_real = rcard.is_real;
-					pcard->realchange = rcard.realchange;
-					pcard->realsetcode = rcard.realsetcode;
-					pcard->realname = rcard.realname;
 					pcard->effcode = rcard.effcode;
+					pcard->namecode = rcard.namecode;
 					pcard->text_hints = rcard.text_hints;
 					hand_real.erase(hand_real.begin() + i);
 					break;
@@ -3877,10 +3869,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				pcard->rrscale = 0;
 				pcard->rlink_marker = 0;
 				pcard->is_real = false;
-				pcard->realchange = 0;
-				pcard->realsetcode = 0;
-				pcard->realname = 0;
 				pcard->effcode = 0;
+				pcard->namecode = 0;
 				pcard->desc_hints.clear();
 				pcard->text_hints.clear();
 			}
@@ -3928,10 +3918,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					pcard->rrscale = rcard.rrscale;
 					pcard->rlink_marker = rcard.rlink_marker;
 					pcard->is_real = rcard.is_real;
-					pcard->realchange = rcard.realchange;
-					pcard->realsetcode = rcard.realsetcode;
-					pcard->realname = rcard.realname;
 					pcard->effcode = rcard.effcode;
+					pcard->namecode = rcard.namecode;
 					pcard->text_hints = rcard.text_hints;
 					extra_real.erase(extra_real.begin() + i);
 					break;
@@ -4049,10 +4037,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mc[i]->rrscale = 0;
 			mc[i]->rlink_marker = 0;
 			mc[i]->is_real = false;
-			mc[i]->realchange = 0;
-			mc[i]->realsetcode = 0;
-			mc[i]->realname = 0;
 			mc[i]->effcode = 0;
+			mc[i]->namecode = 0;
 			mc[i]->desc_hints.clear();
 			mc[i]->text_hints.clear();
 		}
@@ -4072,10 +4058,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					mc[i]->rrscale = rcard.rrscale;
 					mc[i]->rlink_marker = rcard.rlink_marker;
 					mc[i]->is_real = rcard.is_real;
-					mc[i]->realchange = rcard.realchange;
-					mc[i]->realsetcode = rcard.realsetcode;
-					mc[i]->realname = rcard.realname;
 					mc[i]->effcode = rcard.effcode;
+					mc[i]->namecode = rcard.namecode;
 					mc[i]->text_hints = rcard.text_hints;
 					real.erase(real.begin() + i);
 					break;
@@ -4254,9 +4238,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         const auto link_marker = BufferIO::Read<uint32_t>(pbuf);
         const auto realcode = BufferIO::Read<uint32_t>(pbuf);
         const auto effcode = BufferIO::Read<uint32_t>(pbuf);
-        const auto realchange = BufferIO::Read<uint8_t>(pbuf);
-        const auto realsetcode = BufferIO::Read<uint16_t>(pbuf);
-        const auto realname = BufferIO::Read<uint32_t>(pbuf);
+        const auto namecode = BufferIO::Read<uint32_t>(pbuf);
 		auto lock = LockIf();
         CoreUtils::loc_info current2 = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
         ClientCard* ocard = mainGame->dField.GetCard(current2.controler, current2.location, current2.sequence);
@@ -4281,19 +4263,15 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			if(realcode > 0) {
 				pcard->is_real = true;
 				pcard->effcode = effcode;
+				pcard->namecode = namecode;
                 if(pcard != ocard)
                     pcard->text_hints.clear();
                 if(effcode > 0) {
-                    std::wstring text(epro::format(gDataManager->GetText(pcard->effcode), gDataManager->GetName(pcard->code).data()));
+                    std::wstring text(epro::format(gDataManager->GetText(pcard->effcode), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data()));
                     if(text != gDataManager->unknown_string)
                         pcard->text_hints.insert(pcard->text_hints.begin(), text);
                 } else if(ocard)
                     pcard->text_hints = ocard->text_hints;
-				pcard->realchange = realchange;
-				if((realchange & 0x1) || (realchange & 0x2) || (realchange & 0x4) || (realchange & 0x8))
-				    pcard->realsetcode = realsetcode;
-				if((realchange & 0x10) || (realchange & 0x20) || (realchange & 0x40) || (realchange & 0x80))
-				    pcard->realname = realname;
 			} else
 				pcard->is_real = false;
 		} else {
@@ -4315,6 +4293,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			if(realcode > 0) {
 				pcard->is_real = true;
 				pcard->effcode = effcode;
+				pcard->namecode = namecode;
                 if(pcard != ocard)
                     pcard->text_hints.clear();
                 if(effcode > 0) {
@@ -4323,11 +4302,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                         pcard->text_hints.insert(pcard->text_hints.begin(), text);
                 } else if(ocard)
                     pcard->text_hints = ocard->text_hints;
-				pcard->realchange = realchange;
-				if((realchange & 0x1) || (realchange & 0x2) || (realchange & 0x4) || (realchange & 0x8))
-				    pcard->realsetcode = realsetcode;
-				if((realchange & 0x10) || (realchange & 0x20) || (realchange & 0x40) || (realchange & 0x80))
-				    pcard->realname = realname;
 			} else
 				pcard->is_real = false;
 		}
