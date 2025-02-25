@@ -1520,10 +1520,12 @@ bool SoundManager::PlayChants(CHANT chant, std::string file, const uint8_t side,
 			if((mainGame->dInfo.isInDuel && chant == CHANT::STARTUP) || (chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN)) {
 				if(mainGame->dInfo.isInDuel && gGameConfig->pauseduel) {
 					mainGame->isEvent = true;
-					auto t = mainGame->Ploats[character[player]-1].find(file);
+					int size = gSoundManager->textcharacter[player -1].size();
+					auto unzipfile = size == 1 ? file : file.substr(gSoundManager->textcharacter[player -1][0].length());
+					auto t = mainGame->Ploats[character[player]-1].find(unzipfile);
 					if(t != mainGame->Ploats[character[player]-1].end()) {
 						mainGame->ShowElement(mainGame->wChPloatBody[side]);
-        				mainGame->stChPloatInfo[side]->setText(mainGame->Ploats[character[player]-1][file].data());
+        				mainGame->stChPloatInfo[side]->setText(mainGame->Ploats[character[player]-1][unzipfile].data());
 					}
 					std::unique_lock<epro::mutex> lck(mainGame->gMutex);
 					auto wait = std::chrono::milliseconds(GetSoundDuration());

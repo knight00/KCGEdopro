@@ -388,13 +388,7 @@ std::wstring DataManager::GetName(ClientCard* pcard, bool hidenametag) const {
 	return gDataManager->GetName(pcard, pcard->code, hidenametag);
 }
 std::wstring DataManager::GetName(ClientCard* pcard, uint32_t code, bool hidenametag) const {
-	uint32_t alias = 0;
-    if(pcard) alias = pcard->alias;
-	std::wstring codename = GetOriginalName(code, (pcard && pcard->is_real) ? true : hidenametag);
-	if(pcard && pcard->is_real && pcard->namecode > 0) {
-		std::wstring codename2 = GetOriginalName(pcard->namecode, true);
-		codename = epro::format(codename2, codename);
-	}
+	std::wstring codename = (pcard && pcard->is_real) ? epro::format(gDataManager->GetOriginalName(pcard->namecode, hidenametag), pcard->realcardname) : GetOriginalName(code, hidenametag);
 	return codename;
 }
 /////kdiy/////

@@ -3687,6 +3687,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			pcard->is_real = false;
 			pcard->effcode = 0;
 			pcard->namecode = 0;
+			pcard->realcardname = L"";
 			pcard->desc_hints.clear();
 			pcard->text_hints.clear();
 		}
@@ -3718,6 +3719,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					pcard->is_real = rcard.is_real;
 					pcard->effcode = rcard.effcode;
 					pcard->namecode = rcard.namecode;
+					pcard->realcardname = rcard.realcardname;
 					pcard->text_hints = rcard.text_hints;
 					deck_real.erase(deck_real.begin() + i);
 					break;
@@ -3802,6 +3804,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			pcard->is_real = false;
 			pcard->effcode = 0;
 			pcard->namecode = 0;
+			pcard->realcardname = L"";
 			pcard->desc_hints.clear();
 			pcard->text_hints.clear();
 		}
@@ -3827,6 +3830,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					pcard->is_real = rcard.is_real;
 					pcard->effcode = rcard.effcode;
 					pcard->namecode = rcard.namecode;
+					pcard->realcardname = rcard.realcardname;
 					pcard->text_hints = rcard.text_hints;
 					hand_real.erase(hand_real.begin() + i);
 					break;
@@ -3871,6 +3875,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				pcard->is_real = false;
 				pcard->effcode = 0;
 				pcard->namecode = 0;
+				pcard->realcardname = L"";
 				pcard->desc_hints.clear();
 				pcard->text_hints.clear();
 			}
@@ -3920,6 +3925,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					pcard->is_real = rcard.is_real;
 					pcard->effcode = rcard.effcode;
 					pcard->namecode = rcard.namecode;
+					pcard->realcardname = rcard.realcardname;
 					pcard->text_hints = rcard.text_hints;
 					extra_real.erase(extra_real.begin() + i);
 					break;
@@ -4039,6 +4045,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mc[i]->is_real = false;
 			mc[i]->effcode = 0;
 			mc[i]->namecode = 0;
+			mc[i]->realcardname = L"";
 			mc[i]->desc_hints.clear();
 			mc[i]->text_hints.clear();
 		}
@@ -4060,6 +4067,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					mc[i]->is_real = rcard.is_real;
 					mc[i]->effcode = rcard.effcode;
 					mc[i]->namecode = rcard.namecode;
+					mc[i]->realcardname = rcard.realcardname;
 					mc[i]->text_hints = rcard.text_hints;
 					real.erase(real.begin() + i);
 					break;
@@ -4244,6 +4252,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         ClientCard* ocard = mainGame->dField.GetCard(current2.controler, current2.location, current2.sequence);
         if(current2.location & LOCATION_OVERLAY)
             ocard = mainGame->dField.GetCard(current2.controler, current2.location & (~LOCATION_OVERLAY) & 0xff, current2.sequence);
+		auto orealcardname = ocard->realcardname;
+		auto otext_hints = ocard->text_hints;
 		current.controler = mainGame->LocalPlayer(current.controler);
 		if(!(current.location & LOCATION_OVERLAY)) {
 			ClientCard* pcard = mainGame->dField.GetCard(current.controler, current.location, current.sequence);
@@ -4264,6 +4274,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				pcard->is_real = true;
 				pcard->effcode = effcode;
 				pcard->namecode = namecode;
+				if(namecode > 0) {
+					if(ocard)
+						pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), orealcardname);
+					else
+						pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), gDataManager->GetOriginalName(code, true));
+				}
                 if(pcard != ocard)
                     pcard->text_hints.clear();
                 if(effcode > 0) {
@@ -4294,6 +4310,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				pcard->is_real = true;
 				pcard->effcode = effcode;
 				pcard->namecode = namecode;
+				if(namecode > 0) {
+					if(ocard)
+						pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), orealcardname);
+					else
+						pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), gDataManager->GetOriginalName(code, true));
+				}
                 if(pcard != ocard)
                     pcard->text_hints.clear();
                 if(effcode > 0) {

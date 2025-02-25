@@ -66,6 +66,7 @@ public:
 	bool is_real = false;
 	uint32_t effcode = 0;
 	uint32_t namecode = 0;
+	std::wstring realcardname = L"";
 	bool is_orica = false;
 	bool is_sanct = false;
 	bool is_pzone = false;
