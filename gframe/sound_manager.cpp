@@ -1520,8 +1520,8 @@ bool SoundManager::PlayChants(CHANT chant, std::string file, const uint8_t side,
 			if((mainGame->dInfo.isInDuel && chant == CHANT::STARTUP) || (chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN)) {
 				if(mainGame->dInfo.isInDuel && gGameConfig->pauseduel) {
 					mainGame->isEvent = true;
-					int size = gSoundManager->textcharacter[player -1].size();
-					auto unzipfile = size == 1 ? file : file.substr(gSoundManager->textcharacter[player -1][0].length());
+					int size = gSoundManager->textcharacter[character[player]-1].size();
+					auto unzipfile = size == 1 ? file : file.substr(gSoundManager->textcharacter[character[player]-1][0].length()+1);
 					auto t = mainGame->Ploats[character[player]-1].find(unzipfile);
 					if(t != mainGame->Ploats[character[player]-1].end()) {
 						mainGame->ShowElement(mainGame->wChPloatBody[side]);

@@ -54,7 +54,7 @@ struct CardData {
 	//////kdiy///////
 	//uint32_t level;
 	int32_t level;
-	//////kdiy///////	
+	//////kdiy///////
 	uint32_t attribute;
 	uint64_t race;
 	int32_t attack;
@@ -62,9 +62,9 @@ struct CardData {
 	uint32_t lscale;
 	uint32_t rscale;
 	uint32_t link_marker;
-	//////kdiy///////	
+	//////kdiy///////
 	uint32_t ot;
-	//////kdiy///////	
+	//////kdiy///////
 };
 struct CardDataC {
 	uint32_t code;
@@ -74,7 +74,7 @@ struct CardDataC {
 	//////kdiy///////
 	//uint32_t level;
 	int32_t level;
-	//////kdiy///////	
+	//////kdiy///////
 	uint32_t attribute;
 	uint64_t race;
 	int32_t attack;

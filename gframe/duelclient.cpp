@@ -4252,8 +4252,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         ClientCard* ocard = mainGame->dField.GetCard(current2.controler, current2.location, current2.sequence);
         if(current2.location & LOCATION_OVERLAY)
             ocard = mainGame->dField.GetCard(current2.controler, current2.location & (~LOCATION_OVERLAY) & 0xff, current2.sequence);
-		auto orealcardname = ocard->realcardname;
-		auto otext_hints = ocard->text_hints;
+		auto orealcardname = ocard ? ocard->realcardname : L"";
 		current.controler = mainGame->LocalPlayer(current.controler);
 		if(!(current.location & LOCATION_OVERLAY)) {
 			ClientCard* pcard = mainGame->dField.GetCard(current.controler, current.location, current.sequence);

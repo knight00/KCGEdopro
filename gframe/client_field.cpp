@@ -1358,6 +1358,9 @@ static bool is_declarable(const CardDataC* cd, const std::vector<uint64_t>& opco
 		UNARY_OP_OP(OPCODE_ISTYPE, type, &);
 		/////kdiy//////////
 		UNARY_OP_OP(OPCODE_ISOTYPE, ot, &);
+		UNARY_OP_OP(OPCODE_ISLEVEL, level, == (int32_t));
+		UNARY_OP_OP(OPCODE_ISLEVELLARGER, level, > (int32_t));
+		UNARY_OP_OP(OPCODE_ISLEVELSMALLER, level, < (int32_t));
 		/////kdiy//////////
 		UNARY_OP_OP(OPCODE_ISRACE, race, &);
 		UNARY_OP_OP(OPCODE_ISATTRIBUTE, attribute, &);
