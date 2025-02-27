@@ -4256,8 +4256,14 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		current.controler = mainGame->LocalPlayer(current.controler);
 		if(!(current.location & LOCATION_OVERLAY)) {
 			ClientCard* pcard = mainGame->dField.GetCard(current.controler, current.location, current.sequence);
-			if(curMsg == MSG_PICCHANGE) pcard->piccode = code;
-			else pcard->code = code;
+			pcard->piccode = 0;
+			if(curMsg == MSG_PICCHANGE)  {
+				pcard->piccode = code;
+				if(!mainGame->dInfo.isCatchingUp) {
+					mainGame->WaitFrameSignal(5, lock);
+				}
+				return true;
+			} else pcard->code = code;
 			pcard->is_change = true;
 			pcard->rsetnames = setnames;
 			pcard->rtype = type;
@@ -4292,8 +4298,14 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		} else {
 			ClientCard* olcard = mainGame->dField.GetCard(current.controler, current.location & (~LOCATION_OVERLAY) & 0xff, current.sequence);
 			ClientCard* pcard = olcard->overlayed[current.position];
-			if(curMsg == MSG_PICCHANGE) pcard->piccode = code;
-			else pcard->code = code;
+			pcard->piccode = 0;
+			if(curMsg == MSG_PICCHANGE) {
+				pcard->piccode = code;
+				if(!mainGame->dInfo.isCatchingUp) {
+					mainGame->WaitFrameSignal(5, lock);
+				}
+				return true;
+			} else pcard->code = code;
 			pcard->is_change = true;
 			pcard->rsetnames = setnames;
 			pcard->rtype = type;
