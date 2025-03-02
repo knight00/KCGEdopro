@@ -309,40 +309,40 @@ bool ImageManager::Initial() {
     tsubcharacterselect3 = loadTextureFixedSize(EPRO_TEXT("character/3"sv), 25, 25);
     tsubcharacterselect4 = loadTextureFixedSize(EPRO_TEXT("character/4"sv), 25, 25);
     tsubcharacterselect5 = loadTextureFixedSize(EPRO_TEXT("character/5"sv), 25, 25);
-    GetRandomImage(tCover[0], TEXTURE_COVERS, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+    if(gGameConfig->randomcover) GetRandomImage(tCover[0], TEXTURE_COVERS, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
     if (!tCover[0]) {
 	    tCover[0] = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/cover/{}"), Utils::ToPathString(gGameConfig->randomcovertexture)).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 		if (!tCover[0]) tCover[0] = loadTextureFixedSize(EPRO_TEXT("cover"sv), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	}
 	ASSERT_TEXTURE_LOADED(tCover[0], "cover");
-    GetRandomImage(tCover[1], TEXTURE_COVERS2, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+    if(gGameConfig->randomcover) GetRandomImage(tCover[1], TEXTURE_COVERS2, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	if (!tCover[1]) {
 	    tCover[1] = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/cover/{}"), Utils::ToPathString(gGameConfig->randomcoverextratexture)).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 		if (!tCover[1]) tCover[1] = loadTextureFixedSize(EPRO_TEXT("cover2"sv), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	}
     if (!tCover[1])
 	    tCover[1] = tCover[0];
-    GetRandomImage(tCover[2], TEXTURE_COVERS3, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+		if(gGameConfig->randomcover) GetRandomImage(tCover[2], TEXTURE_COVERS3, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
     if (!tCover[2]) {
 	    tCover[2] = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/cover/{}"), Utils::ToPathString(gGameConfig->randomcover2texture)).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	}
 	if (!tCover[2])
 	    tCover[2] = tCover[0];
-    GetRandomImage(tCover[3], TEXTURE_COVERS4, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+	if(gGameConfig->randomcover) GetRandomImage(tCover[3], TEXTURE_COVERS4, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
     if (!tCover[3]) {
 	    tCover[3] = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/cover/{}"), Utils::ToPathString(gGameConfig->randomcover2extratexture)).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	}
 	if (!tCover[3])
 	    tCover[3] = tCover[0];
 
-	GetRandomImage(tUnknown, TEXTURE_UNKNOWN, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+	if(gGameConfig->randomunknown) GetRandomImage(tUnknown, TEXTURE_UNKNOWN, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	if (!tUnknown) {
 	    tUnknown = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/unknown/{}"), Utils::ToPathString(gGameConfig->randomunknowntexture)).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 		if (!tUnknown) tUnknown = loadTextureFixedSize(EPRO_TEXT("unknown"sv), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	}
 	ASSERT_TEXTURE_LOADED(tUnknown, "unknown");
 
-	GetRandomImage(tAct, TEXTURE_ACTIVATE);
+	if(gGameConfig->randomact) GetRandomImage(tAct, TEXTURE_ACTIVATE);
 	if (!tAct) {
 	    tAct = driver->getTexture(epro::format(EPRO_TEXT("./textures/act/{}"), Utils::ToPathString(gGameConfig->randomacttexture)).data());
 		if (!tAct) tAct = loadTextureAnySize(EPRO_TEXT("act"sv));
@@ -350,15 +350,15 @@ bool ImageManager::Initial() {
     }
 	ASSERT_TEXTURE_LOADED(tAct, "act");
 
-	GetRandomImage(tAttack, TEXTURE_ATTACK);
+	if(gGameConfig->randomattack) GetRandomImage(tAttack, TEXTURE_ATTACK);
 	if (!tAttack) {
-		tAttack = driver->getTexture(epro::format(EPRO_TEXT("./textures/act/{}"), Utils::ToPathString(gGameConfig->randomattacktexture)).data());
+		tAttack = driver->getTexture(epro::format(EPRO_TEXT("./textures/attack/{}"), Utils::ToPathString(gGameConfig->randomattacktexture)).data());
 		if (!tAttack) tAttack = loadTextureAnySize(EPRO_TEXT("attack"sv));
         ASSIGN_DEFAULT(tAttack);
     }
 	ASSERT_TEXTURE_LOADED(tAttack, "attack");
 
-	GetRandomImage(tChain, TEXTURE_CHAIN);
+	if(gGameConfig->randomchain) GetRandomImage(tChain, TEXTURE_CHAIN);
 	if (!tChain) {
 		tChain = driver->getTexture(epro::format(EPRO_TEXT("./textures/chain/{}"), Utils::ToPathString(gGameConfig->randomchaintexture)).data());
 		if (!tChain) tChain = loadTextureAnySize(EPRO_TEXT("chain"sv));
@@ -366,7 +366,7 @@ bool ImageManager::Initial() {
     }
 	ASSERT_TEXTURE_LOADED(tChain, "chain");
 
-	GetRandomImage(tNegated, TEXTURE_NEGATED, 128, 128);
+	if(gGameConfig->randomnegate) GetRandomImage(tNegated, TEXTURE_NEGATED, 128, 128);
 	if (!tNegated) {
 		tNegated = driver->getTexture(epro::format(EPRO_TEXT("./textures/negated/{}"), Utils::ToPathString(gGameConfig->randomnegatetexture)).data());
 		if (!tNegated) tNegated = loadTextureFixedSize(EPRO_TEXT("negated"sv), 128, 128);
@@ -378,7 +378,7 @@ bool ImageManager::Initial() {
 	ASSERT_TEXTURE_LOADED(tNumber, "number");
 	ASSIGN_DEFAULT(tNumber);
 
-	GetRandomImage(tMask, TEXTURE_MASK, 254, 254);
+	if(gGameConfig->randommask) GetRandomImage(tMask, TEXTURE_MASK, 254, 254);
 	if (!tMask) {
 		tMask = driver->getTexture(epro::format(EPRO_TEXT("./textures/mask/{}"), Utils::ToPathString(gGameConfig->randommasktexture)).data());
 		if (!tMask) tMask = loadTextureFixedSize(EPRO_TEXT("mask"sv), 254, 254);
@@ -386,7 +386,7 @@ bool ImageManager::Initial() {
     }
 	ASSERT_TEXTURE_LOADED(tMask, "mask");
 
-	GetRandomImage(tEquip, TEXTURE_EQUIP);
+	if(gGameConfig->randomequip) GetRandomImage(tEquip, TEXTURE_EQUIP);
 	if (!tEquip) {
 		tEquip = driver->getTexture(epro::format(EPRO_TEXT("./textures/equip/{}"), Utils::ToPathString(gGameConfig->randomequiptexture)).data());
 		if (!tEquip) tEquip = loadTextureAnySize(EPRO_TEXT("equip"sv));
@@ -394,7 +394,7 @@ bool ImageManager::Initial() {
     }
 	ASSERT_TEXTURE_LOADED(tEquip, "equip");
 
-	GetRandomImage(tTarget, TEXTURE_TARGET);
+	if(gGameConfig->randomtarget) GetRandomImage(tTarget, TEXTURE_TARGET);
 	if (!tTarget) {
 		tTarget = driver->getTexture(epro::format(EPRO_TEXT("./textures/target/{}"), Utils::ToPathString(gGameConfig->randomtargettexture)).data());
 		if (!tTarget) tTarget = loadTextureAnySize(EPRO_TEXT("target"sv));
@@ -402,7 +402,7 @@ bool ImageManager::Initial() {
     }
 	ASSERT_TEXTURE_LOADED(tTarget, "target");
 
-	GetRandomImage(tChainTarget, TEXTURE_CHAINTARGET);
+	if(gGameConfig->randomchaintarget) GetRandomImage(tChainTarget, TEXTURE_CHAINTARGET);
 	if (!tChainTarget) {
 		tChainTarget = driver->getTexture(epro::format(EPRO_TEXT("./textures/chaintarget/{}"), Utils::ToPathString(gGameConfig->randomchaintargettexture)).data());
 		if (!tChainTarget) tChainTarget = loadTextureAnySize(EPRO_TEXT("chaintarget"sv));
@@ -410,7 +410,7 @@ bool ImageManager::Initial() {
     }
 	ASSERT_TEXTURE_LOADED(tChainTarget, "chaintarget");
 
-	GetRandomImage(tLim, TEXTURE_LIM);
+	if(gGameConfig->randomlim) GetRandomImage(tLim, TEXTURE_LIM);
 	if (!tLim) {
 		tLim = driver->getTexture(epro::format(EPRO_TEXT("./textures/lim/{}"), Utils::ToPathString(gGameConfig->randomlimtexture)).data());
 		if (!tLim) tLim = loadTextureAnySize(EPRO_TEXT("lim"sv));
@@ -418,7 +418,7 @@ bool ImageManager::Initial() {
     }
 	ASSERT_TEXTURE_LOADED(tLim, "lim");
 
-	GetRandomImage(tOT, TEXTURE_OT);
+	if(gGameConfig->randomot) GetRandomImage(tOT, TEXTURE_OT);
 	if (!tOT) {
 	    tOT = driver->getTexture(epro::format(EPRO_TEXT("./textures/ot/{}"), Utils::ToPathString(gGameConfig->randomottexture)).data());
 		if (!tOT) tOT = loadTextureAnySize(EPRO_TEXT("ot"sv));
@@ -446,7 +446,7 @@ bool ImageManager::Initial() {
     }
 	ASSERT_TEXTURE_LOADED(tHand[2], "f3");
 
-	GetRandomImage(tBackGround, TEXTURE_BACKGROUND);
+	if(gGameConfig->randombg) GetRandomImage(tBackGround, TEXTURE_BACKGROUND);
 	if (!tBackGround) {
 		tBackGround = driver->getTexture(epro::format(EPRO_TEXT("./textures/bg/{}"), Utils::ToPathString(gGameConfig->randombgtexture)).data());
 		if (!tBackGround) tBackGround = loadTextureAnySize(EPRO_TEXT("bg"sv));
@@ -454,7 +454,7 @@ bool ImageManager::Initial() {
     }
 	ASSERT_TEXTURE_LOADED(tBackGround, "bg");
 
-	GetRandomImage(tBackGround_menu, TEXTURE_MENU);
+	if(gGameConfig->randombgmenu) GetRandomImage(tBackGround_menu, TEXTURE_MENU);
 	if (!tBackGround_menu) {
 		tBackGround_menu = driver->getTexture(epro::format(EPRO_TEXT("./textures/bg_menu/{}"), Utils::ToPathString(gGameConfig->randombgmenutexture)).data());
 		if (!tBackGround_menu) tBackGround_menu = loadTextureAnySize(EPRO_TEXT("bg_menu"sv));
@@ -464,7 +464,7 @@ bool ImageManager::Initial() {
         ASSIGN_DEFAULT(tBackGround_menu);
     }
 
-	GetRandomImage(tBackGround_deck, TEXTURE_DECK);
+	if(gGameConfig->randombgdeck) GetRandomImage(tBackGround_deck, TEXTURE_DECK);
 	if (!tBackGround_deck){
 		tBackGround_deck = driver->getTexture(epro::format(EPRO_TEXT("./textures/bg_deck/{}"), Utils::ToPathString(gGameConfig->randombgdecktexture)).data());
 		if (!tBackGround_deck) tBackGround_deck = loadTextureAnySize(EPRO_TEXT("bg_deck"sv));
@@ -592,9 +592,9 @@ bool ImageManager::Initial() {
     }
 	ASSERT_TEXTURE_LOADED(tFieldTransparent[1][3], "field-transparentSP4");
 
-	GetRandomImage(tSettings, TEXTURE_SETTING);
+	if(gGameConfig->randommsetting) GetRandomImage(tSettings, TEXTURE_SETTING);
 	if (!tSettings) {
-	    tSettings = driver->getTexture(epro::format(EPRO_TEXT("./textures/settings/{}"), Utils::ToPathString(gGameConfig->randomattacktexture)).data());
+	    tSettings = driver->getTexture(epro::format(EPRO_TEXT("./textures/settings/{}"), Utils::ToPathString(gGameConfig->randommsettingtexture)).data());
 		if (!tSettings) tSettings = loadTextureAnySize(EPRO_TEXT("settings"sv));
         ASSIGN_DEFAULT(tSettings);
     }
@@ -1124,159 +1124,49 @@ void ImageManager::ChangeTextures(epro::path_stringview _path) {
 		return;
 	textures_path.assign(_path.data(), _path.size());
 	const bool is_base = textures_path == BASE_PATH;
-	/////kdiy//////
-    // REPLACE_TEXTURE_ANY_SIZE(tAct, "act");
-	// REPLACE_TEXTURE_ANY_SIZE(tAttack, "attack");
-	// REPLACE_TEXTURE_ANY_SIZE(tChain, "chain");
-	// REPLACE_TEXTURE_WITH_FIXED_SIZE(tNegated, "negated", 128, 128);
-	// REPLACE_TEXTURE_WITH_FIXED_SIZE(tNumber, "number", 320, 256);
-	// REPLACE_TEXTURE_ANY_SIZE(tLPBar, "lp");
-	// REPLACE_TEXTURE_ANY_SIZE(tLPFrame, "lpf");
-	// REPLACE_TEXTURE_WITH_FIXED_SIZE(tMask, "mask", 254, 254);
-	// REPLACE_TEXTURE_ANY_SIZE(tEquip, "equip");
-	// REPLACE_TEXTURE_ANY_SIZE(tTarget, "target");
-	// REPLACE_TEXTURE_ANY_SIZE(tChainTarget, "chaintarget");
-	// REPLACE_TEXTURE_ANY_SIZE(tLim, "lim");
-	// REPLACE_TEXTURE_ANY_SIZE(tOT, "ot");
-	// REPLACE_TEXTURE_WITH_FIXED_SIZE(tHand[0], "f1", 89, 128);
-	// REPLACE_TEXTURE_WITH_FIXED_SIZE(tHand[1], "f2", 89, 128);
-	// REPLACE_TEXTURE_WITH_FIXED_SIZE(tHand[2], "f3", 89, 128);
-	// REPLACE_TEXTURE_ANY_SIZE(tBackGround, "bg");
-	// REPLACE_TEXTURE_ANY_SIZE(tBackGround_menu, "bg_menu");
-	// if(!is_base && tBackGround != def_tBackGround && tBackGround_menu == def_tBackGround_menu)
-	// 	tBackGround_menu = tBackGround;
-	// REPLACE_TEXTURE_ANY_SIZE(tBackGround_deck, "bg_deck");
-	// if(!is_base && tBackGround != def_tBackGround && tBackGround_deck == def_tBackGround_deck)
-	// 	tBackGround_deck = tBackGround;
-	// REPLACE_TEXTURE_ANY_SIZE(tBackGround_duel_topdown, "bg_duel_topdown");
-	// if(!is_base && tBackGround != def_tBackGround && tBackGround_duel_topdown == def_tBackGround_duel_topdown)
-	// 	tBackGround_duel_topdown = tBackGround;
-	// REPLACE_TEXTURE_ANY_SIZE(tField[0][0], "field2");
-	// REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[0][0], "field-transparent2");
-	// REPLACE_TEXTURE_ANY_SIZE(tField[0][1], "field3");
-	// REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[0][1], "field-transparent3");
-	// REPLACE_TEXTURE_ANY_SIZE(tField[0][2], "field");
-	// REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[0][2], "field-transparent");
-	// REPLACE_TEXTURE_ANY_SIZE(tField[0][3], "field4");
-	// REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[0][3], "field-transparent4");
-	// REPLACE_TEXTURE_ANY_SIZE(tField[1][0], "fieldSP2");
-	// REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][0], "field-transparentSP2");
-	// REPLACE_TEXTURE_ANY_SIZE(tField[1][1], "fieldSP3");
-	// REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][1], "field-transparentSP3");
-	// REPLACE_TEXTURE_ANY_SIZE(tField[1][2], "fieldSP");
-	// REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][2], "field-transparentSP");
-	// REPLACE_TEXTURE_ANY_SIZE(tField[1][3], "fieldSP4");
-	// REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][3], "field-transparentSP4");
-	// REPLACE_TEXTURE_ANY_SIZE(tSettings, "settings");
-    GetRandomImage(tAct, TEXTURE_ACTIVATE);
-	if(!tAct)
-	    REPLACE_TEXTURE_ANY_SIZE(tAct, "act");
-	GetRandomImage(tAttack, TEXTURE_ATTACK);
-	if(!tAttack)
-	    REPLACE_TEXTURE_ANY_SIZE(tAttack, "attack");
-	GetRandomImage(tChain, TEXTURE_CHAIN);
-	if(!tChain)
-	    REPLACE_TEXTURE_ANY_SIZE(tChain, "chain");
-	GetRandomImage(tNegated, TEXTURE_NEGATED, 128, 128);
-	if(!tNegated)
-	    REPLACE_TEXTURE_WITH_FIXED_SIZE(tNegated, "negated", 128, 128);
-	if(!tMask)
-	    REPLACE_TEXTURE_WITH_FIXED_SIZE(tMask, "mask", 254, 254);
-	GetRandomImage(tEquip, TEXTURE_EQUIP);
-	if(!tEquip)
-	    REPLACE_TEXTURE_ANY_SIZE(tEquip, "equip");
-	GetRandomImage(tTarget, TEXTURE_TARGET);
-	if(!tTarget)
-	    REPLACE_TEXTURE_ANY_SIZE(tTarget, "target");
-	GetRandomImage(tChainTarget, TEXTURE_CHAINTARGET);
-	if(!tChainTarget)
-	    REPLACE_TEXTURE_ANY_SIZE(tChainTarget, "chaintarget");
-	GetRandomImage(tLim, TEXTURE_LIM);
-	if(!tLim)
-	    REPLACE_TEXTURE_ANY_SIZE(tLim, "lim");
-	GetRandomImage(tOT, TEXTURE_OT);
-	if(!tOT)
-	    REPLACE_TEXTURE_ANY_SIZE(tOT, "ot");
-	GetRandomImagef(89, 128);
-	if(!tHand[0])
-	    REPLACE_TEXTURE_WITH_FIXED_SIZE(tHand[0], "f1", 89, 128);
-	if(!tHand[1])
-	    REPLACE_TEXTURE_WITH_FIXED_SIZE(tHand[1], "f2", 89, 128);
-	if(!tHand[2])
-	    REPLACE_TEXTURE_WITH_FIXED_SIZE(tHand[2], "f3", 89, 128);
-	GetRandomImage(tBackGround, TEXTURE_BACKGROUND);
-	if(!tBackGround)
-	    REPLACE_TEXTURE_ANY_SIZE(tBackGround, "bg");
-	GetRandomImage(tBackGround_menu, TEXTURE_MENU);
-	if (!tBackGround_menu)
-		tBackGround_menu = loadTextureAnySize(EPRO_TEXT("bg_menu"sv));
-	if(!tBackGround_menu) {
-		tBackGround_menu = tBackGround;
-    }
-
-	GetRandomImage(tBackGround_deck, TEXTURE_DECK);
-	if (!tBackGround_deck)
-		tBackGround_deck = loadTextureAnySize(EPRO_TEXT("bg_deck"sv));
-	if(!tBackGround_deck) {
-		tBackGround_deck = tBackGround;
-    }
-
-	GetRandomImage(tField[0][0], TEXTURE_field2);
-	if(!tField[0][0])
-	    REPLACE_TEXTURE_ANY_SIZE(tField[0][0], "field2");
-	GetRandomImage(tFieldTransparent[0][0], TEXTURE_field_transparent2);
-	if(!tFieldTransparent[0][0])
-	    REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[0][0], "field-transparent2");
-	GetRandomImage(tField[0][1], TEXTURE_field3);
-	if(!tField[0][1])
-	    REPLACE_TEXTURE_ANY_SIZE(tField[0][1], "field3");
-	GetRandomImage(tFieldTransparent[0][1], TEXTURE_field_transparent3);
-	if(!tFieldTransparent[0][1])
-	    REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[0][1], "field-transparent3");
-	GetRandomImage(tField[0][2], TEXTURE_field);
-	if(!tField[0][2])
-	    REPLACE_TEXTURE_ANY_SIZE(tField[0][2], "field");
-	GetRandomImage(tFieldTransparent[0][2], TEXTURE_field_transparent);
-	if(!tFieldTransparent[0][2])
-	    REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[0][2], "field-transparent");
-	GetRandomImage(tField[0][3], TEXTURE_field4);
-	if(!tField[0][3])
-	    REPLACE_TEXTURE_ANY_SIZE(tField[0][3], "field4");
-	GetRandomImage(tFieldTransparent[0][3], TEXTURE_field_transparent4);
-	if(!tFieldTransparent[0][3])
-	    REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[0][3], "field-transparent4");
-	GetRandomImage(tField[1][0], TEXTURE_field_fieldSP2);
-	if(!tField[1][0])
-	    REPLACE_TEXTURE_ANY_SIZE(tField[1][0], "fieldSP2");
-	GetRandomImage(tFieldTransparent[1][0], TEXTURE_field_transparentSP2);
-	if(!tFieldTransparent[1][0])
-	    REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][0], "field-transparentSP2");
-	GetRandomImage(tField[1][1], TEXTURE_fieldSP3);
-	if(!tField[1][1])
-	    REPLACE_TEXTURE_ANY_SIZE(tField[1][1], "fieldSP3");
-	GetRandomImage(tFieldTransparent[1][1], TEXTURE_field_transparentSP3);
-	if(!tFieldTransparent[1][1])
-	    REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][1], "field-transparentSP3");
-	GetRandomImage(tField[1][2], TEXTURE_fieldSP);
-	if(!tField[1][2])
-	    REPLACE_TEXTURE_ANY_SIZE(tField[1][2], "fieldSP");
-	GetRandomImage(tFieldTransparent[1][2], TEXTURE_field_transparentSP);
-	if(!tFieldTransparent[1][2])
-	    REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][2], "field-transparentSP");
-	GetRandomImage(tField[1][3], TEXTURE_fieldSP4);
-	if(!tField[1][3])
-	    REPLACE_TEXTURE_ANY_SIZE(tField[1][3], "fieldSP4");
-	GetRandomImage(tFieldTransparent[1][3], TEXTURE_field_transparentSP4);
-	if(!tFieldTransparent[1][3])
-	    REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][3], "field-transparentSP4");
-	GetRandomImage(tSettings, TEXTURE_SETTING);
-	if(!tSettings)
-	    REPLACE_TEXTURE_ANY_SIZE(tSettings, "settings");
+    REPLACE_TEXTURE_ANY_SIZE(tAct, "act");
+	REPLACE_TEXTURE_ANY_SIZE(tAttack, "attack");
+	REPLACE_TEXTURE_ANY_SIZE(tChain, "chain");
+	REPLACE_TEXTURE_WITH_FIXED_SIZE(tNegated, "negated", 128, 128);
 	REPLACE_TEXTURE_WITH_FIXED_SIZE(tNumber, "number", 320, 256);
+	REPLACE_TEXTURE_ANY_SIZE(tLPBar, "lp");
+	REPLACE_TEXTURE_ANY_SIZE(tLPFrame, "lpf");
+	REPLACE_TEXTURE_WITH_FIXED_SIZE(tMask, "mask", 254, 254);
+	REPLACE_TEXTURE_ANY_SIZE(tEquip, "equip");
+	REPLACE_TEXTURE_ANY_SIZE(tTarget, "target");
+	REPLACE_TEXTURE_ANY_SIZE(tChainTarget, "chaintarget");
+	REPLACE_TEXTURE_ANY_SIZE(tLim, "lim");
+	REPLACE_TEXTURE_ANY_SIZE(tOT, "ot");
+	REPLACE_TEXTURE_WITH_FIXED_SIZE(tHand[0], "f1", 89, 128);
+	REPLACE_TEXTURE_WITH_FIXED_SIZE(tHand[1], "f2", 89, 128);
+	REPLACE_TEXTURE_WITH_FIXED_SIZE(tHand[2], "f3", 89, 128);
+	REPLACE_TEXTURE_ANY_SIZE(tBackGround, "bg");
+	REPLACE_TEXTURE_ANY_SIZE(tBackGround_menu, "bg_menu");
+	if(!is_base && tBackGround != def_tBackGround && tBackGround_menu == def_tBackGround_menu)
+		tBackGround_menu = tBackGround;
+	REPLACE_TEXTURE_ANY_SIZE(tBackGround_deck, "bg_deck");
+	if(!is_base && tBackGround != def_tBackGround && tBackGround_deck == def_tBackGround_deck)
+		tBackGround_deck = tBackGround;
 	REPLACE_TEXTURE_ANY_SIZE(tBackGround_duel_topdown, "bg_duel_topdown");
-	if(!tBackGround_duel_topdown)
+	if(!is_base && tBackGround != def_tBackGround && tBackGround_duel_topdown == def_tBackGround_duel_topdown)
 		tBackGround_duel_topdown = tBackGround;
-    /////kdiy//////
+	REPLACE_TEXTURE_ANY_SIZE(tField[0][0], "field2");
+	REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[0][0], "field-transparent2");
+	REPLACE_TEXTURE_ANY_SIZE(tField[0][1], "field3");
+	REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[0][1], "field-transparent3");
+	REPLACE_TEXTURE_ANY_SIZE(tField[0][2], "field");
+	REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[0][2], "field-transparent");
+	REPLACE_TEXTURE_ANY_SIZE(tField[0][3], "field4");
+	REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[0][3], "field-transparent4");
+	REPLACE_TEXTURE_ANY_SIZE(tField[1][0], "fieldSP2");
+	REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][0], "field-transparentSP2");
+	REPLACE_TEXTURE_ANY_SIZE(tField[1][1], "fieldSP3");
+	REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][1], "field-transparentSP3");
+	REPLACE_TEXTURE_ANY_SIZE(tField[1][2], "fieldSP");
+	REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][2], "field-transparentSP");
+	REPLACE_TEXTURE_ANY_SIZE(tField[1][3], "fieldSP4");
+	REPLACE_TEXTURE_ANY_SIZE(tFieldTransparent[1][3], "field-transparentSP4");
+	REPLACE_TEXTURE_ANY_SIZE(tSettings, "settings");
 	REPLACE_TEXTURE_ANY_SIZE(tCheckBox[0], "checkbox_16");
 	REPLACE_TEXTURE_ANY_SIZE(tCheckBox[1], "checkbox_32");
 	REPLACE_TEXTURE_ANY_SIZE(tCheckBox[2], "checkbox_64");

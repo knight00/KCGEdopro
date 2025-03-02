@@ -4054,7 +4054,6 @@ bool Game::ApplySkin(const epro::path_string& skinname, bool reload, bool firstr
 #undef CLR
             //kdiy//////////
 			//imageManager.ChangeTextures(epro::format(EPRO_TEXT("./skin/{}/textures/"), prev_skin));
-			imageManager.ChangeTextures(EPRO_TEXT("./textures/"));
 			//kdiy//////////
 		} else {
 			if(firstrun)
