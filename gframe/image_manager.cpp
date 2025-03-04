@@ -879,7 +879,7 @@ void ImageManager::RefreshImageDirf() {
 }
 void ImageManager::GetRandomImage(irr::video::ITexture*& src, int image_type, bool force_random) {
     int count = ImageList[image_type].size();
-	if((!((gGameConfig->randomtexture && image_type > 7) || (gGameConfig->randomwallpaper && image_type < 8)) && !force_random) || count <= 0) {
+	if((!((gGameConfig->randomwallpaper && (image_type < 8 || image_type > 19)) || gGameConfig->randomtexture) && !force_random) || count <= 0) {
 		if (src != nullptr)
 			driver->removeTexture(src);
 		src = nullptr;

@@ -3125,7 +3125,7 @@ void Game::PopulateSettingsWindow() {
 		menuHandler.MakeElementSynchronized(gSettings.chkNoChainDelay);
 		defaultStrings.emplace_back(gSettings.chkNoChainDelay, 1277);
 		//////kdiy///////////
-        gSettings.chktField = env->addCheckBox(gGameConfig->chkField, GetNextRect(), sPanel, CHECKBOX_NO_CHAIN_DELAY, gDataManager->GetSysString(8066).data());
+        gSettings.chktField = env->addCheckBox(gGameConfig->chkField, GetNextRect(), sPanel, -1, gDataManager->GetSysString(8066).data());
 		defaultStrings.emplace_back(gSettings.chktField, 8066);
         IncrementXorY();
 		gSettings.chkEnableAnime = env->addCheckBox(gGameConfig->enableanime, GetNextRect(), sPanel, CHECKBOX_ENABLE_ANIME, gDataManager->GetSysString(8008).data());
@@ -6190,6 +6190,7 @@ std::tuple<bool, std::wstring> Game::SetRandTexture(int i, int set, std::wstring
 		visible = gGameConfig->randomunknown;
 		filepath = gGameConfig->randomunknowntexture;
 	}
+	if(!(gGameConfig->randombgmenu && gGameConfig->randombg && gGameConfig->randombgdeck && gGameConfig->randomcover && gGameConfig->randomcoverextra && gGameConfig->randomcoverextra && gGameConfig->randomcover2 && gGameConfig->randomcover2extra && gGameConfig->randomunknown)) gGameConfig->randomwallpaper = false;
 	if(i == 8) {
 		if(set == 1) gGameConfig->randomattack = mainGame->gSettings.chktexture[i]->isChecked();
 		if(set == 2) gGameConfig->randomattacktexture = setfilepath;
@@ -6262,6 +6263,8 @@ std::tuple<bool, std::wstring> Game::SetRandTexture(int i, int set, std::wstring
 		visible = gGameConfig->randommorra;
 		filepath = gGameConfig->randommorratexture;
 	}
+	if(gGameConfig->randomattack && gGameConfig->randomact && gGameConfig->randomchain && gGameConfig->randomnegate && gGameConfig->randommask && gGameConfig->randomequip && gGameConfig->randomtarget && gGameConfig->randomchaintarget && gGameConfig->randomlim && gGameConfig->randomot && gGameConfig->randommsetting && gGameConfig->randommorra) gGameConfig->randomtexture = true;
+	else gGameConfig->randomtexture = false;
 	return { visible, filepath };
 }
 void Game::ReloadTexture() {
@@ -6575,8 +6578,8 @@ void Game::OnResize() {
     wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 880, 500));
     wBody->setRelativePosition(ResizeWin(370, 175, 570, 475));
     wPloat->setRelativePosition(ResizeWin(520, 100, 775, 400));
-    wChPloatBody[0]->setRelativePosition(ResizeWin(160, 450, 470, 545));
-    wChPloatBody[1]->setRelativePosition(ResizeWin(730, 250, 1040, 345));
+    // wChPloatBody[0]->setRelativePosition(ResizeWin(160, 450, 470, 545));
+    // wChPloatBody[1]->setRelativePosition(ResizeWin(730, 250, 1040, 345));
     ////kdiy/////////
 	wSinglePlay->setRelativePosition(ResizeWin(220, 100, 800, 520));
     ////kdiy/////////

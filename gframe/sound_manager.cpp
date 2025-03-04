@@ -1524,8 +1524,16 @@ bool SoundManager::PlayChants(CHANT chant, std::string file, const uint8_t side,
 					auto unzipfile = size == 1 ? file : file.substr(gSoundManager->textcharacter[character[player]-1][0].length()+1);
 					auto t = mainGame->Ploats[character[player]-1].find(unzipfile);
 					if(t != mainGame->Ploats[character[player]-1].end()) {
-						mainGame->ShowElement(mainGame->wChPloatBody[side]);
         				mainGame->stChPloatInfo[side]->setText(mainGame->Ploats[character[player]-1][unzipfile].data());
+						irr::gui::IGUIFont* font = mainGame->stChPloatInfo[side]->getActiveFont();
+						if (font) {
+							irr::core::dimension2d<irr::u32> textSize = font->getDimension(mainGame->stChPloatInfo[side]->getText());
+							const int padding = 8;
+							irr::core::dimension2d<irr::u32> newSize(textSize.Width + padding, textSize.Height + padding);
+							mainGame->wChPloatBody[side]->setMaxSize(newSize);
+							mainGame->stChPloatInfo[side]->setRelativePosition(irr::core::rect<irr::s32>(padding / 2, padding / 2, newSize.Width - padding / 2, newSize.Height - padding / 2));
+						}
+						mainGame->ShowElement(mainGame->wChPloatBody[side]);
 					}
 					std::unique_lock<epro::mutex> lck(mainGame->gMutex);
 					auto wait = std::chrono::milliseconds(GetSoundDuration());

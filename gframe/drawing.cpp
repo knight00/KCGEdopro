@@ -109,7 +109,7 @@ void Game::DrawBackGround() {
     if(!gGameConfig->chkField && DrawFieldSpell())
 	    DrawTextureRect(matManager.vField, imageManager.tFieldTransparent[three_columns][tfield]);
 	    //DrawFieldSpell();
-    else if(gGameConfig->chkField || !gGameConfig->randombgdeck || (tfield != 3 && tfield != 1))
+    else if(gGameConfig->chkField || !(gGameConfig->randombg || gGameConfig->randombgtexture != L"") || (tfield != 3 && tfield != 1))
     /////kdiy//////
 	DrawTextureRect(matManager.vField, DrawFieldSpell() ? imageManager.tFieldTransparent[three_columns][tfield] : imageManager.tField[three_columns][tfield]);
     /////kdiy//////

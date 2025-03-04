@@ -94,7 +94,7 @@ public:
 	int saved_image_id[36+CHARACTER_VOICE+CHARACTER_VOICE-2];
 	//random image
 	void GetRandomImage(irr::video::ITexture*& src, int image_type, bool force_random=false);
-	void GetRandomImage(irr::video::ITexture*& src, int image_type, int width, int height, bool force_random = false);
+	void GetRandomImage(irr::video::ITexture*& src, int image_type, int width, int height, bool force_random=false);
 	void GetRandomImagef(int width, int height);
 	void GetRandomCharacter(irr::video::ITexture*& src, std::vector<epro::path_string>& list);
 	void LoadCharacter(int player, int subcharacter);
