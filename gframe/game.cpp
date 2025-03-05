@@ -1716,7 +1716,7 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(btnPloat, 1215);
 
 	//second  head 0 player + info
-	wChPloatBody[0] = env->addWindow(Scale(160, 450, 470, 545));
+	wChPloatBody[0] = env->addWindow(Scale(250, 460, 470, 555));
 	wChPloatBody[0]->getCloseButton()->setVisible(false);
 	wChPloatBody[0]->setDraggable(false);
 	wChPloatBody[0]->setDrawTitlebar(false);
@@ -1726,7 +1726,7 @@ void Game::Initialize() {
 	stChPloatInfo[0]->setWordWrap(true);
 
 	//second  head 1 player + info
-	wChPloatBody[1] = env->addWindow(Scale(730, 250, 1040, 345));
+	wChPloatBody[1] = env->addWindow(Scale(810, 170, 1030, 265));
 	wChPloatBody[1]->getCloseButton()->setVisible(false);
 	wChPloatBody[1]->setDraggable(false);
 	wChPloatBody[1]->setDrawTitlebar(false);
@@ -6578,8 +6578,8 @@ void Game::OnResize() {
     wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 880, 500));
     wBody->setRelativePosition(ResizeWin(370, 175, 570, 475));
     wPloat->setRelativePosition(ResizeWin(520, 100, 775, 400));
-    // wChPloatBody[0]->setRelativePosition(ResizeWin(160, 450, 470, 545));
-    // wChPloatBody[1]->setRelativePosition(ResizeWin(730, 250, 1040, 345));
+    wChPloatBody[0]->setRelativePosition(ResizeWin(250, 460, 470, 555));
+    wChPloatBody[1]->setRelativePosition(ResizeWin(810, 170, 1030, 265));
     ////kdiy/////////
 	wSinglePlay->setRelativePosition(ResizeWin(220, 100, 800, 520));
     ////kdiy/////////
