@@ -1652,7 +1652,7 @@ void Game::DrawSpec() {
 					auto size = imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][i];
 					auto width = size.getWidth();
 					auto height = size.getHeight();
-					driver->draw2DImage(imageManager.cutin[gSoundManager->character[showcardcode]][i], ResizeWin(324, 300, 324 + (showcarddif > width/1.333 ? width/1.333 : showcarddif), 300 + height/1.6),
+					driver->draw2DImage(imageManager.cutin[gSoundManager->character[showcardcode]][i], ResizeWin(364, 300, 364 + (showcarddif > width/1.333 ? width/1.333 : showcarddif), 300 + height/1.6),
 						imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][i], 0, 0, true);
 				}
 			}

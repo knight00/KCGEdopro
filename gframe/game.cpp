@@ -6190,7 +6190,10 @@ std::tuple<bool, std::wstring> Game::SetRandTexture(int i, int set, std::wstring
 		visible = gGameConfig->randomunknown;
 		filepath = gGameConfig->randomunknowntexture;
 	}
-	if(!(gGameConfig->randombgmenu && gGameConfig->randombg && gGameConfig->randombgdeck && gGameConfig->randomcover && gGameConfig->randomcoverextra && gGameConfig->randomcoverextra && gGameConfig->randomcover2 && gGameConfig->randomcover2extra && gGameConfig->randomunknown)) gGameConfig->randomwallpaper = false;
+	if(!(gGameConfig->randombgmenu && gGameConfig->randombg && gGameConfig->randombgdeck && gGameConfig->randomcover && gGameConfig->randomcoverextra && gGameConfig->randomcoverextra && gGameConfig->randomcover2 && gGameConfig->randomcover2extra && gGameConfig->randomunknown)) {
+		gGameConfig->randomwallpaper = false;
+		gSettings.chkRandomwallpaper->setChecked(false);
+	}
 	if(i == 8) {
 		if(set == 1) gGameConfig->randomattack = mainGame->gSettings.chktexture[i]->isChecked();
 		if(set == 2) gGameConfig->randomattacktexture = setfilepath;
@@ -6263,8 +6266,13 @@ std::tuple<bool, std::wstring> Game::SetRandTexture(int i, int set, std::wstring
 		visible = gGameConfig->randommorra;
 		filepath = gGameConfig->randommorratexture;
 	}
-	if(gGameConfig->randomattack && gGameConfig->randomact && gGameConfig->randomchain && gGameConfig->randomnegate && gGameConfig->randommask && gGameConfig->randomequip && gGameConfig->randomtarget && gGameConfig->randomchaintarget && gGameConfig->randomlim && gGameConfig->randomot && gGameConfig->randommsetting && gGameConfig->randommorra) gGameConfig->randomtexture = true;
-	else gGameConfig->randomtexture = false;
+	if(gGameConfig->randomattack && gGameConfig->randomact && gGameConfig->randomchain && gGameConfig->randomnegate && gGameConfig->randommask && gGameConfig->randomequip && gGameConfig->randomtarget && gGameConfig->randomchaintarget && gGameConfig->randomlim && gGameConfig->randomot && gGameConfig->randommsetting && gGameConfig->randommorra) {
+		gGameConfig->randomtexture = true;
+		gSettings.chkRandomtexture->setChecked(true);
+	} else {
+		gGameConfig->randomtexture = false;
+		gSettings.chkRandomtexture->setChecked(false);
+	}
 	return { visible, filepath };
 }
 void Game::ReloadTexture() {
