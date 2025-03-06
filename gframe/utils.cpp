@@ -3,6 +3,7 @@
 #include "epro_thread.h"
 #include "config.h"
 #include "fmt.h"
+#include "logging.h"
 
 #if EDOPRO_WINDOWS
 #define WIN32_LEAN_AND_MEAN
@@ -44,7 +45,7 @@ using Stat = struct stat;
 
 #if EDOPRO_APPLE
 #if EDOPRO_MACOS
-#import <CoreFoundation/CoreFoundation.h>
+#include <CoreFoundation/CoreFoundation.h>
 #include <mach-o/dyld.h>
 #include <CoreServices/CoreServices.h>
 #endif //EDOPRO_MACOS
@@ -56,13 +57,6 @@ using Stat = struct stat;
 #include <IOSOperator.h>
 #include "bufferio.h"
 #include "file_stream.h"
-#ifdef USE_GLIBC_FILEBUF
-constexpr FileMode FileStream::in;
-constexpr FileMode FileStream::binary;
-constexpr FileMode FileStream::out;
-constexpr FileMode FileStream::trunc;
-constexpr FileMode FileStream::app;
-#endif
 
 #if EDOPRO_WINDOWS
 namespace {
@@ -174,6 +168,7 @@ LONG WINAPI crashDumpHandler(EXCEPTION_POINTERS* pExceptionInfo) {
 namespace ygo {
 	std::vector<SynchronizedIrrArchive> Utils::archives;
 	irr::io::IFileSystem* Utils::filesystem{ nullptr };
+	irr::ITimer* Utils::irrTimer{ nullptr };
 	irr::IOSOperator* Utils::OSOperator{ nullptr };
 
 	RNG::SplitMix64 Utils::generator(std::chrono::high_resolution_clock::now().time_since_epoch().count());
@@ -458,21 +453,26 @@ namespace ygo {
 	}
 
 	void Utils::CreateResourceFolders() {
+		auto createResourceDirAndLogIfFailure = [](auto fn, epro::path_stringview path) {
+			if(!fn(path)) {
+				ygo::ErrorLog("Failed to create resource folder {} ({})", Utils::ToUTF8IfNeeded(path), GetLastErrorString());
+			}
+		};
 		//create directories if missing
-		MakeDirectory(EPRO_TEXT("deck"));
-		MakeDirectory(EPRO_TEXT("puzzles"));
-		MakeDirectory(EPRO_TEXT("pics"));
-		MakeDirectory(EPRO_TEXT("pics/field"));
-		MakeDirectory(EPRO_TEXT("pics/cover"));
-		MakeDirectory(EPRO_TEXT("pics/temp/"));
-		ClearDirectory(EPRO_TEXT("pics/temp/"));
+		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("deck"));
+		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("puzzles"));
+		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("pics"));
+		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("pics/field"));
+		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("pics/cover"));
+		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("pics/temp/"));
+		createResourceDirAndLogIfFailure(ClearDirectory, EPRO_TEXT("pics/temp/"));
+		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("replay"));
+		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("screenshots"));
 		//kdiy////
-        MakeDirectory(EPRO_TEXT("pics/closeup"));
-		MakeDirectory(EPRO_TEXT("hdpics"));
-		MakeDirectory(EPRO_TEXT("hdpics/jp"));
+        createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("pics/closeup"));
+		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("hdpics"));
+		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("hdpics/jp"));
 		//kdiy////
-		MakeDirectory(EPRO_TEXT("replay"));
-		MakeDirectory(EPRO_TEXT("screenshots"));
 	}
 
 	std::vector<epro::path_string> Utils::FindFiles(epro::path_stringview path, const std::vector<epro::path_stringview>& extensions, int subdirectorylayers) {

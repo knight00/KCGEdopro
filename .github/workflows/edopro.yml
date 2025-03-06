@@ -29,6 +29,8 @@ jobs:
       uses: microsoft/setup-msbuild@v2
     - uses: actions/checkout@v1
       with:
+        ref: ${{ github.head_ref }}
+        repository: ${{github.event.pull_request.head.repo.full_name}}
         fetch-depth: 1
     - name: Install premake
       shell: bash
@@ -79,6 +81,8 @@ jobs:
       uses: microsoft/setup-msbuild@v2
     - uses: actions/checkout@v1
       with:
+        ref: ${{ github.head_ref }}
+        repository: ${{github.event.pull_request.head.repo.full_name}}
         fetch-depth: 1
     - name: Install premake
       shell: bash
@@ -129,6 +133,8 @@ jobs:
       # uses: microsoft/setup-msbuild@v2
     # - uses: actions/checkout@v1
       # with:
+        # ref: ${{ github.head_ref }}
+        # repository: ${{github.event.pull_request.head.repo.full_name}}
         # fetch-depth: 1
     # - name: Install premake
       # shell: bash
@@ -186,6 +192,8 @@ jobs:
         sudo apt install -y g++ build-essential curl p7zip-full p7zip-rar zip git
     - uses: actions/checkout@v1
       with:
+        ref: ${{ github.head_ref }}
+        repository: ${{github.event.pull_request.head.repo.full_name}}
         fetch-depth: 1
     - name: Install premake
       shell: bash
@@ -218,7 +226,7 @@ jobs:
         username: Github
 
   Linux-gcc-10-3-0:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     env:
       DEPLOY_BRANCH: travis-linux-gcc-10
       TRAVIS_OS_NAME: linux
@@ -236,6 +244,8 @@ jobs:
         sudo apt remove libsqlite3-dev
     - uses: actions/checkout@v1
       with:
+        ref: ${{ github.head_ref }}
+        repository: ${{github.event.pull_request.head.repo.full_name}}
         fetch-depth: 1
     - name: Install premake
       shell: bash
@@ -271,7 +281,7 @@ jobs:
         username: Github
 
   Linux-gcc-11:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     env:
       DEPLOY_BRANCH: travis-linux-gcc-11
       TRAVIS_OS_NAME: linux
@@ -289,6 +299,8 @@ jobs:
         sudo apt remove libsqlite3-dev
     - uses: actions/checkout@v1
       with:
+        ref: ${{ github.head_ref }}
+        repository: ${{github.event.pull_request.head.repo.full_name}}
         fetch-depth: 1
     - name: Install premake
       shell: bash
@@ -342,6 +354,8 @@ jobs:
         sudo apt remove libsqlite3-dev
     - uses: actions/checkout@v1
       with:
+        ref: ${{ github.head_ref }}
+        repository: ${{github.event.pull_request.head.repo.full_name}}
         fetch-depth: 1
     - name: Install premake
       shell: bash
@@ -402,6 +416,8 @@ jobs:
         sudo apt install -y g++ build-essential curl p7zip-full p7zip-rar zip git gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu
     - uses: actions/checkout@v1
       with:
+        ref: ${{ github.head_ref }}
+        repository: ${{github.event.pull_request.head.repo.full_name}}
         fetch-depth: 1
     - name: Install premake
       shell: bash
@@ -452,7 +468,7 @@ jobs:
             clang: arm64-macosx
             compiler_arch: arm
             premake_arch: arm64
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     env:
       DEPLOY_BRANCH: ${{ matrix.deploy_name }}
       TRAVIS_OS_NAME: linux
@@ -469,13 +485,10 @@ jobs:
       shell: bash
       run: |
         echo "VCPKG_CACHE_7Z_URL=$DEPENDENCIES_BASE_URL/${{ matrix.package_name }}" >> $GITHUB_ENV
-    - name: Get apt packages
-      shell: bash
-      run: |
-        sudo apt update
-        sudo apt install -y gnustep-base-runtime
     - uses: actions/checkout@v1
       with:
+        ref: ${{ github.head_ref }}
+        repository: ${{github.event.pull_request.head.repo.full_name}}
         fetch-depth: 1
     - name: Download cctools
       run: |
@@ -531,12 +544,9 @@ jobs:
     steps:
     - uses: actions/checkout@v1
       with:
+        ref: ${{ github.head_ref }}
+        repository: ${{github.event.pull_request.head.repo.full_name}}
         fetch-depth: 1
-    - name: Get apt packages
-      shell: bash
-      run: |
-        sudo apt update
-        sudo apt install -y gnustep-base-runtime
     - name: Download lipo binary
       run: |
         wget https://github.com/edo9300/cctools-build/releases/download/preview/lipo
@@ -623,13 +633,10 @@ jobs:
       shell: bash
       run: |
         echo "VCPKG_CACHE_7Z_URL=$DEPENDENCIES_BASE_URL/${{ matrix.package_name }}" >> $GITHUB_ENV
-    - name: Get apt packages
-      shell: bash
-      run: |
-        sudo apt update
-        sudo apt install -y gnustep-base-runtime
     - uses: actions/checkout@v1
       with:
+        ref: ${{ github.head_ref }}
+        repository: ${{github.event.pull_request.head.repo.full_name}}
         fetch-depth: 1
     - name: Download cctools
       run: |
@@ -685,12 +692,9 @@ jobs:
     steps:
     - uses: actions/checkout@v1
       with:
+        ref: ${{ github.head_ref }}
+        repository: ${{github.event.pull_request.head.repo.full_name}}
         fetch-depth: 1
-    - name: Get apt packages
-      shell: bash
-      run: |
-        sudo apt update
-        sudo apt install -y gnustep-base-runtime
     - name: Download osx artifacts
       uses: actions/download-artifact@v4
     - name: Download lipo binary

@@ -4,14 +4,17 @@
 #include "config.h"
 #include "fmt.h"
 #if defined(YGOPRO_USE_IRRKLANG)
-#include "sound_irrklang.h"
+#include "SoundBackends/irrklang/sound_irrklang.h"
 #define BACKEND SoundIrrklang
 #elif defined(YGOPRO_USE_SDL_MIXER)
-#include "sound_sdlmixer.h"
+#include "SoundBackends/sdlmixer/sound_sdlmixer.h"
 #define BACKEND SoundMixer
 #elif defined(YGOPRO_USE_SFML)
-#include "sound_sfml.h"
+#include "SoundBackends/sfml/sound_sfml.h"
 #define BACKEND SoundSFML
+#elif defined(YGOPRO_USE_MINIAUDIO)
+#include "SoundBackends/miniaudio/sound_miniaudio.h"
+#define BACKEND SoundMiniaudio
 #endif
 /////kdiy/////////
 #include "game_config.h"
@@ -32,19 +35,20 @@ SoundManager::SoundManager(double sounds_volume, double music_volume, bool sound
 	soundsEnabled = sounds_enabled;
 	musicEnabled = music_enabled;
 	try {
-		mixer = std::make_unique<BACKEND>();
-		mixer->SetMusicVolume(music_volume);
-		mixer->SetSoundVolume(sounds_volume);
+		auto tmp_mixer = std::make_unique<BACKEND>();
+		tmp_mixer->SetMusicVolume(music_volume);
+		tmp_mixer->SetSoundVolume(sounds_volume);
+		mixer = std::move(tmp_mixer);
 	}
 	catch(const std::runtime_error& e) {
 		epro::print("Failed to initialize audio backend:\n");
 		epro::print(e.what());
-		succesfully_initied = soundsEnabled = musicEnabled = false;
+		soundsEnabled = musicEnabled = false;
 		return;
 	}
 	catch(...) {
 		epro::print("Failed to initialize audio backend.\n");
-		succesfully_initied = soundsEnabled = musicEnabled = false;
+		soundsEnabled = musicEnabled = false;
 		return;
 	}
 	rnd.seed(static_cast<uint32_t>(time(0)));
@@ -55,17 +59,18 @@ SoundManager::SoundManager(double sounds_volume, double music_volume, bool sound
 	RefreshBGMList();
 	RefreshSoundsList();
 	RefreshChantsList();
-	succesfully_initied = true;
 #else
 	epro::print("No audio backend available.\nAudio will be disabled.\n");
-	succesfully_initied = soundsEnabled = musicEnabled = false;
+	soundsEnabled = musicEnabled = false;
 	return;
 #endif // BACKEND
 }
 bool SoundManager::IsUsable() {
-	return succesfully_initied;
+	return mixer != nullptr;
 }
 void SoundManager::RefreshBGMList() {
+	if(!IsUsable())
+		return;
 #ifdef BACKEND
 	Utils::MakeDirectory(EPRO_TEXT("./sound/BGM/"));
 	Utils::MakeDirectory(EPRO_TEXT("./sound/BGM/duel"));
@@ -91,6 +96,8 @@ void SoundManager::RefreshBGMList() {
 #endif
 }
 void SoundManager::RefreshSoundsList() {
+	if(!IsUsable())
+		return;
 #ifdef BACKEND
 	static constexpr std::pair<SFX, epro::path_stringview> fx[]{
         /////kdiy///////
@@ -186,6 +193,8 @@ void SoundManager::RefreshSoundsList() {
 #endif
 }
 void SoundManager::RefreshBGMDir(epro::path_stringview path, BGM scene) {
+	if(!IsUsable())
+		return;
 #ifdef BACKEND
 	for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./sound/BGM/{}"), path), mixer->GetSupportedMusicExtensions())) {
 		auto conv = Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/{}"), path, file));
@@ -279,6 +288,8 @@ void SoundManager::RefreshCards(epro::path_stringview folder, std::map<std::pair
 }
 /////kdiy///////
 void SoundManager::RefreshChantsList() {
+	if(!IsUsable())
+		return;
 #ifdef BACKEND
 	static constexpr std::pair<CHANT, epro::path_stringview> types[]{
 		/////kdiy///////
@@ -528,6 +539,8 @@ void SoundManager::PlayModeSound(int i, uint32_t code, bool music) {
 }
 /////kdiy/////
 void SoundManager::PlaySoundEffect(SFX sound) {
+	if(!IsUsable())
+		return;
 #ifdef BACKEND
 	if(!soundsEnabled) return;
 	if(sound >= SFX::SFX_TOTAL_SIZE) return;
@@ -556,10 +569,12 @@ void SoundManager::PlaySoundEffect(SFX sound) {
 #endif
 }
 void SoundManager::PlayBGM(BGM scene, bool loop) {
+	if(!IsUsable())
+		return;
 #ifdef BACKEND
 	if(!musicEnabled)
 		return;
-	const auto& list = BGMList[scene];
+	auto& list = BGMList[scene];
 	auto count = static_cast<int>(list.size());
 	if(count == 0)
 		return;
@@ -576,7 +591,15 @@ void SoundManager::PlayBGM(BGM scene, bool loop) {
 		if(BGMName.find(bgm_menu) != std::string::npos && BGMName.find(bgm_deck) != std::string::npos && BGMName.find(bgm_win) != std::string::npos && BGMName.find(bgm_lose) != std::string::npos && bgm_now.find(bgm_custom) != std::string::npos) return;
 		bgm_now = BGMName;
 		/////kdiy/////
-		mixer->PlayMusic(BGMName, loop);
+		if(!mixer->PlayMusic(BGMName, loop)) {
+			// music failed to load, directly remove it from the list
+			currentlyLooping = loop;
+			list.erase(std::next(list.begin(), bgm));
+		}
+	} else if(loop != currentlyLooping) {
+		currentlyLooping = loop;
+		mixer->LoopMusic(loop);
+	}
 	}
 #endif
 }
@@ -634,9 +657,10 @@ bool SoundManager::PlayCardBGM(uint32_t code, uint32_t code2) {
             soundcount.push_back(list[soundno]);
 			if(mixer->MusicPlaying())
 		 	    mixer->StopMusic();
-			if(mixer->PlayMusic(list[soundno], gGameConfig->loopMusic))
-				return true;
-			else return false;
+			if(!mixer->PlayMusic(list[soundno], gGameConfig->loopMusic)) {
+				currentlyLooping = loop;
+				list.erase(std::next(list.begin(), soundno));
+			} else return false;
 		} else
 			return false;
 		return true;
@@ -678,7 +702,7 @@ void SoundManager::PlayCustomBGM(std::string num) {
 		 		if(mixer->MusicPlaying())
 		 	       mixer->StopMusic();
 		 		bgm_now = filename;
-		 		if (mixer->PlayMusic(filename, gGameConfig->loopMusic))
+		 		if(mixer->PlayMusic(filename, false))
 					break;
 		 	}
 		 }
@@ -1547,6 +1571,8 @@ void SoundManager::PlayStartupChant(uint8_t player, std::vector<uint8_t> team) {
 }
 //bool SoundManager::PlayChant(CHANT chant, uint32_t code) {
 bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, const uint8_t side, uint8_t player, uint16_t extra, uint8_t player2) {
+	if(!IsUsable())
+		return false;
 ///////kdiy//////
 #ifdef BACKEND
 	if(!soundsEnabled) return false;
@@ -1705,52 +1731,62 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, const u
 #endif
 }
 void SoundManager::SetSoundVolume(double volume) {
+	if(!IsUsable())
+		return;
 #ifdef BACKEND
-	if(mixer)
-		mixer->SetSoundVolume(volume);
+	mixer->SetSoundVolume(volume);
 #endif
 }
 void SoundManager::SetMusicVolume(double volume) {
+	if(!IsUsable())
+		return;
 #ifdef BACKEND
-	if(mixer)
-		mixer->SetMusicVolume(volume);
+	mixer->SetMusicVolume(volume);
 #endif
 }
 void SoundManager::EnableSounds(bool enable) {
+	if(!IsUsable())
+		return;
 #ifdef BACKEND
-	if(mixer && !(soundsEnabled = enable))
+	if(!(soundsEnabled = enable))
 		mixer->StopSounds();
 #endif
 }
 void SoundManager::EnableMusic(bool enable) {
+	if(!IsUsable())
+		return;
 #ifdef BACKEND
-	if(mixer && !(musicEnabled = enable))
+	if(!(musicEnabled = enable))
 		mixer->StopMusic();
 #endif
 }
 void SoundManager::StopSounds() {
+	if(!IsUsable())
+		return;
 #ifdef BACKEND
-	if(mixer)
-		mixer->StopSounds();
+	mixer->StopSounds();
 #endif
 }
 void SoundManager::StopMusic() {
+	if(!IsUsable())
+		return;
 #ifdef BACKEND
-	if(mixer)
-		mixer->StopMusic();
+	mixer->StopMusic();
 #endif
 }
 void SoundManager::PauseMusic(bool pause) {
+	if(!IsUsable())
+		return;
 #ifdef BACKEND
-	if(mixer)
-		mixer->PauseMusic(pause);
+	mixer->PauseMusic(pause);
 #endif
 }
 
 void SoundManager::Tick() {
+	if(!IsUsable())
+		return;
 #ifdef BACKEND
-	if(mixer)
-		mixer->Tick();
+	mixer->Tick();
 #endif
 }
 
