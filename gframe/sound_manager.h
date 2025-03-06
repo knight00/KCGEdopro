@@ -42,7 +42,8 @@ public:
         NEGATE,
         ATTACK_DISABLED,
         POS_CHANGE,
-		CUTIN,
+		CUTIN_chain,
+		CUTIN_damage,
         ///kdiy////////
 		ACTIVATE,
 		SET,

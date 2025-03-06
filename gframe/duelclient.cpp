@@ -1900,7 +1900,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
             if(desc != 1160) {
 				if(mainGame->cutincharacter[cc][1] == 0 && mainGame->imageManager.cutin[gSoundManager->character[cc == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][1]) {
 					auto lock = LockIf();
-					Play(SoundManager::SFX::CUTIN);
+					Play(SoundManager::SFX::CUTIN_chain);
 					mainGame->cutincharacter[cc][1] = 1;
 					mainGame->showcardcode = cc;
 					mainGame->showcarddif = 0;
@@ -1952,7 +1952,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 			mainGame->lpcharacter[pc] = 3;
 			if(mainGame->cutincharacter[pc][2] == 0 && mainGame->imageManager.cutin[gSoundManager->character[pc == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][2]) {
 				auto lock = LockIf();
-				Play(SoundManager::SFX::CUTIN);
+				Play(SoundManager::SFX::CUTIN_damage);
 				mainGame->cutincharacter[pc][2] = 1;
 				mainGame->showcardcode = pc;
 				mainGame->showcarddif = 0;
@@ -1990,7 +1990,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		mainGame->lpcharacter[player] = 1;
 		if(!(reason & REASON_COST) && mainGame->cutincharacter[player][0] == 0 && mainGame->imageManager.cutin[gSoundManager->character[player == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][0]) {
 			auto lock = LockIf();
-			Play(SoundManager::SFX::CUTIN);
+			Play(SoundManager::SFX::CUTIN_damage);
 			mainGame->cutincharacter[player][0] = 1;
 			mainGame->showcardcode = player;
 			mainGame->showcarddif = 0;

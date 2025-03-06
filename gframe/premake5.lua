@@ -265,6 +265,13 @@ local ygopro_config=function(static_core)
 		if not _OPTIONS["oldwindows"] then
 			links "Iphlpapi"
 		end
+		
+    	-- includedirs{ "../opencv2/include" }
+    	-- libdirs{ "../opencv2/lib" }
+    	-- links "opencv_world470"
+    	includedirs{ "../ffmpeg/include" }
+    	libdirs{ "../ffmpeg/lib" }
+		links { "avcodec", "avdevice", "avfilter", "avformat", "avutil", "postproc", "swresample", "swscale" }
 end
 
 include "lzma/."
@@ -280,12 +287,6 @@ if not _OPTIONS["no-core"] then
 		end
 		links { "ocgcore" }
 		ygopro_config(true)
-        -- includedirs{ "../opencv2/include" }
-        -- libdirs{ "../opencv2/lib" }
-		-- links "opencv_world470"
-        includedirs{ "../ffmpeg/include" }
-        libdirs{ "../ffmpeg/lib" }
-		links { "avcodec", "avdevice", "avfilter", "avformat", "avutil", "postproc", "swresample", "swscale" }
 end
 
 
@@ -293,9 +294,3 @@ project "ygoprodll"
 	targetname "Edopro-KCG"
 	defines "YGOPRO_BUILD_DLL"
 	ygopro_config()
-    -- includedirs{ "../opencv2/include" }
-    -- libdirs{ "../opencv2/lib" }
-    -- links "opencv_world470"
-    includedirs{ "../ffmpeg/include" }
-    libdirs{ "../ffmpeg/lib" }
-	links { "avcodec", "avdevice", "avfilter", "avformat", "avutil", "postproc", "swresample", "swscale" }

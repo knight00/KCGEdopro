@@ -170,7 +170,8 @@ void SoundManager::RefreshSoundsList() {
 		{NEXT_TURN, EPRO_TEXT("./sound/nextturn"sv)},
 		{PHASE, EPRO_TEXT("./sound/phase"sv)},
 		{PLAYER_ENTER, EPRO_TEXT("./sound/playerenter"sv)},
-		{CUTIN, EPRO_TEXT("./sound/cutin"sv)},
+		{CUTIN_chain, EPRO_TEXT("./sound/cutin_chain"sv)},
+		{CUTIN_damage, EPRO_TEXT("./sound/cutin_damage"sv)},
 		{CHAT, EPRO_TEXT("./sound/chatmessage"sv)}
         /////kdiy///////
 	};
@@ -600,7 +601,6 @@ void SoundManager::PlayBGM(BGM scene, bool loop) {
 		currentlyLooping = loop;
 		mixer->LoopMusic(loop);
 	}
-	}
 #endif
 }
 ///////kdiy//////
@@ -657,9 +657,8 @@ bool SoundManager::PlayCardBGM(uint32_t code, uint32_t code2) {
             soundcount.push_back(list[soundno]);
 			if(mixer->MusicPlaying())
 		 	    mixer->StopMusic();
-			if(!mixer->PlayMusic(list[soundno], gGameConfig->loopMusic)) {
-				currentlyLooping = loop;
-				list.erase(std::next(list.begin(), soundno));
+			if(mixer->PlayMusic(list[soundno], false)) {
+				return true;
 			} else return false;
 		} else
 			return false;
