@@ -120,21 +120,11 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			case BUTTON_AVATAR_BORED0: {
-#ifndef VIP
-				    break;
-#endif
-				int character = mainGame->dInfo.current_player[0];
-				if(!mainGame->dInfo.isTeam1) character = mainGame->dInfo.current_player[0] + mainGame->dInfo.team1;
-				gSoundManager->PlayChant(SoundManager::CHANT::BORED, 0, 0, 0, character, 0, 1 - character);
+				gSoundManager->PlayChant(SoundManager::CHANT::BORED, 0, 0, 0, mainGame->avataricon1, 0, mainGame->avataricon2);
 				break;
 			}
 			case BUTTON_AVATAR_BORED1: {
-#ifndef VIP
-				    break;
-#endif
-				int character = mainGame->dInfo.current_player[1];
-				if(mainGame->dInfo.isTeam1) character = mainGame->dInfo.current_player[1] + mainGame->dInfo.team1;
-				gSoundManager->PlayChant(SoundManager::CHANT::BORED, 0, 0, 1, character, 0, 1 - character);
+				gSoundManager->PlayChant(SoundManager::CHANT::BORED, 0, 0, 1, mainGame->avataricon2, 0, mainGame->avataricon1);
 				break;
 			}
 			case BUTTON_ENTERTAUNMENT_PLOAT_CLOSE: { //story start after click ok
