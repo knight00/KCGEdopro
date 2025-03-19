@@ -7063,7 +7063,6 @@ void Game::PopulateResourcesDirectories() {
 	pic_dirs.push_back(EPRO_TEXT("archives"));
 	//////kdiy//////////
 	if(gGameConfig->hdpic == 1) {
-        pic_dirs.push_back(EPRO_TEXT("./hdpics/newrelease/"));
         pic_dirs.push_back(EPRO_TEXT("./hdpics/jp/"));
     }
     pic_dirs.push_back(EPRO_TEXT("./pics/prerelease/"));

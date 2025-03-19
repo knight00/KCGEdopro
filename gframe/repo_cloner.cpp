@@ -3,12 +3,14 @@
 #include "config.h"
 #include "fmt.h"
 #include "game_config.h"
+#include "porting.h"
 #include "repo_manager.h"
 #include "text_types.h"
 #include "utils.h"
 
 #include <cstdlib>
 #include <cstdio>
+#include <fmt/ranges.h>
 #include <map>
 #include <memory>
 #include <thread>
@@ -38,10 +40,9 @@ struct GitRepoInfoToBePrinted {
 
 template<>
 struct fmt::formatter<GitRepoInfoToBePrinted> {
-	template<typename ParseContext>
-	constexpr auto parse(ParseContext& ctx) { return ctx.begin(); }
-	template <typename FormatContext>
-	constexpr auto format(const GitRepoInfoToBePrinted& repo, FormatContext& ctx) const {
+	constexpr auto parse(format_parse_context& ctx) { return ctx.begin(); }
+	template <typename Context>
+	constexpr auto format(const GitRepoInfoToBePrinted& repo, Context& ctx) const {
 		return format_to(ctx.out(),
 						 R"("name":"{}","status":"{}","warning_or_error_message":"{}","percentage":{})",
 						 repo.name, repo.status, repo.warning_or_error_message, repo.percentage);
