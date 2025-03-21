@@ -4737,13 +4737,14 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 			////kdiy///////////
 			//event_string = epro::sprintf(gDataManager->GetSysString(1603), gDataManager->GetName(code));
+			//mainGame->showcardcode = code;
 			PlayAnime(pcard, 0, lock);
 			event_string = epro::sprintf(gDataManager->GetSysString(1603), gDataManager->GetName(pcard));
 			uint32_t code2 = 0;
 			if(pcard->alias && pcard->alias > 0) code2 = pcard->alias;
             mainGame->showcardalias = code2;
+			mainGame->showcardcode = pcard->piccode > 0 ? pcard->piccode : code;
 			////kdiy///////////
-			mainGame->showcardcode = code;
 			mainGame->showcarddif = 0;
 			mainGame->showcardp = 0;
 			mainGame->showcard = 7;
@@ -4800,12 +4801,13 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 			////kdiy///////////
 			//event_string = epro::sprintf(gDataManager->GetSysString(1605), gDataManager->GetName(code));
+			//mainGame->showcardcode = code;
 			event_string = epro::sprintf(gDataManager->GetSysString(1605), gDataManager->GetName(pcard));
 			uint32_t code2 = 0;
 			if(pcard->alias && pcard->alias > 0) code2 = pcard->alias;
             mainGame->showcardalias = code2;
+			mainGame->showcardcode = pcard->piccode > 0 ? pcard->piccode : code;
 			////kdiy///////////
-			mainGame->showcardcode = code;
 			mainGame->showcarddif = 1;
 			mainGame->showcard = 5;
 			mainGame->WaitFrameSignal(30, lock);
@@ -4844,7 +4846,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			////kdiy///////////
 			mainGame->dField.MoveCard(pcard, 10);
 			mainGame->WaitFrameSignal(11, lock);
-			mainGame->showcardcode = code;
+			////kdiy///////////
+			//mainGame->showcardcode = code;
+			mainGame->showcardcode = pcard->piccode > 0 ? pcard->piccode : code;
+			////kdiy///////////
 			mainGame->showcarddif = 0;
 			mainGame->showcardp = 0;
 			mainGame->showcard = 7;
@@ -4886,12 +4891,13 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		}
 		if(!mainGame->dInfo.isCatchingUp) {
             /////kdiy//////
+			//mainGame->showcardcode = code;
 			PlayAnime(pcard, 1, lock);
 			uint32_t code2 = 0;
 			if(pcard->alias && pcard->alias > 0) code2 = pcard->alias;
             mainGame->showcardalias = code2;
+			mainGame->showcardcode = pcard->piccode > 0 ? pcard->piccode : code;
             /////kdiy//////
-			mainGame->showcardcode = code;
 			mainGame->showcarddif = 0;
 			mainGame->showcard = 1;
 			/////kdiy//////
@@ -4993,7 +4999,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		const auto ct = BufferIO::Read<uint8_t>(pbuf);
 		if(!mainGame->dInfo.isCatchingUp) {
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
-			mainGame->showcardcode = mainGame->dField.chains[ct - 1].code;
+			///kdiy////////
+			//mainGame->showcardcode = mainGame->dField.chains[ct - 1].code;
+			mainGame->showcardcode = mainGame->dField.chains[ct - 1].chain_card->piccode > 0 ? mainGame->dField.chains[ct - 1].chain_card->piccode : mainGame->dField.chains[ct - 1].code;
+			///kdiy////////
 			mainGame->showcarddif = 0;
 			mainGame->showcard = 3;
 			mainGame->WaitFrameSignal(30, lock);
@@ -5458,12 +5467,13 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					//move to attack target position
                     mainGame->dField.MoveCard(pcard1, pcard2->curPos + irr::core::vector3df(0, 0, 0.3f), 8, 0.9f);
                     mainGame->WaitFrameSignal(16, lock);
-                    mainGame->dField.MoveCard(pcard1, pcard2->curPos + irr::core::vector3df(0, 0, 0.3f), 10);
 					auto pos2 = pcard2->curPos;
 					//attack target move backward
+                    mainGame->dField.MoveCard(pcard1, pos1, 8, ((pcard1->attack >= 3000 && pcard1->position == POS_FACEUP_ATTACK) || (pcard1->defense >= 3000 && pcard1->position == POS_FACEUP_DEFENSE)) ? -0.4f : -0.25f);
                     mainGame->dField.MoveCard(pcard2, pos1, 8, ((pcard1->attack >= 3000 && pcard1->position == POS_FACEUP_ATTACK) || (pcard1->defense >= 3000 && pcard1->position == POS_FACEUP_DEFENSE)) ? -0.4f : -0.25f);
                     mainGame->WaitFrameSignal(2, lock);
 					//attack target return to its position
+                    mainGame->dField.MoveCard(pcard1, pos2, 8);
                     mainGame->dField.MoveCard(pcard2, pos2, 8);
                     mainGame->WaitFrameSignal(2, lock);
                 } else {
@@ -5777,7 +5787,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				if(pcard->location & LOCATION_ONFIELD)
 					pcard->is_highlighting = true;
 				std::unique_lock<epro::mutex> lock(mainGame->gMutex);
-				mainGame->showcardcode = pcard->code;
+				/////kdiy//////
+				//mainGame->showcardcode = pcard->code;
+				mainGame->showcardcode = pcard->piccode > 0 ? pcard->piccode : pcard->code;
+				/////kdiy//////
 				mainGame->showcarddif = 0;
 				mainGame->showcardp = (value & 0xffff) - 1;
 				mainGame->showcard = 6;

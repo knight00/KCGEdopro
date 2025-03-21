@@ -1902,7 +1902,7 @@ void Game::PopupElement(irr::gui::IGUIElement * element, int hideframe) {
 //void Game::WaitFrameSignal(int frame, std::unique_lock<epro::mutex>& _lck) {
 void Game::WaitFrameSignal(int frame, std::unique_lock<epro::mutex>& _lck, bool forced) {
 	//signalFrame = (gGameConfig->quick_animation && frame >= 12) ? 12 * 1000 / 60 : frame * 1000 / 60;
-	signalFrame = (gGameConfig->quick_animation && frame >= 12 && !forced) ? (frame == 40 || frame == 120 ? (30 * 1000 / 60) : (12 * 1000 / 60)) : (frame * 1000 / 60);
+	signalFrame = (gGameConfig->quick_animation && frame >= 12 && !forced) ? (frame == 40 || frame == 120 ? (25 * 1000 / 60) : (12 * 1000 / 60)) : (frame * 1000 / 60);
 //kidy///////
 	frameSignal.Wait(_lck);
 }

@@ -752,13 +752,9 @@ void ImageManager::RefreshRandomImageList() {
 	for(uint8_t playno = 1; playno < CHARACTER_VOICE; playno++) {
 		int size = gSoundManager->textcharacter[playno-1].size();
 		auto path = gSoundManager->textcharacter[playno-1][0];
-#ifdef VIP
 		if(size > 1) path = epro::format(EPRO_TEXT("{}/{}"), gSoundManager->textcharacter[playno-1][0], gSoundManager->textcharacter[playno-1][1]);
-		// icon[playno] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/mini_icon"sv), path));
-		// lpicon[playno] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/lp"sv), path));
-		// vs[playno] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/vs"sv), path));
-		// name[playno] = loadTextureAnySize(epro::format(EPRO_TEXT("character/{}/name"sv), path));
 		if(size > 1) size = size - 1;
+#ifdef VIP
 		for(int i = 0; i < size; i++) {
 			if(size > 1) path = epro::format(EPRO_TEXT("{}/{}"), gSoundManager->textcharacter[playno-1][0], gSoundManager->textcharacter[playno-1][i+1]);
 			for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/icon"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
@@ -773,13 +769,6 @@ void ImageManager::RefreshRandomImageList() {
 				auto filename = Utils::GetFileName(file, true);
 				imgcharacter[playno][i][2].push_back(epro::format(EPRO_TEXT("{}/advantage/{}"), path, filename));
 			}
-			// if(i == 0) {
-			// 	for(int j = 0; j < 3; j++) {
-			// 		GetRandomCharacter(bodycharacter[playno][j], imgcharacter[playno][i][j]);
-			// 		if(j > 0 && !bodycharacter[playno][j])
-			// 	    	bodycharacter[playno][j] = bodycharacter[playno][0];
-			// 	}
-			// }
 
 			for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./textures/character/{}/cutin/damage"), path), { EPRO_TEXT("jpg"), EPRO_TEXT("png") })) {
 				auto filename = Utils::GetFileName(file, true);
@@ -793,26 +782,14 @@ void ImageManager::RefreshRandomImageList() {
 				auto filename = Utils::GetFileName(file, true);
 				cutincharacter[playno][i][2].push_back(epro::format(EPRO_TEXT("{}/cutin/surprise/{}"), path, filename));
 			}
-			// if(i == 0) {
-			// 	for(int j = 0; j < 3; j++) {
-			// 		GetRandomCharacter(cutin[playno][j], cutincharacter[playno][i][j]);
-			// 		if(j > 0 && !cutin[playno][j])
-			// 	    	cutin[playno][j] = cutin[playno][0];
-			// 		if(cutin[playno][j] == nullptr)
-			// 	    	cutincharacter_size[playno][j] = irr::core::rect<irr::s32>(0,0,0,0);
-			// 		else
-			// 			cutincharacter_size[playno][j] = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cutin[playno][j]->getOriginalSize()));
-			// 	}
-			// }
 		}
 #else
 		icon[playno] = driver->getTexture(0);
 		lpicon[playno] = driver->getTexture(0);
 		vs[playno] = driver->getTexture(0);
 		name[playno] = driver->getTexture(0);
-		for(int j = 0; j < 3; j++)
+		for(int j = 0; j < 3; j++) {
             bodycharacter[playno][j] = driver->getTexture(0);
-		for(int j = 0; 3; j++) {
             cutin[playno][j] = driver->getTexture(0);
 			cutincharacter_size[playno][j] = irr::core::rect<irr::s32>(0,0,0,0);
 		}
