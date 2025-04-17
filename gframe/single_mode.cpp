@@ -152,14 +152,14 @@ restart:
 			last_replay.Write<uint32_t>(static_cast<uint32_t>(opponentdeck.main.size()), false);
 			for (int32_t i = (int32_t)opponentdeck.main.size() - 1; i >= 0; --i) {
 				card_info.code = opponentdeck.main[i]->code;
-				OCG_DuelNewCard(pduel, card_info);
+				OCG_DuelNewCard(pduel, &card_info);
 				last_replay.Write<uint32_t>(opponentdeck.main[i]->code, false);
 			}
 			card_info.loc = LOCATION_EXTRA;
 			last_replay.Write<uint32_t>(static_cast<uint32_t>(opponentdeck.extra.size()), false);
 			for (int32_t i = (int32_t)opponentdeck.extra.size() - 1; i >= 0; --i) {
 				card_info.code = opponentdeck.extra[i]->code;
-				OCG_DuelNewCard(pduel, card_info);
+				OCG_DuelNewCard(pduel, &card_info);
 				last_replay.Write<uint32_t>(opponentdeck.extra[i]->code, false);
 			}
             } else {
