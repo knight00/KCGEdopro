@@ -62,8 +62,7 @@ static HWND GetWindowHandle(irr::video::IVideoDriver* driver) {
 }
 #endif
 
-static inline irr::video::E_DRIVER_TYPE getDefaultDriver(irr::E_DEVICE_TYPE device_type) {
-	(void)device_type;
+static inline irr::video::E_DRIVER_TYPE getDefaultDriver([[maybe_unused]] irr::E_DEVICE_TYPE device_type) {
 #if EDOPRO_ANDROID
 	return irr::video::EDT_OGLES2;
 #elif EDOPRO_IOS
@@ -211,8 +210,7 @@ bool GUIUtils::TakeScreenshot(std::shared_ptr<irr::IrrlichtDevice>& device) {
 	return written;
 }
 #if (IRRLICHT_VERSION_MAJOR==1 && IRRLICHT_VERSION_MINOR==9)
-void GUIUtils::ToggleFullscreen(std::shared_ptr<irr::IrrlichtDevice>& device, bool& fullscreen) {
-	(void)fullscreen;
+void GUIUtils::ToggleFullscreen(std::shared_ptr<irr::IrrlichtDevice>& device, [[maybe_unused]] bool& fullscreen) {
 #if EDOPRO_MACOS
 	EDOPRO_ToggleFullScreen();
 #elif EDOPRO_WINDOWS || EDOPRO_LINUX
@@ -229,8 +227,7 @@ static BOOL CALLBACK callback(HMONITOR hMon, HDC hdc, LPRECT lprcMonitor, LPARAM
 	return TRUE;
 }
 #endif
-void GUIUtils::ToggleFullscreen(std::shared_ptr<irr::IrrlichtDevice>& device, bool& fullscreen) {
-	(void)fullscreen;
+void GUIUtils::ToggleFullscreen(std::shared_ptr<irr::IrrlichtDevice>& device, [[maybe_unused]] bool& fullscreen) {
 #if EDOPRO_MACOS
 	EDOPRO_ToggleFullScreen();
 #elif EDOPRO_WINDOWS
@@ -410,6 +407,23 @@ std::string GUIUtils::SerializeWindowPosition(std::shared_ptr<irr::IrrlichtDevic
 #else
 	return std::string{};
 #endif
+}
+
+void GUIUtils::TriggerEvent(std::shared_ptr<irr::IrrlichtDevice>& device, irr::gui::IGUIElement* target, /*irr::gui::EGUI_EVENT_TYPE*/ int type) {
+	irr::SEvent event;
+	event.EventType = irr::EET_GUI_EVENT;
+	event.GUIEvent.EventType = static_cast<irr::gui::EGUI_EVENT_TYPE>(type);
+	event.GUIEvent.Caller = target;
+	device->postEventFromUser(event);
+}
+
+void GUIUtils::ClickButton(std::shared_ptr<irr::IrrlichtDevice>& device, irr::gui::IGUIElement* btn) {
+	TriggerEvent(device, btn, irr::gui::EGET_BUTTON_CLICKED);
+}
+
+void GUIUtils::SetCheckbox(std::shared_ptr<irr::IrrlichtDevice>& device, irr::gui::IGUICheckBox* chk, bool state) {
+	chk->setChecked(state);
+	TriggerEvent(device, chk, irr::gui::EGET_CHECKBOX_CHANGED);
 }
 
 }

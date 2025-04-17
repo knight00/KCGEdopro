@@ -154,6 +154,7 @@ public:
 	uint16_t extra_xyz_count;
 	uint16_t extra_synchro_count;
 	uint16_t extra_link_count;
+	uint16_t extra_rush_ritual_count;
 
 	uint16_t side_monster_count;
 	uint16_t side_spell_count;

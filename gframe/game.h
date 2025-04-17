@@ -316,7 +316,7 @@ struct host_creation_panel_elements {
 	/////kdiy///////
 	irr::gui::IGUIButton* btnRulesOK;
 	irr::gui::IGUIComboBox* cbDuelRule;
-	irr::gui::IGUICheckBox* chkCustomRules[7+12+8+2];
+	irr::gui::IGUICheckBox* chkCustomRules[7+12+8+4];
 	irr::gui::IGUICheckBox* chkTypeLimit[5];
 	irr::gui::IGUICheckBox* chkNoCheckDeckContent;
 	irr::gui::IGUICheckBox* chkNoCheckDeckSize;

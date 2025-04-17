@@ -11,7 +11,6 @@
 #include <sys/wait.h>
 #endif //EDOPRO_WINDOWS
 #include "file_stream.h"
-#include <curl/curl.h>
 #include <nlohmann/json.hpp>
 #include <atomic>
 #include "MD5/md5.h"
@@ -45,9 +44,7 @@ struct Payload {
 };
 
 template<typename off_type>
-static int progress_callback(void* ptr, off_type TotalToDownload, off_type NowDownloaded, off_type TotalToUpload, off_type NowUploaded) {
-	(void)TotalToUpload;
-	(void)NowUploaded;
+static int progress_callback(void* ptr, off_type TotalToDownload, [[maybe_unused]] off_type NowDownloaded, [[maybe_unused]] off_type TotalToUpload, off_type NowUploaded) {
 	Payload* payload = static_cast<Payload*>(ptr);
 	if(payload && payload->callback) {
 		int percentage = 0;
@@ -97,7 +94,7 @@ static CURLcode curlPerform(const char* url, void* payload, void* payload2 = nul
 	curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, ygo::Utils::GetUserAgent().data());
 	curl_easy_setopt(curl_handle, CURLOPT_NOPROXY, "*");
 	curl_easy_setopt(curl_handle, CURLOPT_FOLLOWLOCATION, 1L);
-#if (LIBCURL_VERSION_MAJOR > 7 || LIBCURL_VERSION_MINOR >= 32)
+#if (LIBCURL_VERSION_NUM >= CURL_VERSION_BITS(7,32,0))
 	if(curl_easy_setopt(curl_handle, CURLOPT_XFERINFOFUNCTION, progress_callback<curl_off_t>) == CURLE_OK) {
 		curl_easy_setopt(curl_handle, CURLOPT_XFERINFODATA, payload2);
 	} else

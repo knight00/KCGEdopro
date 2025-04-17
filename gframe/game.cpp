@@ -752,7 +752,7 @@ void Game::Initialize() {
 											L"https://github.com/knight00/KCGEdopro\n"
 											L"https://github.com/knight00/ocgcore-KCG\n"
 											L"Licensed under the GNU AGPLv3 or later. See LICENSE for more details.\n"
-											L"Forked from Fluorohydride's YGOPro, mercury233.\n"
+											L"Forked from Fluorohydride's YGOPro, maintainer mercury233.\n"
 											L"Yu-Gi-Oh! is a trademark of Shueisha and Konami.\n"
 											L"This project is not affiliated with or endorsed by Shueisha or Konami.", false, env, wAbout, -1, Scale(10, 10, 440, 690));
 	((irr::gui::CGUICustomText*)stAbout)->enableScrollBar();
@@ -3199,6 +3199,9 @@ void Game::PopulateSettingsWindow() {
         gSettings.chkPauseduel->setChecked(false);
 #endif
         //////kdiy///////////
+
+		gSettings.chkAutoRPS = env->addCheckBox(gGameConfig->chkAutoRPS, GetNextRect(), sPanel, CHECKBOX_AUTO_RPS, gDataManager->GetSysString(12124).data());
+		defaultStrings.emplace_back(gSettings.chkAutoRPS, 12124);
 	}
 
 	{
@@ -4458,6 +4461,7 @@ void Game::SaveConfig() {
 	gGameConfig->chkRandomPos = gSettings.chkRandomPos->isChecked();
 	gGameConfig->chkAutoChain = gSettings.chkAutoChainOrder->isChecked();
 	gGameConfig->chkWaitChain = gSettings.chkNoChainDelay->isChecked();
+	gGameConfig->chkAutoRPS = gSettings.chkAutoRPS->isChecked();
 	gGameConfig->chkIgnore1 = gSettings.chkIgnoreOpponents->isChecked();
 	gGameConfig->chkIgnore2 = gSettings.chkIgnoreSpectators->isChecked();
 	gGameConfig->chkHideHintButton = gSettings.chkHideChainButtons->isChecked();
@@ -5711,33 +5715,33 @@ void Game::UpdateDuelParam() {
 			cbDuelRule->removeItem(8);
 			break;
 		}
-	}/*fallthrough*/
+	}
+	[[fallthrough]];
 	case DUEL_MODE_RUSH: {
 		cbDuelRule->setSelected(6);
 		if(flag2 == DUEL_MODE_MR5_FORB) {
 			cbDuelRule->removeItem(8);
 			break;
 		}
-	}/*fallthrough*/
+	}
+	[[fallthrough]];
 	case DUEL_MODE_GOAT: {
 		cbDuelRule->setSelected(7);
 		if(flag2 == DUEL_MODE_MR1_FORB) {
 			cbDuelRule->removeItem(8);
 			break;
 		}
-	}/*fallthrough*/
+	}
+	[[fallthrough]];
 	default:
 		switch(flag & ~DUEL_TCG_SEGOC_NONPUBLIC) {
-#ifdef __GNUC__
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-#endif
 	#define CHECK(MR) \
 		case DUEL_MODE_MR##MR:{ \
 			cbDuelRule->setSelected(MR - 1); \
 			if (flag2 == DUEL_MODE_MR##MR##_FORB) { \
 				cbDuelRule->removeItem(8); break; } \
-			}
+			} \
+			[[fallthrough]];
 			CHECK(1)
 			CHECK(2)
 			CHECK(3)
@@ -5749,9 +5753,6 @@ void Game::UpdateDuelParam() {
 			cbDuelRule->setSelected(8);
 			break;
 		}
-#ifdef __GNUC__
-#pragma GCC diagnostic pop
-#endif
 		}
 		break;
 	}
@@ -6078,6 +6079,8 @@ void Game::ReloadCBLimit() {
 	} else {
 		chkAnime->setEnabled(false);
 		cbLimit->addItem(gDataManager->GetSysString(1912).data(), DeckBuilder::LIMITATION_FILTER_LEGEND);
+		cbLimit->addItem(gDataManager->GetSysString(1266).data(), DeckBuilder::LIMITATION_FILTER_ILLEGAL);
+		cbLimit->addItem(gDataManager->GetSysString(1903).data(), DeckBuilder::LIMITATION_FILTER_PRERELEASE);
 		cbLimit->addItem(gDataManager->GetSysString(1310).data(), DeckBuilder::LIMITATION_FILTER_ALL);
 	}
 }
@@ -7025,7 +7028,7 @@ OCG_Duel Game::SetupDuel(OCG_DuelOptions opts) {
 	opts.payload5 = ReadCardDataToCore();
 	/////kdiy/////
 	OCG_Duel pduel = nullptr;
-	OCG_CreateDuel(&pduel, opts);
+	OCG_CreateDuel(&pduel, &opts);
 	LoadScript(pduel, "constant.lua");
 	LoadScript(pduel, "utility.lua");
 	/////kdiy/////
