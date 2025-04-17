@@ -209,7 +209,10 @@ private:
 struct info_panel_elements {
 	//card image
 	irr::gui::IGUIStaticText* wCardImg;
-	irr::gui::IGUIImage* imgCard;
+	/////kdiy/////
+	//irr::gui::IGUIImage* imgCard;
+	irr::gui::IGUIButton* imgCard;
+	/////kdiy/////
 	//infos
 	int infosExpanded; //0: not expanded, 1: expanded and to be shown as expanded, 2: expanded but not to be shown as expanded
 	irr::gui::IGUITabControl* wInfos;
@@ -905,6 +908,8 @@ public:
 	float atk2dy2;
 	float atkdy3;
 	double angle = 0.0f;
+	uint32_t imgcardcode = 0;
+	uint32_t imgcardalias = 0;
     ////kdiy//////
 	int lpframe;
 	float lpd;

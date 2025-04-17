@@ -116,7 +116,6 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
                 mainGame->cardbutton[0]->setImage(mainGame->imageManager.cardchant00);
 				mainGame->cardbutton[1]->setImage(mainGame->imageManager.cardchant01);
 				mainGame->cardbutton[2]->setImage(mainGame->imageManager.cardchant2);
-
 				break;
 			}
 			case BUTTON_AVATAR_BORED0: {

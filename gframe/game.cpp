@@ -2671,10 +2671,15 @@ void Game::PopulateTabSettingsWindow() {
         name->setTextAutoScrolling(irr::gui::CGUICustomText::LEFT_TO_RIGHT_BOUNCING, 0, 1.0f, 0, 120, 300);
         stName = name;
     }
-    imgCard = AlignElementWithParent(env->addImage(Scale(0, 23, 128, 208), wCardImg));
+	imgCard = AlignElementWithParent(env->addButton(Scale(0, 23, 128, 208), wCardImg, BUTTON_PLAY_CARD));
 	imgCard->setImage(imageManager.tCover[0]);
 	imgCard->setScaleImage(true);
+	imgCard->setDrawBorder(false);
 	imgCard->setUseAlphaChannel(true);
+    // imgCard = AlignElementWithParent(env->addImage(Scale(0, 23, 128, 208), wCardImg));
+	// imgCard->setImage(imageManager.tCover[0]);
+	// imgCard->setScaleImage(true);
+	// imgCard->setUseAlphaChannel(true);
 	wCardInfo = AlignElementWithParent(env->addStaticText(L"", Scale(0, 208, 210, 540), true, true, wCardImg, -1, false));
 	wCardInfo->setDrawBackground(true);
 	for(int i = 0; i < 8; i++) {
@@ -4793,6 +4798,8 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
         stPasscodeScope->setText(epro::format(L"[{}] {}", tmp_code, tmp_code2 > 0 ? epro::format(L"[{}]", tmp_code2) : L"").data());
         stPasscodeScope2->setText(epro::format(L"{}", gDataManager->FormatScope(cd->ot)).data());
     }
+	imgcardcode = code;
+	imgcardalias = tmp_code2;
     ///kdiy/////////
 	stSetName->setText(L"");
 	auto setcodes = cd->setcodes;
@@ -6394,6 +6401,36 @@ void Game::ReloadElementsStrings() {
 	cbDBLFList->addItem(gdeckManager->_lfList[nullLFlist].listName.data(), gdeckManager->_lfList[nullLFlist].hash);
 	cbDBLFList->setSelected(prev);
 	//////kdiy//////////
+	prev = ebCharacterDeck->getSelected();
+	ebCharacterDeck->clear();
+	ebCharacterDeck->addItem(gDataManager->GetSysString(8047).data());
+	 for (auto j = 9000; j < 9000 + CHARACTER_VOICE - 1; ++j)
+        ebCharacterDeck->addItem(gDataManager->GetSysString(j).data());
+	ebCharacterDeck->setSelected(prev);
+	for(int i = 0; i < 6; ++i) {
+		prev = ebCharacter_replay[i]->getSelected();
+		ebCharacter_replay[i]->clear();
+#ifdef VIP
+        ebCharacter_replay[i]->addItem(gDataManager->GetSysString(8047).data());
+#else
+        ebCharacter_replay[i]->addItem(gDataManager->GetSysString(8048).data());
+#endif
+        for (auto j = 9000; j < 9000 + CHARACTER_VOICE - 1; ++j)
+            ebCharacter_replay[i]->addItem(gDataManager->GetSysString(j).data());
+		ebCharacter_replay[i]->setSelected(prev);
+	}
+	for(int i = 0; i < 6; ++i) {
+		prev = ebCharacter[i]->getSelected();
+		ebCharacter[i]->clear();
+#ifdef VIP
+        ebCharacter[i]->addItem(gDataManager->GetSysString(8047).data());
+#else
+		ebCharacter[i]->addItem(gDataManager->GetSysString(8048).data());
+#endif
+        for (auto j = 9000; j < 9000 + CHARACTER_VOICE - 1; ++j)
+			ebCharacter[i]->addItem(gDataManager->GetSysString(j).data());
+		ebCharacter[i]->setSelected(prev);
+	}
 	prev = cbpics->getSelected();
 	ReloadCBpic();
 	cbpics->setSelected(prev);

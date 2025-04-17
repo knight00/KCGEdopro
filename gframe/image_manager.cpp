@@ -12,6 +12,7 @@
 #include "config.h"
 #include "fmt.h"
 /////kdiy///////
+#include "CGUIImageButton/CGUIImageButton.h"
 #include "sound_manager.h"
 /////kdiy///////
 
