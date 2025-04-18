@@ -1827,12 +1827,12 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
             uint16_t extra = 0;
             if(sumtype == SUMMON_TYPE_PENDULUM || sumtype == SUMMON_TYPE_LINK || sumtype == SUMMON_TYPE_XYZ || sumtype == SUMMON_TYPE_SYNCHRO || sumtype == SUMMON_TYPE_FUSION || sumtype == SUMMON_TYPE_RITUAL || sumtype == SUMMON_TYPE_MAXIMUM) {
                 if(sumtype == SUMMON_TYPE_PENDULUM) extra |= 0x20;
-                else if(sumtype == SUMMON_TYPE_LINK) extra |= 0x8;
-                else if(sumtype == SUMMON_TYPE_XYZ) extra |= 0x4;
-                else if(sumtype == SUMMON_TYPE_SYNCHRO) extra |= 0x2;
-                else if(sumtype == SUMMON_TYPE_FUSION) extra |= 0x1;
-                else if(sumtype == SUMMON_TYPE_RITUAL) extra |= 0x10;
-                else if(sumtype == SUMMON_TYPE_MAXIMUM) extra |= 0x800;
+                if(sumtype == SUMMON_TYPE_LINK) extra |= 0x8;
+                if(sumtype == SUMMON_TYPE_XYZ) extra |= 0x4;
+                if(sumtype == SUMMON_TYPE_SYNCHRO) extra |= 0x2;
+                if(sumtype == SUMMON_TYPE_FUSION) extra |= 0x1;
+                if(sumtype == SUMMON_TYPE_RITUAL) extra |= 0x10;
+                if(sumtype == SUMMON_TYPE_MAXIMUM) extra |= 0x800;
             } else {
                 extra = 0x40;
                 if(current.position & POS_ATTACK) extra |= 0x100;
@@ -3684,9 +3684,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			pcard->rrscale = 0;
 			pcard->rlink_marker = 0;
 			pcard->is_real = false;
+			pcard->is_rreal = false;
 			pcard->effcode = 0;
 			pcard->namecode = 0;
 			pcard->realcardname = L"";
+			pcard->orealcardname = L"";
 			pcard->desc_hints.clear();
 			pcard->text_hints.clear();
 		}
@@ -3716,9 +3718,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					pcard->rrscale = rcard.rrscale;
 					pcard->rlink_marker = rcard.rlink_marker;
 					pcard->is_real = rcard.is_real;
+					pcard->is_rreal = rcard.is_rreal;
 					pcard->effcode = rcard.effcode;
 					pcard->namecode = rcard.namecode;
 					pcard->realcardname = rcard.realcardname;
+					pcard->orealcardname = rcard.orealcardname;
 					pcard->text_hints = rcard.text_hints;
 					deck_real.erase(deck_real.begin() + i);
 					break;
@@ -3801,9 +3805,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			pcard->rrscale = 0;
 			pcard->rlink_marker = 0;
 			pcard->is_real = false;
+			pcard->is_rreal = false;
 			pcard->effcode = 0;
 			pcard->namecode = 0;
 			pcard->realcardname = L"";
+			pcard->orealcardname = L"";
 			pcard->desc_hints.clear();
 			pcard->text_hints.clear();
 		}
@@ -3827,9 +3833,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					pcard->rrscale = rcard.rrscale;
 					pcard->rlink_marker = rcard.rlink_marker;
 					pcard->is_real = rcard.is_real;
+					pcard->is_rreal = rcard.is_rreal;
 					pcard->effcode = rcard.effcode;
 					pcard->namecode = rcard.namecode;
 					pcard->realcardname = rcard.realcardname;
+					pcard->orealcardname = rcard.orealcardname;
 					pcard->text_hints = rcard.text_hints;
 					hand_real.erase(hand_real.begin() + i);
 					break;
@@ -3872,9 +3880,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				pcard->rrscale = 0;
 				pcard->rlink_marker = 0;
 				pcard->is_real = false;
+				pcard->is_rreal = false;
 				pcard->effcode = 0;
 				pcard->namecode = 0;
 				pcard->realcardname = L"";
+				pcard->orealcardname = L"";
 				pcard->desc_hints.clear();
 				pcard->text_hints.clear();
 			}
@@ -3922,9 +3932,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					pcard->rrscale = rcard.rrscale;
 					pcard->rlink_marker = rcard.rlink_marker;
 					pcard->is_real = rcard.is_real;
+					pcard->is_rreal = rcard.is_rreal;
 					pcard->effcode = rcard.effcode;
 					pcard->namecode = rcard.namecode;
 					pcard->realcardname = rcard.realcardname;
+					pcard->orealcardname = rcard.orealcardname;
 					pcard->text_hints = rcard.text_hints;
 					extra_real.erase(extra_real.begin() + i);
 					break;
@@ -4042,9 +4054,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mc[i]->rrscale = 0;
 			mc[i]->rlink_marker = 0;
 			mc[i]->is_real = false;
+			mc[i]->is_rreal = false;
 			mc[i]->effcode = 0;
 			mc[i]->namecode = 0;
 			mc[i]->realcardname = L"";
+			mc[i]->orealcardname = L"";
 			mc[i]->desc_hints.clear();
 			mc[i]->text_hints.clear();
 		}
@@ -4064,9 +4078,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					mc[i]->rrscale = rcard.rrscale;
 					mc[i]->rlink_marker = rcard.rlink_marker;
 					mc[i]->is_real = rcard.is_real;
+					mc[i]->is_rreal = rcard.is_rreal;
 					mc[i]->effcode = rcard.effcode;
 					mc[i]->namecode = rcard.namecode;
 					mc[i]->realcardname = rcard.realcardname;
+					mc[i]->orealcardname = rcard.orealcardname;
 					mc[i]->text_hints = rcard.text_hints;
 					real.erase(real.begin() + i);
 					break;
@@ -4251,7 +4267,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         ClientCard* ocard = mainGame->dField.GetCard(current2.controler, current2.location, current2.sequence);
         if(current2.location & LOCATION_OVERLAY)
             ocard = mainGame->dField.GetCard(current2.controler, current2.location & (~LOCATION_OVERLAY) & 0xff, current2.sequence);
-		auto orealcardname = ocard ? ocard->realcardname : L"";
 		current.controler = mainGame->LocalPlayer(current.controler);
 		if(!(current.location & LOCATION_OVERLAY)) {
 			ClientCard* pcard = mainGame->dField.GetCard(current.controler, current.location, current.sequence);
@@ -4274,14 +4289,16 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			pcard->rlscale = lscale;
 			pcard->rrscale = rscale;
 			pcard->rlink_marker = link_marker;
+			pcard->orealcardname = ocard ? ocard->realcardname : L"";
 			if(realcode > 0) {
 				pcard->is_real = true;
 				pcard->effcode = effcode;
 				pcard->namecode = namecode;
 				if(namecode > 0) {
-					if(ocard)
-						pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), orealcardname);
-					else
+					if(ocard) {
+						pcard->is_rreal = true;
+						pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), pcard->orealcardname);
+					} else
 						pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), gDataManager->GetOriginalName(code, true));
 				}
                 if(pcard != ocard)
@@ -4292,8 +4309,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                         pcard->text_hints.insert(pcard->text_hints.begin(), text);
                 } else if(ocard)
                     pcard->text_hints = ocard->text_hints;
-			} else
+			} else{
 				pcard->is_real = false;
+				pcard->is_rreal = false;
+			}
 		} else {
 			ClientCard* olcard = mainGame->dField.GetCard(current.controler, current.location & (~LOCATION_OVERLAY) & 0xff, current.sequence);
 			ClientCard* pcard = olcard->overlayed[current.position];
@@ -4316,14 +4335,16 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			pcard->rlscale = lscale;
 			pcard->rrscale = rscale;
 			pcard->rlink_marker = link_marker;
+			pcard->orealcardname = ocard ? ocard->realcardname : L"";
 			if(realcode > 0) {
 				pcard->is_real = true;
 				pcard->effcode = effcode;
 				pcard->namecode = namecode;
 				if(namecode > 0) {
-					if(ocard)
-						pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), orealcardname);
-					else
+					if(ocard) {
+						pcard->is_rreal = true;
+						pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), pcard->orealcardname);
+					} else
 						pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), gDataManager->GetOriginalName(code, true));
 				}
                 if(pcard != ocard)
@@ -4334,8 +4355,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                         pcard->text_hints.insert(pcard->text_hints.begin(), text);
                 } else if(ocard)
                     pcard->text_hints = ocard->text_hints;
-			} else
+			} else {
 				pcard->is_real = false;
+				pcard->is_rreal = false;
+			}
 		}
 		if(!mainGame->dInfo.isCatchingUp) {
 			mainGame->WaitFrameSignal(5, lock);

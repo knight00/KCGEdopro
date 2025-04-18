@@ -908,8 +908,7 @@ public:
 	float atk2dy2;
 	float atkdy3;
 	double angle = 0.0f;
-	uint32_t imgcardcode = 0;
-	uint32_t imgcardalias = 0;
+	uint32_t showingcardalias = 0;
     ////kdiy//////
 	int lpframe;
 	float lpd;

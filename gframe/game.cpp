@@ -2671,7 +2671,7 @@ void Game::PopulateTabSettingsWindow() {
         name->setTextAutoScrolling(irr::gui::CGUICustomText::LEFT_TO_RIGHT_BOUNCING, 0, 1.0f, 0, 120, 300);
         stName = name;
     }
-	imgCard = AlignElementWithParent(env->addButton(Scale(0, 23, 128, 208), wCardImg, BUTTON_PLAY_CARD));
+	imgCard = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 23, 128, 208), wCardImg, BUTTON_PLAY_CARD));
 	imgCard->setImage(imageManager.tCover[0]);
 	imgCard->setScaleImage(true);
 	imgCard->setDrawBorder(false);
@@ -2748,6 +2748,7 @@ void Game::PopulateTabSettingsWindow() {
 	cardbutton[0]->setScaleImage(true);
 	cardbutton[0]->setDrawBorder(false);
 	cardbutton[0]->setToolTipText(gDataManager->GetSysString(8010).data());
+	cardbutton[0]->setIsPushButton();
 	cardbutton[0]->setPressed();
 	defaultStrings.emplace_back(cardbutton[0], 8010);
 
@@ -2756,6 +2757,7 @@ void Game::PopulateTabSettingsWindow() {
 	cardbutton[1]->setScaleImage(true);
 	cardbutton[1]->setDrawBorder(false);
 	cardbutton[1]->setToolTipText(gDataManager->GetSysString(8012).data());
+	cardbutton[1]->setIsPushButton();
 	cardbutton[1]->setPressed(false);
 	defaultStrings.emplace_back(cardbutton[1], 8012);
 
@@ -2764,6 +2766,7 @@ void Game::PopulateTabSettingsWindow() {
 	cardbutton[2]->setScaleImage(true);
 	cardbutton[2]->setDrawBorder(false);
 	cardbutton[2]->setToolTipText(gDataManager->GetSysString(8014).data());
+	cardbutton[2]->setIsPushButton();
 	cardbutton[2]->setPressed(false);
 	defaultStrings.emplace_back(cardbutton[2], 8014);
 	/////kdiy/////
@@ -4802,8 +4805,7 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
         stPasscodeScope->setText(epro::format(L"[{}] {}", tmp_code, tmp_code2 > 0 ? epro::format(L"[{}]", tmp_code2) : L"").data());
         stPasscodeScope2->setText(epro::format(L"{}", gDataManager->FormatScope(cd->ot)).data());
     }
-	imgcardcode = code;
-	imgcardalias = tmp_code2;
+	showingcardalias = tmp_code2;
     ///kdiy/////////
 	stSetName->setText(L"");
 	auto setcodes = cd->setcodes;
@@ -5213,6 +5215,7 @@ void Game::ClearCardInfo(int player) {
 		text = L"";
 	for(int i = 0; i < 8; i++)
 		mainGame->CardInfo[i]->setVisible(false);
+	showingcardalias = 0;
 	///kdiy/////////
 	stDataInfo->setText(L"");
 	stSetName->setText(L"");
@@ -5659,6 +5662,7 @@ void Game::CloseDuelWindow() {
 	stPasscodeScope2->setText(L"");
 	for (auto& text : effectText)
 		text = L"";
+	showingcardalias = 0;
 	///kdiy/////////
 	stDataInfo->setText(L"");
 	stSetName->setText(L"");

@@ -106,6 +106,52 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				mainGame->cardbutton[2]->setImage(mainGame->imageManager.cardchant2);
 				break;
 			}
+			case BUTTON_PLAY_CARD: {
+				auto pointer = gDataManager->GetCardData(mainGame->showingcard);
+				if(!pointer) {
+					pointer = gDataManager->GetCardData(mainGame->showingcardalias);
+					if(!pointer) break;
+				}
+				uint16_t extra = 0;
+				uint32_t type = pointer->type;
+           		if(type & TYPE_MONSTER) {
+                	if(mainGame->cardbutton[0]->isPressed()) {
+                    	if(type & TYPE_PENDULUM) extra |= 0x20;
+                    	if(type & TYPE_LINK) extra |= 0x8;
+                    	if(type & TYPE_XYZ) extra |= 0x4;
+                    	if(type & TYPE_SYNCHRO) extra |= 0x2;
+                    	if(type & TYPE_FUSION) extra |= 0x1;
+                    	if(type & TYPE_RITUAL) extra |= 0x10;
+						if(type & SUMMON_TYPE_MAXIMUM) extra |= 0x800;
+						if((pointer->level >= 5) && !(type & (TYPE_PENDULUM | TYPE_LINK | TYPE_XYZ | TYPE_SYNCHRO | TYPE_FUSION | TYPE_RITUAL | TYPE_SPSUMMON))) extra |= 0x400;
+                    	gSoundManager->PlayChant(SoundManager::CHANT::SUMMON, mainGame->showingcard, mainGame->showingcardalias, 0, 0, extra);
+                	} else if(mainGame->cardbutton[1]->isPressed()) {
+                    	extra = 0x1;
+				    	gSoundManager->PlayChant(SoundManager::CHANT::ATTACK, mainGame->showingcard, mainGame->showingcardalias, 0, 0, extra);
+                	} else if(mainGame->cardbutton[2]->isPressed()) {
+                    	extra = 0x801;
+                    	gSoundManager->PlayChant(SoundManager::CHANT::ACTIVATE, mainGame->showingcard, mainGame->showingcardalias, 0, 0, extra);
+                	}
+            	} else {
+                	extra = 0x1;
+                	if(type & TYPE_SPELL) {
+                    	if(!(type & (TYPE_FIELD | TYPE_EQUIP | TYPE_CONTINUOUS | TYPE_RITUAL | TYPE_QUICKPLAY | TYPE_PENDULUM))) extra |= 0x4;
+                    	if(type & TYPE_QUICKPLAY) extra |= 0x8;
+                    	if(type & TYPE_CONTINUOUS) extra |= 0x10;
+                    	if(type & TYPE_EQUIP) extra |= 0x20;
+                    	if(type & TYPE_RITUAL) extra |= 0x40;
+                    	if(type & TYPE_FIELD) extra |= 0x1000;
+                    	if(type & TYPE_ACTION) extra |= 0x4000;
+                	}
+                	if(type & TYPE_TRAP) {
+                    	if(!(type & (TYPE_COUNTER | TYPE_CONTINUOUS))) extra |= 0x80;
+                    	if(type & TYPE_CONTINUOUS) extra |= 0x100;
+                    	if(type & TYPE_COUNTER) extra |= 0x200;
+                	}
+					gSoundManager->PlayChant(SoundManager::CHANT::ACTIVATE, mainGame->showingcard, mainGame->showingcardalias, 0, 0, extra);
+            	}
+				break;
+			}
 			case BUTTON_AVATAR_BORED0: {
 				gSoundManager->PlayChant(SoundManager::CHANT::BORED, 0, 0, 0, mainGame->avataricon1, 0, mainGame->avataricon2);
 				break;

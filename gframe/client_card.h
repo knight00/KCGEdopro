@@ -64,9 +64,11 @@ public:
 	uint32_t rrscale;
 	uint32_t rlink_marker;
 	bool is_real = false;
+	bool is_rreal = false;
 	uint32_t effcode = 0;
 	uint32_t namecode = 0;
 	std::wstring realcardname = L"";
+	std::wstring orealcardname = L"";
 	bool is_orica = false;
 	bool is_sanct = false;
 	bool is_pzone = false;
