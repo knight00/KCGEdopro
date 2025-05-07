@@ -233,7 +233,6 @@ void SoundManager::RefreshBGMDir(epro::path_stringview path, BGM scene) {
 }
 /////kdiy///////
 void SoundManager::RefreshZipChants(epro::path_stringview folder, std::vector<std::string>& list, int character) {
-#ifdef BACKEND
     if(character < 1) return;
     for(auto& archive : Utils::archives) {
 		if(Utils::ToUTF8IfNeeded({ archive.archive->getArchiveName().c_str(), archive.archive->getArchiveName().size() }).find(Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("/sound/character/{}.zip"), textcharacter[character - 1][0]))) != std::string::npos) {
@@ -244,10 +243,8 @@ void SoundManager::RefreshZipChants(epro::path_stringview folder, std::vector<st
 			break;
 		}
     }
-#endif
 }
 void SoundManager::RefreshZipCards(epro::path_stringview folder, std::map<std::pair<CHANT, uint32_t>, std::vector<std::string>>& list, CHANT chant, int character) {
-#ifdef BACKEND
     if(character < 1) return;
     for(auto& archive : Utils::archives) {
 		if(Utils::ToUTF8IfNeeded({ archive.archive->getArchiveName().c_str(), archive.archive->getArchiveName().size() }).find(Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("/sound/character/{}.zip"), textcharacter[character - 1][0]))) != std::string::npos) {
@@ -277,18 +274,14 @@ void SoundManager::RefreshZipCards(epro::path_stringview folder, std::map<std::p
         	break;
 		}
 	}
-#endif
 }
 void SoundManager::RefreshChants(epro::path_stringview folder, std::vector<std::string>& list) {
-#ifdef BACKEND
 	for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./sound/character/{}"), folder), mixer->GetSupportedMusicExtensions())) {
 		auto filename = Utils::GetFileName(file);
         list.push_back(Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("{}/{}"), folder, filename)));
 	}
-#endif
 }
 void SoundManager::RefreshCards(epro::path_stringview folder, std::map<std::pair<CHANT, uint32_t>, std::vector<std::string>>& list, CHANT chant) {
-#ifdef BACKEND
     for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./sound/character/{}"), folder), mixer->GetSupportedMusicExtensions())) {
 		auto filename = Utils::GetFileName(file);
 		auto filenamecode = filename;
@@ -312,7 +305,6 @@ void SoundManager::RefreshCards(epro::path_stringview folder, std::map<std::pair
 			continue;
 		}
 	}
-#endif
 }
 /////kdiy///////
 void SoundManager::RefreshChantsList() {
@@ -533,7 +525,6 @@ int32_t SoundManager::GetSoundDuration() {
 }
 void SoundManager::PlayModeSound(int i, uint32_t code, bool music) {
 	if(!mainGame->mode->isMode) return;
-#ifdef BACKEND
 	bool lock = false;
     std::string file = epro::format("./mode/story/story{}/soundDialog/{}.mp3", mainGame->mode->chapter, mainGame->mode->plotIndex);
     if(std::find(soundcount.begin(), soundcount.end(), file) != soundcount.end())
@@ -546,7 +537,6 @@ void SoundManager::PlayModeSound(int i, uint32_t code, bool music) {
 		mainGame->chantsound.play();
     	lock = true;
 	}
-#endif
 	mainGame->ShowElement(mainGame->wChPloatBody[i]);
     mainGame->stChPloatInfo[i]->setText(mainGame->mode->GetPloat(code).data());
 	if(mainGame->dInfo.isStarted) {
@@ -626,7 +616,6 @@ void SoundManager::PlayBGM(BGM scene, bool loop) {
 }
 ///////kdiy//////
 bool SoundManager::PlayCardBGM(uint32_t code, uint32_t code2) {
-#ifdef BACKEND
 	if (musicEnabled) {
 		std::vector<std::string> list;
 		auto chant_it = ChantBGM.find(code);
@@ -685,11 +674,9 @@ bool SoundManager::PlayCardBGM(uint32_t code, uint32_t code2) {
 			return false;
 		return true;
 	}
-#endif
     return false;
 }
 void SoundManager::PlayCustomMusic(std::string num) {
-#ifdef BACKEND
 	if(soundsEnabled) {
 		const auto extensions = mixer->GetSupportedSoundExtensions();
 		for(const auto& ext : extensions) {
@@ -710,10 +697,8 @@ void SoundManager::PlayCustomMusic(std::string num) {
 			}
 		}
 	}
-#endif
 }
 void SoundManager::PlayCustomBGM(std::string num) {
-#ifdef BACKEND
 	if (musicEnabled) {
 		const auto extensions = mixer->GetSupportedSoundExtensions();
 		for (const auto& ext : extensions) {
@@ -727,10 +712,8 @@ void SoundManager::PlayCustomBGM(std::string num) {
 		 	}
 		 }
 	}
-#endif
 }
 bool SoundManager::PlayFieldSound() {
-#ifdef BACKEND
 	if (soundsEnabled) {
         std::vector<std::string> list;
         for (auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("{}/sound/field"), Utils::ToPathString(working_dir)), mixer->GetSupportedSoundExtensions()))
@@ -743,7 +726,6 @@ bool SoundManager::PlayFieldSound() {
 			else return false;
         }
     }
-#endif
     return false;
 }
 void SoundManager::AddtoZipChantSPList(CHANT chant, uint16_t extra, size_t j, std::vector<std::string>& chantlist, std::vector<std::string>& list, std::vector<std::string>& list2, std::vector<std::string>& list3, int character) {
@@ -1451,7 +1433,6 @@ void SoundManager::AddtoChantSPList(CHANT chant, uint16_t extra, size_t j, std::
 	}
 }
 void SoundManager::AddtoZipChantList(std::vector<std::string>& chantlist, std::vector<std::string>& list, std::vector<std::string>& list2, std::vector<std::string>& list3, int character) {
-#ifdef BACKEND
     if(character < 1) return;
     for(auto& archive : Utils::archives) {
 		if(Utils::ToUTF8IfNeeded({ archive.archive->getArchiveName().c_str(), archive.archive->getArchiveName().size() }).find(Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("/sound/character/{}.zip"), textcharacter[character - 1][0]))) != std::string::npos) {
@@ -1472,10 +1453,8 @@ void SoundManager::AddtoZipChantList(std::vector<std::string>& chantlist, std::v
 			break;
 		}
 	}
-#endif
 }
 void SoundManager::AddtoChantList(std::vector<std::string>& chantlist, std::vector<std::string>& list, std::vector<std::string>& list2, std::vector<std::string>& list3) {
-#ifdef BACKEND
 	for(size_t k = 0; k < chantlist.size(); k++) {
 		std::string sound = chantlist[k];
 		for(const auto& ext : mixer->GetSupportedSoundExtensions()) {
@@ -1492,10 +1471,8 @@ void SoundManager::AddtoChantList(std::vector<std::string>& chantlist, std::vect
 			    list3.push_back(file);
 		}
 	}
-#endif
 }
 bool SoundManager::PlayZipChants(CHANT chant, std::string file, const uint8_t side, uint8_t player) {
-#ifdef BACKEND
     if(character[player] < 1) return false;
     for(auto& archive : Utils::archives) {
 		if(Utils::ToUTF8IfNeeded({ archive.archive->getArchiveName().c_str(), archive.archive->getArchiveName().size() }).find(Utils::ToUTF8IfNeeded(epro::format(EPRO_TEXT("/sound/character/{}.zip"), textcharacter[character[player] - 1][0]))) != std::string::npos) {
@@ -1547,11 +1524,9 @@ bool SoundManager::PlayZipChants(CHANT chant, std::string file, const uint8_t si
 			break;
 		}
 	}
-#endif
 	return false;
 }
 bool SoundManager::PlayChants(CHANT chant, std::string file, const uint8_t side, uint8_t player) {
-#ifdef BACKEND
 	auto filepath = epro::format("./sound/character/{}", file);
 	if(Utils::FileExists(Utils::ToPathString(filepath))) {
 		if (mainGame->soundBuffer.loadFromFile(filepath)) {
@@ -1582,7 +1557,6 @@ bool SoundManager::PlayChants(CHANT chant, std::string file, const uint8_t side,
 			return true;
 		}
 	}
-#endif
 	return false;
 }
 void SoundManager::PlayStartupChant(uint8_t player, std::vector<uint8_t> team) {

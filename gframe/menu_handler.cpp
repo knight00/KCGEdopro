@@ -1502,9 +1502,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					const auto selected = mainGame->cbDeckSelect->getSelected();
 					///////kdiy////
 					//if(selected == -1 ||
-					    !mainGame->deckBuilder.SetCurrentDeckFromFile(
-						   Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected)), false,
-						   mainGame->dInfo.HasFieldFlag(DUEL_EXTRA_DECK_RITUAL) ? RITUAL_LOCATION::EXTRA : RITUAL_LOCATION::MAIN)) {
+					    //!mainGame->deckBuilder.SetCurrentDeckFromFile(
+						   //Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected)), false,
+						   //mainGame->dInfo.HasFieldFlag(DUEL_EXTRA_DECK_RITUAL) ? RITUAL_LOCATION::EXTRA : RITUAL_LOCATION::MAIN)) {
 					auto folder = Utils::ToPathString(mainGame->cbDeck2Select->getItem(mainGame->cbDeck2Select->getSelected()));
 					if(mainGame->cbDeck2Select->getSelected() == -1 || selected == -1 ||
 						!mainGame->deckBuilder.SetCurrentDeckFromFile(
