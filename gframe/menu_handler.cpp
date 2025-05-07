@@ -122,6 +122,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 		if(mainGame->wMessage->isVisible() && id != BUTTON_MSG_OK &&
 		   prev_operation != ACTION_UPDATE_PROMPT
 		   && prev_operation != ACTION_SHOW_CHANGELOG
+		   && prev_operation != ACTION_ACKNOWLEDGE_HOST
 #if EDOPRO_LINUX && (IRRLICHT_VERSION_MAJOR==1 && IRRLICHT_VERSION_MINOR==9)
 		   && prev_operation != ACTION_TRY_WAYLAND
 #endif
@@ -679,9 +680,12 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				//////kdiy/////
 				//if(selected == -1)
 					//break;
-				//if(!mainGame->deckBuilder.SetCurrentDeckFromFile(Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected))))
+				//if(!mainGame->deckBuilder.SetCurrentDeckFromFile(Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected)), false,
+																//  mainGame->dInfo.HasFieldFlag(DUEL_EXTRA_DECK_RITUAL) ? RITUAL_LOCATION::EXTRA : RITUAL_LOCATION::MAIN))
 				auto folder = Utils::ToPathString(mainGame->cbDeck2Select->getItem(mainGame->cbDeck2Select->getSelected()));
-				if(mainGame->cbDeck2Select->getSelected() == -1 || selected == -1 || !mainGame->deckBuilder.SetCurrentDeckFromFile(folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected))))
+				if(mainGame->cbDeck2Select->getSelected() == -1 || selected == -1 || 
+					!mainGame->deckBuilder.SetCurrentDeckFromFile(folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected)), false,
+					   mainGame->dInfo.HasFieldFlag(DUEL_EXTRA_DECK_RITUAL) ? RITUAL_LOCATION::EXTRA : RITUAL_LOCATION::MAIN))
 				//////kdiy/////
 					break;
 				UpdateDeck();
@@ -1497,9 +1501,15 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				if(static_cast<irr::gui::IGUICheckBox*>(caller)->isChecked()) {
 					const auto selected = mainGame->cbDeckSelect->getSelected();
 					///////kdiy////
-					//if(selected == -1 || !mainGame->deckBuilder.SetCurrentDeckFromFile(Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected)))) {
+					//if(selected == -1 ||
+					    !mainGame->deckBuilder.SetCurrentDeckFromFile(
+						   Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected)), false,
+						   mainGame->dInfo.HasFieldFlag(DUEL_EXTRA_DECK_RITUAL) ? RITUAL_LOCATION::EXTRA : RITUAL_LOCATION::MAIN)) {
 					auto folder = Utils::ToPathString(mainGame->cbDeck2Select->getItem(mainGame->cbDeck2Select->getSelected()));
-					if(mainGame->cbDeck2Select->getSelected() == -1 || selected == -1 || !mainGame->deckBuilder.SetCurrentDeckFromFile(folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected)))) {
+					if(mainGame->cbDeck2Select->getSelected() == -1 || selected == -1 ||
+						!mainGame->deckBuilder.SetCurrentDeckFromFile(
+						   folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected)), false,
+						   mainGame->dInfo.HasFieldFlag(DUEL_EXTRA_DECK_RITUAL) ? RITUAL_LOCATION::EXTRA : RITUAL_LOCATION::MAIN)) {
 					///////kdiy////
 						static_cast<irr::gui::IGUICheckBox*>(caller)->setChecked(false);
 						break;

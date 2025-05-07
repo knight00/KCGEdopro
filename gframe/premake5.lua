@@ -46,7 +46,7 @@ local ygopro_config=function(static_core)
 	if _OPTIONS["covers"] then
 		defines { "DEFAULT_COVER_URL=" .. _OPTIONS["covers"] }
 	end
-	if _OPTIONS["discord"] then
+	if _OPTIONS["discord"] and not os.istarget("ios") then
 		defines { "DISCORD_APP_ID=" .. _OPTIONS["discord"] }
 	end
 	if _OPTIONS["update-url"] then
@@ -92,14 +92,14 @@ local ygopro_config=function(static_core)
 			links { "CoreAudio.framework", "AudioToolbox.framework", "CoreVideo.framework", "ForceFeedback.framework", "Carbon.framework" }
 		filter {}
 	end
-	if _OPTIONS["sound"] then
-		if _OPTIONS["sound"]=="irrklang" then
+	if next(sounds) ~= nil then
+		if sounds.irrklang then
 			defines "YGOPRO_USE_IRRKLANG"
 			_includedirs "../irrKlang/include"
 			files "SoundBackends/irrklang/**"
 			filter {}
 		end
-		if _OPTIONS["sound"]=="sdl-mixer" then
+		if sounds["sdl-mixer"] then
 			defines "YGOPRO_USE_SDL_MIXER"
 			files "SoundBackends/sdlmixer/**"
 			filter "system:windows"
@@ -114,7 +114,7 @@ local ygopro_config=function(static_core)
 				links { "CoreAudio.framework", "AudioToolbox.framework", "CoreVideo.framework", "ForceFeedback.framework", "Carbon.framework" }
 			filter {}
 		end
-		if _OPTIONS["sound"]=="sfml" then
+		if sounds.sfml then
 			defines "YGOPRO_USE_SFML"
 			files "SoundBackends/sfml/**"
 			_includedirs "../sfAudio/include"
@@ -135,7 +135,7 @@ local ygopro_config=function(static_core)
 				end
 			filter {}
 		end
-		if _OPTIONS["sound"]=="miniaudio" then
+		if sounds.miniaudio then
 			defines "YGOPRO_USE_MINIAUDIO"
 			files "SoundBackends/miniaudio/**"
 			filter { "system:ios", "files:**sound_miniaudio.cpp" }
@@ -149,9 +149,7 @@ local ygopro_config=function(static_core)
 				links { "AVFoundation.framework" }
 			filter {}
 		end
-		if _OPTIONS["sound"] then
-			files "SoundBackends/sound_threaded_backend.*"
-		end
+		files "SoundBackends/sound_threaded_backend.*"
 	end
 
 	filter "system:windows"
@@ -170,7 +168,7 @@ local ygopro_config=function(static_core)
 		defines "IRR_COMPILE_WITH_DX9_DEV_PACK"
 
 	filter "system:not windows"
-		if _OPTIONS["discord"] then
+		if _OPTIONS["discord"] and not os.istarget("ios") then
 			links "discord-rpc"
 		end
 		links { "sqlite3", "event", "event_pthreads", "dl", "git2", "ssh2" }
@@ -264,7 +262,7 @@ local ygopro_config=function(static_core)
 end
 
 include "lzma/."
-if _OPTIONS["sound"]=="sfml" then
+if sounds.sfml then
 	include "../sfAudio"
 end
 

@@ -192,7 +192,22 @@ DataHandler::DataHandler() {
 	LoadZipArchives();
 	deckManager = std::make_unique<DeckManager>();
 	gitManager = std::make_unique<RepoManager>();
-	sounds = std::make_unique<SoundManager>(configs->soundVolume / 100.0, configs->musicVolume / 100.0, configs->enablesound, configs->enablemusic);
+	auto sound_backend = SoundManager::DEFAULT;
+	if constexpr(SoundManager::HasMultipleBackends()) {
+		auto sound_backend_valid = [wanted_backend = configs->sound_backend]() -> bool {
+			for(const auto& backend : SoundManager::GetSupportedBackends()) {
+				if(backend == wanted_backend)
+					return true;
+			}
+			return false;
+		}();
+		if(!sound_backend_valid) {
+			auto old = std::exchange(configs->sound_backend, SoundManager::DEFAULT);
+			epro::print("Wanted {} audio backend but not supported, using {} instead\n", old, SoundManager::GetDefaultBackend());
+		}
+		sound_backend = configs->sound_backend;
+	}
+	sounds = std::make_unique<SoundManager>(configs->soundVolume / 100.0, configs->musicVolume / 100.0, configs->enablesound, configs->enablemusic, sound_backend);
 	gitManager->ToggleReadOnly(cli_args[REPOS_READ_ONLY].enabled);
 	////kdiy//////////
 	if(Utils::FileExists(EPRO_TEXT("./config/user_configs.json")))

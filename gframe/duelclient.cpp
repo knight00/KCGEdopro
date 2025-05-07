@@ -1512,14 +1512,18 @@ bool DuelClient::CheckReady() {
 	bool ready1 = false, ready2 = false;
 	for(int i = 0; i < mainGame->dInfo.team1; i++) {
 		if(mainGame->stHostPrepDuelist[i]->getText()[0]) {
-			ready1 = mainGame->chkHostPrepReady[i]->isChecked();
+			if(ready1 = mainGame->chkHostPrepReady[i]->isChecked(); !ready1) {
+				return false;
+			}
 		} else if(!mainGame->dInfo.isRelay) {
 			return false;
 		}
 	}
 	for(int i = mainGame->dInfo.team1; i < mainGame->dInfo.team1 + mainGame->dInfo.team2; i++) {
 		if(mainGame->stHostPrepDuelist[i]->getText()[0]) {
-			ready2 = mainGame->chkHostPrepReady[i]->isChecked();
+			if(ready2 = mainGame->chkHostPrepReady[i]->isChecked(); !ready2) {
+				return false;
+			}
 		} else if(!mainGame->dInfo.isRelay) {
 			return false;
 		}
@@ -6373,7 +6377,6 @@ int DuelClient::RefreshThread(event_base* broadev) {
 }
 void DuelClient::BroadcastReply(evutil_socket_t fd, short events, void* arg) {
 	if(events & EV_TIMEOUT) {
-		evutil_closesocket(fd);
 		event_base_loopbreak((event_base*)arg);
 		if(!is_closing)
 			mainGame->btnLanRefresh->setEnabled(true);

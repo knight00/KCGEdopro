@@ -55,12 +55,12 @@ public:
 	const Deck& GetCurrentDeck() const {
 		return current_deck;
 	}
-    ////////kdiy///////////
-	const Deck& GetOpponentDeck() const {
+	 ////////kdiy///////////
+	 const Deck& GetOpponentDeck() const {
 		return opponentdeck;
 	}
     ////////kdiy///////////
-	bool SetCurrentDeckFromFile(epro::path_stringview file, bool separated = false);
+	bool SetCurrentDeckFromFile(epro::path_stringview file, bool separated = false, RITUAL_LOCATION rituals_in_extra = RITUAL_LOCATION::DEFAULT);
 	void SetCurrentDeck(Deck new_deck) {
 		current_deck = std::move(new_deck);
 		RefreshLimitationStatus();
