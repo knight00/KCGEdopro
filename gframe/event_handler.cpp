@@ -2549,10 +2549,13 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			}
             case CHECKBOX_VWALLPAPER:{
 				gGameConfig->videowallpaper = mainGame->gSettings.chkVideowallpaper->isChecked();
+				mainGame->gSettings.cbVideowallpaper->setEnabled(gGameConfig->videowallpaper);
+				mainGame->gSettings.chkRandomVideowallpaper->setEnabled(gGameConfig->videowallpaper);
 				return true;
 			}
             case CHECKBOX_RANDOM_VWALLPAPER:{
 				gGameConfig->randomvideowallpaper = mainGame->gSettings.chkRandomVideowallpaper->isChecked();
+				if(gGameConfig->randomvideowallpaper) mainGame->imageManager.GetRandomVWallpaper();
 				return true;
 			}
             case CHECKBOX_CLOSEUP:{
@@ -2805,6 +2808,13 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 					mainGame->driver->removeTexture(tTexture);
 					tTexture = nullptr;
 				}
+				return true;
+			}
+			case COMBOBOX_VIDEO_WALLPAPER: {
+				int selected = mainGame->gSettings.cbVideowallpaper->getSelected();
+				if (selected < 0) return true;
+				gGameConfig->videowallpapertexture = Utils::ToUTF8IfNeeded(mainGame->gSettings.cbVideowallpaper->getItem(selected));
+				mainGame->videowallpaper_path = "wallpaper/" + gGameConfig->videowallpapertexture;
 				return true;
 			}
 			///kdiy///////

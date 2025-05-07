@@ -118,6 +118,7 @@ struct SettingsWindow {
     irr::gui::IGUIWindow* wRandomWallpaper;
 	irr::gui::IGUICheckBox* chkRandomwallpaper;
 	irr::gui::IGUICheckBox* chkVideowallpaper;
+	irr::gui::IGUIComboBox* cbVideowallpaper;
 	irr::gui::IGUICheckBox* chkRandomVideowallpaper;
 	irr::gui::IGUICheckBox* chktexture[20];
 	irr::gui::IGUIComboBox* cbName_texture[20];

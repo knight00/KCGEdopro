@@ -3015,7 +3015,7 @@ void Game::PopulateSettingsWindow() {
 		gSettings.stCurrentFont = env->addStaticText(gDataManager->GetSysString(8016).data(), GetCurrentRectWithXOffset(15, 90), false, true, sPanel);
 		defaultStrings.emplace_back(gSettings.stCurrentFont, 8016);
 		gSettings.cbCurrentFont = AddComboBox(env, GetCurrentRectWithXOffset(95, 250), sPanel, COMBOBOX_CURRENT_FONT);
-		for(auto& font : Utils::FindFiles(EPRO_TEXT("./fonts/"), { EPRO_TEXT("ttf"), EPRO_TEXT("otf") })) {
+		for(const auto& font : Utils::FindFiles(EPRO_TEXT("./fonts/"), { EPRO_TEXT("ttf"), EPRO_TEXT("otf") })) {
 			auto itemIndex = gSettings.cbCurrentFont->addItem(Utils::ToUnicodeIfNeeded(font).data());
 			if(Utils::ToPathString(gGameConfig->textfont.font.substr(6, gGameConfig->textfont.font.size() - 1)) == font)
 				gSettings.cbCurrentFont->setSelected(itemIndex);
@@ -3399,24 +3399,36 @@ void Game::PopulateSettingsWindow() {
         ReloadCBpic();
         cbpics->setSelected(gGameConfig->hdpic);
         IncrementXorY();
+		IncrementXorY();
 
 		gSettings.chkRandomtexture = env->addCheckBox(gGameConfig->randomtexture, GetNextRect(), sPanel, CHECKBOX_RANDOM_TEXTURE, gDataManager->GetSysString(8042).data());
 		defaultStrings.emplace_back(gSettings.chkRandomtexture, 8042);
 		gSettings.chkRandomwallpaper = env->addCheckBox(gGameConfig->randomwallpaper, GetNextRect(), sPanel, CHECKBOX_RANDOM_WALLPAPER, gDataManager->GetSysString(8094).data());
 		defaultStrings.emplace_back(gSettings.chkRandomwallpaper, 8094);
 
-		gSettings.chkVideowallpaper = env->addCheckBox(gGameConfig->videowallpaper, GetNextRect(), sPanel, CHECKBOX_VWALLPAPER, gDataManager->GetSysString(8091).data());
+		gSettings.chkVideowallpaper = env->addCheckBox(gGameConfig->videowallpaper, GetCurrentRectWithXOffset(15, 105), sPanel, CHECKBOX_VWALLPAPER, gDataManager->GetSysString(8091).data());
 		defaultStrings.emplace_back(gSettings.chkVideowallpaper, 8091);
+		gSettings.chkVideowallpaper->setChecked(gGameConfig->videowallpaper);
+		gSettings.cbVideowallpaper = AddComboBox(env, GetCurrentRectWithXOffset(150, 320), sPanel, COMBOBOX_VIDEO_WALLPAPER);
+		bool chkvwallpaper = false;
+		for(const auto& vwallpaper : Utils::FindFiles(EPRO_TEXT("./movies/wallpaper/"), { EPRO_TEXT("mp4"), EPRO_TEXT("mkv"), EPRO_TEXT("avi") })) {
+			auto itemIndex = gSettings.cbVideowallpaper->addItem(Utils::ToUnicodeIfNeeded(vwallpaper).data());
+			if(Utils::ToPathString(gGameConfig->videowallpapertexture) == vwallpaper) {
+				gSettings.cbVideowallpaper->setSelected(itemIndex);
+				chkvwallpaper = true;
+			}
+		}
+		if(!chkvwallpaper) {
+			gSettings.cbVideowallpaper->setSelected(0);
+			gGameConfig->videowallpapertexture = Utils::ToUTF8IfNeeded(gSettings.cbVideowallpaper->getItem(gSettings.cbVideowallpaper->getSelected()));
+		}
+		if(!gGameConfig->randomvideowallpaper) videowallpaper_path = "wallpaper/" + gGameConfig->videowallpapertexture;
+		gSettings.cbVideowallpaper->setEnabled(gGameConfig->videowallpaper);
 		IncrementXorY();
-		gSettings.chkRandomVideowallpaper = env->addCheckBox(gGameConfig->randomvideowallpaper, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_RANDOM_VWALLPAPER, gDataManager->GetSysString(8092).data());
+		gSettings.chkRandomVideowallpaper = env->addCheckBox(gGameConfig->randomvideowallpaper, GetNextRect(), sPanel, CHECKBOX_RANDOM_VWALLPAPER, gDataManager->GetSysString(8092).data());
 		defaultStrings.emplace_back(gSettings.chkRandomVideowallpaper, 8092);
-		///ktemp//////
-		gSettings.chkVideowallpaper->setEnabled(false);
-		gSettings.chkVideowallpaper->setChecked(false);
-		gSettings.chkRandomVideowallpaper->setEnabled(false);
-		gSettings.chkRandomVideowallpaper->setChecked(false);
-		///ktemp//////
-		IncrementXorY();
+		gSettings.chkRandomVideowallpaper->setChecked(gGameConfig->randomvideowallpaper);
+		gSettings.chkRandomVideowallpaper->setEnabled(gGameConfig->videowallpaper);
 
 		gSettings.chkCloseup = env->addCheckBox(gGameConfig->closeup, GetNextRect(), sPanel, CHECKBOX_CLOSEUP, gDataManager->GetSysString(8043).data());
 		defaultStrings.emplace_back(gSettings.chkCloseup, 8043);
@@ -3880,11 +3892,9 @@ bool Game::MainLoop() {
 				SetCentered(wQuery);
 				PopupElement(wQuery);
 				/////kdiy/////
-#ifdef VIP
                 wMainMenu->setVisible(false);
 				btnNo->setVisible(false);
 				btnNo->setEnabled(false);
-#endif
 				/////kdiy/////
 				update_prompted = true;
 			} else if (show_changelog) {
@@ -4451,6 +4461,8 @@ void Game::SaveConfig() {
 	gGameConfig->duelrule = cbDuelRule2->getSelected();
 	gGameConfig->randomtexture = gSettings.chkRandomtexture->isChecked();
 	gGameConfig->randomwallpaper = gSettings.chkRandomwallpaper->isChecked();
+	gGameConfig->videowallpaper = gSettings.chkVideowallpaper->isChecked();
+	gGameConfig->randomvideowallpaper = gSettings.chkRandomVideowallpaper->isChecked();
 	gGameConfig->closeup = gSettings.chkCloseup->isChecked();
 	gGameConfig->painting = gSettings.chkPainting->isChecked();
 	gGameConfig->chkField = gSettings.chktField->isChecked();
@@ -5226,6 +5238,7 @@ void Game::ClearCardInfo(int player) {
 }
 ///kdiy/////////
 bool Game::openVideo(std::string filename) {
+	filename = "./movies/" + filename;
 	if(!Utils::FileExists(Utils::ToPathString(filename))) {
 		isAnime = false;
 		return false;
@@ -5242,6 +5255,10 @@ bool Game::openVideo(std::string filename) {
 		if (avformat_open_input(&formatCtx, filename.c_str(), nullptr, nullptr) != 0) {
 			isAnime = false;
 			return false;
+		}
+		if(videotexture) {
+			driver->removeTexture(videotexture);
+			videotexture = nullptr;
 		}
 		avformat_open_input(&formatCtx2, filename.c_str(), nullptr, nullptr);
 		if (avformat_find_stream_info(formatCtx, nullptr) < 0) {
@@ -5288,27 +5305,14 @@ bool Game::openVideo(std::string filename) {
 		// wchar_t buffer[30];
 		// _snwprintf(buffer, sizeof(buffer) / sizeof(*buffer), L"%lf", (formatCtx->streams[audioStreamIndex]->codecpar->sample_rate));
 		// MessageBox(nullptr, buffer, TEXT("Message"), MB_OK);
-        // if(!cap.isOpened()) {
-        //     cap.open(videoname);
-        //     if(!cap.isOpened()) {
-        //         //double vfps = cap.get(cv::CAP_PROP_FPS);
-        //         //totalFrames = cap.get(cv::CAP_PROP_FRAME_COUNT);
-        //         //double duration = (totalFrames / vfps) * 1000;
-        //     // } else {
-        //         StopVideo();
-        //         return false;
-        //     }
-        //     if(!cap.read(frame)) {
-        //         StopVideo();
-        //         return false;
-        //     }
-        //     cap.set(cv::CAP_PROP_POS_FRAMES, 0); // Ensure we start from the first frame
-        // }
     }
 	frameReady = false;
 	return true;
 }
 irr::video::ITexture* renderVideoFrame(irr::video::IVideoDriver* driver, AVCodecContext* videoCodecCtx, AVFrame* videoFrame) {
+	if (mainGame->videotexture) {
+		driver->removeTexture(mainGame->videotexture);
+	}
 	int width = videoFrame->width;
     int height = videoFrame->height;
 	std::vector<uint8_t> dstData(width * height * 4); // 4 bytes for RGBA
@@ -5338,9 +5342,13 @@ irr::video::ITexture* renderVideoFrame(irr::video::IVideoDriver* driver, AVCodec
 bool Game::PlayVideo(bool loop) {
     // Ensure a valid format context
 	if (formatCtx) {
-		if(videostart) timeAccumulated += static_cast<double>(delta_time) / 1000.0;
-		else timeAccumulated = videoFrameDuration;
-		while (timeAccumulated >= videoFrameDuration - 0.95) {
+		timeAccumulated += static_cast<double>(delta_time) / 1000.0;
+		static int frameCounter = 0;
+        // Determine frames to skip based on FPS ratio
+        int framesToSkip = 1;
+        // Variable for frame processing time
+        double frameRenderTime = 0.0;
+		while (timeAccumulated >= videoFrameDuration) {
 			if (av_read_frame(formatCtx, &packet) < 0) {
 				if(loop) {
 					av_seek_frame(formatCtx, videoStreamIndex, 0, AVSEEK_FLAG_BACKWARD);
@@ -5352,6 +5360,7 @@ bool Game::PlayVideo(bool loop) {
 				}
 			}
 			if (packet.stream_index == videoStreamIndex) {
+				auto startFrameProcessing = std::chrono::high_resolution_clock::now();
 				if (avcodec_send_packet(videoCodecCtx, &packet) < 0) {
 					av_packet_unref(&packet);
 					StopVideo();
@@ -5359,18 +5368,30 @@ bool Game::PlayVideo(bool loop) {
 				}
 				if (avcodec_receive_frame(videoCodecCtx, videoFrame) >= 0) {
 					frameReady = true;
-					lastVideoFrameTime += videoFrameDuration; // Keep track of when this frame will be displayed
 				}
+				av_packet_unref(&packet); // Clean up the packet
+				// Calculate the processing time of the frame
+            	auto endFrameProcessing = std::chrono::high_resolution_clock::now();
+            	std::chrono::duration<double> frameDuration = endFrameProcessing - startFrameProcessing;
+            	frameRenderTime = frameDuration.count();
+				// Frame skipping and lag handling logic
+				if (frameRenderTime > videoFrameDuration) {
+					// If rendering this frame is lagging behind, skip the frame
+					// Adjust timeAccumulated to not let it build up too much
+					timeAccumulated -= videoFrameDuration;
+				} else {
+					// Skip frames logic
+					if (frameCounter % framesToSkip == 0 && frameReady) {
+						videotexture = renderVideoFrame(driver, videoCodecCtx, videoFrame); // Render the frame
+						frameReady = false; // Reset frame flag
+					}
+				}
+				// Increment frame counter
+				frameCounter++;
+				timeAccumulated -= videoFrameDuration; // Adjust time after processing
+				videostart = true;
 			}
-			av_packet_unref(&packet); // Clean up the packet
-			timeAccumulated -= videoFrameDuration;
 		}
-		if (frameReady) {
-			if (videotexture) driver->removeTexture(videotexture); // Remove previous texture if it exists
-			videotexture = renderVideoFrame(driver, videoCodecCtx, videoFrame); // Render the frame
-			frameReady = false;
-		}
-		videostart = true;
 		if(isAnime && gGameConfig->animefull) {
 			wBtnShowCard->setVisible(false);
 			if(wCardImg->isVisible()) {
@@ -5435,31 +5456,6 @@ bool Game::PlayVideo(bool loop) {
 		return false;
 	}
 	return true;
-    // } else {
-	// 	irr::video::IImage* img = driver->createImageFromData(irr::video::ECF_R8G8B8, scale, rgbBuffer, true, false);
-    //     if(videotexture) driver->removeTexture(videotexture);
-    //     videotexture = driver->addTexture("VideoFrame", img);
-    //     img->drop();
-    //     delete[] rgbBuffer;
-    // }
-    // double currentFrame = cap.get(cv::CAP_PROP_POS_FRAMES);
-    // If the current frame is close to the total frame count, reset to the beginning
-    // if(loop && currentFrame >= totalFrames - 1)
-    //     cap.set(cv::CAP_PROP_POS_FRAMES, 0);
-    // bool capsuccess = cap.read(frame);
-    // if(capsuccess) {
-    //     //cv::flip(frame, frame, 0);
-    //     cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
-    //     irr::video::IImage* irrImage = driver->createImageFromData(irr::video::ECOLOR_FORMAT::ECF_R8G8B8, irr::core::dimension2d<irr::u32>(frame.cols, frame.rows), frame.data, true, false);
-    //     if(videotexture) driver->removeTexture(videotexture);
-    //     videotexture = driver->addTexture("video_frame", irrImage);
-    //     irrImage->drop();
-    // } else if(loop) {
-    //     cap.set(cv::CAP_PROP_POS_FRAMES, 0);
-    // } else if(!loop) {
-    //     StopVideo();
-    //     return false;
-    // }
 }
 void Game::StopVideo(bool close, bool reset) {
 	videostart = false;
@@ -5505,7 +5501,6 @@ void Game::StopVideo(bool close, bool reset) {
     if(reset) {
         isAnime = false;
     }
-    // if(cap.isOpened()) cap.release();
 }
 ///kdiy/////////
 void Game::AddChatMsg(epro::wstringview msg, int player, int type) {

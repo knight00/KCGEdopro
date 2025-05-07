@@ -97,6 +97,7 @@ public:
 	void GetRandomImage(irr::video::ITexture*& src, int image_type, int width, int height, bool force_random=false);
 	void GetRandomImagef(int width, int height);
 	void GetRandomCharacter(irr::video::ITexture*& src, std::vector<epro::path_string>& list);
+	void GetRandomVWallpaper();
 	void LoadCharacter(int player, int subcharacter);
 	void RefreshRandomImageList();
 	void RefreshImageDir(epro::path_string path, int image_type);

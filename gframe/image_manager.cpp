@@ -796,6 +796,8 @@ void ImageManager::RefreshRandomImageList() {
 		}
 #endif
     }
+
+	GetRandomVWallpaper();
 }
 void ImageManager::LoadCharacter(int player, int subcharacter) {
 #ifdef VIP
@@ -933,14 +935,14 @@ void ImageManager::GetRandomImagef(int width, int height) {
 	}
 }
 void ImageManager::GetRandomCharacter(irr::video::ITexture*& src, std::vector<epro::path_string>& list) {
-	int size = list.size();
-	if(size < 1) {
+	int count = list.size();
+	if(count < 1) {
 		if(src != nullptr)
 			driver->removeTexture(src);
         src = nullptr;
 		return;
 	}
-	int num = rand() % size;
+	int num = rand() % count;
 	auto name = list[num];
 	irr::video::ITexture* tmp = driver->getTexture(epro::format(EPRO_TEXT("./textures/character/{}"), name).c_str());
     if(tmp == nullptr) {
@@ -952,6 +954,20 @@ void ImageManager::GetRandomCharacter(irr::video::ITexture*& src, std::vector<ep
 	if(src != nullptr && src != tmp)
 		driver->removeTexture(src);
 	src = tmp;
+}
+void ImageManager::GetRandomVWallpaper() {
+	if(!gGameConfig->randomvideowallpaper)
+        return;
+	std::vector<std::string> VWallpaperList;
+	for(const auto& vwallpaper : Utils::FindFiles(EPRO_TEXT("./movies/wallpaper/"), { EPRO_TEXT("mp4"), EPRO_TEXT("mkv"), EPRO_TEXT("avi") })) {
+		VWallpaperList.push_back(Utils::ToUTF8IfNeeded(vwallpaper));
+	}
+	int count = VWallpaperList.size();
+	if(count <= 0)
+        return;
+	int num = rand() % count;
+	auto name = VWallpaperList[num];
+	mainGame->videowallpaper_path = "wallpaper/" + name;
 }
 irr::video::ITexture* ImageManager::UpdatetTexture(int i, std::wstring filepath) {
 	auto file = epro::format(EPRO_TEXT("./textures/{}/{}"), ImageFolder[i], Utils::ToPathString(filepath));

@@ -23,7 +23,6 @@
 /////kdiy/////
 #include "client_card.h"
 #include "network.h"
-// #include <opencv2/opencv.hpp>
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
@@ -964,9 +963,7 @@ public:
 	bool isAnime = false;
     sf::Sound videosound;
 	sf::SoundBuffer videosoundBuffer;
-    // cv::VideoCapture cap;
     irr::video::ITexture* videotexture = nullptr;
-	// cv::Mat frame;
     double totalFrames = 0;
     AVFormatContext* formatCtx = nullptr, * formatCtx2 = nullptr;
     AVCodecContext* videoCodecCtx = nullptr;
@@ -983,6 +980,7 @@ public:
 	bool openVideo(std::string videoName);
 	bool PlayVideo(bool loop = false);
     void StopVideo(bool close = false, bool reset = true);
+	std::string videowallpaper_path = "";
 	bool showcardinfo = false, showchat = false, showloc = false;
 	bool LoadJson(epro::path_string path, uint8_t character);
 	void LoadJsonInfo();

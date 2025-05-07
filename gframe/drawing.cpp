@@ -1772,19 +1772,18 @@ void Game::DrawBackImage(irr::video::ITexture* texture, bool resized) {
 		prevbg = nullptr;
 	if(!texture)
 		return;
-    /////ktemp//////
-    // if(texture == imageManager.tBackGround_menu) {
-    //     if(openVideo("./movies/SlifervsObelisk.mp4")) {
-	// 	    if(PlayVideo(true))
-    //             if(videotexture)
-	// 		    driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, videoFrame->width, videoFrame->height));
-	// 		    //driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, frame.cols, frame.rows));
-    //         return;
-	//     }
-    // } else {
-    //     if(!isAnime && videostart) StopVideo();
-    // }
-    /////ktemp//////
+    /////kdiy//////
+    if(texture == imageManager.tBackGround_menu) {
+        if(gGameConfig->videowallpaper && openVideo(videowallpaper_path)) {
+		    if(PlayVideo(true))
+                if(videotexture)
+			    	driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, videoFrame->width, videoFrame->height));
+            return;
+	    }
+    } else {
+        if(!isAnime && videostart) StopVideo();
+    }
+    /////kdiy//////
 	if(texture != prevbg) {
 		prevbg = texture;
 		dest_size = Resize(0, 0, 1024, 640);

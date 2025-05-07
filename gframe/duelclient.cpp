@@ -1601,20 +1601,23 @@ inline void PlayAnimecode(uint32_t code, uint32_t code2, uint8_t cat, std::uniqu
 	if(cat == 2 && !gGameConfig->enableaanime) return;
 	if(cat == 0 && !gGameConfig->enablesanime) return;
     if(code < 1) return;
-	std::string s1 = "./movies/", s11 = "./movies/";
+	std::string s1, s11, s21;
 	if(cat == 0) {
-		s1 += "s" + std::to_string(code) + ".mp4";
-		s11 += "s" + std::to_string(code) + ".mkv";
+		s1 = "s" + std::to_string(code) + ".mp4";
+		s11 = "s" + std::to_string(code) + ".mkv";
+		s21 = "s" + std::to_string(code) + ".avi";
 	}
 	if(cat == 1) {
-		s1 += "c" + std::to_string(code) + ".mp4";
-		s11 += "c" + std::to_string(code) + ".mkv";
+		s1 = "c" + std::to_string(code) + ".mp4";
+		s11 = "c" + std::to_string(code) + ".mkv";
+		s21 = "c" + std::to_string(code) + ".avi";
 	}
 	if(cat == 2) {
-		s1 += "a" + std::to_string(code) + ".mp4";
-		s11 += "a" + std::to_string(code) + ".mkv";
+		s1 = "a" + std::to_string(code) + ".mp4";
+		s11 = "a" + std::to_string(code) + ".mkv";
+		s21 = "a" + std::to_string(code) + ".avi";
 	}
-	std::vector<std::string> s1List = {s1, s11};
+	std::vector<std::string> s1List = {s1, s11, s21};
 	for (const auto& str : s1List) {
 		if (mainGame->openVideo(str)) {
 			mainGame->WaitFrameSignal(12, lock);
@@ -1639,26 +1642,32 @@ inline void PlayAnime(ClientCard* pcard, uint8_t cat, std::unique_lock<epro::mut
 	auto cd = gDataManager->GetCardData(code);
 	uint32_t code2 = 0;
 	if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
-	std::string s1 = "./movies/", s2 = "./movies/", s11 = "./movies/", s21 = "./movies/";
+	std::string s1, s11, s21, s2, s12, s22;
 	if(cat == 0) {
-		s1 += "s" + std::to_string(code) + ".mp4";
-		s11 += "s" + std::to_string(code) + ".mkv";
-		s2 += "s" + std::to_string(code2) + ".mp4";
-		s21 += "s" + std::to_string(code2) + ".mkv";
+		s1 = "s" + std::to_string(code) + ".mp4";
+		s11 = "s" + std::to_string(code) + ".mkv";
+		s21 = "s" + std::to_string(code) + ".avi";
+		s2 = "s" + std::to_string(code2) + ".mp4";
+		s12 = "s" + std::to_string(code2) + ".mkv";
+		s22 = "s" + std::to_string(code2) + ".avi";
 	}
 	if(cat == 1) {
-		s1 += "c" + std::to_string(code) + ".mp4";
-		s11 += "c" + std::to_string(code) + ".mkv";
-		s2 += "c" + std::to_string(code2) + ".mp4";
-		s21 += "c" + std::to_string(code2) + ".mkv";
+		s1 = "c" + std::to_string(code) + ".mp4";
+		s11 = "c" + std::to_string(code) + ".mkv";
+		s21 = "c" + std::to_string(code) + ".avi";
+		s2 = "c" + std::to_string(code2) + ".mp4";
+		s12 = "c" + std::to_string(code2) + ".mkv";
+		s22 = "c" + std::to_string(code2) + ".avi";
 	}
 	if(cat == 2) {
-		s1 += "a" + std::to_string(code) + ".mp4";
-		s11 += "a" + std::to_string(code) + ".mkv";
-		s2 += "a" + std::to_string(code2) + ".mp4";
-		s21 += "a" + std::to_string(code2) + ".mkv";
+		s1 = "a" + std::to_string(code) + ".mp4";
+		s11 = "a" + std::to_string(code) + ".mkv";
+		s21 = "a" + std::to_string(code) + ".avi";
+		s2 = "a" + std::to_string(code2) + ".mp4";
+		s12 = "a" + std::to_string(code2) + ".mkv";
+		s22 = "a" + std::to_string(code2) + ".avi";
 	}
-	std::vector<std::string> s1List = {s1, s11, s2, s21};
+	std::vector<std::string> s1List = {s1, s11, s21, s2, s12, s22};
 	for(const auto& str : s1List) {
 		if(mainGame->openVideo(str)) {
 			mainGame->WaitFrameSignal(12, lock);
@@ -1676,12 +1685,13 @@ inline void PlayAnime(ClientCard* pcard, uint8_t cat, std::unique_lock<epro::mut
 inline void PlayAnimeC(std::string text, std::unique_lock<epro::mutex> &lock) {
 #ifdef VIP
 	if(!gGameConfig->enableanime) return;
-	std::string s1 = "./movies/custom/";
+	std::string s1 = "custom/";
 	s1 += text;
-	std::string s11 = s1;
+	std::string s11 = s1, s21 = s1;
 	s1 += ".mp4";
 	s11 += ".mkv";
-	std::vector<std::string> s1List = {s1, s11};
+	s21 += ".avi";
+	std::vector<std::string> s1List = {s1, s11, s21};
 	for (size_t i = 0; i < s1List.size(); ++i) {
 		if(mainGame->openVideo(s1List[i])) {
 			mainGame->WaitFrameSignal(12, lock);
