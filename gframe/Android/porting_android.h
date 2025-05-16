@@ -35,10 +35,6 @@ void openUrl(epro::path_stringview url);
 
 void openFile(epro::path_stringview file);
 
-///kdiy////////
-void openAnime(epro::path_stringview file);
-///kdiy////////
-
 void shareFile(epro::path_stringview file);
 
 void setTextToClipboard(epro::wstringview text);

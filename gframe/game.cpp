@@ -3426,6 +3426,8 @@ void Game::PopulateSettingsWindow() {
 		gSettings.chkVideowallpaper->setChecked(gGameConfig->videowallpaper);
 		gSettings.cbVideowallpaper = AddComboBox(env, GetCurrentRectWithXOffset(150, 320), sPanel, COMBOBOX_VIDEO_WALLPAPER);
 		bool chkvwallpaper = false;
+		Utils::MakeDirectory(EPRO_TEXT("./movies"));
+		Utils::MakeDirectory(EPRO_TEXT("./movies/wallpaper"));
 		for(const auto& vwallpaper : Utils::FindFiles(EPRO_TEXT("./movies/wallpaper/"), { EPRO_TEXT("mp4"), EPRO_TEXT("mkv"), EPRO_TEXT("avi") })) {
 			auto itemIndex = gSettings.cbVideowallpaper->addItem(Utils::ToUnicodeIfNeeded(vwallpaper).data());
 			if(Utils::ToPathString(gGameConfig->videowallpapertexture) == vwallpaper) {
@@ -3438,7 +3440,7 @@ void Game::PopulateSettingsWindow() {
 			gGameConfig->videowallpapertexture = Utils::ToUTF8IfNeeded(gSettings.cbVideowallpaper->getItem(gSettings.cbVideowallpaper->getSelected()));
 		}
 		if(!gGameConfig->randomvideowallpaper) videowallpaper_path = "wallpaper/" + gGameConfig->videowallpapertexture;
-		gSettings.cbVideowallpaper->setEnabled(gGameConfig->videowallpaper);
+		gSettings.cbVideowallpaper->setEnabled(gGameConfig->videowallpaper && !gGameConfig->randomvideowallpaper);
 		IncrementXorY();
 		gSettings.chkRandomVideowallpaper = env->addCheckBox(gGameConfig->randomvideowallpaper, GetNextRect(), sPanel, CHECKBOX_RANDOM_VWALLPAPER, gDataManager->GetSysString(8092).data());
 		defaultStrings.emplace_back(gSettings.chkRandomVideowallpaper, 8092);
@@ -5433,9 +5435,7 @@ bool Game::PlayVideo(bool loop) {
 		if(loop) {
 			return true;
 		}
-		if(videostart) timeAccumulated2 += static_cast<double>(delta_time) / 1000.0;
-		else timeAccumulated2 = audioFrameDuration;
-		while (timeAccumulated2 >= audioFrameDuration + 0.12) {
+		while (timeAccumulated2 >= audioFrameDuration) {
 			if (av_read_frame(formatCtx2, &packet) >= 0) {
 			if (packet.stream_index == audioStreamIndex) {
 				if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {

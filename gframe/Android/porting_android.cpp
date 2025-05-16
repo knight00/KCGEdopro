@@ -437,9 +437,6 @@ JAVAVOIDSTRINGMETHOD(addWindbotDatabase)
 JAVAVOIDSTRINGMETHOD(installUpdate)
 JAVAVOIDSTRINGMETHOD(openUrl)
 JAVAVOIDSTRINGMETHOD(openFile)
-///kdiy////////
-JAVAVOIDSTRINGMETHOD(openAnime)
-///kdiy////////
 JAVAVOIDSTRINGMETHOD(shareFile)
 
 void showErrorDialog(epro::stringview context, epro::stringview message) {
