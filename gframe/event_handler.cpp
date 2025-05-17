@@ -2549,8 +2549,8 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			}
             case CHECKBOX_VWALLPAPER:{
 				gGameConfig->videowallpaper = mainGame->gSettings.chkVideowallpaper->isChecked();
-				mainGame->gSettings.cbVideowallpaper->setEnabled(gGameConfig->videowallpaper);
 				mainGame->gSettings.chkRandomVideowallpaper->setEnabled(gGameConfig->videowallpaper);
+				mainGame->gSettings.cbVideowallpaper->setEnabled(gGameConfig->videowallpaper && !gGameConfig->randomvideowallpaper);
 				return true;
 			}
             case CHECKBOX_RANDOM_VWALLPAPER:{

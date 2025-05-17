@@ -3425,17 +3425,18 @@ void Game::PopulateSettingsWindow() {
 		defaultStrings.emplace_back(gSettings.chkVideowallpaper, 8091);
 		gSettings.chkVideowallpaper->setChecked(gGameConfig->videowallpaper);
 		gSettings.cbVideowallpaper = AddComboBox(env, GetCurrentRectWithXOffset(150, 320), sPanel, COMBOBOX_VIDEO_WALLPAPER);
-		bool chkvwallpaper = false;
+		bool chkhasvwallpaper = false, chkvwallpaper = false;
 		Utils::MakeDirectory(EPRO_TEXT("./movies"));
 		Utils::MakeDirectory(EPRO_TEXT("./movies/wallpaper"));
 		for(const auto& vwallpaper : Utils::FindFiles(EPRO_TEXT("./movies/wallpaper/"), { EPRO_TEXT("mp4"), EPRO_TEXT("mkv"), EPRO_TEXT("avi") })) {
+			chkhasvwallpaper = true;
 			auto itemIndex = gSettings.cbVideowallpaper->addItem(Utils::ToUnicodeIfNeeded(vwallpaper).data());
 			if(Utils::ToPathString(gGameConfig->videowallpapertexture) == vwallpaper) {
 				gSettings.cbVideowallpaper->setSelected(itemIndex);
 				chkvwallpaper = true;
 			}
 		}
-		if(!chkvwallpaper) {
+		if(chkhasvwallpaper && !chkvwallpaper) {
 			gSettings.cbVideowallpaper->setSelected(0);
 			gGameConfig->videowallpapertexture = Utils::ToUTF8IfNeeded(gSettings.cbVideowallpaper->getItem(gSettings.cbVideowallpaper->getSelected()));
 		}
@@ -5363,6 +5364,7 @@ bool Game::PlayVideo(bool loop) {
     // Ensure a valid format context
 	if (formatCtx) {
 		timeAccumulated += static_cast<double>(delta_time) / 1000.0;
+		timeAccumulated2 += static_cast<double>(delta_time) / 1000.0;
 		static int frameCounter = 0;
         // Determine frames to skip based on FPS ratio
         int framesToSkip = 1;
