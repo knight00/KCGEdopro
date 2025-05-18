@@ -475,6 +475,8 @@ namespace ygo {
         createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("pics/closeup"));
 		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("hdpics"));
 		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("hdpics/jp"));
+		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("movies"));
+		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("movies/wallpaper"));
 		//kdiy////
 	}
 

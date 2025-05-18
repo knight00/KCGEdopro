@@ -3426,8 +3426,6 @@ void Game::PopulateSettingsWindow() {
 		gSettings.chkVideowallpaper->setChecked(gGameConfig->videowallpaper);
 		gSettings.cbVideowallpaper = AddComboBox(env, GetCurrentRectWithXOffset(150, 320), sPanel, COMBOBOX_VIDEO_WALLPAPER);
 		bool chkhasvwallpaper = false, chkvwallpaper = false;
-		Utils::MakeDirectory(EPRO_TEXT("./movies"));
-		Utils::MakeDirectory(EPRO_TEXT("./movies/wallpaper"));
 		for(const auto& vwallpaper : Utils::FindFiles(EPRO_TEXT("./movies/wallpaper/"), { EPRO_TEXT("mp4"), EPRO_TEXT("mkv"), EPRO_TEXT("avi") })) {
 			chkhasvwallpaper = true;
 			auto itemIndex = gSettings.cbVideowallpaper->addItem(Utils::ToUnicodeIfNeeded(vwallpaper).data());
@@ -4537,18 +4535,18 @@ Game::RepoGui* Game::AddGithubRepositoryStatusWindow(const GitRepo* repo) {
 	grepo.progress1->setColors(skin::PROGRESSBAR_FILL_COLOR_VAL, skin::PROGRESSBAR_EMPTY_COLOR_VAL);
 	grepo.progress1->drop();
 	((irr::gui::CGUICustomContextMenu*)mRepositoriesInfo)->addItem(a, -1);
-    //kidy///////
+    //kdiy///////
 	//grepo.history_button1 = env->addButton(Scale(90 + 295, 0, 170 + 295, 20 + 5), a, BUTTON_REPO_CHANGELOG, gDataManager->GetSysString(1443).data());
     grepo.history_button1 = env->addButton(Scale(5 + 295, 0, 85 + 295, 20 + 5), a, BUTTON_REPO_CHANGELOG, gDataManager->GetSysString(1443).data());
-    //kidy///////
+    //kdiy///////
 	defaultStrings.emplace_back(grepo.history_button1, 1443);
 	grepo.history_button1->setEnabled(repo->ready);
-     //kidy///////
+     //kdiy///////
     grepo.path = repo->repo_path;
     grepo.file_button = env->addButton(Scale(90 + 295, 0, 170 + 295, 20 + 5), a, BUTTON_REPO_FILE, gDataManager->GetSysString(8040).data());
 	defaultStrings.emplace_back(grepo.file_button, 8040);
 	grepo.file_button->setEnabled(true);
-    //kidy///////
+    //kdiy///////
 
 	auto b = env->addWindow(Scale(0, 0, 10000, 55), false, L"", tabRepositories);
 	b->getCloseButton()->setVisible(false);
