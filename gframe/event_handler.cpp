@@ -253,6 +253,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
         		mainGame->lpcharacter[1] = 0;
 				mainGame->chantsound.stop();
                 gSoundManager->soundcount.clear();
+                mainGame->animecount.clear();
 				if(mainGame->dInfo.isReplay) {
 					ReplayMode::StopReplay();
 					break;
@@ -327,6 +328,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
         		mainGame->lpcharacter[1] = 0;
 				mainGame->chantsound.stop();
                 gSoundManager->soundcount.clear();
+                mainGame->animecount.clear();
 			    ////kdiy////////
 				if(mainGame->dInfo.isSingleMode)
 					SingleMode::Restart();
@@ -2467,19 +2469,25 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			case CHECKBOX_ENABLE_SANIME: {
 				gGameConfig->enablesanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
 				if(gGameConfig->enablesanime)
-                    mainGame->moviecheck();
+                    mainGame->moviecheck(0);
 				return true;
 			}
 			case CHECKBOX_ENABLE_CANIME: {
 				gGameConfig->enablecanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
 				if(gGameConfig->enablecanime)
-                    mainGame->moviecheck();
+                    mainGame->moviecheck(1);
 				return true;
 			}
 			case CHECKBOX_ENABLE_AANIME: {
 				gGameConfig->enableaanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
 				if(gGameConfig->enableaanime)
-                    mainGame->moviecheck();
+                    mainGame->moviecheck(2);
+				return true;
+			}
+			case CHECKBOX_ENABLE_FANIME: {
+				gGameConfig->enablefanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
+				if(gGameConfig->enablefanime)
+                    mainGame->moviecheck(3);
 				return true;
 			}
 			case CHECKBOX_ANIME_FULL: {

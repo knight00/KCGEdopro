@@ -1774,7 +1774,7 @@ void Game::DrawBackImage(irr::video::ITexture* texture, bool resized) {
 		return;
     /////kdiy//////
     if(texture == imageManager.tBackGround_menu) {
-        if(gGameConfig->videowallpaper && openVideo(videowallpaper_path)) {
+        if(gGameConfig->videowallpaper && openVideo(videowallpaper_path, true)) {
 		    if(PlayVideo(true))
                 if(videotexture)
 			    	driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, videoFrame->width, videoFrame->height));

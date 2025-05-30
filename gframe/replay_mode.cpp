@@ -198,6 +198,7 @@ void ReplayMode::EndDuel() {
         mainGame->lpcharacter[1] = 0;
 		mainGame->chantsound.stop();
         gSoundManager->soundcount.clear();
+        mainGame->animecount.clear();
 		////kdiy////////
 		mainGame->closeDoneSignal.Wait(lock);
 		mainGame->ShowElement(mainGame->wReplay);
@@ -233,6 +234,7 @@ void ReplayMode::Restart(bool refresh) {
     mainGame->lpcharacter[1] = 0;
 	mainGame->chantsound.stop();
     gSoundManager->soundcount.clear();
+    mainGame->animecount.clear();
 	////kdiy////////
 	if(!mainGame->dInfo.isRelay) {
 		if(mainGame->dInfo.isFirst)

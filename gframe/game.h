@@ -713,7 +713,7 @@ public:
 	void RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder=false);
 	void* ReadCardDataToCore();
 	void ReloadCBpic();
-	bool moviecheck(bool initial = false);
+	bool moviecheck(uint8_t cat = 5, bool initial = false);
 	bool chantcheck(bool initial = false);
 	void charactcomboselect(uint8_t player, int box, int sel); //box: 1=ebCharacter, 2= ebCharacter_replay, 3= ebCharacterDeck
     std::vector<std::wstring>& GetPlayerReplayNames();
@@ -974,12 +974,14 @@ public:
     int videoStreamIndex = -1, audioStreamIndex = -1;
 	bool frameReady = false;
 	double timeAccumulated = 0.0, timeAccumulated2 = 0.0, lastAudioProcessedTime = 0.0, lastVideoFrameTime = 0.0; // Accumulate time to ensure smooth frame skipping
+	int frameps = 0;
 	double videoFrameDuration = 1.0, audioFrameDuration = 1.0;
 	int64_t videoDuration;
 	std::vector<int16_t> audioBuffer;
-	bool openVideo(std::string videoName);
+	bool openVideo(std::string videoName, bool loop = false);
 	bool PlayVideo(bool loop = false);
     void StopVideo(bool close = false, bool reset = true);
+	std::vector<std::string> animecount;
 	std::string videowallpaper_path = "";
 	bool showcardinfo = false, showchat = false, showloc = false;
 	bool LoadJson(epro::path_string path, uint8_t character);

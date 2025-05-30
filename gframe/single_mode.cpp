@@ -236,6 +236,7 @@ restart:
         	mainGame->lpcharacter[1] = 0;
 			mainGame->chantsound.stop();
             gSoundManager->soundcount.clear();
+            mainGame->animecount.clear();
 			////kdiy////////
 			if(!hand_test) {
 				mainGame->ShowElement(mainGame->wSinglePlay);
@@ -398,6 +399,7 @@ restart:
         mainGame->lpcharacter[1] = 0;
 		mainGame->chantsound.stop();
         gSoundManager->soundcount.clear();
+        mainGame->animecount.clear();
 		////kdiy////////
 		if(!hand_test) {
 			mainGame->ShowElement(mainGame->wSinglePlay);

@@ -2167,7 +2167,7 @@ void Game::Initialize() {
 	stHandTestSettings->setEnabled(coreloaded);
 	//kdiy///////
 	btnEntertainmentMode->setEnabled(coreloaded);
-	moviecheck(true);
+	moviecheck(5, true);
 	chantcheck(true);
 	//kdiy///////
 	RefreshUICoreVersion();
@@ -3163,11 +3163,14 @@ void Game::PopulateSettingsWindow() {
             gSettings.chkEnableAttackSound = env->addCheckBox(gGameConfig->enableasound, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_ENABLE_ASOUND, gDataManager->GetSysString(8012).data());
 	        defaultStrings.emplace_back(gSettings.chkEnableAttackSound, 8012);
             IncrementXorY();
-			gSettings.chkAnimeFull = env->addCheckBox(gGameConfig->animefull, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_ANIME_FULL, gDataManager->GetSysString(8093).data());
-			defaultStrings.emplace_back(gSettings.chkAnimeFull, 8093);
+            gSettings.chkEnableFieldAnime = env->addCheckBox(gGameConfig->enablefanime, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_ENABLE_FANIME, gDataManager->GetSysString(8027).data());
+	        defaultStrings.emplace_back(gSettings.chkEnableFieldAnime, 8027);
             IncrementXorY();
             gSettings.chkPauseduel = env->addCheckBox(gGameConfig->pauseduel, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_PAUSE_DUEL, gDataManager->GetSysString(8052).data());
             defaultStrings.emplace_back(gSettings.chkPauseduel, 8052);
+            IncrementXorY();
+			gSettings.chkAnimeFull = env->addCheckBox(gGameConfig->animefull, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_ANIME_FULL, gDataManager->GetSysString(8093).data());
+			defaultStrings.emplace_back(gSettings.chkAnimeFull, 8093);
 #ifndef VIP
             gSettings.chkPauseduel->setEnabled(false);
 #endif
@@ -3178,6 +3181,7 @@ void Game::PopulateSettingsWindow() {
 		gGameConfig->enablesanime = false;
 		gGameConfig->enablecanime = false;
 		gGameConfig->enableaanime = false;
+		gGameConfig->enablefanime = false;
 		gGameConfig->animefull = false;
 		gGameConfig->enablessound = false;
 		gGameConfig->enablessound = false;
@@ -3677,6 +3681,11 @@ bool Game::MainLoop() {
 		atkdy2 = (float)sin(atkframe * 0.65f);
 		atk2dy2 = (float)cos(atkframe * 0.65f);
 		atkdy3 = (float)tan(atkframe);
+		if(fps > frameps) frameps = fps;
+		if(frameps > 140) frameps = 144;
+		else if(frameps > 80) frameps = 120;
+		else if(frameps > 40) frameps = 60;
+		else frameps = 30;
         //kdiy///////
 		driver->beginScene(true, true, irr::video::SColor(0, 0, 0, 0));
 		gMutex.lock();
@@ -5256,13 +5265,18 @@ void Game::ClearCardInfo(int player) {
 	showingcard = 0;
 }
 ///kdiy/////////
-bool Game::openVideo(std::string filename) {
+bool Game::openVideo(std::string filename, bool loop) {
 	filename = "./movies/" + filename;
 	if(!Utils::FileExists(Utils::ToPathString(filename))) {
 		isAnime = false;
 		return false;
 	}
     if(filename != currentVideo) {
+		if(!loop && std::find(animecount.begin(), animecount.end(), filename) != animecount.end()) {
+			isAnime = false;
+			return false;
+		}
+		animecount.push_back(filename);
         if (formatCtx) {
 			avformat_close_input(&formatCtx); // Close previous video input
 		}
@@ -5365,13 +5379,18 @@ bool Game::PlayVideo(bool loop) {
 		timeAccumulated2 += static_cast<double>(delta_time) / 1000.0;
 		static int frameCounter = 0;
         // Determine frames to skip based on FPS ratio
-        int framesToSkip = 1;
+		double videoFPS = 1.0 / videoFrameDuration;
+		if(videoFPS > 70) videoFPS = 120;
+		else if(videoFPS > 40) frameps = 60;
+		else videoFPS = 30;
+        int framesToSkip = static_cast<int>(videoFPS / frameps);
+		if(framesToSkip < 1) framesToSkip = 1;
         // Variable for frame processing time
         double frameRenderTime = 0.0;
 		while (timeAccumulated >= videoFrameDuration) {
 			if (av_read_frame(formatCtx, &packet) < 0) {
 				if(loop) {
-					av_seek_frame(formatCtx, videoStreamIndex, 0, AVSEEK_FLAG_BACKWARD);
+					av_seek_frame(formatCtx, videoStreamIndex, 1, AVSEEK_FLAG_BACKWARD);
 					avcodec_flush_buffers(videoCodecCtx); // Flush the codec buffers
 					avcodec_flush_buffers(audioCodecCtx);
 				} else {
@@ -5390,6 +5409,31 @@ bool Game::PlayVideo(bool loop) {
 					frameReady = true;
 				}
 				av_packet_unref(&packet); // Clean up the packet
+				if(!loop) {
+            		if (av_read_frame(formatCtx2, &packet) >= 0) {
+                		if (packet.stream_index == audioStreamIndex) {
+                    		if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
+                        		while (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
+                            		int numSamples = audioFrame->nb_samples;
+                            		int audioChannels = audioCodecCtx->channels;
+                            		audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
+                            		for (int i = 0; i < numSamples; i++) {
+                                		for (int ch = 0; ch < audioChannels; ch++) {
+                                    		if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
+                                        		float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
+                                        		audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767));
+                                    		} else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
+                                        		int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
+                                        		audioBuffer.push_back(src[i]);
+                                    		}
+                                		}
+                            		}
+                        		}
+                    		}
+                		}
+                		av_packet_unref(&packet);
+            		}
+				}
 				// Calculate the processing time of the frame
             	auto endFrameProcessing = std::chrono::high_resolution_clock::now();
             	std::chrono::duration<double> frameDuration = endFrameProcessing - startFrameProcessing;
@@ -5435,33 +5479,33 @@ bool Game::PlayVideo(bool loop) {
 		if(loop) {
 			return true;
 		}
-		while (timeAccumulated2 >= audioFrameDuration) {
-			if (av_read_frame(formatCtx2, &packet) >= 0) {
-			if (packet.stream_index == audioStreamIndex) {
-				if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
-					while (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
-                        int numSamples = audioFrame->nb_samples;
-						int audioChannels = audioCodecCtx->channels;
-						audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
-						for (int i = 0; i < numSamples; i++) {
-							for (int ch = 0; ch < audioChannels; ch++) {
-								if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
-									float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
-									audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767)); // Convert float samples to Int16
-								} else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
-									int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
-									audioBuffer.push_back(src[i]); // Copy directly
-								}
-							}
-						}
-					}
-					lastAudioProcessedTime += audioFrameDuration;
-				}
-            }
-			av_packet_unref(&packet); // Clean up the packet
-			}
-			timeAccumulated2 -= audioFrameDuration;
-		}
+		// while (timeAccumulated2 >= audioFrameDuration) {
+		// 	if (av_read_frame(formatCtx2, &packet) >= 0) {
+		// 	if (packet.stream_index == audioStreamIndex) {
+		// 		if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
+		// 			while (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
+        //                 int numSamples = audioFrame->nb_samples;
+		// 				int audioChannels = audioCodecCtx->channels;
+		// 				audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
+		// 				for (int i = 0; i < numSamples; i++) {
+		// 					for (int ch = 0; ch < audioChannels; ch++) {
+		// 						if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
+		// 							float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
+		// 							audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767)); // Convert float samples to Int16
+		// 						} else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
+		// 							int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
+		// 							audioBuffer.push_back(src[i]); // Copy directly
+		// 						}
+		// 					}
+		// 				}
+		// 			}
+		// 			lastAudioProcessedTime += audioFrameDuration;
+		// 		}
+        //     }
+		// 	av_packet_unref(&packet); // Clean up the packet
+		// 	}
+		// 	timeAccumulated2 -= audioFrameDuration;
+		// }
 		if (!audioBuffer.empty()) {
 			if (videosoundBuffer.loadFromSamples(audioBuffer.data(), audioBuffer.size(), audioCodecCtx->channels, audioCodecCtx->sample_rate)) {
 				videosound.setBuffer(videosoundBuffer);
@@ -6908,12 +6952,16 @@ void* Game::ReadCardDataToCore() {
 	}
 	return cards_data;
 }
-bool Game::moviecheck(bool initial) {
-	bool filechk = false;
-	for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./movies/")), { EPRO_TEXT("mp4") })) {
+bool Game::moviecheck(uint8_t cat, bool initial) {
+	bool filechk = false, filechks = false, filechkc = false, filechka = false, filechkf = false;
+	for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./movies/")), { EPRO_TEXT("mp4"), EPRO_TEXT("mkv"), EPRO_TEXT("avi") })) {
 		if(Utils::FileExists(EPRO_TEXT("./movies/") + file)) {
 			filechk = true;
-			break;
+			if(file.find_first_of(EPRO_TEXT("s")) != std::string::npos) filechks = true;
+			if(file.find_first_of(EPRO_TEXT("c")) != std::string::npos) filechkc = true;
+			if(file.find_first_of(EPRO_TEXT("a")) != std::string::npos) filechka = true;
+			if(file.find_first_of(EPRO_TEXT("f")) != std::string::npos) filechkf = true;
+			if(filechks && filechkc && filechka && filechkf) break;
 		}
 	}
 #ifndef VIP
@@ -6927,6 +6975,7 @@ bool Game::moviecheck(bool initial) {
 		gGameConfig->enablesanime = false;
 		gGameConfig->enablecanime = false;
 		gGameConfig->enableaanime = false;
+		gGameConfig->enablefanime = false;
 		gGameConfig->animefull = false;
 		gGameConfig->videowallpaper = false;
 
@@ -6938,23 +6987,30 @@ bool Game::moviecheck(bool initial) {
 #endif
 		}
 	}
-	if(gGameConfig->enablesanime || gGameConfig->enablecanime || gGameConfig->enableaanime)
+	if(!filechks) gGameConfig->enablesanime = false;
+	if(!filechkc) gGameConfig->enablecanime = false;
+	if(!filechka) gGameConfig->enableaanime = false;
+	if(!filechkf) gGameConfig->enablefanime = false;
+	if(gGameConfig->enablesanime || gGameConfig->enablecanime || gGameConfig->enableaanime || gGameConfig->enablefanime)
 		gGameConfig->enableanime = true;
 	tabSettings.chkEnableAnime->setChecked(gGameConfig->enableanime);
 	gSettings.chkEnableAnime->setChecked(gGameConfig->enableanime);
-	if(gGameConfig->enableanime && !gGameConfig->enablesanime && !gGameConfig->enablecanime && !gGameConfig->enableaanime) {
+	if(gGameConfig->enableanime && !gGameConfig->enablesanime && !gGameConfig->enablecanime && !gGameConfig->enableaanime && !gGameConfig->enablefanime) {
 		gGameConfig->enablesanime = true;
 		gGameConfig->enablecanime = true;
 		gGameConfig->enableaanime = true;
+		gGameConfig->enablefanime = true;
     }
 	if(!gGameConfig->enableanime) {
 		gGameConfig->enablesanime = false;
 		gGameConfig->enablecanime = false;
 		gGameConfig->enableaanime = false;
+		gGameConfig->enablefanime = false;
 	}
 	gSettings.chkEnableSummonAnime->setChecked(gGameConfig->enablesanime);
 	gSettings.chkEnableActivateAnime->setChecked(gGameConfig->enablecanime);
 	gSettings.chkEnableAttackAnime->setChecked(gGameConfig->enableaanime);
+	gSettings.chkEnableFieldAnime->setChecked(gGameConfig->enablefanime);
 	gSettings.chkAnimeFull->setChecked(gGameConfig->animefull);
 	gSettings.chkVideowallpaper->setChecked(gGameConfig->videowallpaper);
 	return filechk;

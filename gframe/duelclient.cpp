@@ -491,6 +491,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
         		mainGame->lpcharacter[1] = 0;
 				mainGame->chantsound.stop();
                 gSoundManager->soundcount.clear();
+                mainGame->animecount.clear();
                 ////kdiy////////
 				mainGame->device->setEventReceiver(&mainGame->menuHandler);
 				if(mainGame->isHostingOnline) {
@@ -1281,6 +1282,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
         	mainGame->lpcharacter[1] = 0;
 			mainGame->chantsound.stop();
             gSoundManager->soundcount.clear();
+            mainGame->animecount.clear();
 			////kdiy////////
 			if(mainGame->isHostingOnline) {
 				mainGame->ShowElement(mainGame->wRoomListPlaceholder);
@@ -1493,6 +1495,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
         /////kdiy//////
 		mainGame->chantsound.stop();
         gSoundManager->soundcount.clear();
+        mainGame->animecount.clear();
         //not send rematch for stroy mode
 		if(mainGame->mode->isMode && mainGame->mode->rule == MODE_STORY) {
             mainGame->dInfo.checkRematch = false;
@@ -1604,6 +1607,7 @@ inline void PlayAnimecode(uint32_t code, uint32_t code2, uint8_t cat, std::uniqu
 	if(cat == 1 && !gGameConfig->enablecanime) return;
 	if(cat == 2 && !gGameConfig->enableaanime) return;
 	if(cat == 0 && !gGameConfig->enablesanime) return;
+	if(cat == 3 && !gGameConfig->enablefanime) return;
     if(code < 1) return;
 	std::string s1, s11, s21;
 	if(cat == 0) {
@@ -1620,6 +1624,11 @@ inline void PlayAnimecode(uint32_t code, uint32_t code2, uint8_t cat, std::uniqu
 		s1 = "a" + std::to_string(code) + ".mp4";
 		s11 = "a" + std::to_string(code) + ".mkv";
 		s21 = "a" + std::to_string(code) + ".avi";
+	}
+	if(cat == 3) {
+		s1 = "f" + std::to_string(code) + ".mp4";
+		s11 = "f" + std::to_string(code) + ".mkv";
+		s21 = "f" + std::to_string(code) + ".avi";
 	}
 	std::vector<std::string> s1List = {s1, s11, s21};
 	for (const auto& str : s1List) {
@@ -1641,6 +1650,7 @@ inline void PlayAnime(ClientCard* pcard, uint8_t cat, std::unique_lock<epro::mut
 	if(cat == 1 && !gGameConfig->enablecanime) return;
 	if(cat == 2 && !gGameConfig->enableaanime) return;
 	if(cat == 0 && !gGameConfig->enablesanime) return;
+	if(cat == 3 && !gGameConfig->enablefanime) return;
 	if(pcard == nullptr || pcard->code < 1) return;
 	uint32_t code = pcard->code;
 	auto cd = gDataManager->GetCardData(code);
@@ -1670,6 +1680,14 @@ inline void PlayAnime(ClientCard* pcard, uint8_t cat, std::unique_lock<epro::mut
 		s2 = "a" + std::to_string(code2) + ".mp4";
 		s12 = "a" + std::to_string(code2) + ".mkv";
 		s22 = "a" + std::to_string(code2) + ".avi";
+	}
+	if(cat == 3) {
+		s1 = "f" + std::to_string(code) + ".mp4";
+		s11 = "f" + std::to_string(code) + ".mkv";
+		s21 = "f" + std::to_string(code) + ".avi";
+		s2 = "f" + std::to_string(code2) + ".mp4";
+		s12 = "f" + std::to_string(code2) + ".mkv";
+		s22 = "f" + std::to_string(code2) + ".avi";
 	}
 	std::vector<std::string> s1List = {s1, s11, s21, s2, s12, s22};
 	for(const auto& str : s1List) {
@@ -2230,6 +2248,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         		mainGame->lpcharacter[1] = 0;
 				mainGame->chantsound.stop();
                 gSoundManager->soundcount.clear();
+                mainGame->animecount.clear();
                 ////kdiy////////
 				mainGame->btnCreateHost->setEnabled(mainGame->coreloaded);
 				mainGame->btnJoinHost->setEnabled(true);
@@ -4838,6 +4857,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			////kdiy///////////
 			//event_string = epro::sprintf(gDataManager->GetSysString(1605), gDataManager->GetName(code));
 			//mainGame->showcardcode = code;
+			PlayAnime(pcard, 0, lock);
 			event_string = epro::sprintf(gDataManager->GetSysString(1605), gDataManager->GetName(pcard));
 			uint32_t code2 = 0;
 			if(pcard->alias && pcard->alias > 0) code2 = pcard->alias;
@@ -4875,6 +4895,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 			////kdiy///////////
 			//event_string = epro::sprintf(gDataManager->GetSysString(1607), gDataManager->GetName(code));
+			PlayAnime(pcard, 0, lock);
 			event_string = epro::sprintf(gDataManager->GetSysString(1607), gDataManager->GetName(pcard));
 			uint32_t code2 = 0;
 			if(pcard->alias && pcard->alias > 0) code2 = pcard->alias;
@@ -6509,6 +6530,7 @@ void DuelClient::ReplayPrompt(bool local_stream) {
     mainGame->lpcharacter[1] = 0;
 	mainGame->chantsound.stop();
     gSoundManager->soundcount.clear();
+    mainGame->animecount.clear();
     ////kdiy////////
 	auto now = std::time(nullptr);
 	mainGame->PopupSaveWindow(gDataManager->GetSysString(1340), epro::format(L"{:%Y-%m-%d %H-%M-%S}", fmt::localtime(now)), gDataManager->GetSysString(1342));
