@@ -5393,13 +5393,23 @@ bool Game::PlayVideo(bool loop) {
 					av_seek_frame(formatCtx, videoStreamIndex, 1, AVSEEK_FLAG_BACKWARD);
 					avcodec_flush_buffers(videoCodecCtx); // Flush the codec buffers
 					avcodec_flush_buffers(audioCodecCtx);
+                    // load the first frame immediately after seeking
+                    int response = av_read_frame(formatCtx, &packet);
+                    if (response >= 0 && packet.stream_index == videoStreamIndex) {
+                        avcodec_send_packet(videoCodecCtx, &packet);
+                        avcodec_receive_frame(videoCodecCtx, videoFrame);
+                        frameCounter++; // Counter increment for the first frame
+                        // Render the first frame directly
+                        videotexture = renderVideoFrame(driver, videoCodecCtx, videoFrame);
+                        av_packet_unref(&packet); // Clean up
+                    }
 				} else {
 					StopVideo();
 					return false;
 				}
 			}
+			auto startFrameProcessing = std::chrono::high_resolution_clock::now();
 			if (packet.stream_index == videoStreamIndex) {
-				auto startFrameProcessing = std::chrono::high_resolution_clock::now();
 				if (avcodec_send_packet(videoCodecCtx, &packet) < 0) {
 					av_packet_unref(&packet);
 					StopVideo();
@@ -5408,9 +5418,8 @@ bool Game::PlayVideo(bool loop) {
 				if (avcodec_receive_frame(videoCodecCtx, videoFrame) >= 0) {
 					frameReady = true;
 				}
-				av_packet_unref(&packet); // Clean up the packet
+			}
 				if(!loop) {
-            		if (av_read_frame(formatCtx2, &packet) >= 0) {
                 		if (packet.stream_index == audioStreamIndex) {
                     		if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
                         		while (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
@@ -5432,12 +5441,12 @@ bool Game::PlayVideo(bool loop) {
                     		}
                 		}
                 		av_packet_unref(&packet);
-            		}
 				}
 				// Calculate the processing time of the frame
             	auto endFrameProcessing = std::chrono::high_resolution_clock::now();
             	std::chrono::duration<double> frameDuration = endFrameProcessing - startFrameProcessing;
             	frameRenderTime = frameDuration.count();
+				if (packet.stream_index == videoStreamIndex) {
 				// Frame skipping and lag handling logic
 				if (frameRenderTime > videoFrameDuration) {
 					// If rendering this frame is lagging behind, skip the frame
@@ -5450,11 +5459,12 @@ bool Game::PlayVideo(bool loop) {
 						frameReady = false; // Reset frame flag
 					}
 				}
+				av_packet_unref(&packet); // Clean up the packet
 				// Increment frame counter
 				frameCounter++;
 				timeAccumulated -= videoFrameDuration; // Adjust time after processing
-				videostart = true;
 			}
+				videostart = true;
 		}
 		if(isAnime && gGameConfig->animefull) {
 			wBtnShowCard->setVisible(false);

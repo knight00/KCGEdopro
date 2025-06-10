@@ -87,6 +87,10 @@ newoption {
     trigger = "ek",
     description = "EK"
 }
+newoption {
+    trigger = "server_url",
+    description = "Server IP"
+}
 -----kdiy-----
 newoption {
 	trigger = "architecture",

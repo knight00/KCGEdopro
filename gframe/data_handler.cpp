@@ -67,10 +67,8 @@ void DataHandler::LoadPicUrls() {
                         imageDownloader->AddDownloadResource({ DEFAULT_JHDPIC_URL, imgType::ART, 1 });
 #else
 					continue;
-#endif							
-					} else if(type == "hdpic")
-                        imageDownloader->AddDownloadResource({ url, imgType::ART, 1 });
-                    else
+#endif
+					} else
 					//kdiy//////
 					if(url == "default") {
 						if(type == "pic") {
@@ -102,13 +100,19 @@ void DataHandler::LoadPicUrls() {
 						}
 						//kdiy//////
 					} else {
-						imageDownloader->AddDownloadResource({ url, type == "field" ?
+						//kdiy//////
+						// imageDownloader->AddDownloadResource({ url, type == "field" ?
+						// 										imgType::FIELD : (type == "pic") ?
+						// 										imgType::ART : imgType::COVER });
+						std::string url2 = url;
+						if(url.substr(0,8) == "default/")
+			    			url2 = epro::format("http://{}:3000/{}", DEFAULT_SERVER_URL, url.substr(7, url.length()));
+						imageDownloader->AddDownloadResource({ url2, type == "field" ?
 																imgType::FIELD : (type == "pic") ?
-																//kdiy//////
-																//imgType::ART : imgType::COVER });
 																imgType::ART : (type == "closeup") ?
-																imgType::CLOSEUP :  imgType::COVER});
-																//kdiy//////
+																imgType::CLOSEUP :  imgType::COVER,
+																type == "hdpic" ? 1 : 0});
+						//kdiy//////
 					}
 				}
 				catch(const std::exception& e) {

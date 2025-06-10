@@ -190,7 +190,7 @@ void ServerLobby::GetRoomsThread() {
     curl_easy_setopt(curl_handle, CURLOPT_SSL_VERIFYPEER, 0L);
     curl_easy_setopt(curl_handle, CURLOPT_SSL_VERIFYHOST, 0L);
 	if(serverInfo.roomaddress == BufferIO::EncodeUTF8(L"default"))
-	curl_easy_setopt(curl_handle, CURLOPT_URL, epro::format("http://{}:{}/api/getrooms", "1.15.14.207", 18001).data());
+	curl_easy_setopt(curl_handle, CURLOPT_URL, epro::format("http://{}:{}/api/getrooms", DEFAULT_SERVER_URL, 18001).data());
 	else
     ////kdiy////////
 	curl_easy_setopt(curl_handle, CURLOPT_URL, epro::format("{}://{}:{}/api/getrooms", serverInfo.GetProtocolString(), serverInfo.roomaddress, serverInfo.roomlistport).data());
@@ -323,7 +323,7 @@ const epro::Host& ServerInfo::Resolved() const {
 	if(!resolved) {
 		try {
 			///////kdiy/////////
-			if (address == "default") resolved_address = epro::Host::resolve(BufferIO::EncodeUTF8(L"1.15.14.207"), 18000);
+			if (address == "default") resolved_address = epro::Host::resolve(DEFAULT_SERVER_URL, 18000);
 			else
 			///////kdiy/////////
 			resolved_address = epro::Host::resolve(address, duelport);

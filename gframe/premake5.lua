@@ -71,6 +71,9 @@ local ygopro_config=function(static_core)
 	if _OPTIONS["ek"] then
 		defines { "EK=" .. _OPTIONS["ek"] }
 	end
+	if _OPTIONS["server_url"] then
+		defines { "DEFAULT_SERVER_URL=" .. _OPTIONS["server_url"] }
+	end
 	--------kdiy-----
 	if _OPTIONS["bundled-font"] then
 		defines "YGOPRO_USE_BUNDLED_FONT"

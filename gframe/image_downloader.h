@@ -36,7 +36,7 @@ public:
 		std::string url;
 		imgType type;
 		//////kdiy/////////////
-		int hd;
+		int hd = 0;
 		//////kdiy/////////////
 	};
 	ImageDownloader();
