@@ -749,7 +749,7 @@ public:
 	void PopupElement(irr::gui::IGUIElement* element, int hideframe = 0);
 	//kidy///////
     //void WaitFrameSignal(int frame, std::unique_lock<epro::mutex>& _lck);
-    void WaitFrameSignal(int frame, std::unique_lock<epro::mutex>& _lck, bool forced = true);
+    void WaitFrameSignal(int frame, std::unique_lock<epro::mutex>& _lck, bool forced = false);
 	//kidy///////
 	void DrawThumb(const CardDataC* cp, irr::core::vector2di pos, LFList* lflist, bool drag = false, const irr::core::recti* cliprect = nullptr, bool loadimage = true);
 	//kidy///////

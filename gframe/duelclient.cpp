@@ -4528,12 +4528,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 						////////kdiy////////
 						if (reason & REASON_DESTROY) {
                             pcard->is_damage = true;
-                            int frames = 20;
-                            if(gGameConfig->quick_animation)
-                                frames = 12;
-						    mainGame->WaitFrameSignal(frames/2, lock);
-                            mainGame->dField.FadeCard(pcard, 0, frames);
-						    mainGame->WaitFrameSignal(frames/2, lock);
+						    mainGame->WaitFrameSignal(5, lock);
+                            mainGame->dField.FadeCard(pcard, 0, 10);
+						    mainGame->WaitFrameSignal(5, lock);
                         }
 						//if (current.location == LOCATION_MZONE && pcard->overlayed.size() > 0) {
 						if((current.location == LOCATION_MZONE || current.location == LOCATION_SZONE) && pcard->overlayed.size() > 0) {
