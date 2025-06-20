@@ -5339,32 +5339,31 @@ bool Game::openVideo(std::string filename, bool loop) {
 		// _snwprintf(buffer, sizeof(buffer) / sizeof(*buffer), L"%lf", (formatCtx->streams[audioStreamIndex]->codecpar->sample_rate));
 		// MessageBox(nullptr, buffer, TEXT("Message"), MB_OK);
     }
-	frameReady = false;
 	return true;
 }
 irr::video::ITexture* renderVideoFrame(irr::video::IVideoDriver* driver, AVCodecContext* videoCodecCtx, AVFrame* videoFrame) {
 	if (mainGame->videotexture) {
 		driver->removeTexture(mainGame->videotexture);
 	}
-	int width = videoFrame->width;
-    int height = videoFrame->height;
-	std::vector<uint8_t> dstData(width * height * 4); // 4 bytes for RGBA
+	mainGame->video_width = videoFrame->width;
+    mainGame->video_height = videoFrame->height;
+	std::vector<uint8_t> dstData(mainGame->video_width * mainGame->video_width * 4); // 4 bytes for RGBA
     // Create a pointer array for the destination data
     uint8_t* dstDataPtr[1] = { dstData.data() };
-    int dstLineSize[1] = { width * 4 }; // Line size in bytes for RGBA
+    int dstLineSize[1] = { mainGame->video_width * 4 }; // Line size in bytes for RGBA
     // Convert data from AVFrame to texture format
     struct SwsContext* swsCtx = sws_getContext(
         videoCodecCtx->width,
         videoCodecCtx->height,
         videoCodecCtx->pix_fmt,
-        width,
-        height,
+        mainGame->video_width,
+        mainGame->video_height,
 		AV_PIX_FMT_BGRA,
         SWS_BILINEAR,
         nullptr, nullptr, nullptr
     );
     sws_scale(swsCtx, videoFrame->data, videoFrame->linesize, 0, videoCodecCtx->height, dstDataPtr, dstLineSize); // Pass the pointer to the RGBA data
-	irr::video::IImage* image = driver->createImageFromData(irr::video::ECF_A8R8G8B8, irr::core::dimension2d<irr::u32>(width, height), dstData.data(), false);
+	irr::video::IImage* image = driver->createImageFromData(irr::video::ECF_A8R8G8B8, irr::core::dimension2d<irr::u32>(mainGame->video_width, mainGame->video_height), dstData.data(), false);
     // Add the image as a texture
     irr::video::ITexture* texture = driver->addTexture("videoFrame", image);
     // Cleanup
@@ -5390,24 +5389,16 @@ bool Game::PlayVideo(bool loop) {
 		while (timeAccumulated >= videoFrameDuration) {
 			if (av_read_frame(formatCtx, &packet) < 0) {
 				if(loop) {
-					av_seek_frame(formatCtx, videoStreamIndex, 1, AVSEEK_FLAG_BACKWARD);
 					avcodec_flush_buffers(videoCodecCtx); // Flush the codec buffers
 					avcodec_flush_buffers(audioCodecCtx);
-                    // load the first frame immediately after seeking
-                    int response = av_read_frame(formatCtx, &packet);
-                    if (response >= 0 && packet.stream_index == videoStreamIndex) {
-                        avcodec_send_packet(videoCodecCtx, &packet);
-                        avcodec_receive_frame(videoCodecCtx, videoFrame);
-                        frameCounter++; // Counter increment for the first frame
-                        // Render the first frame directly
-                        videotexture = renderVideoFrame(driver, videoCodecCtx, videoFrame);
-                        av_packet_unref(&packet); // Clean up
-                    }
+					av_seek_frame(formatCtx, videoStreamIndex, 0, AVSEEK_FLAG_BACKWARD);
+					av_read_frame(formatCtx, &packet);
 				} else {
 					StopVideo();
 					return false;
 				}
 			}
+			bool frameReady = false;
 			auto startFrameProcessing = std::chrono::high_resolution_clock::now();
 			if (packet.stream_index == videoStreamIndex) {
 				if (avcodec_send_packet(videoCodecCtx, &packet) < 0) {
@@ -5419,34 +5410,34 @@ bool Game::PlayVideo(bool loop) {
 					frameReady = true;
 				}
 			}
-				if(!loop) {
-                		if (packet.stream_index == audioStreamIndex) {
-                    		if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
-                        		while (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
-                            		int numSamples = audioFrame->nb_samples;
-                            		int audioChannels = audioCodecCtx->channels;
-                            		audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
-                            		for (int i = 0; i < numSamples; i++) {
-                                		for (int ch = 0; ch < audioChannels; ch++) {
-                                    		if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
-                                        		float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
-                                        		audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767));
-                                    		} else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
-                                        		int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
-                                        		audioBuffer.push_back(src[i]);
-                                    		}
-                                		}
-                            		}
-                        		}
-                    		}
-                		}
-                		av_packet_unref(&packet);
-				}
-				// Calculate the processing time of the frame
-            	auto endFrameProcessing = std::chrono::high_resolution_clock::now();
-            	std::chrono::duration<double> frameDuration = endFrameProcessing - startFrameProcessing;
-            	frameRenderTime = frameDuration.count();
-				if (packet.stream_index == videoStreamIndex) {
+			// if(!loop) {
+            //     if (packet.stream_index == audioStreamIndex) {
+            //         if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
+            //             while (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
+            //                 int numSamples = audioFrame->nb_samples;
+            //                 int audioChannels = audioCodecCtx->channels;
+            //                 audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
+            //                 for (int i = 0; i < numSamples; i++) {
+            //                     for (int ch = 0; ch < audioChannels; ch++) {
+            //                         if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
+            //                             float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
+            //                             audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767));
+            //                         } else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
+            //                             int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
+            //                             audioBuffer.push_back(src[i]);
+            //                         }
+            //                     }
+            //                 }
+            //             }
+            //         }
+            //     }
+            //     av_packet_unref(&packet);
+			// }
+			// Calculate the processing time of the frame
+            auto endFrameProcessing = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> frameDuration = endFrameProcessing - startFrameProcessing;
+            frameRenderTime = frameDuration.count();
+			if (packet.stream_index == videoStreamIndex) {
 				// Frame skipping and lag handling logic
 				if (frameRenderTime > videoFrameDuration) {
 					// If rendering this frame is lagging behind, skip the frame
@@ -5464,7 +5455,7 @@ bool Game::PlayVideo(bool loop) {
 				frameCounter++;
 				timeAccumulated -= videoFrameDuration; // Adjust time after processing
 			}
-				videostart = true;
+			videostart = true;
 		}
 		if(isAnime && gGameConfig->animefull) {
 			wBtnShowCard->setVisible(false);
@@ -5489,33 +5480,33 @@ bool Game::PlayVideo(bool loop) {
 		if(loop) {
 			return true;
 		}
-		// while (timeAccumulated2 >= audioFrameDuration) {
-		// 	if (av_read_frame(formatCtx2, &packet) >= 0) {
-		// 	if (packet.stream_index == audioStreamIndex) {
-		// 		if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
-		// 			while (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
-        //                 int numSamples = audioFrame->nb_samples;
-		// 				int audioChannels = audioCodecCtx->channels;
-		// 				audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
-		// 				for (int i = 0; i < numSamples; i++) {
-		// 					for (int ch = 0; ch < audioChannels; ch++) {
-		// 						if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
-		// 							float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
-		// 							audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767)); // Convert float samples to Int16
-		// 						} else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
-		// 							int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
-		// 							audioBuffer.push_back(src[i]); // Copy directly
-		// 						}
-		// 					}
-		// 				}
-		// 			}
-		// 			lastAudioProcessedTime += audioFrameDuration;
-		// 		}
-        //     }
-		// 	av_packet_unref(&packet); // Clean up the packet
-		// 	}
-		// 	timeAccumulated2 -= audioFrameDuration;
-		// }
+		while (timeAccumulated2 >= audioFrameDuration) {
+			if (av_read_frame(formatCtx2, &packet) >= 0) {
+			if (packet.stream_index == audioStreamIndex) {
+				if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
+					while (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
+                        int numSamples = audioFrame->nb_samples;
+						int audioChannels = audioCodecCtx->channels;
+						audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
+						for (int i = 0; i < numSamples; i++) {
+							for (int ch = 0; ch < audioChannels; ch++) {
+								if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
+									float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
+									audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767)); // Convert float samples to Int16
+								} else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
+									int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
+									audioBuffer.push_back(src[i]); // Copy directly
+								}
+							}
+						}
+					}
+					lastAudioProcessedTime += audioFrameDuration;
+				}
+            }
+			av_packet_unref(&packet); // Clean up the packet
+			}
+			timeAccumulated2 -= audioFrameDuration;
+		}
 		if (!audioBuffer.empty()) {
 			if (videosoundBuffer.loadFromSamples(audioBuffer.data(), audioBuffer.size(), audioCodecCtx->channels, audioCodecCtx->sample_rate)) {
 				videosound.setBuffer(videosoundBuffer);
@@ -5533,7 +5524,8 @@ void Game::StopVideo(bool close, bool reset) {
 	videostart = false;
 	timeAccumulated = 0; timeAccumulated2 = 0;
 	lastAudioProcessedTime = 0;
-	frameReady = false;
+	video_width = 0;
+    video_height = 0;
 	currentVideo = "";
 	if(isAnime)
 	    mainGame->cv->notify_one();

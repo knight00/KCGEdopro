@@ -393,11 +393,18 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				case MSG_SELECT_YESNO:
 				case MSG_SELECT_EFFECTYN: {
 					if(highlighting_card)
-					    ////kdiy///////////
+						////kdiy///////////
 						//highlighting_card->is_highlighting = false;
 						highlighting_card->is_activable = false;
 						////kdiy///////////
 					highlighting_card = 0;
+					////kdiy///////////
+        			if(mainGame->dField.attacker && mainGame->dField.attacker->is_attack) {
+            			mainGame->dField.attacker->is_attack = false;
+            			mainGame->dField.attacker->curRot = mainGame->dField.attacker->attRot;
+        			}
+        			mainGame->dField.attacker->is_attacked = false;
+					////kdiy///////////
 					DuelClient::SetResponseI(0);
 					mainGame->HideElement(mainGame->wQuery, true);
 					break;
@@ -3654,6 +3661,13 @@ void ClientField::CancelOrFinish() {
 			highlighting_card->is_activable = false;
 			////kdiy///////////
 		highlighting_card = 0;
+		////kdiy///////////
+        if(mainGame->dField.attacker && mainGame->dField.attacker->is_attack) {
+            	mainGame->dField.attacker->is_attack = false;
+            mainGame->dField.attacker->curRot = mainGame->dField.attacker->attRot;
+        }
+        mainGame->dField.attacker->is_attacked = false;
+		////kdiy///////////
 		DuelClient::SetResponseI(0);
 		mainGame->HideElement(mainGame->wQuery, true);
 		break;

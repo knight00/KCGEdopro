@@ -102,7 +102,7 @@ void Game::DrawBackGround() {
 	if(isAnime) {
 		if(PlayVideo())
 		    if(videotexture) {
-				if(gGameConfig->animefull) driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, videoFrame->width, videoFrame->height));
+				if(gGameConfig->animefull) driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, video_width, video_height));
 				else DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
 			}
     } else {
@@ -1776,8 +1776,8 @@ void Game::DrawBackImage(irr::video::ITexture* texture, bool resized) {
     if(texture == imageManager.tBackGround_menu) {
         if(gGameConfig->videowallpaper && openVideo(videowallpaper_path, true)) {
 		    if(PlayVideo(true))
-                if(videotexture)
-			    	driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, videoFrame->width, videoFrame->height));
+            	if(videotexture)
+			    	driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, video_width, video_height));
             return;
 	    }
     } else {
