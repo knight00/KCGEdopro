@@ -31,6 +31,7 @@
 #include "CGUIImageButton/CGUIImageButton.h"
 #include "sound_manager.h"
 //////kdiy///////
+#include "localtime.h"
 
 namespace ygo {
 
@@ -1302,7 +1303,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				mainGame->btnShareReplay->setEnabled(true);
 				std::wstring repinfo;
 				time_t curtime = replay.pheader.base.timestamp;
-				repinfo.append(epro::format(L"{:%Y/%m/%d %H:%M:%S}\n", fmt::localtime(curtime)));
+				repinfo.append(epro::format(L"{:%Y/%m/%d %H:%M:%S}\n", epro::localtime(curtime)));
                 ///kdiy////
 				//const auto& names = replay.GetPlayerNames();
 				const auto& names1 = replay.GetPlayerNames();
