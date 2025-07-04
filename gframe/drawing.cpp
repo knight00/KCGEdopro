@@ -65,7 +65,10 @@ void Game::DrawBackGround() {
 	};
 	const int three_columns = dInfo.HasFieldFlag(DUEL_3_COLUMNS_FIELD);
 	auto DrawFieldSpell = [&]() -> bool {
-		if(!gGameConfig->draw_field_spell)
+		/////kdiy//////
+		//if(!gGameConfig->draw_field_spell)
+		if(!gGameConfig->draw_field_spell && !gGameConfig->enablefanime)
+		/////kdiy//////
 			return false;
 		uint32_t fieldcode1 = 0;
 		if(dField.szone[0][5] && dField.szone[0][5]->position & POS_FACEUP)
@@ -83,14 +86,83 @@ void Game::DrawBackGround() {
 		if(both == 0)
 			return false;
 		if(fieldcode1 == 0 || fieldcode2 == 0 || fieldcode1 == fieldcode2) {
+			/////kdiy//////
+			if(gGameConfig->enablefanime) {
+				std::string s1, s11, s21;
+				s1 = "f" + std::to_string(both) + ".mp4";
+				s11 = "f" + std::to_string(both) + ".mkv";
+				s21 = "f" + std::to_string(both) + ".avi";
+				std::vector<std::string> s1List = {s1, s11, s21};
+				for (const auto& str : s1List) {
+					if(openVideo(str, true)) {
+						isFieldPlay = true;
+						if(PlayVideo(true)) {
+							if(videotexture) {
+								DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
+								return videotexture;
+							}
+							break;
+						}
+					}
+				}
+			}
+			if(!gGameConfig->draw_field_spell)
+				return false;
+			/////kdiy//////
 			auto* texture = imageManager.GetTextureField(both);
 			if(texture)
 				DrawTextureRect(matManager.vFieldSpell[three_columns], texture);
 			return texture;
 		}
+		/////kdiy//////
+		if(gGameConfig->enablefanime) {
+			std::string s1, s11, s21;
+			s1 = "f" + std::to_string(fieldcode1) + ".mp4";
+			s11 = "f" + std::to_string(fieldcode1) + ".mkv";
+			s21 = "f" + std::to_string(fieldcode1) + ".avi";
+			std::vector<std::string> s1List = {s1, s11, s21};
+			for (const auto& str : s1List) {
+				if(openVideo(str, true)) {
+					isFieldPlay = true;
+					if(PlayVideo(true)) {
+						if(videotexture) {
+							DrawTextureRect(matManager.vFieldSpell1[three_columns], videotexture);
+							return videotexture;
+						}
+						break;
+					}
+				}
+			}
+		}
+		if(!gGameConfig->draw_field_spell)
+			return false;
+		/////kdiy//////
 		auto* texture1 = imageManager.GetTextureField(fieldcode1);
 		if(texture1)
 			DrawTextureRect(matManager.vFieldSpell1[three_columns], texture1);
+		/////kdiy//////
+		if(gGameConfig->enablefanime) {
+			std::string s1, s11, s21;
+			s1 = "f" + std::to_string(fieldcode2) + ".mp4";
+			s11 = "f" + std::to_string(fieldcode2) + ".mkv";
+			s21 = "f" + std::to_string(fieldcode2) + ".avi";
+			std::vector<std::string> s1List = {s1, s11, s21};
+			for (const auto& str : s1List) {
+				if(openVideo(str, true)) {
+					isFieldPlay = true;
+					if(PlayVideo(true)) {
+						if(videotexture) {
+							DrawTextureRect(matManager.vFieldSpell2[three_columns], videotexture);
+							return videotexture;
+						}
+						break;
+					}
+				}
+			}
+		}
+		if(!gGameConfig->draw_field_spell)
+			return false;
+		/////kdiy//////
 		auto texture2 = imageManager.GetTextureField(fieldcode2);
 		if(texture2)
 			DrawTextureRect(matManager.vFieldSpell2[three_columns], texture2);
@@ -224,7 +296,7 @@ void Game::DrawBackGround() {
 }
 void Game::DrawLinkedZones(ClientCard* pcard) {
 	///kdiy////////
-	if(videostart) return;
+	if(isAnime) return;
 	///kdiy////////
 	auto CheckMutual = [&](ClientCard* pcard, int mark)->bool {
 		driver->setMaterial(matManager.mLinkedField);
@@ -406,8 +478,8 @@ void Game::DrawCards() {
 }
 void Game::DrawCard(ClientCard* pcard) {
 	///kdiy////////
-	if(videostart && !pcard->is_anime) return;
-	if(!videostart) pcard->is_anime = false;
+	if(isAnime && !pcard->is_anime) return;
+	if(!isAnime) pcard->is_anime = false;
 	///kdiy////////
 	if (pcard->aniFrame > 0) {
 		uint32_t movetime = std::min<uint32_t>(delta_time, pcard->aniFrame);
@@ -1066,7 +1138,7 @@ Draws the stats of a card based on its relative position
 void Game::DrawStatus(ClientCard* pcard, bool attackonly) {
 //kidy///////
 	///kdiy////////
-	if(videostart) return;
+	if(isAnime) return;
 	///kdiy////////
 	auto getcoords = [collisionmanager=device->getSceneManager()->getSceneCollisionManager()](const irr::core::vector3df& pos3d) {
 		return collisionmanager->getScreenCoordinatesFrom3DPosition(pos3d);
@@ -1336,7 +1408,7 @@ Draws the pendulum scale value of a card in the pendulum zone based on its relat
 */
 void Game::DrawPendScale(ClientCard* pcard) {
 	///kdiy////////
-	if(videostart) return;
+	if(isAnime) return;
 	///kdiy////////
 	int swap = (pcard->sequence > 1 && pcard->sequence != 6) ? 1 : 0;
 	float x0, y0, reverse = (pcard->controler == 0) ? 1.0f : -1.0f;
@@ -1362,7 +1434,7 @@ Draws the text in the middle of the bottom side of the zone
 */
 void Game::DrawStackIndicator(epro::wstringview text, const Materials::QuadVertex v, bool opponent) {
 	///kdiy////////
-	if(videostart) return;
+	if(isAnime) return;
 	///kdiy////////
 	const irr::core::ustring utext(text);
 	const auto dim = textFont->getDimensionustring(utext) / 2;
@@ -1781,7 +1853,7 @@ void Game::DrawBackImage(irr::video::ITexture* texture, bool resized) {
             return;
 	    }
     } else {
-        if(!isAnime && videostart) StopVideo();
+        if(!isAnime && !isFieldPlay && videostart) StopVideo();
     }
     /////kdiy//////
 	if(texture != prevbg) {

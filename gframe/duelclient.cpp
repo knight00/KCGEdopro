@@ -1608,7 +1608,6 @@ inline void PlayAnimecode(uint32_t code, uint32_t code2, uint8_t cat, std::uniqu
 	if(cat == 1 && !gGameConfig->enablecanime) return;
 	if(cat == 2 && !gGameConfig->enableaanime) return;
 	if(cat == 0 && !gGameConfig->enablesanime) return;
-	if(cat == 3 && !gGameConfig->enablefanime) return;
     if(code < 1) return;
 	std::string s1, s11, s21;
 	if(cat == 0) {
@@ -1626,16 +1625,11 @@ inline void PlayAnimecode(uint32_t code, uint32_t code2, uint8_t cat, std::uniqu
 		s11 = "a" + std::to_string(code) + ".mkv";
 		s21 = "a" + std::to_string(code) + ".avi";
 	}
-	if(cat == 3) {
-		s1 = "f" + std::to_string(code) + ".mp4";
-		s11 = "f" + std::to_string(code) + ".mkv";
-		s21 = "f" + std::to_string(code) + ".avi";
-	}
 	std::vector<std::string> s1List = {s1, s11, s21};
+	mainGame->isAnime = true;
 	for (const auto& str : s1List) {
 		if (mainGame->openVideo(str)) {
 			mainGame->WaitFrameSignal(12, lock);
-			mainGame->isAnime = true;
 			mainGame->cv->wait_for(lock, std::chrono::milliseconds(mainGame->videoDuration));
 			mainGame->WaitFrameSignal(10, lock);
 			break;
@@ -1651,7 +1645,6 @@ inline void PlayAnime(ClientCard* pcard, uint8_t cat, std::unique_lock<epro::mut
 	if(cat == 1 && !gGameConfig->enablecanime) return;
 	if(cat == 2 && !gGameConfig->enableaanime) return;
 	if(cat == 0 && !gGameConfig->enablesanime) return;
-	if(cat == 3 && !gGameConfig->enablefanime) return;
 	if(pcard == nullptr || pcard->code < 1) return;
 	uint32_t code = pcard->code;
 	auto cd = gDataManager->GetCardData(code);
@@ -1682,19 +1675,11 @@ inline void PlayAnime(ClientCard* pcard, uint8_t cat, std::unique_lock<epro::mut
 		s12 = "a" + std::to_string(code2) + ".mkv";
 		s22 = "a" + std::to_string(code2) + ".avi";
 	}
-	if(cat == 3) {
-		s1 = "f" + std::to_string(code) + ".mp4";
-		s11 = "f" + std::to_string(code) + ".mkv";
-		s21 = "f" + std::to_string(code) + ".avi";
-		s2 = "f" + std::to_string(code2) + ".mp4";
-		s12 = "f" + std::to_string(code2) + ".mkv";
-		s22 = "f" + std::to_string(code2) + ".avi";
-	}
 	std::vector<std::string> s1List = {s1, s11, s21, s2, s12, s22};
+	mainGame->isAnime = true;
 	for(const auto& str : s1List) {
 		if(mainGame->openVideo(str)) {
 			mainGame->WaitFrameSignal(12, lock);
-			mainGame->isAnime = true;
 			pcard->is_anime = true;
 			mainGame->cv->wait_for(lock, std::chrono::milliseconds(mainGame->videoDuration));
 			mainGame->WaitFrameSignal(10, lock);
@@ -1715,10 +1700,10 @@ inline void PlayAnimeC(std::string text, std::unique_lock<epro::mutex> &lock) {
 	s11 += ".mkv";
 	s21 += ".avi";
 	std::vector<std::string> s1List = {s1, s11, s21};
+	mainGame->isAnime = true;
 	for (size_t i = 0; i < s1List.size(); ++i) {
 		if(mainGame->openVideo(s1List[i])) {
 			mainGame->WaitFrameSignal(12, lock);
-			mainGame->isAnime = true;
 			mainGame->cv->wait_for(lock, std::chrono::milliseconds(mainGame->videoDuration));
 			mainGame->WaitFrameSignal(10, lock);
 		    break;

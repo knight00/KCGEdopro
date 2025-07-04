@@ -960,7 +960,7 @@ public:
 	sf::SoundBuffer soundBuffer;
     std::string currentVideo;
 	bool videostart = false;
-	bool isAnime = false;
+	bool isAnime = false, isFieldPlay = false;
     sf::Sound videosound;
 	sf::SoundBuffer videosoundBuffer;
     irr::video::ITexture* videotexture = nullptr;

@@ -208,7 +208,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 			if(tmp_repo.repo_path == tmp_repo3) {
 				if(tmp_repo.repo_name.empty())
 					tmp_repo.repo_name = "Language";
-				tmp_repo.url = "https://e.coding.net/ygo94/kcg/Ch.git";
+				tmp_repo.url = "https://gitcode.com/edokcg/Ch.git";
 				tmp_repo.data_path = "";
 				tmp_repo.is_language = true;
 				repo3chk = true;
@@ -217,7 +217,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 				continue;
 			}
 			if(tmp_repo.url.substr(0,8) == "default/")
-			    tmp_repo.url = "https://e.coding.net/ygo94/kcg" + tmp_repo.url.substr(7,tmp_repo.url.length());
+			    tmp_repo.url = "https://gitcode.com/edokcg" + tmp_repo.url.substr(7,tmp_repo.url.length());
 			else
                 continue;
             if(tmp_repo.Sanitize() && gGameConfig->system_engine)
@@ -229,7 +229,7 @@ void RepoManager::LoadRepositoriesFromJson(const nlohmann::json& configs) {
 	if(cit == configs.end() || !repo3chk) {
 		GitRepo repo1;
 		repo1.repo_name = "Language";
-		repo1.url = "https://e.coding.net/ygo94/kcg/Ch.git";
+		repo1.url = "https://gitcode.com/edokcg/Ch.git";
 		repo1.repo_path = tmp_repo3;
 		repo1.data_path = "";
 		repo1.is_language = true;
