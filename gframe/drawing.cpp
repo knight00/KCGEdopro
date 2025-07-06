@@ -93,9 +93,9 @@ void Game::DrawBackGround() {
 				s11 = "f" + std::to_string(both) + ".mkv";
 				s21 = "f" + std::to_string(both) + ".avi";
 				std::vector<std::string> s1List = {s1, s11, s21};
+				isFieldPlay = true;
 				for (const auto& str : s1List) {
 					if(openVideo(str, true)) {
-						isFieldPlay = true;
 						if(PlayVideo(true)) {
 							if(videotexture) {
 								DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
@@ -105,7 +105,9 @@ void Game::DrawBackGround() {
 						}
 					}
 				}
-			}
+				isFieldPlay = false;
+			} else
+				if(!isAnime && videostart) StopVideo();
 			if(!gGameConfig->draw_field_spell)
 				return false;
 			/////kdiy//////
@@ -121,6 +123,7 @@ void Game::DrawBackGround() {
 			s11 = "f" + std::to_string(fieldcode1) + ".mkv";
 			s21 = "f" + std::to_string(fieldcode1) + ".avi";
 			std::vector<std::string> s1List = {s1, s11, s21};
+			isFieldPlay = true;
 			for (const auto& str : s1List) {
 				if(openVideo(str, true)) {
 					isFieldPlay = true;
@@ -133,7 +136,9 @@ void Game::DrawBackGround() {
 					}
 				}
 			}
-		}
+			isFieldPlay = false;
+		} else
+			if(!isAnime && videostart) StopVideo();
 		if(!gGameConfig->draw_field_spell)
 			return false;
 		/////kdiy//////
@@ -147,6 +152,7 @@ void Game::DrawBackGround() {
 			s11 = "f" + std::to_string(fieldcode2) + ".mkv";
 			s21 = "f" + std::to_string(fieldcode2) + ".avi";
 			std::vector<std::string> s1List = {s1, s11, s21};
+			isFieldPlay = true;
 			for (const auto& str : s1List) {
 				if(openVideo(str, true)) {
 					isFieldPlay = true;
@@ -159,7 +165,9 @@ void Game::DrawBackGround() {
 					}
 				}
 			}
-		}
+			isFieldPlay = false;
+		} else
+			if(!isAnime && videostart) StopVideo();
 		if(!gGameConfig->draw_field_spell)
 			return false;
 		/////kdiy//////
@@ -180,7 +188,6 @@ void Game::DrawBackGround() {
     } else {
     if(!gGameConfig->chkField && DrawFieldSpell())
 	    DrawTextureRect(matManager.vField, imageManager.tFieldTransparent[three_columns][tfield]);
-	    //DrawFieldSpell();
     else if(gGameConfig->chkField || !(gGameConfig->randombg || gGameConfig->randombgtexture != L"") || (tfield != 3 && tfield != 1))
     /////kdiy//////
 	DrawTextureRect(matManager.vField, DrawFieldSpell() ? imageManager.tFieldTransparent[three_columns][tfield] : imageManager.tField[three_columns][tfield]);
@@ -1852,6 +1859,7 @@ void Game::DrawBackImage(irr::video::ITexture* texture, bool resized) {
 			    	driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, video_width, video_height));
             return;
 	    }
+		if(!gGameConfig->videowallpaper && videostart) StopVideo();
     } else {
         if(!isAnime && !isFieldPlay && videostart) StopVideo();
     }

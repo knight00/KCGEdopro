@@ -1635,6 +1635,7 @@ inline void PlayAnimecode(uint32_t code, uint32_t code2, uint8_t cat, std::uniqu
 			break;
 		}
 	}
+	mainGame->isAnime = false;
 #else
 	return;
 #endif
@@ -1686,6 +1687,7 @@ inline void PlayAnime(ClientCard* pcard, uint8_t cat, std::unique_lock<epro::mut
 		    break;
 		}
     }
+	mainGame->isAnime = false;
 #else
 	return;
 #endif
@@ -1709,6 +1711,7 @@ inline void PlayAnimeC(std::string text, std::unique_lock<epro::mutex> &lock) {
 		    break;
 		}
     }
+	mainGame->isAnime = false;
 #else
 	return;
 #endif

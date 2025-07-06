@@ -3681,11 +3681,7 @@ bool Game::MainLoop() {
 		atkdy2 = (float)sin(atkframe * 0.65f);
 		atk2dy2 = (float)cos(atkframe * 0.65f);
 		atkdy3 = (float)tan(atkframe);
-		if(fps > frameps) frameps = fps;
-		if(frameps > 140) frameps = 144;
-		else if(frameps > 80) frameps = 120;
-		else if(frameps > 40) frameps = 60;
-		else frameps = 30;
+		frameps = fps;
         //kdiy///////
 		driver->beginScene(true, true, irr::video::SColor(0, 0, 0, 0));
 		gMutex.lock();
@@ -5268,8 +5264,6 @@ void Game::ClearCardInfo(int player) {
 bool Game::openVideo(std::string filename, bool loop) {
 	filename = "./movies/" + filename;
 	if(!Utils::FileExists(Utils::ToPathString(filename))) {
-		isAnime = false;
-		isFieldPlay = false;
 		return false;
 	}
 	if(isFieldPlay && isAnime) {
@@ -5348,13 +5342,6 @@ bool Game::openVideo(std::string filename, bool loop) {
 		// _snwprintf(buffer, sizeof(buffer) / sizeof(*buffer), L"%lf", (formatCtx->streams[audioStreamIndex]->codecpar->sample_rate));
 		// MessageBox(nullptr, buffer, TEXT("Message"), MB_OK);
     }
-	if (!loop && audioCodecCtx && !audioBuffer.empty()) {
-		if (videosoundBuffer.loadFromSamples(audioBuffer.data(), audioBuffer.size(), audioCodecCtx->channels, audioCodecCtx->sample_rate)) {
-			videosound.setBuffer(videosoundBuffer);
-			videosound.play();
-		}
-		audioBuffer.clear();
-	}
 	return true;
 }
 irr::video::ITexture* renderVideoFrame(irr::video::IVideoDriver* driver, AVCodecContext* videoCodecCtx, AVFrame* videoFrame) {
@@ -5392,16 +5379,19 @@ bool Game::PlayVideo(bool loop) {
 	if (formatCtx) {
 		timeAccumulated += static_cast<double>(delta_time) / 1000.0;
 		timeAccumulated2 += static_cast<double>(delta_time) / 1000.0;
-		static int frameCounter = 0;
+		static int frameCounter = 0, frameCounter2 = 0;
         // Determine frames to skip based on FPS ratio
 		double videoFPS = 1.0 / videoFrameDuration;
 		if(videoFPS > 70) videoFPS = 120;
-		else if(videoFPS > 40) frameps = 60;
+		else if(videoFPS > 40) videoFPS = 60;
 		else videoFPS = 30;
         int framesToSkip = static_cast<int>(videoFPS / frameps);
 		if(framesToSkip < 1) framesToSkip = 1;
+		double audioFPS = 1.0 / audioFrameDuration;
+        int framesToSkip2 = static_cast<int>(audioFPS / frameps);
+		if(framesToSkip2 < 1) framesToSkip2 = 1;
         // Variable for frame processing time
-        double frameRenderTime = 0.0;
+        double frameRenderTime = 0.0, frameRenderTime2 = 0.0;
 		while (timeAccumulated >= videoFrameDuration) {
 			if (av_read_frame(formatCtx, &packet) < 0) {
 				if(loop) {
@@ -5448,29 +5438,36 @@ bool Game::PlayVideo(bool loop) {
 				frameCounter++;
 				timeAccumulated -= videoFrameDuration; // Adjust time after processing
 			}
-			if(!loop) {
-                if (packet.stream_index == audioStreamIndex) {
-                    if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
-                        while (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
-                            int numSamples = audioFrame->nb_samples;
-                            int audioChannels = audioCodecCtx->channels;
-                            audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
-                            for (int i = 0; i < numSamples; i++) {
-                                for (int ch = 0; ch < audioChannels; ch++) {
-                                    if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
-                                        float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
-                                        audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767));
-                                    } else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
-                                        int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
-                                        audioBuffer.push_back(src[i]);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                	av_packet_unref(&packet);
-                }
-			}
+			// if(!loop) {
+            //     if (packet.stream_index == audioStreamIndex) {
+            //         if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
+            //             while (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
+            //                 int numSamples = audioFrame->nb_samples;
+            //                 int audioChannels = audioCodecCtx->channels;
+            //                 audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
+            //                 for (int i = 0; i < numSamples; i++) {
+            //                     for (int ch = 0; ch < audioChannels; ch++) {
+            //                         if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
+            //                             float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
+            //                             audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767));
+            //                         } else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
+            //                             int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
+            //                             audioBuffer.push_back(src[i]);
+            //                         }
+            //                     }
+            //                 }
+            //             }
+            //         }
+            //     	av_packet_unref(&packet);
+            //     }
+			// if (!audioBuffer.empty()) {
+			// 	if (videosoundBuffer.loadFromSamples(audioBuffer.data(), audioBuffer.size(), audioCodecCtx->channels, audioCodecCtx->sample_rate)) {
+			// 		videosound.setBuffer(videosoundBuffer);
+			// 		videosound.play();
+			// 	}
+			// 	audioBuffer.clear();
+			// }
+			// }
 			videostart = true;
 		}
 		if(isAnime && gGameConfig->animefull) {
@@ -5499,8 +5496,16 @@ bool Game::PlayVideo(bool loop) {
 		// while (timeAccumulated2 >= audioFrameDuration) {
 		// 	if (av_read_frame(formatCtx2, &packet) >= 0) {
 		// 	if (packet.stream_index == audioStreamIndex) {
+		// 		auto startFrameProcessing = std::chrono::high_resolution_clock::now();
 		// 		if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
-		// 			while (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
+		// 			if (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
+		// 				auto endFrameProcessing = std::chrono::high_resolution_clock::now();
+		// 				std::chrono::duration<double> frameDuration = endFrameProcessing - startFrameProcessing;
+		// 				frameRenderTime2 = frameDuration.count();
+		// 				if (frameRenderTime2 > audioFrameDuration) {
+		// 					timeAccumulated2 -= audioFrameDuration;
+		// 				} else {
+		// 					if (frameCounter2 % framesToSkip2 == 0) {
         //                 int numSamples = audioFrame->nb_samples;
 		// 				int audioChannels = audioCodecCtx->channels;
 		// 				audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
@@ -5515,21 +5520,23 @@ bool Game::PlayVideo(bool loop) {
 		// 						}
 		// 					}
 		// 				}
+		// 				}}
 		// 			}
 		// 			lastAudioProcessedTime += audioFrameDuration;
 		// 		}
-        //     }
 		// 	av_packet_unref(&packet); // Clean up the packet
-		// 	}
+		// 	frameCounter2++;
 		// 	timeAccumulated2 -= audioFrameDuration;
-		// }
-		// if (!audioBuffer.empty()) {
-		// 	if (videosoundBuffer.loadFromSamples(audioBuffer.data(), audioBuffer.size(), audioCodecCtx->channels, audioCodecCtx->sample_rate)) {
-		// 		videosound.setBuffer(videosoundBuffer);
-		// 		videosound.play();
 		// 	}
-		// 	audioBuffer.clear();
+        //     }
 		// }
+		if (!audioBuffer.empty()) {
+			if (videosoundBuffer.loadFromSamples(audioBuffer.data(), audioBuffer.size(), audioCodecCtx->channels, audioCodecCtx->sample_rate)) {
+				videosound.setBuffer(videosoundBuffer);
+				videosound.play();
+			}
+			audioBuffer.clear();
+		}
 	} else {
 		StopVideo();
 		return false;

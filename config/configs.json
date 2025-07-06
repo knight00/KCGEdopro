@@ -55,7 +55,7 @@
 			"type": "pic"
 		},
 		{
-			"url": "https://code.moenext.com/perfectdicky/Rush-HD-Pictures/-/raw/master/pics/{}.png",
+			"url": "default/Rush-HD-Pictures/raw/branch/main/pics/{}.png",
 			"type": "pic"
 		},
 		{
@@ -71,7 +71,7 @@
 			"type": "field"
 		},
 		{
-			"url": "https://code.moenext.com/perfectdicky/Rush-HD-Pictures/-/raw/pics/field/{}.png",
+			"url": "default/Rush-HD-Pictures/raw/branch/main/pics/field/{}.png",
 			"type": "field"
 		},
 		{
