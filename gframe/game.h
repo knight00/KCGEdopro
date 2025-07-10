@@ -968,16 +968,16 @@ public:
     AVFormatContext* formatCtx = nullptr, * formatCtx2 = nullptr;
     AVCodecContext* videoCodecCtx = nullptr;
     AVCodecContext* audioCodecCtx = nullptr;
-	AVPacket packet;
 	AVFrame* videoFrame;
     AVFrame* audioFrame;
     int videoStreamIndex = -1, audioStreamIndex = -1;
-	double timeAccumulated = 0.0, timeAccumulated2 = 0.0, lastAudioProcessedTime = 0.0, lastVideoFrameTime = 0.0; // Accumulate time to ensure smooth frame skipping
+	double timeAccumulated = 0.0, timeAccumulated2 = 0.0, lastAudioProcessedTime = 0.0; // Accumulate time to ensure smooth frame skipping
 	int frameps = 0;
 	int video_width = 0;
     int video_height = 0;
 	double videoFrameDuration = 1.0, audioFrameDuration = 1.0;
 	int64_t videoDuration;
+	bool needsNewAudioPacket_ = true; 
 	std::vector<int16_t> audioBuffer;
 	bool openVideo(std::string videoName, bool loop = false);
 	bool PlayVideo(bool loop = false);
@@ -985,6 +985,7 @@ public:
 	std::vector<std::string> animecount;
 	std::string videowallpaper_path = "";
 	bool showcardinfo = false, showchat = false, showloc = false;
+	uint16_t current_phase = 0;
 	bool LoadJson(epro::path_string path, uint8_t character);
 	void LoadJsonInfo();
 	struct Ploat {

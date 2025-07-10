@@ -5335,7 +5335,7 @@ bool Game::openVideo(std::string filename, bool loop) {
 			avgFrameRate = videoStream->r_frame_rate;
 		}
 		videoFrameDuration = (double)avgFrameRate.den / (double)avgFrameRate.num;
-		timeAccumulated = 0; timeAccumulated2 = 0;
+		timeAccumulated = 0;
 		audioFrameDuration = 1.0 / (formatCtx->streams[audioStreamIndex]->codecpar->sample_rate);
         currentVideo = filename;
 		// wchar_t buffer[30];
@@ -5376,176 +5376,141 @@ irr::video::ITexture* renderVideoFrame(irr::video::IVideoDriver* driver, AVCodec
 }
 bool Game::PlayVideo(bool loop) {
     // Ensure a valid format context
-	if (formatCtx) {
-		timeAccumulated += static_cast<double>(delta_time) / 1000.0;
-		timeAccumulated2 += static_cast<double>(delta_time) / 1000.0;
-		static int frameCounter = 0, frameCounter2 = 0;
-        // Determine frames to skip based on FPS ratio
-		double videoFPS = 1.0 / videoFrameDuration;
-		if(videoFPS > 70) videoFPS = 120;
-		else if(videoFPS > 40) videoFPS = 60;
-		else videoFPS = 30;
-        int framesToSkip = static_cast<int>(videoFPS / frameps);
-		if(framesToSkip < 1) framesToSkip = 1;
-		double audioFPS = 1.0 / audioFrameDuration;
-        int framesToSkip2 = static_cast<int>(audioFPS / frameps);
-		if(framesToSkip2 < 1) framesToSkip2 = 1;
-        // Variable for frame processing time
-        double frameRenderTime = 0.0, frameRenderTime2 = 0.0;
-		while (timeAccumulated >= videoFrameDuration) {
-			if (av_read_frame(formatCtx, &packet) < 0) {
-				if(loop) {
-					avcodec_flush_buffers(videoCodecCtx); // Flush the codec buffers
-					avcodec_flush_buffers(audioCodecCtx);
-					av_seek_frame(formatCtx, videoStreamIndex, 0, AVSEEK_FLAG_BACKWARD);
-					av_read_frame(formatCtx, &packet);
-				} else {
-					StopVideo();
-					return false;
-				}
+	if (!formatCtx) {
+        StopVideo(); // Always good practice to call StopVideo on failure
+        return false;
+    }
+	// --- NEW: Time-Sliced Audio Frame Decoding ---
+    // We do this ONCE per call to PlayVideo.
+    // We only try to receive a frame if we've previously sent the decoder a packet.
+    if (!needsNewAudioPacket_ && !loop) {
+        int result = avcodec_receive_frame(audioCodecCtx, audioFrame);
+        if (result == 0) {
+            // Success! We got an audio frame. Process it into our buffer.
+            int numSamples = audioFrame->nb_samples;
+            int audioChannels = audioCodecCtx->channels;
+            // Reserve memory to avoid multiple small reallocations
+            audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
+            for (int i = 0; i < numSamples; i++) {
+                for (int ch = 0; ch < audioChannels; ch++) {
+                    if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
+                        float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
+                        audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767.0f));
+                    } else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
+                        int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
+                        audioBuffer.push_back(src[i]);
+                    }
+                }
+            }
+        } else if (result == AVERROR(EAGAIN)) {
+            // The decoder has finished all frames from the last packet and needs more data.
+            needsNewAudioPacket_ = true;
+        }
+        // Other results (like EOF) are handled implicitly. We just stop getting frames.
+    }
+
+	timeAccumulated += static_cast<double>(delta_time) / 1000.0;
+	static int frameCounter = 0;
+    // Determine frames to skip based on FPS ratio
+	double videoFPS = 1.0 / videoFrameDuration;
+	if(videoFPS > 70) videoFPS = 120;
+	else if(videoFPS > 40) videoFPS = 60;
+	else videoFPS = 30;
+    int framesToSkip = static_cast<int>(videoFPS / frameps);
+	if(framesToSkip < 1) framesToSkip = 1;
+    // Variable for frame processing time
+    double frameRenderTime = 0.0;
+
+	while (timeAccumulated >= videoFrameDuration) {
+		AVPacket packet;
+		if (av_read_frame(formatCtx, &packet) < 0) {
+			if(loop) {
+				avcodec_flush_buffers(videoCodecCtx); // Flush the codec buffers
+				avcodec_flush_buffers(audioCodecCtx);
+				av_seek_frame(formatCtx, videoStreamIndex, 0, AVSEEK_FLAG_BACKWARD);
+				// After seeking, we must try to read a new frame immediately
+            	if (av_read_frame(formatCtx, &packet) < 0) {
+                	StopVideo(); // If seek and read fails, something is wrong
+                	return false;
+            	}
+			} else {
+				StopVideo();
+				return false;
 			}
-			bool frameReady = false;
+		}
+		if (packet.stream_index == videoStreamIndex) {
+			if (avcodec_send_packet(videoCodecCtx, &packet) < 0) {
+				av_packet_unref(&packet);
+				StopVideo();
+				return false;
+			}
 			auto startFrameProcessing = std::chrono::high_resolution_clock::now();
-			if (packet.stream_index == videoStreamIndex) {
-				if (avcodec_send_packet(videoCodecCtx, &packet) < 0) {
-					av_packet_unref(&packet);
-					StopVideo();
-					return false;
-				}
-				if (avcodec_receive_frame(videoCodecCtx, videoFrame) >= 0) {
-					frameReady = true;
-				}
-			}
-			// Calculate the processing time of the frame
-            auto endFrameProcessing = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> frameDuration = endFrameProcessing - startFrameProcessing;
-            frameRenderTime = frameDuration.count();
-			if (packet.stream_index == videoStreamIndex) {
-				// Frame skipping and lag handling logic
+			if (avcodec_receive_frame(videoCodecCtx, videoFrame) >= 0) {
+				// Calculate the processing time of the frame
+            	auto endFrameProcessing = std::chrono::high_resolution_clock::now();
+            	std::chrono::duration<double> frameDuration = endFrameProcessing - startFrameProcessing;
+            	frameRenderTime = frameDuration.count();
 				if (frameRenderTime > videoFrameDuration) {
 					// If rendering this frame is lagging behind, skip the frame
 					// Adjust timeAccumulated to not let it build up too much
 					timeAccumulated -= videoFrameDuration;
 				} else {
 					// Skip frames logic
-					if (frameCounter % framesToSkip == 0 && frameReady) {
+					if (frameCounter % framesToSkip == 0) {
 						videotexture = renderVideoFrame(driver, videoCodecCtx, videoFrame); // Render the frame
-						frameReady = false; // Reset frame flag
 					}
 				}
-				av_packet_unref(&packet); // Clean up the packet
-				// Increment frame counter
-				frameCounter++;
-				timeAccumulated -= videoFrameDuration; // Adjust time after processing
 			}
-			// if(!loop) {
-            //     if (packet.stream_index == audioStreamIndex) {
-            //         if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
-            //             while (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
-            //                 int numSamples = audioFrame->nb_samples;
-            //                 int audioChannels = audioCodecCtx->channels;
-            //                 audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
-            //                 for (int i = 0; i < numSamples; i++) {
-            //                     for (int ch = 0; ch < audioChannels; ch++) {
-            //                         if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
-            //                             float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
-            //                             audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767));
-            //                         } else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
-            //                             int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
-            //                             audioBuffer.push_back(src[i]);
-            //                         }
-            //                     }
-            //                 }
-            //             }
-            //         }
-            //     	av_packet_unref(&packet);
-            //     }
-			// if (!audioBuffer.empty()) {
-			// 	if (videosoundBuffer.loadFromSamples(audioBuffer.data(), audioBuffer.size(), audioCodecCtx->channels, audioCodecCtx->sample_rate)) {
-			// 		videosound.setBuffer(videosoundBuffer);
-			// 		videosound.play();
-			// 	}
-			// 	audioBuffer.clear();
-			// }
-			// }
-			videostart = true;
+			// Increment frame counter
+			frameCounter++;
+			timeAccumulated -= videoFrameDuration; // Adjust time after processing
+		} else if (packet.stream_index == audioStreamIndex && !loop) {
+            // We just send the packet to the decoder. This is fast.
+            // The actual decoding happens a little bit at a time, up above.
+            if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
+                // We've successfully fed the decoder. It no longer "needs" a new packet
+                // until it runs out of frames (which we check for via EAGAIN).
+                needsNewAudioPacket_ = false;
+            }
+		} // IMPORTANT: No `else` here, so we ignore other streams (like subtitles)
+		av_packet_unref(&packet); // Clean up the packet
+		videostart = true;
+	}
+	// This checks if sound should be started or refilled.
+    if (!loop && videosound.getStatus() != sf::Sound::Playing) {
+        if (!audioBuffer.empty()) {
+            videosoundBuffer.loadFromSamples(audioBuffer.data(), audioBuffer.size(), audioCodecCtx->channels, audioCodecCtx->sample_rate);
+            videosound.setBuffer(videosoundBuffer);
+            videosound.play();
+            // Clear the buffer now that we've given it to SFML.
+            audioBuffer.clear();
+        }
+	}
+	if(isAnime && gGameConfig->animefull) {
+		wBtnShowCard->setVisible(false);
+		if(wCardImg->isVisible()) {
+			showcardinfo = true;
+			wCardImg->setVisible(false);
 		}
-		if(isAnime && gGameConfig->animefull) {
-			wBtnShowCard->setVisible(false);
-			if(wCardImg->isVisible()) {
-				showcardinfo = true;
-				wCardImg->setVisible(false);
-			}
-			if(wInfos->isVisible()) {
-				showchat = true;
-				wInfos->setVisible(false);
-			}
-			if(wLocation->isVisible()) {
-				showloc = true;
-				wLocation->setVisible(false);
-			}
-			wPhase->setVisible(false);
-			btnSpectatorSwap->setVisible(false);
-			btnChainIgnore->setVisible(false);
-			btnChainAlways->setVisible(false);
-			btnChainWhenAvail->setVisible(false);
+		if(wInfos->isVisible()) {
+			showchat = true;
+			wInfos->setVisible(false);
 		}
-		if(loop) {
-			return true;
+		if(wLocation->isVisible()) {
+			showloc = true;
+			wLocation->setVisible(false);
 		}
-		// while (timeAccumulated2 >= audioFrameDuration) {
-		// 	if (av_read_frame(formatCtx2, &packet) >= 0) {
-		// 	if (packet.stream_index == audioStreamIndex) {
-		// 		auto startFrameProcessing = std::chrono::high_resolution_clock::now();
-		// 		if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
-		// 			if (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
-		// 				auto endFrameProcessing = std::chrono::high_resolution_clock::now();
-		// 				std::chrono::duration<double> frameDuration = endFrameProcessing - startFrameProcessing;
-		// 				frameRenderTime2 = frameDuration.count();
-		// 				if (frameRenderTime2 > audioFrameDuration) {
-		// 					timeAccumulated2 -= audioFrameDuration;
-		// 				} else {
-		// 					if (frameCounter2 % framesToSkip2 == 0) {
-        //                 int numSamples = audioFrame->nb_samples;
-		// 				int audioChannels = audioCodecCtx->channels;
-		// 				audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
-		// 				for (int i = 0; i < numSamples; i++) {
-		// 					for (int ch = 0; ch < audioChannels; ch++) {
-		// 						if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
-		// 							float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
-		// 							audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767)); // Convert float samples to Int16
-		// 						} else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
-		// 							int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
-		// 							audioBuffer.push_back(src[i]); // Copy directly
-		// 						}
-		// 					}
-		// 				}
-		// 				}}
-		// 			}
-		// 			lastAudioProcessedTime += audioFrameDuration;
-		// 		}
-		// 	av_packet_unref(&packet); // Clean up the packet
-		// 	frameCounter2++;
-		// 	timeAccumulated2 -= audioFrameDuration;
-		// 	}
-        //     }
-		// }
-		if (!audioBuffer.empty()) {
-			if (videosoundBuffer.loadFromSamples(audioBuffer.data(), audioBuffer.size(), audioCodecCtx->channels, audioCodecCtx->sample_rate)) {
-				videosound.setBuffer(videosoundBuffer);
-				videosound.play();
-			}
-			audioBuffer.clear();
-		}
-	} else {
-		StopVideo();
-		return false;
+		wPhase->setVisible(false);
+		btnSpectatorSwap->setVisible(false);
+		btnChainIgnore->setVisible(false);
+		btnChainAlways->setVisible(false);
+		btnChainWhenAvail->setVisible(false);
 	}
 	return true;
 }
 void Game::StopVideo(bool close, bool reset) {
 	videostart = false;
-	timeAccumulated = 0; timeAccumulated2 = 0;
+	timeAccumulated = 0;
 	lastAudioProcessedTime = 0;
 	video_width = 0;
     video_height = 0;
