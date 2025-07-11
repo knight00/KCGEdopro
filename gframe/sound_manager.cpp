@@ -449,9 +449,35 @@ void SoundManager::RefreshChantsList() {
 				    	RefreshZipChants(epro::format(EPRO_TEXT("{}/{}/{}"), character_name, chantType.second, textcharacter[playno][0]), Chantaction[i][x][0][playno + 1], x);
 				}
 				if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM || chantType.first == CHANT::REINCARNATE)
-					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card"), character_name, chantType.second), Chantcard[x], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card"), character_name, chantType.second), Chantcard[x][0], chantType.first, x);
+				if(chantType.first == CHANT::ACTIVATE) {
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/activate"), character_name, chantType.second), Chantcard[x][0], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/flip"), character_name, chantType.second), Chantcard[x][1], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/fussummon"), character_name, chantType.second), Chantcard[x][2], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/synsummon"), character_name, chantType.second), Chantcard[x][3], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/xyzsummon"), character_name, chantType.second), Chantcard[x][4], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/linksummon"), character_name, chantType.second), Chantcard[x][5], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/ritsummon"), character_name, chantType.second), Chantcard[x][6], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/spsummon"), character_name, chantType.second), Chantcard[x][7], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/summon"), character_name, chantType.second), Chantcard[x][8], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/otherssummon"), character_name, chantType.second), Chantcard[x][9], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/equip"), character_name, chantType.second), Chantcard[x][10], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/atkannounce"), character_name, chantType.second), Chantcard[x][11], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/othersatkannounce"), character_name, chantType.second), Chantcard[x][12], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/battle_noxyz"), character_name, chantType.second), Chantcard[x][13], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/battle"), character_name, chantType.second), Chantcard[x][14], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/standby"), character_name, chantType.second), Chantcard[x][15], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/end"), character_name, chantType.second), Chantcard[x][16], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/othersequip"), character_name, chantType.second), Chantcard[x][17], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/chain"), character_name, chantType.second), Chantcard[x][18], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/othersdestroy"), character_name, chantType.second), Chantcard[x][19], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/xyzmaterial"), character_name, chantType.second), Chantcard[x][20], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/cost"), character_name, chantType.second), Chantcard[x][21], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/nonfield"), character_name, chantType.second), Chantcard[x][22], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}/card/main"), character_name, chantType.second), Chantcard[x][23], chantType.first, x);
+				}
 				if(chantType.first == CHANT::WIN)
-					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}"), character_name, chantType.second), Chantcard[x], chantType.first, x);
+					RefreshZipCards(epro::format(EPRO_TEXT("{}/{}"), character_name, chantType.second), Chantcard[x][0], chantType.first, x);
 
 				if(size > 1) character_name = epro::format(EPRO_TEXT("{}/{}"), textcharacter[x-1][0], textcharacter[x-1][j]);
 				if(chantType.first == CHANT::SUMMON) {
@@ -508,9 +534,35 @@ void SoundManager::RefreshChantsList() {
 				}
 
 				if(chantType.first == CHANT::SUMMON || chantType.first == CHANT::ATTACK || chantType.first == CHANT::ACTIVATE || chantType.first == CHANT::PENDULUM || chantType.first == CHANT::REINCARNATE)
-					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card"), character_name, chantType.second), Chantcard2[x], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card"), character_name, chantType.second), Chantcard2[x][0], chantType.first);
+				if(chantType.first == CHANT::ACTIVATE) {
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/activate"), character_name, chantType.second), Chantcard2[x][0], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/flip"), character_name, chantType.second), Chantcard2[x][1], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/fussummon"), character_name, chantType.second), Chantcard2[x][2], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/synsummon"), character_name, chantType.second), Chantcard2[x][3], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/xyzsummon"), character_name, chantType.second), Chantcard2[x][4], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/linksummon"), character_name, chantType.second), Chantcard2[x][5], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/ritsummon"), character_name, chantType.second), Chantcard2[x][6], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/spsummon"), character_name, chantType.second), Chantcard2[x][7], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/summon"), character_name, chantType.second), Chantcard2[x][8], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/otherssummon"), character_name, chantType.second), Chantcard2[x][9], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/equip"), character_name, chantType.second), Chantcard2[x][10], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/atkannounce"), character_name, chantType.second), Chantcard2[x][11], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/othersatkannounce"), character_name, chantType.second), Chantcard2[x][12], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/battle_noxyz"), character_name, chantType.second), Chantcard2[x][13], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/battle"), character_name, chantType.second), Chantcard2[x][14], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/standby"), character_name, chantType.second), Chantcard2[x][15], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/end"), character_name, chantType.second), Chantcard2[x][16], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/othersequip"), character_name, chantType.second), Chantcard2[x][17], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/chain"), character_name, chantType.second), Chantcard2[x][18], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/othersdestroy"), character_name, chantType.second), Chantcard2[x][19], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/xyzmaterial"), character_name, chantType.second), Chantcard2[x][20], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/cost"), character_name, chantType.second), Chantcard2[x][21], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/nonfield"), character_name, chantType.second), Chantcard2[x][22], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}/card/main"), character_name, chantType.second), Chantcard2[x][23], chantType.first);
+				}
 				if(chantType.first == CHANT::WIN)
-					RefreshCards(epro::format(EPRO_TEXT("{}/{}"), character_name, chantType.second), Chantcard2[x], chantType.first);
+					RefreshCards(epro::format(EPRO_TEXT("{}/{}"), character_name, chantType.second), Chantcard2[x][0], chantType.first);
 			}
 		}
 	}
@@ -1561,10 +1613,10 @@ bool SoundManager::PlayChants(CHANT chant, std::string file, const uint8_t side,
 }
 void SoundManager::PlayStartupChant(uint8_t player, std::vector<uint8_t> team) {
 	int playerno = (std::uniform_int_distribution<>(0, team.size() - 1))(rnd);
-	PlayChant(CHANT::STARTUP, 0, 0, 0, player, 0, team[playerno]);
+	PlayChant(CHANT::STARTUP, 0, 0, 0, player, 0, 0, team[playerno]);
 }
 //bool SoundManager::PlayChant(CHANT chant, uint32_t code) {
-bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, const uint8_t side, uint8_t player, uint16_t extra, uint8_t player2) {
+bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, const uint8_t side, uint8_t player, uint16_t extra, uint16_t card_extra, uint8_t player2) {
 ///////kdiy//////
 	if(!IsUsable())
 		return false;
@@ -1603,10 +1655,6 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, const u
 	if(i == -1) return false;
 	auto key = std::make_pair(chant, code);
 	auto key2 = std::make_pair(chant, code2);
-	auto chant_it = Chantcard[character[player]].find(key);
-	auto _chant_it = Chantcard2[character[player]].find(key);
-	auto chant_it2 = Chantcard[character[player]].find(key2);
-	auto _chant_it2 = Chantcard2[character[player]].find(key2);
 	std::vector<std::string> list; //store zip chant
     std::vector<std::string> list2; //store zip chant part 2
     std::vector<std::string> list3; //store zip chant part 2
@@ -1614,20 +1662,49 @@ bool SoundManager::PlayChant(CHANT chant, uint32_t code, uint32_t code2, const u
     std::vector<std::string> _list2; //store chant part 2
     std::vector<std::string> _list3; //store chant part 2
 
-	//found chant card code
-	if(chant_it != Chantcard[character[player]].end())
-		AddtoZipChantList(chant_it->second, list, list2, list3, character[player]);
-	else if(_chant_it != Chantcard2[character[player]].end())
-		AddtoChantList(_chant_it->second, _list, _list2, _list3);
-	if(list.size() < 1 && _list.size() < 1) {
-		//found chant card alias
-		if(chant_it2 != Chantcard[character[player]].end())
-			AddtoZipChantList(chant_it2->second, list, list2, list3, character[player]);
-		else if(_chant_it2 != Chantcard2[character[player]].end())
-			AddtoChantList(_chant_it2->second, _list, _list2, _list3);
+	//for chant card extra>0
+	if(card_extra > 0) {
+		for(int k = 1; k < 24; k++) {
+			auto chant_it = Chantcard[character[player]][k].find(key); //code zip chant
+			auto _chant_it = Chantcard2[character[player]][k].find(key); //code chant
+			auto chant_it2 = Chantcard[character[player]][k].find(key2); //alias zip chant
+			auto _chant_it2 = Chantcard2[character[player]][k].find(key2); //alias chant
+			//found chant card code
+			if(chant_it != Chantcard[character[player]][k].end())
+				AddtoZipChantList(chant_it->second, list, list2, list3, character[player]);
+			else if(_chant_it != Chantcard2[character[player]][k].end())
+				AddtoChantList(_chant_it->second, _list, _list2, _list3);
+
+			if(list.size() < 1 && _list.size() < 1) {
+			//found chant card alias
+				if(chant_it2 != Chantcard[character[player]][k].end())
+					AddtoZipChantList(chant_it2->second, list, list2, list3, character[player]);
+				else if(_chant_it2 != Chantcard2[character[player]][k].end())
+					AddtoChantList(_chant_it2->second, _list, _list2, _list3);
+			}
+		}
 	}
+	//for chant card extra=0
 	if(list.size() < 1 && _list.size() < 1) {
-		//not find chant for this code
+		auto chant_it = Chantcard[character[player]][0].find(key); //code zip chant
+		auto _chant_it = Chantcard2[character[player]][0].find(key); //code chant
+		auto chant_it2 = Chantcard[character[player]][0].find(key2); //alias zip chant
+		auto _chant_it2 = Chantcard2[character[player]][0].find(key2); //alias chant
+		if(chant_it != Chantcard[character[player]][0].end())
+			AddtoZipChantList(chant_it->second, list, list2, list3, character[player]);
+		else if(_chant_it != Chantcard2[character[player]][0].end())
+			AddtoChantList(_chant_it->second, _list, _list2, _list3);
+
+		if(list.size() < 1 && _list.size() < 1) {
+			if(chant_it2 != Chantcard[character[player]][0].end())
+				AddtoZipChantList(chant_it2->second, list, list2, list3, character[player]);
+			else if(_chant_it2 != Chantcard2[character[player]][0].end())
+				AddtoChantList(_chant_it2->second, _list, _list2, _list3);
+		}
+	}
+	
+	if(list.size() < 1 && _list.size() < 1) {
+		//not find chant for code & alias
         for(int j = 0; j < 14; j++) {
 			if(character[player2] > 0) {
 				AddtoZipChantSPList(chant, extra, j, Chantaction[i][character[player]][j][character[player2]], list, list2, list3, character[player]);

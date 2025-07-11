@@ -1580,19 +1580,19 @@ inline bool PlayCardBGM(ClientCard* card) {
 // 		return gSoundManager->PlayChant(sound, code);
 //    return true;
 //}
-inline bool PlayChantcode(SoundManager::CHANT sound, uint32_t code, uint32_t code2, const uint8_t player, uint16_t extra = 0, const uint8_t player2 = 0) {
+inline bool PlayChantcode(SoundManager::CHANT sound, uint32_t code, uint32_t code2, const uint8_t player, uint16_t extra = 0, uint16_t card_extra = 0, const uint8_t player2 = 0) {
 #ifdef VIP
 	if((sound == SoundManager::CHANT::ACTIVATE || sound == SoundManager::CHANT::PENDULUM) && !gGameConfig->enablecsound) return false;
 	if(sound == SoundManager::CHANT::SUMMON && !gGameConfig->enablessound) return false;
 	if(sound == SoundManager::CHANT::ATTACK && !gGameConfig->enableasound) return false;
 	if(!mainGame->dInfo.isCatchingUp)
-		return gSoundManager->PlayChant(sound, code, code2, player, player == 0 ? mainGame->avataricon1 : mainGame->avataricon2, extra, player2 == 0 ? mainGame->avataricon1 : mainGame->avataricon2);
+		return gSoundManager->PlayChant(sound, code, code2, player, player == 0 ? mainGame->avataricon1 : mainGame->avataricon2, extra, card_extra, player2 == 0 ? mainGame->avataricon1 : mainGame->avataricon2);
 	return true;
 #else
     return false;
 #endif
 }
-inline bool PlayChant(SoundManager::CHANT sound, ClientCard* pcard, const uint8_t player, uint16_t extra = 0, const uint8_t player2 = 0) {
+inline bool PlayChant(SoundManager::CHANT sound, ClientCard* pcard, const uint8_t player, uint16_t extra = 0, uint16_t card_extra = 0, const uint8_t player2 = 0) {
 	uint32_t code = 0;
     uint32_t code2 = 0;
 	if(pcard != nullptr) {
@@ -1600,7 +1600,7 @@ inline bool PlayChant(SoundManager::CHANT sound, ClientCard* pcard, const uint8_
         auto cd = gDataManager->GetCardData(code);
         if(cd && cd->alias && cd->alias > 0) code2 = cd->alias;
     }
-	return PlayChantcode(sound, code, code2, player, extra, player2);
+	return PlayChantcode(sound, code, code2, player, extra, card_extra, player2);
 }
 inline void PlayAnimecode(uint32_t code, uint32_t code2, uint8_t cat, std::unique_lock<epro::mutex> &lock) {
 #ifdef VIP
@@ -1727,6 +1727,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 	switch(msg) {
 	case MSG_NEW_PHASE: {
 		const auto phase = BufferIO::Read<uint16_t>(pbuf);
+		mainGame->current_phase = phase;
 		uint8_t player = 1 - ((mainGame->dInfo.turn % 2 && mainGame->dInfo.isFirst) || (!(mainGame->dInfo.turn % 2) && !mainGame->dInfo.isFirst));
 		uint8_t player2 = ((mainGame->dInfo.turn % 2 && mainGame->dInfo.isFirst) || (!(mainGame->dInfo.turn % 2) && !mainGame->dInfo.isFirst));
 		switch (phase) {
@@ -1735,15 +1736,15 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         			mainGame->cutincharacter[0][i] = 0;
         			mainGame->cutincharacter[1][i] = 0;
 				}
-				PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, player, 0, player2);
+				PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, player, 0, 0, player2);
 				break;
 			}
 			case PHASE_BATTLE_START: {
-				PlayChant(SoundManager::CHANT::BATTLEPHASE, nullptr, player, 0, player2);
+				PlayChant(SoundManager::CHANT::BATTLEPHASE, nullptr, player, 0, 0, player2);
 				break;
 			}
             case PHASE_END: {
-				PlayChant(SoundManager::CHANT::TURNEND, nullptr, player, 0, player2);
+				PlayChant(SoundManager::CHANT::TURNEND, nullptr, player, 0, 0, player2);
 				break;
 			}
 		}
@@ -1788,11 +1789,11 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
             }
         }
 		if(previous.location != current.location && (reason & REASON_DESTROY) && rp != 2 && rp != previous.controler && firstone)
-			PlayChant(SoundManager::CHANT::DESTROY, nullptr, previous.controler, 0, 1 - previous.controler);
+			PlayChant(SoundManager::CHANT::DESTROY, nullptr, previous.controler, 0, 0, 1 - previous.controler);
 		else if(previous.location != current.location && (reason & REASON_RELEASE) && rp != 2 && rp == previous.controler && firstone)
-			PlayChant(SoundManager::CHANT::RELEASE, nullptr, previous.controler, 0, 1 - previous.controler);
+			PlayChant(SoundManager::CHANT::RELEASE, nullptr, previous.controler, 0, 0, 1 - previous.controler);
 		else if(cpzone)
-            PlayChantcode(SoundManager::CHANT::PSCALE, 0, 0, current.controler, 0, 1 - current.controler);
+            PlayChantcode(SoundManager::CHANT::PSCALE, 0, 0, current.controler, 0, 0, 1 - current.controler);
 		break;
     }
     case MSG_SET: {
@@ -1814,7 +1815,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		uint16_t extra = 0;
 		if(settype == 1) extra |= 0x1;
 		if(setplayer >= 0)
-		    PlayChant(SoundManager::CHANT::SET, nullptr, setplayer, extra, 1 - setplayer);
+		    PlayChant(SoundManager::CHANT::SET, nullptr, setplayer, extra, 0, 1 - setplayer);
 		break;
     }
     case MSG_SUMMONING: {
@@ -1831,7 +1832,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 			if(info.position & POS_DEFENSE) extra |= 0x200;
 		}
 		if(sumplayer >= 0)
-		    PlayChant(SoundManager::CHANT::SUMMON, pcard, sumplayer, extra, 1 -sumplayer);
+		    PlayChant(SoundManager::CHANT::SUMMON, pcard, sumplayer, extra, 0, 1 -sumplayer);
 		PlayCardBGM(pcard);
 		break;
     }
@@ -1861,8 +1862,8 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
             }
 			if(reincarnate)
 				extra |= 0x1000;
-            if(reincarnate && !PlayChant(SoundManager::CHANT::REINCARNATE, pcard, sumplayer, extra, 1 - sumplayer))
-            	PlayChant(SoundManager::CHANT::SUMMON, pcard, sumplayer, extra, 1 - sumplayer);
+            if(reincarnate && !PlayChant(SoundManager::CHANT::REINCARNATE, pcard, sumplayer, extra, 0, 1 - sumplayer))
+            	PlayChant(SoundManager::CHANT::SUMMON, pcard, sumplayer, extra, 0, 1 - sumplayer);
             PlayCardBGM(pcard);
 		}
 		break;
@@ -1875,7 +1876,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         const auto sumplayer = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		ClientCard* pcard = mainGame->dField.GetCard(info.controler, info.location, info.sequence);
 		if(sumplayer >= 0)
-		    PlayChant(SoundManager::CHANT::SUMMON, pcard, sumplayer, 0x80, 1 - sumplayer);
+		    PlayChant(SoundManager::CHANT::SUMMON, pcard, sumplayer, 0x80, 0, 1 - sumplayer);
 		break;
     }
 	case MSG_CHAINING: {
@@ -1916,7 +1917,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
             }
         }
 		if(!mode) {
-			uint16_t extra = 0;
+			uint16_t extra = 0,  card_extra = 0;
             if(desc != 1160) {
 				if(mainGame->cutincharacter[cc][1] == 0 && mainGame->imageManager.cutin[gSoundManager->character[cc == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][1]) {
 					auto lock = LockIf();
@@ -1945,11 +1946,23 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 					if(pcard->type & TYPE_COUNTER) extra |= 0x200;
 				}
 				if(pcard->type & TYPE_MONSTER) extra |= 0x800;
-				if(mainGame->LocalPlayer(previous.controler) == mainGame->LocalPlayer(info.controler) && previous.location == info.location & (previous.position & POS_FACEDOWN) & (info.position & POS_FACEUP)) extra |= 0x400;
+				if(mainGame->LocalPlayer(previous.controler) == mainGame->LocalPlayer(info.controler) && previous.location == info.location & (previous.position & POS_FACEDOWN) & (info.position & POS_FACEUP)) {
+					extra |= 0x400;
+					card_extra = 0x1;
+				} else if (mainGame->current_phase == PHASE_STANDBY)
+					card_extra = 0x2;
+				else if (mainGame->current_phase == PHASE_END)
+					card_extra = 0x3;
+				else if (mainGame->current_phase >= PHASE_BATTLE_START && mainGame->current_phase <= PHASE_BATTLE)
+					card_extra = 0x4;
+				else if(!(info.location & LOCATION_ONFIELD))
+					card_extra = 0x5;
+				else if(mainGame->current_phase & (PHASE_MAIN1 | PHASE_MAIN2))
+					card_extra = 0x6;
                 if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && cpzone)
                     PlayChantcode(SoundManager::CHANT::PENDULUM, code, code2, cc, extra);
 			    else
-				    PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, cc, extra);
+				    PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, cc, extra, card_extra);
 				if(mainGame->imageManager.cutin[gSoundManager->character[cc == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][1]) {
 					mainGame->cutincharacter[cc][1] = 2;
 					auto lock = LockIf();
@@ -1979,8 +1992,8 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 				mainGame->showcard = 11;
 				mainGame->WaitFrameSignal(20, lock, true);
 			}
-            PlayChant(SoundManager::CHANT::SELFCOUNTER, nullptr, cc, 0, 1- cc);
-            PlayChant(SoundManager::CHANT::OPPCOUNTER, nullptr, pc, 0, 1- pc);
+            PlayChant(SoundManager::CHANT::SELFCOUNTER, nullptr, cc, 0, 0, 1- cc);
+            PlayChant(SoundManager::CHANT::OPPCOUNTER, nullptr, pc, 0, 0, 1- pc);
 			mainGame->bodycharacter[pc] = ((mainGame->dInfo.lp[pc] > 0 && mainGame->dInfo.lp[pc] >= mainGame->dInfo.lp[1 - pc] * 2) && prev_bodycharacter == 2) ? 2 : 0;
 			mainGame->lpcharacter[pc] = ((mainGame->dInfo.lp[pc] > 0 && mainGame->dInfo.lp[pc] >= mainGame->dInfo.lp[1 - pc] * 2) && prev_lpcharacter == 2) ? 2 : 0;
 			if(mainGame->imageManager.cutin[gSoundManager->character[pc == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][2]) {
@@ -1996,7 +2009,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		uint16_t extra = 1;
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		if(mainGame->dInfo.lp[player] > 0 && mainGame->dInfo.lp[player] <= mainGame->dInfo.lp[1 - player] / 2) extra = 0x2;
-		PlayChant(SoundManager::CHANT::DRAW, nullptr, player, extra, 1 - player);
+		PlayChant(SoundManager::CHANT::DRAW, nullptr, player, extra, 0, 1 - player);
         break;
 	}
     case MSG_DAMAGE: {
@@ -2021,7 +2034,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		if(reason & REASON_COST) extra = 0x1;
 		else if((mainGame->dInfo.lp[player] > 0 && mainGame->dInfo.lp[player] >= mainGame->dInfo.lp[1 - player] * 2) || val >= 4000) extra = 0x4;
 		else extra = 0x2;
-		PlayChant(SoundManager::CHANT::DAMAGE, nullptr, player, extra, 1 - player);
+		PlayChant(SoundManager::CHANT::DAMAGE, nullptr, player, extra, 0, 1 - player);
 		mainGame->bodycharacter[player] = (((mainGame->dInfo.lp[player] > 0 && mainGame->dInfo.lp[player] >= mainGame->dInfo.lp[1 - player] * 2) || val >= 4000) && prev_bodycharacter == 2) ? 2 : 0;
 		mainGame->lpcharacter[player] = (((mainGame->dInfo.lp[player] > 0 && mainGame->dInfo.lp[player] >= mainGame->dInfo.lp[1 - player] * 2) || val >= 4000) && prev_lpcharacterr == 2) ? 2 : 0;
 		if(!(reason & REASON_COST) && mainGame->imageManager.cutin[gSoundManager->character[player == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][0]) {
@@ -2036,12 +2049,12 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 		mainGame->lpcharacter[player] = 2;
 		mainGame->bodycharacter[player] = 2;
-		PlayChant(SoundManager::CHANT::RECOVER, nullptr, player, 0, 1 - player);
+		PlayChant(SoundManager::CHANT::RECOVER, nullptr, player, 0, 0, 1 - player);
         break;
     }
     case MSG_PAY_LPCOST: {
 		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
-		PlayChant(SoundManager::CHANT::DAMAGE, nullptr, player, 0x1, 1 - player);
+		PlayChant(SoundManager::CHANT::DAMAGE, nullptr, player, 0x1, 0, 1 - player);
         break;
     }
 	case MSG_ATTACK: {
@@ -2056,7 +2069,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         if(is_direct) extra |= 0x4;
         else extra |= 0x2;
         if(is_direct || (info1.controler != info2.controler))
-		    PlayChant(SoundManager::CHANT::ATTACK, mainGame->dField.attacker, info1.controler, extra, 1 - info2.controler);
+		    PlayChant(SoundManager::CHANT::ATTACK, mainGame->dField.attacker, info1.controler, extra, 0, 1 - info2.controler);
 		break;
     }
 	case MSG_TAG_SWAP: {
@@ -2094,7 +2107,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 				character1new = (character1 + 1) % ((player == 0 && mainGame->dInfo.isFirst) ? mainGame->replay_team1 : mainGame->replay_team2);
 				character2new = (character2 + 1) % ((player == 0 && mainGame->dInfo.isFirst) ? mainGame->replay_team2 : mainGame->replay_team1);
 			}
-			gSoundManager->PlayChant(SoundManager::CHANT::TAGSWITCH, 0, 0, player, player == 0 ? character1 : character2, 0, player == 0 ? character1new : character2new);
+			gSoundManager->PlayChant(SoundManager::CHANT::TAGSWITCH, 0, 0, player, player == 0 ? character1 : character2, 0, 0, player == 0 ? character1new : character2new);
 		}
 	}
     case MSG_WIN: {
@@ -2123,7 +2136,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 				if(cd && cd->alias && cd->alias > 0) match_kill2 = cd->alias;
 				PlayChantcode(SoundManager::CHANT::LOSE, match_kill, match_kill2, player);
 			}
-			PlayChant(SoundManager::CHANT::LOSE, nullptr, 1 - player, 0, player);
+			PlayChant(SoundManager::CHANT::LOSE, nullptr, 1 - player, 0, 0, player);
 		}
         break;
     }
@@ -2578,8 +2591,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		if(mainGame->dInfo.compat_mode)
 			/*duel_rule = */BufferIO::Read<uint8_t>(pbuf);
 		///////////kdiy///////////
-		PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, mainGame->LocalPlayer(0), 0, mainGame->LocalPlayer(1));
-		PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, mainGame->LocalPlayer(1), 0, mainGame->LocalPlayer(0));
+		PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, mainGame->LocalPlayer(0), 0, 0, mainGame->LocalPlayer(1));
+		PlayChant(SoundManager::CHANT::NEXTTURN, nullptr, mainGame->LocalPlayer(1), 0, 0, mainGame->LocalPlayer(0));
 		///////////kdiy///////////
 		auto lock = LockIf();
 		mainGame->wPhase->setVisible(true);

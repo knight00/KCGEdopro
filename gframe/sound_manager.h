@@ -138,7 +138,7 @@ public:
 	void AddtoChantList(std::vector<std::string>& chantlist, std::vector<std::string>& list, std::vector<std::string>& list2, std::vector<std::string>& list3);
 	bool PlayZipChants(CHANT chant, std::string file, const uint8_t side, uint8_t player);
 	bool PlayChants(CHANT chant, std::string file, const uint8_t side, uint8_t player);
-	bool PlayChant(CHANT chant, uint32_t code, uint32_t code2, const uint8_t side, uint8_t player, uint16_t extra = 0, uint8_t player2 = 0);
+	bool PlayChant(CHANT chant, uint32_t code, uint32_t code2, const uint8_t side, uint8_t player, uint16_t extra = 0, uint16_t card_extra = 0, uint8_t player2 = 0);
 	void PlayStartupChant(uint8_t player, std::vector<uint8_t> team);
 	uint8_t character[6] = {0,0,0,0,0,0}; //0: empty, 1: muto, 2: atem,...
 	int subcharacter[CHARACTER_VOICE] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
@@ -319,8 +319,8 @@ private:
     std::vector<std::string> SFXList[SFX::SFX_TOTAL_SIZE];
 	std::map<uint32_t, std::string> ChantBGM;
 	//card chant, Chantcard2 for zipped
-	std::map<std::pair<CHANT, uint32_t>, std::vector<std::string>> Chantcard[CHARACTER_VOICE + CHARACTER_STORY_ONLY];
-	std::map<std::pair<CHANT, uint32_t>, std::vector<std::string>> Chantcard2[CHARACTER_VOICE + CHARACTER_STORY_ONLY];
+	std::map<std::pair<CHANT, uint32_t>, std::vector<std::string>> Chantcard[CHARACTER_VOICE + CHARACTER_STORY_ONLY][24];
+	std::map<std::pair<CHANT, uint32_t>, std::vector<std::string>> Chantcard2[CHARACTER_VOICE + CHARACTER_STORY_ONLY][24];
 	//action chant, Chantaction2 for zipped
 	std::vector<std::string> Chantaction[21][CHARACTER_VOICE + CHARACTER_STORY_ONLY][14][CHARACTER_VOICE + CHARACTER_STORY_ONLY]; //1st: action no., 2nd: character(0=no character), 3rd: subaction, 4th: opponent character
 	std::vector<std::string> Chantaction2[21][CHARACTER_VOICE + CHARACTER_STORY_ONLY][14][CHARACTER_VOICE + CHARACTER_STORY_ONLY];
