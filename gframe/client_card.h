@@ -72,7 +72,7 @@ public:
 	bool is_orica = false;
 	bool is_sanct = false;
 	bool is_pzone = false;
-	bool is_summon = false;
+	uint16_t summon_extra = 0;
 	bool is_attack = false;
 	bool is_attacking = false;
 	bool is_attacked = false;

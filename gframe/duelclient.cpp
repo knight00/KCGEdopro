@@ -1580,7 +1580,7 @@ inline bool PlayCardBGM(ClientCard* card) {
 // 		return gSoundManager->PlayChant(sound, code);
 //    return true;
 //}
-inline bool PlayChantcode(SoundManager::CHANT sound, uint32_t code, uint32_t code2, const uint8_t player, uint16_t extra = 0, uint16_t card_extra = 0, const uint8_t player2 = 0) {
+inline bool PlayChantcode(SoundManager::CHANT sound, uint32_t code, uint32_t code2, const uint8_t player, uint16_t extra = 0, uint16_t card_extra = 0, uint8_t card_extra2 = 0, const uint8_t player2 = 0) {
 #ifdef VIP
 	if((sound == SoundManager::CHANT::ACTIVATE || sound == SoundManager::CHANT::PENDULUM) && !gGameConfig->enablecsound) return false;
 	if(sound == SoundManager::CHANT::SUMMON && !gGameConfig->enablessound) return false;
@@ -1592,7 +1592,7 @@ inline bool PlayChantcode(SoundManager::CHANT sound, uint32_t code, uint32_t cod
     return false;
 #endif
 }
-inline bool PlayChant(SoundManager::CHANT sound, ClientCard* pcard, const uint8_t player, uint16_t extra = 0, uint16_t card_extra = 0, const uint8_t player2 = 0) {
+inline bool PlayChant(SoundManager::CHANT sound, ClientCard* pcard, const uint8_t player, uint16_t extra = 0, uint16_t card_extra = 0, uint8_t card_extra2 = 0, const uint8_t player2 = 0) {
 	uint32_t code = 0;
     uint32_t code2 = 0;
 	if(pcard != nullptr) {
@@ -1826,6 +1826,8 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         const auto sumplayer = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
 	    ClientCard* pcard = mainGame->dField.GetCard(player, info.location, info.sequence);
         uint16_t extra = 0x80;
+		pcard->summon_extra = extra;
+		mainGame->dField.summon_cards.push_back(pcard);
         if(pcard->level >= 5) extra |= 0x400;
         else {
 			if(info.position & POS_ATTACK) extra |= 0x100;
@@ -1845,6 +1847,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
         const auto sumtype = BufferIO::Read<uint32_t>(pbuf);
         const auto sumplayer = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
         const auto reincarnate = BufferIO::Read<bool>(pbuf);
+		mainGame->dField.spsummon_cards.push_back(pcard);
         if((current.location & LOCATION_MZONE) && (current.position & POS_FACEUP) && sumplayer >= 0) {
             uint16_t extra = 0;
             if(sumtype == SUMMON_TYPE_PENDULUM || sumtype == SUMMON_TYPE_LINK || sumtype == SUMMON_TYPE_XYZ || sumtype == SUMMON_TYPE_SYNCHRO || sumtype == SUMMON_TYPE_FUSION || sumtype == SUMMON_TYPE_RITUAL || sumtype == SUMMON_TYPE_MAXIMUM) {
@@ -1855,6 +1858,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
                 if(sumtype == SUMMON_TYPE_FUSION) extra |= 0x1;
                 if(sumtype == SUMMON_TYPE_RITUAL) extra |= 0x10;
                 if(sumtype == SUMMON_TYPE_MAXIMUM) extra |= 0x800;
+				pcard->summon_extra = extra;
             } else {
                 extra = 0x40;
                 if(current.position & POS_ATTACK) extra |= 0x100;
@@ -1917,7 +1921,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
             }
         }
 		if(!mode) {
-			uint16_t extra = 0,  card_extra = 0;
+			uint16_t extra = 0, card_extra = 0; uint8_t card_extra2 = 0;
             if(desc != 1160) {
 				if(mainGame->cutincharacter[cc][1] == 0 && mainGame->imageManager.cutin[gSoundManager->character[cc == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][1]) {
 					auto lock = LockIf();
@@ -1947,22 +1951,56 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 				}
 				if(pcard->type & TYPE_MONSTER) extra |= 0x800;
 				if(mainGame->LocalPlayer(previous.controler) == mainGame->LocalPlayer(info.controler) && previous.location == info.location & (previous.position & POS_FACEDOWN) & (info.position & POS_FACEUP)) {
+					//flip
 					extra |= 0x400;
-					card_extra = 0x1;
-				} else if (mainGame->current_phase == PHASE_STANDBY)
-					card_extra = 0x2;
-				else if (mainGame->current_phase == PHASE_END)
-					card_extra = 0x3;
-				else if (mainGame->current_phase >= PHASE_BATTLE_START && mainGame->current_phase <= PHASE_BATTLE)
-					card_extra = 0x4;
-				else if(!(info.location & LOCATION_ONFIELD))
-					card_extra = 0x5;
-				else if(mainGame->current_phase & (PHASE_MAIN1 | PHASE_MAIN2))
-					card_extra = 0x6;
+					card_extra |= 0x1;
+				}
+				if(mainGame->dField.last_chain) //chaining
+					card_extra |= 0x4;
+				if(mainGame->dField.summon_cards.size() + mainGame->dField.spsummon_cards.size() > 0) {
+					card_extra |= 0x8;
+					for (auto scard : mainGame->dField.spsummon_cards) {
+						if(pcard != scard) continue;
+						if(scard->summon_extra & 0x1) //SUMMON_TYPE_FUSION
+							card_extra2 = 0;
+						else if(scard->summon_extra & 0x2) //SUMMON_TYPE_SYNCHRO
+							card_extra2 = 1;
+						else if(scard->summon_extra & 0x4) //SUMMON_TYPE_XYZ
+							card_extra2 = 2;
+						else if(scard->summon_extra & 0x8) //SUMMON_TYPE_LINK
+							card_extra2 = 3;
+						else if(scard->summon_extra & 0x10) //SUMMON_TYPE_RITUAL
+							card_extra2 = 4;
+						else
+							card_extra2 = 5;
+					}
+					for (auto scard : mainGame->dField.summon_cards) {
+						if(pcard != scard) continue;
+						card_extra2 = 6;
+					}
+					if(card_extra2 == 0)
+						card_extra2 = 7;
+				}
+				if(mainGame->dField.attacker) {
+					card_extra |= 0x20;
+					if(mainGame->dField.attacker == pcard) //pcard attack
+						card_extra2 = 0;
+					else if(pcard->overlayed.size() == 0) //pcard not xyz material battling
+						card_extra2 = 1;
+					else
+						card_extra2 = 2;
+				} else if(mainGame->current_phase == PHASE_STANDBY)
+					card_extra2 = 3;
+				else if(mainGame->current_phase == PHASE_END)
+					card_extra2 = 4;
+				if(!(info.location & LOCATION_ONFIELD))
+					card_extra |= 0x100;
+				if(mainGame->current_phase & (PHASE_MAIN1 | PHASE_MAIN2))
+					card_extra |= 0x200;
                 if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && cpzone)
                     PlayChantcode(SoundManager::CHANT::PENDULUM, code, code2, cc, extra);
 			    else
-				    PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, cc, extra, card_extra);
+				    PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, cc, extra, card_extra, card_extra2);
 				if(mainGame->imageManager.cutin[gSoundManager->character[cc == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][1]) {
 					mainGame->cutincharacter[cc][1] = 2;
 					auto lock = LockIf();
@@ -4802,11 +4840,16 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 	}
 	case MSG_SUMMONED: {
 		event_string = gDataManager->GetSysString(1604).data();		
+		/////kdiy//////
+		for (auto pcard : mainGame->dField.summon_cards)
+			pcard->summon_extra = 0;
+		mainGame->dField.summon_cards.clear();
+		/////kdiy//////
 		return true;
 	}		
 	case MSG_SPSUMMONING: {
 		const auto code = BufferIO::Read<uint32_t>(pbuf);	
-		/////kdiy//////		
+		/////kdiy//////
 		//if(!PlayChant(SoundManager::CHANT::SUMMON, code))
 		///*CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);*/
 		    //Play(SoundManager::SFX::SPECIAL_SUMMON);
@@ -4865,6 +4908,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 	}
 	case MSG_SPSUMMONED: {
 		event_string = gDataManager->GetSysString(1606).data();	
+		/////kdiy//////
+		for (auto pcard : mainGame->dField.spsummon_cards)
+			pcard->summon_extra = 0;
+		mainGame->dField.spsummon_cards.clear();
+		/////kdiy//////
 		return true;
 	}
 	case MSG_FLIPSUMMONING: {

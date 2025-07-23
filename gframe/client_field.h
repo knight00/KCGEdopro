@@ -117,6 +117,8 @@ public:
 	void MoveCard(ClientCard* pcard, float frame, irr::core::vector3df trans2 = irr::core::vector3df(0, 0, 0));
 	//move pcard to destined position with some % adjustment
 	void MoveCard(ClientCard* pcard, irr::core::vector3df trans, float frame, float tune = 1.0f);
+	std::vector<ClientCard*> summon_cards;
+	std::vector<ClientCard*> spsummon_cards;
     ////kdiy///////////
 	void FadeCard(ClientCard* pcard, float alpha, float frame);
 	bool ShowSelectSum();
