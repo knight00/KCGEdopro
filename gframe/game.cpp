@@ -4857,11 +4857,11 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 	// if (setcodes.size()) {
 	// 	stSetName->setText(epro::format(L"{}{}", gDataManager->GetSysString(1329), gDataManager->FormatSetName(setcodes)).data());
 	// }
-    if(pcard && pcard->is_change && pcard->rsetnames && pcard->rsetnames > 0) {
+    if(pcard && pcard->is_change) {
 		setcodes.clear();
 	    for(int i = 0; i < 4; i++) {
 			uint16_t setcode = (pcard->rsetnames >> (i * 16)) & 0xffff;
-			if(setcode)
+			if(setcode && setcode > 0)
 				setcodes.push_back(setcode);
 		}
 	}
