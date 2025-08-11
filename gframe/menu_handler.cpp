@@ -1880,7 +1880,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				gGameConfig->hdpic = mainGame->cbpics->getSelected();
 				//mainGame->device->closeDevice();
 				int sel = mainGame->cbpics->getSelected();
-				if(sel > 0 && prevsel ==0) {
+				if(sel > 0 && prevsel == 0) {
 				    try {
 						gGameConfig->dpi_scale = static_cast<uint32_t>(std::stol(mainGame->gSettings.ebDpiScale->getText())) / 100.0;
 						mainGame->restart = true;
