@@ -399,11 +399,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 						////kdiy///////////
 					highlighting_card = 0;
 					////kdiy///////////
-        			if(mainGame->dField.attacker && mainGame->dField.attacker->is_attack) {
-            			mainGame->dField.attacker->is_attack = false;
-            			mainGame->dField.attacker->curRot = mainGame->dField.attacker->attRot;
-        			}
-        			mainGame->dField.attacker->is_attacked = false;
+        			if(mainGame->dInfo.curMsg == MSG_SELECT_YESNO && reattack && attacker)
+            			attacker->is_attacking = false;
+					if(mainGame->dInfo.curMsg == MSG_SELECT_YESNO && reattack && attack_target)
+						attack_target->is_attacked = false;
 					////kdiy///////////
 					DuelClient::SetResponseI(0);
 					mainGame->HideElement(mainGame->wQuery, true);
@@ -3662,11 +3661,10 @@ void ClientField::CancelOrFinish() {
 			////kdiy///////////
 		highlighting_card = 0;
 		////kdiy///////////
-        if(mainGame->dField.attacker && mainGame->dField.attacker->is_attack) {
-            	mainGame->dField.attacker->is_attack = false;
-            mainGame->dField.attacker->curRot = mainGame->dField.attacker->attRot;
-        }
-        mainGame->dField.attacker->is_attacked = false;
+        if(mainGame->dInfo.curMsg == MSG_SELECT_YESNO && reattack && attacker)
+            attacker->is_attacking = false;
+		if(mainGame->dInfo.curMsg == MSG_SELECT_YESNO && reattack && attack_target)
+			attack_target->is_attacked = false;
 		////kdiy///////////
 		DuelClient::SetResponseI(0);
 		mainGame->HideElement(mainGame->wQuery, true);

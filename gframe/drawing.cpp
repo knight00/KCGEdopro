@@ -569,7 +569,13 @@ void Game::DrawCard(ClientCard* pcard) {
 		xd = pcard->attdPos.X;
 		yd = pcard->attdPos.Y;
 		irr::core::vector3df atkr = irr::core::vector3df(0, 0, pcard->controler == 0 ? -std::atan((xd - xa) / (yd - ya)) : irr::core::PI -std::atan((xd - xa) / (yd - ya)));
-		pcard->mTransform.setRotationRadians(atkr);
+		if(!pcard->is_attacking) {
+			pcard->is_attack = false;
+			pcard->is_attacking = false;
+            pcard->curRot = pcard->attRot;
+			pcard->mTransform.setRotationRadians(pcard->curRot);
+		} else
+			pcard->mTransform.setRotationRadians(atkr);
 	} else if ((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->location & LOCATION_SZONE) && (pcard->sequence == dInfo.GetPzoneIndex(0)) && !pcard->is_orica && pcard->is_pzone && !pcard->equipTarget
 		&& !gGameConfig->topdown_view) {
 		pcard->mTransform.setTranslation(pcard->curPos + irr::core::vector3df(pcard->controler == 0 ? -0.32f : 0.32f, pcard->controler == 0 ? 0 : -0.8f, 0));

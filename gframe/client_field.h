@@ -119,6 +119,7 @@ public:
 	void MoveCard(ClientCard* pcard, irr::core::vector3df trans, float frame, float tune = 1.0f);
 	std::vector<ClientCard*> summon_cards;
 	std::vector<ClientCard*> spsummon_cards;
+	bool reattack = false;
     ////kdiy///////////
 	void FadeCard(ClientCard* pcard, float alpha, float frame);
 	bool ShowSelectSum();
