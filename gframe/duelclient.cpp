@@ -4382,6 +4382,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                     pcard->text_hints.clear();
                 if(effcode > 0) {
                     std::wstring text(epro::format(gDataManager->GetText(pcard->effcode), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data()));
+					if(ocard) {
+						std::wstring textr(epro::format(gDataManager->GetText(pcard->effcode), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data()));
+						text = textr;
+					}
                     if(text != gDataManager->unknown_string)
                         pcard->text_hints.insert(pcard->text_hints.begin(), text);
                 } else if(ocard)
@@ -4428,6 +4432,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                     pcard->text_hints.clear();
                 if(effcode > 0) {
                     std::wstring text(epro::format(gDataManager->GetText(pcard->effcode), gDataManager->GetName(pcard->code).data()));
+					if(ocard) {
+						std::wstring textr(epro::format(gDataManager->GetText(pcard->effcode), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data()));
+						text = textr;
+					}
                     if(text != gDataManager->unknown_string)
                         pcard->text_hints.insert(pcard->text_hints.begin(), text);
                 } else if(ocard)
