@@ -1956,9 +1956,9 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 					card_extra |= 0x1;
 				}
 				if(mainGame->dField.last_chain) //chaining
-					card_extra |= 0x4;
+					card_extra |= 0x10;
 				if(mainGame->dField.summon_cards.size() + mainGame->dField.spsummon_cards.size() > 0) {
-					card_extra |= 0x8;
+					card_extra |= 0x20;
 					for (auto scard : mainGame->dField.spsummon_cards) {
 						if(pcard != scard) continue;
 						if(scard->summon_extra & 0x1) //SUMMON_TYPE_FUSION
@@ -1982,21 +1982,25 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 						card_extra2 = 7;
 				}
 				if(mainGame->dField.attacker) {
-					card_extra |= 0x20;
+					card_extra |= 0x80;
 					if(mainGame->dField.attacker == pcard) //pcard attack
 						card_extra2 = 0;
+					// else if(pcard->overlayed.size() == 0) //battled
+					// 	card_extra2 = 1;
 					else if(pcard->overlayed.size() == 0) //pcard not xyz material battling
-						card_extra2 = 1;
-					else
 						card_extra2 = 2;
-				} else if(mainGame->current_phase == PHASE_STANDBY)
+					else
+						card_extra2 = 3;
+				} else if (mainGame->current_phase >= PHASE_BATTLE_START && mainGame->current_phase <= PHASE_BATTLE)
 					card_extra2 = 3;
-				else if(mainGame->current_phase == PHASE_END)
+				else if(mainGame->current_phase == PHASE_STANDBY)
 					card_extra2 = 4;
+				else if(mainGame->current_phase == PHASE_END)
+					card_extra2 = 5;
 				if(!(info.location & LOCATION_ONFIELD))
-					card_extra |= 0x100;
+					card_extra |= 0x800;
 				if(mainGame->current_phase & (PHASE_MAIN1 | PHASE_MAIN2))
-					card_extra |= 0x200;
+					card_extra |= 0x1000;
                 if((pcard->type & TYPE_PENDULUM) && !pcard->equipTarget && cpzone)
                     PlayChantcode(SoundManager::CHANT::PENDULUM, code, code2, cc, extra);
 			    else

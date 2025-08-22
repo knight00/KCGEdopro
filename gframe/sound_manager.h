@@ -319,8 +319,8 @@ private:
     std::vector<std::string> SFXList[SFX::SFX_TOTAL_SIZE];
 	std::map<uint32_t, std::string> ChantBGM;
 	//card chant, Chantcard2 for zipped
-	std::map<std::pair<CHANT, uint32_t>, std::vector<std::string>> Chantcard[CHARACTER_VOICE + CHARACTER_STORY_ONLY][11][8];
-	std::map<std::pair<CHANT, uint32_t>, std::vector<std::string>> Chantcard2[CHARACTER_VOICE + CHARACTER_STORY_ONLY][11][8];
+	std::map<std::pair<CHANT, uint32_t>, std::vector<std::string>> Chantcard[CHARACTER_VOICE + CHARACTER_STORY_ONLY][14][8];
+	std::map<std::pair<CHANT, uint32_t>, std::vector<std::string>> Chantcard2[CHARACTER_VOICE + CHARACTER_STORY_ONLY][14][8];
 	//action chant, Chantaction2 for zipped
 	std::vector<std::string> Chantaction[21][CHARACTER_VOICE + CHARACTER_STORY_ONLY][14][CHARACTER_VOICE + CHARACTER_STORY_ONLY]; //1st: action no., 2nd: character(0=no character), 3rd: subaction, 4th: opponent character
 	std::vector<std::string> Chantaction2[21][CHARACTER_VOICE + CHARACTER_STORY_ONLY][14][CHARACTER_VOICE + CHARACTER_STORY_ONLY];
