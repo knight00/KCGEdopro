@@ -4394,9 +4394,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                         pcard->text_hints.insert(pcard->text_hints.begin(), text);
                 } else if(ocard)
                     pcard->text_hints = ocard->text_hints;
-			} else{
+			} else {
 				pcard->is_real = false;
 				pcard->is_rreal = false;
+				pcard->realcardname = L"";
+				pcard->orealcardname = L"";
+				pcard->text_hints.clear();
 			}
 		} else {
 			ClientCard* olcard = mainGame->dField.GetCard(current.controler, current.location & (~LOCATION_OVERLAY) & 0xff, current.sequence);
@@ -4447,6 +4450,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			} else {
 				pcard->is_real = false;
 				pcard->is_rreal = false;
+				pcard->realcardname = L"";
+				pcard->orealcardname = L"";
+				pcard->text_hints.clear();
 			}
 		}
 		if(!mainGame->dInfo.isCatchingUp) {
