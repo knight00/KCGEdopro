@@ -1743,6 +1743,10 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 				PlayChant(SoundManager::CHANT::BATTLEPHASE, nullptr, player, 0, 0, player2);
 				break;
 			}
+			case PHASE_BATTLE: {
+				mainGame->dField.battle_cards.clear();
+				break;
+			}
             case PHASE_END: {
 				PlayChant(SoundManager::CHANT::TURNEND, nullptr, player, 0, 0, player2);
 				break;
@@ -1950,43 +1954,58 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 					if(pcard->type & TYPE_COUNTER) extra |= 0x200;
 				}
 				if(pcard->type & TYPE_MONSTER) extra |= 0x800;
-				if(mainGame->LocalPlayer(previous.controler) == mainGame->LocalPlayer(info.controler) && previous.location == info.location & (previous.position & POS_FACEDOWN) & (info.position & POS_FACEUP)) {
+				if(pcard->is_flip) {
 					//flip
 					extra |= 0x400;
 					card_extra |= 0x1;
 				}
-				if(mainGame->dField.last_chain) //chaining
+				if(mainGame->dField.recovering) //recover
+					card_extra |= 2;
+				if(mainGame->dField.damaging) //damage
+					card_extra |= 4;
+				if(mainGame->dField.last_chain) //chain
+					card_extra |= 0x8;
+				if(mainGame->dField.summon_cards.size() + mainGame->dField.spsummon_cards.size() > 0) { //summon
 					card_extra |= 0x10;
-				if(mainGame->dField.summon_cards.size() + mainGame->dField.spsummon_cards.size() > 0) {
-					card_extra |= 0x20;
 					for (auto scard : mainGame->dField.spsummon_cards) {
 						if(pcard != scard) continue;
-						if(scard->summon_extra & 0x1) //SUMMON_TYPE_FUSION
+						if(scard->summon_extra & 0x1) //fussummon
 							card_extra2 = 0;
-						else if(scard->summon_extra & 0x2) //SUMMON_TYPE_SYNCHRO
+						else if(scard->summon_extra & 0x2) //synsummon
 							card_extra2 = 1;
-						else if(scard->summon_extra & 0x4) //SUMMON_TYPE_XYZ
+						else if(scard->summon_extra & 0x4) //xyzsummon
 							card_extra2 = 2;
-						else if(scard->summon_extra & 0x8) //SUMMON_TYPE_LINK
+						else if(scard->summon_extra & 0x8) //linksummon
 							card_extra2 = 3;
-						else if(scard->summon_extra & 0x10) //SUMMON_TYPE_RITUAL
+						else if(scard->summon_extra & 0x10) //ritsummon
 							card_extra2 = 4;
 						else
-							card_extra2 = 5;
+							card_extra2 = 5; //spsummon
 					}
-					for (auto scard : mainGame->dField.summon_cards) {
+					for (auto scard : mainGame->dField.summon_cards) { //summon
 						if(pcard != scard) continue;
 						card_extra2 = 6;
 					}
-					if(card_extra2 == 0)
+					if(card_extra2 == 0) //otherssummon
 						card_extra2 = 7;
 				}
+				if(pcard->is_equip) {
+					card_extra |= 0x20;
+					card_extra2 = 0;
+				}
+				for (auto ecard : mainGame->dField.equip_cards) {
+					if(ecard != pcard) {
+						card_extra |= 0x20;
+						card_extra2 = 1;
+						break;
+					}
+				}
 				if(mainGame->dField.attacker) {
-					card_extra |= 0x80;
+					card_extra |= 0x40;
 					if(mainGame->dField.attacker == pcard) //pcard attack
 						card_extra2 = 0;
-					// else if(pcard->overlayed.size() == 0) //battled
-					// 	card_extra2 = 1;
+					else if(std::find(mainGame->dField.battle_cards.begin(), mainGame->dField.battle_cards.end(), pcard) != mainGame->dField.battle_cards.end()) //battled
+						card_extra2 = 1;
 					else if(pcard->overlayed.size() == 0) //pcard not xyz material battling
 						card_extra2 = 2;
 					else
@@ -1997,6 +2016,12 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 					card_extra2 = 4;
 				else if(mainGame->current_phase == PHASE_END)
 					card_extra2 = 5;
+				if(mainGame->dField.destroying && std::find(mainGame->dField.destroy_cards.begin(), mainGame->dField.destroy_cards.end(), pcard) == mainGame->dField.destroy_cards.end()) //othersdestroy
+					card_extra |= 0x80;
+				if(mainGame->dField.removing && std::find(mainGame->dField.remove_cards.begin(), mainGame->dField.remove_cards.end(), pcard) == mainGame->dField.remove_cards.end()) //othersremove
+					card_extra |= 0x100;
+				if(pcard->overlayed.size() > 0)
+					card_extra |= 0x400;
 				if(!(info.location & LOCATION_ONFIELD))
 					card_extra |= 0x800;
 				if(mainGame->current_phase & (PHASE_MAIN1 | PHASE_MAIN2))
@@ -4468,6 +4493,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		const auto cpzone = BufferIO::Read<bool>(pbuf);
 		const auto firstone = BufferIO::Read<bool>(pbuf);
 		const auto sanct = BufferIO::Read<bool>(pbuf);
+		if (previous.location != current.location) {
+			if(reason & REASON_DESTROY)
+				mainGame->dField.destroying = true;
+			if(current.location & LOCATION_REMOVED)
+				mainGame->dField.removing = true;
+		}
         //////kdiy///
 		if (previous.location != current.location) {
 			if (reason & REASON_DESTROY)					
@@ -4546,7 +4577,13 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					pcard->is_attacking = false;
                     pcard->curRot = pcard->attRot;
                 }
-                pcard->is_attacked = false;
+				pcard->is_attacked = false;
+				if(previous.location != current.location) {
+					if(reason & REASON_DESTROY)
+						mainGame->dField.destroy_cards.push_back(pcard);
+					else if(current.location & LOCATION_REMOVED)
+						mainGame->dField.remove_cards.push_back(pcard);
+				}
 				//////kdiy///
 				if (pcard->code != code && (code != 0 || current.location == LOCATION_EXTRA))
 					pcard->SetCode(code);
@@ -4626,6 +4663,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                     pcard->curRot = pcard->attRot;
                 }
                 pcard->is_attacked = false;
+				if(previous.location != current.location) {
+					if(reason & REASON_DESTROY)
+						mainGame->dField.destroy_cards.push_back(pcard);
+					else if(current.location & LOCATION_REMOVED)
+						mainGame->dField.remove_cards.push_back(pcard);
+				}
                 Play(SoundManager::SFX::OVERLAY);
 				//////kdiy///
 				if (code != 0 && pcard->code != code)
@@ -4662,6 +4705,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                     pcard->curRot = pcard->attRot;
                 }
                 pcard->is_attacked = false;
+				if(previous.location != current.location) {
+					if(reason & REASON_DESTROY)
+						mainGame->dField.destroy_cards.push_back(pcard);
+					else if(current.location & LOCATION_REMOVED)
+						mainGame->dField.remove_cards.push_back(pcard);
+				}
                 Play(SoundManager::SFX::OVERLAY);
                 //////kdiy///
 				olcard->overlayed.erase(olcard->overlayed.begin() + pcard->sequence);
@@ -4692,6 +4741,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
                     pcard->curRot = pcard->attRot;
                 }
                 pcard->is_attacked = false;
+				if(previous.location != current.location) {
+					if(reason & REASON_DESTROY)
+						mainGame->dField.destroy_cards.push_back(pcard);
+					else if(current.location & LOCATION_REMOVED)
+						mainGame->dField.remove_cards.push_back(pcard);
+				}
                 //////kdiy///
 				olcard1->overlayed.erase(olcard1->overlayed.begin() + pcard->sequence);
 				olcard2->overlayed.push_back(pcard);
@@ -4727,6 +4782,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
             pcard->curRot = pcard->attRot;
         }
         pcard->is_attacked = false;
+		if((cl & LOCATION_ONFIELD) && (cp & POS_FACEUP))
+			pcard->is_flip = true;
+		mainGame->dField.flip_cards.push_back(pcard);
 		Play(SoundManager::SFX::POS_CHANGE);
         /////kdiy//////
 		if((pp & POS_FACEUP) && (cp & POS_FACEDOWN)) {
@@ -5109,6 +5167,27 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			chain.chain_card->is_showchaintarget = false;
 		}
 		mainGame->dField.chains.clear();
+		///kdiy////////
+		mainGame->dField.recovering = false;
+		mainGame->dField.damaging = false;
+		for (auto pcard : mainGame->dField.flip_cards)
+			pcard->is_flip = false;
+		mainGame->dField.flip_cards.clear();
+		for (auto pcard : mainGame->dField.summon_cards)
+			pcard->summon_extra = 0;
+		mainGame->dField.summon_cards.clear();
+		for (auto pcard : mainGame->dField.spsummon_cards)
+			pcard->summon_extra = 0;
+		mainGame->dField.spsummon_cards.clear();
+		for (auto pcard : mainGame->dField.equip_cards)
+			pcard->is_equip = false;
+		mainGame->dField.equip_cards.clear();
+		mainGame->dField.battle_cards.clear();
+		mainGame->dField.destroy_cards.clear();
+		mainGame->dField.remove_cards.clear();
+		mainGame->dField.destroying = false;
+		mainGame->dField.removing = false;
+		///kdiy////////
 		return true;
 	}
 	case MSG_CHAIN_NEGATED:
@@ -5232,6 +5311,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		///////////kdiy///////////
 		if(mainGame->dInfo.lp[player] >= 8888888)
             final = 8888888;
+		mainGame->dField.damaging = true;
 		///////////kdiy///////////
 		auto lock = LockIf();
 		if(!mainGame->dInfo.isCatchingUp) {
@@ -5275,6 +5355,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		if(mainGame->dInfo.lp[player] >= 8888888 || val >= 8888888)
             final2 = 8888888;
         const int final = final2;
+		mainGame->dField.recovering = true;
 		///////////kdiy///////////
 		auto lock = LockIf();
 		if(!mainGame->dInfo.isCatchingUp) {
@@ -5317,6 +5398,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			pc1->equipTarget->equipped.erase(pc1);
 		pc1->equipTarget = pc2;
 		pc2->equipped.insert(pc1);
+		///////////kdiy///////////
+		pc2->is_equip = true;
+		mainGame->dField.equip_cards.push_back(pc2);
+		///////////kdiy///////////
 		if(!mainGame->dInfo.isCatchingUp) {
 			if(pc1->equipTarget) {
 				pc1->is_showequip = false;
@@ -5362,6 +5447,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			else if(mainGame->dField.hovered_card == pc->equipTarget)
 				pc->is_showequip = false;
 		}
+		///////////kdiy///////////
+		pc->equipTarget->is_equip = false;
+		mainGame->dField.equip_cards.clear();
+		///////////kdiy///////////
 		pc->equipTarget->equipped.erase(pc);
 		pc->equipTarget = 0;
 		return true;
@@ -5611,6 +5700,9 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
             mainGame->WaitFrameSignal(20, lock);
             if(info2.location)
                 pcard2->is_attacked = false;
+			mainGame->dField.battle_cards.push_back(pcard1);
+			if(info2.location)
+				mainGame->dField.battle_cards.push_back(pcard2);
 		}
 		}
         ////kdiy///////////
