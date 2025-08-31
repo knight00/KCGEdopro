@@ -1101,7 +1101,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					curstring->enableOverrideColor(false);
 					// image
 					if(curcard->code)
-						mainGame->imageLoading[mainGame->btnCardSelect[i]] = curcard->code;
+						///kdiy////////
+						//mainGame->imageLoading[mainGame->btnCardSelect[i]] = curcard->code;
+						mainGame->imageLoading[mainGame->btnCardSelect[i]] = curcard->piccode > 0 ? curcard->piccode : curcard->code;
+						///kdiy////////
 					else if(conti_selecting)
 						mainGame->imageLoading[mainGame->btnCardSelect[i]] = curcard->chain_code;
 					else
@@ -1170,7 +1173,10 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					// draw display_cards[i + pos] in btnCardDisplay[i]
 					curstring->enableOverrideColor(false);
 					if(curcard->code)
-						mainGame->imageLoading[mainGame->btnCardDisplay[i]] = curcard->code;
+						///kdiy////////
+						//mainGame->imageLoading[mainGame->btnCardDisplay[i]] = curcard->code;
+						mainGame->imageLoading[mainGame->btnCardDisplay[i]] = curcard->piccode > 0 ? curcard->piccode : curcard->code;
+						///kdiy////////
 					else
 						mainGame->btnCardDisplay[i]->setImage(mainGame->imageManager.tCover[0]);
 					mainGame->btnCardDisplay[i]->setRelativePosition(mainGame->Scale(30 + i * 125, 55, 30 + 120 + i * 125, 225));

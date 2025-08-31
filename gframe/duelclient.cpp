@@ -4326,7 +4326,23 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		return true;
 	}
 	//////kdiy///
-	case MSG_PICCHANGE:
+	case MSG_PICCHANGE: {
+		const auto code = BufferIO::Read<uint32_t>(pbuf);
+		CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+		auto lock = LockIf();
+		if(!(current.location & LOCATION_OVERLAY)) {
+			ClientCard* pcard = mainGame->dField.GetCard(current.controler, current.location, current.sequence);
+			pcard->piccode = code;
+		} else {
+			ClientCard* olcard = mainGame->dField.GetCard(current.controler, current.location & (~LOCATION_OVERLAY) & 0xff, current.sequence);
+			ClientCard* pcard = olcard->overlayed[current.position];
+			pcard->piccode = code;
+		}
+		if(!mainGame->dInfo.isCatchingUp) {
+			mainGame->WaitFrameSignal(5, lock);
+		}
+		return true;
+	}
 	case MSG_CHANGE: {
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
 		CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
@@ -4352,13 +4368,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		if(!(current.location & LOCATION_OVERLAY)) {
 			ClientCard* pcard = mainGame->dField.GetCard(current.controler, current.location, current.sequence);
 			pcard->piccode = 0;
-			if(curMsg == MSG_PICCHANGE)  {
-				pcard->piccode = code;
-				if(!mainGame->dInfo.isCatchingUp) {
-					mainGame->WaitFrameSignal(5, lock);
-				}
-				return true;
-			} else pcard->code = code;
+			pcard->code = code;
 			pcard->is_change = true;
 			pcard->rsetnames = setnames;
 			pcard->rtype = type;
@@ -4380,11 +4390,20 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 						pcard->is_rreal = true;
 						pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), pcard->orealcardname);
 					} else
+						pcard->is_rreal = false;
 						pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), gDataManager->GetOriginalName(code, true));
 				}
-                if(pcard != ocard)
+                if(pcard != ocard && pcard->is_rreal)
                     pcard->text_hints.clear();
                 if(effcode > 0) {
+					for (std::wstring& str : pcard->text_hints) {
+						epro::wstringview to = L"";
+						size_t start_pos = 0;
+						while ((start_pos = str.find(gDataManager->GetText(pcard->effcode), start_pos)) != epro::wstringview::npos) {
+							str.replace(start_pos, gDataManager->GetText(pcard->effcode).length(), to);
+							start_pos += to.length(); // Advance past the replaced text
+						}
+					}
                     std::wstring text(epro::format(gDataManager->GetText(pcard->effcode), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data()));
 					if(ocard) {
 						std::wstring textr(epro::format(gDataManager->GetText(pcard->effcode), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data()));
@@ -4405,13 +4424,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			ClientCard* olcard = mainGame->dField.GetCard(current.controler, current.location & (~LOCATION_OVERLAY) & 0xff, current.sequence);
 			ClientCard* pcard = olcard->overlayed[current.position];
 			pcard->piccode = 0;
-			if(curMsg == MSG_PICCHANGE) {
-				pcard->piccode = code;
-				if(!mainGame->dInfo.isCatchingUp) {
-					mainGame->WaitFrameSignal(5, lock);
-				}
-				return true;
-			} else pcard->code = code;
+			pcard->code = code;
 			pcard->is_change = true;
 			pcard->rsetnames = setnames;
 			pcard->rtype = type;
@@ -4433,12 +4446,21 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 						pcard->is_rreal = true;
 						pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), pcard->orealcardname);
 					} else
+						pcard->is_rreal = false;
 						pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), gDataManager->GetOriginalName(code, true));
 				}
-                if(pcard != ocard)
+                if(pcard != ocard && pcard->is_rreal)
                     pcard->text_hints.clear();
                 if(effcode > 0) {
-                    std::wstring text(epro::format(gDataManager->GetText(pcard->effcode), gDataManager->GetName(pcard->code).data()));
+					for (std::wstring& str : pcard->text_hints) {
+						epro::wstringview to = L"";
+						size_t start_pos = 0;
+						while ((start_pos = str.find(gDataManager->GetText(pcard->effcode), start_pos)) != epro::wstringview::npos) {
+							str.replace(start_pos, gDataManager->GetText(pcard->effcode).length(), to);
+							start_pos += to.length(); // Advance past the replaced text
+						}
+					}
+                    std::wstring text(epro::format(gDataManager->GetText(pcard->effcode), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data()));
 					if(ocard) {
 						std::wstring textr(epro::format(gDataManager->GetText(pcard->effcode), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data()));
 						text = textr;
@@ -5888,14 +5910,37 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		if(chtype == CHINT_DESC_ADD) {
             //kdiy////////
             if(addtotext == true && value > 0) {
-				if(addtofront == true)
-				    pcard->text_hints.insert(pcard->text_hints.begin(), text);
-				else
-					pcard->text_hints.push_back(text);
+				if(pcard->text_hints_no[value] <= 0) {
+					if(addtofront == true)
+				    	pcard->text_hints.insert(pcard->text_hints.begin(), text);
+					else
+						pcard->text_hints.push_back(text);
+				}
+				pcard->text_hints_no[value]++;
 			} else
             //kdiy////////
             pcard->desc_hints[value]++;
 		} else if(chtype == CHINT_DESC_REMOVE) {
+            //kdiy////////
+            if(addtotext == true && value > 0) {
+				// //remove all text
+				auto it = std::remove(pcard->text_hints.begin(), pcard->text_hints.end(), text);
+				pcard->text_hints.erase(it, pcard->text_hints.end());
+				//remove one first text only
+				// auto it = std::find(pcard->text_hints.begin(), pcard->text_hints.end(), text);
+				// if(it != pcard->text_hints.end())
+				// 	pcard->text_hints.erase(it);
+				if(pcard->text_hints_no[value] > 1) {
+					if(addtofront == true)
+						pcard->text_hints.insert(pcard->text_hints.begin(), text);
+					else
+						pcard->text_hints.push_back(text);
+				}
+				pcard->text_hints_no[value]--;
+				if(pcard->text_hints_no[value] <= 0)
+					pcard->text_hints_no.erase(value);
+			} else
+            //kdiy////////
 			pcard->desc_hints[value]--;
 			if(pcard->desc_hints[value] <= 0)
 				pcard->desc_hints.erase(value);

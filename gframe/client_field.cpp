@@ -377,7 +377,10 @@ void ClientField::ShowSelectCard(bool buttonok, bool chain) {
 		curstring->enableOverrideColor(false);
 		// image
 		if(curcard->code)
-			mainGame->imageLoading[mainGame->btnCardSelect[i]] = curcard->code;
+			///kdiy////////
+			//mainGame->imageLoading[mainGame->btnCardSelect[i]] = curcard->code;
+			mainGame->imageLoading[mainGame->btnCardSelect[i]] = curcard->piccode > 0 ? curcard->piccode : curcard->code;
+			///kdiy////////
 		else if(conti_selecting)
 			mainGame->imageLoading[mainGame->btnCardSelect[i]] = curcard->chain_code;
 		else
@@ -470,7 +473,10 @@ void ClientField::ShowChainCard() {
 		auto& curstring = mainGame->stCardPos[i];
 		auto& curcard = selectable_cards[i];
 		if(curcard->code)
-			mainGame->imageLoading[mainGame->btnCardSelect[i]] = curcard->code;
+			///kdiy////////
+			//mainGame->imageLoading[mainGame->btnCardSelect[i]] = curcard->code;
+			mainGame->imageLoading[mainGame->btnCardSelect[i]] = curcard->piccode > 0 ? curcard->piccode : curcard->code;
+			///kdiy////////
 		else
 			mainGame->btnCardSelect[i]->setImage(mainGame->imageManager.tCover[curcard->controler]);
 		mainGame->btnCardSelect[i]->setRelativePosition(mainGame->Scale<irr::s32>(static_cast<irr::s32>(startpos + i * 125), 55, static_cast<irr::s32>(startpos + 120 + i * 125), 225));
@@ -527,7 +533,10 @@ void ClientField::ShowLocationCard() {
 		auto& curcard = display_cards[i];
 		curstring->enableOverrideColor(false);
 		if(curcard->code)
-			mainGame->imageLoading[mainGame->btnCardDisplay[i]] = curcard->code;
+			///kdiy////////
+			//mainGame->imageLoading[mainGame->btnCardDisplay[i]] = curcard->code;
+			mainGame->imageLoading[mainGame->btnCardDisplay[i]] = curcard->piccode > 0 ? curcard->piccode : curcard->code;
+			///kdiy////////
 		else
 			mainGame->btnCardDisplay[i]->setImage(mainGame->imageManager.tCover[curcard->controler]);
 		mainGame->btnCardDisplay[i]->setRelativePosition(mainGame->Scale<irr::s32>(static_cast<irr::s32>(startpos + i * 125), 55, static_cast<irr::s32>(startpos + 120 + i * 125), 225));
