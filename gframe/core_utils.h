@@ -68,10 +68,10 @@ private:
 	uint32_t type;
 	////////////kdiy///////
 	//uint32_t level;
-	int32_t level;
-	int32_t rank;
 	//uint32_t rank;
 	//uint32_t link;
+	int32_t level;
+	int32_t rank;
 	int32_t link;
 	////////////kdiy///////
 	uint32_t attribute;

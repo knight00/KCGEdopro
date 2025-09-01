@@ -116,6 +116,7 @@ public:
 	std::map<irr::u64, int> desc_hints;
     //kdiy////////
 	std::vector<std::wstring> text_hints;
+	std::map<irr::u64, int> text_hints_no;
     //kdiy////////
 	std::wstring atkstring;
 	std::wstring defstring;

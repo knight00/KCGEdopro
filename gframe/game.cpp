@@ -5118,8 +5118,20 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 	for(int i = 0; i < 8; i++)
 		CardInfo[i]->setVisible(false);
     if(pcard && pcard->is_real && !pcard->text_hints.empty()) {
-		for(std::vector<std::wstring>::size_type i = 0; i != pcard->text_hints.size(); i++) {
+		bool found2 = false;
+		for (std::vector<std::wstring>::size_type i = 0; i != pcard->text_hints.size(); i++) {
 			std::wstring texts = pcard->text_hints[i];
+			// size_t endPos = texts.find(L"\u2461");
+			// if(endPos != std::wstring::npos) {
+			// 	found2 = true;
+			// 	break;
+			// }
+		// }
+		// for(std::vector<std::wstring>::size_type i = 0; i != pcard->text_hints.size(); i++) {
+		// 	std::wstring texts = pcard->text_hints[i];
+		// 	if(found2) {
+		// 		texts = epro::format(L"{}{}", L"\u2462\uFF1A", texts);
+		// 	}
 			if(i == 0)
 				cardeffect.append(epro::format(L"{}", texts));
 			else if(texts != L"" && texts != L" ")
