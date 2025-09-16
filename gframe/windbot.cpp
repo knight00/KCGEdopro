@@ -66,7 +66,7 @@ WindBot::launch_ret_t WindBot::Launch(int port, epro::wstringview pass, bool cha
 							{"Version", epro::to_string(version)},
 							///kdiy//////////
 							//{"Name", BufferIO::EncodeUTF8(name)},
-							{"Name", BufferIO::EncodeUTF8(deck == L"AI_perfectdicky" ? deckpath : name)},
+							{"Name", BufferIO::EncodeUTF8(epro::format(L"[AI] {}", deck == L"AI_perfectdicky" ? deckpath : name))},
 							///kdiy//////////
 							{"Dialog", BufferIO::EncodeUTF8(dialog)},
 							{"Chat", epro::to_string(static_cast<int>(chat))},

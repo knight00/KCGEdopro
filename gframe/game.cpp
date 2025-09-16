@@ -4826,9 +4826,9 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 	if(only_texture)
 		return;
 	auto tmp_code = code;
-	if(cd->IsInArtworkOffsetRange())
-		tmp_code = cd->alias;
-    ///kdiy/////////
+    // ///kdiy/////////
+	// if(cd->IsInArtworkOffsetRange())
+	// 	tmp_code = cd->alias;
     //stName->setText(gDataManager->GetName(tmp_code).data());
     //stPasscodeScope->setText(epro::format(L"[{:08}] {}", tmp_code, gDataManager->FormatScope(cd->ot)).data());
 	stName->setText(gDataManager->GetName(pcard, tmp_code).data());
