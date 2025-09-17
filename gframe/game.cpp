@@ -5395,31 +5395,31 @@ bool Game::PlayVideo(bool loop) {
 	// --- NEW: Time-Sliced Audio Frame Decoding ---
     // We do this ONCE per call to PlayVideo.
     // We only try to receive a frame if we've previously sent the decoder a packet.
-    if (!needsNewAudioPacket_ && !loop) {
-        int result = avcodec_receive_frame(audioCodecCtx, audioFrame);
-        if (result == 0) {
-            // Success! We got an audio frame. Process it into our buffer.
-            int numSamples = audioFrame->nb_samples;
-            int audioChannels = audioCodecCtx->channels;
-            // Reserve memory to avoid multiple small reallocations
-            audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
-            for (int i = 0; i < numSamples; i++) {
-                for (int ch = 0; ch < audioChannels; ch++) {
-                    if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
-                        float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
-                        audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767.0f));
-                    } else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
-                        int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
-                        audioBuffer.push_back(src[i]);
-                    }
-                }
-            }
-        } else if (result == AVERROR(EAGAIN)) {
-            // The decoder has finished all frames from the last packet and needs more data.
-            needsNewAudioPacket_ = true;
-        }
-        // Other results (like EOF) are handled implicitly. We just stop getting frames.
-    }
+    // if (!needsNewAudioPacket_ && !loop) {
+    //     int result = avcodec_receive_frame(audioCodecCtx, audioFrame);
+    //     if (result == 0) {
+    //         // Success! We got an audio frame. Process it into our buffer.
+    //         int numSamples = audioFrame->nb_samples;
+    //         int audioChannels = audioCodecCtx->channels;
+    //         // Reserve memory to avoid multiple small reallocations
+    //         audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
+    //         for (int i = 0; i < numSamples; i++) {
+    //             for (int ch = 0; ch < audioChannels; ch++) {
+    //                 if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
+    //                     float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
+    //                     audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767.0f));
+    //                 } else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
+    //                     int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
+    //                     audioBuffer.push_back(src[i]);
+    //                 }
+    //             }
+    //         }
+    //     } else if (result == AVERROR(EAGAIN)) {
+    //         // The decoder has finished all frames from the last packet and needs more data.
+    //         needsNewAudioPacket_ = true;
+    //     }
+    //     // Other results (like EOF) are handled implicitly. We just stop getting frames.
+    // }
 
 	timeAccumulated += static_cast<double>(delta_time) / 1000.0;
 	static int frameCounter = 0;
