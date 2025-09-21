@@ -5118,20 +5118,41 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 	for(int i = 0; i < 8; i++)
 		CardInfo[i]->setVisible(false);
     if(pcard && pcard->is_real && !pcard->text_hints.empty()) {
-		bool found2 = false;
+		wchar_t largestCircledDigit = L'\0';
+		int largestCircledDigit_pos = 0;
 		for (std::vector<std::wstring>::size_type i = 0; i != pcard->text_hints.size(); i++) {
 			std::wstring texts = pcard->text_hints[i];
-			// size_t endPos = texts.find(L"\u2461");
-			// if(endPos != std::wstring::npos) {
-			// 	found2 = true;
-			// 	break;
-			// }
-		// }
-		// for(std::vector<std::wstring>::size_type i = 0; i != pcard->text_hints.size(); i++) {
-		// 	std::wstring texts = pcard->text_hints[i];
-		// 	if(found2) {
-		// 		texts = epro::format(L"{}{}", L"\u2462\uFF1A", texts);
-		// 	}
+			size_t startPos = texts.find(gDataManager->GetSysString(8095));
+			//reset circled digits for pendulum
+			if (startPos != std::wstring::npos)
+				largestCircledDigit = L'\0';
+			// Check for circled digits (U+2460 to U+2468)
+			for (wchar_t ch : texts) {
+				if (ch >= L'\u2460' && ch <= L'\u2468') { // Check if ch is between ① and ⑨
+					if (ch > largestCircledDigit) {
+						largestCircledDigit = ch; // Update largest circled digit
+						largestCircledDigit_pos = i;
+					}
+				}
+			}
+		}
+		// Get the numeric value from the largest circled digit
+		int digitValue = largestCircledDigit - L'\u2460' + 1; // Convert to 1-9
+		for(std::vector<std::wstring>::size_type i = 0; i != pcard->text_hints.size(); i++) {
+			std::wstring texts = pcard->text_hints[i];
+			bool has_circledDigit = false;
+			// If we found a circled digit, increment and prepend
+			if(largestCircledDigit != L'\0') {
+				for(wchar_t &ch : texts) {
+					if(ch >= L'\u2460' && ch <= L'\u2468')
+						has_circledDigit = true;
+				}
+				if(!has_circledDigit && largestCircledDigit_pos < i) {
+					wchar_t nextCircledDigit = L'\u2460' + digitValue; // Convert back to circled digit
+					digitValue += 1;
+					texts = epro::format(L"{}{}{}", nextCircledDigit, L"\uFF1A", texts);
+				}
+			}
 			if(i == 0)
 				cardeffect.append(epro::format(L"{}", texts));
 			else if(texts != L"" && texts != L" ")
@@ -5152,8 +5173,12 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
                 parts.push_back(temp.substr(startPos + 1, endPos - startPos - 1));
             }
         } else {
-            // The line does not contain parenthesis, so add to output1
-            fcardeffect += temp + L"\n";
+			size_t endPos = temp.find(L"\\");
+			if(endPos != std::wstring::npos){
+				fcardeffect += temp.substr(0, endPos) + L"\n" + temp.substr(endPos+2) + L"\n";
+			} else
+            	// The line does not contain parenthesis, so add to output1
+            	fcardeffect += temp + L"\n";
         }
     }
     // Remove the trailing newline from output1
