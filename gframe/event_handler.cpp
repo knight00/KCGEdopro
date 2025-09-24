@@ -1890,7 +1890,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 							//if(mcard->alias != 0 && !CardDataC::IsInArtworkOffsetRange(mcard) && str != gDataManager->GetName(mcard->alias)) {
 								//str.append(epro::format(L"\n({})", gDataManager->GetName(mcard->alias)));
 							std::wstring str(gDataManager->GetName(mcard));
-							if(mcard->alias != 0 && !CardDataC::IsInArtworkOffsetRange(mcard) && gDataManager->GetName(mcard, true).substr(0,gDataManager->GetName(mcard->alias, true).length()) != gDataManager->GetName(mcard->alias, true) && !mcard->is_real) {
+							if((mcard->alias != 0 && !CardDataC::IsInArtworkOffsetRange(mcard) && gDataManager->GetName(mcard, true).substr(0,gDataManager->GetName(mcard->alias, true).length()) != gDataManager->GetName(mcard->alias, true)) || (mcard->is_real && mcard->alias > 0)) {
 								str.append(epro::format(L"\n({})", gDataManager->GetName(mcard->alias)));
 							///////kdiy/////////
 							}
