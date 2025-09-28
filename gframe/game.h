@@ -976,6 +976,10 @@ public:
 	int video_width = 0;
     int video_height = 0;
 	double videoFrameDuration = 1.0, audioFrameDuration = 1.0;
+	double videoFPS = 1.0;
+	int framesToSkip = 1;
+	int fpscomp = 1;
+	int framesplay = 0;
 	int64_t videoDuration;
 	bool needsNewAudioPacket_ = true; 
 	std::vector<int16_t> audioBuffer;

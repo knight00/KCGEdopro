@@ -5126,9 +5126,9 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 			//reset circled digits for pendulum
 			if (startPos != std::wstring::npos)
 				largestCircledDigit = L'\0';
-			// Check for circled digits (U+2460 to U+2468)
+			// Check for circled digits (U+2460 to U+2479)
 			for (wchar_t ch : texts) {
-				if (ch >= L'\u2460' && ch <= L'\u2468') { // Check if ch is between ① and ⑨
+				if (ch >= L'\u2460' && ch <= L'\u2479') { // Check if ch is between 1 and 20
 					if (ch > largestCircledDigit) {
 						largestCircledDigit = ch; // Update largest circled digit
 						largestCircledDigit_pos = i;
@@ -5137,14 +5137,14 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 			}
 		}
 		// Get the numeric value from the largest circled digit
-		int digitValue = largestCircledDigit - L'\u2460' + 1; // Convert to 1-9
+		int digitValue = largestCircledDigit - L'\u2460' + 1; // Convert to 1-20
 		for(std::vector<std::wstring>::size_type i = 0; i != pcard->text_hints.size(); i++) {
 			std::wstring texts = pcard->text_hints[i];
 			bool has_circledDigit = false;
 			// If we found a circled digit, increment and prepend
 			if(largestCircledDigit != L'\0') {
 				for(wchar_t &ch : texts) {
-					if(ch >= L'\u2460' && ch <= L'\u2468')
+					if(ch >= L'\u2460' && ch <= L'\u2479')
 						has_circledDigit = true;
 				}
 				if(!has_circledDigit && largestCircledDigit_pos < i) {
@@ -5375,6 +5375,15 @@ bool Game::openVideo(std::string filename, bool loop) {
 		timeAccumulated = 0;
 		audioFrameDuration = 1.0 / (formatCtx->streams[audioStreamIndex]->codecpar->sample_rate);
         currentVideo = filename;
+		// Determine frames to skip based on FPS ratio
+		videoFPS = 1.0 / videoFrameDuration;
+		if(videoFPS > 70) videoFPS = 120;
+		else if(videoFPS > 40) videoFPS = 60;
+		else videoFPS = 30;
+		fpscomp = static_cast<int>(videoFPS / frameps);
+		framesplay = 0;
+		if(fpscomp > 1) framesToSkip = fpscomp;
+		else framesToSkip = static_cast<int>(frameps / videoFPS);
 		// wchar_t buffer[30];
 		// _snwprintf(buffer, sizeof(buffer) / sizeof(*buffer), L"%lf", (formatCtx->streams[audioStreamIndex]->codecpar->sample_rate));
 		// MessageBox(nullptr, buffer, TEXT("Message"), MB_OK);
@@ -5447,72 +5456,125 @@ bool Game::PlayVideo(bool loop) {
     // }
 
 	timeAccumulated += static_cast<double>(delta_time) / 1000.0;
+	framesplay++;
 	static int frameCounter = 0;
-    // Determine frames to skip based on FPS ratio
-	double videoFPS = 1.0 / videoFrameDuration;
-	if(videoFPS > 70) videoFPS = 120;
-	else if(videoFPS > 40) videoFPS = 60;
-	else videoFPS = 30;
-    int framesToSkip = static_cast<int>(videoFPS / frameps);
-	if(framesToSkip < 1) framesToSkip = 1;
     // Variable for frame processing time
     double frameRenderTime = 0.0;
-
-	while (timeAccumulated >= videoFrameDuration) {
-		AVPacket packet;
-		if (av_read_frame(formatCtx, &packet) < 0) {
-			if(loop) {
-				avcodec_flush_buffers(videoCodecCtx); // Flush the codec buffers
-				avcodec_flush_buffers(audioCodecCtx);
-				av_seek_frame(formatCtx, videoStreamIndex, 0, AVSEEK_FLAG_BACKWARD);
-				// After seeking, we must try to read a new frame immediately
-            	if (av_read_frame(formatCtx, &packet) < 0) {
-                	StopVideo(); // If seek and read fails, something is wrong
-                	return false;
-            	}
-			} else {
-				StopVideo();
-				return false;
-			}
-		}
-		if (packet.stream_index == videoStreamIndex) {
-			if (avcodec_send_packet(videoCodecCtx, &packet) < 0) {
-				av_packet_unref(&packet);
-				StopVideo();
-				return false;
-			}
-			auto startFrameProcessing = std::chrono::high_resolution_clock::now();
-			if (avcodec_receive_frame(videoCodecCtx, videoFrame) >= 0) {
-				// Calculate the processing time of the frame
-            	auto endFrameProcessing = std::chrono::high_resolution_clock::now();
-            	std::chrono::duration<double> frameDuration = endFrameProcessing - startFrameProcessing;
-            	frameRenderTime = frameDuration.count();
-				if (frameRenderTime > videoFrameDuration) {
-					// If rendering this frame is lagging behind, skip the frame
-					// Adjust timeAccumulated to not let it build up too much
-					timeAccumulated -= videoFrameDuration;
+	if(fpscomp > 1) {
+		while (timeAccumulated >= videoFrameDuration) {
+			AVPacket packet;
+			if (av_read_frame(formatCtx, &packet) < 0) {
+				if(loop) {
+					avcodec_flush_buffers(videoCodecCtx); // Flush the codec buffers
+					avcodec_flush_buffers(audioCodecCtx);
+					av_seek_frame(formatCtx, videoStreamIndex, 0, AVSEEK_FLAG_BACKWARD);
+					// After seeking, we must try to read a new frame immediately
+					if (av_read_frame(formatCtx, &packet) < 0) {
+						StopVideo(); // If seek and read fails, something is wrong
+						return false;
+					}
 				} else {
-					// Skip frames logic
-					if (frameCounter % framesToSkip == 0) {
+					StopVideo();
+					return false;
+				}
+			}
+			if (packet.stream_index == videoStreamIndex) {
+				if (avcodec_send_packet(videoCodecCtx, &packet) < 0) {
+					av_packet_unref(&packet);
+					StopVideo();
+					return false;
+				}
+				auto startFrameProcessing = std::chrono::high_resolution_clock::now();
+				if (avcodec_receive_frame(videoCodecCtx, videoFrame) >= 0) {
+					// Calculate the processing time of the frame
+					auto endFrameProcessing = std::chrono::high_resolution_clock::now();
+					std::chrono::duration<double> frameDuration = endFrameProcessing - startFrameProcessing;
+					frameRenderTime = frameDuration.count();
+					if (frameRenderTime > videoFrameDuration) {
+						// If rendering this frame is lagging behind, skip the frame
+						// Adjust timeAccumulated to not let it build up too much
+						timeAccumulated -= videoFrameDuration;
+					} else {
+						// Skip frames logic
+						if (frameCounter % framesToSkip == 0) {
+							videotexture = renderVideoFrame(driver, videoCodecCtx, videoFrame); // Render the frame
+						}
+					}
+				}
+				// Increment frame counter
+				frameCounter++;
+				timeAccumulated -= videoFrameDuration; // Adjust time after processing
+			} else if (packet.stream_index == audioStreamIndex && !loop) {
+				// We just send the packet to the decoder. This is fast.
+				// The actual decoding happens a little bit at a time, up above.
+				if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
+					// We've successfully fed the decoder. It no longer "needs" a new packet
+					// until it runs out of frames (which we check for via EAGAIN).
+					needsNewAudioPacket_ = false;
+				}
+			} // IMPORTANT: No `else` here, so we ignore other streams (like subtitles)
+			av_packet_unref(&packet); // Clean up the packet
+		}
+	} else {
+		while (timeAccumulated >= videoFrameDuration) {
+			AVPacket packet;
+			if (av_read_frame(formatCtx, &packet) < 0) {
+				if(loop) {
+					avcodec_flush_buffers(videoCodecCtx);
+					avcodec_flush_buffers(audioCodecCtx);
+					av_seek_frame(formatCtx, videoStreamIndex, 0, AVSEEK_FLAG_BACKWARD);
+					if (av_read_frame(formatCtx, &packet) < 0) {
+						StopVideo();
+						return false;
+					}
+				} else {
+					StopVideo();
+					return false;
+				}
+			}
+			if (packet.stream_index == videoStreamIndex) {
+				if (avcodec_send_packet(videoCodecCtx, &packet) < 0) {
+					av_packet_unref(&packet);
+					StopVideo();
+					return false;
+				}
+				auto startFrameProcessing = std::chrono::high_resolution_clock::now();
+				if (avcodec_receive_frame(videoCodecCtx, videoFrame) >= 0) {
+					auto endFrameProcessing = std::chrono::high_resolution_clock::now();
+					std::chrono::duration<double> frameDuration = endFrameProcessing - startFrameProcessing;
+					frameRenderTime = frameDuration.count();
+					if (frameRenderTime > videoFrameDuration) {
+						timeAccumulated -= videoFrameDuration;
+					} else {
 						videotexture = renderVideoFrame(driver, videoCodecCtx, videoFrame); // Render the frame
 					}
 				}
+				timeAccumulated -= videoFrameDuration;
+			} else if (packet.stream_index == audioStreamIndex && !loop) {
+				if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
+					int result = avcodec_receive_frame(audioCodecCtx, audioFrame);
+					if (result == 0) {
+						int numSamples = audioFrame->nb_samples;
+						int audioChannels = audioCodecCtx->channels;
+						audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
+						for (int i = 0; i < numSamples; i++) {
+							for (int ch = 0; ch < audioChannels; ch++) {
+								if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
+									float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
+									audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767.0f));
+								} else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
+									int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
+									audioBuffer.push_back(src[i]);
+								}
+							}
+						}
+					}
+				}
 			}
-			// Increment frame counter
-			frameCounter++;
-			timeAccumulated -= videoFrameDuration; // Adjust time after processing
-		} else if (packet.stream_index == audioStreamIndex && !loop) {
-            // We just send the packet to the decoder. This is fast.
-            // The actual decoding happens a little bit at a time, up above.
-            if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
-                // We've successfully fed the decoder. It no longer "needs" a new packet
-                // until it runs out of frames (which we check for via EAGAIN).
-                needsNewAudioPacket_ = false;
-            }
-		} // IMPORTANT: No `else` here, so we ignore other streams (like subtitles)
-		av_packet_unref(&packet); // Clean up the packet
-		videostart = true;
+			av_packet_unref(&packet);
+		}
 	}
+	videostart = true;
 	// This checks if sound should be started or refilled.
     if (!loop && videosound.getStatus() != sf::Sound::Playing) {
         if (!audioBuffer.empty()) {
@@ -5552,6 +5614,10 @@ void Game::StopVideo(bool close, bool reset) {
 	video_width = 0;
     video_height = 0;
 	currentVideo = "";
+	videoFPS = 1.0;
+	framesToSkip = 1;
+	fpscomp = 1;
+	framesplay = 0;
 	if(isAnime)
 	    mainGame->cv->notify_one();
 	if(close) {
