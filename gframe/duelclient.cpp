@@ -4385,18 +4385,22 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         const auto lscale = BufferIO::Read<uint32_t>(pbuf);
         const auto rscale = BufferIO::Read<uint32_t>(pbuf);
         const auto link_marker = BufferIO::Read<uint32_t>(pbuf);
+        const auto partchange = BufferIO::Read<bool>(pbuf);
         const auto realcode = BufferIO::Read<uint32_t>(pbuf);
         const auto effcode = BufferIO::Read<uint32_t>(pbuf);
         const auto namecode = BufferIO::Read<uint32_t>(pbuf);
 		auto lock = LockIf();
-        CoreUtils::loc_info current2 = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
-        ClientCard* ocard = mainGame->dField.GetCard(current2.controler, current2.location, current2.sequence);
-        if(current2.location & LOCATION_OVERLAY)
-            ocard = mainGame->dField.GetCard(current2.controler, current2.location & (~LOCATION_OVERLAY) & 0xff, current2.sequence);
+        CoreUtils::loc_info current2;
+		ClientCard* ocard;
+		if(!partchange) {
+        	current2 = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+        	ocard = mainGame->dField.GetCard(current2.controler, current2.location, current2.sequence);
+        	if(current2.location & LOCATION_OVERLAY)
+            	ocard = mainGame->dField.GetCard(current2.controler, current2.location & (~LOCATION_OVERLAY) & 0xff, current2.sequence);
+		}
 		current.controler = mainGame->LocalPlayer(current.controler);
 		if(!(current.location & LOCATION_OVERLAY)) {
 			ClientCard* pcard = mainGame->dField.GetCard(current.controler, current.location, current.sequence);
-			pcard->piccode = 0;
 			pcard->code = code;
 			pcard->is_change = true;
 			pcard->rsetnames = setnames;
@@ -4409,50 +4413,52 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			pcard->rlscale = lscale;
 			pcard->rrscale = rscale;
 			pcard->rlink_marker = link_marker;
-			pcard->orealcardname = ocard ? ocard->realcardname : L"";
-			if(realcode > 0) {
-				pcard->is_real = true;
-				pcard->effcode = effcode;
-				pcard->namecode = namecode;
-				if(namecode > 0) {
-					if(ocard) {
-						pcard->is_rreal = true;
-						pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), pcard->orealcardname);
-					} else
-						pcard->is_rreal = false;
-						pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), gDataManager->GetOriginalName(code, true));
-				}
-                if(pcard != ocard && pcard->is_rreal)
-                    pcard->text_hints.clear();
-                if(effcode > 0) {
-					for (std::wstring& str : pcard->text_hints) {
-						epro::wstringview to = L"";
-						size_t start_pos = 0;
-						while ((start_pos = str.find(gDataManager->GetText(pcard->effcode), start_pos)) != epro::wstringview::npos) {
-							str.replace(start_pos, gDataManager->GetText(pcard->effcode).length(), to);
-							start_pos += to.length(); // Advance past the replaced text
+			if(!partchange) {
+				pcard->piccode = 0;
+				pcard->orealcardname = ocard ? ocard->realcardname : L"";
+				if(realcode > 0) {
+					pcard->is_real = true;
+					pcard->effcode = effcode;
+					pcard->namecode = namecode;
+					if(namecode > 0) {
+						if(ocard) {
+							pcard->is_rreal = true;
+							pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), pcard->orealcardname);
+						} else
+							pcard->is_rreal = false;
+							pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), gDataManager->GetOriginalName(code, true));
+					}
+					if(pcard != ocard && pcard->is_rreal)
+						pcard->text_hints.clear();
+					if(effcode > 0) {
+						for (std::wstring& str : pcard->text_hints) {
+							epro::wstringview to = L"";
+							size_t start_pos = 0;
+							while ((start_pos = str.find(gDataManager->GetText(pcard->effcode), start_pos)) != epro::wstringview::npos) {
+								str.replace(start_pos, gDataManager->GetText(pcard->effcode).length(), to);
+								start_pos += to.length(); // Advance past the replaced text
+							}
 						}
-					}
-                    std::wstring text(epro::format(gDataManager->GetText(pcard->effcode), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data()));
-					if(ocard) {
-						std::wstring textr(epro::format(gDataManager->GetText(pcard->effcode), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data()));
-						text = textr;
-					}
-                    if(text != gDataManager->unknown_string)
-                        pcard->text_hints.insert(pcard->text_hints.begin(), text);
-                } else if(ocard)
-                    pcard->text_hints = ocard->text_hints;
-			} else {
-				pcard->is_real = false;
-				pcard->is_rreal = false;
-				pcard->realcardname = L"";
-				pcard->orealcardname = L"";
-				pcard->text_hints.clear();
+						std::wstring text(epro::format(gDataManager->GetText(pcard->effcode), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data()));
+						if(ocard) {
+							std::wstring textr(epro::format(gDataManager->GetText(pcard->effcode), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data()));
+							text = textr;
+						}
+						if(text != gDataManager->unknown_string)
+							pcard->text_hints.insert(pcard->text_hints.begin(), text);
+					} else if(ocard)
+						pcard->text_hints = ocard->text_hints;
+				} else {
+					pcard->is_real = false;
+					pcard->is_rreal = false;
+					pcard->realcardname = L"";
+					pcard->orealcardname = L"";
+					pcard->text_hints.clear();
+				}
 			}
 		} else {
 			ClientCard* olcard = mainGame->dField.GetCard(current.controler, current.location & (~LOCATION_OVERLAY) & 0xff, current.sequence);
 			ClientCard* pcard = olcard->overlayed[current.position];
-			pcard->piccode = 0;
 			pcard->code = code;
 			pcard->is_change = true;
 			pcard->rsetnames = setnames;
@@ -4465,45 +4471,48 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			pcard->rlscale = lscale;
 			pcard->rrscale = rscale;
 			pcard->rlink_marker = link_marker;
-			pcard->orealcardname = ocard ? ocard->realcardname : L"";
-			if(realcode > 0) {
-				pcard->is_real = true;
-				pcard->effcode = effcode;
-				pcard->namecode = namecode;
-				if(namecode > 0) {
-					if(ocard) {
-						pcard->is_rreal = true;
-						pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), pcard->orealcardname);
-					} else
-						pcard->is_rreal = false;
-						pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), gDataManager->GetOriginalName(code, true));
-				}
-                if(pcard != ocard && pcard->is_rreal)
-                    pcard->text_hints.clear();
-                if(effcode > 0) {
-					for (std::wstring& str : pcard->text_hints) {
-						epro::wstringview to = L"";
-						size_t start_pos = 0;
-						while ((start_pos = str.find(gDataManager->GetText(pcard->effcode), start_pos)) != epro::wstringview::npos) {
-							str.replace(start_pos, gDataManager->GetText(pcard->effcode).length(), to);
-							start_pos += to.length(); // Advance past the replaced text
+			if(!partchange) {
+				pcard->piccode = 0;
+				pcard->orealcardname = ocard ? ocard->realcardname : L"";
+				if(realcode > 0) {
+					pcard->is_real = true;
+					pcard->effcode = effcode;
+					pcard->namecode = namecode;
+					if(namecode > 0) {
+						if(ocard) {
+							pcard->is_rreal = true;
+							pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), pcard->orealcardname);
+						} else
+							pcard->is_rreal = false;
+							pcard->realcardname = epro::format(gDataManager->GetOriginalName(namecode, true), gDataManager->GetOriginalName(code, true));
+					}
+					if(pcard != ocard && pcard->is_rreal)
+						pcard->text_hints.clear();
+					if(effcode > 0) {
+						for (std::wstring& str : pcard->text_hints) {
+							epro::wstringview to = L"";
+							size_t start_pos = 0;
+							while ((start_pos = str.find(gDataManager->GetText(pcard->effcode), start_pos)) != epro::wstringview::npos) {
+								str.replace(start_pos, gDataManager->GetText(pcard->effcode).length(), to);
+								start_pos += to.length(); // Advance past the replaced text
+							}
 						}
-					}
-                    std::wstring text(epro::format(gDataManager->GetText(pcard->effcode), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data()));
-					if(ocard) {
-						std::wstring textr(epro::format(gDataManager->GetText(pcard->effcode), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data()));
-						text = textr;
-					}
-                    if(text != gDataManager->unknown_string)
-                        pcard->text_hints.insert(pcard->text_hints.begin(), text);
-                } else if(ocard)
-                    pcard->text_hints = ocard->text_hints;
-			} else {
-				pcard->is_real = false;
-				pcard->is_rreal = false;
-				pcard->realcardname = L"";
-				pcard->orealcardname = L"";
-				pcard->text_hints.clear();
+						std::wstring text(epro::format(gDataManager->GetText(pcard->effcode), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data(), gDataManager->GetName(pcard->code).data()));
+						if(ocard) {
+							std::wstring textr(epro::format(gDataManager->GetText(pcard->effcode), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data(), pcard->orealcardname.data()));
+							text = textr;
+						}
+						if(text != gDataManager->unknown_string)
+							pcard->text_hints.insert(pcard->text_hints.begin(), text);
+					} else if(ocard)
+						pcard->text_hints = ocard->text_hints;
+				} else {
+					pcard->is_real = false;
+					pcard->is_rreal = false;
+					pcard->realcardname = L"";
+					pcard->orealcardname = L"";
+					pcard->text_hints.clear();
+				}
 			}
 		}
 		if(!mainGame->dInfo.isCatchingUp) {
