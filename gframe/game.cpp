@@ -132,10 +132,10 @@ void Mode::NextPlot(uint8_t step, uint32_t code) {
         for(int i = 0; i < 6; ++i)
             character[i] = 0;
         if(chapter == 1) {
-            gSoundManager->character[0] = 43; //Player 1 voice: Yusei
+            gSoundManager->character[0] = 44; //Player 1 voice: Yusei
             gSoundManager->character[1] = CHARACTER_VOICE; //Player 2 voice: Dark Siner
         } else {
-            gSoundManager->character[0] = 43; //Player 1 voice: Yusei
+            gSoundManager->character[0] = 44; //Player 1 voice: Yusei
             gSoundManager->character[1] = CHARACTER_VOICE; //Player 2 voice: Dark Siner
         }
 		for(uint8_t i = 0; i < mainGame->dInfo.team1 + mainGame->dInfo.team2; ++i) {
@@ -5373,17 +5373,13 @@ bool Game::openVideo(std::string filename, bool loop) {
 		}
 		videoFrameDuration = (double)avgFrameRate.den / (double)avgFrameRate.num;
 		timeAccumulated = 0;
-		audioFrameDuration = 1.0 / (formatCtx->streams[audioStreamIndex]->codecpar->sample_rate);
+		// audioFrameDuration = 2.0 / (formatCtx->streams[audioStreamIndex]->codecpar->sample_rate);
         currentVideo = filename;
 		// Determine frames to skip based on FPS ratio
 		videoFPS = 1.0 / videoFrameDuration;
 		if(videoFPS > 70) videoFPS = 120;
 		else if(videoFPS > 40) videoFPS = 60;
 		else videoFPS = 30;
-		fpscomp = static_cast<int>(videoFPS / frameps);
-		framesplay = 0;
-		if(fpscomp > 1) framesToSkip = fpscomp;
-		else framesToSkip = static_cast<int>(frameps / videoFPS);
 		// wchar_t buffer[30];
 		// _snwprintf(buffer, sizeof(buffer) / sizeof(*buffer), L"%lf", (formatCtx->streams[audioStreamIndex]->codecpar->sample_rate));
 		// MessageBox(nullptr, buffer, TEXT("Message"), MB_OK);
@@ -5429,150 +5425,90 @@ bool Game::PlayVideo(bool loop) {
 	// --- NEW: Time-Sliced Audio Frame Decoding ---
     // We do this ONCE per call to PlayVideo.
     // We only try to receive a frame if we've previously sent the decoder a packet.
-    // if (!needsNewAudioPacket_ && !loop) {
-    //     int result = avcodec_receive_frame(audioCodecCtx, audioFrame);
-    //     if (result == 0) {
-    //         // Success! We got an audio frame. Process it into our buffer.
-    //         int numSamples = audioFrame->nb_samples;
-    //         int audioChannels = audioCodecCtx->channels;
-    //         // Reserve memory to avoid multiple small reallocations
-    //         audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
-    //         for (int i = 0; i < numSamples; i++) {
-    //             for (int ch = 0; ch < audioChannels; ch++) {
-    //                 if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
-    //                     float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
-    //                     audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767.0f));
-    //                 } else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
-    //                     int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
-    //                     audioBuffer.push_back(src[i]);
-    //                 }
-    //             }
-    //         }
-    //     } else if (result == AVERROR(EAGAIN)) {
-    //         // The decoder has finished all frames from the last packet and needs more data.
-    //         needsNewAudioPacket_ = true;
-    //     }
-    //     // Other results (like EOF) are handled implicitly. We just stop getting frames.
-    // }
+    if (!needsNewAudioPacket_ && !loop) {
+        int result = avcodec_receive_frame(audioCodecCtx, audioFrame);
+        if (result == 0) {
+            // Success! We got an audio frame. Process it into our buffer.
+            int numSamples = audioFrame->nb_samples;
+            int audioChannels = audioCodecCtx->channels;
+            // Reserve memory to avoid multiple small reallocations
+            audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
+            for (int i = 0; i < numSamples; i++) {
+                for (int ch = 0; ch < audioChannels; ch++) {
+                    if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
+                        float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
+                        audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767.0f));
+                    } else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
+                        int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
+                        audioBuffer.push_back(src[i]);
+                    }
+                }
+            }
+        } else if (result == AVERROR(EAGAIN)) {
+            // The decoder has finished all frames from the last packet and needs more data.
+            needsNewAudioPacket_ = true;
+        }
+        // Other results (like EOF) are handled implicitly. We just stop getting frames.
+    }
 
 	timeAccumulated += static_cast<double>(delta_time) / 1000.0;
-	framesplay++;
+	framesToSkip = std::max(1, static_cast<int>(videoFPS / frameps));
 	static int frameCounter = 0;
     // Variable for frame processing time
     double frameRenderTime = 0.0;
-	if(fpscomp > 1) {
-		while (timeAccumulated >= videoFrameDuration) {
-			AVPacket packet;
-			if (av_read_frame(formatCtx, &packet) < 0) {
-				if(loop) {
-					avcodec_flush_buffers(videoCodecCtx); // Flush the codec buffers
-					avcodec_flush_buffers(audioCodecCtx);
-					av_seek_frame(formatCtx, videoStreamIndex, 0, AVSEEK_FLAG_BACKWARD);
-					// After seeking, we must try to read a new frame immediately
-					if (av_read_frame(formatCtx, &packet) < 0) {
-						StopVideo(); // If seek and read fails, something is wrong
-						return false;
-					}
-				} else {
-					StopVideo();
+	while (timeAccumulated >= videoFrameDuration) {
+		AVPacket packet;
+		if (av_read_frame(formatCtx, &packet) < 0) {
+			if(loop) {
+				avcodec_flush_buffers(videoCodecCtx); // Flush the codec buffers
+				avcodec_flush_buffers(audioCodecCtx);
+				av_seek_frame(formatCtx, videoStreamIndex, 0, AVSEEK_FLAG_BACKWARD);
+				// After seeking, we must try to read a new frame immediately
+				if (av_read_frame(formatCtx, &packet) < 0) {
+					StopVideo(); // If seek and read fails, something is wrong
 					return false;
 				}
+			} else {
+				StopVideo();
+				return false;
 			}
-			if (packet.stream_index == videoStreamIndex) {
-				if (avcodec_send_packet(videoCodecCtx, &packet) < 0) {
-					av_packet_unref(&packet);
-					StopVideo();
-					return false;
-				}
-				auto startFrameProcessing = std::chrono::high_resolution_clock::now();
-				if (avcodec_receive_frame(videoCodecCtx, videoFrame) >= 0) {
-					// Calculate the processing time of the frame
-					auto endFrameProcessing = std::chrono::high_resolution_clock::now();
-					std::chrono::duration<double> frameDuration = endFrameProcessing - startFrameProcessing;
-					frameRenderTime = frameDuration.count();
-					if (frameRenderTime > videoFrameDuration) {
-						// If rendering this frame is lagging behind, skip the frame
-						// Adjust timeAccumulated to not let it build up too much
-						timeAccumulated -= videoFrameDuration;
-					} else {
-						// Skip frames logic
-						if (frameCounter % framesToSkip == 0) {
-							videotexture = renderVideoFrame(driver, videoCodecCtx, videoFrame); // Render the frame
-						}
-					}
-				}
-				// Increment frame counter
-				frameCounter++;
-				timeAccumulated -= videoFrameDuration; // Adjust time after processing
-			} else if (packet.stream_index == audioStreamIndex && !loop) {
-				// We just send the packet to the decoder. This is fast.
-				// The actual decoding happens a little bit at a time, up above.
-				if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
-					// We've successfully fed the decoder. It no longer "needs" a new packet
-					// until it runs out of frames (which we check for via EAGAIN).
-					needsNewAudioPacket_ = false;
-				}
-			} // IMPORTANT: No `else` here, so we ignore other streams (like subtitles)
-			av_packet_unref(&packet); // Clean up the packet
 		}
-	} else {
-		while (timeAccumulated >= videoFrameDuration) {
-			AVPacket packet;
-			if (av_read_frame(formatCtx, &packet) < 0) {
-				if(loop) {
-					avcodec_flush_buffers(videoCodecCtx);
-					avcodec_flush_buffers(audioCodecCtx);
-					av_seek_frame(formatCtx, videoStreamIndex, 0, AVSEEK_FLAG_BACKWARD);
-					if (av_read_frame(formatCtx, &packet) < 0) {
-						StopVideo();
-						return false;
-					}
-				} else {
-					StopVideo();
-					return false;
-				}
+		if (packet.stream_index == videoStreamIndex) {
+			if (avcodec_send_packet(videoCodecCtx, &packet) < 0) {
+				av_packet_unref(&packet);
+				StopVideo();
+				return false;
 			}
-			if (packet.stream_index == videoStreamIndex) {
-				if (avcodec_send_packet(videoCodecCtx, &packet) < 0) {
-					av_packet_unref(&packet);
-					StopVideo();
-					return false;
-				}
-				auto startFrameProcessing = std::chrono::high_resolution_clock::now();
-				if (avcodec_receive_frame(videoCodecCtx, videoFrame) >= 0) {
-					auto endFrameProcessing = std::chrono::high_resolution_clock::now();
-					std::chrono::duration<double> frameDuration = endFrameProcessing - startFrameProcessing;
-					frameRenderTime = frameDuration.count();
-					if (frameRenderTime > videoFrameDuration) {
-						timeAccumulated -= videoFrameDuration;
-					} else {
+			auto startFrameProcessing = std::chrono::high_resolution_clock::now();
+			if (avcodec_receive_frame(videoCodecCtx, videoFrame) >= 0) {
+				// Calculate the processing time of the frame
+				auto endFrameProcessing = std::chrono::high_resolution_clock::now();
+				std::chrono::duration<double> frameDuration = endFrameProcessing - startFrameProcessing;
+				frameRenderTime = frameDuration.count();
+				if (frameRenderTime > videoFrameDuration) {
+					// If rendering this frame is lagging behind, skip the frame
+					// Adjust timeAccumulated to not let it build up too much
+					timeAccumulated -= videoFrameDuration;
+				} else {
+					// Skip frames logic
+					if (frameCounter % framesToSkip == 0) {
 						videotexture = renderVideoFrame(driver, videoCodecCtx, videoFrame); // Render the frame
 					}
-				}
-				timeAccumulated -= videoFrameDuration;
-			} else if (packet.stream_index == audioStreamIndex && !loop) {
-				if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
-					int result = avcodec_receive_frame(audioCodecCtx, audioFrame);
-					if (result == 0) {
-						int numSamples = audioFrame->nb_samples;
-						int audioChannels = audioCodecCtx->channels;
-						audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
-						for (int i = 0; i < numSamples; i++) {
-							for (int ch = 0; ch < audioChannels; ch++) {
-								if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
-									float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
-									audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767.0f));
-								} else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
-									int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
-									audioBuffer.push_back(src[i]);
-								}
-							}
-						}
-					}
+					timeAccumulated -= videoFrameDuration; // Adjust time after processing
 				}
 			}
-			av_packet_unref(&packet);
-		}
+			// Increment frame counter
+			frameCounter++;
+		} else if (packet.stream_index == audioStreamIndex && !loop) {
+			// We just send the packet to the decoder. This is fast.
+			// The actual decoding happens a little bit at a time, up above.
+			if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
+				// We've successfully fed the decoder. It no longer "needs" a new packet
+				// until it runs out of frames (which we check for via EAGAIN).
+				needsNewAudioPacket_ = false;
+			}
+		} // IMPORTANT: No `else` here, so we ignore other streams (like subtitles)
+		av_packet_unref(&packet); // Clean up the packet
 	}
 	videostart = true;
 	// This checks if sound should be started or refilled.
@@ -5610,14 +5546,11 @@ bool Game::PlayVideo(bool loop) {
 void Game::StopVideo(bool close, bool reset) {
 	videostart = false;
 	timeAccumulated = 0;
-	lastAudioProcessedTime = 0;
 	video_width = 0;
     video_height = 0;
 	currentVideo = "";
 	videoFPS = 1.0;
 	framesToSkip = 1;
-	fpscomp = 1;
-	framesplay = 0;
 	if(isAnime)
 	    mainGame->cv->notify_one();
 	if(close) {

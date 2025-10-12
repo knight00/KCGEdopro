@@ -1732,28 +1732,21 @@ void Game::DrawSpec() {
 		}
         //////kdiy//////////
 		case 11: {
-			for(int i = 0; i < 3; i++) {
-				if(cutincharacter[0][i] == 1) {
-					auto size = imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][i];
-					auto width = size.getWidth();
-					auto height = size.getHeight();
-					driver->draw2DImage(imageManager.cutin[gSoundManager->character[showcardcode]][i], ResizeWin(364, 300, 364 + (showcarddif > width/1.333 ? width/1.333 : showcarddif), 300 + height/1.6),
-						imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][i], 0, 0, true);
-				}
+			if(cutincharacter[0][showtype] == 1) {
+				auto size = imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][showtype];
+				auto width = size.getWidth();
+				auto height = size.getHeight();
+				driver->draw2DImage(imageManager.cutin[gSoundManager->character[showcardcode]][showtype], ResizeWin(364, 300, 364 + (showcarddif > width/1.333 ? width/1.333 : showcarddif), 300 + height/1.6),
+					imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][showtype], 0, 0, true);
 			}
-			for(int i = 0; i < 3; i++) {
-				if(cutincharacter[1][i] == 1) {
-					auto size = imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][i];
-					auto width = size.getWidth();
-					auto height = size.getHeight();
-					driver->draw2DImage(imageManager.cutin[gSoundManager->character[showcardcode]][i], ResizeWin(884 - (showcarddif > width/1.333 ? width/1.333 : showcarddif), 100, 884, 100 + height/1.6),
-						imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][i], 0, 0, true);
-				}
+			if(cutincharacter[1][showtype] == 1) {
+				auto size = imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][showtype];
+				auto width = size.getWidth();
+				auto height = size.getHeight();
+				driver->draw2DImage(imageManager.cutin[gSoundManager->character[showcardcode]][showtype], ResizeWin(884 - (showcarddif > width/1.333 ? width/1.333 : showcarddif), 100, 884, 100 + height/1.6),
+					imageManager.cutincharacter_size[gSoundManager->character[showcardcode]][showtype], 0, 0, true);
 			}
 			showcarddif += (2600.0f / 1000.0f) * (float)delta_time;
-			// if(showcarddif >= 240 * 3) {
-			// 	showcard = 0;
-			// }
 			break;
 		}
         //////kdiy//////////

@@ -718,7 +718,7 @@ public:
 	void charactcomboselect(uint8_t player, int box, int sel); //box: 1=ebCharacter, 2= ebCharacter_replay, 3= ebCharacterDeck
     std::vector<std::wstring>& GetPlayerReplayNames();
 	int bodycharacter[2] = { 0,0 };
-	int cutincharacter[2][3] = { {0,0,0},{0,0,0} };
+	int cutincharacter[2][3] = { {0,0,0},{0,0,0} }; //[3]: damage, advantage, surprise
 	int lpcharacter[2] = { 0,0 };
 	int replay_player[2];
     int replay_team1;
@@ -902,6 +902,7 @@ public:
 	irr::core::vector3df atk_t;
 	float atkdy;
     ////kdiy//////
+	int showtype;
 	float atk2dy;
 	float atkdy2;
 	float atk2dy2;
@@ -971,17 +972,15 @@ public:
 	AVFrame* videoFrame;
     AVFrame* audioFrame;
     int videoStreamIndex = -1, audioStreamIndex = -1;
-	double timeAccumulated = 0.0, timeAccumulated2 = 0.0, lastAudioProcessedTime = 0.0; // Accumulate time to ensure smooth frame skipping
+	double timeAccumulated = 0.0; // Accumulate time to ensure smooth frame skipping
 	int frameps = 0;
 	int video_width = 0;
     int video_height = 0;
-	double videoFrameDuration = 1.0, audioFrameDuration = 1.0;
+	double videoFrameDuration = 1.0;
 	double videoFPS = 1.0;
 	int framesToSkip = 1;
-	int fpscomp = 1;
-	int framesplay = 0;
 	int64_t videoDuration;
-	bool needsNewAudioPacket_ = true; 
+	bool needsNewAudioPacket_ = true;
 	std::vector<int16_t> audioBuffer;
 	bool openVideo(std::string videoName, bool loop = false);
 	bool PlayVideo(bool loop = false);

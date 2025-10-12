@@ -1748,6 +1748,10 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 				break;
 			}
             case PHASE_END: {
+				for(int i = 0; i < 3; i++) {
+        			mainGame->cutincharacter[0][i] = 0;
+        			mainGame->cutincharacter[1][i] = 0;
+				}
 				PlayChant(SoundManager::CHANT::TURNEND, nullptr, player, 0, 0, player2);
 				break;
 			}
@@ -1927,7 +1931,10 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		if(!mode) {
 			uint16_t extra = 0, card_extra = 0; uint8_t card_extra2 = 0;
             if(desc != 1160) {
+				bool cutin_activated = false;
 				if(mainGame->cutincharacter[cc][1] == 0 && mainGame->imageManager.cutin[gSoundManager->character[cc == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][1]) {
+					cutin_activated = true;
+					mainGame->showtype = 1;
 					auto lock = LockIf();
 					Play(SoundManager::SFX::CUTIN_chain);
 					mainGame->cutincharacter[cc][1] = 1;
@@ -2030,7 +2037,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
                     PlayChantcode(SoundManager::CHANT::PENDULUM, code, code2, cc, extra);
 			    else
 				    PlayChantcode(SoundManager::CHANT::ACTIVATE, code, code2, cc, extra, card_extra, card_extra2);
-				if(mainGame->imageManager.cutin[gSoundManager->character[cc == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][1]) {
+				if(cutin_activated) {
 					mainGame->cutincharacter[cc][1] = 2;
 					auto lock = LockIf();
 					mainGame->showcard = 0;
@@ -2050,7 +2057,10 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 			int prev_lpcharacter = mainGame->lpcharacter[pc];
 			mainGame->bodycharacter[pc] = 3;
 			mainGame->lpcharacter[pc] = 3;
+			bool cutin_activated = false;
 			if(mainGame->cutincharacter[pc][2] == 0 && mainGame->imageManager.cutin[gSoundManager->character[pc == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][2]) {
+				cutin_activated = true;
+				mainGame->showtype = 2;
 				auto lock = LockIf();
 				Play(SoundManager::SFX::CUTIN_damage);
 				mainGame->cutincharacter[pc][2] = 1;
@@ -2063,7 +2073,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
             PlayChant(SoundManager::CHANT::OPPCOUNTER, nullptr, pc, 0, 0, 1- pc);
 			mainGame->bodycharacter[pc] = ((mainGame->dInfo.lp[pc] > 0 && mainGame->dInfo.lp[pc] >= mainGame->dInfo.lp[1 - pc] * 2) && prev_bodycharacter == 2) ? 2 : 0;
 			mainGame->lpcharacter[pc] = ((mainGame->dInfo.lp[pc] > 0 && mainGame->dInfo.lp[pc] >= mainGame->dInfo.lp[1 - pc] * 2) && prev_lpcharacter == 2) ? 2 : 0;
-			if(mainGame->imageManager.cutin[gSoundManager->character[pc == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][2]) {
+			if(cutin_activated) {
 				mainGame->cutincharacter[cc][2] = 2;
 				auto lock = LockIf();
 				mainGame->showcard = 0;
@@ -2088,7 +2098,10 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		int prev_lpcharacterr = mainGame->lpcharacter[player];
 		mainGame->bodycharacter[player] = 1;
 		mainGame->lpcharacter[player] = 1;
+		bool cutin_activated = false;
 		if(!(reason & REASON_COST) && mainGame->cutincharacter[player][0] == 0 && mainGame->imageManager.cutin[gSoundManager->character[player == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][0]) {
+			cutin_activated = true;
+			mainGame->showtype = 0;
 			auto lock = LockIf();
 			Play(SoundManager::SFX::CUTIN_damage);
 			mainGame->cutincharacter[player][0] = 1;
@@ -2104,7 +2117,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		PlayChant(SoundManager::CHANT::DAMAGE, nullptr, player, extra, 0, 1 - player);
 		mainGame->bodycharacter[player] = (((mainGame->dInfo.lp[player] > 0 && mainGame->dInfo.lp[player] >= mainGame->dInfo.lp[1 - player] * 2) || val >= 4000) && prev_bodycharacter == 2) ? 2 : 0;
 		mainGame->lpcharacter[player] = (((mainGame->dInfo.lp[player] > 0 && mainGame->dInfo.lp[player] >= mainGame->dInfo.lp[1 - player] * 2) || val >= 4000) && prev_lpcharacterr == 2) ? 2 : 0;
-		if(!(reason & REASON_COST) && mainGame->imageManager.cutin[gSoundManager->character[player == 0 ? mainGame->avataricon1 : mainGame->avataricon2]][0]) {
+		if(cutin_activated) {
 			mainGame->cutincharacter[player][0] = 2;
 			auto lock = LockIf();
 			mainGame->showcard = 0;

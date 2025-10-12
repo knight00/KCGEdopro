@@ -1325,7 +1325,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			if(mainGame->wCardDisplay->isVisible())
 				break;
 			/////kdiy/////
-			if(mainGame->isAnime) {
+			if(mainGame->isAnime && mainGame->videostart) {
 				mainGame->StopVideo(false, true);
 			    break;
 			}
