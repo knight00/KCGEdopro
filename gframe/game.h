@@ -977,6 +977,7 @@ public:
 	int video_width = 0;
     int video_height = 0;
 	double videoFrameDuration = 1.0;
+	double audioFrameDuration = 1.0;
 	double videoFPS = 1.0;
 	int framesToSkip = 1;
 	int64_t videoDuration;

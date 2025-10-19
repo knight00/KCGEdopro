@@ -471,6 +471,12 @@ bool SingleMode::SinglePlayAnalyze(CoreUtils::Packet& packet) {
 				break;
 			}
 			case 10:
+			////kdiy//////
+			case 21:
+			case 22:
+			case 23:
+			case 24:
+			////kdiy//////
 			case 200:
 			case 201:
 			case 202:

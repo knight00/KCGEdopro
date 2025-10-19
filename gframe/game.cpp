@@ -5372,8 +5372,9 @@ bool Game::openVideo(std::string filename, bool loop) {
 			avgFrameRate = videoStream->r_frame_rate;
 		}
 		videoFrameDuration = (double)avgFrameRate.den / (double)avgFrameRate.num;
+		int audioChannels = audioCodecCtx->channels;
+		audioFrameDuration = (double)audioChannels / (double)(formatCtx->streams[audioStreamIndex]->codecpar->sample_rate);
 		timeAccumulated = 0;
-		// audioFrameDuration = 2.0 / (formatCtx->streams[audioStreamIndex]->codecpar->sample_rate);
         currentVideo = filename;
 		// Determine frames to skip based on FPS ratio
 		videoFPS = 1.0 / videoFrameDuration;
@@ -5425,34 +5426,34 @@ bool Game::PlayVideo(bool loop) {
 	// --- NEW: Time-Sliced Audio Frame Decoding ---
     // We do this ONCE per call to PlayVideo.
     // We only try to receive a frame if we've previously sent the decoder a packet.
-    if (!needsNewAudioPacket_ && !loop) {
-        int result = avcodec_receive_frame(audioCodecCtx, audioFrame);
-        if (result == 0) {
-            // Success! We got an audio frame. Process it into our buffer.
-            int numSamples = audioFrame->nb_samples;
-            int audioChannels = audioCodecCtx->channels;
-            // Reserve memory to avoid multiple small reallocations
-            audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
-            for (int i = 0; i < numSamples; i++) {
-                for (int ch = 0; ch < audioChannels; ch++) {
-                    if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
-                        float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
-                        audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767.0f));
-                    } else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
-                        int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
-                        audioBuffer.push_back(src[i]);
-                    }
-                }
-            }
-        } else if (result == AVERROR(EAGAIN)) {
-            // The decoder has finished all frames from the last packet and needs more data.
-            needsNewAudioPacket_ = true;
-        }
-        // Other results (like EOF) are handled implicitly. We just stop getting frames.
-    }
+    // if (!needsNewAudioPacket_ && !loop) {
+    //     int result = avcodec_receive_frame(audioCodecCtx, audioFrame);
+    //     if (result == 0) {
+    //         // Success! We got an audio frame. Process it into our buffer.
+    //         int numSamples = audioFrame->nb_samples;
+    //         int audioChannels = audioCodecCtx->channels;
+    //         // Reserve memory to avoid multiple small reallocations
+    //         audioBuffer.reserve(audioBuffer.size() + numSamples * audioChannels);
+    //         for (int i = 0; i < numSamples; i++) {
+    //             for (int ch = 0; ch < audioChannels; ch++) {
+    //                 if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
+    //                     float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
+    //                     audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767.0f));
+    //                 } else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
+    //                     int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
+    //                     audioBuffer.push_back(src[i]);
+    //                 }
+    //             }
+    //         }
+    //     } else if (result == AVERROR(EAGAIN)) {
+    //         // The decoder has finished all frames from the last packet and needs more data.
+    //         needsNewAudioPacket_ = true;
+    //     }
+    //     // Other results (like EOF) are handled implicitly. We just stop getting frames.
+    // }
 
 	timeAccumulated += static_cast<double>(delta_time) / 1000.0;
-	framesToSkip = std::max(1, static_cast<int>(videoFPS / frameps));
+	framesToSkip = std::max(1, static_cast<int>(frameps / videoFPS));
 	static int frameCounter = 0;
     // Variable for frame processing time
     double frameRenderTime = 0.0;
@@ -5485,27 +5486,33 @@ bool Game::PlayVideo(bool loop) {
 				auto endFrameProcessing = std::chrono::high_resolution_clock::now();
 				std::chrono::duration<double> frameDuration = endFrameProcessing - startFrameProcessing;
 				frameRenderTime = frameDuration.count();
-				if (frameRenderTime > videoFrameDuration) {
-					// If rendering this frame is lagging behind, skip the frame
-					// Adjust timeAccumulated to not let it build up too much
-					timeAccumulated -= videoFrameDuration;
-				} else {
-					// Skip frames logic
-					if (frameCounter % framesToSkip == 0) {
-						videotexture = renderVideoFrame(driver, videoCodecCtx, videoFrame); // Render the frame
-					}
-					timeAccumulated -= videoFrameDuration; // Adjust time after processing
+				if (frameCounter % framesToSkip == 0) {
+					videotexture = renderVideoFrame(driver, videoCodecCtx, videoFrame); // Render the frame
 				}
+				timeAccumulated -= (videoFrameDuration - frameRenderTime); // Adjust the accumulated time based on rendering time
 			}
 			// Increment frame counter
 			frameCounter++;
 		} else if (packet.stream_index == audioStreamIndex && !loop) {
 			// We just send the packet to the decoder. This is fast.
-			// The actual decoding happens a little bit at a time, up above.
 			if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
-				// We've successfully fed the decoder. It no longer "needs" a new packet
-				// until it runs out of frames (which we check for via EAGAIN).
-				needsNewAudioPacket_ = false;
+				while (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
+					// Success! We got an audio frame. Process it into our buffer.
+					int numSamples = audioFrame->nb_samples;
+					// Reserve memory to avoid multiple small reallocations
+					audioBuffer.reserve(audioBuffer.size() + numSamples * audioCodecCtx->channels);
+					for (int i = 0; i < numSamples; i++) {
+						for (int ch = 0; ch < audioCodecCtx->channels; ch++) {
+							if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
+								float* src = reinterpret_cast<float*>(audioFrame->data[ch]);
+								audioBuffer.push_back(static_cast<int16_t>(src[i] * 32767.0f));
+							} else if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16) {
+								int16_t* src = reinterpret_cast<int16_t*>(audioFrame->data[ch]);
+								audioBuffer.push_back(src[i]);
+							}
+						}
+					}
+				}
 			}
 		} // IMPORTANT: No `else` here, so we ignore other streams (like subtitles)
 		av_packet_unref(&packet); // Clean up the packet
