@@ -114,7 +114,7 @@ bool WindBotPanel::LaunchSelected(int port, epro::wstringview pass) {
 		if(aiDeckSelect2->getSelected() == 0)
 			tmpdeck = Utils::ToUnicodeIfNeeded(DeckManager::GetDeckPath(Utils::ToPathString(aiDeckSelect->getItem(aiDeckSelect->getSelected()))));
 		else
-		    tmpdeck = Utils::ToUnicodeIfNeeded(DeckManager::GetDeckPath(Utils::ToPathString(epro::format("{}/{}", aiDeckSelect2->getItem(aiDeckSelect2->getSelected()), aiDeckSelect->getItem(aiDeckSelect->getSelected())))));
+		    tmpdeck = Utils::ToUnicodeIfNeeded(DeckManager::GetDeckPath(Utils::ToPathString(epro::format(EPRO_TEXT("{}/{}"), aiDeckSelect2->getItem(aiDeckSelect2->getSelected()), aiDeckSelect->getItem(aiDeckSelect->getSelected())))));
 		overridedeck = tmpdeck.data();
 		bots[index].deckpath = aiDeckSelect->getItem(aiDeckSelect->getSelected());
 	}
