@@ -6,6 +6,7 @@
 #include <map>
 #include "network.h"
 #include "text_types.h"
+#include "fmt.h"
 #include "data_manager.h"
 #include "deck.h"
 
@@ -44,10 +45,20 @@ private:
 	mutable std::unordered_map<uint32_t, CardDataC*> dummy_entries;
 	const CardDataC* GetDummyOrMappedCardData(uint32_t code) const;
 	bool load_dummies{ true };
+	static inline epro::path_string deck_folder = EPRO_TEXT("./deck/");
 public:
 	Deck sent_deck;
 	Deck pre_deck;
 	std::vector<LFList> _lfList;
+	static epro::path_string GetDeckPath(epro::path_stringview file) {
+		return Utils::NormalizePath(epro::format(EPRO_TEXT("{}/{}.ydk"), deck_folder, file), false);
+	}
+	static epro::path_stringview GetDeckFolder() {
+		return deck_folder;
+	}
+	static void SetDeckFolder(epro::path_stringview path) {
+		deck_folder = path;
+	}
 	~DeckManager() {
 		ClearDummies();
 	}
@@ -73,9 +84,9 @@ public:
 	static bool SaveDeck(epro::path_stringview name, const Deck& deck);
 	static bool SaveDeck(epro::path_stringview name, const cardlist_type& mainlist, const cardlist_type& extralist, const cardlist_type& sidelist);
 	static std::string MakeYdkEntryString(uint32_t code);
-	static const wchar_t* ExportDeckBase64(const Deck& deck);
-	static const wchar_t* ExportDeckCardNames(Deck deck);
-	static void ImportDeckBase64(Deck& deck, const wchar_t* buffer);
+	static std::wstring ExportDeckYdke(const Deck& deck);
+	static std::wstring ExportDeckCardNames(Deck deck);
+	static void ImportDeckYdke(Deck& deck, epro::wstringview buffer);
 	static bool ImportDeckBase64Omega(Deck& deck, epro::wstringview buffer);
 	static bool DeleteDeck(Deck& deck, epro::path_stringview name);
 	static bool RenameDeck(epro::path_stringview oldname, epro::path_stringview newname);

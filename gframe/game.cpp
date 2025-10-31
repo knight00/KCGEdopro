@@ -1558,7 +1558,7 @@ void Game::Initialize() {
 	wReplay->getCloseButton()->setVisible(false);
 	wReplay->setVisible(false);
 	lstReplayList = irr::gui::CGUIFileSelectListBox::addFileSelectListBox(env, wReplay, LISTBOX_REPLAY_LIST, Scale(10, 30, 350, 400), true, true, false);
-	lstReplayList->setWorkingPath(L"./replay", true);
+	lstReplayList->setWorkingPath(Utils::ToUnicodeIfNeeded(Replay::GetReplayFolder()), true);
 	lstReplayList->addFilteredExtensions({L"yrp", L"yrpx"});
 	lstReplayList->setItemHeight(Scale(18));
 	btnLoadReplay = env->addButton(Scale(470, 355, 570, 380), wReplay, BUTTON_LOAD_REPLAY, gDataManager->GetSysString(1348).data());
@@ -3709,11 +3709,11 @@ bool Game::MainLoop() {
 			else
 				gSoundManager->PlayBGM(SoundManager::BGM::DUEL, gGameConfig->loopMusic);
 			EnableMaterial2D(true);
-			if(current_topdown)
-				DrawBackImage(imageManager.tBackGround_duel_topdown, resized);
-			else
-				DrawBackImage(imageManager.tBackGround, resized);
-            DrawBackGround();
+			auto bg_texture = imageManager.tBackGround;
+			if(current_topdown && imageManager.tBackGround_duel_topdown)
+				bg_texture = imageManager.tBackGround_duel_topdown;
+			DrawBackImage(bg_texture, resized);
+			DrawBackGround();
 			DrawCards();
 			DrawMisc();
 			///kdiy///////
@@ -3735,7 +3735,7 @@ bool Game::MainLoop() {
 			else
 				discord.UpdatePresence(DiscordWrapper::DECK);
 			gSoundManager->PlayBGM(SoundManager::BGM::DECK, gGameConfig->loopMusic);
-			DrawBackImage(imageManager.tBackGround_deck, resized);
+			DrawBackImage(imageManager.tBackGround_deck ? imageManager.tBackGround_deck : imageManager.tBackGround, resized);
 			EnableMaterial2D(true);
 			DrawDeckBd();
 			EnableMaterial2D(false);
@@ -3745,7 +3745,7 @@ bool Game::MainLoop() {
 			else
 				discord.UpdatePresence(DiscordWrapper::MENU);
 			gSoundManager->PlayBGM(SoundManager::BGM::MENU, gGameConfig->loopMusic);
-            DrawBackImage(imageManager.tBackGround_menu, resized);
+			DrawBackImage(imageManager.tBackGround_menu ? imageManager.tBackGround_menu : imageManager.tBackGround, resized);
 		}
 		if(current_topdown != gGameConfig->topdown_view || current_keep_aspect_ratio != gGameConfig->keep_aspect_ratio) {
 			if(std::exchange(gGameConfig->topdown_view, current_topdown) != gGameConfig->topdown_view)
@@ -4160,7 +4160,7 @@ void Game::RefreshDeck() {
     cbDeckSelect->clear();
     irr::u32 dcount = -1;
     int count = 0;
-    for(auto& file : Utils::FindFiles(EPRO_TEXT("./deck/"), { EPRO_TEXT("ydk") })) {
+    for(auto& file : Utils::FindFiles(DeckManager::GetDeckFolder(), { EPRO_TEXT("ydk") })) {
         count++;
         if(count == 1) {
             dcount++;
@@ -4177,10 +4177,10 @@ void Game::RefreshDeck() {
 		if(gGameConfig->lastdeckfolder == cbDeck2Select->getItem(dcount))
             cbDeckSelect->addItem(Utils::ToUnicodeIfNeeded(file).data());
 	}
-	auto deckdirs = Utils::FindSubfolders(EPRO_TEXT("./deck/"), 1, false);
+	auto deckdirs = Utils::FindSubfolders(DeckManager::GetDeckFolder(), 1, false);
 	for(auto& _folder : deckdirs) {
 		int count = 0;
-		for(auto& file : Utils::FindFiles(EPRO_TEXT("./deck/") + _folder + EPRO_TEXT("/"), { EPRO_TEXT("ydk") })) {	
+		for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./deck/{}/"), _folder), { EPRO_TEXT("ydk") })) {
 			count++;
             if(count == 1) {
                 dcount++;
@@ -4214,9 +4214,9 @@ void Game::RefreshDeck() {
 //void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck) {
 void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder) {
 /////////kdiy///////
-	cbDeck->clear();	
+	cbDeck->clear();
 	/////////kdiy///////
-	// for(auto& file : Utils::FindFiles(EPRO_TEXT("./deck/"), { EPRO_TEXT("ydk") })) {
+	// for(auto& file : Utils::FindFiles(DeckManager::GetDeckFolder(), { EPRO_TEXT("ydk") })) {
 	// 	file.erase(file.size() - 4);
 	// 	cbDeck->addItem(Utils::ToUnicodeIfNeeded(file).data());
 	//}
@@ -4243,7 +4243,7 @@ void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder) {
             cbDBDecks22->clear();
         irr::u32 dcount = -1;
         int count = 0;
-		for(auto& file : Utils::FindFiles(EPRO_TEXT("./deck/"), { EPRO_TEXT("ydk") })) {
+		for(auto& file : Utils::FindFiles(DeckManager::GetDeckFolder(), { EPRO_TEXT("ydk") })) {
             count++;
             if(count == 1) {
                 dcount++;
@@ -4265,10 +4265,10 @@ void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder) {
 			   && gGameConfig->lastAIdeckfolder == cbDeck2->getItem(dcount))
                 cbDeck->addItem(Utils::ToUnicodeIfNeeded(file).data());
 		}
-		auto deckdirs = Utils::FindSubfolders(EPRO_TEXT("./deck/"), 1, false);
+		auto deckdirs = Utils::FindSubfolders(DeckManager::GetDeckFolder(), 1, false);
 		for(auto& _folder : deckdirs) {
 			int count = 0;
-            for(auto& file : Utils::FindFiles(EPRO_TEXT("./deck/") + _folder + EPRO_TEXT("/"), { EPRO_TEXT("ydk") })) {	
+            for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./deck/{}/"), _folder), { EPRO_TEXT("ydk") })) {
                 count++;
                 if(count == 1) {
                     dcount++;
@@ -4313,7 +4313,7 @@ void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder) {
         cbHandTestDecks->setSelected(cbDBDecks->getSelected());
 	} else {
         auto _folder = Utils::ToPathString(cbDeck2->getItem(cbDeck2->getSelected()));
-        for(auto& file : Utils::FindFiles(EPRO_TEXT("./deck/") + _folder + EPRO_TEXT("/"), { EPRO_TEXT("ydk") })) {
+        for(auto& file : Utils::FindFiles(epro::format(EPRO_TEXT("./deck/{}/"), _folder), { EPRO_TEXT("ydk") })) {
             file.erase(file.size() - 4);
 			cbDeck->addItem(Utils::ToUnicodeIfNeeded(file).data());
 		}

@@ -82,6 +82,9 @@ namespace ygo {
 		static inline std::wstring ToUnicodeIfNeeded(epro::wstringview input);
 		static bool SetWorkingDirectory(epro::path_stringview newpath);
 		static const epro::path_string& GetWorkingDirectory();
+		static void SetUserStorageDirectory(epro::path_stringview newpath);
+		static const epro::path_string& GetUserStorageDirectory();
+		static epro::path_string GetUserFolderPathFor(epro::path_stringview path);
 		static void CreateResourceFolders();
 		static void FindFiles(epro::path_stringview path, const std::function<void(epro::path_stringview, bool)>& cb);
 		static std::vector<epro::path_string> FindFiles(epro::path_stringview path, const std::vector<epro::path_stringview>& extensions, int subdirectorylayers = 0);
@@ -113,6 +116,8 @@ namespace ygo {
 
 		DECLARE_STRING_VIEWED(GetFileName)
 
+		DECLARE_STRING_VIEWED(ToUpperNoAccents)
+
 #undef DECLARE_STRING_VIEWED
 
 		static const std::string& GetUserAgent();
@@ -125,8 +130,6 @@ namespace ygo {
 		static inline std::vector<T> TokenizeString(epro::basic_string_view<typename T::value_type> input, typename T::value_type token);
 		template<typename T>
 		static T ToUpperChar(T c);
-		template<typename T>
-		static T ToUpperNoAccents(T input);
 		template<typename T>
 		static T& ToUpperNoAccentsSelf(T& input);
 		/** Returns true if and only if all tokens are contained in the input. */
@@ -188,6 +191,8 @@ namespace ygo {
 		static auto GetFilePathImpl(const epro::basic_string_view<T>& file);
 		template<typename T>
 		static auto GetFileNameImpl(const epro::basic_string_view<T>& file, bool keepextension = false);
+		template<typename Char>
+		static auto ToUpperNoAccentsImpl(epro::basic_string_view<Char> str);
 		static RNG::SplitMix64 generator;
 	};
 
@@ -199,6 +204,13 @@ auto Utils::NormalizePathImpl(const epro::basic_string_view<T>& _path, bool trai
 	static constexpr auto prev = CHAR_T_STRINGVIEW(T, "..");
 	static constexpr auto slash = CAST('/');
 	std::replace(path.begin(), path.end(), CAST('\\'), slash);
+#if EDOPRO_ANDROID
+	static constexpr auto content_uri = CHAR_T_STRINGVIEW(T, "content://");
+	bool isContentUri = starts_with(path, content_uri);
+	if(isContentUri) {
+		path.erase(0, content_uri.size());
+	}
+#endif
 	auto paths = TokenizeString<std::basic_string<T>>(path, slash);
 	if(paths.empty())
 		return path;
@@ -219,13 +231,18 @@ auto Utils::NormalizePathImpl(const epro::basic_string_view<T>& _path, bool trai
 		it++;
 	}
 	path.clear();
+	if(is_absolute)
+		path = slash;
+#if EDOPRO_ANDROID
+	else if(isContentUri) {
+		path = content_uri;
+	}
+#endif
 	for(auto it = paths.begin(); it != (paths.end() - 1); it++)
 		path += *it + slash;
 	path += paths.back();
 	if(trailing_slash)
 		path += slash;
-	if(is_absolute)
-		path = slash + path;
 	return path;
 }
 #undef CHAR_T_STRING
@@ -343,9 +360,11 @@ T Utils::ToUpperChar(T c) {
 		return static_cast<T>(std::toupper(c));
 }
 
-template<typename T>
-inline T Utils::ToUpperNoAccents(T input) {
-	std::transform(input.begin(), input.end(), input.begin(), ToUpperChar<typename T::value_type>);
+template<typename Char>
+inline auto Utils::ToUpperNoAccentsImpl(epro::basic_string_view<Char> str) {
+	std::basic_string<Char> input;
+	input.reserve(str.size());
+	std::transform(str.begin(), str.end(), std::back_inserter(input), ToUpperChar<Char>);
 	return input;
 }
 

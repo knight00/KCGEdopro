@@ -119,7 +119,12 @@ int edopro_main(const args_t& args) {
 			return EXIT_FAILURE;
 		}
 	}
-    /////kdiy/////////
+	{
+		const auto& userdir = args[LAUNCH_PARAM::USER_STORAGE_DIRECTORY];
+		const epro::path_stringview dir = userdir.enabled ? userdir.argument : EPRO_TEXT("./");
+		ygo::Utils::SetUserStorageDirectory(dir);
+	}
+	/////kdiy/////////
 	//ygo::Utils::SetupCrashDumpLogging();
     /////kdiy/////////
 	std::optional<ThreadsCleaner> cleaner;

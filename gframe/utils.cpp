@@ -4,6 +4,8 @@
 #include "config.h"
 #include "fmt.h"
 #include "logging.h"
+#include "deck_manager.h"
+#include "replay.h"
 
 #if EDOPRO_WINDOWS
 #define WIN32_LEAN_AND_MEAN
@@ -292,6 +294,10 @@ namespace ygo {
 #if EDOPRO_WINDOWS
 		return SetLastErrorStringIfFailed(CreateDirectory(path.data(), nullptr) || ERROR_ALREADY_EXISTS == GetLastError());
 #else
+#if EDOPRO_ANDROID
+		if(porting::pathIsUri(path))
+			return SetLastErrorStringIfFailed(porting::createFolderUri(path));
+#endif
 		return SetLastErrorStringIfFailed(mkdir(path.data(), 0777) == 0 || errno == EEXIST);
 #endif
 	}
@@ -314,25 +320,35 @@ namespace ygo {
 #if EDOPRO_WINDOWS
 		return SetLastErrorStringIfFailed(CopyFile(source.data(), destination.data(), false));
 #elif EDOPRO_LINUX_KERNEL
-		int input, output;
-		if((input = open(source.data(), O_RDONLY)) == -1) {
-			SetLastError();
-			return false;
-		}
-		Stat fileinfo{};
-		fstat(input, &fileinfo);
-		if((output = creat(destination.data(), fileinfo.st_mode)) == -1) {
-			SetLastError();
+#if EDOPRO_ANDROID
+#define NEEDS_FSTREAM
+		if(!porting::pathIsUri(source) && !porting::pathIsUri(destination))
+#endif
+		{
+			int input, output;
+			if((input = open(source.data(), O_RDONLY)) == -1) {
+				SetLastError();
+				return false;
+			}
+			Stat fileinfo{};
+			fstat(input, &fileinfo);
+			if((output = creat(destination.data(), fileinfo.st_mode)) == -1) {
+				SetLastError();
+				close(input);
+				return false;
+			}
+			auto result = FileCopyFD(input, output);
 			close(input);
-			return false;
+			close(output);
+			return result;
 		}
-		auto result = FileCopyFD(input, output);
-		close(input);
-		close(output);
-		return result;
 #elif EDOPRO_APPLE
 		return SetLastErrorStringIfFailed(copyfile(source.data(), destination.data(), 0, COPYFILE_ALL) == 0);
 #else
+#define NEEDS_FSTREAM
+#endif
+#if defined(NEEDS_FSTREAM)
+#undef NEEDS_FSTREAM
 		FileStream src(source.data(), FileStream::in | FileStream::binary);
 		if(!src.is_open())
 			return false;
@@ -346,9 +362,22 @@ namespace ygo {
 #endif
 	}
 	bool Utils::FileMove(epro::path_stringview source, epro::path_stringview destination) {
+		if(source == destination)
+			return true;
 #if EDOPRO_WINDOWS
 		return SetLastErrorStringIfFailed(MoveFile(source.data(), destination.data()));
 #else
+#if EDOPRO_ANDROID
+		if(porting::pathIsUri(source) || porting::pathIsUri(destination)) {
+			if(!FileCopy(source, destination))
+				return false;
+			if(!FileDelete(source)) {
+				FileDelete(destination);
+				return false;
+			}
+			return true;
+		}
+#endif
 		return SetLastErrorStringIfFailed(rename(source.data(), destination.data()) == 0);
 #endif
 	}
@@ -377,10 +406,24 @@ namespace ygo {
 	const epro::path_string& Utils::GetWorkingDirectory() {
 		return working_dir;
 	}
+	static epro::path_string user_storage_dir;
+	void Utils::SetUserStorageDirectory(epro::path_stringview newpath) {
+		user_storage_dir = NormalizePath(GetAbsolutePath(newpath));
+	}
+	const epro::path_string& Utils::GetUserStorageDirectory() {
+		return user_storage_dir;
+	}
+	epro::path_string Utils::GetUserFolderPathFor(epro::path_stringview path) {
+		return NormalizePath(epro::format(EPRO_TEXT("{}/{}"), GetUserStorageDirectory(), path));
+	}
 	bool Utils::FileDelete(epro::path_stringview source) {
 #if EDOPRO_WINDOWS
 		return SetLastErrorStringIfFailed(DeleteFile(source.data()));
 #else
+#if EDOPRO_ANDROID
+		if(porting::pathIsUri(source))
+			return porting::deleteFileUri(source);
+#endif
 		return SetLastErrorStringIfFailed(remove(source.data()) == 0);
 #endif
 	}
@@ -397,6 +440,27 @@ namespace ygo {
 			FindClose(fh);
 		}
 #else
+#if EDOPRO_ANDROID
+		if(porting::pathIsUri(path)) {
+			bool found_curdir = false;
+			bool found_topdir = false;
+			auto entries = porting::listFilesInFolder(path);
+			for(auto& entry : entries) {
+				bool isdir = entry.back() == EPRO_TEXT('/');
+				if(isdir)
+					entry.pop_back();
+				cb(entry, isdir);
+				if(entry == EPRO_TEXT("."sv))
+					found_curdir = true;
+				if(entry == EPRO_TEXT(".."sv))
+					found_topdir = true;
+			}
+			if(!found_curdir)
+				cb(EPRO_TEXT("."), true);
+			if(!found_topdir)
+				cb(EPRO_TEXT(".."), true);
+		}
+#endif
 		if(auto dir = opendir(path.data())) {
 #if EDOPRO_ANDROID
 			// workaround, on android 11 (and probably higher) the folders "." and ".." aren't
@@ -456,6 +520,10 @@ namespace ygo {
 #if EDOPRO_WINDOWS
 		return RemoveDirectory(path.data());
 #else
+#if EDOPRO_ANDROID
+		if(porting::pathIsUri(path))
+			return porting::deleteFileUri(path);
+#endif
 		return rmdir(path.data()) == 0;
 #endif
 	}
@@ -476,14 +544,14 @@ namespace ygo {
 			}
 		};
 		//create directories if missing
-		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("deck"));
+		createResourceDirAndLogIfFailure(MakeDirectory, DeckManager::GetDeckFolder());
 		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("puzzles"));
 		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("pics"));
 		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("pics/field"));
 		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("pics/cover"));
 		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("pics/temp/"));
 		createResourceDirAndLogIfFailure(ClearDirectory, EPRO_TEXT("pics/temp/"));
-		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("replay"));
+		createResourceDirAndLogIfFailure(MakeDirectory, Replay::GetReplayFolder());
 		createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("screenshots"));
 		//kdiy////
         createResourceDirAndLogIfFailure(MakeDirectory, EPRO_TEXT("pics/closeup"));
@@ -618,6 +686,10 @@ namespace ygo {
 		std::replace(ret.begin(), ret.end(), EPRO_TEXT('\\'), EPRO_TEXT('/'));
 		return ret;
 #else
+#if EDOPRO_ANDROID
+		if(porting::pathIsUri(path))
+			return epro::path_string{ path };
+#endif
 		char buff[PATH_MAX];
 		if(realpath(path.data(), buff) == nullptr)
 			return { path.data(), path.size() };
@@ -805,10 +877,14 @@ namespace ygo {
 #elif EDOPRO_ANDROID
 		switch(type) {
 		case OPEN_FILE:
+			if(porting::pathIsUri(arg))
+				return porting::openFile(arg);
 			return porting::openFile(epro::format("{}/{}", GetWorkingDirectory(), arg));
 		case OPEN_URL:
 			return porting::openUrl(arg);
 		case SHARE_FILE:
+			if(porting::pathIsUri(arg))
+				return porting::shareFile(arg);
 			return porting::shareFile(epro::format("{}/{}", GetWorkingDirectory(), arg));
 		}
 #endif
