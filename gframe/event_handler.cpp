@@ -2474,32 +2474,27 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			}
 			case CHECKBOX_ENABLE_ANIME: {
 				gGameConfig->enableanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
-				if(gGameConfig->enableanime)
-					mainGame->moviecheck();
+				mainGame->moviecheck();
 				return true;
 			}
 			case CHECKBOX_ENABLE_SANIME: {
 				gGameConfig->enablesanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
-				if(gGameConfig->enablesanime)
-                    mainGame->moviecheck(0);
+				mainGame->moviecheck(0);
 				return true;
 			}
 			case CHECKBOX_ENABLE_CANIME: {
 				gGameConfig->enablecanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
-				if(gGameConfig->enablecanime)
-                    mainGame->moviecheck(1);
+				mainGame->moviecheck(1);
 				return true;
 			}
 			case CHECKBOX_ENABLE_AANIME: {
 				gGameConfig->enableaanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
-				if(gGameConfig->enableaanime)
-                    mainGame->moviecheck(2);
+				mainGame->moviecheck(2);
 				return true;
 			}
 			case CHECKBOX_ENABLE_FANIME: {
 				gGameConfig->enablefanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
-				if(gGameConfig->enablefanime)
-                    mainGame->moviecheck(3);
+				mainGame->moviecheck(3);
 				return true;
 			}
 			case CHECKBOX_ANIME_FULL: {
