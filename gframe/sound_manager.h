@@ -216,10 +216,11 @@ public:
 		{EPRO_TEXT("anna")},
 		{EPRO_TEXT("dorube"),EPRO_TEXT("dorube_human"),EPRO_TEXT("dorube_seventh")},
 		{EPRO_TEXT("rio")},
+		{EPRO_TEXT("vector"),EPRO_TEXT("vector_human"),EPRO_TEXT("vector_seventh")},
 		{EPRO_TEXT("alit"),EPRO_TEXT("alit_human"),EPRO_TEXT("alit_seventh")},
 		{EPRO_TEXT("girag"),EPRO_TEXT("girag_human"),EPRO_TEXT("girag_seventh")},
 		{EPRO_TEXT("mizarel"),EPRO_TEXT("mizarel_human"),EPRO_TEXT("mizarel_seventh")},
-		{EPRO_TEXT("DonThousand")}, //73
+		{EPRO_TEXT("DonThousand")}, //74
 		
 		{EPRO_TEXT("yuya"),EPRO_TEXT("yuya_main"),EPRO_TEXT("yugo"),EPRO_TEXT("yuto")},
 		{EPRO_TEXT("declan")},
@@ -228,7 +229,7 @@ public:
 		{EPRO_TEXT("yuzu"),EPRO_TEXT("yuzu_main"),EPRO_TEXT("selina"),EPRO_TEXT("ruri"),EPRO_TEXT("rin")},
 		{EPRO_TEXT("gongenzaka")},
 		{EPRO_TEXT("sawatari")},
-		{EPRO_TEXT("dennis")}, //81
+		{EPRO_TEXT("dennis")}, //82
 		
 		{EPRO_TEXT("playmaker")},
 		{EPRO_TEXT("revolver")},
@@ -236,19 +237,20 @@ public:
 		{EPRO_TEXT("blueangel")},
 		{EPRO_TEXT("gore")},
 		{EPRO_TEXT("ghostgirl")},
+		{EPRO_TEXT("akira")},
 		{EPRO_TEXT("spectre")},
 		{EPRO_TEXT("bravemax")},
-		{EPRO_TEXT("hanoi")}, //90
+		{EPRO_TEXT("hanoi")}, //92
 
 		{EPRO_TEXT("yuuga")},
 		{EPRO_TEXT("luke")},
 		{EPRO_TEXT("romin")},
 		{EPRO_TEXT("gakuto")},
-		{EPRO_TEXT("mimi")}, //95
+		{EPRO_TEXT("mimi")}, //97
 		
 		{EPRO_TEXT("guider")},
 		
-		{EPRO_TEXT("darksiner")} }; //total 97
+		{EPRO_TEXT("darksiner")} }; //total 99
 	std::vector<std::string> soundcount;
 	int32_t GetSoundDuration();
 	void PlayModeSound(int i, uint32_t code, bool music = false);

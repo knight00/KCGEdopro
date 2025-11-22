@@ -111,10 +111,12 @@ bool WindBotPanel::LaunchSelected(int port, epro::wstringview pass) {
 	// 	}
 	// }
 	if(bots[index].deck == L"AI_perfectdicky") {
-		if(aiDeckSelect2->getSelected() == 0)
+		if (aiDeckSelect2->getSelected() == 0)
 			tmpdeck = Utils::ToUnicodeIfNeeded(DeckManager::GetDeckPath(Utils::ToPathString(aiDeckSelect->getItem(aiDeckSelect->getSelected()))));
-		else
-		    tmpdeck = Utils::ToUnicodeIfNeeded(DeckManager::GetDeckPath(Utils::ToPathString(epro::format(EPRO_TEXT("{}/{}"), aiDeckSelect2->getItem(aiDeckSelect2->getSelected()), aiDeckSelect->getItem(aiDeckSelect->getSelected())))));
+		else {
+			auto s = epro::format(EPRO_TEXT("{}/{}"), Utils::ToPathString(aiDeckSelect2->getItem(aiDeckSelect2->getSelected())), Utils::ToPathString(aiDeckSelect->getItem(aiDeckSelect->getSelected())));
+			tmpdeck = Utils::ToUnicodeIfNeeded(DeckManager::GetDeckPath(s));
+		}
 		overridedeck = tmpdeck.data();
 		bots[index].deckpath = aiDeckSelect->getItem(aiDeckSelect->getSelected());
 	}
