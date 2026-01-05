@@ -378,14 +378,14 @@ void GenericDuel::PlayerReady(DuelPlayer* dp, bool is_ready, bool ai) {
         bool kcgwarn = false;
         std::vector<const CardDataC*>::iterator iter;
 		for(iter = dueler.pdeck.main.begin(); iter != dueler.pdeck.main.end(); ) {
-			if((*iter)->code < 2500 || (*iter)->code == 900000061 || (*iter)->code == 900000062 || (*iter)->code == 900000071 || (*iter)->code == 900000074) {
+			if(((*iter)->code < 2500 || (*iter)->code == 900000061 || (*iter)->code == 900000062 || (*iter)->code == 900000071 || (*iter)->code == 900000074) && (*iter)->code != 483) {
                 kcgwarn = true;
 				iter = dueler.pdeck.main.erase(iter);
             } else
 				++iter;
         }
         for(iter = dueler.pdeck.extra.begin(); iter != dueler.pdeck.extra.end(); ) {
-			if((*iter)->code < 2500 || (*iter)->code == 10000044 || (*iter)->code == 123106 || (*iter)->code == 123108) {
+			if(((*iter)->code < 2500 || (*iter)->code == 10000044 || (*iter)->code == 123106 || (*iter)->code == 123108)) && (*iter)->code != 483 {
                 kcgwarn = true;
 				iter = dueler.pdeck.extra.erase(iter);
             } else
@@ -583,13 +583,13 @@ void GenericDuel::RematchResult(DuelPlayer* dp, uint8_t rematch) {
 #ifndef VIP
         std::vector<const CardDataC*>::iterator iter;
 		for(iter = dueler.pdeck.main.begin(); iter != dueler.pdeck.main.end(); ) {
-			if((*iter)->code < 2500 || (*iter)->code == 900000061 || (*iter)->code == 900000062 || (*iter)->code == 900000071 || (*iter)->code == 900000074) {
+			if(((*iter)->code < 2500 || (*iter)->code == 900000061 || (*iter)->code == 900000062 || (*iter)->code == 900000071 || (*iter)->code == 900000074) && (*iter)->code != 483) {
 				iter = dueler.pdeck.main.erase(iter);
             } else
 				++iter;
         }
         for(iter = dueler.pdeck.extra.begin(); iter != dueler.pdeck.extra.end(); ) {
-			if((*iter)->code < 2500 || (*iter)->code == 10000044 || (*iter)->code == 123106 || (*iter)->code == 123108) {
+			if(((*iter)->code < 2500 || (*iter)->code == 10000044 || (*iter)->code == 123106 || (*iter)->code == 123108) && (*iter)->code != 483) {
 				iter = dueler.pdeck.extra.erase(iter);
             } else
 				++iter;

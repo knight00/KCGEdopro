@@ -4371,17 +4371,27 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 	case MSG_PICCHANGE: {
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
 		CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+		current.controler = mainGame->LocalPlayer(current.controler);
 		auto lock = LockIf();
 		if(!(current.location & LOCATION_OVERLAY)) {
 			ClientCard* pcard = mainGame->dField.GetCard(current.controler, current.location, current.sequence);
 			pcard->piccode = code;
+			if(!mainGame->dInfo.isCatchingUp) {
+				mainGame->dField.FadeCard(pcard, 5, 5);
+				mainGame->WaitFrameSignal(2, lock);
+				mainGame->dField.FadeCard(pcard, 255, 5);
+				mainGame->WaitFrameSignal(2, lock);
+			}
 		} else {
 			ClientCard* olcard = mainGame->dField.GetCard(current.controler, current.location & (~LOCATION_OVERLAY) & 0xff, current.sequence);
 			ClientCard* pcard = olcard->overlayed[current.position];
 			pcard->piccode = code;
-		}
-		if(!mainGame->dInfo.isCatchingUp) {
-			mainGame->WaitFrameSignal(5, lock);
+			if(!mainGame->dInfo.isCatchingUp) {
+				mainGame->dField.FadeCard(pcard, 5, 5);
+				mainGame->WaitFrameSignal(2, lock);
+				mainGame->dField.FadeCard(pcard, 255, 5);
+				mainGame->WaitFrameSignal(2, lock);
+			}
 		}
 		return true;
 	}
@@ -4404,9 +4414,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         const auto namecode = BufferIO::Read<uint32_t>(pbuf);
 		auto lock = LockIf();
         CoreUtils::loc_info current2;
-		ClientCard* ocard;
+		ClientCard* ocard = nullptr;
 		if(!partchange) {
         	current2 = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+			current2.controler = mainGame->LocalPlayer(current2.controler);
         	ocard = mainGame->dField.GetCard(current2.controler, current2.location, current2.sequence);
         	if(current2.location & LOCATION_OVERLAY)
             	ocard = mainGame->dField.GetCard(current2.controler, current2.location & (~LOCATION_OVERLAY) & 0xff, current2.sequence);
@@ -4469,6 +4480,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					pcard->text_hints.clear();
 				}
 			}
+			if(!mainGame->dInfo.isCatchingUp) {
+				mainGame->dField.FadeCard(pcard, 5, 5);
+				mainGame->WaitFrameSignal(2, lock);
+				mainGame->dField.FadeCard(pcard, 255, 5);
+				mainGame->WaitFrameSignal(2, lock);
+			}
 		} else {
 			ClientCard* olcard = mainGame->dField.GetCard(current.controler, current.location & (~LOCATION_OVERLAY) & 0xff, current.sequence);
 			ClientCard* pcard = olcard->overlayed[current.position];
@@ -4527,9 +4544,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					pcard->text_hints.clear();
 				}
 			}
-		}
-		if(!mainGame->dInfo.isCatchingUp) {
-			mainGame->WaitFrameSignal(5, lock);
+			if(!mainGame->dInfo.isCatchingUp) {
+				mainGame->dField.FadeCard(pcard, 5, 5);
+				mainGame->WaitFrameSignal(2, lock);
+				mainGame->dField.FadeCard(pcard, 255, 5);
+				mainGame->WaitFrameSignal(2, lock);
+			}
 		}
 		return true;
 	}
