@@ -600,6 +600,7 @@ void SoundManager::PlayModeSound(int i, uint32_t code, bool music) {
 		StopSounds();
 		mainGame->chantsound.setBuffer(mainGame->soundBuffer);
 		mainGame->chantsound.play();
+		mainGame->chantsound.setVolume(gGameConfig->soundVolume);
     	lock = true;
 	}
 	mainGame->ShowElement(mainGame->wChPloatBody[i]);
@@ -750,6 +751,7 @@ void SoundManager::PlayCustomMusic(std::string num) {
 				if (mainGame->soundBuffer.loadFromFile(file)) {
 					mainGame->chantsound.setBuffer(mainGame->soundBuffer);
 					mainGame->chantsound.play();
+					mainGame->chantsound.setVolume(gGameConfig->soundVolume);
 					mainGame->isEvent = true;
 					if(mainGame->dInfo.isInDuel && gGameConfig->pauseduel) {
 						std::unique_lock<epro::mutex> lck(mainGame->gMutex);
@@ -1569,6 +1571,7 @@ bool SoundManager::PlayZipChants(CHANT chant, std::string file, const uint8_t si
 						StopSounds();
 						mainGame->chantsound.setBuffer(mainGame->soundBuffer);
 						mainGame->chantsound.play();
+						mainGame->chantsound.setVolume(gGameConfig->soundVolume);
 						if((mainGame->dInfo.isInDuel && chant == CHANT::STARTUP) || (chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN)) {
 							if(mainGame->dInfo.isInDuel && gGameConfig->pauseduel) {
 								mainGame->isEvent = true;
@@ -1607,6 +1610,7 @@ bool SoundManager::PlayChants(CHANT chant, std::string file, const uint8_t side,
 			StopSounds();
 			mainGame->chantsound.setBuffer(mainGame->soundBuffer);
 			mainGame->chantsound.play();
+			mainGame->chantsound.setVolume(gGameConfig->soundVolume);
 			if((mainGame->dInfo.isInDuel && chant == CHANT::STARTUP) || (chant != CHANT::STARTUP && chant != CHANT::BORED && chant != CHANT::WIN)) {
 				if(mainGame->dInfo.isInDuel && gGameConfig->pauseduel) {
 					mainGame->isEvent = true;

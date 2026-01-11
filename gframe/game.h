@@ -723,7 +723,6 @@ public:
 	int replay_player[2];
     int replay_team1;
     int replay_team2;
-    bool replayswap;
 	////////kdiy////////
 	void RefreshLFLists();
 	void RefreshAiDecks();
@@ -1029,7 +1028,12 @@ public:
 	irr::gui::CGUITTFont* numFont0;
 	irr::gui::CGUITTFont* adFont0;
 	irr::gui::CGUITTFont* lpFont;
+	irr::gui::CGUITTFont* lpFont5ds;
+	irr::gui::CGUITTFont* lpFonta5;
+	irr::gui::CGUITTFont* lpFontv6;
+	irr::gui::CGUITTFont* lpFontdsod;
 	irr::gui::CGUITTFont* nameFont;
+	irr::gui::CGUITTFont* nameFontdsod;
 	irr::gui::CGUITTFont* turnFont;
 	//irr::gui::IGUIStaticText* wCardImg;
 	/////kdiy/////////

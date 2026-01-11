@@ -566,8 +566,18 @@ Game::~Game() {
 		adFont0->drop();
 	if(lpFont)
 		lpFont->drop();
+	if(lpFont5ds)
+		lpFont5ds->drop();
+	if(lpFonta5)
+		lpFonta5->drop();
+	if(lpFontv6)
+		lpFontv6->drop();
+	if(lpFontdsod)
+		lpFontdsod->drop();
 	if(nameFont)
 		nameFont->drop();
+	if(nameFontdsod)
+		nameFontdsod->drop();
 	if(turnFont)
 		turnFont->drop();
 	/////kdiy//////
@@ -707,9 +717,19 @@ void Game::Initialize() {
 	adFont0 = irr::gui::CGUITTFont::createTTFont(env, numfont0, fallbackFonts);
 	numfont.size = Scale(24);
 	lpFont = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
-	textfont.size = Scale(textfont.size * 1.8);
+	numfont.size = Scale(13);
+	lpFont5ds = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
+	numfont.size = Scale(20);
+	lpFonta5 = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
+	numfont.size = Scale(28);
+	lpFontv6 = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
+	numfont.size = Scale(52);
+	lpFontdsod = irr::gui::CGUITTFont::createTTFont(env, numfont, fallbackFonts);
+	textfont.size = Scale(45);
 	nameFont = irr::gui::CGUITTFont::createTTFont(env, textfont, fallbackFonts);
-	textfont.size = Scale(textfont.size * 1.2);
+	textfont.size = Scale(100);
+	nameFontdsod = irr::gui::CGUITTFont::createTTFont(env, textfont, fallbackFonts);
+	textfont.size = Scale(30);
 	turnFont = irr::gui::CGUITTFont::createTTFont(env, textfont, fallbackFonts);
 	//if(!numFont || !adFont || !lpcFont)
 	if(!numFont || !adFont || !numFont0 || !lpcFont)
@@ -5555,7 +5575,7 @@ void Game::StopVideo(bool close, bool reset) {
 			showloc = false;
 		}
 		wPhase->setVisible(true);
-		btnSpectatorSwap->setVisible(true);
+		btnSpectatorSwap->setVisible(dInfo.isReplay &&  dInfo.player_type == 7);
 		btnChainIgnore->setVisible(true);
 		btnChainAlways->setVisible(true);
 		btnChainWhenAvail->setVisible(true);
