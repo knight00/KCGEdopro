@@ -720,9 +720,6 @@ public:
 	int bodycharacter[2] = { 0,0 };
 	int cutincharacter[2][3] = { {0,0,0},{0,0,0} }; //[3]: damage, advantage, surprise
 	int lpcharacter[2] = { 0,0 };
-	int replay_player[2];
-    int replay_team1;
-    int replay_team2;
 	////////kdiy////////
 	void RefreshLFLists();
 	void RefreshAiDecks();

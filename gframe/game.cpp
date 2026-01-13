@@ -1737,23 +1737,23 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(btnPloat, 1215);
 
 	//second  head 0 player + info
-	wChPloatBody[0] = env->addWindow(Scale(250, 460, 470, 555));
+	wChPloatBody[0] = env->addWindow(Scale(250, 460, 480, 560));
 	wChPloatBody[0]->getCloseButton()->setVisible(false);
 	wChPloatBody[0]->setDraggable(false);
 	wChPloatBody[0]->setDrawTitlebar(false);
 	wChPloatBody[0]->setDrawBackground(true);
 	wChPloatBody[0]->setVisible(false);
-	stChPloatInfo[0] = irr::gui::CGUICustomText::addCustomText(L"", false, env, wChPloatBody[0], -1, Scale(10, 15, 300, 80));
+	stChPloatInfo[0] = irr::gui::CGUICustomText::addCustomText(L"", false, env, wChPloatBody[0], -1, Scale(10, 15, 220, 85));
 	stChPloatInfo[0]->setWordWrap(true);
 
 	//second  head 1 player + info
-	wChPloatBody[1] = env->addWindow(Scale(810, 170, 1030, 265));
+	wChPloatBody[1] = env->addWindow(Scale(800, 170, 1030, 270));
 	wChPloatBody[1]->getCloseButton()->setVisible(false);
 	wChPloatBody[1]->setDraggable(false);
 	wChPloatBody[1]->setDrawTitlebar(false);
 	wChPloatBody[1]->setDrawBackground(true);
 	wChPloatBody[1]->setVisible(false);
-	stChPloatInfo[1] = irr::gui::CGUICustomText::addCustomText(L"", false, env, wChPloatBody[1], -1, Scale(10, 15, 300, 80));
+	stChPloatInfo[1] = irr::gui::CGUICustomText::addCustomText(L"", false, env, wChPloatBody[1], -1, Scale(10, 15, 220, 85));
 	stChPloatInfo[1]->setWordWrap(true);
     ////kdiy////////
 	chkYrp = env->addCheckBox(false, Scale(360, 250, 560, 270), wReplay, -1, gDataManager->GetSysString(1356).data());
@@ -3794,57 +3794,6 @@ bool Game::MainLoop() {
 		} else { // bottom right of window with a little padding
 			fpsCounter->setRelativePosition(Resize(5, 620, 5 + fpsCounterWidth, 640));
 		}
-
-		avataricon1 = 0; avataricon2 = 0;
-        if(dInfo.isInDuel && !dInfo.isSingleMode && !dInfo.isReplay) {
-            if (dInfo.isTeam1) {
-                avataricon1 = dInfo.current_player[0];
-                avataricon2 = dInfo.current_player[1] + dInfo.team1;
-            } else {
-                avataricon1 = dInfo.current_player[0] + dInfo.team1;
-                avataricon2 = dInfo.current_player[1];
-            }
-        } else if(dInfo.isReplay) {
-            if(dInfo.isReplaySwapped) {
-                if (!dInfo.isTeam1) {
-                    avataricon1 = replay_player[0] + dInfo.team1;
-                    avataricon2 = replay_player[1];
-                } else {
-                    avataricon1 = replay_player[0];
-                    avataricon2 = replay_player[1] + dInfo.team1;
-                }
-            } else {
-                if (dInfo.isTeam1) {
-                    avataricon1 = replay_player[0];
-                    avataricon2 = replay_player[1] + dInfo.team1;
-                } else {
-                    avataricon1 = replay_player[0] + dInfo.team1;
-                    avataricon2 = replay_player[1];
-                }
-            }
-        } else if(dInfo.isSingleMode) {
-            avataricon1 = 0;
-            avataricon2 = 1;
-        } else if(is_building) {
-            avataricon1 = 0;
-        }
-		avatarbutton[0]->setImage(imageManager.bodycharacter[gSoundManager->character[avataricon1]][bodycharacter[0] > 2 ? 0 : bodycharacter[0]]);
-		avatarbutton[1]->setImage(imageManager.bodycharacter[gSoundManager->character[avataricon2]][bodycharacter[1] > 2 ? 0 : bodycharacter[1]]);
-#ifdef VIP
-        if((dInfo.isInDuel || is_building) && !mode->isMode) {
-            if(gSoundManager->character[avataricon1] > 0)
-                wAvatar[0]->setVisible(true);
-            else
-                wAvatar[0]->setVisible(false);
-            if(gSoundManager->character[avataricon2] > 0 && !is_building)
-                wAvatar[1]->setVisible(true);
-            else
-                wAvatar[1]->setVisible(false);
-        } else {
-            wAvatar[0]->setVisible(false);
-            wAvatar[1]->setVisible(false);
-        }
-#endif
         wCardImg->setRelativePosition(Resize(10, 10, 220, 550));
         for(int i = 0; i < 8; i++)
 		    CardInfo[i]->setRelativePosition(Resize(220, 198 + i * 20, i == 0 ? 270 : 312, 218 + i * 20));
@@ -6712,8 +6661,8 @@ void Game::OnResize() {
     wCharacterReplay->setRelativePosition(ResizeWin(220, 100, 880, 500));
     wBody->setRelativePosition(ResizeWin(370, 175, 570, 475));
     wPloat->setRelativePosition(ResizeWin(520, 100, 775, 400));
-    wChPloatBody[0]->setRelativePosition(ResizeWin(250, 460, 470, 555));
-    wChPloatBody[1]->setRelativePosition(ResizeWin(810, 170, 1030, 265));
+    wChPloatBody[0]->setRelativePosition(ResizeWin(250, 460, 480, 560));
+    wChPloatBody[1]->setRelativePosition(ResizeWin(800, 170, 1030, 270));
     ////kdiy/////////
 	wSinglePlay->setRelativePosition(ResizeWin(220, 100, 800, 520));
     ////kdiy/////////

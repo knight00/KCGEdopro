@@ -513,7 +513,7 @@ void Game::DrawCard(ClientCard* pcard) {
 	///kdiy////////
     auto cd = gDataManager->GetCardData(pcard->code);
 	irr::video::ITexture* cardcloseup; irr::video::SColor cardcloseupcolor = irr::video::SColor(255, 255, 255, 0);
-	std::tie(cardcloseup, cardcloseupcolor) = imageManager.GetTextureCloseup(pcard->piccode > 0 ? pcard->piccode : pcard->code, pcard->is_change && cd ? cd->alias : pcard->alias);
+	std::tie(cardcloseup, cardcloseupcolor) = imageManager.GetTextureCloseup(pcard->code, pcard->is_change && cd ? cd->alias : pcard->alias);
 	matManager.mTexture.AmbientColor = 0xffffffff;
     auto drawLine = [&](const auto& pos0, const auto& pos1, const auto& pos2, const auto& pos3, irr::video::SColor color) -> void {
         driver->draw3DLineW(pos0, pos1, color, (pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup ? 10 : 8);
@@ -951,12 +951,49 @@ void Game::DrawMisc() {
 	/////kdiy/////////
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(330, 10, 629, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(691, 10, 990, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
-	driver->draw2DImage(imageManager.tLPFrame_z4, Resize(161, 553, 350, 640), irr::core::recti(0, 0, 494, 228), 0, 0, true);
-	driver->draw2DImage(mainGame->mode->isMode ? imageManager.modeHead[avataricon1] : imageManager.lpicon[gSoundManager->character[avataricon1]], Resize(268, 567, 318, 617), mainGame->mode->isMode ? imageManager.modehead_size[avataricon1] : irr::core::recti(0, 0, 240, 240), 0, 0, true);
+	int lpstyle = 2;
+	//self LP bar
+	if(lpstyle == 1)
+		driver->draw2DImage(imageManager.tLPFrame_dm, Resize(161, 553, 350, 640), irr::core::recti(0, 0, 459, 342), 0, 0, true);
+	if(lpstyle == 2)
+		driver->draw2DImage(imageManager.tLPFrame_gx, Resize(161, 553, 350, 640), irr::core::recti(0, 0, 575, 479), 0, 0, true);
+	if(lpstyle == 3)
+		driver->draw2DImage(imageManager.tLPFrame_5ds, Resize(181, 553, 278, 640), irr::core::recti(0, 0, 502, 497), 0, 0, true);
+	if(lpstyle == 4) {
+		driver->draw2DImage(imageManager.tLPFrame_z4, Resize(161, 553, 350, 640), irr::core::recti(0, 0, 494, 228), 0, 0, true);
+	//self lp vs icon
+		driver->draw2DImage(mainGame->mode->isMode ? imageManager.modeHead[avataricon1] : imageManager.lpicon[gSoundManager->character[avataricon1]], Resize(268, 567, 318, 617), mainGame->mode->isMode ? imageManager.modehead_size[avataricon1] : irr::core::recti(0, 0, 240, 240), 0, 0, true);
+	}
+	if(lpstyle == 5) {
+		driver->draw2DImage(imageManager.tLPFrame_a5, Resize(151, 553, 350, 640), irr::core::recti(0, 0, 430, 452), 0, 0, true);
+		driver->draw2DImage(mainGame->mode->isMode ? imageManager.modeHead[avataricon1] : imageManager.lpicon[gSoundManager->character[avataricon1]], Resize(268, 574, 318, 624), mainGame->mode->isMode ? imageManager.modehead_size[avataricon1] : irr::core::recti(0, 0, 240, 240), 0, 0, true);
+	}
+	if(lpstyle == 6)
+		driver->draw2DImage(imageManager.tLPFrame_v6, Resize(161, 570, 350, 620), irr::core::recti(0, 0, 392, 94), 0, 0, true);
+	if(lpstyle == 7)
+		driver->draw2DImage(imageManager.tLPFrame_dsod, Resize(161, 583, 615, 623), irr::core::recti(0, 0, 1060, 115), 0, 0, true);
 	if(dField.player_desc_hints[0].size() > 0)
 	    driver->draw2DImage(imageManager.tHint, Resize(151, 550, 191, 615), irr::core::recti(0, 0, 532, 649), 0, 0, true);
-	driver->draw2DImage(imageManager.tLPFrame2_z4, Resize(811, 18, 1020, 105), irr::core::recti(0, 0, 494, 228), 0, 0, true);
-	driver->draw2DImage(mainGame->mode->isMode ? imageManager.modeHead[avataricon2] : imageManager.lpicon[gSoundManager->character[avataricon2]], Resize(845, 32, 895, 82), mainGame->mode->isMode ? imageManager.modehead_size[avataricon2] : irr::core::recti(0, 0, 240, 240), 0, 0, true);
+	//oppo LP bar
+	if(lpstyle == 1)
+		driver->draw2DImage(imageManager.tLPFrame_dm, Resize(811, 18, 1020, 105), irr::core::recti(0, 0, 459, 342), 0, 0, true);
+	if(lpstyle == 2)
+		driver->draw2DImage(imageManager.tLPFrame_gx, Resize(811, 18, 1020, 105), irr::core::recti(0, 0, 575, 479), 0, 0, true);
+	if(lpstyle == 3)
+		driver->draw2DImage(imageManager.tLPFrame_5ds, Resize(831, 18, 928, 105), irr::core::recti(0, 0, 502, 497), 0, 0, true);
+	if(lpstyle == 4) {
+		driver->draw2DImage(imageManager.tLPFrame2_z4, Resize(811, 18, 1020, 105), irr::core::recti(0, 0, 494, 228), 0, 0, true);
+	//oppo lp vs icon
+		driver->draw2DImage(mainGame->mode->isMode ? imageManager.modeHead[avataricon2] : imageManager.lpicon[gSoundManager->character[avataricon2]], Resize(845, 32, 895, 82), mainGame->mode->isMode ? imageManager.modehead_size[avataricon2] : irr::core::recti(0, 0, 240, 240), 0, 0, true);
+	}
+	if(lpstyle == 5) {
+		driver->draw2DImage(imageManager.tLPFrame2_a5, Resize(801, 18, 1020, 105), irr::core::recti(0, 0, 430, 452), 0, 0, true);
+		driver->draw2DImage(mainGame->mode->isMode ? imageManager.modeHead[avataricon2] : imageManager.lpicon[gSoundManager->character[avataricon2]], Resize(839, 37, 889, 87), mainGame->mode->isMode ? imageManager.modehead_size[avataricon2] : irr::core::recti(0, 0, 240, 240), 0, 0, true);
+	}
+	if(lpstyle == 6)
+		driver->draw2DImage(imageManager.tLPFrame_v6, Resize(811, 55, 1000, 105), irr::core::recti(0, 0, 392, 94), 0, 0, true);
+	if(lpstyle == 7)
+		driver->draw2DImage(imageManager.tLPFrame_dsod, Resize(596, 50, 1050, 90), irr::core::recti(0, 0, 1060, 115), 0, 0, true);
 	if(dField.player_desc_hints[1].size() > 0)
 	    driver->draw2DImage(imageManager.tHint, Resize(801, 15, 841, 80), irr::core::recti(0, 0, 532, 649), 0, 0, true);
 	/////kdiy/////////
@@ -1035,17 +1072,64 @@ void Game::DrawMisc() {
 
     ////kdiy////////////
 	// DrawShadowText(numFont, dInfo.strLP[0], Resize(330, 11, 629, 29), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, true);
-	// DrawShadowText(numFont, dInfo.strLP[1], Resize(691, 11, 990, 29), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, true); 161, 553, 350, 640 691, 48, 900, 135   268, 567, 318, 617 725, 62, 775, 112
-	DrawShadowText(numFont, L"LP", Resize(166, 585, 233, 604), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, false);
-	DrawShadowText(numFont, L"LP", mainGame->mode->isMode || gSoundManager->character[avataricon2] > 0 ? Resize(875, 50, 942, 69) : Resize(820, 50, 887, 69), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, false);
-    if(dInfo.lp[0] >= 8888888)
-	    DrawShadowText(nameFont, dInfo.strLP[0], Resize(208, 580, 248, 634), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, true);
-    else
-	    DrawShadowText(lpFont, dInfo.strLP[0], Resize(208, 600, 268, 624), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, false);
-    if(dInfo.lp[1] >= 8888888)
-	    DrawShadowText(nameFont, dInfo.strLP[1], mainGame->mode->isMode || gSoundManager->character[avataricon2] > 0 ? Resize(917, 45, 957, 89) : Resize(868, 45, 908, 89), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, true);
-    else
-	    DrawShadowText(lpFont, dInfo.strLP[1], mainGame->mode->isMode || gSoundManager->character[avataricon2] > 0 ? Resize(917, 65, 977, 89) : Resize(868, 65, 928, 89), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, false);
+	// DrawShadowText(numFont, dInfo.strLP[1], Resize(691, 11, 990, 29), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, true);
+	// 161, 553, 350, 640 691, 48, 900, 135   268, 567, 318, 617 725, 62, 775, 112
+	if(lpstyle == 1 || lpstyle == 2 || lpstyle == 4) {
+		DrawShadowText(numFont, L"LP", (mainGame->mode->isMode || gSoundManager->character[avataricon1] > 0) && lpstyle == 4 ? Resize(196, 585, 233, 604) : Resize(196, 585, 233, 604), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, false);
+		DrawShadowText(numFont, L"LP", (mainGame->mode->isMode || gSoundManager->character[avataricon2] > 0) && lpstyle == 4 ? Resize(900, 50, 937, 69) : Resize(855, 50, 892, 69), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, false);
+		if(dInfo.lp[0] >= 8888888)
+	    	DrawShadowText(nameFont, dInfo.strLP[0], (mainGame->mode->isMode || gSoundManager->character[avataricon1] > 0) && lpstyle == 4 ? Resize(208, 580, 248, 634) : Resize(208, 580, 248, 634), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, true);
+    	else
+	    	DrawShadowText(lpFont, dInfo.strLP[0], (mainGame->mode->isMode || gSoundManager->character[avataricon1] > 0) && lpstyle == 4 ? Resize(208, 600, 268, 624) : Resize(213, 600, 273, 624), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_1_VAL, 0xff000000, true, false);
+    	if(dInfo.lp[1] >= 8888888)
+	    	DrawShadowText(nameFont, dInfo.strLP[1], (mainGame->mode->isMode || gSoundManager->character[avataricon2] > 0) && lpstyle == 4 ? Resize(917, 52, 957, 89) : Resize(867, 52, 907, 89), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, true);
+    	else
+	    	DrawShadowText(lpFont, dInfo.strLP[1], (mainGame->mode->isMode || gSoundManager->character[avataricon2] > 0) && lpstyle == 4 ? Resize(917, 65, 977, 89) : Resize(872, 65, 932, 89), Resize(0, 1, 2, 0), skin::DUELFIELD_LP_2_VAL, 0xff000000, true, false);
+	}
+	if(lpstyle == 3) { //181, 553, 278, 640  831, 18, 928, 105
+		DrawShadowText(numFont, L"LP", Resize(205, 575, 245, 595), Resize(0, 1, 2, 0), 0xffffffff, 0xff000000, true, false);
+		DrawShadowText(numFont, L"LP", Resize(855, 40, 895, 60), Resize(0, 1, 2, 0), 0xffffffff, 0xff000000, true, false);
+		if(dInfo.lp[0] >= 8888888)
+	    	DrawShadowText(nameFont, dInfo.strLP[0], Resize(208, 570, 248, 624), Resize(0, 1, 2, 0), 0xffffffff, 0xff000000, true, true);
+    	else
+	    	DrawShadowText(lpFont5ds, dInfo.strLP[0], Resize(195, 590, 265, 601), Resize(0, 1, 2, 0), 0xffffffff, 0xff000000, true, false);
+    	if(dInfo.lp[1] >= 8888888)
+	    	DrawShadowText(nameFont, dInfo.strLP[1],Resize(858, 40, 898, 84), Resize(0, 1, 2, 0), 0xffffffff, 0xff000000, true, true);
+    	else
+	    	DrawShadowText(lpFont5ds, dInfo.strLP[1], Resize(845, 60, 915, 70), Resize(0, 1, 2, 0), 0xffffffff, 0xff000000, true, false);
+	}
+	if(lpstyle == 5) {
+		DrawShadowText(numFont, L"LP", Resize(191, 575, 258, 594), Resize(0, 1, 2, 0), 0xffffffff, 0xff000000, true, false);
+		DrawShadowText(numFont, L"LP", mainGame->mode->isMode || gSoundManager->character[avataricon2] > 0 ? Resize(875, 41, 942, 60) : Resize(845, 41, 912, 60), Resize(0, 1, 2, 0), 0xffffffff, 0xff000000, true, false);
+		if(dInfo.lp[0] >= 8888888)
+	    	DrawShadowText(nameFont, dInfo.strLP[0], mainGame->mode->isMode || gSoundManager->character[avataricon1] > 0 ? Resize(228, 579, 268, 616) : Resize(228, 579, 268, 616), Resize(0, 1, 2, 0), 0xffffffff, 0xff000000, true, true);
+    	else
+	    	DrawShadowText(mainGame->mode->isMode || gSoundManager->character[avataricon1] > 0 ?lpFonta5 : lpFont, dInfo.strLP[0], mainGame->mode->isMode || gSoundManager->character[avataricon1] > 0 ? Resize(208, 589, 248, 611) : Resize(228, 589, 268, 611), Resize(0, 1, 2, 0), 0xffffffff, 0xff000000, true, false);
+    	if(dInfo.lp[1] >= 8888888)
+	    	DrawShadowText(nameFont, dInfo.strLP[1], mainGame->mode->isMode || gSoundManager->character[avataricon2] > 0 ? Resize(918, 51, 938, 78) : Resize(893, 49, 913, 76), Resize(0, 1, 2, 0), 0xffffffff, 0xff000000, true, true);
+    	else
+	    	DrawShadowText(mainGame->mode->isMode || gSoundManager->character[avataricon1] > 0 ?lpFonta5 : lpFont, dInfo.strLP[1], mainGame->mode->isMode || gSoundManager->character[avataricon2] > 0 ? Resize(910, 54, 950, 78) : Resize(882, 54, 922, 78), Resize(0, 1, 2, 0), 0xffffffff, 0xff000000, true, false);
+	}
+	if(lpstyle == 6) { //161, 570, 350, 620  811, 55, 1000, 105
+		if(dInfo.lp[0] >= 8888888)
+	    	DrawShadowText(nameFont, dInfo.strLP[0], Resize(228, 560, 268, 615), Resize(0, 1, 2, 0), 0xffffffff, 0xff000000, true, true);
+    	else
+	    	DrawShadowText(lpFontv6, dInfo.strLP[0], Resize(248, 575, 293, 615), Resize(0, 1, 2, 0), 0xffffffff, 0xff000000, true, true);
+    	if(dInfo.lp[1] >= 8888888)
+	    	DrawShadowText(nameFont, dInfo.strLP[1], Resize(876, 45, 916, 100), Resize(0, 1, 2, 0), 0xffffffff, 0xff000000, true, true);
+    	else
+	    	DrawShadowText(lpFontv6, dInfo.strLP[1], Resize(896, 60, 941, 100), Resize(0, 1, 2, 0), 0xffffffff, 0xff000000, true, true);
+	}
+	if(lpstyle == 7) { //161, 583, 615, 623 596, 50, 1050, 90
+		if(dInfo.lp[0] >= 8888888)
+	    	DrawShadowText(nameFontdsod, dInfo.strLP[0], Resize(235, 543, 695, 578), Resize(0, 1, 2, 0), 0xffffffff, 0xff000000, true, true);
+    	else
+	    	DrawShadowText(lpFontdsod, dInfo.strLP[0], Resize(235, 568, 695, 603), Resize(0, 1, 2, 0), 0xffffffff, 0xff000000, true, true);
+    	if(dInfo.lp[1] >= 8888888)
+	    	DrawShadowText(nameFontdsod, dInfo.strLP[1], Resize(670, 20, 1130, 70), Resize(0, 1, 2, 0), 0xffffffff, 0xff000000, true, true);
+    	else
+	    	DrawShadowText(lpFontdsod, dInfo.strLP[1], Resize(670, 35, 1130, 70), Resize(0, 1, 2, 0), 0xffffffff, 0xff000000, true, true);
+	}
 
 	//irr::core::recti p1size = Resize(335, 31, 629, 50);
 	//irr::core::recti p2size = Resize(986, 31, 986, 50);
@@ -1075,22 +1159,104 @@ void Game::DrawMisc() {
 	irr::core::recti p2size = Resize(719, 30, 737, 49);
 	{
 		int i = 0;
-		for (const auto& player : self) {
-			if (i++ == dInfo.current_player[0])
-				textFont->drawustring(player, Resize(196, 569, 226, 580), skin::DUELFIELD_LP_1_VAL, false, true, 0);
-			else {
-				textFont->drawustring(player, p1size, 0xff00ff00, false, true, 0);
-                p1size += irr::core::vector2di{ 0, p1size.getHeight() + ResizeY(4) };
-            }
+		if(lpstyle == 1 || lpstyle == 2 || lpstyle == 4) {
+			for (const auto& player : self) {
+				if (i++ == dInfo.current_player[0])
+					textFont->drawustring(player, Resize(196, 569, 226, 580), skin::DUELFIELD_LP_1_VAL, false, true, 0);
+				else {
+					textFont->drawustring(player, p1size, 0xff00ff00, false, true, 0);
+					p1size += irr::core::vector2di{ 0, p1size.getHeight() + ResizeY(4) };
+				}
+			}
+			i = 0;
+			for (const auto& player : oppo) {
+				if (i++ == dInfo.current_player[1])
+					textFont->drawustring(player, mainGame->mode->isMode || gSoundManager->character[avataricon2] > 0 && lpstyle == 4 ? Resize(903, 34, 933, 45) : Resize(850, 34, 880, 45), skin::DUELFIELD_LP_2_VAL, false, true, 0);
+				else {
+					textFont->drawustring(player, p2size, 0xff00ff00, false, true, 0);
+					p2size += irr::core::vector2di{ 0, p2size.getHeight() + ResizeY(4) };
+				}
+			}
 		}
-		i = 0;
-		for (const auto& player : oppo) {
-			if (i++ == dInfo.current_player[1])
-				textFont->drawustring(player, mainGame->mode->isMode || gSoundManager->character[avataricon2] > 0 ? Resize(903, 34, 933, 45) : Resize(850, 34, 880, 45), skin::DUELFIELD_LP_2_VAL, false, true, 0);
-			else {
-				textFont->drawustring(player, p2size, 0xff00ff00, false, true, 0);
-                p2size += irr::core::vector2di{ 0, p2size.getHeight() + ResizeY(4) };
-            }
+		if(lpstyle == 3) { //181, 553, 278, 640  831, 18, 928, 105
+			for (const auto& player : self) {
+				if (i++ == dInfo.current_player[0])
+					textFont->drawustring(player, Resize(180, 557, 210, 568), 0xffffffff, false, true, 0);
+				else {
+					textFont->drawustring(player, p1size, 0xffffffff, false, true, 0);
+					p1size += irr::core::vector2di{ 0, p1size.getHeight() + ResizeY(4) };
+				}
+			}
+			i = 0;
+			for (const auto& player : oppo) {
+				if (i++ == dInfo.current_player[1])
+					textFont->drawustring(player, Resize(830, 22, 860, 33), 0xffffffff, false, true, 0);
+				else {
+					textFont->drawustring(player, p2size, 0xffffffff, false, true, 0);
+					p2size += irr::core::vector2di{ 0, p2size.getHeight() + ResizeY(4) };
+				}
+			}
+		}
+		if(lpstyle == 5) {
+			p2size = Resize(719, 35, 737, 54);
+			for (const auto& player : self) {
+				if (i++ == dInfo.current_player[0])
+					textFont->drawustring(player, Resize(220, 564, 250, 575), 0xffffffff, false, true, 0);
+				else {
+					textFont->drawustring(player, p1size, 0xffffffff, false, true, 0);
+					p1size += irr::core::vector2di{ 0, p1size.getHeight() + ResizeY(4) };
+				}
+			}
+			i = 0;
+			for (const auto& player : oppo) {
+				if (i++ == dInfo.current_player[1])
+					textFont->drawustring(player, mainGame->mode->isMode || gSoundManager->character[avataricon2] > 0 ? Resize(925, 29, 955, 40) : Resize(872, 29, 902, 40), 0xffffffff, false, true, 0);
+				else {
+					textFont->drawustring(player, p2size, 0xffffffff, false, true, 0);
+					p2size += irr::core::vector2di{ 0, p2size.getHeight() + ResizeY(4) };
+				}
+			}
+		}
+		if(lpstyle == 6) { //161, 570, 350, 620  811, 55, 1000, 105
+			p2size = Resize(719, 70, 737, 89);
+			for (const auto& player : self) {
+				if (i++ == dInfo.current_player[0])
+					textFont->drawustring(player, Resize(180, 557, 210, 568), 0xffffffff, false, true, 0);
+				else {
+					textFont->drawustring(player, p1size, 0xffffffff, false, true, 0);
+					p1size += irr::core::vector2di{ 0, p1size.getHeight() + ResizeY(4) };
+				}
+			}
+			i = 0;
+			for (const auto& player : oppo) {
+				if (i++ == dInfo.current_player[1])
+					textFont->drawustring(player, Resize(830, 42, 860, 53), 0xffffffff, false, true, 0);
+				else {
+					textFont->drawustring(player, p2size, 0xffffffff, false, true, 0);
+					p2size += irr::core::vector2di{ 0, p2size.getHeight() + ResizeY(4) };
+				}
+			}
+		}
+		if(lpstyle == 7) {
+			p1size = Resize(178, 572, 208, 583);
+	        p2size = Resize(610, 40, 640, 51);
+			for (const auto& player : self) {
+				if (i++ == dInfo.current_player[0])
+					textFont->drawustring(player, Resize(178, 588, 208, 599), 0xffffffff, false, true, 0);
+				else {
+					textFont->drawustring(player, p1size, 0xffffffff, false, true, 0);
+					p1size -= irr::core::vector2di{ 0, p1size.getHeight() + ResizeY(4) };
+				}
+			}
+			i = 0;
+			for (const auto& player : oppo) {
+				if (i++ == dInfo.current_player[1])
+					textFont->drawustring(player, Resize(610, 56, 640, 67), 0xffffffff, false, true, 0);
+				else {
+					textFont->drawustring(player, p2size, 0xffffffff, false, true, 0);
+					p2size -= irr::core::vector2di{ 0, p2size.getHeight() + ResizeY(4) };
+				}
+			}
 		}
 	}
 	////kdiy////////////
