@@ -4266,10 +4266,11 @@ void Game::RefreshDeck(irr::gui::IGUIComboBox* cbDeck, bool refresh_folder) {
                 break;
             }
         }
-        for(irr::u32 i = 0; i < cbDBDecks2->getItemCount(); ++i) {
-            cbHandTestDecks2->addItem(cbDBDecks2->getItem(i));
+		if(cbDBDecks2->getSelected() >= 0) {
+        	for(irr::u32 i = 0; i < cbDBDecks2->getItemCount(); ++i)
+            	cbHandTestDecks2->addItem(cbDBDecks2->getItem(i));
+			cbHandTestDecks2->setSelected(cbDBDecks2->getSelected());
         }
-        cbHandTestDecks2->setSelected(cbDBDecks2->getSelected());
         for(irr::u32 i = 0; i < cbDBDecks->getItemCount(); ++i) {
             cbHandTestDecks->addItem(cbDBDecks->getItem(i));
         }

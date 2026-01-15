@@ -683,9 +683,9 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					//break;
 				//if(!mainGame->deckBuilder.SetCurrentDeckFromFile(Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected)), false,
 																//  mainGame->dInfo.HasFieldFlag(DUEL_EXTRA_DECK_RITUAL) ? RITUAL_LOCATION::EXTRA : RITUAL_LOCATION::MAIN))
-				auto folder = Utils::ToPathString(mainGame->cbDeck2Select->getItem(mainGame->cbDeck2Select->getSelected()));
+				auto folder = Utils::ToPathString(mainGame->cbDeck2Select->getSelected() < 1 ? EPRO_TEXT("") : mainGame->cbDeck2Select->getItem(mainGame->cbDeck2Select->getSelected())) + EPRO_TEXT("/");
 				if(mainGame->cbDeck2Select->getSelected() == -1 || selected == -1 || 
-					!mainGame->deckBuilder.SetCurrentDeckFromFile(folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected)), false,
+					!mainGame->deckBuilder.SetCurrentDeckFromFile(folder + Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected)), false,
 					   mainGame->dInfo.HasFieldFlag(DUEL_EXTRA_DECK_RITUAL) ? RITUAL_LOCATION::EXTRA : RITUAL_LOCATION::MAIN))
 				//////kdiy/////
 					break;
@@ -1088,12 +1088,13 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				// 	auto name = Utils::GetFileName(open_file_name);
 				//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 137, 295, 187));
 				mainGame->RefreshDeck(mainGame->cbDBDecks, true);
-				auto folder = Utils::ToPathString(mainGame->cbDBDecks2->getItem(mainGame->cbDBDecks2->getSelected()));
-                for(uint32_t i = 0; i < mainGame->cbDBDecks2->getItemCount() - 1; i++) {
-                    mainGame->cbDBDecks22->addItem(mainGame->cbDBDecks2->getItem(i));
+				auto folder = Utils::ToPathString(mainGame->cbDBDecks2->getSelected() < 1 ? EPRO_TEXT("") : mainGame->cbDBDecks2->getItem(mainGame->cbDBDecks2->getSelected())) + EPRO_TEXT("/");
+				if(mainGame->cbDBDecks2->getSelected() >= 0) {
+                	for(uint32_t i = 0; i < mainGame->cbDBDecks2->getItemCount() - 1; i++)
+                    	mainGame->cbDBDecks22->addItem(mainGame->cbDBDecks2->getItem(i));
                 }
-				if(open_file && mainGame->deckBuilder.SetCurrentDeckFromFile(folder + EPRO_TEXT("/") + open_file_name, true)) {
-					auto name = Utils::GetFileName(folder + EPRO_TEXT("/") + open_file_name);
+				if(open_file && mainGame->deckBuilder.SetCurrentDeckFromFile(folder + open_file_name, true)) {
+					auto name = Utils::GetFileName(folder + open_file_name);
 				//////kdiy/////
 					mainGame->ebDeckname->setText(Utils::ToUnicodeIfNeeded(name).data());
 					//////kdiy/////
@@ -1106,7 +1107,7 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				// } else if(mainGame->cbDBDecks->getSelected() != -1) {
 				} else if(mainGame->cbDBDecks->getSelected() >= 0 && mainGame->cbDBDecks2->getSelected() >= 0) {
 					// mainGame->deckBuilder.SetCurrentDeckFromFile(Utils::ToPathString(mainGame->cbDBDecks->getItem(mainGame->cbDBDecks->getSelected())), true);
-					mainGame->deckBuilder.SetCurrentDeckFromFile(folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDBDecks->getItem(mainGame->cbDBDecks->getSelected())), true);
+					mainGame->deckBuilder.SetCurrentDeckFromFile(folder + Utils::ToPathString(mainGame->cbDBDecks->getItem(mainGame->cbDBDecks->getSelected())), true);
                     mainGame->cbDBDecks22->setSelected(mainGame->cbDBDecks2->getSelected());
                 //////kdiy/////
 					mainGame->ebDeckname->setText(L"");
@@ -1510,10 +1511,10 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 					    //!mainGame->deckBuilder.SetCurrentDeckFromFile(
 						   //Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected)), false,
 						   //mainGame->dInfo.HasFieldFlag(DUEL_EXTRA_DECK_RITUAL) ? RITUAL_LOCATION::EXTRA : RITUAL_LOCATION::MAIN)) {
-					auto folder = Utils::ToPathString(mainGame->cbDeck2Select->getItem(mainGame->cbDeck2Select->getSelected()));
+					auto folder = Utils::ToPathString(mainGame->cbDeck2Select->getSelected() < 1 ? EPRO_TEXT("") : mainGame->cbDeck2Select->getItem(mainGame->cbDeck2Select->getSelected())) + EPRO_TEXT("/");
 					if(mainGame->cbDeck2Select->getSelected() == -1 || selected == -1 ||
 						!mainGame->deckBuilder.SetCurrentDeckFromFile(
-						   folder + EPRO_TEXT("/") + Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected)), false,
+						   folder + Utils::ToPathString(mainGame->cbDeckSelect->getItem(selected)), false,
 						   mainGame->dInfo.HasFieldFlag(DUEL_EXTRA_DECK_RITUAL) ? RITUAL_LOCATION::EXTRA : RITUAL_LOCATION::MAIN)) {
 					///////kdiy////
 						static_cast<irr::gui::IGUICheckBox*>(caller)->setChecked(false);
