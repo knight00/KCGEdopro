@@ -385,7 +385,7 @@ void GenericDuel::PlayerReady(DuelPlayer* dp, bool is_ready, bool ai) {
 				++iter;
         }
         for(iter = dueler.pdeck.extra.begin(); iter != dueler.pdeck.extra.end(); ) {
-			if(((*iter)->code < 2500 || (*iter)->code == 10000044 || (*iter)->code == 123106 || (*iter)->code == 123108)) && (*iter)->code != 483 {
+			if((((*iter)->code < 2500 || (*iter)->code == 10000044 || (*iter)->code == 123106 || (*iter)->code == 123108)) && (*iter)->code != 483) {
                 kcgwarn = true;
 				iter = dueler.pdeck.extra.erase(iter);
             } else
@@ -712,6 +712,8 @@ void GenericDuel::TPResult(DuelPlayer* dp, uint8_t tp) {
 		extracards.push_back(85);
 	if(host_info.extra_rules & Field_System)
 		extracards.push_back(86);
+	if(host_info.extra_rules & No_Shuffle)
+		extracards.push_back(842);
 	if(mainGame->mode->isMode) {
 		if(mainGame->mode->rule == MODE_RULE_ZCG || mainGame->mode->rule == MODE_RULE_ZCG_NO_RANDOM)
 			extracards.push_back(99710410);

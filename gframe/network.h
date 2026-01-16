@@ -367,6 +367,7 @@ public:
 ////kdiy///////
 #define KCG_System          0x2000
 #define Field_System        0x4000
+#define No_Shuffle          0x8000
 ////kdiy///////
 
 #define DUEL_STAGE_BEGIN		0

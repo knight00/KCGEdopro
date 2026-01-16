@@ -3201,7 +3201,6 @@ void Game::PopulateSettingsWindow() {
 		gGameConfig->enablessound = false;
 		gGameConfig->enablecsound = false;
 		gGameConfig->enableasound = false;
-		gGameConfig->pauseduel = false;
         gSettings.chkEnableAnime->setChecked(false);
         defaultStrings.emplace_back(gSettings.chkEnableAnime, 8053);
         gSettings.chkEnableSummonAnime->setChecked(false);
@@ -3217,7 +3216,6 @@ void Game::PopulateSettingsWindow() {
         gSettings.chkEnableAttackSound->setChecked(false);
         defaultStrings.emplace_back(gSettings.chkEnableAttackSound, 8022);
         gSettings.chkAnimeFull->setChecked(false);
-        gSettings.chkPauseduel->setChecked(false);
 #endif
         //////kdiy///////////
 
@@ -7002,7 +7000,6 @@ bool Game::chantcheck(bool initial) {
 		gGameConfig->enablessound = false;
 		gGameConfig->enablecsound = false;
 		gGameConfig->enableasound = false;
-		gGameConfig->pauseduel = false;
 		if(!initial) {
 			stACMessage->setText(gDataManager->GetSysString(8050).data());
 			PopupElement(wACMessage, 90);
@@ -7024,7 +7021,6 @@ bool Game::chantcheck(bool initial) {
 	gSettings.chkEnableSummonSound->setChecked(gGameConfig->enablessound);
     gSettings.chkEnableActivateSound->setChecked(gGameConfig->enablecsound);
 	gSettings.chkEnableAttackSound->setChecked(gGameConfig->enableasound);
-	gSettings.chkPauseduel->setChecked(gGameConfig->pauseduel);
 	return filechk;
 }
 void Game::charactcomboselect(uint8_t player, int box, int sel) {

@@ -893,7 +893,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		if(!mainGame->dInfo.compat_mode) {
 			////kdiu/////////
 			//for(int flag = SEALED_DUEL, i = 0; flag < ACTION_DUEL + 1; flag = flag << 1, i++)
-			for(int flag = SEALED_DUEL, i = 0; flag < Field_System + 1; flag = flag << 1, i++)
+			for(int flag = SEALED_DUEL, i = 0; flag < No_Shuffle + 1; flag = flag << 1, i++)
 			////kdiu/////////
 				if(pkt.info.extra_rules & flag) {
 					strR.append(epro::format(L"*{}\n", gDataManager->GetSysString(1132 + i)));
