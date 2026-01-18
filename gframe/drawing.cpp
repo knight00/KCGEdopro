@@ -956,7 +956,7 @@ void Game::DrawMisc() {
 	if(lpstyle == 1)
 		driver->draw2DImage(imageManager.tLPFrame_dm, Resize(161, 553, 350, 640), irr::core::recti(0, 0, 459, 342), 0, 0, true);
 	if(lpstyle == 2)
-		driver->draw2DImage(imageManager.tLPFrame_gx, Resize(161, 553, 350, 640), irr::core::recti(0, 0, 575, 479), 0, 0, true);
+		driver->draw2DImage(lpplayer == 1 || lpframe == 0 ? imageManager.tLPFrame_gx[0] : lpframe < 6 ? imageManager.tLPFrame_gx[1] : lpframe < 12 ? imageManager.tLPFrame_gx[2] : lpframe < 18 ? imageManager.tLPFrame_gx[3] : lpframe < 24 ? imageManager.tLPFrame_gx[4] : imageManager.tLPFrame_gx[5], Resize(161, 553, 350, 640), irr::core::recti(0, 0, 273, 202), 0, 0, true);
 	if(lpstyle == 3)
 		driver->draw2DImage(imageManager.tLPFrame_5ds, Resize(181, 553, 278, 640), irr::core::recti(0, 0, 502, 497), 0, 0, true);
 	if(lpstyle == 4) {
@@ -978,7 +978,7 @@ void Game::DrawMisc() {
 	if(lpstyle == 1)
 		driver->draw2DImage(imageManager.tLPFrame_dm, Resize(811, 18, 1020, 105), irr::core::recti(0, 0, 459, 342), 0, 0, true);
 	if(lpstyle == 2)
-		driver->draw2DImage(imageManager.tLPFrame_gx, Resize(811, 18, 1020, 105), irr::core::recti(0, 0, 575, 479), 0, 0, true);
+		driver->draw2DImage(lpplayer == 0 || lpframe == 0 ? imageManager.tLPFrame_gx[0] : lpframe < 6 ? imageManager.tLPFrame_gx[1] : lpframe < 12 ? imageManager.tLPFrame_gx[2] : lpframe < 18 ? imageManager.tLPFrame_gx[3] : lpframe < 24 ? imageManager.tLPFrame_gx[4] : imageManager.tLPFrame_gx[5], Resize(811, 18, 1020, 105), irr::core::recti(0, 0, 273, 202), 0, 0, true);
 	if(lpstyle == 3)
 		driver->draw2DImage(imageManager.tLPFrame_5ds, Resize(831, 18, 928, 105), irr::core::recti(0, 0, 502, 497), 0, 0, true);
 	if(lpstyle == 4) {

@@ -214,7 +214,7 @@ public:
 	/////////kdiy////
 	A(tLPFrame_dm)
 	A(tLPFrame_dsod)
-	A(tLPFrame_gx)
+	A(tLPFrame_gx[6])
 	A(tLPFrame_5ds)
 	A(tLPFrame_z4)
 	A(tLPFrame2_z4)
