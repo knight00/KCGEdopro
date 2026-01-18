@@ -37,6 +37,8 @@ OPTION(bool, hideHandsInReplays, false)
 OPTION(ygo::GameConfig::TextFont, textfont, EPRO_TEXT("fonts/ygo.ttf"), 12)
 ///kdiy//////////
 //OPTION(epro::path_string, numfont, EPRO_TEXT("fonts/ygo.ttf"))
+OPTION(bool, OppLP, false)
+OPTION(bool, OppHand, false)
 ///kdiy//////////
 #ifdef YGOPRO_USE_BUNDLED_FONT
 OPTION(ygo::GameConfig::FallbackFonts, fallbackFonts, ygo::GameConfig::TextFont{ epro::path_string{EPRO_TEXT("bundled")}, 12 })

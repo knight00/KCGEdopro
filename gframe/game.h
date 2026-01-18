@@ -330,6 +330,10 @@ struct host_creation_panel_elements {
 	irr::gui::IGUIStaticText* stVersus;
 	irr::gui::IGUIStaticText* stBestof;
 	///////kdiy//////////
+	irr::gui::IGUICheckBox* chkOppLP;
+	irr::gui::IGUICheckBox* chkOppLP2;
+	irr::gui::IGUICheckBox* chkOppHand;
+	irr::gui::IGUICheckBox* chkOppHand2;
 	irr::gui::IGUIWindow* wCreateHost2;
 	irr::gui::IGUICheckBox* chkdefaultlocal;
 	irr::gui::IGUICheckBox* chkAI;

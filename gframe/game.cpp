@@ -936,6 +936,12 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(tmpptr, 1231);
 	ebStartLP2 = env->addEditBox(WStr(gGameConfig->startLP), Scale(140, 235, 220, 260), true, wCreateHost2, EDITBOX_NUMERIC);
 	ebStartLP2->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
+	////kdiy//////
+	chkOppLP2 = env->addCheckBox(gGameConfig->OppLP, Scale(230, 235, 530, 260), wCreateHost2, CHECKBOX_OPPLP2, gDataManager->GetSysString(8097).data());
+	defaultStrings.emplace_back(chkOppLP2, 8097);
+	chkOppHand2 = env->addCheckBox(gGameConfig->OppHand, Scale(230, 265, 530, 290), wCreateHost2, CHECKBOX_OPPHAND2, gDataManager->GetSysString(8097).data());
+	defaultStrings.emplace_back(chkOppHand2, 8098);
+	////kdiy//////
 	tmpptr = env->addStaticText(gDataManager->GetSysString(1232).data(), Scale(20, 270, 320, 290), false, false, wCreateHost2);
 	defaultStrings.emplace_back(tmpptr, 1232);
 	ebStartHand2 = env->addEditBox(WStr(gGameConfig->startHand), Scale(140, 265, 220, 290), true, wCreateHost2, EDITBOX_NUMERIC);
@@ -2330,6 +2336,12 @@ void Game::PopulateGameHostWindows() {
 		ebStartLP = env->addEditBox(WStr(gGameConfig->startLP), Scale(140, 245, 220, 270), true, tDuelSettings, EDITBOX_NUMERIC);
 		ebStartLP->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
 		defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1232).data(), Scale(20, 280, 320, 300), false, false, tDuelSettings), 1232);
+		////kdiy//////
+		chkOppLP = env->addCheckBox(gGameConfig->OppLP, Scale(230, 245, 530, 270), tDuelSettings, CHECKBOX_OPPLP, gDataManager->GetSysString(8097).data());
+		defaultStrings.emplace_back(chkOppLP, 8097);
+		chkOppHand = env->addCheckBox(gGameConfig->OppHand, Scale(230, 275, 530, 300), tDuelSettings, CHECKBOX_OPPHAND, gDataManager->GetSysString(8097).data());
+		defaultStrings.emplace_back(chkOppHand, 8098);
+		////kdiy//////
 		ebStartHand = env->addEditBox(WStr(gGameConfig->startHand), Scale(140, 275, 220, 300), true, tDuelSettings, EDITBOX_NUMERIC);
 		ebStartHand->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
 		defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1233).data(), Scale(20, 310, 320, 330), false, false, tDuelSettings), 1233);
@@ -4455,6 +4467,8 @@ void Game::SaveConfig() {
 	gGameConfig->botThrowRock = gBot.chkThrowRock->isChecked();
 	gGameConfig->botMute = gBot.chkMute->isChecked();
 	/////kdiy//////
+	gGameConfig->OppLP = chkOppLP->isChecked();
+	gGameConfig->OppHand = chkOppHand->isChecked();
 	gGameConfig->botSeed = gBot.chkSeed->getSelected();
 	auto lastLocalServerIndex = serverChoice2->getSelected();
 	if (lastLocalServerIndex >= 0)

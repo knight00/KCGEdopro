@@ -3,6 +3,9 @@
 #include "netserver.h"
 #include "game.h"
 #include "core_utils.h"
+////kdiy//////
+#include "game_config.h"
+////kdiy//////
 namespace ygo {
 
 ReplayStream GenericDuel::replay_stream;
@@ -719,7 +722,11 @@ void GenericDuel::TPResult(DuelPlayer* dp, uint8_t tp) {
 			extracards.push_back(99710410);
 		if(mainGame->mode->rule == MODE_STORY)
             extracards.push_back(mainGame->mode->lua[mainGame->mode->chapter]);
-	};
+	}
+	if(gGameConfig->OppLP)
+		extracards.push_back(843);
+	if(gGameConfig->OppHand)
+		extracards.push_back(844);
 	/////kdiy/////
 	OCG_NewCardInfo card_info = { 0, 0, 0, 0, 0, 0, POS_FACEDOWN_DEFENSE };
 	for(auto it = extracards.crbegin(), end = extracards.crend(); it != end; ++it) {

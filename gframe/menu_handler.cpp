@@ -51,17 +51,17 @@ static void UpdateDeck() {
 	BufferIO::Write<uint32_t>(pdeck, static_cast<uint32_t>(deck.side.size()));
 	for(const auto& pcard : deck.main)
         ///////kdiy/////////
-        if(!(pcard->code == 111 || pcard->code == 112 || pcard->code == 211 || pcard->code == 208 || pcard->code == 85 || pcard->code == 86))
+        if(!(pcard->code == 111 || pcard->code == 112 || pcard->code == 211 || pcard->code == 208 || pcard->code == 85 || pcard->code == 86 || pcard->code == 157 || pcard->code == 842 || pcard->code == 843))
         ///////kdiy/////////
 		BufferIO::Write<uint32_t>(pdeck, pcard->code);
 	for(const auto& pcard : deck.extra)
         ///////kdiy/////////
-        if(!(pcard->code == 111 || pcard->code == 112 || pcard->code == 211 || pcard->code == 208 || pcard->code == 85 || pcard->code == 86))
+        if(!(pcard->code == 111 || pcard->code == 112 || pcard->code == 211 || pcard->code == 208 || pcard->code == 85 || pcard->code == 86 || pcard->code == 157 || pcard->code == 842 || pcard->code == 843))
         ///////kdiy/////////
 		BufferIO::Write<uint32_t>(pdeck, pcard->code);
 	for(const auto& pcard : deck.side)
         ///////kdiy/////////
-        if(!(pcard->code == 111 || pcard->code == 112 || pcard->code == 211 || pcard->code == 208 || pcard->code == 85 || pcard->code == 86))
+        if(!(pcard->code == 111 || pcard->code == 112 || pcard->code == 211 || pcard->code == 208 || pcard->code == 85 || pcard->code == 86 || pcard->code == 157 || pcard->code == 842 || pcard->code == 843))
         ///////kdiy/////////
 		BufferIO::Write<uint32_t>(pdeck, pcard->code);
 	DuelClient::SendBufferToServer(CTOS_UPDATE_DECK, deckbuf, pdeck - deckbuf);
@@ -1415,6 +1415,22 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 		case irr::gui::EGET_CHECKBOX_CHANGED: {
 			switch(id) {
 			/////kdiy/////
+			case CHECKBOX_OPPLP: {
+				gGameConfig->OppLP = mainGame->chkOppLP->isChecked();;
+				break;
+			}
+			case CHECKBOX_OPPLP2: {
+				gGameConfig->OppLP = mainGame->chkOppLP2->isChecked();;
+				break;
+			}
+			case CHECKBOX_OPPHAND: {
+				gGameConfig->OppHand = mainGame->chkOppHand->isChecked();;
+				break;
+			}
+			case CHECKBOX_OPPHAND2: {
+				gGameConfig->OppHand = mainGame->chkOppHand2->isChecked();;
+				break;
+			}
 			case CHECKBOX_ENTERTAUNMENT_MODE_1_CHECK: {
 				if(mainGame->chkEntertainmentMode_1Check->isChecked())
 					mainGame->cbEntertainmentMode_1Bot->setEnabled(true);
