@@ -1758,21 +1758,6 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 	}
 	mainGame->avatarbutton[0]->setImage(mainGame->imageManager.bodycharacter[gSoundManager->character[mainGame->avataricon1]][mainGame->bodycharacter[0] > 2 ? 0 : mainGame->bodycharacter[0]]);
 	mainGame->avatarbutton[1]->setImage(mainGame->imageManager.bodycharacter[gSoundManager->character[mainGame->avataricon2]][mainGame->bodycharacter[1] > 2 ? 0 : mainGame->bodycharacter[1]]);
-#ifdef VIP
-	if((mainGame->dInfo.isInDuel || mainGame->is_building) && !mainGame->mode->isMode) {
-		if(gSoundManager->character[mainGame->avataricon1] > 0)
-			mainGame->wAvatar[0]->setVisible(true);
-		else
-			mainGame->wAvatar[0]->setVisible(false);
-		if(gSoundManager->character[mainGame->avataricon2] > 0 && !mainGame->is_building)
-			mainGame->wAvatar[1]->setVisible(true);
-		else
-			mainGame->wAvatar[1]->setVisible(false);
-	} else {
-		mainGame->wAvatar[0]->setVisible(false);
-		mainGame->wAvatar[1]->setVisible(false);
-	}
-#endif
 	switch(msg) {
 	case MSG_NEW_PHASE: {
 		const auto phase = BufferIO::Read<uint16_t>(pbuf);
@@ -5582,8 +5567,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		if(!mainGame->dInfo.isCatchingUp) {
 			mainGame->lpd = (mainGame->dInfo.lp[player] - val) / 10;
 			mainGame->lpplayer = player;
-			mainGame->lpframe = 10;
 			///////////kdiy///////////
+			// mainGame->lpframe = 10;
 			//mainGame->WaitFrameSignal(11, lock);
 			mainGame->WaitFrameSignal(val == 0 ? 30 : 11, lock);
 			///////////kdiy///////////

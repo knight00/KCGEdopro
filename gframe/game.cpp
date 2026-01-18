@@ -3792,6 +3792,26 @@ bool Game::MainLoop() {
 		} else { // bottom right of window with a little padding
 			fpsCounter->setRelativePosition(Resize(5, 620, 5 + fpsCounterWidth, 640));
 		}
+		if(mainGame->is_building) {
+			mainGame->avataricon1 = 0;
+			mainGame->avatarbutton[0]->setImage(mainGame->imageManager.bodycharacter[gSoundManager->character[mainGame->avataricon1]][mainGame->bodycharacter[0] > 2 ? 0 : mainGame->bodycharacter[0]]);
+			mainGame->avatarbutton[1]->setImage(mainGame->imageManager.bodycharacter[gSoundManager->character[mainGame->avataricon2]][mainGame->bodycharacter[1] > 2 ? 0 : mainGame->bodycharacter[1]]);
+		}
+#ifdef VIP
+		if((mainGame->dInfo.isInDuel || mainGame->is_building) && !mainGame->mode->isMode) {
+			if(gSoundManager->character[mainGame->avataricon1] > 0)
+				mainGame->wAvatar[0]->setVisible(true);
+			else
+				mainGame->wAvatar[0]->setVisible(false);
+			if(gSoundManager->character[mainGame->avataricon2] > 0 && !mainGame->is_building)
+				mainGame->wAvatar[1]->setVisible(true);
+			else
+				mainGame->wAvatar[1]->setVisible(false);
+		} else {
+			mainGame->wAvatar[0]->setVisible(false);
+			mainGame->wAvatar[1]->setVisible(false);
+		}
+#endif
         wCardImg->setRelativePosition(Resize(10, 10, 220, 550));
         for(int i = 0; i < 8; i++)
 		    CardInfo[i]->setRelativePosition(Resize(220, 198 + i * 20, i == 0 ? 270 : 312, 218 + i * 20));
@@ -5457,8 +5477,8 @@ bool Game::PlayVideo(bool loop) {
 		if (!audioBuffer.empty()) {
 			videosoundBuffer.loadFromSamples(audioBuffer.data(), audioBuffer.size(), audioCodecCtx->channels, audioCodecCtx->sample_rate);
 			videosound.setBuffer(videosoundBuffer);
-			videosound.play();
 			videosound.setVolume(gGameConfig->soundVolume);
+			videosound.play();
 			// Clear the buffer now that we've given it to SFML.
 			audioBuffer.clear();
 		}
