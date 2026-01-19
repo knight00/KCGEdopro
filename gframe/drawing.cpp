@@ -568,8 +568,8 @@ void Game::DrawCard(ClientCard* pcard) {
 		float xd, yd;
 		xd = pcard->attdPos.X;
 		yd = pcard->attdPos.Y;
-		irr::core::vector3df atkr = irr::core::vector3df(0, 0, pcard->controler == 0 ? -std::atan((xd - xa) / (yd - ya)) : irr::core::PI -std::atan((xd - xa) / (yd - ya)));
-		if(!pcard->is_attacking) {
+		irr::core::vector3df atkr = irr::core::vector3df(0, 0, pcard->controler == 0 && -std::atan((xd - xa) / (yd - ya)) != irr::core::PI / 2 ? -std::atan((xd - xa) / (yd - ya)) : irr::core::PI -std::atan((xd - xa) / (yd - ya)));
+		if(!pcard->is_attacking && !(pcard->cmdFlag & COMMAND_ATTACK)) {
 			pcard->is_attack = false;
 			pcard->is_attacking = false;
             pcard->curRot = pcard->attRot;
