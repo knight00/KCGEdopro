@@ -1316,14 +1316,6 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 		}();
 		switch(event.MouseInput.Event) {
 		case irr::EMIE_LMOUSE_DOUBLE_CLICK: {
-			if(mainGame->dInfo.isReplay)
-				break;
-			if(mainGame->dInfo.player_type == 7)
-				break;
-			if(!mainGame->dInfo.isInDuel)
-				break;
-			if(mainGame->wCardDisplay->isVisible())
-				break;
 			/////kdiy/////
 			if(mainGame->isAnime && mainGame->videostart) {
 				mainGame->StopVideo(false, true);
@@ -1342,6 +1334,14 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			/////kdiy/////
+			if(mainGame->dInfo.isReplay)
+				break;
+			if(mainGame->dInfo.player_type == 7)
+				break;
+			if(!mainGame->dInfo.isInDuel)
+				break;
+			if(mainGame->wCardDisplay->isVisible())
+				break;
 			irr::core::vector2di mousepos(event.MouseInput.X, event.MouseInput.Y);
 			irr::gui::IGUIElement* root = mainGame->env->getRootGUIElement();
 			if(root->getElementFromPoint(mousepos) != root)
@@ -1358,8 +1358,6 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			break;
 		}
 		case irr::EMIE_LMOUSE_LEFT_UP: {
-			if(!mainGame->dInfo.isInDuel)
-				break;
 			/////kdiy/////
 			if(mainGame->mode->isMode && mainGame->mode->isPlot){
 				if(mainGame->mode->plotStep < 1) break;
@@ -1372,6 +1370,8 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			/////kdiy/////
+			if(!mainGame->dInfo.isInDuel)
+				break;
 			hovered_location = 0;
 			irr::core::vector2di pos = mainGame->Resize(event.MouseInput.X, event.MouseInput.Y, true);
 			irr::core::vector2di mousepos(event.MouseInput.X, event.MouseInput.Y);
