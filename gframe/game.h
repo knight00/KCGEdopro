@@ -311,7 +311,8 @@ struct host_creation_panel_elements {
 	irr::gui::IGUIWindow* wRules;
 	/////kdiy///////
 	//irr::gui::IGUICheckBox* chkRules[13];
-	irr::gui::IGUICheckBox* chkRules[16];
+	irr::gui::IGUIButton* btnNoSwapMode;
+	irr::gui::IGUICheckBox* chkRules[14];
 	/////kdiy///////
 	irr::gui::IGUIButton* btnRulesOK;
 	irr::gui::IGUIComboBox* cbDuelRule;

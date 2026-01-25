@@ -266,6 +266,10 @@ catch(...) { what = def; }
 #undef TOI
 				if(mainGame->btnRelayMode->isPressed())
 					cscg.info.duel_flag_low |= DUEL_RELAY;
+				/////kdiy//////
+				if(mainGame->btnNoSwapMode->isPressed())
+					cscg.info.duel_flag_high |= DUEL_TAG_NOSWAP >> 32;
+				/////kdiy//////
 				if(cscg.info.no_shuffle_deck)
 					cscg.info.duel_flag_low |= DUEL_PSEUDO_SHUFFLE;
 				cscg.info.forbiddentypes = mainGame->forbiddentypes;
@@ -893,7 +897,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 		if(!mainGame->dInfo.compat_mode) {
 			////kdiu/////////
 			//for(int flag = SEALED_DUEL, i = 0; flag < ACTION_DUEL + 1; flag = flag << 1, i++)
-			for(int flag = SEALED_DUEL, i = 0; flag < No_Shuffle + 1; flag = flag << 1, i++)
+			for(int flag = SEALED_DUEL, i = 0; flag < 0x8000 + 1; flag = flag << 1, i++)
 			////kdiu/////////
 				if(pkt.info.extra_rules & flag) {
 					strR.append(epro::format(L"*{}\n", gDataManager->GetSysString(1132 + i)));
@@ -1761,9 +1765,9 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 	switch(msg) {
 	case MSG_NEW_PHASE: {
 		const auto phase = BufferIO::Read<uint16_t>(pbuf);
+		const auto player = mainGame->LocalPlayer(BufferIO::Read<uint8_t>(pbuf));
+		const auto player2 = 1 - player;
 		mainGame->current_phase = phase;
-		uint8_t player = 1 - ((mainGame->dInfo.turn % 2 && mainGame->dInfo.isFirst) || (!(mainGame->dInfo.turn % 2) && !mainGame->dInfo.isFirst));
-		uint8_t player2 = ((mainGame->dInfo.turn % 2 && mainGame->dInfo.isFirst) || (!(mainGame->dInfo.turn % 2) && !mainGame->dInfo.isFirst));
 		switch (phase) {
             case PHASE_DRAW: {
 				for(int i = 0; i < 3; i++) {
@@ -2220,9 +2224,9 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 			character1new = character1;
 			character2new = character2;
 			if(player == 0) {
-				player1new = (mainGame->dInfo.current_player[0] + 1) % ((player == 0 && mainGame->dInfo.isFirst) ? mainGame->dInfo.team1 : mainGame->dInfo.team2);
+				player1new = (mainGame->dInfo.current_player[0] + 1) % (mainGame->dInfo.isTeam1 ? mainGame->dInfo.team1 : mainGame->dInfo.team2);
 			} else {
-				player2new = (mainGame->dInfo.current_player[1] + 1) % ((player == 0 && mainGame->dInfo.isFirst) ? mainGame->dInfo.team1 : mainGame->dInfo.team2);
+				player2new = (mainGame->dInfo.current_player[1] + 1) % (!mainGame->dInfo.isTeam1 ? mainGame->dInfo.team1 : mainGame->dInfo.team2);
 			}
 			if(mainGame->dInfo.isInDuel && !mainGame->dInfo.isReplay) {
 				if (mainGame->dInfo.isTeam1) {
@@ -4435,26 +4439,13 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		const auto code = BufferIO::Read<uint32_t>(pbuf);
 		CoreUtils::loc_info current = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
 		current.controler = mainGame->LocalPlayer(current.controler);
-		auto lock = LockIf();
 		if(!(current.location & LOCATION_OVERLAY)) {
 			ClientCard* pcard = mainGame->dField.GetCard(current.controler, current.location, current.sequence);
 			pcard->piccode = code;
-			if(!mainGame->dInfo.isCatchingUp) {
-				mainGame->dField.FadeCard(pcard, 5, 5);
-				mainGame->WaitFrameSignal(2, lock);
-				mainGame->dField.FadeCard(pcard, 255, 5);
-				mainGame->WaitFrameSignal(2, lock);
-			}
 		} else {
 			ClientCard* olcard = mainGame->dField.GetCard(current.controler, current.location & (~LOCATION_OVERLAY) & 0xff, current.sequence);
 			ClientCard* pcard = olcard->overlayed[current.position];
 			pcard->piccode = code;
-			if(!mainGame->dInfo.isCatchingUp) {
-				mainGame->dField.FadeCard(pcard, 5, 5);
-				mainGame->WaitFrameSignal(2, lock);
-				mainGame->dField.FadeCard(pcard, 255, 5);
-				mainGame->WaitFrameSignal(2, lock);
-			}
 		}
 		return true;
 	}
@@ -4475,7 +4466,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
         const auto realcode = BufferIO::Read<uint32_t>(pbuf);
         const auto effcode = BufferIO::Read<uint32_t>(pbuf);
         const auto namecode = BufferIO::Read<uint32_t>(pbuf);
-		auto lock = LockIf();
         CoreUtils::loc_info current2;
 		ClientCard* ocard = nullptr;
 		if(!partchange) {
@@ -4543,12 +4533,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					pcard->text_hints.clear();
 				}
 			}
-			if(!mainGame->dInfo.isCatchingUp) {
-				mainGame->dField.FadeCard(pcard, 5, 5);
-				mainGame->WaitFrameSignal(2, lock);
-				mainGame->dField.FadeCard(pcard, 255, 5);
-				mainGame->WaitFrameSignal(2, lock);
-			}
 		} else {
 			ClientCard* olcard = mainGame->dField.GetCard(current.controler, current.location & (~LOCATION_OVERLAY) & 0xff, current.sequence);
 			ClientCard* pcard = olcard->overlayed[current.position];
@@ -4606,12 +4590,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					pcard->orealcardname = L"";
 					pcard->text_hints.clear();
 				}
-			}
-			if(!mainGame->dInfo.isCatchingUp) {
-				mainGame->dField.FadeCard(pcard, 5, 5);
-				mainGame->WaitFrameSignal(2, lock);
-				mainGame->dField.FadeCard(pcard, 255, 5);
-				mainGame->WaitFrameSignal(2, lock);
 			}
 		}
 		return true;

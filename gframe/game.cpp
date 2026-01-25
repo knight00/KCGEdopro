@@ -937,9 +937,9 @@ void Game::Initialize() {
 	ebStartLP2 = env->addEditBox(WStr(gGameConfig->startLP), Scale(140, 235, 220, 260), true, wCreateHost2, EDITBOX_NUMERIC);
 	ebStartLP2->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
 	////kdiy//////
-	chkOppLP2 = env->addCheckBox(gGameConfig->OppLP, Scale(230, 235, 530, 260), wCreateHost2, CHECKBOX_OPPLP2, gDataManager->GetSysString(8097).data());
+	chkOppLP2 = env->addCheckBox(gGameConfig->chkOppLP, Scale(230, 235, 530, 260), wCreateHost2, CHECKBOX_OPPLP2, gDataManager->GetSysString(8097).data());
 	defaultStrings.emplace_back(chkOppLP2, 8097);
-	chkOppHand2 = env->addCheckBox(gGameConfig->OppHand, Scale(230, 265, 530, 290), wCreateHost2, CHECKBOX_OPPHAND2, gDataManager->GetSysString(8097).data());
+	chkOppHand2 = env->addCheckBox(gGameConfig->chkOppHand, Scale(230, 265, 530, 290), wCreateHost2, CHECKBOX_OPPHAND2, gDataManager->GetSysString(8097).data());
 	defaultStrings.emplace_back(chkOppHand2, 8098);
 	////kdiy//////
 	tmpptr = env->addStaticText(gDataManager->GetSysString(1232).data(), Scale(20, 270, 320, 290), false, false, wCreateHost2);
@@ -2295,6 +2295,12 @@ void Game::PopulateGameHostWindows() {
 		cbRule->setSelected(gGameConfig->lastallowedcards);
 		defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1227).data(), Scale(20, 70, 220, 90), false, false, tDuelSettings), 1227);
 #define WStr(i) epro::to_wstring<int>(i).data()
+		////kdiy////////
+		btnNoSwapMode = env->addButton(Scale(85, 65, 130, 90), tDuelSettings, -1, gDataManager->GetSysString(8099).data());
+		defaultStrings.emplace_back(btnNoSwapMode, 8099);
+		btnNoSwapMode->setIsPushButton(true);
+		btnNoSwapMode->setPressed(gGameConfig->NoSwap);
+		////kdiy////////
 		ebTeam1 = env->addEditBox(WStr(gGameConfig->team1count), Scale(140, 65, 170, 90), true, tDuelSettings, EDITBOX_TEAM_COUNT);
 		ebTeam1->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
 		auto vsstring = env->addStaticText(gDataManager->GetSysString(1380).data(), Scale(175, 65, 195, 90), false, false, tDuelSettings);
@@ -2337,9 +2343,9 @@ void Game::PopulateGameHostWindows() {
 		ebStartLP->setTextAlignment(irr::gui::EGUIA_CENTER, irr::gui::EGUIA_CENTER);
 		defaultStrings.emplace_back(env->addStaticText(gDataManager->GetSysString(1232).data(), Scale(20, 280, 320, 300), false, false, tDuelSettings), 1232);
 		////kdiy//////
-		chkOppLP = env->addCheckBox(gGameConfig->OppLP, Scale(230, 245, 530, 270), tDuelSettings, CHECKBOX_OPPLP, gDataManager->GetSysString(8097).data());
+		chkOppLP = env->addCheckBox(gGameConfig->chkOppLP, Scale(230, 245, 530, 270), tDuelSettings, CHECKBOX_OPPLP, gDataManager->GetSysString(8097).data());
 		defaultStrings.emplace_back(chkOppLP, 8097);
-		chkOppHand = env->addCheckBox(gGameConfig->OppHand, Scale(230, 275, 530, 300), tDuelSettings, CHECKBOX_OPPHAND, gDataManager->GetSysString(8097).data());
+		chkOppHand = env->addCheckBox(gGameConfig->chkOppHand, Scale(230, 275, 530, 300), tDuelSettings, CHECKBOX_OPPHAND, gDataManager->GetSysString(8097).data());
 		defaultStrings.emplace_back(chkOppHand, 8098);
 		////kdiy//////
 		ebStartHand = env->addEditBox(WStr(gGameConfig->startHand), Scale(140, 275, 220, 300), true, tDuelSettings, EDITBOX_NUMERIC);
@@ -4467,8 +4473,9 @@ void Game::SaveConfig() {
 	gGameConfig->botThrowRock = gBot.chkThrowRock->isChecked();
 	gGameConfig->botMute = gBot.chkMute->isChecked();
 	/////kdiy//////
-	gGameConfig->OppLP = chkOppLP->isChecked();
-	gGameConfig->OppHand = chkOppHand->isChecked();
+	gGameConfig->NoSwap = btnNoSwapMode->isPressed();
+	gGameConfig->chkOppLP = chkOppLP->isChecked();
+	gGameConfig->chkOppHand = chkOppHand->isChecked();
 	gGameConfig->botSeed = gBot.chkSeed->getSelected();
 	auto lastLocalServerIndex = serverChoice2->getSelected();
 	if (lastLocalServerIndex >= 0)
@@ -5833,38 +5840,60 @@ void Game::UpdateExtraRules(bool set) {
 		}
 		return;
 	}
+	/////kdiy///////////
+	// if(chkRules[0]->isChecked()) {
+	// 	chkRules[1]->setEnabled(false);
+	// 	chkRules[4]->setEnabled(false);
+	// }
+	// if(chkRules[1]->isChecked()) {
+	// 	chkRules[0]->setEnabled(false);
+	// 	chkRules[4]->setEnabled(false);
+	// }
+	// if(chkRules[4]->isChecked()) {
+	// 	chkRules[0]->setEnabled(false);
+	// 	chkRules[1]->setEnabled(false);
+	// }
+	// if(chkRules[5]->isChecked()) {
+	// 	chkRules[6]->setEnabled(false);
+	// 	chkRules[7]->setEnabled(false);
+	// }
+	// if(chkRules[6]->isChecked()) {
+	// 	chkRules[5]->setEnabled(false);
+	// 	chkRules[7]->setEnabled(false);
+	// }
+	// if(chkRules[7]->isChecked()) {
+	// 	chkRules[5]->setEnabled(false);
+	// 	chkRules[6]->setEnabled(false);
+	// }
 	if(chkRules[0]->isChecked()) {
 		chkRules[1]->setEnabled(false);
-		chkRules[4]->setEnabled(false);
+		chkRules[3]->setEnabled(false);
 	}
 	if(chkRules[1]->isChecked()) {
 		chkRules[0]->setEnabled(false);
-		chkRules[4]->setEnabled(false);
+		chkRules[3]->setEnabled(false);
 	}
-	if(chkRules[4]->isChecked()) {
+	if(chkRules[3]->isChecked()) {
 		chkRules[0]->setEnabled(false);
 		chkRules[1]->setEnabled(false);
 	}
-	if(chkRules[5]->isChecked()) {
+	if(chkRules[4]->isChecked()) {
+		chkRules[5]->setEnabled(false);
 		chkRules[6]->setEnabled(false);
-		chkRules[7]->setEnabled(false);
+	}
+	if(chkRules[5]->isChecked()) {
+		chkRules[4]->setEnabled(false);
+		chkRules[67]->setEnabled(false);
 	}
 	if(chkRules[6]->isChecked()) {
+		chkRules[4]->setEnabled(false);
 		chkRules[5]->setEnabled(false);
-		chkRules[7]->setEnabled(false);
 	}
-	if(chkRules[7]->isChecked()) {
-		chkRules[5]->setEnabled(false);
-		chkRules[6]->setEnabled(false);
-	}
-	/////kdiy///////////
-	if(chkRules[13]->isChecked()) {
+	if(chkRules[11]->isChecked()) {
 		chkRules[0]->setEnabled(false);
 		chkRules[1]->setEnabled(false);
 		chkRules[2]->setEnabled(false);
 		chkRules[3]->setEnabled(false);
-		chkRules[4]->setEnabled(false);
-		chkRules[11]->setEnabled(false);
 	}
 	/////kdiy///////////
 	extra_rules = 0;
@@ -5872,6 +5901,12 @@ void Game::UpdateExtraRules(bool set) {
 		if(chkRules[i]->isChecked())
 			extra_rules |= flag;
 	}
+	/////kdiy///////////
+	if(gGameConfig->chkOppLP)
+		extra_rules |= 0x4000;
+	if(gGameConfig->chkOppHand)
+		extra_rules |= 0x8000;
+	/////kdiy///////////
 }
 int Game::GetMasterRule(uint64_t param, uint32_t forbidden, int* truerule) {
 	if(truerule)

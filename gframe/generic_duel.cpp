@@ -700,14 +700,18 @@ void GenericDuel::TPResult(DuelPlayer* dp, uint8_t tp) {
 		extracards.push_back(511600002);
 	if(host_info.extra_rules & TURBO_DUEL)
 		extracards.push_back(110000000);
-	if(host_info.extra_rules & RULE_OF_THE_DAY)
-		extracards.push_back(777777777);
+	////kdiy///////
+	// if(host_info.extra_rules & RULE_OF_THE_DAY)
+	// 	extracards.push_back(777777777);
+	////kdiy///////
 	if(host_info.extra_rules & COMMAND_DUEL)
 		extracards.push_back(95200000);
 	if(host_info.extra_rules & DECK_MASTER)
 		extracards.push_back(153999999);
-	if(host_info.extra_rules & DESTINY_DRAW)
-		extracards.push_back(511004000);
+	////kdiy///////
+	// if(host_info.extra_rules & DESTINY_DRAW)
+	// 	extracards.push_back(511004000);
+	////kdiy///////
 	if(host_info.extra_rules & ACTION_DUEL)
 		extracards.push_back(151999999);
 	////kdiy///////
@@ -717,16 +721,16 @@ void GenericDuel::TPResult(DuelPlayer* dp, uint8_t tp) {
 		extracards.push_back(86);
 	if(host_info.extra_rules & No_Shuffle)
 		extracards.push_back(842);
+	if(host_info.extra_rules & OppLP)
+		extracards.push_back(843);
+	if(host_info.extra_rules & OppHand)
+		extracards.push_back(844);
 	if(mainGame->mode->isMode) {
 		if(mainGame->mode->rule == MODE_RULE_ZCG || mainGame->mode->rule == MODE_RULE_ZCG_NO_RANDOM)
 			extracards.push_back(99710410);
 		if(mainGame->mode->rule == MODE_STORY)
             extracards.push_back(mainGame->mode->lua[mainGame->mode->chapter]);
 	}
-	if(gGameConfig->OppLP)
-		extracards.push_back(843);
-	if(gGameConfig->OppHand)
-		extracards.push_back(844);
 	/////kdiy/////
 	OCG_NewCardInfo card_info = { 0, 0, 0, 0, 0, 0, POS_FACEDOWN_DEFENSE };
 	for(auto it = extracards.crbegin(), end = extracards.crend(); it != end; ++it) {

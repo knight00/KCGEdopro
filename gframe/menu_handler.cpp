@@ -1416,19 +1416,23 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			switch(id) {
 			/////kdiy/////
 			case CHECKBOX_OPPLP: {
-				gGameConfig->OppLP = mainGame->chkOppLP->isChecked();;
+				gGameConfig->chkOppLP = mainGame->chkOppLP->isChecked();
+				mainGame->UpdateExtraRules();
 				break;
 			}
 			case CHECKBOX_OPPLP2: {
-				gGameConfig->OppLP = mainGame->chkOppLP2->isChecked();;
+				gGameConfig->chkOppLP = mainGame->chkOppLP2->isChecked();
+				mainGame->UpdateExtraRules();
 				break;
 			}
 			case CHECKBOX_OPPHAND: {
-				gGameConfig->OppHand = mainGame->chkOppHand->isChecked();;
+				gGameConfig->chkOppHand = mainGame->chkOppHand->isChecked();
+				mainGame->UpdateExtraRules();
 				break;
 			}
 			case CHECKBOX_OPPHAND2: {
-				gGameConfig->OppHand = mainGame->chkOppHand2->isChecked();;
+				gGameConfig->chkOppHand = mainGame->chkOppHand2->isChecked();
+				mainGame->UpdateExtraRules();
 				break;
 			}
 			case CHECKBOX_ENTERTAUNMENT_MODE_1_CHECK: {
