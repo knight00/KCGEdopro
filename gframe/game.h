@@ -763,9 +763,6 @@ public:
 		IProgressBar* progress1;
 		IProgressBar* progress2;
 		irr::gui::IGUIButton* history_button1;
-        //kidy///////
-        irr::gui::IGUIButton* file_button;
-        //kidy///////
 		irr::gui::IGUIButton* history_button2;
 		std::wstring commit_history_full;
 		std::wstring commit_history_partial;
@@ -960,33 +957,34 @@ public:
     std::vector<irr::core::vector3df> haloNode[2][12][10];
 	sf::Sound chantsound;
 	sf::SoundBuffer soundBuffer;
-    std::string currentVideo;
 	bool videostart = false;
-	bool isAnime = false, isFieldPlay = false;
+	bool isAnime = false;
+	bool isFieldPlay[2] = {false, false};
+	bool isCloseupAnime[12] = {false, false, false, false, false, false, false, false, false, false, false, false};
     sf::Sound videosound;
 	sf::SoundBuffer videosoundBuffer;
-    irr::video::ITexture* videotexture = nullptr;
-    double totalFrames = 0;
-    AVFormatContext* formatCtx = nullptr, * formatCtx2 = nullptr;
-    AVCodecContext* videoCodecCtx = nullptr;
+	std::string currentVideo[15];
+	irr::video::ITexture* videotexture[15];
+    AVFormatContext* formatCtx2 = nullptr;
+    AVFormatContext* formatCtx[15];
     AVCodecContext* audioCodecCtx = nullptr;
-	AVFrame* videoFrame;
-    AVFrame* audioFrame;
-    int videoStreamIndex = -1, audioStreamIndex = -1;
-	double timeAccumulated = 0.0; // Accumulate time to ensure smooth frame skipping
+    AVCodecContext* videoCodecCtx[15];
+	AVFrame* audioFrame;
+    AVFrame* videoFrame[15];
+    int audioStreamIndex = -1;
+    int videoStreamIndex[15] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+	double timeAccumulated[15] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}; // Accumulate time to ensure smooth frame skipping
 	int frameps = 0;
-	int video_width = 0;
-    int video_height = 0;
-	double videoFrameDuration = 1.0;
+	int video_width[15] = {0, 0, 0}, video_height[15] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	int64_t videoDuration[15];
 	double audioFrameDuration = 1.0;
-	double videoFPS = 1.0;
-	int framesToSkip = 1;
-	int64_t videoDuration;
-	bool needsNewAudioPacket_ = true;
+	double videoFrameDuration[15] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+	double videoFPS[15] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+	int framesToSkip[15] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 	std::vector<int16_t> audioBuffer;
-	bool openVideo(std::string videoName, bool loop = false);
-	bool PlayVideo(bool loop = false);
-    void StopVideo(bool close = false, bool reset = true);
+	bool openVideo(std::string videoName, bool audio = true, bool loop = false, int type = 0);
+	bool PlayVideo(bool audio = true, bool loop = false, int type = 0);
+    void StopVideo(bool reset = false, int type = 0, bool close = false);
 	std::vector<std::string> animecount;
 	std::string videowallpaper_path = "";
 	bool showcardinfo = false, showchat = false, showloc = false;

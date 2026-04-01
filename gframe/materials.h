@@ -34,6 +34,8 @@ public:
 	QuadVertex vXyz;
 	QuadVertex vXyztrail;
 	QuadVertex vCXyz;
+	QuadVertex vFieldMzone_2[2][7];
+	std::array<std::array<std::array<std::array<QuadVertex, 8>, 2>, 2>, 2> vFieldSzone_2;
 	////kdiy////////
 	QuadVertex vSymbol;
 	QuadVertex vNegate;

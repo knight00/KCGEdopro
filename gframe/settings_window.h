@@ -111,7 +111,9 @@ struct SettingsWindow {
 	irr::gui::IGUICheckBox* chkEnableSummonAnime;
 	irr::gui::IGUICheckBox* chkEnableActivateAnime;
 	irr::gui::IGUICheckBox* chkEnableAttackAnime;
+	irr::gui::IGUICheckBox* chkEnableAnimeSound;
 	irr::gui::IGUICheckBox* chkEnableFieldAnime;
+	irr::gui::IGUICheckBox* chkEnableCloseupAnime;
 	irr::gui::IGUICheckBox* chkAnimeFull;
     irr::gui::IGUICheckBox* chkPauseduel;
     irr::gui::IGUIWindow* wRandomTexture;

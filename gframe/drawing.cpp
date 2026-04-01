@@ -93,21 +93,20 @@ void Game::DrawBackGround() {
 				s11 = "f" + std::to_string(both) + ".mkv";
 				s21 = "f" + std::to_string(both) + ".avi";
 				std::vector<std::string> s1List = {s1, s11, s21};
-				isFieldPlay = true;
 				for (const auto& str : s1List) {
-					if(openVideo(str, true)) {
-						if(PlayVideo(true)) {
-							if(videotexture) {
-								DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
-								return videotexture;
+					if(openVideo(str, false, true, 1)) {
+						isFieldPlay[0] = true;
+						if(PlayVideo(false, true, 1)) {
+							if(videotexture[1]) {
+								DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture[1]);
+								return videotexture[1];
 							}
 							break;
 						}
 					}
 				}
-				isFieldPlay = false;
 			} else
-				if(!isAnime && videostart) StopVideo();
+				StopVideo(false, 1);
 			if(!gGameConfig->draw_field_spell)
 				return false;
 			/////kdiy//////
@@ -123,54 +122,44 @@ void Game::DrawBackGround() {
 			s11 = "f" + std::to_string(fieldcode1) + ".mkv";
 			s21 = "f" + std::to_string(fieldcode1) + ".avi";
 			std::vector<std::string> s1List = {s1, s11, s21};
-			isFieldPlay = true;
 			for (const auto& str : s1List) {
-				if(openVideo(str, true)) {
-					isFieldPlay = true;
-					if(PlayVideo(true)) {
-						if(videotexture) {
-							DrawTextureRect(matManager.vFieldSpell1[three_columns], videotexture);
-							return videotexture;
+				if(openVideo(str, false, true, 1)) {
+					isFieldPlay[0] = true;
+					if(PlayVideo(false, true, 1)) {
+						if(videotexture[1]) {
+							DrawTextureRect(matManager.vFieldSpell1[three_columns], videotexture[1]);
 						}
 						break;
 					}
 				}
 			}
-			isFieldPlay = false;
-		} else
-			if(!isAnime && videostart) StopVideo();
+			std::string s12, s112, s212;
+			s12 = "f" + std::to_string(fieldcode2) + ".mp4";
+			s112 = "f" + std::to_string(fieldcode2) + ".mkv";
+			s212 = "f" + std::to_string(fieldcode2) + ".avi";
+			std::vector<std::string> s2List = {s12, s112, s212};
+			for (const auto& str : s2List) {
+				if(openVideo(str, false, true, 2)) {
+					isFieldPlay[1] = true;
+					if(PlayVideo(false, true, 2)) {
+						if(videotexture[2]) {
+							DrawTextureRect(matManager.vFieldSpell2[three_columns], videotexture[2]);
+						}
+						break;
+					}
+				}
+			}
+			return videotexture[1] || videotexture[2];
+		} else {
+			StopVideo(false, 1);
+			StopVideo(false, 2);
+		}
 		if(!gGameConfig->draw_field_spell)
 			return false;
 		/////kdiy//////
 		auto* texture1 = imageManager.GetTextureField(fieldcode1);
 		if(texture1)
 			DrawTextureRect(matManager.vFieldSpell1[three_columns], texture1);
-		/////kdiy//////
-		if(gGameConfig->enablefanime) {
-			std::string s1, s11, s21;
-			s1 = "f" + std::to_string(fieldcode2) + ".mp4";
-			s11 = "f" + std::to_string(fieldcode2) + ".mkv";
-			s21 = "f" + std::to_string(fieldcode2) + ".avi";
-			std::vector<std::string> s1List = {s1, s11, s21};
-			isFieldPlay = true;
-			for (const auto& str : s1List) {
-				if(openVideo(str, true)) {
-					isFieldPlay = true;
-					if(PlayVideo(true)) {
-						if(videotexture) {
-							DrawTextureRect(matManager.vFieldSpell2[three_columns], videotexture);
-							return videotexture;
-						}
-						break;
-					}
-				}
-			}
-			isFieldPlay = false;
-		} else
-			if(!isAnime && videostart) StopVideo();
-		if(!gGameConfig->draw_field_spell)
-			return false;
-		/////kdiy//////
 		auto texture2 = imageManager.GetTextureField(fieldcode2);
 		if(texture2)
 			DrawTextureRect(matManager.vFieldSpell2[three_columns], texture2);
@@ -182,8 +171,8 @@ void Game::DrawBackGround() {
 	if(isAnime) {
 		if(PlayVideo())
 		    if(videotexture) {
-				if(gGameConfig->animefull) driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, video_width, video_height));
-				else DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture);
+				if(gGameConfig->animefull) driver->draw2DImage(videotexture[0], Resize(0, 0, 1024, 640), irr::core::recti(0, 0, video_width[0], video_height[0]));
+				else DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture[0]);
 			}
     } else {
     if(!gGameConfig->chkField && DrawFieldSpell())
@@ -226,29 +215,41 @@ void Game::DrawBackGround() {
 		uint32_t filter = 0x1;
 		for (int i = 0; i < 7; ++i, filter <<= 1) {
 			if (dField.disabled_field & filter) {
-				driver->draw3DLine(matManager.vFieldMzone[0][i][0].Pos, matManager.vFieldMzone[0][i][3].Pos, disabled_color);
-				driver->draw3DLine(matManager.vFieldMzone[0][i][1].Pos, matManager.vFieldMzone[0][i][2].Pos, disabled_color);
+				/////kdiy//////
+				// driver->draw3DLine(matManager.vFieldMzone[0][i][0].Pos, matManager.vFieldMzone[0][i][3].Pos, disabled_color);
+				// driver->draw3DLine(matManager.vFieldMzone[0][i][1].Pos, matManager.vFieldMzone[0][i][2].Pos, disabled_color);
+				DrawTextureRect(matManager.vFieldMzone_2[0][i], imageManager.tNegated);
+				/////kdiy//////
 			}
 		}
 		filter = 0x100;
 		for (int i = 0; i < 8; ++i, filter <<= 1) {
 			if (dField.disabled_field & filter) {
-				driver->draw3DLine(matManager.getSzone()[0][i][0].Pos, matManager.getSzone()[0][i][3].Pos, disabled_color);
-				driver->draw3DLine(matManager.getSzone()[0][i][1].Pos, matManager.getSzone()[0][i][2].Pos, disabled_color);
+				/////kdiy//////
+				// driver->draw3DLine(matManager.getSzone()[0][i][0].Pos, matManager.getSzone()[0][i][3].Pos, disabled_color);
+				// driver->draw3DLine(matManager.getSzone()[0][i][1].Pos, matManager.getSzone()[0][i][2].Pos, disabled_color);
+				DrawTextureRect(matManager.vFieldSzone_2[dInfo.HasFieldFlag(DUEL_3_COLUMNS_FIELD)][!dInfo.HasFieldFlag(DUEL_SEPARATE_PZONE)][0][i], imageManager.tNegated);
+				/////kdiy//////
 			}
 		}
 		filter = 0x10000;
 		for (int i = 0; i < 7; ++i, filter <<= 1) {
 			if (dField.disabled_field & filter) {
-				driver->draw3DLine(matManager.vFieldMzone[1][i][0].Pos, matManager.vFieldMzone[1][i][3].Pos, disabled_color);
-				driver->draw3DLine(matManager.vFieldMzone[1][i][1].Pos, matManager.vFieldMzone[1][i][2].Pos, disabled_color);
+				/////kdiy//////
+				// driver->draw3DLine(matManager.vFieldMzone[1][i][0].Pos, matManager.vFieldMzone[1][i][3].Pos, disabled_color);
+				// driver->draw3DLine(matManager.vFieldMzone[1][i][1].Pos, matManager.vFieldMzone[1][i][2].Pos, disabled_color);
+				DrawTextureRect(matManager.vFieldMzone_2[1][i], imageManager.tNegated);
+				/////kdiy//////
 			}
 		}
 		filter = 0x1000000;
 		for (int i = 0; i < 8; ++i, filter <<= 1) {
 			if (dField.disabled_field & filter) {
-				driver->draw3DLine(matManager.getSzone()[1][i][0].Pos, matManager.getSzone()[1][i][3].Pos, disabled_color);
-				driver->draw3DLine(matManager.getSzone()[1][i][1].Pos, matManager.getSzone()[1][i][2].Pos, disabled_color);
+				/////kdiy//////
+				// driver->draw3DLine(matManager.getSzone()[1][i][0].Pos, matManager.getSzone()[1][i][3].Pos, disabled_color);
+				// driver->draw3DLine(matManager.getSzone()[1][i][1].Pos, matManager.getSzone()[1][i][2].Pos, disabled_color);
+				DrawTextureRect(matManager.vFieldSzone_2[dInfo.HasFieldFlag(DUEL_3_COLUMNS_FIELD)][!dInfo.HasFieldFlag(DUEL_SEPARATE_PZONE)][1][i], imageManager.tNegated);
+				/////kdiy//////
 			}
 		}
 	}
@@ -620,7 +621,29 @@ void Game::DrawCard(ClientCard* pcard) {
 				matManager.mTexture.AmbientColor = irr::video::SColor(255, 180, 180, 255);
 			else
 				matManager.mTexture.AmbientColor = 0xffffffff;
-			matManager.mTexture.setTexture(0, cardcloseup);
+			int seq = pcard->sequence;
+#ifdef VIP
+			if(gGameConfig->enablemcanime) {
+				std::string s1, s11, s21;
+				s1 = "closeup/" + std::to_string(pcard->code) + ".mp4";
+				s11 = "closeup/" + std::to_string(pcard->code) + ".mkv";
+				s21 = "closeup/" + std::to_string(pcard->code) + ".avi";
+				std::vector<std::string> s1List = {s1, s11, s21};
+				if(pcard->controler == 1 && seq != 5 && seq != 6) seq = pcard->sequence + 7;
+				for (const auto& str : s1List) {
+					if(openVideo(str, false, true, seq + 3)) {
+						isCloseupAnime[seq] = true;
+						if(PlayVideo(false, true, seq + 3)) {
+							break;
+						}
+					}
+				}
+			}
+#endif
+			if(isCloseupAnime[seq] && videotexture[seq + 3])
+				matManager.mTexture.setTexture(0, videotexture[seq + 3]);
+			else
+				matManager.mTexture.setTexture(0, cardcloseup);
 			driver->setMaterial(matManager.mTexture);
 			irr::core::matrix4 atk;
 			if (!(pcard->cmdFlag & COMMAND_ATTACK))
@@ -721,7 +744,7 @@ void Game::DrawCard(ClientCard* pcard) {
 	    matManager.mTexture.setTexture(0, imageManager.tHint);
 		driver->setMaterial(matManager.mTexture);
 		irr::core::matrix4 atk;
-		atk.setTranslation(pcard->curPos + irr::core::vector3df(0, -1.0f, 0));
+		atk.setTranslation(pcard->curPos + irr::core::vector3df(-0.2f, -0.1f, 0));
 		driver->setTransform(irr::video::ETS_WORLD, atk);
 		driver->drawVertexPrimitiveList(matManager.vHint, 4, matManager.iRectangle, 2);
 	}
@@ -2018,15 +2041,15 @@ void Game::DrawBackImage(irr::video::ITexture* texture, bool resized) {
 		return;
     /////kdiy//////
     if(texture == imageManager.tBackGround_menu) {
-        if(gGameConfig->videowallpaper && openVideo(videowallpaper_path, true)) {
-		    if(PlayVideo(true))
-            	if(videotexture)
-			    	driver->draw2DImage(videotexture, Resize(0, 0, 1024, 640), irr::core::recti(0, 0, video_width, video_height));
+        if(gGameConfig->videowallpaper && openVideo(videowallpaper_path, false, true)) {
+		    if(PlayVideo(false, true))
+            	if(videotexture[0])
+			    	driver->draw2DImage(videotexture[0], Resize(0, 0, 1024, 640), irr::core::recti(0, 0, video_width[0], video_height[0]));
             return;
 	    }
 		if(!gGameConfig->videowallpaper && videostart) StopVideo();
     } else {
-        if(!isAnime && !isFieldPlay && videostart) StopVideo();
+        if(!isAnime && videostart) StopVideo();
     }
     /////kdiy//////
 	if(texture != prevbg) {

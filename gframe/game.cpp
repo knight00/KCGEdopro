@@ -3201,14 +3201,21 @@ void Game::PopulateSettingsWindow() {
             gSettings.chkEnableAttackSound = env->addCheckBox(gGameConfig->enableasound, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_ENABLE_ASOUND, gDataManager->GetSysString(8012).data());
 	        defaultStrings.emplace_back(gSettings.chkEnableAttackSound, 8012);
             IncrementXorY();
-            gSettings.chkEnableFieldAnime = env->addCheckBox(gGameConfig->enablefanime, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_ENABLE_FANIME, gDataManager->GetSysString(8027).data());
-	        defaultStrings.emplace_back(gSettings.chkEnableFieldAnime, 8027);
+			
+            gSettings.chkEnableAnimeSound = env->addCheckBox(gGameConfig->enableanimesound, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_ENABLE_ANIMESOUND, gDataManager->GetSysString(8005).data());
+	        defaultStrings.emplace_back(gSettings.chkEnableAnimeSound, 8005);
             IncrementXorY();
             gSettings.chkPauseduel = env->addCheckBox(gGameConfig->pauseduel, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_PAUSE_DUEL, gDataManager->GetSysString(8052).data());
             defaultStrings.emplace_back(gSettings.chkPauseduel, 8052);
             IncrementXorY();
+            gSettings.chkEnableFieldAnime = env->addCheckBox(gGameConfig->enablefanime, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_ENABLE_FANIME, gDataManager->GetSysString(8027).data());
+	        defaultStrings.emplace_back(gSettings.chkEnableFieldAnime, 8027);
+            IncrementXorY();
 			gSettings.chkAnimeFull = env->addCheckBox(gGameConfig->animefull, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_ANIME_FULL, gDataManager->GetSysString(8093).data());
 			defaultStrings.emplace_back(gSettings.chkAnimeFull, 8093);
+            IncrementXorY();
+            gSettings.chkEnableCloseupAnime = env->addCheckBox(gGameConfig->enablemcanime, GetCurrentRectWithXOffset(35, 320), sPanel, CHECKBOX_ENABLE_MCANIME, gDataManager->GetSysString(8096).data());
+	        defaultStrings.emplace_back(gSettings.chkEnableCloseupAnime, 8096);
 #ifndef VIP
             gSettings.chkPauseduel->setEnabled(false);
 #endif
@@ -3617,9 +3624,10 @@ bool Game::MainLoop() {
 		}
     }
 	avformat_network_init();
-	videoFrame = av_frame_alloc();
-    audioFrame = av_frame_alloc();
+	audioFrame = av_frame_alloc();
 	audioBuffer.reserve(4096);
+	for(int i = 0; i < 15; i++)
+		videoFrame[i] = av_frame_alloc();
 	/////////kdiy/////////
 	while(!restart && device->run()) {
 		DispatchQueue();
@@ -4004,7 +4012,7 @@ bool Game::MainLoop() {
 		frameSignal.SetNoWait(true);
 	}
     /////kdiy//////
-    StopVideo(true, true);
+    StopVideo(true,0,true);
 	isEvent = false;
 	chantsound.stop();
     /////kdiy//////
@@ -4549,12 +4557,6 @@ Game::RepoGui* Game::AddGithubRepositoryStatusWindow(const GitRepo* repo) {
     //kdiy///////
 	defaultStrings.emplace_back(grepo.history_button1, 1443);
 	grepo.history_button1->setEnabled(repo->ready);
-     //kdiy///////
-    grepo.path = repo->repo_path;
-    grepo.file_button = env->addButton(Scale(90 + 295, 0, 170 + 295, 20 + 5), a, BUTTON_REPO_FILE, gDataManager->GetSysString(8040).data());
-	defaultStrings.emplace_back(grepo.file_button, 8040);
-	grepo.file_button->setEnabled(true);
-    //kdiy///////
 
 	auto b = env->addWindow(Scale(0, 0, 10000, 55), false, L"", tabRepositories);
 	b->getCloseButton()->setVisible(false);
@@ -4935,14 +4937,16 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 			    else
 				    ltext.append(epro::format(L"{}/{}", pcard->rattack, pcard->rdefense));
 			} else {
-				if (pcard->rattack < 0)
-				    ltext.append(epro::format(L"?/LINK {}	  ", mixlink));
-			    else if(pcard->rattack >= 9999999)
-				    ltext.append(epro::format(L"(\u221E)/LINK {}	  ", mixlink));
-			    else if(pcard->rattack >= 8888888)
-				    ltext.append(epro::format(L"\u221E/LINK {}	  ", mixlink));
-			    else
-				    ltext.append(epro::format(L"{}/LINK {}	  ", pcard->rattack, mixlink));
+				if(pcard->rtype & TYPE_MONSTER) {
+					if (pcard->rattack < 0)
+						ltext.append(epro::format(L"?/LINK {}	  ", mixlink));
+					else if(pcard->rattack >= 9999999)
+						ltext.append(epro::format(L"(\u221E)/LINK {}	  ", mixlink));
+					else if(pcard->rattack >= 8888888)
+						ltext.append(epro::format(L"\u221E/LINK {}	  ", mixlink));
+					else
+						ltext.append(epro::format(L"{}/LINK {}	  ", pcard->rattack, mixlink));
+				}
 			    ltext.append(gDataManager->FormatLinkMarker(pcard->rlink_marker));
 			}
 			//has lv, rk, lk
@@ -5047,14 +5051,16 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 			else
 				ltext.append(epro::format(L"{}/{}", cd->attack, cd->defense));
 		} else {
-			if (cd->attack < 0)
-				ltext.append(epro::format(L"?/LINK {}	  ", mixlink));
-			else if(cd->attack >= 9999999)
-				ltext.append(epro::format(L"(\u221E)/LINK {}	  ", mixlink));
-			else if(cd->attack >= 8888888)
-				ltext.append(epro::format(L"\u221E/LINK {}	  ", mixlink));
-			else
-				ltext.append(epro::format(L"{}/LINK {}	  ", cd->attack, mixlink));
+			if(cd->type & TYPE_MONSTER) {
+				if (cd->attack < 0)
+					ltext.append(epro::format(L"?/LINK {}	  ", mixlink));
+				else if(cd->attack >= 9999999)
+					ltext.append(epro::format(L"(\u221E)/LINK {}	  ", mixlink));
+				else if(cd->attack >= 8888888)
+					ltext.append(epro::format(L"\u221E/LINK {}	  ", mixlink));
+				else
+					ltext.append(epro::format(L"{}/LINK {}	  ", cd->attack, mixlink));
+			}
 			ltext.append(gDataManager->FormatLinkMarker(cd->link_marker));
 		}
 		//has lv, rk, lk
@@ -5301,120 +5307,126 @@ void Game::ClearCardInfo(int player) {
 	showingcard = 0;
 }
 ///kdiy/////////
-bool Game::openVideo(std::string filename, bool loop) {
+bool Game::openVideo(std::string filename, bool audio, bool loop, int type) {
 	filename = "./movies/" + filename;
 	if(!Utils::FileExists(Utils::ToPathString(filename))) {
 		return false;
 	}
-	if(isFieldPlay && isAnime) {
-		isFieldPlay = false;
-		currentVideo = "";
+	if(type > 1 && isAnime) {
+		isFieldPlay[0] = false;
+		isFieldPlay[1] = false;
+		for(int i = 0; i < 12; i++)
+			isCloseupAnime[i] = false;
+		for(int i = 0; i < 15; i++)
+			currentVideo[i] = "";
+		return false;
 	}
-	if(isFieldPlay) loop = true;
-    if(filename != currentVideo) {
+	if(type > 1) loop = true;
+	if(loop) audio = false;
+    if(filename != currentVideo[type]) {
 		if(!loop && std::find(animecount.begin(), animecount.end(), filename) != animecount.end()) {
 			isAnime = false;
 			return false;
 		}
 		if(!loop) animecount.push_back(filename);
-        if (formatCtx) {
-			avformat_close_input(&formatCtx); // Close previous video input
+        if (formatCtx[type]) {
+			avformat_close_input(&formatCtx[type]); // Close previous video input
 		}
-		formatCtx = nullptr;
-        if (formatCtx2) {
-			avformat_close_input(&formatCtx2); // Close previous video input
+		formatCtx[type] = nullptr;
+		if(audio) {
+			if (formatCtx2) {
+				avformat_close_input(&formatCtx2); // Close previous video input
+			}
+			formatCtx2 = nullptr;
 		}
-		formatCtx2 = nullptr;
-		if (avformat_open_input(&formatCtx, filename.c_str(), nullptr, nullptr) != 0) {
+		if (avformat_open_input(&formatCtx[type], filename.c_str(), nullptr, nullptr) != 0) {
 			isAnime = false;
-			isFieldPlay = false;
 			return false;
 		}
-		if(videotexture) {
-			driver->removeTexture(videotexture);
-			videotexture = nullptr;
+		if(videotexture[type]) {
+			driver->removeTexture(videotexture[type]);
+			videotexture[type] = nullptr;
 		}
-		avformat_open_input(&formatCtx2, filename.c_str(), nullptr, nullptr);
-		if (avformat_find_stream_info(formatCtx, nullptr) < 0) {
+		if(audio) avformat_open_input(&formatCtx2, filename.c_str(), nullptr, nullptr);
+		if (avformat_find_stream_info(formatCtx[type], nullptr) < 0) {
 			isAnime = false;
-			isFieldPlay = false;
 			return false;
 		}
 		// Find the first video and audio stream
-		videoStreamIndex = -1;
+		videoStreamIndex[type] = -1;
 		audioStreamIndex = -1;
-		for (unsigned int i = 0; i < formatCtx->nb_streams; ++i) {
-			if (formatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO && videoStreamIndex == -1) {
-				videoStreamIndex = i;
+		for (unsigned int i = 0; i < formatCtx[type]->nb_streams; ++i) {
+			if (formatCtx[type]->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO && videoStreamIndex[type] == -1) {
+				videoStreamIndex[type] = i;
 			}
-			if (formatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO && audioStreamIndex == -1) {
-				audioStreamIndex = i;
+			if(audio) {
+				if (formatCtx[type]->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO && audioStreamIndex == -1) {
+					audioStreamIndex = i;
+				}
 			}
 		}
-		if (videoStreamIndex == -1 || audioStreamIndex == -1) {
-			avformat_close_input(&formatCtx);
+		if (videoStreamIndex[type] == -1) {
+			avformat_close_input(&formatCtx[type]);
 			isAnime = false;
-			isFieldPlay = false;
 			return false;
 		}
 		// Initialize codec contexts
-		videoCodecCtx = avcodec_alloc_context3(nullptr);
-		audioCodecCtx = avcodec_alloc_context3(nullptr);
-		avcodec_parameters_to_context(videoCodecCtx, formatCtx->streams[videoStreamIndex]->codecpar);
-		avcodec_parameters_to_context(audioCodecCtx, formatCtx2->streams[audioStreamIndex]->codecpar);
-		const AVCodec* videoCodec = avcodec_find_decoder(videoCodecCtx->codec_id);
-		const AVCodec* audioCodec = avcodec_find_decoder(audioCodecCtx->codec_id);
-		avcodec_open2(videoCodecCtx, videoCodec, nullptr);
-		avcodec_open2(audioCodecCtx, audioCodec, nullptr);
-		videoDuration = formatCtx->duration;
-		AVStream* videoStream = formatCtx->streams[videoStreamIndex];
+		if(audio) {
+			audioCodecCtx = avcodec_alloc_context3(nullptr);
+			avcodec_parameters_to_context(audioCodecCtx, formatCtx2->streams[audioStreamIndex]->codecpar);
+			const AVCodec* audioCodec = avcodec_find_decoder(audioCodecCtx->codec_id);
+			avcodec_open2(audioCodecCtx, audioCodec, nullptr);
+			int audioChannels = audioCodecCtx->channels;
+			audioFrameDuration = (double)audioChannels / (double)(formatCtx[type]->streams[audioStreamIndex]->codecpar->sample_rate);
+		}
+		videoCodecCtx[type] = avcodec_alloc_context3(nullptr);
+		avcodec_parameters_to_context(videoCodecCtx[type], formatCtx[type]->streams[videoStreamIndex[type]]->codecpar);
+		const AVCodec* videoCodec = avcodec_find_decoder(videoCodecCtx[type]->codec_id);
+		avcodec_open2(videoCodecCtx[type], videoCodec, nullptr);
+		videoDuration[type] = formatCtx[type]->duration;
+		AVStream* videoStream = formatCtx[type]->streams[videoStreamIndex[type]];
 		// Use avg_frame_rate for a general frame rate
 		AVRational avgFrameRate = videoStream->avg_frame_rate;
 		// If avg_frame_rate is 0, use r_frame_rate as a fallback
 		if (avgFrameRate.num == 0) {
 			avgFrameRate = videoStream->r_frame_rate;
 		}
-		videoFrameDuration = (double)avgFrameRate.den / (double)avgFrameRate.num;
-		int audioChannels = audioCodecCtx->channels;
-		audioFrameDuration = (double)audioChannels / (double)(formatCtx->streams[audioStreamIndex]->codecpar->sample_rate);
-		timeAccumulated = 0;
-        currentVideo = filename;
+		videoFrameDuration[type] = (double)avgFrameRate.den / (double)avgFrameRate.num;
+		timeAccumulated[type] = 0;
+        currentVideo[type] = filename;
 		// Determine frames to skip based on FPS ratio
-		videoFPS = 1.0 / videoFrameDuration;
-		if(videoFPS > 70) videoFPS = 120;
-		else if(videoFPS > 40) videoFPS = 60;
-		else videoFPS = 30;
-		videoFPS = 30;
-		videoFrameDuration = 1.0 / 30.0;
+		videoFPS[type] = 1.0 / videoFrameDuration[type];
+		if(videoFPS[type] > 25) videoFPS[type] = 30;
+		else videoFPS[type] = 16;
 		// wchar_t buffer[30];
 		// _snwprintf(buffer, sizeof(buffer) / sizeof(*buffer), L"%lf", (formatCtx->streams[audioStreamIndex]->codecpar->sample_rate));
 		// MessageBox(nullptr, buffer, TEXT("Message"), MB_OK);
     }
 	return true;
 }
-irr::video::ITexture* renderVideoFrame(irr::video::IVideoDriver* driver, AVCodecContext* videoCodecCtx, AVFrame* videoFrame) {
-	if (mainGame->videotexture) {
-		driver->removeTexture(mainGame->videotexture);
+irr::video::ITexture* renderVideoFrame(irr::video::IVideoDriver* driver, AVCodecContext* videoCodecCtx, AVFrame* videoFrame, irr::video::ITexture* videotexture, int& video_width, int& video_height) {
+	if (videotexture) {
+		driver->removeTexture(videotexture);
 	}
-	mainGame->video_width = videoFrame->width;
-    mainGame->video_height = videoFrame->height;
-	std::vector<uint8_t> dstData(mainGame->video_width * mainGame->video_width * 4); // 4 bytes for RGBA
+	video_width = videoFrame->width;
+    video_height = videoFrame->height;
+	std::vector<uint8_t> dstData(video_width * video_width * 4); // 4 bytes for RGBA
     // Create a pointer array for the destination data
     uint8_t* dstDataPtr[1] = { dstData.data() };
-    int dstLineSize[1] = { mainGame->video_width * 4 }; // Line size in bytes for RGBA
+    int dstLineSize[1] = { video_width * 4 }; // Line size in bytes for RGBA
     // Convert data from AVFrame to texture format
     struct SwsContext* swsCtx = sws_getContext(
         videoCodecCtx->width,
         videoCodecCtx->height,
         videoCodecCtx->pix_fmt,
-        mainGame->video_width,
-        mainGame->video_height,
+        video_width,
+        video_height,
 		AV_PIX_FMT_BGRA,
         SWS_BILINEAR,
         nullptr, nullptr, nullptr
     );
     sws_scale(swsCtx, videoFrame->data, videoFrame->linesize, 0, videoCodecCtx->height, dstDataPtr, dstLineSize); // Pass the pointer to the RGBA data
-	irr::video::IImage* image = driver->createImageFromData(irr::video::ECF_A8R8G8B8, irr::core::dimension2d<irr::u32>(mainGame->video_width, mainGame->video_height), dstData.data(), false);
+	irr::video::IImage* image = driver->createImageFromData(irr::video::ECF_A8R8G8B8, irr::core::dimension2d<irr::u32>(video_width, video_height), dstData.data(), false);
     // Add the image as a texture
     irr::video::ITexture* texture = driver->addTexture("videoFrame", image);
     // Cleanup
@@ -5422,27 +5434,25 @@ irr::video::ITexture* renderVideoFrame(irr::video::IVideoDriver* driver, AVCodec
 	image->drop();
     return texture;
 }
-bool Game::PlayVideo(bool loop) {
-    // Ensure a valid format context
-	if (!formatCtx) {
-        StopVideo(); // Always good practice to call StopVideo on failure
-        return false;
-    }
-
-	timeAccumulated += static_cast<double>(delta_time) / 1000.0;
-	framesToSkip = std::max(1, static_cast<int>(frameps / videoFPS));
+bool Game::PlayVideo(bool audio, bool loop, int type) {
+	// Ensure a valid format context
+	if (!formatCtx[type]) {
+		StopVideo(); // Always good practice to call StopVideo on failure
+		return false;
+	}
+	timeAccumulated[type] += static_cast<double>(delta_time) / 1000.0;
+	framesToSkip[type] = std::max(1, static_cast<int>(frameps / videoFPS[type]));
 	static int frameCounter = 0;
-    // Variable for frame processing time
-    double frameRenderTime = 0.0;
-	while (timeAccumulated >= videoFrameDuration) {
+	// Variable for frame processing time
+	double frameRenderTime = 0.0;
+	while (timeAccumulated[type] >= videoFrameDuration[type]) {
 		AVPacket packet;
-		if (av_read_frame(formatCtx, &packet) < 0) {
+		if (av_read_frame(formatCtx[type], &packet) < 0) {
 			if(loop) {
-				avcodec_flush_buffers(videoCodecCtx); // Flush the codec buffers
-				avcodec_flush_buffers(audioCodecCtx);
-				av_seek_frame(formatCtx, videoStreamIndex, 0, AVSEEK_FLAG_BACKWARD);
+				avcodec_flush_buffers(videoCodecCtx[type]); // Flush the codec buffers
+				av_seek_frame(formatCtx[type], videoStreamIndex[type], 0, AVSEEK_FLAG_BACKWARD);
 				// After seeking, we must try to read a new frame immediately
-				if (av_read_frame(formatCtx, &packet) < 0) {
+				if (av_read_frame(formatCtx[type], &packet) < 0) {
 					StopVideo(); // If seek and read fails, something is wrong
 					return false;
 				}
@@ -5451,26 +5461,26 @@ bool Game::PlayVideo(bool loop) {
 				return false;
 			}
 		}
-		if (packet.stream_index == videoStreamIndex) {
-			if (avcodec_send_packet(videoCodecCtx, &packet) < 0) {
+		if (packet.stream_index == videoStreamIndex[type]) {
+			if (avcodec_send_packet(videoCodecCtx[type], &packet) < 0) {
 				av_packet_unref(&packet);
 				StopVideo();
 				return false;
 			}
 			auto startFrameProcessing = std::chrono::high_resolution_clock::now();
-			if (avcodec_receive_frame(videoCodecCtx, videoFrame) >= 0) {
+			if (avcodec_receive_frame(videoCodecCtx[type], videoFrame[type]) >= 0) {
 				// Calculate the processing time of the frame
 				auto endFrameProcessing = std::chrono::high_resolution_clock::now();
 				std::chrono::duration<double> frameDuration = endFrameProcessing - startFrameProcessing;
 				frameRenderTime = frameDuration.count();
-				if (frameCounter % framesToSkip == 0)
-					videotexture = renderVideoFrame(driver, videoCodecCtx, videoFrame); // Render the frame
-				timeAccumulated -= videoFrameDuration;
+				if (frameCounter % framesToSkip[type] == 0)
+					videotexture[type] = renderVideoFrame(driver, videoCodecCtx[type], videoFrame[type], videotexture[type], video_width[type], video_height[type]); // Render the frame
+				timeAccumulated[type] -= videoFrameDuration[type];
 				// timeAccumulated -= (videoFrameDuration - frameRenderTime); // Adjust the accumulated time based on rendering time
 			}
 			// Increment frame counter
 			frameCounter++;
-		} else if (packet.stream_index == audioStreamIndex && !loop) {
+		} else if (packet.stream_index == audioStreamIndex && audio) {
 			// We just send the packet to the decoder. This is fast.
 			if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
 				if (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
@@ -5493,6 +5503,7 @@ bool Game::PlayVideo(bool loop) {
 			}
 		} // IMPORTANT: No `else` here, so we ignore other streams (like subtitles)
 		av_packet_unref(&packet); // Clean up the packet
+		if(loop) break;
 	}
 	if (videosound.getStatus() != sf::Sound::Playing) {
 		if (!audioBuffer.empty()) {
@@ -5527,28 +5538,44 @@ bool Game::PlayVideo(bool loop) {
 	}
 	return true;
 }
-void Game::StopVideo(bool close, bool reset) {
-	videostart = false;
-	timeAccumulated = 0;
-	video_width = 0;
-    video_height = 0;
-	currentVideo = "";
-	videoFPS = 1.0;
-	framesToSkip = 1;
+void Game::StopVideo(bool reset, int type, bool close) {
+	if(reset || close) {
+		for(int i = 0; i < 15; i++) {
+			timeAccumulated[i] = 0;
+			video_width[i] = 0;
+			video_height[i] = 0;
+			currentVideo[i] = "";
+			videoFPS[i] = 1.0;
+			framesToSkip[i] = 1;
+		}
+	} else {
+		timeAccumulated[type] = 0;
+		video_width[type] = 0;
+		video_height[type] = 0;
+		currentVideo[type] = "";
+		videoFPS[type] = 1.0;
+		framesToSkip[type] = 1;
+	}
+	if(videotexture[type]) {
+		driver->removeTexture(videotexture[type]);
+		videotexture[type] = nullptr;
+	}
+	if(type == 0 || reset || close) {
+		videostart = false;
+		videosound.stop();
+	}
 	if(isAnime)
 	    mainGame->cv->notify_one();
 	if(close) {
-		av_frame_free(&videoFrame);
 		av_frame_free(&audioFrame);
-		avcodec_free_context(&videoCodecCtx);
 		avcodec_free_context(&audioCodecCtx);
-		avformat_close_input(&formatCtx);
 		avformat_close_input(&formatCtx2);
+		for(int i = 0; i < 15; i++) {
+			av_frame_free(&videoFrame[type]);
+			avcodec_free_context(&videoCodecCtx[type]);
+			avformat_close_input(&formatCtx[type]);
+		}
 	}
-    if(videotexture) {
-        driver->removeTexture(videotexture);
-        videotexture = nullptr;
-    }
 	if(isAnime && gGameConfig->animefull) {
 		wBtnShowCard->setVisible(true);
 	    if(showcardinfo) {
@@ -5569,11 +5596,10 @@ void Game::StopVideo(bool close, bool reset) {
 		btnChainAlways->setVisible(true);
 		btnChainWhenAvail->setVisible(true);
 	}
-	videosound.stop();
-    if(reset) {
-        isAnime = false;
-		isFieldPlay = false;
-    }
+    if(type == 0 || reset || close) isAnime = false;
+	if(type == 1 || reset || close) isFieldPlay[0] = false;
+	if(type == 2 || reset || close) isFieldPlay[1] = false;
+	if(type > 2 || reset || close) isCloseupAnime[type - 3] = false;
 }
 ///kdiy/////////
 void Game::AddChatMsg(epro::wstringview msg, int player, int type) {
@@ -6992,7 +7018,7 @@ void* Game::ReadCardDataToCore() {
 	return cards_data;
 }
 bool Game::moviecheck(uint8_t cat, bool initial) {
-	bool filechk = false, filechks = false, filechkc = false, filechka = false, filechkf = false;
+	bool filechk = false, filechks = false, filechkc = false, filechka = false, filechkf = false, filechkmc = false;
 	for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./movies/")), { EPRO_TEXT("mp4"), EPRO_TEXT("mkv"), EPRO_TEXT("avi") })) {
 		if(Utils::FileExists(EPRO_TEXT("./movies/") + file)) {
 			filechk = true;
@@ -7001,6 +7027,12 @@ bool Game::moviecheck(uint8_t cat, bool initial) {
 			if(file.find_first_of(EPRO_TEXT("a")) != std::string::npos) filechka = true;
 			if(file.find_first_of(EPRO_TEXT("f")) != std::string::npos) filechkf = true;
 			if(filechks && filechkc && filechka && filechkf) break;
+		}
+	}
+	for(auto& file : Utils::FindFiles(Utils::ToPathString(EPRO_TEXT("./movies/closeup")), { EPRO_TEXT("mp4"), EPRO_TEXT("mkv"), EPRO_TEXT("avi") })) {
+		if(Utils::FileExists(EPRO_TEXT("./movies/closeup/") + file)) {
+			filechkmc = true;
+			if(filechkmc) break;
 		}
 	}
 #ifndef VIP
@@ -7015,6 +7047,7 @@ bool Game::moviecheck(uint8_t cat, bool initial) {
 		gGameConfig->enablecanime = false;
 		gGameConfig->enableaanime = false;
 		gGameConfig->enablefanime = false;
+		gGameConfig->enablemcanime = false;
 		gGameConfig->animefull = false;
 		gGameConfig->videowallpaper = false;
 
@@ -7030,21 +7063,24 @@ bool Game::moviecheck(uint8_t cat, bool initial) {
 	if(!filechkc) gGameConfig->enablecanime = false;
 	if(!filechka) gGameConfig->enableaanime = false;
 	if(!filechkf) gGameConfig->enablefanime = false;
+	if(!filechkmc) gGameConfig->enablemcanime = false;
 	if(!gGameConfig->enableanime && cat == 5) {
 		gGameConfig->enablesanime = false;
 		gGameConfig->enablecanime = false;
 		gGameConfig->enableaanime = false;
 		gGameConfig->enablefanime = false;
+		gGameConfig->enablemcanime = false;
 	}
-	if((gGameConfig->enablesanime || gGameConfig->enablecanime || gGameConfig->enableaanime || gGameConfig->enablefanime) && cat != 5)
+	if((gGameConfig->enablesanime || gGameConfig->enablecanime || gGameConfig->enableaanime || gGameConfig->enablefanime || gGameConfig->enablemcanime) && cat != 5)
 		gGameConfig->enableanime = true;
 	else if(cat != 5)
 		gGameConfig->enableanime = false;
-	if(gGameConfig->enableanime && !gGameConfig->enablesanime && !gGameConfig->enablecanime && !gGameConfig->enableaanime && !gGameConfig->enablefanime) {
+	if(gGameConfig->enableanime && !gGameConfig->enablesanime && !gGameConfig->enablecanime && !gGameConfig->enableaanime && !gGameConfig->enablefanime && !gGameConfig->enablemcanime) {
 		if(filechks) gGameConfig->enablesanime = true;
 		if(filechkc) gGameConfig->enablecanime = true;
 		if(filechka)gGameConfig->enableaanime = true;
 		if(filechkf) gGameConfig->enablefanime = true;
+		if(filechkmc) gGameConfig->enablemcanime = true;
     }
 	tabSettings.chkEnableAnime->setChecked(gGameConfig->enableanime);
 	gSettings.chkEnableAnime->setChecked(gGameConfig->enableanime);
@@ -7052,6 +7088,7 @@ bool Game::moviecheck(uint8_t cat, bool initial) {
 	gSettings.chkEnableActivateAnime->setChecked(gGameConfig->enablecanime);
 	gSettings.chkEnableAttackAnime->setChecked(gGameConfig->enableaanime);
 	gSettings.chkEnableFieldAnime->setChecked(gGameConfig->enablefanime);
+	gSettings.chkEnableCloseupAnime->setChecked(gGameConfig->enablemcanime);
 	gSettings.chkAnimeFull->setChecked(gGameConfig->animefull);
 	gSettings.chkVideowallpaper->setChecked(gGameConfig->videowallpaper);
 	return filechk;

@@ -241,7 +241,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_LEAVE_GAME: {
 			    ////kdiy////////
-				mainGame->StopVideo(false, true);
+				mainGame->StopVideo(true);
                 mainGame->isEvent = false;
         		mainGame->bodycharacter[0] = 0;
         		mainGame->bodycharacter[1] = 0;
@@ -316,7 +316,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_RESTART_SINGLE: {
                 ////kdiy////////
-				mainGame->StopVideo(false, true);
+				mainGame->StopVideo(true);
                 mainGame->isEvent = false;
         		mainGame->bodycharacter[0] = 0;
         		mainGame->bodycharacter[1] = 0;
@@ -1318,7 +1318,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 		case irr::EMIE_LMOUSE_DOUBLE_CLICK: {
 			/////kdiy/////
 			if(mainGame->isAnime && mainGame->videostart) {
-				mainGame->StopVideo(false, true);
+				mainGame->StopVideo(true);
 			    break;
 			}
             if(mainGame->isEvent) {
@@ -2277,17 +2277,6 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				}
 				break;
 			}
-            case BUTTON_REPO_FILE:	{
-				irr::gui::IGUIButton* button = (irr::gui::IGUIButton*)event.GUIEvent.Caller;
-				for(auto& repo : mainGame->repoInfoGui) {
-					if(repo.second.file_button == button) {
-						mainGame->stACMessage->setText(gDataManager->GetSysString(8005).data());
-						mainGame->PopupElement(mainGame->wACMessage, 90);
-						Utils::SystemOpen(Utils::ToPathString(repo.second.path), Utils::OPEN_FILE);
-					}
-                }
-				break;
-			}
 			case BUTTON_HOME: {
                 Utils::SystemOpen(EPRO_TEXT("https://afdian.com/a/Edokcg/"), Utils::OPEN_URL);
 				break;
@@ -2495,6 +2484,11 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			case CHECKBOX_ENABLE_FANIME: {
 				gGameConfig->enablefanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
 				mainGame->moviecheck(3);
+				return true;
+			}
+			case CHECKBOX_ENABLE_MCANIME: {
+				gGameConfig->enablemcanime = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
+				mainGame->moviecheck(4);
 				return true;
 			}
 			case CHECKBOX_ANIME_FULL: {
@@ -3366,7 +3360,10 @@ void ClientField::ShowMenu(int flag, int x, int y) {
 		height += increase;
 	} else mainGame->btnMSet->setVisible(false);
 	if(flag & COMMAND_SSET) {
-		if(!(clicked_card->type & TYPE_MONSTER))
+		/////kdiy///////////
+		// if(!(clicked_card->type & TYPE_MONSTER))
+		if(!(clicked_card->type & (TYPE_SPELL|TYPE_TRAP)))
+		/////kdiy///////////
 			mainGame->btnSSet->setText(gDataManager->GetSysString(1153).data());
 		else
 			mainGame->btnSSet->setText(gDataManager->GetSysString(1159).data());
