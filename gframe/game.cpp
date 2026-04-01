@@ -766,7 +766,7 @@ void Game::Initialize() {
 	stAbout = irr::gui::CGUICustomText::addCustomText(L"EDOPro-KCG\n"
 											L"by perfectdicky (QQ: 874342483)\n"
 											L"\n"
-											L"Copyright (C) 2020-2025 Edoardo Lolletti (edo9300) and others\n"
+											L"Copyright (C) 2020-2026 Edoardo Lolletti (edo9300) and others\n"
 											L"Card scripts and supporting resources by Project Ignis.\n"
 											L"\n"
 											L"https://github.com/knight00/KCGEdopro\n"
