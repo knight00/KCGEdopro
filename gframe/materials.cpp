@@ -51,6 +51,8 @@ Materials::Materials() {
 	SetS3DVertex(vXyz, -0.1f, -0.1f, 0.1f, 0.1f, 0, 1, 0, 0, 1, 1);
 	SetS3DVertex(vXyztrail, -0.05f, -0.05f, 0.05f, 0.05f, 0, 1, 0, 0, 1, 1);
 	SetS3DVertex(vCXyz, -0.2f, -0.2f, 0.2f, 0.2f, 0.05f, 1, 0, 0, 1, 1);
+	SetS3DVertex(vLinkZone, -0.65f, -0.8f, 0.65f, 0.8f, 0, 1, 0, 0, 1, 1);
+	SetS3DVertex(vLinkZone2, -0.65f, -0.8f, 0.65f, 0.8f, 0.02f, 1, 0, 0, 1, 1);
 	///////kdiy//////
 	SetS3DVertex(vChainNum, -0.35f, -0.35f, 0.35f, 0.35f, 0, 1, 0, 0, 0.19375f, 0.2421875f);
 	SetS3DVertex(vActivate, -0.5f, -0.5f, 0.5f, 0.5f, 0, 1, 0, 0, 1, 1);

@@ -1101,14 +1101,33 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					curstring->enableOverrideColor(false);
 					// image
 					if(curcard->code)
-						///kdiy////////
+					///kdiy////////
 						//mainGame->imageLoading[mainGame->btnCardSelect[i]] = curcard->code;
+					// else if(conti_selecting)
+					// 	mainGame->imageLoading[mainGame->btnCardSelect[i]] = curcard->chain_code;
+					// else
+					// 	mainGame->btnCardSelect[i]->setImage(mainGame->imageManager.tCover[0]);
+					{
 						mainGame->imageLoading[mainGame->btnCardSelect[i]] = curcard->piccode > 0 ? curcard->piccode : curcard->code;
-						///kdiy////////
-					else if(conti_selecting)
+						mainGame->DrawRealCard(curcard, mainGame->btnCardSelect2[i]);
+					}
+					else if(conti_selecting) {
 						mainGame->imageLoading[mainGame->btnCardSelect[i]] = curcard->chain_code;
-					else
+						mainGame->DrawRealCard(curcard, mainGame->btnCardSelect2[i]);
+					} else {
 						mainGame->btnCardSelect[i]->setImage(mainGame->imageManager.tCover[0]);
+						mainGame->btnCardSelect2[i][0]->setImage(0);
+						mainGame->btnCardSelect2[i][1]->setImage(0);
+						mainGame->btnCardSelect2[i][2]->setImage(0);
+						mainGame->btnCardSelect2[i][3]->setImage(0);
+						mainGame->btnCardSelect2[i][4]->setImage(0);
+					}
+					mainGame->btnCardSelect2[i][0]->setRelativePosition(mainGame->Scale(30 + i * 125, 55, 30 + 120 + i * 125, 225));
+					mainGame->btnCardSelect2[i][1]->setRelativePosition(mainGame->Scale(30 + i * 125, 55, 30 + 120 + i * 125, 225));
+					mainGame->btnCardSelect2[i][2]->setRelativePosition(mainGame->Scale(30 + i * 125, 55, 30 + 120 + i * 125, 225));
+					mainGame->btnCardSelect2[i][3]->setRelativePosition(mainGame->Scale(30 + i * 125, 55, 30 + 120 + i * 125, 225));
+					mainGame->btnCardSelect2[i][4]->setRelativePosition(mainGame->Scale(30 + i * 125, 55, 30 + 120 + i * 125, 225));
+					///kdiy////////
 					mainGame->btnCardSelect[i]->setRelativePosition(mainGame->Scale(30 + i * 125, 55, 30 + 120 + i * 125, 225));
 					// text
 					std::wstring text = L"";
@@ -1172,13 +1191,28 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					auto& curstring = mainGame->stDisplayPos[i];
 					// draw display_cards[i + pos] in btnCardDisplay[i]
 					curstring->enableOverrideColor(false);
-					if(curcard->code)
+					if (curcard->code)
 						///kdiy////////
-						//mainGame->imageLoading[mainGame->btnCardDisplay[i]] = curcard->code;
+							//mainGame->imageLoading[mainGame->btnCardDisplay[i]] = curcard->code;
+						// else
+						// 	mainGame->btnCardDisplay[i]->setImage(mainGame->imageManager.tCover[0]);
+					{
 						mainGame->imageLoading[mainGame->btnCardDisplay[i]] = curcard->piccode > 0 ? curcard->piccode : curcard->code;
-						///kdiy////////
-					else
+						mainGame->DrawRealCard(curcard, mainGame->btnCardDisplay2[i]);
+					} else {
 						mainGame->btnCardDisplay[i]->setImage(mainGame->imageManager.tCover[0]);
+						mainGame->btnCardDisplay2[i][0]->setImage(0);
+						mainGame->btnCardDisplay2[i][1]->setImage(0);
+						mainGame->btnCardDisplay2[i][2]->setImage(0);
+						mainGame->btnCardDisplay2[i][3]->setImage(0);
+						mainGame->btnCardDisplay2[i][4]->setImage(0);
+					}
+					mainGame->btnCardDisplay2[i][0]->setRelativePosition(mainGame->Scale(30 + i * 125, 55, 30 + 120 + i * 125, 225));
+					mainGame->btnCardDisplay2[i][1]->setRelativePosition(mainGame->Scale(30 + i * 125, 55, 30 + 120 + i * 125, 225));
+					mainGame->btnCardDisplay2[i][2]->setRelativePosition(mainGame->Scale(30 + i * 125, 55, 30 + 120 + i * 125, 225));
+					mainGame->btnCardDisplay2[i][3]->setRelativePosition(mainGame->Scale(30 + i * 125, 55, 30 + 120 + i * 125, 225));
+					mainGame->btnCardDisplay2[i][4]->setRelativePosition(mainGame->Scale(30 + i * 125, 55, 30 + 120 + i * 125, 225));
+					///kdiy////////
 					mainGame->btnCardDisplay[i]->setRelativePosition(mainGame->Scale(30 + i * 125, 55, 30 + 120 + i * 125, 225));
 					std::wstring text;
 					if(curcard->location == LOCATION_OVERLAY) {

@@ -3459,6 +3459,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		/*uint8_t selecting_player = */BufferIO::Read<uint8_t>(pbuf);
 		uint32_t code = BufferIO::Read<uint32_t>(pbuf);
 		uint8_t positions = BufferIO::Read<uint8_t>(pbuf);
+		///kdiy////////
+		//extra parameter
+		CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+		info.controler = mainGame->LocalPlayer(info.controler);
+		ClientCard* pcard = mainGame->dField.GetCard(info.controler, info.location, info.sequence);
+		///kdiy////////
 		if (positions == POS_FACEUP_ATTACK || positions == POS_FACEDOWN_ATTACK || positions == POS_FACEUP_DEFENSE || positions == POS_FACEDOWN_DEFENSE) {
 			SetResponseI(positions);
 			return true;
@@ -3476,8 +3482,24 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->imageLoading[mainGame->btnPSAU] = code;
 			mainGame->btnPSAU->setRelativePosition(mainGame->Scale<irr::s32>(startpos, 45, startpos + 140, 185));
 			mainGame->btnPSAU->setVisible(true);
+			///kdiy////////
+			if(pcard) {
+				mainGame->DrawRealCard(pcard, mainGame->btnPSAU2);
+				for(int i = 0; i < 5; ++i) {
+					mainGame->btnPSAU2[i]->setRelativePosition(mainGame->Scale<irr::s32>(startpos, 45, startpos + 140, 185));
+					mainGame->btnPSAU2[i]->setVisible(true);
+				}
+			}
+			///kdiy////////
 			startpos += 145;
-		} else mainGame->btnPSAU->setVisible(false);
+		///kdiy////////
+		// } else mainGame->btnPSAU->setVisible(false);
+		} else {
+			mainGame->btnPSAU->setVisible(false);
+			for(int i = 0; i < 5; ++i)
+				mainGame->btnPSAU2[i]->setVisible(false);
+		}
+		///kdiy////////
 		if(positions & POS_FACEDOWN_ATTACK) {
 			mainGame->btnPSAD->setRelativePosition(mainGame->Scale<irr::s32>(startpos, 45, startpos + 140, 185));
 			mainGame->btnPSAD->setVisible(true);
@@ -3487,8 +3509,24 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->imageLoading[mainGame->btnPSDU] = code;
 			mainGame->btnPSDU->setRelativePosition(mainGame->Scale<irr::s32>(startpos, 45, startpos + 140, 185));
 			mainGame->btnPSDU->setVisible(true);
+			///kdiy////////
+			if(pcard) {
+				mainGame->DrawRealCard(pcard, mainGame->btnPSDU2);
+				for(int i = 0; i < 5; ++i) {
+					mainGame->btnPSDU2[i]->setRelativePosition(mainGame->Scale<irr::s32>(startpos, 45, startpos + 140, 185));
+					mainGame->btnPSDU2[i]->setVisible(true);
+				}
+			}
+			///kdiy////////
 			startpos += 145;
-		} else mainGame->btnPSDU->setVisible(false);
+		///kdiy////////
+		// } else mainGame->btnPSDU->setVisible(false);
+		} else {
+			mainGame->btnPSDU->setVisible(false);
+			for(int i = 0; i < 5; ++i)
+				mainGame->btnPSDU2[i]->setVisible(false);
+		}
+		///kdiy////////
 		if(positions & POS_FACEDOWN_DEFENSE) {
 			mainGame->btnPSDD->setRelativePosition(mainGame->Scale<irr::s32>(startpos, 45, startpos + 140, 185));
 			mainGame->btnPSDD->setVisible(true);
@@ -5023,6 +5061,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			event_string = epro::sprintf(gDataManager->GetSysString(1603), gDataManager->GetName(pcard));
 			uint32_t code2 = 0;
 			if(pcard->alias && pcard->alias > 0) code2 = pcard->alias;
+			mainGame->showpcard = pcard;
             mainGame->showcardalias = code2;
 			mainGame->showcardcode = pcard->piccode > 0 ? pcard->piccode : code;
 			////kdiy///////////
@@ -5100,6 +5139,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				PlayAnime(pcard, 0, lock);
 				uint32_t code2 = 0;
 				if(pcard->alias && pcard->alias > 0) code2 = pcard->alias;
+				mainGame->showpcard = pcard;
             	mainGame->showcardalias = code2;
 				mainGame->showcardcode = pcard->piccode > 0 ? pcard->piccode : code;
 				mainGame->showcarddif = 1;
@@ -5150,6 +5190,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->WaitFrameSignal(11, lock);
 			////kdiy///////////
 			//mainGame->showcardcode = code;
+			mainGame->showpcard = pcard;
 			mainGame->showcardcode = pcard->piccode > 0 ? pcard->piccode : code;
 			////kdiy///////////
 			mainGame->showcarddif = 0;
@@ -5197,6 +5238,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			PlayAnime(pcard, 1, lock);
 			uint32_t code2 = 0;
 			if(pcard->alias && pcard->alias > 0) code2 = pcard->alias;
+			mainGame->showpcard = pcard;
             mainGame->showcardalias = code2;
 			mainGame->showcardcode = pcard->piccode > 0 ? pcard->piccode : code;
             /////kdiy//////
@@ -5324,6 +5366,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 			///kdiy////////
 			//mainGame->showcardcode = mainGame->dField.chains[ct - 1].code;
+			mainGame->showpcard = mainGame->dField.chains[ct - 1].chain_card;
 			mainGame->showcardcode = mainGame->dField.chains[ct - 1].chain_card->piccode > 0 ? mainGame->dField.chains[ct - 1].chain_card->piccode : mainGame->dField.chains[ct - 1].code;
 			///kdiy////////
 			mainGame->showcarddif = 0;
@@ -6145,6 +6188,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 				/////kdiy//////
 				//mainGame->showcardcode = pcard->code;
+				mainGame->showpcard = pcard;
 				mainGame->showcardcode = pcard->piccode > 0 ? pcard->piccode : pcard->code;
 				/////kdiy//////
 				mainGame->showcarddif = 0;

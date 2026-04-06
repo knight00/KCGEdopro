@@ -484,6 +484,129 @@ void Game::DrawCards() {
 			DrawCard(dField.skills[p]);
 	}
 }
+///kdiy////////
+void Game::DrawRealCard(ClientCard* pcard, irr::core::rect<irr::s32> drawrect, irr::core::rect<irr::s32> cardrect) {
+	if(pcard->is_change && (pcard->position & POS_FACEUP) && (pcard->rtype & TYPE_MONSTER)) {
+		if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_FUSION))
+			driver->draw2DImage(imageManager.tFusPendType, drawrect, cardrect, 0, 0, true);
+		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_XYZ))
+			driver->draw2DImage(imageManager.tXyzPendType, drawrect, cardrect, 0, 0, true);
+		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_LINK))
+			driver->draw2DImage(imageManager.tLinkPendType, drawrect, cardrect, 0, 0, true);
+		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_SYNCHRO))
+			driver->draw2DImage(imageManager.tSynPendType, drawrect, cardrect, 0, 0, true);
+		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_RITUAL))
+			driver->draw2DImage(imageManager.tRitPendType, drawrect, cardrect, 0, 0, true);
+		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_EFFECT) && !(pcard->rtype & TYPE_TOKEN))
+			driver->draw2DImage(imageManager.tEffPendType, drawrect, cardrect, 0, 0, true);
+		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_NORMAL) && !(pcard->rtype & TYPE_TOKEN))
+			driver->draw2DImage(imageManager.tNormPendType, drawrect, cardrect, 0, 0, true);
+		else if(pcard->rtype & TYPE_FUSION)
+			driver->draw2DImage(imageManager.tFusionType, drawrect, cardrect, 0, 0, true);
+		else if(pcard->rtype & TYPE_XYZ)
+			driver->draw2DImage(imageManager.tXyzType, drawrect, cardrect, 0, 0, true);
+		else if(pcard->rtype & TYPE_LINK)
+			driver->draw2DImage(imageManager.tLinkType, drawrect, cardrect, 0, 0, true);
+		else if(pcard->rtype & TYPE_SYNCHRO)
+			driver->draw2DImage(imageManager.tSynchType, drawrect, cardrect, 0, 0, true);
+		else if(pcard->rtype & TYPE_RITUAL)
+			driver->draw2DImage(imageManager.tRitualType, drawrect, cardrect, 0, 0, true);
+		else if((pcard->rtype & TYPE_EFFECT) && !(pcard->rtype & TYPE_TOKEN))
+			driver->draw2DImage(imageManager.tEffectType, drawrect, cardrect, 0, 0, true);
+		else if((pcard->rtype & TYPE_NORMAL) && !(pcard->rtype & TYPE_TOKEN))
+			driver->draw2DImage(imageManager.tNormType, drawrect, cardrect, 0, 0, true);
+		else if(pcard->rtype & TYPE_TOKEN)
+			driver->draw2DImage(imageManager.tTokenType, drawrect, cardrect, 0, 0, true);
+
+		if(pcard->rlevel > 0 && !(pcard->rtype & (TYPE_XYZ|TYPE_LINK)))
+			driver->draw2DImage(imageManager.tLv[pcard->rlevel - 1], drawrect, cardrect, 0, 0, true);
+		else if(pcard->rlevel > 0 && (pcard->rtype & TYPE_XYZ))
+			driver->draw2DImage(imageManager.tRk[pcard->rlevel - 1], drawrect, cardrect, 0, 0, true);
+		if(pcard->rtype & TYPE_PENDULUM) {
+			driver->draw2DImage(imageManager.tLS[pcard->rlscale], drawrect, cardrect, 0, 0, true);
+			driver->draw2DImage(imageManager.tRS[pcard->rlscale], drawrect, cardrect, 0, 0, true);
+		}
+
+		if(pcard->rattribute & ATTRIBUTE_DIVINE)
+			driver->draw2DImage(imageManager.tGodAtt, drawrect, cardrect, 0, 0, true);
+		else if(pcard->rattribute & ATTRIBUTE_DARK)
+			driver->draw2DImage(imageManager.tDARKAtt, drawrect, cardrect, 0, 0, true);
+		else if(pcard->rattribute & ATTRIBUTE_LIGHT)
+			driver->draw2DImage(imageManager.tLightAtt, drawrect, cardrect, 0, 0, true);
+		else if(pcard->rattribute & ATTRIBUTE_WIND)
+			driver->draw2DImage(imageManager.tWindAtt, drawrect, cardrect, 0, 0, true);
+		else if(pcard->rattribute & ATTRIBUTE_EARTH)
+			driver->draw2DImage(imageManager.tEarthAtt, drawrect, cardrect, 0, 0, true);
+		else if(pcard->rattribute & ATTRIBUTE_FIRE)
+			driver->draw2DImage(imageManager.tFireAtt, drawrect, cardrect, 0, 0, true);
+		else if(pcard->rattribute & ATTRIBUTE_WATER)
+			driver->draw2DImage(imageManager.tWaterAtt, drawrect, cardrect, 0, 0, true);
+	}
+}
+void Game::DrawRealCard(ClientCard* pcard, Materials::QuadVertex vCardFront) {
+	auto DrawTextureRect = [this](Materials::QuadVertex vertices, irr::video::ITexture* texture) {
+		matManager.mTexture.setTexture(0, texture);
+		driver->setMaterial(matManager.mTexture);
+		driver->drawVertexPrimitiveList(vertices, 4, matManager.iRectangle, 2);
+	};
+	if(pcard->is_change && (pcard->position & POS_FACEUP) && (pcard->rtype & TYPE_MONSTER)) {
+		if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_FUSION))
+			DrawTextureRect(vCardFront, imageManager.tFusPendType);
+		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_XYZ))
+			DrawTextureRect(vCardFront, imageManager.tXyzPendType);
+		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_LINK))
+			DrawTextureRect(vCardFront, imageManager.tLinkPendType);
+		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_SYNCHRO))
+			DrawTextureRect(vCardFront, imageManager.tSynPendType);
+		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_RITUAL))
+			DrawTextureRect(vCardFront, imageManager.tRitPendType);
+		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_EFFECT) && !(pcard->rtype & TYPE_TOKEN))
+			DrawTextureRect(vCardFront, imageManager.tEffPendType);
+		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_NORMAL) && !(pcard->rtype & TYPE_TOKEN))
+			DrawTextureRect(vCardFront, imageManager.tNormPendType);
+		else if(pcard->rtype & TYPE_FUSION)
+			DrawTextureRect(vCardFront, imageManager.tFusionType);
+		else if(pcard->rtype & TYPE_XYZ)
+			DrawTextureRect(vCardFront, imageManager.tXyzType);
+		else if(pcard->rtype & TYPE_LINK)
+			DrawTextureRect(vCardFront, imageManager.tLinkType);
+		else if(pcard->rtype & TYPE_SYNCHRO)
+			DrawTextureRect(vCardFront, imageManager.tSynchType);
+		else if(pcard->rtype & TYPE_RITUAL)
+			DrawTextureRect(vCardFront, imageManager.tRitualType);
+		else if((pcard->rtype & TYPE_EFFECT) && !(pcard->rtype & TYPE_TOKEN))
+			DrawTextureRect(vCardFront, imageManager.tEffectType);
+		else if((pcard->rtype & TYPE_NORMAL) && !(pcard->rtype & TYPE_TOKEN))
+			DrawTextureRect(vCardFront, imageManager.tNormType);
+		else if(pcard->rtype & TYPE_TOKEN)
+			DrawTextureRect(vCardFront, imageManager.tTokenType);
+
+		if(pcard->rlevel > 0 && !(pcard->rtype & (TYPE_XYZ|TYPE_LINK)))
+			DrawTextureRect(vCardFront, imageManager.tLv[pcard->rlevel - 1]);
+		else if(pcard->rlevel > 0 && (pcard->rtype & TYPE_XYZ))
+			DrawTextureRect(vCardFront, imageManager.tRk[pcard->rlevel - 1]);
+		if(pcard->rtype & TYPE_PENDULUM) {
+			DrawTextureRect(vCardFront, imageManager.tLS[pcard->rlscale]);
+			DrawTextureRect(vCardFront, imageManager.tRS[pcard->rrscale]);
+		}
+
+		if(pcard->rattribute & ATTRIBUTE_DIVINE)
+			DrawTextureRect(vCardFront, imageManager.tGodAtt);
+		else if(pcard->rattribute & ATTRIBUTE_DARK)
+			DrawTextureRect(vCardFront, imageManager.tDARKAtt);
+		else if(pcard->rattribute & ATTRIBUTE_LIGHT)
+			DrawTextureRect(vCardFront, imageManager.tLightAtt);
+		else if(pcard->rattribute & ATTRIBUTE_WIND)
+			DrawTextureRect(vCardFront, imageManager.tWindAtt);
+		else if(pcard->rattribute & ATTRIBUTE_EARTH)
+			DrawTextureRect(vCardFront, imageManager.tEarthAtt);
+		else if(pcard->rattribute & ATTRIBUTE_FIRE)
+			DrawTextureRect(vCardFront, imageManager.tFireAtt);
+		else if(pcard->rattribute & ATTRIBUTE_WATER)
+			DrawTextureRect(vCardFront, imageManager.tWaterAtt);
+	}
+}
+///kdiy////////
 void Game::DrawCard(ClientCard* pcard) {
 	///kdiy////////
 	if(isAnime && !pcard->is_anime) return;
@@ -523,6 +646,11 @@ void Game::DrawCard(ClientCard* pcard) {
         driver->draw3DLineW(pos2, pos0, color, (pcard->location & LOCATION_ONFIELD) && (pcard->type & TYPE_MONSTER) && (pcard->position & POS_FACEUP) && cardcloseup ? 10 : 8);
     };
     ///kdiy////////
+	auto DrawTextureRect = [this](Materials::QuadVertex vertices, irr::video::ITexture* texture) {
+		matManager.mTexture.setTexture(0, texture);
+		driver->setMaterial(matManager.mTexture);
+		driver->drawVertexPrimitiveList(vertices, 4, matManager.iRectangle, 2);
+	};
 	if (((pcard->location == LOCATION_HAND && pcard->code) || ((pcard->location & 0xc) && (pcard->position & POS_FACEUP))) && (pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
 	matManager.mCard.AmbientColor = irr::video::SColor(255, 128, 128, 180);
 	else
@@ -540,6 +668,7 @@ void Game::DrawCard(ClientCard* pcard) {
 		///kdiy////////
 		//driver->drawVertexPrimitiveList(matManager.vCardFront, 4, matManager.iRectangle, 2);
 		driver->drawVertexPrimitiveList((pcard->location & LOCATION_ONFIELD) ? matManager.vCardFront2 : matManager.vCardFront, 4, matManager.iRectangle, 2);
+		DrawRealCard(pcard, (pcard->location & LOCATION_ONFIELD) ? matManager.vCardFront2 : matManager.vCardFront);
 		///kdiy////////
 	}
 	if (m22 < 0.99 || pcard->is_moving) {
@@ -613,6 +742,8 @@ void Game::DrawCard(ClientCard* pcard) {
 			drawLine((pcard->location & LOCATION_ONFIELD) ? matManager.vCardOutliner2[0].Pos : matManager.vCardOutliner[0].Pos, (pcard->location & LOCATION_ONFIELD) ? matManager.vCardOutliner2[1].Pos : matManager.vCardOutliner[1].Pos, (pcard->location & LOCATION_ONFIELD) ? matManager.vCardOutliner2[2].Pos : matManager.vCardOutliner[2].Pos, (pcard->location & LOCATION_ONFIELD) ? matManager.vCardOutliner2[3].Pos : matManager.vCardOutliner[3].Pos, 0xffffff00);
 		}
 	}
+	if(((pcard->location == LOCATION_MZONE && !pcard->is_sanct) || (pcard->location == LOCATION_SZONE && pcard->is_orica)) && (pcard->location & LOCATION_ONFIELD) && (pcard->position & POS_FACEUP) && (pcard->type & TYPE_LINK) && (pcard->type & TYPE_MONSTER))
+		DrawTextureRect(matManager.vLinkZone, imageManager.tLinkZone);
 	if((pcard->location & LOCATION_ONFIELD) && (pcard->position & POS_FACEUP) && cardcloseup) {
 		if ( ((pcard->location == LOCATION_MZONE && !pcard->is_sanct) || (pcard->location == LOCATION_SZONE && pcard->is_orica)) || (pcard->cmdFlag & COMMAND_ATTACK) || pcard->is_attack || pcard->is_attacked) {
 			if ((pcard->status & (STATUS_DISABLED | STATUS_FORBIDDEN)))
@@ -647,9 +778,9 @@ void Game::DrawCard(ClientCard* pcard) {
 			driver->setMaterial(matManager.mTexture);
 			irr::core::matrix4 atk;
 			if (!(pcard->cmdFlag & COMMAND_ATTACK))
-				atk.setTranslation(pcard->curPos + irr::core::vector3df(0, pcard->controler == 0 ? 0 : 0.2f, 0.2f));
+				atk.setTranslation(pcard->curPos + irr::core::vector3df(0, pcard->controler == 0 ? 0 : 0.5f, 0.2f));
 			else
-				atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? -0.4f : 0.4f) * (atkdy / 4.0f + 0.35f), 0.05f));
+				atk.setTranslation(pcard->curPos + irr::core::vector3df(0, (pcard->controler == 0 ? -0.4f : 0.7f) * (atkdy / 4.0f + 0.35f), 0.05f));
 			driver->setTransform(irr::video::ETS_WORLD, atk);
 			if (pcard->attack >= 10000 || pcard->defense >= 10000)
 				driver->drawVertexPrimitiveList(matManager.vAttack4, 4, matManager.iRectangle, 2);
@@ -662,16 +793,10 @@ void Game::DrawCard(ClientCard* pcard) {
 		}
 	}
 	driver->setTransform(irr::video::ETS_WORLD, pcard->mTransform);
-	if (pcard->is_attack_disabled) {
-		matManager.mTexture.setTexture(0, imageManager.tShield);
-		driver->setMaterial(matManager.mTexture);
-		driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
-	}
-	if (pcard->is_damage) {
-		matManager.mTexture.setTexture(0, imageManager.tCrack);
-		driver->setMaterial(matManager.mTexture);
-		driver->drawVertexPrimitiveList(matManager.vAttack3, 4, matManager.iRectangle, 2);
-	}
+	if (pcard->is_attack_disabled)
+		DrawTextureRect(matManager.vSymbol, imageManager.tShield);
+	if (pcard->is_damage)
+		DrawTextureRect(matManager.vAttack3, imageManager.tCrack);
 	///kdiy////////
 	if (pcard->is_selectable && (pcard->location & 0xe)) {
 		irr::video::SColor outline_color = skin::DUELFIELD_SELECTABLE_CARD_OUTLINE_VAL;
@@ -847,21 +972,200 @@ void Game::DrawCard(ClientCard* pcard) {
 		driver->drawVertexPrimitiveList(matManager.vSymbol, 4, matManager.iRectangle, 2);
 	}
     ////kdiy/////////
+	driver->setTransform(irr::video::ETS_WORLD, pcard->mTransform);
+	auto CheckMutual = [&](ClientCard* pcard, int mark)->bool {
+		if(pcard && pcard->type & TYPE_LINK && pcard->link_marker & mark)
+			return true;
+		return false;
+	};
+	const int mark = pcard->link_marker;
+	ClientCard* pcard2;
+	const uint32_t three_columns = dInfo.HasFieldFlag(DUEL_3_COLUMNS_FIELD);
+	if((pcard->type & TYPE_LINK) && (pcard->location & LOCATION_ONFIELD)) {
+		if(pcard->location == LOCATION_SZONE) {
+			if(pcard->sequence < 5) {
+				if(mark & LINK_MARKER_TOP_LEFT && pcard->sequence > (0 + three_columns)) {
+					pcard2 = dField.mzone[pcard->controler][pcard->sequence - 1];
+					if(CheckMutual(pcard2, LINK_MARKER_BOTTOM_RIGHT))
+						matManager.mTexture.AmbientColor.set(255, 0, 255*atkdy4, 0);
+					else
+						matManager.mTexture.AmbientColor.set(255, 255*atkdy4, 255*atkdy4, 255*atkdy4);
+					DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[1]);
+				}
+				if(mark & LINK_MARKER_TOP) {
+					pcard2 = dField.mzone[pcard->controler][pcard->sequence];
+					if(CheckMutual(pcard2, LINK_MARKER_BOTTOM))
+						matManager.mTexture.AmbientColor.set(255, 0, 255*atkdy4, 0);
+					else
+						matManager.mTexture.AmbientColor.set(255, 255*atkdy4, 255*atkdy4, 255*atkdy4);
+					DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[0]);
+				}
+				if(mark & LINK_MARKER_TOP_RIGHT && pcard->sequence < (4 - three_columns)) {
+					pcard2 = dField.mzone[pcard->controler][pcard->sequence + 1];
+					if(CheckMutual(pcard2, LINK_MARKER_BOTTOM_LEFT))
+						matManager.mTexture.AmbientColor.set(255, 0, 255*atkdy4, 0);
+					else
+						matManager.mTexture.AmbientColor.set(255, 255*atkdy4, 255*atkdy4, 255*atkdy4);
+					DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[2]);
+				}
+				if(mark & LINK_MARKER_LEFT && pcard->sequence >(0 + three_columns)) {
+					pcard2 = dField.szone[pcard->controler][pcard->sequence - 1];
+					if(CheckMutual(pcard2, LINK_MARKER_RIGHT))
+						matManager.mTexture.AmbientColor.set(255, 0, 255*atkdy4, 0);
+					else
+						matManager.mTexture.AmbientColor.set(255, 255*atkdy4, 255*atkdy4, 255*atkdy4);
+					DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[3]);
+				}
+				if(mark & LINK_MARKER_RIGHT && pcard->sequence < (4 - three_columns)) {
+					pcard2 = dField.szone[pcard->controler][pcard->sequence + 1];
+					if(CheckMutual(pcard2, LINK_MARKER_LEFT))
+						matManager.mTexture.AmbientColor.set(255, 0, 255*atkdy4, 0);
+					else
+						matManager.mTexture.AmbientColor.set(255, 255*atkdy4, 255*atkdy4, 255*atkdy4);
+					DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[4]);
+				}
+			}
+		} else {
+			if (pcard->sequence < 5) {
+				if (mark & LINK_MARKER_LEFT && pcard->sequence > (0 + three_columns)) {
+					pcard2 = dField.mzone[pcard->controler][pcard->sequence - 1];
+					if(CheckMutual(pcard2, LINK_MARKER_RIGHT))
+						matManager.mTexture.AmbientColor.set(255, 0, 255*atkdy4, 0);
+					else
+						matManager.mTexture.AmbientColor.set(255, 255*atkdy4, 255*atkdy4, 255*atkdy4);
+					DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[3]);
+				}
+				if (mark & LINK_MARKER_RIGHT && pcard->sequence < (4 - three_columns)) {
+					pcard2 = dField.mzone[pcard->controler][pcard->sequence + 1];
+					if(CheckMutual(pcard2, LINK_MARKER_LEFT))
+						matManager.mTexture.AmbientColor.set(255, 0, 255*atkdy4, 0);
+					else
+						matManager.mTexture.AmbientColor.set(255, 255*atkdy4, 255*atkdy4, 255*atkdy4);
+					DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[4]);
+				}
+				if(mark & LINK_MARKER_BOTTOM_LEFT && pcard->sequence > (0 + three_columns)) {
+					pcard2 = dField.szone[pcard->controler][pcard->sequence - 1];
+					if(CheckMutual(pcard2, LINK_MARKER_TOP_RIGHT))
+						matManager.mTexture.AmbientColor.set(255, 0, 255*atkdy4, 0);
+					else
+						matManager.mTexture.AmbientColor.set(255, 255*atkdy4, 255*atkdy4, 255*atkdy4);
+					DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[7]);
+				}
+				if(mark & LINK_MARKER_BOTTOM_RIGHT && pcard->sequence < (4 - three_columns)) {
+					pcard2 = dField.szone[pcard->controler][pcard->sequence + 1];
+					if(CheckMutual(pcard2, LINK_MARKER_TOP_LEFT))
+						matManager.mTexture.AmbientColor.set(255, 0, 255*atkdy4, 0);
+					else
+						matManager.mTexture.AmbientColor.set(255, 255*atkdy4, 255*atkdy4, 255*atkdy4);
+					DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[6]);
+				}
+				if(mark & LINK_MARKER_BOTTOM) {
+					pcard2 = dField.szone[pcard->controler][pcard->sequence];
+					if(CheckMutual(pcard2, LINK_MARKER_TOP))
+						matManager.mTexture.AmbientColor.set(255, 0, 255*atkdy4, 0);
+					else
+						matManager.mTexture.AmbientColor.set(255, 255*atkdy4, 255*atkdy4, 255*atkdy4);
+					DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[5]);
+				}
+				if(dInfo.HasFieldFlag(DUEL_EMZONE)) {
+					if ((mark & LINK_MARKER_TOP_LEFT && pcard->sequence == 2)
+						|| (mark & LINK_MARKER_TOP && pcard->sequence == 1)
+						|| (mark & LINK_MARKER_TOP_RIGHT && pcard->sequence == 0)) {
+						int other_mark = (pcard->sequence == 2) ? LINK_MARKER_BOTTOM_RIGHT : (pcard->sequence == 1) ? LINK_MARKER_BOTTOM : LINK_MARKER_BOTTOM_LEFT;
+						pcard2 = dField.mzone[pcard->controler][5];
+						if (!pcard2) {
+							pcard2 = dField.mzone[1 - pcard->controler][6];
+							other_mark = (pcard->sequence == 2) ? LINK_MARKER_TOP_LEFT : (pcard->sequence == 1) ? LINK_MARKER_TOP : LINK_MARKER_TOP_RIGHT;
+						}
+						if(CheckMutual(pcard2, other_mark))
+							matManager.mTexture.AmbientColor.set(255, 0, 255*atkdy4, 0);
+						else
+							matManager.mTexture.AmbientColor.set(255, 255*atkdy4, 255*atkdy4, 255*atkdy4);
+						if (mark & LINK_MARKER_TOP_LEFT) DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[1]);
+						if (mark & LINK_MARKER_TOP) DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[0]);
+						if (mark & LINK_MARKER_TOP_RIGHT) DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[2]);
+					}
+					if ((mark & LINK_MARKER_TOP_LEFT && pcard->sequence == 4)
+						|| (mark & LINK_MARKER_TOP && pcard->sequence == 3)
+						|| (mark & LINK_MARKER_TOP_RIGHT && pcard->sequence == 2)) {
+						int other_mark = (pcard->sequence == 4) ? LINK_MARKER_BOTTOM_RIGHT : (pcard->sequence == 3) ? LINK_MARKER_BOTTOM : LINK_MARKER_BOTTOM_LEFT;
+						pcard2 = dField.mzone[pcard->controler][6];
+						if (!pcard2) {
+							pcard2 = dField.mzone[1 - pcard->controler][5];
+							other_mark = (pcard->sequence == 4) ? LINK_MARKER_TOP_LEFT : (pcard->sequence == 3) ? LINK_MARKER_TOP : LINK_MARKER_TOP_RIGHT;
+						}
+						if(CheckMutual(pcard2, other_mark))
+							matManager.mTexture.AmbientColor.set(255, 0, 255*atkdy4, 0);
+						else
+							matManager.mTexture.AmbientColor.set(255, 255*atkdy4, 255*atkdy4, 255*atkdy4);
+						if (mark & LINK_MARKER_TOP_LEFT) DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[1]);
+						if (mark & LINK_MARKER_TOP) DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[0]);
+						if (mark & LINK_MARKER_TOP_RIGHT) DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[2]);
+					}
+				}
+			} else {
+				int swap = (pcard->sequence == 5) ? 0 : 2;
+				if (mark & LINK_MARKER_BOTTOM_LEFT && !(three_columns && swap == 0)) {
+					pcard2 = dField.mzone[pcard->controler][0 + swap];
+					if(CheckMutual(pcard2, LINK_MARKER_TOP_RIGHT))
+						matManager.mTexture.AmbientColor.set(255, 0, 255*atkdy4, 0);
+					else
+						matManager.mTexture.AmbientColor.set(255, 255*atkdy4, 255*atkdy4, 255*atkdy4);
+					DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[7]);
+				}
+				if (mark & LINK_MARKER_BOTTOM) {
+					pcard2 = dField.mzone[pcard->controler][1 + swap];
+					if(CheckMutual(pcard2, LINK_MARKER_TOP))
+						matManager.mTexture.AmbientColor.set(255, 0, 255*atkdy4, 0);
+					else
+						matManager.mTexture.AmbientColor.set(255, 255*atkdy4, 255*atkdy4, 255*atkdy4);
+					DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[5]);
+				}
+				if (mark & LINK_MARKER_BOTTOM_RIGHT && !(three_columns && swap == 2)) {
+					pcard2 = dField.mzone[pcard->controler][2 + swap];
+					if(CheckMutual(pcard2, LINK_MARKER_TOP_LEFT))
+						matManager.mTexture.AmbientColor.set(255, 0, 255*atkdy4, 0);
+					else
+						matManager.mTexture.AmbientColor.set(255, 255*atkdy4, 255*atkdy4, 255*atkdy4);
+					DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[6]);
+				}
+				if (mark & LINK_MARKER_TOP_LEFT && !(three_columns && swap == 0)) {
+					pcard2 = dField.mzone[1 - pcard->controler][4 - swap];
+					if(CheckMutual(pcard2, LINK_MARKER_TOP_LEFT))
+						matManager.mTexture.AmbientColor.set(255, 0, 255*atkdy4, 0);
+					else
+						matManager.mTexture.AmbientColor.set(255, 255*atkdy4, 255*atkdy4, 255*atkdy4);
+					DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[1]);
+				}
+				if (mark & LINK_MARKER_TOP) {
+					pcard2 = dField.mzone[1 - pcard->controler][3 - swap];
+					if(CheckMutual(pcard2, LINK_MARKER_TOP))
+						matManager.mTexture.AmbientColor.set(255, 0, 255*atkdy4, 0);
+					else
+						matManager.mTexture.AmbientColor.set(255, 255*atkdy4, 255*atkdy4, 255*atkdy4);
+					DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[0]);
+				}
+				if (mark & LINK_MARKER_TOP_RIGHT && !(three_columns && swap == 2)) {
+					pcard2 = dField.mzone[1 - pcard->controler][2 - swap];
+					if(CheckMutual(pcard2, LINK_MARKER_TOP_RIGHT))
+						matManager.mTexture.AmbientColor.set(255, 0, 255*atkdy4, 0);
+					else
+						matManager.mTexture.AmbientColor.set(255, 255*atkdy4, 255*atkdy4, 255*atkdy4);
+					DrawTextureRect(matManager.vLinkZone2, imageManager.tLinkMarker[2]);
+				}
+			}
+		}
+	}
+	matManager.mTexture.AmbientColor = 0xffffffff;
 	if((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->location & LOCATION_SZONE) && (pcard->sequence == dInfo.GetPzoneIndex(0)) && !pcard->is_orica && pcard->is_pzone && !pcard->equipTarget) {
 		int scale = pcard->lscale;
-		if(scale >= 0 && scale <= 13 && imageManager.tLScale[scale]) {
-			matManager.mTexture.setTexture(0, imageManager.tLScale[scale]);
-			driver->setMaterial(matManager.mTexture);
-			driver->drawVertexPrimitiveList(matManager.vPScale, 4, matManager.iRectangle, 2);
-		}
+		if(scale >= 0 && scale <= 13 && imageManager.tLScale[scale])
+			DrawTextureRect(matManager.vPScale, imageManager.tLScale[scale]);
 	}
 	if((pcard->position & POS_FACEUP) && (pcard->type & TYPE_PENDULUM) && (pcard->location & LOCATION_SZONE) && (pcard->sequence == dInfo.GetPzoneIndex(1)) && !pcard->is_orica && pcard->is_pzone && !pcard->equipTarget) {
 		int scale2 = pcard->rscale;
-		if(scale2 >= 0 && scale2 <= 13 && imageManager.tRScale[scale2]) {
-			matManager.mTexture.setTexture(0, imageManager.tRScale[scale2]);
-			driver->setMaterial(matManager.mTexture);
-			driver->drawVertexPrimitiveList(matManager.vPScale, 4, matManager.iRectangle, 2);
-		}
+		if(scale2 >= 0 && scale2 <= 13 && imageManager.tRScale[scale2])
+			DrawTextureRect(matManager.vPScale, imageManager.tRScale[scale2]);
 	}
 	////kdiy/////////
 }
@@ -1375,15 +1679,15 @@ void Game::DrawStatus(ClientCard* pcard, bool attackonly) {
 		coords = getcoords({ (pcard->curPos.X + 0.45f), (pcard->curPos.Y - 0.5f), (pcard->curPos.Z + 0.25f) });
 		x3 = coords.X;
 	} else {
-		auto coords = getcoords({ pcard->curPos.X + 0.1f, (pcard->curPos.Y - 0.4f), (pcard->curPos.Z + 0.25f) });
+		auto coords = getcoords({ pcard->curPos.X + 0.1f, (pcard->curPos.Y - 0.2f), (pcard->curPos.Z + 0.25f) });
 		x1 = coords.X;
 		y1 = coords.Y;
-		coords = getcoords({ pcard->curPos.X, (pcard->curPos.Y - 0.4f), (pcard->curPos.Z + 0.25f) });
+		coords = getcoords({ pcard->curPos.X, (pcard->curPos.Y - 0.2f), (pcard->curPos.Z + 0.25f) });
 		y3 = coords.Y;
 		coords = getcoords({ (pcard->curPos.X - 0.3f), (0.59f + pcard->curPos.Y), (pcard->curPos.Z + 0.25f) });
 		x2 = coords.X;
 		y2 = coords.Y;
-		coords = getcoords({ (pcard->curPos.X + 0.45f), (0.59f + pcard->curPos.Y), (pcard->curPos.Z + 0.25f) });
+		coords = getcoords({ (pcard->curPos.X + 0.45f), (0.8f + pcard->curPos.Y), (pcard->curPos.Z + 0.25f) });
 		x3 = coords.X;
 	}
 	////kdiy//////////
@@ -1685,14 +1989,46 @@ void Game::DrawGUI() {
 							btnPSAD->setDrawImage(true);
 							btnPSDU->setDrawImage(true);
 							btnPSDD->setDrawImage(true);
+							///kdiy////////
+							btnPSAU2[0]->setDrawImage(true);
+							btnPSAU2[1]->setDrawImage(true);
+							btnPSAU2[2]->setDrawImage(true);
+							btnPSAU2[3]->setDrawImage(true);
+							btnPSAU2[4]->setDrawImage(true);
+							btnPSDU2[0]->setDrawImage(true);
+							btnPSDU2[1]->setDrawImage(true);
+							btnPSDU2[2]->setDrawImage(true);
+							btnPSDU2[3]->setDrawImage(true);
+							btnPSDU2[4]->setDrawImage(true);
+							///kdiy////////
 						}
 						if(fu.guiFading == wCardSelect) {
 							for(int i = 0; i < 5; ++i)
+							///kdiy////////
+							//btnCardSelect[i]->setDrawImage(true);
+							{
 								btnCardSelect[i]->setDrawImage(true);
+								btnCardSelect2[i][0]->setDrawImage(true);
+								btnCardSelect2[i][1]->setDrawImage(true);
+								btnCardSelect2[i][2]->setDrawImage(true);
+								btnCardSelect2[i][3]->setDrawImage(true);
+								btnCardSelect2[i][4]->setDrawImage(true);
+							}
+							///kdiy////////
 						}
 						if(fu.guiFading == wCardDisplay) {
 							for(int i = 0; i < 5; ++i)
+							///kdiy////////
+							//btnCardDisplay[i]->setDrawImage(true);
+							{
 								btnCardDisplay[i]->setDrawImage(true);
+								btnCardDisplay2[i][0]->setDrawImage(true);
+								btnCardDisplay2[i][1]->setDrawImage(true);
+								btnCardDisplay2[i][2]->setDrawImage(true);
+								btnCardDisplay2[i][3]->setDrawImage(true);
+								btnCardDisplay2[i][4]->setDrawImage(true);
+							}
+							///kdiy////////
 						}
 					} else
 						fu.guiFading->setRelativePosition(irr::core::recti(fu.fadingUL, fu.fadingLR));
@@ -1717,14 +2053,46 @@ void Game::DrawGUI() {
 							btnPSAD->setDrawImage(true);
 							btnPSDU->setDrawImage(true);
 							btnPSDD->setDrawImage(true);
+							///kdiy////////
+							btnPSAU2[0]->setDrawImage(true);
+							btnPSAU2[1]->setDrawImage(true);
+							btnPSAU2[2]->setDrawImage(true);
+							btnPSAU2[3]->setDrawImage(true);
+							btnPSAU2[4]->setDrawImage(true);
+							btnPSDU2[0]->setDrawImage(true);
+							btnPSDU2[1]->setDrawImage(true);
+							btnPSDU2[2]->setDrawImage(true);
+							btnPSDU2[3]->setDrawImage(true);
+							btnPSDU2[4]->setDrawImage(true);
+							///kdiy////////
 						}
 						if(fu.guiFading == wCardSelect) {
 							for(int i = 0; i < 5; ++i)
+							///kdiy////////
+							//btnCardSelect[i]->setDrawImage(true);
+							{
 								btnCardSelect[i]->setDrawImage(true);
+								btnCardSelect2[i][0]->setDrawImage(true);
+								btnCardSelect2[i][1]->setDrawImage(true);
+								btnCardSelect2[i][2]->setDrawImage(true);
+								btnCardSelect2[i][3]->setDrawImage(true);
+								btnCardSelect2[i][4]->setDrawImage(true);
+							}
+							///kdiy////////
 						}
 						if(fu.guiFading == wCardDisplay) {
 							for(int i = 0; i < 5; ++i)
+							///kdiy////////
+							//btnCardDisplay[i]->setDrawImage(true);
+							{
 								btnCardDisplay[i]->setDrawImage(true);
+								btnCardDisplay2[i][0]->setDrawImage(true);
+								btnCardDisplay2[i][1]->setDrawImage(true);
+								btnCardDisplay2[i][2]->setDrawImage(true);
+								btnCardDisplay2[i][3]->setDrawImage(true);
+								btnCardDisplay2[i][4]->setDrawImage(true);
+							}
+							///kdiy////////
 						}
 					} else
 						fu.guiFading->setRelativePosition(irr::core::recti(fu.fadingUL, fu.fadingLR));
@@ -1774,6 +2142,7 @@ void Game::DrawSpec() {
 	};
 	irr::video::ITexture* cardcloseup; irr::video::SColor cardcloseupcolor;
 	std::tie(cardcloseup, cardcloseupcolor) = imageManager.GetTextureCloseup(showcardcode, showcardalias, true);
+	auto realcardrect = irr::core::recti(0, 0, 484, 707);
     //////kdiy//////////
 	if(showcard) {
 		switch(showcard) {
@@ -1790,10 +2159,13 @@ void Game::DrawSpec() {
 				atk.setRotationRadians(irr::core::vector3df(-irr::core::PI/4, irr::core::PI/8, -irr::core::PI/8));
 				driver->setTransform(irr::video::ETS_WORLD, atk);
 				driver->drawVertexPrimitiveList(matManager.vCloseup, 4, matManager.iRectangle, 2);
+				DrawRealCard(showpcard, matManager.vCloseup);
 			    auto cardrect2 = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cardcloseup->getOriginalSize()));
 				driver->draw2DImage(cardcloseup, drawrect3, cardrect2, 0, 0, true);
-			} else
+			} else {
 			    driver->draw2DImage(cardtxt, hdexist ? drawrect2_hd : drawrect2, cardrect);
+				DrawRealCard(showpcard, hdexist ? drawrect2_hd : drawrect2, realcardrect);
+			}
             //////kdiy//////////
 			driver->draw2DImage(imageManager.tMask, ResizeWin(574, 150, 574 + (showcarddif > CARD_IMG_WIDTH ? CARD_IMG_WIDTH : showcarddif), 404),
 								Scale<irr::s32>(CARD_IMG_HEIGHT - showcarddif, 0, CARD_IMG_HEIGHT - (showcarddif > CARD_IMG_WIDTH ? showcarddif - CARD_IMG_WIDTH : 0), CARD_IMG_HEIGHT), 0, 0, true);
@@ -1817,10 +2189,13 @@ void Game::DrawSpec() {
 				atk.setRotationRadians(irr::core::vector3df(-irr::core::PI/4, irr::core::PI/8, -irr::core::PI/8));
 				driver->setTransform(irr::video::ETS_WORLD, atk);
 				driver->drawVertexPrimitiveList(matManager.vCloseup, 4, matManager.iRectangle, 2);
+				DrawRealCard(showpcard, matManager.vCloseup);
 				auto cardrect2 = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cardcloseup->getOriginalSize()));
 				driver->draw2DImage(cardcloseup, drawrect3, cardrect2, 0, 0, true);
-			} else
+			} else {
 			    driver->draw2DImage(cardtxt, hdexist ? drawrect2_hd : drawrect2, cardrect);
+				DrawRealCard(showpcard, hdexist ? drawrect2_hd : drawrect2, realcardrect);
+			}
             //////kdiy//////////
 			driver->draw2DImage(imageManager.tMask, ResizeWin(574 + showcarddif, 150, 751, 404), Scale(0, 0, CARD_IMG_WIDTH - showcarddif, 254), 0, 0, true);
 			showcarddif += (900.0f / 1000.0f) * (float)delta_time;
@@ -1835,6 +2210,7 @@ void Game::DrawSpec() {
 			//////kdiy//////////
 			//driver->draw2DImage(cardtxt, drawrect2, cardrect);
 			driver->draw2DImage(cardtxt, hdexist ? drawrect2_hd : drawrect2, cardrect);
+			DrawRealCard(showpcard, drawrect2_hd, cardrect);
 			//////kdiy//////////
 			driver->draw2DImage(imageManager.tNegated, ResizeWin(536 + showcarddif, 141 + showcarddif, 793 - showcarddif, 397 - showcarddif), Scale(0, 0, 128, 128), 0, 0, true);
 			if(showcarddif < 64)
@@ -1851,6 +2227,7 @@ void Game::DrawSpec() {
 			//////kdiy//////////
 			//driver->draw2DImage(cardtxt, drawrect2, cardrect, 0, matManager.c2d, true);
 			driver->draw2DImage(cardtxt, hdexist ? drawrect2_hd : drawrect2, cardrect, 0, matManager.c2d, true);
+			DrawRealCard(showpcard, hdexist ? drawrect2_hd : drawrect2, realcardrect);
 			//////kdiy//////////
 			if(showcarddif < 255)
 				showcarddif += (1020.0f / 1000.0f) * (float)delta_time;
@@ -1866,6 +2243,7 @@ void Game::DrawSpec() {
 			auto rect = ResizeWin(662 - showcarddif * (CARD_IMG_WIDTH_F / CARD_IMG_HEIGHT_F), 277 - showcarddif, 662 + showcarddif * (CARD_IMG_WIDTH_F / CARD_IMG_HEIGHT_F), 277 + showcarddif);
 			driver->draw2DImage(cardtxt, rect, cardrect, 0, matManager.c2d, true);
             //////kdiy//////////
+			DrawRealCard(showpcard, rect, realcardrect);
             if(chklast) {
 				irr::video::ITexture* cardcloseup; irr::video::SColor cardcloseupcolor;
 				std::tie(cardcloseup, cardcloseupcolor) = imageManager.GetTextureCloseup(showcardcode, showcardalias, true);
@@ -1886,6 +2264,7 @@ void Game::DrawSpec() {
 			//////kdiy//////////
 			//driver->draw2DImage(cardtxt, drawrect2, cardrect);
 			driver->draw2DImage(cardtxt, hdexist ? drawrect2_hd : drawrect2, cardrect);
+			DrawRealCard(showpcard, drawrect2_hd, realcardrect);
 			//////kdiy//////////
 			driver->draw2DImage(imageManager.tNumber, ResizeWin(536 + showcarddif, 141 + showcarddif, 793 - showcarddif, 397 - showcarddif),
 								Scale(((int)std::round(showcardp) % 5) * 64, ((int)std::round(showcardp) / 5) * 64, ((int)std::round(showcardp) % 5 + 1) * 64, ((int)std::round(showcardp) / 5 + 1) * 64), 0, 0, true);
@@ -2104,14 +2483,46 @@ void Game::ShowElement(irr::gui::IGUIElement * win, int autoframe) {
 		btnPSAD->setDrawImage(false);
 		btnPSDU->setDrawImage(false);
 		btnPSDD->setDrawImage(false);
+		///kdiy////////
+		btnPSAU2[0]->setDrawImage(false);
+		btnPSAU2[1]->setDrawImage(false);
+		btnPSAU2[2]->setDrawImage(false);
+		btnPSAU2[3]->setDrawImage(false);
+		btnPSAU2[4]->setDrawImage(false);
+		btnPSDU2[0]->setDrawImage(false);
+		btnPSDU2[1]->setDrawImage(false);
+		btnPSDU2[2]->setDrawImage(false);
+		btnPSDU2[3]->setDrawImage(false);
+		btnPSDU2[4]->setDrawImage(false);
+		///kdiy////////
 	}
 	if(win == wCardSelect) {
 		for(int i = 0; i < 5; ++i)
+		///kdiy////////
+		//btnCardSelect[i]->setDrawImage(false);
+		{
 			btnCardSelect[i]->setDrawImage(false);
+			btnCardSelect2[i][0]->setDrawImage(false);
+			btnCardSelect2[i][1]->setDrawImage(false);
+			btnCardSelect2[i][2]->setDrawImage(false);
+			btnCardSelect2[i][3]->setDrawImage(false);
+			btnCardSelect2[i][4]->setDrawImage(false);
+		}
+		///kdiy////////
 	}
 	if(win == wCardDisplay) {
 		for(int i = 0; i < 5; ++i)
+		///kdiy////////
+		//btnCardDisplay[i]->setDrawImage(false);
+		{
 			btnCardDisplay[i]->setDrawImage(false);
+			btnCardDisplay2[i][0]->setDrawImage(false);
+			btnCardDisplay2[i][1]->setDrawImage(false);
+			btnCardDisplay2[i][2]->setDrawImage(false);
+			btnCardDisplay2[i][3]->setDrawImage(false);
+			btnCardDisplay2[i][4]->setDrawImage(false);
+		}
+		///kdiy////////
 	}
 	win->setRelativePosition(Scale(center.X, center.Y, 0, 0));
 	fadingList.push_back(fu);
@@ -2141,15 +2552,47 @@ void Game::HideElement(irr::gui::IGUIElement * win, bool set_action) {
 		btnPSAD->setDrawImage(false);
 		btnPSDU->setDrawImage(false);
 		btnPSDD->setDrawImage(false);
+		///kdiy////////
+		btnPSAU2[0]->setDrawImage(false);
+		btnPSAU2[1]->setDrawImage(false);
+		btnPSAU2[2]->setDrawImage(false);
+		btnPSAU2[3]->setDrawImage(false);
+		btnPSAU2[4]->setDrawImage(false);
+		btnPSDU2[0]->setDrawImage(false);
+		btnPSDU2[1]->setDrawImage(false);
+		btnPSDU2[2]->setDrawImage(false);
+		btnPSDU2[3]->setDrawImage(false);
+		btnPSDU2[4]->setDrawImage(false);
+		///kdiy////////
 	}
 	if(win == wCardSelect) {
 		for(int i = 0; i < 5; ++i)
+		///kdiy////////
+		//btnCardSelect[i]->setDrawImage(false);
+		{
 			btnCardSelect[i]->setDrawImage(false);
+			btnCardSelect2[i][0]->setDrawImage(false);
+			btnCardSelect2[i][1]->setDrawImage(false);
+			btnCardSelect2[i][2]->setDrawImage(false);
+			btnCardSelect2[i][3]->setDrawImage(false);
+			btnCardSelect2[i][4]->setDrawImage(false);
+		}
+		///kdiy////////
 		dField.conti_selecting = false;
 	}
 	if(win == wCardDisplay) {
 		for(int i = 0; i < 5; ++i)
+		///kdiy////////
+		//btnCardDisplay[i]->setDrawImage(false);
+		{
 			btnCardDisplay[i]->setDrawImage(false);
+			btnCardDisplay2[i][0]->setDrawImage(false);
+			btnCardDisplay2[i][1]->setDrawImage(false);
+			btnCardDisplay2[i][2]->setDrawImage(false);
+			btnCardDisplay2[i][3]->setDrawImage(false);
+			btnCardDisplay2[i][4]->setDrawImage(false);
+		}
+		///kdiy////////
 	}
 	fadingList.push_back(fu);
 }

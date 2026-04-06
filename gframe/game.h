@@ -211,6 +211,7 @@ struct info_panel_elements {
 	/////kdiy/////
 	//irr::gui::IGUIImage* imgCard;
 	irr::gui::IGUIButton* imgCard;
+	irr::gui::CGUIImageButton* imgCard2[5];
 	/////kdiy/////
 	//infos
 	int infosExpanded; //0: not expanded, 1: expanded and to be shown as expanded, 2: expanded but not to be shown as expanded
@@ -627,6 +628,12 @@ struct game_field_elements {
 	//card display
 	irr::gui::IGUIWindow* wCardDisplay;
 	irr::gui::CGUIImageButton* btnCardDisplay[5];
+	/////kdiy///////
+	irr::gui::CGUIImageButton* btnPSAU2[5];
+	irr::gui::CGUIImageButton* btnPSDU2[5];
+	irr::gui::CGUIImageButton* btnCardSelect2[5][5];
+	irr::gui::CGUIImageButton* btnCardDisplay2[5][5];
+	/////kdiy///////
 	irr::gui::IGUIStaticText* stDisplayPos[5];
 	irr::gui::IGUIScrollBar* scrDisplayList;
 	irr::gui::IGUIButton* btnDisplayOK;
@@ -781,6 +788,9 @@ public:
 	//void ShowCardInfo(uint32_t code, bool resize = false, imgType type = imgType::ART);
     void ShowCardInfo(uint32_t code, bool resize = false, imgType type = imgType::ART, ClientCard* pcard = nullptr);
     void ShowPlayerInfo(uint8_t player);
+	void Game::DrawRealCard(ClientCard* pcard, irr::core::rect<irr::s32> drawrect, irr::core::rect<irr::s32> cardrect);
+    void DrawRealCard(ClientCard* pcard, Materials::QuadVertex vCardFront);
+    void DrawRealCard(ClientCard* pcard, irr::gui::CGUIImageButton* imgCard2[5]);
 	///kdiy//////////
 	void RefreshCardInfoTextPositions();
 	void ClearCardInfo(int player = 0);
@@ -900,11 +910,13 @@ public:
 	irr::core::vector3df atk_t;
 	float atkdy;
     ////kdiy//////
+	ClientCard* showpcard;
 	int showtype;
 	float atk2dy;
 	float atkdy2;
 	float atk2dy2;
 	float atkdy3;
+	float atkdy4;
 	double angle = 0.0f;
 	uint32_t showingcardalias = 0;
     ////kdiy//////
