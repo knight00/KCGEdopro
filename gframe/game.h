@@ -788,7 +788,7 @@ public:
 	//void ShowCardInfo(uint32_t code, bool resize = false, imgType type = imgType::ART);
     void ShowCardInfo(uint32_t code, bool resize = false, imgType type = imgType::ART, ClientCard* pcard = nullptr);
     void ShowPlayerInfo(uint8_t player);
-	void Game::DrawRealCard(ClientCard* pcard, irr::core::rect<irr::s32> drawrect, irr::core::rect<irr::s32> cardrect);
+	void DrawRealCard(ClientCard* pcard, irr::core::rect<irr::s32> drawrect, irr::core::rect<irr::s32> cardrect);
     void DrawRealCard(ClientCard* pcard, Materials::QuadVertex vCardFront);
     void DrawRealCard(ClientCard* pcard, irr::gui::CGUIImageButton* imgCard2[5]);
 	///kdiy//////////
