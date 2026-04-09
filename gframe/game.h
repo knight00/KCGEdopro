@@ -210,7 +210,7 @@ struct info_panel_elements {
 	irr::gui::IGUIStaticText* wCardImg;
 	/////kdiy/////
 	//irr::gui::IGUIImage* imgCard;
-	irr::gui::IGUIButton* imgCard;
+	irr::gui::CGUIImageButton* imgCard;
 	irr::gui::CGUIImageButton* imgCard2[5];
 	/////kdiy/////
 	//infos

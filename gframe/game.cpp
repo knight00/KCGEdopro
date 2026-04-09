@@ -2785,21 +2785,23 @@ void Game::PopulateTabSettingsWindow() {
         name->setTextAutoScrolling(irr::gui::CGUICustomText::LEFT_TO_RIGHT_BOUNCING, 0, 1.0f, 0, 120, 300);
         stName = name;
     }
-	imgCard = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 23, 128, 208), wCardImg, -1);
+	irr::core::dimension2di imgsize0 = { Scale<irr::s32>(128), Scale<irr::s32>(185) };
+	imgCard = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 23, 128, 208), wCardImg, -1));
+	imgCard->setImageSize(imgsize0);
 	imgCard->setImage(imageManager.tCover[0]);
 	imgCard->setScaleImage(true);
 	imgCard->setDrawBorder(false);
 	imgCard->setUseAlphaChannel(true);
 	for(int i = 0; i < 4; i++) {
-		imgCard2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 23, 128, 208), wCardImg, -1);
-		imgCard2[i]->setImageSize(Scale(0, 0, 128, 185).getSize());
+		imgCard2[i] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 23, 128, 208), wCardImg, -1));
+		imgCard2[i]->setImageSize(imgsize0);
 		imgCard2[i]->setImage(0);
 		imgCard2[i]->setScaleImage(true);
 		imgCard2[i]->setDrawBorder(false);
 		imgCard2[i]->setUseAlphaChannel(true);
 	}
-	imgCard2[4] = irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 23, 128, 208), wCardImg, BUTTON_PLAY_CARD);
-	imgCard2[4]->setImageSize(Scale(0, 0, 128, 185).getSize());
+	imgCard2[4] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 23, 128, 208), wCardImg, BUTTON_PLAY_CARD));
+	imgCard2[4]->setImageSize(imgsize0);
 	imgCard2[4]->setImage(0);
 	imgCard2[4]->setScaleImage(true);
 	imgCard2[4]->setDrawBorder(false);
