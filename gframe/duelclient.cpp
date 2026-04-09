@@ -3483,12 +3483,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->btnPSAU->setRelativePosition(mainGame->Scale<irr::s32>(startpos, 45, startpos + 140, 185));
 			mainGame->btnPSAU->setVisible(true);
 			///kdiy////////
-			if(pcard) {
+			if(pcard)
 				mainGame->DrawRealCard(pcard, mainGame->btnPSAU2);
-				for(int i = 0; i < 5; ++i) {
-					mainGame->btnPSAU2[i]->setRelativePosition(mainGame->Scale<irr::s32>(startpos, 45, startpos + 140, 185));
-					mainGame->btnPSAU2[i]->setVisible(true);
-				}
+			for(int i = 0; i < 5; ++i) {
+				mainGame->btnPSAU2[i]->setRelativePosition(mainGame->Scale<irr::s32>(startpos, 45, startpos + 140, 185));
+				mainGame->btnPSAU2[i]->setVisible(true);
 			}
 			///kdiy////////
 			startpos += 145;
@@ -3510,12 +3509,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->btnPSDU->setRelativePosition(mainGame->Scale<irr::s32>(startpos, 45, startpos + 140, 185));
 			mainGame->btnPSDU->setVisible(true);
 			///kdiy////////
-			if(pcard) {
+			if(pcard)
 				mainGame->DrawRealCard(pcard, mainGame->btnPSDU2);
-				for(int i = 0; i < 5; ++i) {
-					mainGame->btnPSDU2[i]->setRelativePosition(mainGame->Scale<irr::s32>(startpos, 45, startpos + 140, 185));
-					mainGame->btnPSDU2[i]->setVisible(true);
-				}
+			for(int i = 0; i < 5; ++i) {
+				mainGame->btnPSDU2[i]->setRelativePosition(mainGame->Scale<irr::s32>(startpos, 45, startpos + 140, 185));
+				mainGame->btnPSDU2[i]->setVisible(true);
 			}
 			///kdiy////////
 			startpos += 145;
