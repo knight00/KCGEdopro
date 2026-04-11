@@ -124,6 +124,9 @@ public:
 	std::vector<ClientCard*> battle_cards;
 	std::vector<ClientCard*> destroy_cards;
 	std::vector<ClientCard*> remove_cards;
+	std::vector<ClientCard> deck_real;
+	std::vector<ClientCard> hand_real;
+	std::vector<ClientCard> extra_real;
 	bool recovering = false;
 	bool damaging = false;
 	bool destroying = false;

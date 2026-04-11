@@ -34,8 +34,97 @@ void ClientCard::UpdateInfo(const CoreUtils::Query& query) {
 	CHECK_AND_SET(QUERY_OWNER, owner);
 	CHECK_AND_SET(QUERY_STATUS, status);
 	CHECK_AND_SET(QUERY_COVER, cover);
-	if(query.flag & QUERY_CODE)
+	//kdiy////////
+	// if(query.flag & QUERY_CODE)
+	// 	SetCode(query.code);
+	if(query.flag & QUERY_CODE) {
 		SetCode(query.code);
+		if(location == LOCATION_DECK) {
+			for(size_t i = 0; i < mainGame->dField.deck_real.size(); i++) {
+				ClientCard rcard = mainGame->dField.deck_real[i];
+				if(query.code == rcard.code) {
+					is_change = rcard.is_change;
+					piccode = rcard.piccode;
+					rsetnames = rcard.rsetnames;
+					rtype = rcard.rtype;
+					rlevel = rcard.rlevel;
+					rattribute = rcard.rattribute;
+					rrace = rcard.rrace;
+					rattack = rcard.rattack;
+					rdefense = rcard.rdefense;
+					rlscale = rcard.rlscale;
+					rrscale = rcard.rrscale;
+					rlink_marker = rcard.rlink_marker;
+					is_real = rcard.is_real;
+					is_rreal = rcard.is_rreal;
+					effcode = rcard.effcode;
+					namecode = rcard.namecode;
+					realcardname = rcard.realcardname;
+					orealcardname = rcard.orealcardname;
+					text_hints = rcard.text_hints;
+					mainGame->dField.deck_real.erase(mainGame->dField.deck_real.begin() + i);
+					break;
+				}
+			}
+		}
+		if(location == LOCATION_HAND) {
+			for(size_t i = 0; i < mainGame->dField.hand_real.size(); i++) {
+				ClientCard rcard = mainGame->dField.hand_real[i];
+				if(query.code == rcard.code) {
+					is_change = rcard.is_change;
+					piccode = rcard.piccode;
+					rsetnames = rcard.rsetnames;
+					rtype = rcard.rtype;
+					rlevel = rcard.rlevel;
+					rattribute = rcard.rattribute;
+					rrace = rcard.rrace;
+					rattack = rcard.rattack;
+					rdefense = rcard.rdefense;
+					rlscale = rcard.rlscale;
+					rrscale = rcard.rrscale;
+					rlink_marker = rcard.rlink_marker;
+					is_real = rcard.is_real;
+					is_rreal = rcard.is_rreal;
+					effcode = rcard.effcode;
+					namecode = rcard.namecode;
+					realcardname = rcard.realcardname;
+					orealcardname = rcard.orealcardname;
+					text_hints = rcard.text_hints;
+					mainGame->dField.hand_real.erase(mainGame->dField.hand_real.begin() + i);
+					break;
+				}
+			}
+		}
+		if(location == LOCATION_EXTRA && !(position & POS_FACEUP)) {
+			for(size_t i = 0; i < mainGame->dField.extra_real.size(); i++) {
+				ClientCard rcard = mainGame->dField.extra_real[i];
+				if(query.code == rcard.code) {
+					is_change = rcard.is_change;
+					piccode = rcard.piccode;
+					rsetnames = rcard.rsetnames;
+					rtype = rcard.rtype;
+					rlevel = rcard.rlevel;
+					rattribute = rcard.rattribute;
+					rrace = rcard.rrace;
+					rattack = rcard.rattack;
+					rdefense = rcard.rdefense;
+					rlscale = rcard.rlscale;
+					rrscale = rcard.rrscale;
+					rlink_marker = rcard.rlink_marker;
+					is_real = rcard.is_real;
+					is_rreal = rcard.is_rreal;
+					effcode = rcard.effcode;
+					namecode = rcard.namecode;
+					realcardname = rcard.realcardname;
+					orealcardname = rcard.orealcardname;
+					text_hints = rcard.text_hints;
+					mainGame->dField.extra_real.erase(mainGame->dField.extra_real.begin() + i);
+					break;
+				}
+			}
+		}
+	}
+	//kdiy////////
 	if(query.flag & QUERY_POSITION) {
 		if(IsDifferent(position, static_cast<uint8_t>(query.position)) && (location & (LOCATION_EXTRA | LOCATION_REMOVED)))
 			mainGame->dField.MoveCard(this, 1);

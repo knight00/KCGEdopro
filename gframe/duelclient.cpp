@@ -1770,6 +1770,7 @@ void DuelClient::ModeClientAnalyze(uint8_t chapter, const uint8_t* pbuf, uint8_t
 		mainGame->current_phase = phase;
 		switch (phase) {
             case PHASE_DRAW: {
+				if(mainGame->dInfo.turn < 2) break;
 				for(int i = 0; i < 3; i++) {
         			mainGame->cutincharacter[0][i] = 0;
         			mainGame->cutincharacter[1][i] = 0;
@@ -3894,13 +3895,13 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		bool rev = mainGame->dField.deck_reversed;
 		auto lock = LockIf();
 		//kdiy////////
-		std::vector<ClientCard> deck_real;
 		for(const auto& pcard : mainGame->dField.deck[player]) {
 			if(pcard->is_change) {
 				ClientCard rcard = *pcard;
-				deck_real.push_back(rcard);
+				mainGame->dField.deck_real.push_back(rcard);
 			}
 			pcard->is_change = false;
+			pcard->piccode = 0;
 			pcard->rsetnames = 0;
 			pcard->rtype = 0;
 			pcard->rlevel = 0;
@@ -3930,33 +3931,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			}
 		}
 		for(const auto& pcard : mainGame->dField.deck[player]) {
-			//kdiy////////
-			for(size_t i = 0; i < deck_real.size(); i++) {
-				ClientCard rcard = deck_real[i];
-				if(pcard->code == rcard.code) {
-					pcard->is_change = rcard.is_change;
-					pcard->rsetnames = rcard.rsetnames;
-					pcard->rtype = rcard.rtype;
-					pcard->rlevel = rcard.rlevel;
-					pcard->rattribute = rcard.rattribute;
-					pcard->rrace = rcard.rrace;
-					pcard->rattack = rcard.rattack;
-					pcard->rdefense = rcard.rdefense;
-					pcard->rlscale = rcard.rlscale;
-					pcard->rrscale = rcard.rrscale;
-					pcard->rlink_marker = rcard.rlink_marker;
-					pcard->is_real = rcard.is_real;
-					pcard->is_rreal = rcard.is_rreal;
-					pcard->effcode = rcard.effcode;
-					pcard->namecode = rcard.namecode;
-					pcard->realcardname = rcard.realcardname;
-					pcard->orealcardname = rcard.orealcardname;
-					pcard->text_hints = rcard.text_hints;
-					deck_real.erase(deck_real.begin() + i);
-					break;
-				}
-			}
-			//kdiy////////
 			pcard->code = 0;
 			pcard->is_reversed = false;
 		}
@@ -4015,13 +3989,13 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			mainGame->WaitFrameSignal(11, lock);
 		}
 		//kdiy////////
-		std::vector<ClientCard> hand_real;
 		for(const auto& pcard : mainGame->dField.hand[player]) {
 			if(pcard->is_change) {
 				ClientCard rcard = *pcard;
-				hand_real.push_back(rcard);
+				mainGame->dField.hand_real.push_back(rcard);
 			}
 			pcard->is_change = false;
+			pcard->piccode = 0;
 			pcard->rsetnames = 0;
 			pcard->rtype = 0;
 			pcard->rlevel = 0;
@@ -4045,33 +4019,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 		for(const auto& pcard : mainGame->dField.hand[player]) {
 			uint32_t code = BufferIO::Read<uint32_t>(pbuf);
 			pcard->SetCode(code);
-			//kdiy////////
-			for(size_t i = 0; i < hand_real.size(); i++) {
-				ClientCard rcard = hand_real[i];
-				if(pcard->code == rcard.code) {
-					pcard->is_change = rcard.is_change;
-					pcard->rsetnames = rcard.rsetnames;
-					pcard->rtype = rcard.rtype;
-					pcard->rlevel = rcard.rlevel;
-					pcard->rattribute = rcard.rattribute;
-					pcard->rrace = rcard.rrace;
-					pcard->rattack = rcard.rattack;
-					pcard->rdefense = rcard.rdefense;
-					pcard->rlscale = rcard.rlscale;
-					pcard->rrscale = rcard.rrscale;
-					pcard->rlink_marker = rcard.rlink_marker;
-					pcard->is_real = rcard.is_real;
-					pcard->is_rreal = rcard.is_rreal;
-					pcard->effcode = rcard.effcode;
-					pcard->namecode = rcard.namecode;
-					pcard->realcardname = rcard.realcardname;
-					pcard->orealcardname = rcard.orealcardname;
-					pcard->text_hints = rcard.text_hints;
-					hand_real.erase(hand_real.begin() + i);
-					break;
-				}
-			}
-			//kdiy////////
 			pcard->desc_hints.clear();
 			if(!mainGame->dInfo.isCatchingUp) {
 				pcard->is_hovered = false;
@@ -4089,12 +4036,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			return true;
 		auto lock = LockIf();
 		//kdiy////////
-		std::vector<ClientCard> extra_real;
 		for(const auto& pcard : mainGame->dField.extra[player]) {
 			if(!(pcard->position & POS_FACEUP)) {
 				if(pcard->is_change) {
 					ClientCard rcard = *pcard;
-					extra_real.push_back(rcard);
+					mainGame->dField.extra_real.push_back(rcard);
 				}
 				pcard->is_change = false;
 				pcard->rsetnames = 0;
@@ -4139,39 +4085,8 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			}
 		}
 		for (const auto& pcard : mainGame->dField.extra[player])
-			//kdiy////////
-		    {
-			//kdiy////////
 			if(!(pcard->position & POS_FACEUP))
 				pcard->SetCode(BufferIO::Read<uint32_t>(pbuf));
-			//kdiy////////
-			for(size_t i = 0; i < extra_real.size(); i++) {
-				ClientCard rcard = extra_real[i];
-				if(pcard->code == rcard.code && !(pcard->position & POS_FACEUP)) {
-					pcard->is_change = rcard.is_change;
-					pcard->rsetnames = rcard.rsetnames;
-					pcard->rtype = rcard.rtype;
-					pcard->rlevel = rcard.rlevel;
-					pcard->rattribute = rcard.rattribute;
-					pcard->rrace = rcard.rrace;
-					pcard->rattack = rcard.rattack;
-					pcard->rdefense = rcard.rdefense;
-					pcard->rlscale = rcard.rlscale;
-					pcard->rrscale = rcard.rrscale;
-					pcard->rlink_marker = rcard.rlink_marker;
-					pcard->is_real = rcard.is_real;
-					pcard->is_rreal = rcard.is_rreal;
-					pcard->effcode = rcard.effcode;
-					pcard->namecode = rcard.namecode;
-					pcard->realcardname = rcard.realcardname;
-					pcard->orealcardname = rcard.orealcardname;
-					pcard->text_hints = rcard.text_hints;
-					extra_real.erase(extra_real.begin() + i);
-					break;
-				}
-			}
-		    }
-		    //kdiy////////
 		return true;
 	}
 	case MSG_REFRESH_DECK: {

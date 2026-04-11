@@ -242,7 +242,11 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			case BUTTON_LEAVE_GAME: {
 			    ////kdiy////////
 				mainGame->StopVideo(true);
-                mainGame->isEvent = false;
+				if(mainGame->isEvent) {
+					mainGame->isEvent = false;
+					mainGame->cv->notify_one();
+					mainGame->chantsound.stop();
+				}
         		mainGame->bodycharacter[0] = 0;
         		mainGame->bodycharacter[1] = 0;
 				for(int i = 0; i < 3; i++) {
@@ -251,7 +255,6 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				}
         		mainGame->lpcharacter[0] = 0;
         		mainGame->lpcharacter[1] = 0;
-				mainGame->chantsound.stop();
                 gSoundManager->soundcount.clear();
                 mainGame->animecount.clear();
 				if(mainGame->dInfo.isReplay) {
@@ -317,7 +320,11 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 			case BUTTON_RESTART_SINGLE: {
                 ////kdiy////////
 				mainGame->StopVideo(true);
-                mainGame->isEvent = false;
+				if(mainGame->isEvent) {
+					mainGame->isEvent = false;
+					mainGame->cv->notify_one();
+					mainGame->chantsound.stop();
+				}
         		mainGame->bodycharacter[0] = 0;
         		mainGame->bodycharacter[1] = 0;
 				for(int i = 0; i < 3; i++) {
@@ -326,7 +333,6 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				}
         		mainGame->lpcharacter[0] = 0;
         		mainGame->lpcharacter[1] = 0;
-				mainGame->chantsound.stop();
                 gSoundManager->soundcount.clear();
                 mainGame->animecount.clear();
 			    ////kdiy////////

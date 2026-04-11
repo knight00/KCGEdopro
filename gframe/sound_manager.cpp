@@ -749,6 +749,7 @@ void SoundManager::PlayCustomMusic(std::string num) {
 			const auto file = epro::format("./sound/custom/{}.{}", num, Utils::ToUTF8IfNeeded(ext));
 			if(Utils::FileExists(Utils::ToPathString(file))) {
 				if (mainGame->soundBuffer.loadFromFile(file)) {
+					StopSounds();
 					mainGame->chantsound.setBuffer(mainGame->soundBuffer);
 					mainGame->chantsound.setVolume(gGameConfig->soundVolume);
 					mainGame->chantsound.play();
