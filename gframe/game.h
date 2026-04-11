@@ -207,8 +207,8 @@ private:
 
 struct info_panel_elements {
 	//card image
-	irr::gui::IGUIStaticText* wCardImg;
 	/////kdiy/////
+	// irr::gui::IGUIStaticText* wCardImg;
 	//irr::gui::IGUIImage* imgCard;
 	irr::gui::CGUIImageButton* imgCard;
 	irr::gui::CGUIImageButton* imgCard2[5];
@@ -1033,7 +1033,6 @@ public:
 	irr::gui::CGUITTFont* adFont;
 	irr::gui::CGUITTFont* lpcFont;
 	std::map<irr::gui::CGUIImageButton*, uint32_t> imageLoading;
-	//card image
 	/////kdiy/////////
 	irr::gui::CGUITTFont* atkFont;
 	irr::gui::CGUITTFont* defFont;
@@ -1047,7 +1046,6 @@ public:
 	irr::gui::CGUITTFont* nameFont;
 	irr::gui::CGUITTFont* nameFontdsod;
 	irr::gui::CGUITTFont* turnFont;
-	//irr::gui::IGUIStaticText* wCardImg;
 	/////kdiy/////////
 	//hint text
 	irr::gui::IGUIStaticText* stHintMsg;
@@ -1069,6 +1067,7 @@ public:
 	IProgressBar* updateProgressBottom;
     /////kdiy/////////
 	irr::gui::IGUIWindow* wCardImg;
+	irr::gui::IGUIWindow* wCardImg0;
 	irr::gui::IGUIButton* CardInfo[8];
 	irr::gui::IGUIStaticText* stCardInfo[8];
 	std::wstring effectText[8];
