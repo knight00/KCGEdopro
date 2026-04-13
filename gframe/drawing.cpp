@@ -486,7 +486,7 @@ void Game::DrawCards() {
 }
 ///kdiy////////
 inline void DrawRealCardPic(ClientCard* pcard, irr::core::rect<irr::s32> drawrect, irr::core::rect<irr::s32> cardrect) {
-	if(pcard && pcard->is_change && (pcard->position & POS_FACEUP) && (pcard->rtype & TYPE_MONSTER)) {
+	if(pcard && pcard->is_change && ((pcard->position & POS_FACEUP) || (pcard->location & LOCATION_HAND)) && (pcard->rtype & TYPE_MONSTER)) {
 		if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_FUSION))
 			mainGame->driver->draw2DImage(mainGame->imageManager.tFusPendType, drawrect, cardrect, 0, 0, true);
 		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_XYZ))
@@ -549,7 +549,7 @@ inline void DrawTextureRect0(Materials::QuadVertex vertices, irr::video::ITextur
 	mainGame->driver->drawVertexPrimitiveList(vertices, 4, matManager.iRectangle, 2);
 }
 inline void DrawRealCardV(ClientCard* pcard, Materials::QuadVertex vCardFront) {
-	if(pcard && pcard->is_change && (pcard->position & POS_FACEUP) && (pcard->rtype & TYPE_MONSTER)) {
+	if(pcard && pcard->is_change && ((pcard->position & POS_FACEUP) || (pcard->location & LOCATION_HAND)) && (pcard->rtype & TYPE_MONSTER)) {
 		if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_FUSION))
 			DrawTextureRect0(vCardFront, mainGame->imageManager.tFusPendType);
 		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_XYZ))
