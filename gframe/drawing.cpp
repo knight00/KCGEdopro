@@ -2201,6 +2201,9 @@ void Game::DrawSpec() {
 			showcarddif += (900.0f / 1000.0f) * (float)delta_time;
 			if(showcarddif >= CARD_IMG_WIDTH) {
 				showcard = 0;
+				//////kdiy//////////
+				showpcard = nullptr;
+				//////kdiy//////////
 			}
 			break;
 		}

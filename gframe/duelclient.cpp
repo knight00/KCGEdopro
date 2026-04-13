@@ -2456,6 +2456,12 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			break;
 		}
 		case HINT_EFFECT: {
+			/////kdiy//////
+			CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+			info.controler = mainGame->LocalPlayer(info.controler);
+	    	ClientCard* pcard = mainGame->dField.GetCard(info.controler, info.location, info.sequence);
+			mainGame->showpcard = pcard;
+			/////kdiy//////
 			std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 			mainGame->showcardcode = data;
 			mainGame->showcarddif = 0;
@@ -2503,6 +2509,10 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 			/////kdiy//////
 			//std::unique_lock<epro::mutex> lock(mainGame->gMutex);
 			/////kdiy//////
+			CoreUtils::loc_info info = CoreUtils::ReadLocInfo(pbuf, mainGame->dInfo.compat_mode);
+			info.controler = mainGame->LocalPlayer(info.controler);
+	    	ClientCard* pcard = mainGame->dField.GetCard(info.controler, info.location, info.sequence);
+			mainGame->showpcard = pcard;
 			mainGame->showcardcode = data;
 			mainGame->showcarddif = 0;
 			mainGame->showcard = 1;
