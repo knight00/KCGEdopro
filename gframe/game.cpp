@@ -1194,14 +1194,14 @@ void Game::Initialize() {
 	btnPSDD->setImageRotation(270);
 	btnPSDD->setImage(imageManager.tCover[0]);
 	//////////kdiy/////////
-	for(int i = 0; i < 4; i++) {
-		btnPSAU2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(10, 45, 150, 185), wPosSelect, -1);
+	for(int i = 0; i < 5; i++) {
+		btnPSAU2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(10, 45, 150, 185), wPosSelect, (i == 4) ? BUTTON_POS_AU : -1);
 		btnPSAU2[i]->setImageSize(imgsize);
 		btnPSAU2[i]->setImage(0);
 		btnPSAU2[i]->setScaleImage(true);
 		btnPSAU2[i]->setDrawBorder(false);
 		btnPSAU2[i]->setUseAlphaChannel(true);
-		btnPSDU2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(300, 45, 440, 185), wPosSelect, -1);
+		btnPSDU2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(300, 45, 440, 185), wPosSelect, (i == 4) ? BUTTON_POS_DU : -1);
 		btnPSDU2[i]->setImageSize(imgsize);
 		btnPSDU2[i]->setImage(0);
 		btnPSDU2[i]->setScaleImage(true);
@@ -1209,19 +1209,6 @@ void Game::Initialize() {
 		btnPSDU2[i]->setUseAlphaChannel(true);
 		btnPSDU2[i]->setImageRotation(270);
 	}
-	btnPSAU2[4] = irr::gui::CGUIImageButton::addImageButton(env, Scale(10, 45, 150, 185), wPosSelect, BUTTON_POS_AU);
-	btnPSAU2[4]->setImageSize(imgsize);
-	btnPSAU2[4]->setImage(0);
-	btnPSAU2[4]->setScaleImage(true);
-	btnPSAU2[4]->setDrawBorder(false);
-	btnPSAU2[4]->setUseAlphaChannel(true);
-	btnPSDU2[4] = irr::gui::CGUIImageButton::addImageButton(env, Scale(300, 45, 440, 185), wPosSelect, BUTTON_POS_DU);
-	btnPSDU2[4]->setImageSize(imgsize);
-	btnPSDU2[4]->setImage(0);
-	btnPSDU2[4]->setScaleImage(true);
-	btnPSDU2[4]->setDrawBorder(false);
-	btnPSDU2[4]->setUseAlphaChannel(true);
-	btnPSDU2[4]->setImageRotation(270);
 	//////////kdiy/////////
 	//card select
 	imgsize = { Scale<irr::s32>(CARD_IMG_WIDTH * 0.6f), Scale<irr::s32>(CARD_IMG_HEIGHT * 0.6f) };
@@ -2785,25 +2772,21 @@ void Game::PopulateTabSettingsWindow() {
         name->setTextAutoScrolling(irr::gui::CGUICustomText::LEFT_TO_RIGHT_BOUNCING, 0, 1.0f, 0, 120, 300);
         stName = name;
     }
-	wCardImg0 = AlignElementWithParent(env->addWindow(Scale(0, 23, 128, 208), false, L"", wCardImg));
-	irr::core::dimension2di imgsize0 = Scale(0, 0, 128 * 2.5f / dpi_scale, 185 * 2.5f / dpi_scale).getSize();
+	wCardImg0 = AlignElementWithParent(env->addWindow(Scale(0, 23, 128, 208)));
 	imgCard = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 128, 185), wCardImg0, -1));
 	imgCard->setImage(imageManager.tCover[0]);
-	imgCard->setImageSize(imgsize0);
+	imgCard->setScaleImage(true);
 	imgCard->setDrawBorder(true);
 	imgCard->setUseAlphaChannel(true);
-	for(int i = 0; i < 4; i++) {
-		imgCard2[i] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 128, 185), wCardImg0, -1));
-		imgCard2[i]->setImage(0);
+	irr::core::rect<irr::s32> imgCardSize = imgCard->getAbsolutePosition();
+	for(int i = 0; i < 5; i++) {
+		imgCard2[i] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, irr::core::rect<irr::s32>(0, 0, imgCardSize.getWidth(), imgCardSize.getHeight()), imgCard, (i == 4) ? BUTTON_PLAY_CARD : -1));
+		imgCard2[i]->setImage(imageManager.tCover[0]);
 		imgCard2[i]->setScaleImage(true);
 		imgCard2[i]->setDrawBorder(false);
 		imgCard2[i]->setUseAlphaChannel(true);
+		imgCard2[i]->setRelativePosition(irr::core::position2di(0, 0));
 	}
-	imgCard2[4] = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 128, 185), wCardImg0, BUTTON_PLAY_CARD));
-	imgCard2[4]->setImage(0);
-	imgCard2[4]->setScaleImage(true);
-	imgCard2[4]->setDrawBorder(false);
-	imgCard2[4]->setUseAlphaChannel(true);
 	wCardInfo = AlignElementWithParent(env->addStaticText(L"", Scale(0, 208, 210, 540), true, true, wCardImg, -1, false));
 	wCardInfo->setDrawBackground(true);
 	for(int i = 0; i < 8; i++) {
@@ -3932,6 +3915,11 @@ bool Game::MainLoop() {
 		}
 #endif
         wCardImg->setRelativePosition(Resize(10, 10, 220, 550));
+		wCardImg0->setRelativePosition(Resize(10, 33, 138, 218));
+		auto imgCardTextureSize = imageManager.tCover[0]->getSize();
+		for (int i = 0; i < 5; i++) {
+			imgCard2[i]->setImageSize(irr::core::rect<irr::s32>(0, 0, imgCardTextureSize.Width, imgCardTextureSize.Height).getSize());
+		}
         for(int i = 0; i < 8; i++)
 		    CardInfo[i]->setRelativePosition(Resize(220, 198 + i * 20, i == 0 ? 270 : 312, 218 + i * 20));
         wAvatar[0]->setRelativePosition(dInfo.isInDuel ? Resize(215, 400, 315, 580) : Resize(215, 455, 315, 635));
@@ -5471,6 +5459,10 @@ void Game::DrawRealCard(ClientCard* pcard, irr::gui::CGUIImageButton* imgCard2[5
 			imgCard2[4]->setImage(imageManager.tWaterAtt);
 		else
 			imgCard2[4]->setImage(0);
+		auto imgCardTextureSize = imageManager.tCover[0]->getSize();
+		for (int i = 0; i < 5; i++) {
+			imgCard2[i]->setImageSize(irr::core::rect<irr::s32>(0, 0, imgCardTextureSize.Width, imgCardTextureSize.Height).getSize());
+		}
 	} else {
 		imgCard2[0]->setImage(0);
 		imgCard2[1]->setImage(0);
