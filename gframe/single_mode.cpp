@@ -226,7 +226,11 @@ restart:
 			////kdiy////////
 			//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
 			mainGame->StopVideo(true);
-            mainGame->isEvent = false;
+			if(mainGame->isEvent) {
+				mainGame->isEvent = false;
+				mainGame->cv->notify_one();
+				mainGame->chantsound.stop();
+			}
         	mainGame->bodycharacter[0] = 0;
         	mainGame->bodycharacter[1] = 0;
 			for(int i = 0; i < 3; i++) {
@@ -235,7 +239,6 @@ restart:
 			}
         	mainGame->lpcharacter[0] = 0;
         	mainGame->lpcharacter[1] = 0;
-			mainGame->chantsound.stop();
             gSoundManager->soundcount.clear();
             mainGame->animecount.clear();
 			////kdiy////////
@@ -280,6 +283,7 @@ restart:
     //mainGame->wInfos->setVisible(true);
 	/////kdiy/////
 	mainGame->btnLeaveGame->setVisible(true);
+	mainGame->wCardImg0->setVisible(true);
 	////kdiy////
 	//mainGame->btnLeaveGame->setText(gDataManager->GetSysString(1210).data());
 	mainGame->btnLeaveGame->setToolTipText(gDataManager->GetSysString(1210).data());
@@ -389,7 +393,11 @@ restart:
 		////kdiy////////
 		//mainGame->btnLeaveGame->setRelativePosition(mainGame->Resize(205, 5, 295, 80));
 		mainGame->StopVideo(true);
-        mainGame->isEvent = false;
+		if(mainGame->isEvent) {
+			mainGame->isEvent = false;
+			mainGame->cv->notify_one();
+			mainGame->chantsound.stop();
+		}
         mainGame->bodycharacter[0] = 0;
         mainGame->bodycharacter[1] = 0;
 		for(int i = 0; i < 3; i++) {
@@ -398,7 +406,6 @@ restart:
 		}
         mainGame->lpcharacter[0] = 0;
         mainGame->lpcharacter[1] = 0;
-		mainGame->chantsound.stop();
         gSoundManager->soundcount.clear();
         mainGame->animecount.clear();
 		////kdiy////////

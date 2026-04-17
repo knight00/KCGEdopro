@@ -1198,13 +1198,11 @@ void Game::Initialize() {
 		btnPSAU2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(10, 45, 150, 185), wPosSelect, (i == 4) ? BUTTON_POS_AU : -1);
 		btnPSAU2[i]->setImageSize(imgsize);
 		btnPSAU2[i]->setImage(0);
-		btnPSAU2[i]->setScaleImage(true);
 		btnPSAU2[i]->setDrawBorder(false);
 		btnPSAU2[i]->setUseAlphaChannel(true);
 		btnPSDU2[i] = irr::gui::CGUIImageButton::addImageButton(env, Scale(300, 45, 440, 185), wPosSelect, (i == 4) ? BUTTON_POS_DU : -1);
 		btnPSDU2[i]->setImageSize(imgsize);
 		btnPSDU2[i]->setImage(0);
-		btnPSDU2[i]->setScaleImage(true);
 		btnPSDU2[i]->setDrawBorder(false);
 		btnPSDU2[i]->setUseAlphaChannel(true);
 		btnPSDU2[i]->setImageRotation(270);
@@ -1225,20 +1223,13 @@ void Game::Initialize() {
 		//////////kdiy/////////
 		btnCardSelect[i]->setImageSize(imgsize);
         //////////kdiy/////////
-		for(int j = 0; j < 4; j++) {
-			btnCardSelect2[i][j] = irr::gui::CGUIImageButton::addImageButton(env, Scale(30 + 125 * i, 55, 150 + 125 * i, 225), wCardSelect, -1);
+		for(int j = 0; j < 5; j++) {
+			btnCardSelect2[i][j] = irr::gui::CGUIImageButton::addImageButton(env, Scale(30 + 125 * i, 55, 150 + 125 * i, 225), wCardSelect, j == 4 ? (BUTTON_CARD_0 + i) : -1);
 			btnCardSelect2[i][j]->setImageSize(imgsize);
 			btnCardSelect2[i][j]->setImage(0);
-			btnCardSelect2[i][j]->setScaleImage(true);
 			btnCardSelect2[i][j]->setDrawBorder(false);
 			btnCardSelect2[i][j]->setUseAlphaChannel(true);
 		}
-		btnCardSelect2[i][4] = irr::gui::CGUIImageButton::addImageButton(env, Scale(30 + 125 * i, 55, 150 + 125 * i, 225), wCardSelect, BUTTON_CARD_0 + i);
-		btnCardSelect2[i][4]->setImageSize(imgsize);
-		btnCardSelect2[i][4]->setImage(0);
-		btnCardSelect2[i][4]->setScaleImage(true);
-		btnCardSelect2[i][4]->setDrawBorder(false);
-		btnCardSelect2[i][4]->setUseAlphaChannel(true);
         selectedcard[i] = env->addButton(Scale(20 + 125 * i, 55, 40 + 125 * i, 75), wCardSelect, 0);
         selectedcard[i]->setImage(imageManager.tTick);
         selectedcard[i]->setScaleImage(true);
@@ -1265,20 +1256,13 @@ void Game::Initialize() {
 		//////////kdiy/////////
 		btnCardDisplay[i]->setImageSize(imgsize);
         //////////kdiy/////////
-		for(int j = 0; j < 4; j++) {
-			btnCardDisplay2[i][j] = irr::gui::CGUIImageButton::addImageButton(env, Scale(30 + 125 * i, 55, 150 + 125 * i, 225), wCardDisplay, -1);
+		for(int j = 0; j < 5; j++) {
+			btnCardDisplay2[i][j] = irr::gui::CGUIImageButton::addImageButton(env, Scale(30 + 125 * i, 55, 150 + 125 * i, 225), wCardDisplay, j == 4 ? (BUTTON_CARD_0 + i) : -1);
 			btnCardDisplay2[i][j]->setImageSize(imgsize);
 			btnCardDisplay2[i][j]->setImage(0);
-			btnCardDisplay2[i][j]->setScaleImage(true);
 			btnCardDisplay2[i][j]->setDrawBorder(false);
 			btnCardDisplay2[i][j]->setUseAlphaChannel(true);
 		}
-		btnCardDisplay2[i][4] = irr::gui::CGUIImageButton::addImageButton(env, Scale(30 + 125 * i, 55, 150 + 125 * i, 225), wCardDisplay, BUTTON_DISPLAY_0 + i);
-		btnCardDisplay2[i][4]->setImageSize(imgsize);
-		btnCardDisplay2[i][4]->setImage(0);
-		btnCardDisplay2[i][4]->setScaleImage(true);
-		btnCardDisplay2[i][4]->setDrawBorder(false);
-		btnCardDisplay2[i][4]->setUseAlphaChannel(true);
         //////////kdiy/////////
 	}
 	scrDisplayList = env->addScrollBar(true, Scale(30, 235, 650, 255), wCardDisplay, SCROLL_CARD_DISPLAY);
@@ -2773,6 +2757,7 @@ void Game::PopulateTabSettingsWindow() {
         stName = name;
     }
 	wCardImg0 = AlignElementWithParent(env->addWindow(Scale(0, 23, 128, 208)));
+	wCardImg0->setVisible(false);
 	imgCard = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 128, 185), wCardImg0, -1));
 	imgCard->setImage(imageManager.tCover[0]);
 	imgCard->setScaleImage(true);
@@ -4094,8 +4079,11 @@ bool Game::MainLoop() {
 	}
     /////kdiy//////
     StopVideo(true,0,true);
-	isEvent = false;
-	chantsound.stop();
+	if(isEvent) {
+		isEvent = false;
+		cv->notify_one();
+		chantsound.stop();
+	}
     /////kdiy//////
 	DuelClient::StopClient(true);
 	//This is set again as waitable in the above call
@@ -4905,7 +4893,7 @@ void Game::ShowCardInfo(uint32_t code, bool resize, imgType type, ClientCard* pc
 	if(shouldrefresh == 2)
 		cardimagetextureloading = true;
 	imgCard->setImage(img);
-	DrawRealCard(pcard, imgCard2);
+	DrawRealCard(pcard, imgCard2, true);
 	showingcard = code;
 	if(only_texture)
 		return;
@@ -5396,7 +5384,7 @@ void Game::ClearCardInfo(int player) {
 	showingcard = 0;
 }
 ///kdiy/////////
-void Game::DrawRealCard(ClientCard* pcard, irr::gui::CGUIImageButton* imgCard2[5]) {
+void Game::DrawRealCard(ClientCard* pcard, irr::gui::CGUIImageButton* imgCard2[5], bool resize) {
 	if(pcard && pcard->is_change && (pcard->rtype & TYPE_MONSTER)) {
 		if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_FUSION))
 			imgCard2[0]->setImage(imageManager.tFusPendType);
@@ -5459,9 +5447,11 @@ void Game::DrawRealCard(ClientCard* pcard, irr::gui::CGUIImageButton* imgCard2[5
 			imgCard2[4]->setImage(imageManager.tWaterAtt);
 		else
 			imgCard2[4]->setImage(0);
-		auto imgCardTextureSize = imageManager.tCover[0]->getSize();
-		for (int i = 0; i < 5; i++) {
-			imgCard2[i]->setImageSize(irr::core::rect<irr::s32>(0, 0, imgCardTextureSize.Width, imgCardTextureSize.Height).getSize());
+		if(resize) {
+			auto imgCardTextureSize = imageManager.tCover[0]->getSize();
+			for (int i = 0; i < 5; i++) {
+				imgCard2[i]->setImageSize(irr::core::rect<irr::s32>(0, 0, imgCardTextureSize.Width, imgCardTextureSize.Height).getSize());
+			}
 		}
 	} else {
 		imgCard2[0]->setImage(0);
@@ -5685,6 +5675,7 @@ bool Game::PlayVideo(bool audio, bool loop, int type) {
 		if(wCardImg->isVisible()) {
 			showcardinfo = true;
 			wCardImg->setVisible(false);
+			wCardImg0->setVisible(false);
 		}
 		if(wInfos->isVisible()) {
 			showchat = true;
@@ -5744,6 +5735,7 @@ void Game::StopVideo(bool reset, int type, bool close) {
 		wBtnShowCard->setVisible(true);
 	    if(showcardinfo) {
 			wCardImg->setVisible(true);
+			wCardImg0->setVisible(true);
 			showcardinfo = false;
 		}
 		if(showchat) {
@@ -5893,6 +5885,7 @@ void Game::CloseDuelWindow() {
 	wANNumber->setVisible(false);
 	wANRace->setVisible(false);
 	wCardImg->setVisible(false);
+	wCardImg0->setVisible(false);
 	wCardSelect->setVisible(false);
 	wCardDisplay->setVisible(false);
 	wCmdMenu->setVisible(false);
@@ -5943,6 +5936,9 @@ void Game::CloseDuelWindow() {
 	for (auto& text : effectText)
 		text = L"";
 	showingcardalias = 0;
+	stPloatInfo->setText(L"");
+	stChPloatInfo[0]->setText(L"");
+	stChPloatInfo[1]->setText(L"");
 	///kdiy/////////
 	stDataInfo->setText(L"");
 	stSetName->setText(L"");

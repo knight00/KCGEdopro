@@ -485,7 +485,11 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 				mainGame->is_building = false;
                 ////kdiy////////
 				mainGame->StopVideo(true);
-            	mainGame->isEvent = false;
+				if(mainGame->isEvent) {
+					mainGame->isEvent = false;
+					mainGame->cv->notify_one();
+					mainGame->chantsound.stop();
+				}
         		mainGame->bodycharacter[0] = 0;
         		mainGame->bodycharacter[1] = 0;
 				for(int i = 0; i < 3; i++) {
@@ -494,7 +498,6 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 				}
         		mainGame->lpcharacter[0] = 0;
         		mainGame->lpcharacter[1] = 0;
-				mainGame->chantsound.stop();
                 gSoundManager->soundcount.clear();
                 mainGame->animecount.clear();
                 ////kdiy////////
@@ -1171,6 +1174,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
         mainGame->lpcharacter[0] = 0;
         mainGame->lpcharacter[1] = 0;
 		mainGame->wBtnShowCard->setVisible(true);
+		mainGame->wCardImg0->setVisible(true);
 		/////kdiy/////
 		mainGame->wPhase->setVisible(true);
 		mainGame->btnSideOK->setVisible(false);
@@ -1268,7 +1272,11 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->device->setEventReceiver(&mainGame->menuHandler);
 			////kdiy////////
 			mainGame->StopVideo(true);
-            mainGame->isEvent = false;
+			if(mainGame->isEvent) {
+				mainGame->isEvent = false;
+				mainGame->cv->notify_one();
+				mainGame->chantsound.stop();
+			}
             for(int i = 0; i < 5; ++i)
                 mainGame->selectedcard[i]->setVisible(false);
             mainGame->wLocation->setVisible(false);
@@ -1284,7 +1292,6 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			}
         	mainGame->lpcharacter[0] = 0;
         	mainGame->lpcharacter[1] = 0;
-			mainGame->chantsound.stop();
             gSoundManager->soundcount.clear();
             mainGame->animecount.clear();
 			////kdiy////////
@@ -2389,7 +2396,11 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				mainGame->dInfo.isStarted = false;
                 ////kdiy////////
 				mainGame->StopVideo(true);
-                mainGame->isEvent = false;
+				if(mainGame->isEvent) {
+					mainGame->isEvent = false;
+					mainGame->cv->notify_one();
+					mainGame->chantsound.stop();
+				}
         		mainGame->bodycharacter[0] = 0;
         		mainGame->bodycharacter[1] = 0;
 				for(int i = 0; i < 3; i++) {
@@ -2398,7 +2409,6 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 				}
         		mainGame->lpcharacter[0] = 0;
         		mainGame->lpcharacter[1] = 0;
-				mainGame->chantsound.stop();
                 gSoundManager->soundcount.clear();
                 mainGame->animecount.clear();
                 ////kdiy////////
@@ -6781,7 +6791,11 @@ void DuelClient::ReplayPrompt(bool local_stream) {
 	mainGame->btnCancelOrFinish->setVisible(false);
 	////kdiy////////
 	mainGame->StopVideo(true);
-    mainGame->isEvent = false;
+	if(mainGame->isEvent) {
+		mainGame->isEvent = false;
+		mainGame->cv->notify_one();
+		mainGame->chantsound.stop();
+	}
 	mainGame->wBtnShowCard->setVisible(false);
     mainGame->wLocation->setVisible(false);
     mainGame->wChPloatBody[0]->setVisible(false);
@@ -6794,7 +6808,6 @@ void DuelClient::ReplayPrompt(bool local_stream) {
 	}
     mainGame->lpcharacter[0] = 0;
     mainGame->lpcharacter[1] = 0;
-	mainGame->chantsound.stop();
     gSoundManager->soundcount.clear();
     mainGame->animecount.clear();
     ////kdiy////////

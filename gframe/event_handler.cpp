@@ -290,6 +290,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					    mainGame->CardInfo[i]->setVisible(false);
 					mainGame->wBtnShowCard->setVisible(false);
                     mainGame->wLocation->setVisible(false);
+					mainGame->wCardImg0->setVisible(false);
 					///////kdiy///////
 					mainGame->btnSpectatorSwap->setVisible(false);
 					mainGame->wChat->setVisible(false);
@@ -1357,15 +1358,15 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 		switch(event.MouseInput.Event) {
 		case irr::EMIE_LMOUSE_DOUBLE_CLICK: {
 			/////kdiy/////
+			if(mainGame->isEvent) {
+				mainGame->isEvent = false;
+				mainGame->cv->notify_one();
+				mainGame->chantsound.stop();
+			}
 			if(mainGame->isAnime && mainGame->videostart) {
 				mainGame->StopVideo(true);
 			    break;
 			}
-            if(mainGame->isEvent) {
-				mainGame->isEvent = false;
-				mainGame->cv->notify_one();
-				mainGame->chantsound.stop();
-            }
 			if(mainGame->mode->isMode && mainGame->mode->isPlot) {
 				if(mainGame->mode->plotStep < 1) break;
                 if(!mainGame->dInfo.isStarted)
@@ -2246,9 +2247,10 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			}
 			//////kdiy///////
 			case BUTTON_SHOW_CARD: {
-				if(!mainGame->wCardImg->isVisible())
+				if(!mainGame->wCardImg->isVisible()) {
 					mainGame->wCardImg->setVisible(true);
-                else
+					mainGame->wCardImg0->setVisible(true);
+                } else
 					mainGame->HideElement(mainGame->wCardImg);
 				break;
 			}

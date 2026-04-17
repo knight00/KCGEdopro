@@ -187,7 +187,11 @@ void ReplayMode::EndDuel() {
 		mainGame->closeDuelWindow = true;
         ////kdiy////////
 		mainGame->StopVideo(true);
-        mainGame->isEvent = false;
+		if(mainGame->isEvent) {
+			mainGame->isEvent = false;
+			mainGame->cv->notify_one();
+			mainGame->chantsound.stop();
+		}
         mainGame->bodycharacter[0] = 0;
         mainGame->bodycharacter[1] = 0;
 		for(int i = 0; i < 3; i++) {
@@ -196,7 +200,6 @@ void ReplayMode::EndDuel() {
 		}
         mainGame->lpcharacter[0] = 0;
         mainGame->lpcharacter[1] = 0;
-		mainGame->chantsound.stop();
         gSoundManager->soundcount.clear();
         mainGame->animecount.clear();
 		////kdiy////////
@@ -223,7 +226,11 @@ void ReplayMode::Restart(bool refresh) {
 	mainGame->dInfo.current_player[1] = 0;
     ////kdiy////////
 	mainGame->StopVideo(true);
-    mainGame->isEvent = false;
+	if(mainGame->isEvent) {
+		mainGame->isEvent = false;
+		mainGame->cv->notify_one();
+		mainGame->chantsound.stop();
+	}
     mainGame->bodycharacter[0] = 0;
     mainGame->bodycharacter[1] = 0;
 	for(int i = 0; i < 3; i++) {
@@ -232,7 +239,6 @@ void ReplayMode::Restart(bool refresh) {
 	}
     mainGame->lpcharacter[0] = 0;
     mainGame->lpcharacter[1] = 0;
-	mainGame->chantsound.stop();
     gSoundManager->soundcount.clear();
     mainGame->animecount.clear();
 	////kdiy////////
