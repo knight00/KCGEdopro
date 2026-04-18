@@ -2771,6 +2771,7 @@ void Game::PopulateTabSettingsWindow() {
 		imgCard2[i]->setDrawBorder(false);
 		imgCard2[i]->setUseAlphaChannel(true);
 		imgCard2[i]->setRelativePosition(irr::core::position2di(0, 0));
+		imgCard2[i]->setVisible(false);
 	}
 	wCardInfo = AlignElementWithParent(env->addStaticText(L"", Scale(0, 208, 210, 540), true, true, wCardImg, -1, false));
 	wCardInfo->setDrawBackground(true);
@@ -5297,11 +5298,10 @@ void Game::ShowPlayerInfo(uint8_t player) {
     if(!wCardImg->isVisible()) return;
 	ClearCardInfo(0);
 	imgCard->setImage(0);
-	imgCard2[0]->setImage(0);
-	imgCard2[1]->setImage(0);
-	imgCard2[2]->setImage(0);
-	imgCard2[3]->setImage(0);
-	imgCard2[4]->setImage(0);
+	for(int i = 0; i < 5; i++) {
+		imgCard2[i]->setImage(0);
+		imgCard2[i]->setVisible(false);
+	}
 	std::wstring playereffect = L"";
 	for(const auto& hint : dField.player_desc_hints[player]) {
         if(playereffect == L"")
@@ -5363,11 +5363,10 @@ void Game::ClearCardInfo(int player) {
 	stName->setText(L"");
 	stInfo->setText(L"");
 	///kdiy/////////
-	imgCard2[0]->setImage(0);
-	imgCard2[1]->setImage(0);
-	imgCard2[2]->setImage(0);
-	imgCard2[3]->setImage(0);
-	imgCard2[4]->setImage(0);
+	for(int i = 0; i < 5; i++) {
+		imgCard2[i]->setImage(0);
+		imgCard2[i]->setVisible(false);
+	}
 	stInfo2->setText(L"");
 	stPasscodeScope2->setText(L"");
 	for (auto& text : effectText)
@@ -5386,6 +5385,8 @@ void Game::ClearCardInfo(int player) {
 ///kdiy/////////
 void Game::DrawRealCard(ClientCard* pcard, irr::gui::CGUIImageButton* imgCard2[5], bool resize) {
 	if(pcard && pcard->is_change && (pcard->rtype & TYPE_MONSTER)) {
+		for(int i = 0; i < 5; i++)
+			imgCard2[i]->setVisible(true);
 		if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_FUSION))
 			imgCard2[0]->setImage(imageManager.tFusPendType);
 		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_XYZ))
@@ -5416,19 +5417,27 @@ void Game::DrawRealCard(ClientCard* pcard, irr::gui::CGUIImageButton* imgCard2[5
 			imgCard2[0]->setImage(imageManager.tNormType);
 		else if(pcard->rtype & TYPE_TOKEN)
 			imgCard2[0]->setImage(imageManager.tTokenType);
+		else {
+			imgCard2[0]->setImage(0);
+			imgCard2[0]->setVisible(false);
+		}
 
 		if(pcard->rlevel > 0 && !(pcard->rtype & (TYPE_XYZ|TYPE_LINK)))
 			imgCard2[1]->setImage(imageManager.tLv[pcard->rlevel - 1]);
 		else if(pcard->rlevel > 0 && (pcard->rtype & TYPE_XYZ))
 			imgCard2[1]->setImage(imageManager.tRk[pcard->rlevel - 1]);
-		else
+		else {
 			imgCard2[1]->setImage(0);
+			imgCard2[1]->setVisible(false);
+		}
 		if(pcard->rtype & TYPE_PENDULUM) {
 			imgCard2[2]->setImage(imageManager.tLS[pcard->rlscale]);
 			imgCard2[3]->setImage(imageManager.tRS[pcard->rrscale]);
 		} else {
 			imgCard2[2]->setImage(0);
+			imgCard2[2]->setVisible(false);
 			imgCard2[3]->setImage(0);
+			imgCard2[3]->setVisible(false);
 		}
 
 		if(pcard->rattribute & ATTRIBUTE_DIVINE)
@@ -5445,8 +5454,10 @@ void Game::DrawRealCard(ClientCard* pcard, irr::gui::CGUIImageButton* imgCard2[5
 			imgCard2[4]->setImage(imageManager.tFireAtt);
 		else if(pcard->rattribute & ATTRIBUTE_WATER)
 			imgCard2[4]->setImage(imageManager.tWaterAtt);
-		else
+		else {
 			imgCard2[4]->setImage(0);
+			imgCard2[4]->setVisible(false);
+		}
 		if(resize) {
 			auto imgCardTextureSize = imageManager.tCover[0]->getSize();
 			for (int i = 0; i < 5; i++) {
@@ -5454,11 +5465,10 @@ void Game::DrawRealCard(ClientCard* pcard, irr::gui::CGUIImageButton* imgCard2[5
 			}
 		}
 	} else {
-		imgCard2[0]->setImage(0);
-		imgCard2[1]->setImage(0);
-		imgCard2[2]->setImage(0);
-		imgCard2[3]->setImage(0);
-		imgCard2[4]->setImage(0);
+		for(int i = 0; i < 5; i++) {
+			imgCard2[i]->setImage(0);
+			imgCard2[i]->setVisible(false);
+		}
 	}
 }
 bool Game::openVideo(std::string filename, bool audio, bool loop, int type) {
@@ -5844,11 +5854,10 @@ void Game::ClearTextures() {
 	matManager.mCard.setTexture(0, 0);
 	imgCard->setImage(imageManager.tCover[0]);
 	///kdiy/////////
-	imgCard2[0]->setImage(0);
-	imgCard2[1]->setImage(0);
-	imgCard2[2]->setImage(0);
-	imgCard2[3]->setImage(0);
-	imgCard2[4]->setImage(0);
+	for(int i = 0; i < 5; i++) {
+		imgCard2[i]->setImage(0);
+		imgCard2[i]->setVisible(false);
+	}
 	stInfo2->setText(L"");
 	///kdiy/////////
 	btnPSAU->setImage();
