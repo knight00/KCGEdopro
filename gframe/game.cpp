@@ -2756,8 +2756,11 @@ void Game::PopulateTabSettingsWindow() {
         name->setTextAutoScrolling(irr::gui::CGUICustomText::LEFT_TO_RIGHT_BOUNCING, 0, 1.0f, 0, 120, 300);
         stName = name;
     }
-	wCardImg0 = AlignElementWithParent(env->addWindow(Scale(0, 23, 128, 208)));
-	wCardImg0->setVisible(false);
+	wCardImg0 = AlignElementWithParent(env->addWindow(Scale(0, 23, 128, 208), false, L"", wCardImg));
+	wCardImg0->getCloseButton()->setVisible(false);
+	wCardImg0->setDraggable(false);
+	wCardImg0->setDrawTitlebar(false);
+	wCardImg0->setDrawBackground(false);
 	imgCard = AlignElementWithParent(irr::gui::CGUIImageButton::addImageButton(env, Scale(0, 0, 128, 185), wCardImg0, -1));
 	imgCard->setImage(imageManager.tCover[0]);
 	imgCard->setScaleImage(true);
@@ -3900,7 +3903,7 @@ bool Game::MainLoop() {
 		}
 #endif
         wCardImg->setRelativePosition(Resize(10, 10, 220, 550));
-		wCardImg0->setRelativePosition(Resize(10, 33, 138, 218));
+		wCardImg0->setRelativePosition(Resize(0, 23, 128, 208));
 		auto imgCardTextureSize = imageManager.tCover[0]->getSize();
 		for (int i = 0; i < 5; i++) {
 			imgCard2[i]->setImageSize(irr::core::rect<irr::s32>(0, 0, imgCardTextureSize.Width, imgCardTextureSize.Height).getSize());
@@ -5381,7 +5384,7 @@ void Game::ClearCardInfo(int player) {
 }
 ///kdiy/////////
 void Game::DrawRealCard(ClientCard* pcard, irr::gui::CGUIImageButton* imgCard2[5], bool resize) {
-	if(pcard && pcard->is_change && (pcard->rtype & TYPE_MONSTER)) {
+	if(pcard && pcard->is_real && (pcard->rtype & TYPE_MONSTER)) {
 		if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_FUSION))
 			imgCard2[0]->setImage(imageManager.tFusPendType);
 		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_XYZ))
@@ -5674,7 +5677,6 @@ bool Game::PlayVideo(bool audio, bool loop, int type) {
 		if(wCardImg->isVisible()) {
 			showcardinfo = true;
 			wCardImg->setVisible(false);
-			wCardImg0->setVisible(false);
 		}
 		if(wInfos->isVisible()) {
 			showchat = true;
@@ -5734,7 +5736,6 @@ void Game::StopVideo(bool reset, int type, bool close) {
 		wBtnShowCard->setVisible(true);
 	    if(showcardinfo) {
 			wCardImg->setVisible(true);
-			wCardImg0->setVisible(true);
 			showcardinfo = false;
 		}
 		if(showchat) {
@@ -5882,7 +5883,6 @@ void Game::CloseDuelWindow() {
 	wANNumber->setVisible(false);
 	wANRace->setVisible(false);
 	wCardImg->setVisible(false);
-	wCardImg0->setVisible(false);
 	wCardSelect->setVisible(false);
 	wCardDisplay->setVisible(false);
 	wCmdMenu->setVisible(false);

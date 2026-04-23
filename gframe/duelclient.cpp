@@ -1174,7 +1174,6 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
         mainGame->lpcharacter[0] = 0;
         mainGame->lpcharacter[1] = 0;
 		mainGame->wBtnShowCard->setVisible(true);
-		mainGame->wCardImg0->setVisible(true);
 		/////kdiy/////
 		mainGame->wPhase->setVisible(true);
 		mainGame->btnSideOK->setVisible(false);

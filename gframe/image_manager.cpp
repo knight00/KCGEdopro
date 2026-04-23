@@ -313,11 +313,10 @@ bool ImageManager::Initial() {
     if(gGameConfig->randomcover) GetRandomImage(tCover[1], TEXTURE_COVERS2, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	if (!tCover[1]) {
 	    tCover[1] = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/cover/{}"), Utils::ToPathString(gGameConfig->randomcoverextratexture)).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
-		if (!tCover[1]) tCover[1] = loadTextureFixedSize(EPRO_TEXT("cover2"sv), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	}
     if (!tCover[1])
 	    tCover[1] = tCover[0];
-		if(gGameConfig->randomcover) GetRandomImage(tCover[2], TEXTURE_COVERS3, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
+	if(gGameConfig->randomcover) GetRandomImage(tCover[2], TEXTURE_COVERS3, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
     if (!tCover[2]) {
 	    tCover[2] = GetTextureFromFile(epro::format(EPRO_TEXT("./textures/cover/{}"), Utils::ToPathString(gGameConfig->randomcover2texture)).data(), CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
 	}
@@ -1176,6 +1175,16 @@ irr::video::ITexture* ImageManager::UpdatetTexture(int i, std::wstring filepath)
 		tCover[1] = mainGame->driver->getTexture(file.c_str());
 		return tCover[1];
 	}
+	if(i == TEXTURE_COVERS3) {
+		if(tCover[2]) mainGame->driver->removeTexture(tCover[2]);
+		tCover[2] = mainGame->driver->getTexture(file.c_str());
+		return tCover[2];
+	}
+	if(i == TEXTURE_COVERS4) {
+		if(tCover[3]) mainGame->driver->removeTexture(tCover[3]);
+		tCover[3] = mainGame->driver->getTexture(file.c_str());
+		return tCover[3];
+	}
 	if(i == TEXTURE_ATTACK) {
 		if(tAttack) mainGame->driver->removeTexture(tAttack);
 		tAttack = mainGame->driver->getTexture(file.c_str());
@@ -1230,16 +1239,6 @@ irr::video::ITexture* ImageManager::UpdatetTexture(int i, std::wstring filepath)
 		if(tOT) mainGame->driver->removeTexture(tOT);
 		tOT = mainGame->driver->getTexture(file.c_str());
 		return tOT;
-	}
-	if(i == TEXTURE_COVERS3) {
-		if(tCover[2]) mainGame->driver->removeTexture(tCover[2]);
-		tCover[2] = mainGame->driver->getTexture(file.c_str());
-		return tCover[2];
-	}
-	if(i == TEXTURE_COVERS4) {
-		if(tCover[3]) mainGame->driver->removeTexture(tCover[3]);
-		tCover[3] = mainGame->driver->getTexture(file.c_str());
-		return tCover[3];
 	}
 	if(i == TEXTURE_SETTING) {
 		if(tSettings) mainGame->driver->removeTexture(tSettings);

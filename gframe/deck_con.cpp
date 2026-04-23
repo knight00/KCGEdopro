@@ -76,7 +76,6 @@ void DeckBuilder::Initialize(bool refresh) {
 	////kdiy////
 	//mainGame->btnLeaveGame->setText(gDataManager->GetSysString(1306).data());
 	mainGame->btnLeaveGame->setToolTipText(gDataManager->GetSysString(1306).data());
-	mainGame->wCardImg0->setVisible(true);
 	////kdiy////
 	mainGame->btnSideOK->setVisible(false);
 	mainGame->btnSideShuffle->setVisible(false);
@@ -126,7 +125,6 @@ void DeckBuilder::Terminate(bool showmenu) {
 		mainGame->wCardImg->setVisible(false);
 		mainGame->wInfos->setVisible(false);
 		////kdiy////
-		mainGame->wCardImg0->setVisible(false);
 		for(int i = 0; i < 8; i++)
 		    mainGame->CardInfo[i]->setVisible(false);
 		////kdiy////

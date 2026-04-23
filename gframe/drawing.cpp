@@ -486,7 +486,7 @@ void Game::DrawCards() {
 }
 ///kdiy////////
 inline void DrawRealCardPic(ClientCard* pcard, irr::core::rect<irr::s32> drawrect, irr::core::rect<irr::s32> cardrect) {
-	if(pcard && pcard->is_change && ((pcard->position & POS_FACEUP) || (pcard->location & LOCATION_HAND)) && (pcard->rtype & TYPE_MONSTER)) {
+	if(pcard && pcard->is_real && ((pcard->position & POS_FACEUP) || (pcard->location & LOCATION_HAND)) && (pcard->rtype & TYPE_MONSTER)) {
 		if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_FUSION))
 			mainGame->driver->draw2DImage(mainGame->imageManager.tFusPendType, drawrect, cardrect, 0, 0, true);
 		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_XYZ))
@@ -543,67 +543,68 @@ inline void DrawRealCardPic(ClientCard* pcard, irr::core::rect<irr::s32> drawrec
 			mainGame->driver->draw2DImage(mainGame->imageManager.tWaterAtt, drawrect, cardrect, 0, 0, true);
 	}
 }
-inline void DrawTextureRect0(Materials::QuadVertex vertices, irr::video::ITexture* texture) {
+inline void DrawTextureRect0(Materials::QuadVertex vertices, irr::video::ITexture* texture, irr::core::matrix4 atk) {
 	matManager.mTexture.setTexture(0, texture);
 	mainGame->driver->setMaterial(matManager.mTexture);
+	mainGame->driver->setTransform(irr::video::ETS_WORLD, atk);
 	mainGame->driver->drawVertexPrimitiveList(vertices, 4, matManager.iRectangle, 2);
 }
-inline void DrawRealCardV(ClientCard* pcard, Materials::QuadVertex vCardFront) {
-	if(pcard && pcard->is_change && ((pcard->position & POS_FACEUP) || (pcard->location & LOCATION_HAND)) && (pcard->rtype & TYPE_MONSTER)) {
+inline void DrawRealCardV(ClientCard* pcard, Materials::QuadVertex vCardFront, irr::core::matrix4 atk) {
+	if(pcard && pcard->is_real && ((pcard->position & POS_FACEUP) || (pcard->location & LOCATION_HAND)) && (pcard->rtype & TYPE_MONSTER)) {
 		if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_FUSION))
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tFusPendType);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tFusPendType, atk);
 		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_XYZ))
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tXyzPendType);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tXyzPendType, atk);
 		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_LINK))
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tLinkPendType);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tLinkPendType, atk);
 		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_SYNCHRO))
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tSynPendType);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tSynPendType, atk);
 		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_RITUAL))
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tRitPendType);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tRitPendType, atk);
 		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_EFFECT) && !(pcard->rtype & TYPE_TOKEN))
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tEffPendType);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tEffPendType, atk);
 		else if((pcard->rtype & TYPE_PENDULUM) && (pcard->rtype & TYPE_NORMAL) && !(pcard->rtype & TYPE_TOKEN))
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tNormPendType);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tNormPendType, atk);
 		else if(pcard->rtype & TYPE_FUSION)
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tFusionType);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tFusionType, atk);
 		else if(pcard->rtype & TYPE_XYZ)
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tXyzType);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tXyzType, atk);
 		else if(pcard->rtype & TYPE_LINK)
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tLinkType);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tLinkType, atk);
 		else if(pcard->rtype & TYPE_SYNCHRO)
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tSynchType);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tSynchType, atk);
 		else if(pcard->rtype & TYPE_RITUAL)
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tRitualType);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tRitualType, atk);
 		else if((pcard->rtype & TYPE_EFFECT) && !(pcard->rtype & TYPE_TOKEN))
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tEffectType);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tEffectType, atk);
 		else if((pcard->rtype & TYPE_NORMAL) && !(pcard->rtype & TYPE_TOKEN))
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tNormType);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tNormType, atk);
 		else if(pcard->rtype & TYPE_TOKEN)
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tTokenType);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tTokenType, atk);
 
 		if(pcard->rlevel > 0 && !(pcard->rtype & (TYPE_XYZ|TYPE_LINK)))
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tLv[pcard->rlevel - 1]);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tLv[pcard->rlevel - 1], atk);
 		else if(pcard->rlevel > 0 && (pcard->rtype & TYPE_XYZ))
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tRk[pcard->rlevel - 1]);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tRk[pcard->rlevel - 1], atk);
 		if(pcard->rtype & TYPE_PENDULUM) {
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tLS[pcard->rlscale]);
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tRS[pcard->rrscale]);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tLS[pcard->rlscale], atk);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tRS[pcard->rrscale], atk);
 		}
 
 		if(pcard->rattribute & ATTRIBUTE_DIVINE)
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tGodAtt);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tGodAtt, atk);
 		else if(pcard->rattribute & ATTRIBUTE_DARK)
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tDARKAtt);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tDARKAtt, atk);
 		else if(pcard->rattribute & ATTRIBUTE_LIGHT)
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tLightAtt);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tLightAtt, atk);
 		else if(pcard->rattribute & ATTRIBUTE_WIND)
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tWindAtt);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tWindAtt, atk);
 		else if(pcard->rattribute & ATTRIBUTE_EARTH)
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tEarthAtt);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tEarthAtt, atk);
 		else if(pcard->rattribute & ATTRIBUTE_FIRE)
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tFireAtt);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tFireAtt, atk);
 		else if(pcard->rattribute & ATTRIBUTE_WATER)
-			DrawTextureRect0(vCardFront, mainGame->imageManager.tWaterAtt);
+			DrawTextureRect0(vCardFront, mainGame->imageManager.tWaterAtt, atk);
 	}
 }
 ///kdiy////////
@@ -668,7 +669,7 @@ void Game::DrawCard(ClientCard* pcard) {
 		///kdiy////////
 		//driver->drawVertexPrimitiveList(matManager.vCardFront, 4, matManager.iRectangle, 2);
 		driver->drawVertexPrimitiveList((pcard->location & LOCATION_ONFIELD) ? matManager.vCardFront2 : matManager.vCardFront, 4, matManager.iRectangle, 2);
-		DrawRealCardV(pcard, (pcard->location & LOCATION_ONFIELD) ? matManager.vCardFront2 : matManager.vCardFront);
+		DrawRealCardV(pcard, (pcard->location & LOCATION_ONFIELD) ? matManager.vCardFront2 : matManager.vCardFront, pcard->mTransform);
 		///kdiy////////
 	}
 	if (m22 < 0.99 || pcard->is_moving) {
@@ -2159,7 +2160,7 @@ void Game::DrawSpec() {
 				atk.setRotationRadians(irr::core::vector3df(-irr::core::PI/4, irr::core::PI/8, -irr::core::PI/8));
 				driver->setTransform(irr::video::ETS_WORLD, atk);
 				driver->drawVertexPrimitiveList(matManager.vCloseup, 4, matManager.iRectangle, 2);
-				DrawRealCardV(showpcard, matManager.vCloseup);
+				DrawRealCardV(showpcard, matManager.vCloseup, atk);
 			    auto cardrect2 = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cardcloseup->getOriginalSize()));
 				driver->draw2DImage(cardcloseup, drawrect3, cardrect2, 0, 0, true);
 			} else {
@@ -2189,7 +2190,7 @@ void Game::DrawSpec() {
 				atk.setRotationRadians(irr::core::vector3df(-irr::core::PI/4, irr::core::PI/8, -irr::core::PI/8));
 				driver->setTransform(irr::video::ETS_WORLD, atk);
 				driver->drawVertexPrimitiveList(matManager.vCloseup, 4, matManager.iRectangle, 2);
-				DrawRealCardV(showpcard, matManager.vCloseup);
+				DrawRealCardV(showpcard, matManager.vCloseup, atk);
 				auto cardrect2 = irr::core::rect<irr::s32>(irr::core::vector2di(0, 0), irr::core::dimension2di(cardcloseup->getOriginalSize()));
 				driver->draw2DImage(cardcloseup, drawrect3, cardrect2, 0, 0, true);
 			} else {

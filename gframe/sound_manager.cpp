@@ -582,6 +582,11 @@ void SoundManager::RefreshChantsList() {
 	/////kdiy///////
 }
 /////kdiy/////
+inline std::unique_lock<epro::mutex> LockIf() {
+	if(!mainGame->dInfo.isCatchingUp || !mainGame->dInfo.isReplay)
+		return std::unique_lock<epro::mutex>(mainGame->gMutex);
+	return std::unique_lock<epro::mutex>();
+}
 int32_t SoundManager::GetSoundDuration() {
 	std::size_t sampleCount = mainGame->soundBuffer.getSampleCount();
     unsigned int sampleRate = mainGame->soundBuffer.getSampleRate();
@@ -607,14 +612,14 @@ void SoundManager::PlayModeSound(int i, uint32_t code, bool music) {
     mainGame->stChPloatInfo[i]->setText(mainGame->mode->GetPloat(code).data());
 	if(mainGame->dInfo.isStarted) {
     	if(!lock) {
-        	std::unique_lock<epro::mutex> lck(mainGame->gMutex);
-        	mainGame->cv->wait_for(lck, std::chrono::milliseconds(2500));
+        	auto lock = LockIf();
+        	mainGame->cv->wait_for(lock, std::chrono::milliseconds(2500));
         	return;
 		}
 		mainGame->isEvent = true;
-    	std::unique_lock<epro::mutex> lck(mainGame->gMutex);
+    	auto lock = LockIf();
 		auto wait = std::chrono::milliseconds(GetSoundDuration());
-    	mainGame->cv->wait_for(lck, wait);
+    	mainGame->cv->wait_for(lock, wait);
 		mainGame->isEvent = false;
 	}
 	if(music) PauseMusic(false);
@@ -755,9 +760,9 @@ void SoundManager::PlayCustomMusic(std::string num) {
 					mainGame->chantsound.play();
 					mainGame->isEvent = true;
 					if(mainGame->dInfo.isInDuel && gGameConfig->pauseduel) {
-						std::unique_lock<epro::mutex> lck(mainGame->gMutex);
+						auto lock = LockIf();
 						auto wait = std::chrono::milliseconds(GetSoundDuration());
-						mainGame->cv->wait_for(lck, wait);
+						mainGame->cv->wait_for(lock, wait);
 					}
 					mainGame->isEvent = false;
 				    break;
@@ -1581,9 +1586,9 @@ bool SoundManager::PlayZipChants(CHANT chant, std::string file, const uint8_t si
 									mainGame->ShowElement(mainGame->wChPloatBody[side]);
         							mainGame->stChPloatInfo[side]->setText(mainGame->Ploats[character[player]-1][file].data());
 								}
-								std::unique_lock<epro::mutex> lck(mainGame->gMutex);
+								auto lock = LockIf();
 								auto wait = std::chrono::milliseconds(GetSoundDuration());
-								mainGame->cv->wait_for(lck, wait);
+								mainGame->cv->wait_for(lock, wait);
 								if(mainGame->wChPloatBody[side]->isVisible())
 									mainGame->HideElement(mainGame->wChPloatBody[side]);
 								mainGame->isEvent = false;
@@ -1622,9 +1627,9 @@ bool SoundManager::PlayChants(CHANT chant, std::string file, const uint8_t side,
 						mainGame->ShowElement(mainGame->wChPloatBody[side]);
         				mainGame->stChPloatInfo[side]->setText(mainGame->Ploats[character[player]-1][unzipfile].data());
 					}
-					std::unique_lock<epro::mutex> lck(mainGame->gMutex);
+					auto lock = LockIf();
 					auto wait = std::chrono::milliseconds(GetSoundDuration());
-					mainGame->cv->wait_for(lck, wait);
+					mainGame->cv->wait_for(lock, wait);
 					if(mainGame->wChPloatBody[side]->isVisible())
 						mainGame->HideElement(mainGame->wChPloatBody[side]);
 					mainGame->isEvent = false;

@@ -290,7 +290,6 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					    mainGame->CardInfo[i]->setVisible(false);
 					mainGame->wBtnShowCard->setVisible(false);
                     mainGame->wLocation->setVisible(false);
-					mainGame->wCardImg0->setVisible(false);
 					///////kdiy///////
 					mainGame->btnSpectatorSwap->setVisible(false);
 					mainGame->wChat->setVisible(false);
@@ -2247,13 +2246,10 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 			}
 			//////kdiy///////
 			case BUTTON_SHOW_CARD: {
-				if(!mainGame->wCardImg->isVisible()) {
+				if(!mainGame->wCardImg->isVisible())
 					mainGame->wCardImg->setVisible(true);
-					mainGame->wCardImg0->setVisible(true);
-                } else {
+                else
 					mainGame->HideElement(mainGame->wCardImg);
-					mainGame->HideElement(mainGame->wCardImg0);
-				}
 				break;
 			}
 			case BUTTON_CHATLOG: {
@@ -2268,7 +2264,6 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				if(!mainGame->wLocation->isVisible()) {
 					mainGame->wLocation->setVisible(true);
 					mainGame->HideElement(mainGame->wCardImg);
-					mainGame->HideElement(mainGame->wCardImg0);
 					mainGame->HideElement(mainGame->wInfos);
                     for(int i = 0; i < 8; i++)
                         mainGame->CardInfo[i]->setVisible(false);

@@ -283,7 +283,6 @@ restart:
     //mainGame->wInfos->setVisible(true);
 	/////kdiy/////
 	mainGame->btnLeaveGame->setVisible(true);
-	mainGame->wCardImg0->setVisible(true);
 	////kdiy////
 	//mainGame->btnLeaveGame->setText(gDataManager->GetSysString(1210).data());
 	mainGame->btnLeaveGame->setToolTipText(gDataManager->GetSysString(1210).data());
