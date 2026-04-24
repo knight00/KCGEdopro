@@ -45,10 +45,8 @@
 
 #if EDOPRO_ANDROID || EDOPRO_IOS
 #include "CGUICustomComboBox/CGUICustomComboBox.h"
-#define EnableMaterial2D(enable) driver->enableMaterial2D(enable)
 #define DispatchQueue() porting::dispatchQueuedMessages()
 #else
-#define EnableMaterial2D(enable) ((void)0)
 #define DispatchQueue() ((void)0)
 #endif
 
@@ -3652,7 +3650,7 @@ bool Game::MainLoop() {
 	bool was_connected = false;
 	bool update_prompted = false;
 	bool update_checked = false;
-	if(!driver->queryFeature(irr::video::EVDF_TEXTURE_NPOT)) {
+	if(auto driver_type = driver->getDriverType(); driver_type == irr::video::EDT_OGLES1 || driver_type == irr::video::EDT_OGLES2) {
 		auto SetClamp = [](irr::video::SMaterialLayer layer[irr::video::MATERIAL_MAX_TEXTURES]) {
 			layer[0].TextureWrapU = irr::video::ETC_CLAMP_TO_EDGE;
 			layer[0].TextureWrapV = irr::video::ETC_CLAMP_TO_EDGE;
@@ -3810,7 +3808,6 @@ bool Game::MainLoop() {
 				gSoundManager->PlayBGM(SoundManager::BGM::ADVANTAGE, gGameConfig->loopMusic);
 			else
 				gSoundManager->PlayBGM(SoundManager::BGM::DUEL, gGameConfig->loopMusic);
-			EnableMaterial2D(true);
 			auto bg_texture = imageManager.tBackGround;
 			if(current_topdown && imageManager.tBackGround_duel_topdown)
 				bg_texture = imageManager.tBackGround_duel_topdown;
@@ -3830,7 +3827,6 @@ bool Game::MainLoop() {
 			smgr->drawAll();
 			driver->setMaterial(irr::video::IdentityMaterial);
 			ClearZBuffer(driver);//Without this, "animations" are drawn behind everything
-			EnableMaterial2D(false);
 		} else if(is_building) {
 			if(is_siding)
 				discord.UpdatePresence(DiscordWrapper::DECK_SIDING);
@@ -3838,9 +3834,7 @@ bool Game::MainLoop() {
 				discord.UpdatePresence(DiscordWrapper::DECK);
 			gSoundManager->PlayBGM(SoundManager::BGM::DECK, gGameConfig->loopMusic);
 			DrawBackImage(imageManager.tBackGround_deck ? imageManager.tBackGround_deck : imageManager.tBackGround, resized);
-			EnableMaterial2D(true);
 			DrawDeckBd();
-			EnableMaterial2D(false);
 		} else {
 			if(dInfo.isInLobby)
 				discord.UpdatePresence(DiscordWrapper::IN_LOBBY);
@@ -3915,10 +3909,8 @@ bool Game::MainLoop() {
         wBtnSettings->setRelativePosition(Resize(10, 580, 50, 620));
         btnLeaveGame->setRelativePosition(Resize(60, 580, 100, 620));
 		/////kdiy//////////
-		EnableMaterial2D(true);
 		DrawGUI();
 		DrawSpec();
-		EnableMaterial2D(false);
 		if(cardimagetextureloading) {
 			ShowCardInfo(showingcard);
 		}
