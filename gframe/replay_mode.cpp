@@ -191,6 +191,7 @@ void ReplayMode::EndDuel() {
 			mainGame->isEvent = false;
 			mainGame->cv->notify_one();
 			mainGame->chantsound.stop();
+			mainGame->chantmusic.stop();
 		}
         mainGame->bodycharacter[0] = 0;
         mainGame->bodycharacter[1] = 0;
@@ -230,6 +231,7 @@ void ReplayMode::Restart(bool refresh) {
 		mainGame->isEvent = false;
 		mainGame->cv->notify_one();
 		mainGame->chantsound.stop();
+		mainGame->chantmusic.stop();
 	}
     mainGame->bodycharacter[0] = 0;
     mainGame->bodycharacter[1] = 0;

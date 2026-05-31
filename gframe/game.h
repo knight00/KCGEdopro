@@ -965,7 +965,7 @@ public:
 	epro::condition_variable* cv;//should lock thread when play mode-story sound,this cv is in duelclient.cpp
 	bool haloNodeexist[2][12][10];
     std::vector<irr::core::vector3df> haloNode[2][12][10];
-	sf::Sound chantsound;
+	sf::Sound chantsound, chantmusic;
 	sf::SoundBuffer soundBuffer;
 	bool videostart = false;
 	bool isAnime = false;
@@ -978,17 +978,19 @@ public:
     AVFormatContext* formatCtx2 = nullptr;
     AVFormatContext* formatCtx[15];
     AVCodecContext* audioCodecCtx = nullptr;
-    AVCodecContext* videoCodecCtx[15];
+    AVCodecContext* videoCodecCtx[15]; //0: summo anime, 1: own field anime, 2: opp field, others: closeup
 	AVFrame* audioFrame;
     AVFrame* videoFrame[15];
     int audioStreamIndex = -1;
     int videoStreamIndex[15] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 	double timeAccumulated[15] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}; // Accumulate time to ensure smooth frame skipping
-	int frameps = 0;
+	double ttimeAccumulated[15] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+	int frameps = 0, video_frameps = 0;
 	int video_width[15] = {0, 0, 0}, video_height[15] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	int64_t videoDuration[15];
 	double audioFrameDuration = 1.0;
 	double videoFrameDuration[15] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+	double nextFrameTime[15] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 	double videoFPS[15] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
 	int framesToSkip[15] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 	std::vector<int16_t> audioBuffer;

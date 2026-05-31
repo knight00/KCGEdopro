@@ -169,11 +169,12 @@ void Game::DrawBackGround() {
 	//draw field
     /////kdiy//////
 	if(isAnime) {
-		if(PlayVideo())
-		    if(videotexture) {
+		if(PlayVideo(gGameConfig->enableanimesound)) {
+			if(videotexture) {
 				if(gGameConfig->animefull) driver->draw2DImage(videotexture[0], Resize(0, 0, 1024, 640), irr::core::recti(0, 0, video_width[0], video_height[0]));
 				else DrawTextureRect(matManager.vFieldSpell[three_columns], videotexture[0]);
 			}
+		}
     } else {
     if(!gGameConfig->chkField && DrawFieldSpell())
 	    DrawTextureRect(matManager.vField, imageManager.tFieldTransparent[three_columns][tfield]);
@@ -1279,7 +1280,7 @@ void Game::DrawMisc() {
 	/////kdiy/////////
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(330, 10, 629, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
 	//driver->draw2DImage(imageManager.tLPFrame, Resize(691, 10, 990, 30), irr::core::recti(0, 0, 200, 20), 0, 0, true);
-	int lpstyle = 2;
+	int lpstyle = 1;
 	//self LP bar
 	if(lpstyle == 1)
 		driver->draw2DImage(imageManager.tLPFrame_dm, Resize(161, 553, 350, 640), irr::core::recti(0, 0, 459, 342), 0, 0, true);

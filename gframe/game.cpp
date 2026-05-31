@@ -3775,7 +3775,6 @@ bool Game::MainLoop() {
 		atk2dy2 = (float)cos(atkframe * 0.65f);
 		atkdy3 = (float)tan(atkframe);
 		atkdy4 = (float)std::abs(sin(atkframe * 0.35f));
-		frameps = fps;
         //kdiy///////
 		driver->beginScene(true, true, irr::video::SColor(0, 0, 0, 0));
 		gMutex.lock();
@@ -3818,10 +3817,14 @@ bool Game::MainLoop() {
 			///kdiy///////
             if(wLocation->isVisible())
 			    DrawDeckBd();
+			chantsound.setVolume(gGameConfig->soundVolume);
+			chantmusic.setVolume(gGameConfig->musicVolume);
 			if(isEvent && chantsound.getStatus() != sf::Sound::Playing) {
 				isEvent = false;
 				cv->notify_one();
 				chantsound.stop();
+				chantmusic.stop();
+				gSoundManager->PauseMusic(false);
             }
 			///kdiy///////
 			smgr->drawAll();
@@ -4055,6 +4058,7 @@ bool Game::MainLoop() {
 		}
 		while(cur_time >= 1000) {
 			fpsCounter->setText(epro::format(gDataManager->GetSysString(1444), fps).data());
+			frameps = fps;
 			fps = 0;
 			cur_time -= 1000;
 			if(dInfo.time_player == 0 || dInfo.time_player == 1)
@@ -4078,6 +4082,7 @@ bool Game::MainLoop() {
 		isEvent = false;
 		cv->notify_one();
 		chantsound.stop();
+		chantmusic.stop();
 	}
     /////kdiy//////
 	DuelClient::StopClient(true);
@@ -5531,7 +5536,7 @@ bool Game::openVideo(std::string filename, bool audio, bool loop, int type) {
 		avcodec_parameters_to_context(videoCodecCtx[type], formatCtx[type]->streams[videoStreamIndex[type]]->codecpar);
 		const AVCodec* videoCodec = avcodec_find_decoder(videoCodecCtx[type]->codec_id);
 		avcodec_open2(videoCodecCtx[type], videoCodec, nullptr);
-		videoDuration[type] = formatCtx[type]->duration;
+		videoDuration[type] = formatCtx[type]->duration / 1000;
 		AVStream* videoStream = formatCtx[type]->streams[videoStreamIndex[type]];
 		// Use avg_frame_rate for a general frame rate
 		AVRational avgFrameRate = videoStream->avg_frame_rate;
@@ -5541,11 +5546,14 @@ bool Game::openVideo(std::string filename, bool audio, bool loop, int type) {
 		}
 		videoFrameDuration[type] = (double)avgFrameRate.den / (double)avgFrameRate.num;
 		timeAccumulated[type] = 0;
+		ttimeAccumulated[type] = 0;
         currentVideo[type] = filename;
 		// Determine frames to skip based on FPS ratio
 		videoFPS[type] = 1.0 / videoFrameDuration[type];
 		if(videoFPS[type] > 25) videoFPS[type] = 30;
 		else videoFPS[type] = 16;
+		video_frameps = frameps;
+		nextFrameTime[type] = device->getTimer()->getRealTime();
 		// wchar_t buffer[30];
 		// _snwprintf(buffer, sizeof(buffer) / sizeof(*buffer), L"%lf", (formatCtx->streams[audioStreamIndex]->codecpar->sample_rate));
 		// MessageBox(nullptr, buffer, TEXT("Message"), MB_OK);
@@ -5593,49 +5601,50 @@ bool Game::PlayVideo(bool audio, bool loop, int type) {
 	static int frameCounter = 0;
 	// Variable for frame processing time
 	double frameRenderTime = 0.0;
-	while (timeAccumulated[type] >= videoFrameDuration[type]) {
-		AVPacket packet;
-		if (av_read_frame(formatCtx[type], &packet) < 0) {
-			if(loop) {
-				avcodec_flush_buffers(videoCodecCtx[type]); // Flush the codec buffers
-				av_seek_frame(formatCtx[type], videoStreamIndex[type], 0, AVSEEK_FLAG_BACKWARD);
-				// After seeking, we must try to read a new frame immediately
-				if (av_read_frame(formatCtx[type], &packet) < 0) {
-					StopVideo(); // If seek and read fails, something is wrong
+	if (device->getTimer()->getRealTime() >= nextFrameTime[type]) {
+		while (timeAccumulated[type] >= videoFrameDuration[type]) {
+			AVPacket packet;
+			if (av_read_frame(formatCtx[type], &packet) < 0) {
+				if(loop) {
+					avcodec_flush_buffers(videoCodecCtx[type]); // Flush the codec buffers
+					av_seek_frame(formatCtx[type], videoStreamIndex[type], 0, AVSEEK_FLAG_BACKWARD);
+					// After seeking, we must try to read a new frame immediately
+					if (av_read_frame(formatCtx[type], &packet) < 0) {
+						StopVideo(); // If seek and read fails, something is wrong
+						return false;
+					}
+				} else {
+					StopVideo();
 					return false;
 				}
-			} else {
-				StopVideo();
-				return false;
 			}
-		}
-		if (packet.stream_index == videoStreamIndex[type]) {
-			if (avcodec_send_packet(videoCodecCtx[type], &packet) < 0) {
-				av_packet_unref(&packet);
-				StopVideo();
-				return false;
-			}
-			auto startFrameProcessing = std::chrono::high_resolution_clock::now();
-			if (avcodec_receive_frame(videoCodecCtx[type], videoFrame[type]) >= 0) {
-				// Calculate the processing time of the frame
-				auto endFrameProcessing = std::chrono::high_resolution_clock::now();
-				std::chrono::duration<double> frameDuration = endFrameProcessing - startFrameProcessing;
-				frameRenderTime = frameDuration.count();
-				if (frameCounter % framesToSkip[type] == 0)
-					videotexture[type] = renderVideoFrame(driver, videoCodecCtx[type], videoFrame[type], videotexture[type], video_width[type], video_height[type]); // Render the frame
-				timeAccumulated[type] -= videoFrameDuration[type];
-				// timeAccumulated -= (videoFrameDuration - frameRenderTime); // Adjust the accumulated time based on rendering time
-			}
-			// Increment frame counter
-			frameCounter++;
-		} else if (packet.stream_index == audioStreamIndex && audio) {
-			// We just send the packet to the decoder. This is fast.
-			if (avcodec_send_packet(audioCodecCtx, &packet) >= 0) {
+			if (packet.stream_index == videoStreamIndex[type]) {
+				if (avcodec_send_packet(videoCodecCtx[type], &packet) < 0) {
+					av_packet_unref(&packet);
+					StopVideo();
+					return false;
+				}
+				auto startFrameProcessing = std::chrono::high_resolution_clock::now();
+				if (avcodec_receive_frame(videoCodecCtx[type], videoFrame[type]) >= 0) {
+					// Calculate the processing time of the frame
+					auto endFrameProcessing = std::chrono::high_resolution_clock::now();
+					std::chrono::duration<double> frameDuration = endFrameProcessing - startFrameProcessing;
+					frameRenderTime = frameDuration.count();
+					if (frameCounter % framesToSkip[type] == 0)
+						videotexture[type] = renderVideoFrame(driver, videoCodecCtx[type], videoFrame[type], videotexture[type], video_width[type], video_height[type]); // Render the frame
+					timeAccumulated[type] -= videoFrameDuration[type];
+					ttimeAccumulated[type] += 1000.0 / videoFPS[type];
+				}
+				// Increment frame counter
+				frameCounter++;
+			} else if (packet.stream_index == audioStreamIndex && audio) {
+				if (avcodec_send_packet(audioCodecCtx, &packet) < 0)
+					audioBuffer.clear();
 				if (avcodec_receive_frame(audioCodecCtx, audioFrame) >= 0) {
 					// Success! We got an audio frame. Process it into our buffer.
 					int numSamples = audioFrame->nb_samples;
-					// Reserve memory to avoid multiple small reallocations
-					audioBuffer.reserve(audioBuffer.size() + numSamples * audioCodecCtx->channels);
+					if (audioBuffer.size() + numSamples * audioCodecCtx->channels > 4096)
+						audioBuffer.reserve(audioBuffer.size() + numSamples * audioCodecCtx->channels);
 					for (int i = 0; i < numSamples; i++) {
 						for (int ch = 0; ch < audioCodecCtx->channels; ch++) {
 							if (audioCodecCtx->sample_fmt == AV_SAMPLE_FMT_FLTP) {
@@ -5648,12 +5657,16 @@ bool Game::PlayVideo(bool audio, bool loop, int type) {
 						}
 					}
 				}
-			}
-		} // IMPORTANT: No `else` here, so we ignore other streams (like subtitles)
-		av_packet_unref(&packet); // Clean up the packet
-		if(loop) break;
+			} // IMPORTANT: No `else` here, so we ignore other streams (like subtitles)
+			av_packet_unref(&packet); // Clean up the packet
+		}
+		nextFrameTime[type] += 1000.0 / videoFPS[type];
 	}
-	if (videosound.getStatus() != sf::Sound::Playing) {
+	// Stop audio playback 2 seconds before the end of the video
+	if (ttimeAccumulated[type] >= videoDuration[type]) {
+		if (videosound.getStatus() == sf::Sound::Playing)
+			videosound.stop(); // Stop audio playback
+	} else if (videosound.getStatus() != sf::Sound::Playing) {
 		if (!audioBuffer.empty()) {
 			videosoundBuffer.loadFromSamples(audioBuffer.data(), audioBuffer.size(), audioCodecCtx->channels, audioCodecCtx->sample_rate);
 			videosound.setBuffer(videosoundBuffer);
@@ -5689,20 +5702,26 @@ bool Game::PlayVideo(bool audio, bool loop, int type) {
 void Game::StopVideo(bool reset, int type, bool close) {
 	if(reset || close) {
 		for(int i = 0; i < 15; i++) {
+			videoDuration[i] = 0;
 			timeAccumulated[i] = 0;
+			ttimeAccumulated[i] = 0;
 			video_width[i] = 0;
 			video_height[i] = 0;
 			currentVideo[i] = "";
 			videoFPS[i] = 1.0;
 			framesToSkip[i] = 1;
+			nextFrameTime[i] = 0.0;
 		}
 	} else {
+		videoDuration[type] = 0;
 		timeAccumulated[type] = 0;
+		ttimeAccumulated[type] = 0;
 		video_width[type] = 0;
 		video_height[type] = 0;
 		currentVideo[type] = "";
 		videoFPS[type] = 1.0;
 		framesToSkip[type] = 1;
+		nextFrameTime[type] = 0.0;
 	}
 	if(videotexture[type]) {
 		driver->removeTexture(videotexture[type]);
@@ -5712,6 +5731,7 @@ void Game::StopVideo(bool reset, int type, bool close) {
 		videostart = false;
 		videosound.stop();
 	}
+	audioBuffer.clear();
 	if(isAnime)
 	    mainGame->cv->notify_one();
 	if(close) {

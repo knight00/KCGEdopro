@@ -489,6 +489,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 					mainGame->isEvent = false;
 					mainGame->cv->notify_one();
 					mainGame->chantsound.stop();
+					mainGame->chantmusic.stop();
 				}
         		mainGame->bodycharacter[0] = 0;
         		mainGame->bodycharacter[1] = 0;
@@ -1275,6 +1276,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 				mainGame->isEvent = false;
 				mainGame->cv->notify_one();
 				mainGame->chantsound.stop();
+				mainGame->chantmusic.stop();
 			}
             for(int i = 0; i < 5; ++i)
                 mainGame->selectedcard[i]->setVisible(false);
@@ -1504,6 +1506,7 @@ void DuelClient::HandleSTOCPacketLanAsync(const std::vector<uint8_t>& data) {
 			mainGame->HideElement(mainGame->wANCard);
         /////kdiy//////
 		mainGame->chantsound.stop();
+		mainGame->chantmusic.stop();
         gSoundManager->soundcount.clear();
         mainGame->animecount.clear();
         //not send rematch for stroy mode
@@ -2399,6 +2402,7 @@ int DuelClient::ClientAnalyze(const uint8_t* msg, uint32_t len) {
 					mainGame->isEvent = false;
 					mainGame->cv->notify_one();
 					mainGame->chantsound.stop();
+					mainGame->chantmusic.stop();
 				}
         		mainGame->bodycharacter[0] = 0;
         		mainGame->bodycharacter[1] = 0;
@@ -6794,6 +6798,7 @@ void DuelClient::ReplayPrompt(bool local_stream) {
 		mainGame->isEvent = false;
 		mainGame->cv->notify_one();
 		mainGame->chantsound.stop();
+		mainGame->chantmusic.stop();
 	}
 	mainGame->wBtnShowCard->setVisible(false);
     mainGame->wLocation->setVisible(false);

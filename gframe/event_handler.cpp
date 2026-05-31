@@ -246,6 +246,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					mainGame->isEvent = false;
 					mainGame->cv->notify_one();
 					mainGame->chantsound.stop();
+					mainGame->chantmusic.stop();
 				}
         		mainGame->bodycharacter[0] = 0;
         		mainGame->bodycharacter[1] = 0;
@@ -324,6 +325,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					mainGame->isEvent = false;
 					mainGame->cv->notify_one();
 					mainGame->chantsound.stop();
+					mainGame->chantmusic.stop();
 				}
         		mainGame->bodycharacter[0] = 0;
         		mainGame->bodycharacter[1] = 0;
@@ -1361,6 +1363,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 				mainGame->isEvent = false;
 				mainGame->cv->notify_one();
 				mainGame->chantsound.stop();
+				mainGame->chantmusic.stop();
 			}
 			if(mainGame->isAnime && mainGame->videostart) {
 				mainGame->StopVideo(true);
@@ -1405,6 +1408,7 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 					mainGame->isEvent = false;
                     mainGame->cv->notify_one();
 					mainGame->chantsound.stop();
+					mainGame->chantmusic.stop();
                 } else if(!(mainGame->dInfo.isStarted && mainGame->mode->isStartEvent))
                     mainGame->mode->NextPlot();
 				break;
@@ -1918,12 +1922,11 @@ bool ClientField::OnEvent(const irr::SEvent& event) {
 							mainGame->hideChat = true;
 					}
 					SetShowMark(mcard, true);
-                    ///////kdiy/////////
-					//if(mcard->code) {
+					if(mcard->code) {
+						///////kdiy/////////
 						//mainGame->ShowCardInfo(mcard->code);
-                    if(mcard->code && (mcard->type || mainGame->dInfo.isSingleMode)) {
 						mainGame->ShowCardInfo(mcard->code, false, imgType::ART, mcard);
-                    ///////kdiy/////////
+                    	///////kdiy/////////
 						if(mcard->location & (LOCATION_HAND | LOCATION_MZONE | LOCATION_SZONE | LOCATION_SKILL)) {
 							///////kdiy/////////
 							//std::wstring str(gDataManager->GetName(mcard->code));
@@ -2499,6 +2502,10 @@ bool ClientField::OnCommonEvent(const irr::SEvent& event, bool& stopPropagation)
 				gGameConfig->enableasound = static_cast<irr::gui::IGUICheckBox*>(event.GUIEvent.Caller)->isChecked();
 				if(gGameConfig->enableasound)
 					mainGame->chantcheck();
+				return true;
+			}
+			case CHECKBOX_ENABLE_ANIMESOUND: {
+				gGameConfig->enableanimesound = static_cast<irr::gui::IGUICheckBox *>(event.GUIEvent.Caller)->isChecked();
 				return true;
 			}
 			case CHECKBOX_ENABLE_ANIME: {
