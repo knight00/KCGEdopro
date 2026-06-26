@@ -128,6 +128,15 @@ public:
 			return *_locale_strings;
 		return _strings;
 	}
+	epro::wstringview GetDesc(uint32_t stringid) const {
+		if(stringid > std::size(_strings.desc))
+			return L"";
+		if(_locale_strings) {
+			if(const auto& desc = _locale_strings->desc[stringid]; desc.size())
+				return desc;
+		}
+		return _strings.desc[stringid];
+	}
 	CardDataM(){}
 	CardDataM(CardDataC&& data, CardString&& strings, CardString* locale_strings = nullptr):
 		_data(std::move(data)), _strings(std::move(strings)), _locale_strings(locale_strings){}
@@ -200,6 +209,11 @@ public:
 
 	static constexpr auto unknown_string = L"???"sv;
 	static void CardReader(void* payload, uint32_t code, OCG_CardData* data);
+	static bool IsCardDeclarable(const CardDataC* cd, const uint64_t* opcode_list, size_t opcode_num, bool compat_mode);
+	template<typename T>
+	static inline bool IsCardDeclarable(const CardDataC* cd, const T& opcodes, bool compat_mode) {
+		return IsCardDeclarable(cd, opcodes.data(), opcodes.size(), compat_mode);
+	}
 	static bool deck_sort_lv(const CardDataC* l1, const CardDataC* l2);
 	static bool deck_sort_atk(const CardDataC* l1, const CardDataC* l2);
 	static bool deck_sort_def(const CardDataC* l1, const CardDataC* l2);

@@ -370,7 +370,7 @@ extern SoundManager* gSoundManager;
 }
 
 template<typename CharT>
-struct fmt::formatter<ygo::SoundManager::BACKEND, CharT> {
+struct epro::formatter<ygo::SoundManager::BACKEND, CharT> {
 	template<typename ParseContext>
 	constexpr auto parse(ParseContext& ctx) const { return ctx.begin(); }
 

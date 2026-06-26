@@ -2,11 +2,11 @@
 #include "cli_args.h"
 #include "text_types.h"
 #include "repo_cloner.h"
+#include "epro_thread.h"
+#include "utils.h"
 
 #if EDOPRO_WINDOWS
-#define WIN32_LEAN_AND_MEAN
-#include <tchar.h> //_tmain
-#define real_main _tmain
+#define real_main edopro_main
 #include "winmain.inl"
 #elif (EDOPRO_IOS || EDOPRO_ANDROID)
 #define real_main edopro_main
@@ -17,7 +17,15 @@
 #include <clocale>
 #include <unistd.h>
 #include <signal.h>
+#include <sys/wait.h>
 #endif //EDOPRO_POSIX
+
+namespace ygo {
+
+extern epro::thread::id main_thread_id;
+epro::thread::id main_thread_id;
+
+}
 
 args_t cli_args;
 int edopro_main(const args_t& cli_args);
@@ -69,10 +77,15 @@ auto ParseArguments(int argc, epro::path_char* argv[]) {
 }
 
 extern "C" int real_main(int argc, epro::path_char** argv) {
+	ygo::main_thread_id = ygo::Utils::GetCurrThreadId();
 #if EDOPRO_POSIX
 	setlocale(LC_CTYPE, "UTF-8");
 	struct sigaction sa;
-	sa.sa_handler = SIG_IGN;
+	sa.sa_handler = []([[maybe_unused]] int signum) {
+		pid_t pid;
+		int status;
+		while((pid = waitpid(-1, &status, WNOHANG)) > 0);
+	};
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
 	(void)sigaction(SIGCHLD, &sa, 0);
