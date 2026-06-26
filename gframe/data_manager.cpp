@@ -664,6 +664,12 @@ bool DataManager::IsCardDeclarable(const CardDataC* cd, const uint64_t* opcode_l
 		BINARY_OP(OPCODE_RSHIFT, >>);
 		UNARY_OP_OP(OPCODE_ISCODE, code, ==);
 		UNARY_OP_OP(OPCODE_ISTYPE, type, &);
+		/////kdiy//////////
+		UNARY_OP_OP(OPCODE_ISOTYPE, ot, &);
+		UNARY_OP_OP(OPCODE_ISLEVEL, level, == (int32_t));
+		UNARY_OP_OP(OPCODE_ISLEVELLARGER, level, > (int32_t));
+		UNARY_OP_OP(OPCODE_ISLEVELSMALLER, level, < (int32_t));
+		/////kdiy//////////
 		UNARY_OP_OP(OPCODE_ISRACE, race, &);
 		UNARY_OP_OP(OPCODE_ISATTRIBUTE, attribute, &);
 		GET_OP(OPCODE_GETCODE, code);
@@ -705,7 +711,10 @@ bool DataManager::IsCardDeclarable(const CardDataC* cd, const uint64_t* opcode_l
 	if(stack.size() != 1 || stack.top() == 0)
 		return false;
 	return cd->code == CARD_MARINE_DOLPHIN || cd->code == CARD_TWINKLE_MOSS
-		|| ((alias || !cd->alias) && (token || ((cd->type & (TYPE_MONSTER + TYPE_TOKEN)) != (TYPE_MONSTER + TYPE_TOKEN))));
+		/////////kdiy///////////
+		//|| ((alias || !cd->alias) && (token || ((cd->type & (TYPE_MONSTER + TYPE_TOKEN)) != (TYPE_MONSTER + TYPE_TOKEN))));
+		|| ((alias || !cd->alias) && (token || (((cd->type & (TYPE_MONSTER + TYPE_TOKEN)) != (TYPE_MONSTER + TYPE_TOKEN)) && ((cd->type & (TYPE_SPELL + TYPE_TOKEN)) != (TYPE_SPELL + TYPE_TOKEN)))));
+		/////////kdiy///////////
 }
 #undef BINARY_OP
 #undef UNARY_OP
