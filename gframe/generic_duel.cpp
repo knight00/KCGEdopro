@@ -387,8 +387,9 @@ void GenericDuel::PlayerReady(DuelPlayer* dp, bool is_ready, bool ai) {
             } else
 				++iter;
         }
+		//kcgvip/////////
         for(iter = dueler.pdeck.extra.begin(); iter != dueler.pdeck.extra.end(); ) {
-			if((((*iter)->code < 2500 || (*iter)->code == 10000044 || (*iter)->code == 123106 || (*iter)->code == 123108)) && (*iter)->code != 483) {
+			if(((*iter)->code < 2500 || (*iter)->code == 10000044 || ((*iter)->code > 12200 && (*iter)->code < 13736) || ((*iter)->code >= 122600 && (*iter)->code < 123132) || ((*iter)->code > 900000020 && (*iter)->code < 900000100)) && (*iter)->code != 483) {
                 kcgwarn = true;
 				iter = dueler.pdeck.extra.erase(iter);
             } else
