@@ -1,3 +1,7 @@
+--old premake5 support
+if not externalincludedirs then
+	externalincludedirs = sysincludedirs
+end
 newoption {
 	trigger	= "no-direct3d",
 	description = "Disable DirectX options in irrlicht if the DirectX SDK isn't installed"
@@ -120,7 +124,7 @@ local function valid_arch(arch)
 end
 
 local function valid_sound(sound)
-	return sound == "irrklang" or sound == "sdl-mixer" or sound == "sfml" or sound == "miniaudio"
+	return sound == "irrklang" or sound == "sdl-mixer" or sound == "sdl3-mixer" or sound == "sfml" or sound == "miniaudio"
 end
 
 local absolute_vcpkg_path =(function()
@@ -178,10 +182,6 @@ if _OPTIONS["sound"] then
 	end
 end
 
-local _includedirs=includedirs
-if _ACTION=="xcode4" then
-	_includedirs=sysincludedirs
-end
 workspace "ygo"
 	location "build"
 	language "C++"
@@ -243,6 +243,9 @@ workspace "ygo"
 
 	if _OPTIONS["oldwindows"] then
 		filter { "action:vs*" }
+			if _ACTION >= "vs2019" then
+				externalincludedirs = includedirs
+			end
 			toolset "v141_xp"
 		filter {}
 	else
@@ -257,7 +260,7 @@ workspace "ygo"
 			print(full_vcpkg_root_path)
 			local platform="platforms:" .. (arch=="x86" and os.istarget("windows") and "Win32" or arch)
 			filter { "action:not vs*", platform }
-				_includedirs { full_vcpkg_root_path .. "/include" }
+				externalincludedirs { full_vcpkg_root_path .. "/include" }
 
 			filter { "action:not vs*", "configurations:Debug", platform }
 				libdirs { full_vcpkg_root_path .. "/debug/lib" }
@@ -267,17 +270,13 @@ workspace "ygo"
 		end
 	end
 
+	filter "system:haiku"
+		externalincludedirs { "/boot/system/develop/headers/freetype2" }
+
 	filter "system:macosx"
-		_includedirs { "/usr/local/include" }
+		externalincludedirs { "/usr/local/include" }
 		libdirs { "/usr/local/lib" }
 		--systemversion "10.10"
-
-	filter { "system:ios", "platforms:*-iossim"}
-		buildoptions { "-mios-simulator-version-min=9.0" }
-		linkoptions { "-mios-simulator-version-min=9.0" }
-	filter { "system:ios", "platforms:arm64 or armv7"}
-		buildoptions { "-miphoneos-version-min=9.0" }
-		linkoptions { "-miphoneos-version-min=9.0" }
 
 	filter "action:vs*"
 		vectorextensions "SSE2"
@@ -347,7 +346,7 @@ workspace "ygo"
 		linkoptions { "-static-libgcc", "-static-libstdc++" }
 
 	subproject = true
-	if not _OPTIONS["prebuilt-core"] and not _OPTIONS["no-core"] then
+	if not _OPTIONS["prebuilt-core"] then
 		include "ocgcore"
 	end
 	if _OPTIONS["bundled-font"] then
@@ -355,7 +354,7 @@ workspace "ygo"
 		bin2c(_OPTIONS["bundled-font"], "gframe/CGUITTFont/bundled_font.cpp")
 	end
 	include "gframe"
-	if os.istarget("windows") then
+	if os.istarget("windows") or os.istarget("haiku") then
 		include "irrlicht"
 	end
 	if os.istarget("macosx") and _OPTIONS["discord"] then

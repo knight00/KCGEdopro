@@ -1,17 +1,13 @@
-#ifdef YGOPRO_BUILD_DLL
-#include <string>
-#include "config.h"
-#if EDOPRO_WINDOWS
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#else
-#include "porting.h"
-#include <dlfcn.h>
-#endif
-#include "config.h"
 #include "dllinterface.h"
-#include "utils.h"
+
+#include "compiler_features.h"
+#include "dll.h"
 #include "fmt.h"
+
+#define X(type,name,...) extern "C" type name(__VA_ARGS__);
+#include "ocgcore_functions.inl"
+
+#ifdef YGOPRO_BUILD_DLL
 
 #if EDOPRO_WINDOWS
 #define CORENAME EPRO_TEXT("ocgcore.dll")
@@ -20,12 +16,6 @@
 #elif EDOPRO_IOS
 #define CORENAME EPRO_TEXT("libocgcore-ios.dylib")
 #elif EDOPRO_ANDROID
-#include <fcntl.h> //open()
-#include <unistd.h> //close()
-struct AndroidCore {
-	void* library;
-	int fd;
-};
 #if defined(__arm__)
 #define CORENAME EPRO_TEXT("libocgcorev7.so")
 #elif defined(__i386__)
@@ -41,142 +31,60 @@ struct AndroidCore {
 #else
 #define CORENAME EPRO_TEXT("libocgcore.so")
 #endif
+#elif EDOPRO_HAIKU
+#define CORENAME EPRO_TEXT("libocgcore.haiku.so")
 #endif //EDOPRO_WINDOWS
 
-#define X(type,name,...) type(*name)(__VA_ARGS__) = nullptr;
-#include "ocgcore_functions.inl"
-#undef X
-
-#if EDOPRO_WINDOWS
-static inline void* OpenLibrary(epro::path_stringview path) {
-	return LoadLibrary(epro::format("{}" CORENAME, path).data());
+static epro::path_string GetCorePath(epro::path_stringview path) {
+	return epro::format("{}" CORENAME, path);
 }
-#define CloseLibrary(core) FreeLibrary((HMODULE)core)
 
-#define GetFunction(core, x) function_cast<decltype(x)>(GetProcAddress((HMODULE)core, #x))
+bool Core::check_api_version() {
+	OCG_GetVersion(&ver_major, &ver_minor);
+	return (ver_major == EXPECTED_VERSION_MAJOR) && (ver_minor == EXPECTED_VERSION_MINOR);
+}
 
-#elif EDOPRO_ANDROID
+#endif // YGOPRO_BUILD_DLL
 
-static void* OpenLibrary(epro::path_stringview path) {
-	void* lib = nullptr;
-	auto dest_path = porting::internal_storage + "/libocgcoreXXXXXX.so";
-	auto output = mkstemps(&dest_path[0], 3);
-	if(output == -1)
-		return nullptr;
-	auto input = open(epro::format("{}" CORENAME, path).data(), O_RDONLY);
-	if(input == -1) {
-		unlink(dest_path.data());
-		close(output);
-		return nullptr;
-	}
-	ygo::Utils::FileCopyFD(input, output);
-	lib = dlopen(dest_path.data(), RTLD_NOW);
-	unlink(dest_path.data());
-	if(!lib) {
-		close(output);
-		close(input);
-		return nullptr;
-	}
-	close(input);
-	auto core = new AndroidCore;
-	core->library = lib;
-	core->fd = output;
+std::shared_ptr<const Core> Core::LoadBundled() {
+	auto core = std::shared_ptr<Core>(new Core{});
+#define X(type,name,...) do{ core->name = ::name; } while(0);
+#include "ocgcore_functions.inl"
+	core->ver_major = OCG_VERSION_MAJOR;
+	core->ver_minor = OCG_VERSION_MINOR;
 	return core;
 }
 
-static inline void CloseLibrary(void* core) {
-	AndroidCore* acore = static_cast<AndroidCore*>(core);
-	dlclose(acore->library);
-	close(acore->fd);
-	delete acore;
+#ifdef YGOPRO_BUILD_DLL
+std::shared_ptr<const Core> Core::Load(epro::path_stringview path) {
+	if(path.empty()) {
+		return nullptr;
+	}
+	auto core_path = GetCorePath(path);
+	auto library = Dll::OpenLibrary(core_path);
+	if(!library)
+		return nullptr;
+	auto core = std::shared_ptr<Core>(new Core{});
+#define X(type,name,...) if((core->name = library.GetFunction<decltype(Core::name)>(#name)) == nullptr) return nullptr;
+#include "ocgcore_functions.inl"
+	if(!core->check_api_version())
+		return nullptr;
+	core->library = std::move(library);
+	return core;
 }
-
-#define GetFunction(core, x) (decltype(x))dlsym(static_cast<AndroidCore*>(core)->library, #x)
-
-#else
-
-static inline void* OpenLibrary(epro::path_stringview path) {
-	return dlopen(epro::format("{}" CORENAME, path).data(), RTLD_NOW);
-}
-
-#define CloseLibrary(core) dlclose(core)
-
-#define GetFunction(core, x) (decltype(x))dlsym(core, #x)
-
 #endif
 
-class Core {
-#define X(type,name,...) type(*int_##name)(__VA_ARGS__);
-#include "ocgcore_functions.inl"
-#undef X
-	void* library{ nullptr };
-	bool valid{ false };
-	bool enabled{ false };
-
-	bool check_api_version() const {
-		int max = 0, min = 0;
-		int_OCG_GetVersion(&max, &min);
-		return (max == OCG_VERSION_MAJOR) && (min == OCG_VERSION_MINOR);
-	}
-public:
-
-	Core(epro::path_stringview path) {
-		library = OpenLibrary(path);
-		if(!library)
-			return;
-#define X(type,name,...) if((int_##name = GetFunction(library, name)) == nullptr) return;
-#include "ocgcore_functions.inl"
-#undef X
-		valid = check_api_version();
-	}
-	~Core() {
-		Disable();
-		if(library) {
-			CloseLibrary(library);
-		}
-	}
-	void Enable() {
-#define X(type,name,...) name = int_##name;
-#include "ocgcore_functions.inl"
-#undef X
-		enabled = true;
-	}
-	void Disable() {
-		if(enabled) {
-#define X(type,name,...) name = nullptr;
-#include "ocgcore_functions.inl"
-#undef X
-			enabled = false;
-		}
-	}
-	bool IsValid() const {
-		return valid;
-	}
-};
-
-void* LoadOCGcore(epro::path_stringview path) {
-	Core* core = new Core(path);
-	if(!core->IsValid()) {
-		delete core;
+DuelPtr Core::CreateDuel(OCG_DuelOptions* options_ptr) const {
+	OCG_Duel pduel{};
+	auto payload = std::make_unique<Duel::ScriptReaderPayload>();
+	payload->ogPayload = options_ptr->payload2;
+	options_ptr->payload2 = payload.get();
+	if(OCG_CreateDuel(&pduel, options_ptr) != OCG_DUEL_CREATION_SUCCESS)
 		return nullptr;
-	}
-	core->Enable();
-	return core;
+	std::unique_ptr<Duel> duel{ new Duel{} };
+	duel->core = this->shared_from_this();
+	duel->thiz = pduel;
+	payload->duel = duel.get();
+	duel->scriptReaderPayload = std::move(payload);
+	return duel;
 }
-
-void UnloadCore(void* handle) {
-	if(!handle)
-		return;
-	delete static_cast<Core*>(handle);
-}
-
-void* ChangeOCGcore(epro::path_stringview path, void* handle) {
-	Core* newcore = new Core(path);
-	if(!newcore->IsValid())
-		return nullptr;
-	UnloadCore(handle);
-	newcore->Enable();
-	return newcore;
-}
-
-#endif //YGOPRO_BUILD_DLL

@@ -23,7 +23,7 @@
 #endif
 #endif //EDOPRO_WINDOWS
 
-#if EDOPRO_LINUX_KERNEL || EDOPRO_APPLE
+#if EDOPRO_POSIX
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
@@ -185,7 +185,7 @@ namespace ygo {
 #elif EDOPRO_LINUX_KERNEL
 		pthread_setname_np(pthread_self(), name);
 #elif EDOPRO_APPLE
-		pthread_setname_np(name);
+		porting::nameThread(name);
 #endif //EDOPRO_WINDOWS
 	}
 

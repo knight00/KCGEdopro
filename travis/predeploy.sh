@@ -8,6 +8,8 @@ BUILD_CONFIG=${BUILD_CONFIG:-release}
 TARGET_OS=${TARGET_OS:-$TRAVIS_OS_NAME}
 PLATFORM=${1:-$TARGET_OS}
 ARCH=${ARCH:-""}
+OBJCOPY="objcopy"
+STRIP="strip"
 
 function copy_if_exists {
     if [[ -f bin/$ARCH/$BUILD_CONFIG/$1 ]]; then
@@ -15,18 +17,33 @@ function copy_if_exists {
     fi
 }
 
+function copy_compressed_if_exists {
+    if [[ -f bin/$ARCH/$BUILD_CONFIG/$1 ]]; then
+		tar -Jcvf deploy/$1.tgx -C bin/$ARCH/$BUILD_CONFIG $1
+    fi
+}
+
 function compress_if_exist {
     if [[ -f bin/$ARCH/$BUILD_CONFIG/$1 ]]; then
-		./upx deploy/$1 -o deploy/compressed-$1
+		if [[ -n "${CV2PDB:-""}" ]]; then
+			# upx doesn't like binaries touched by cv2pdb
+			./upx deploy/$1 -o deploy/compressed-$1 --force
+		else
+			./upx deploy/$1 -o deploy/compressed-$1
+		fi
     fi
 }
 
 function strip_if_exists {
     if [[ -f bin/$ARCH/$BUILD_CONFIG/$1 ]]; then
-		objcopy --only-keep-debug bin/$ARCH/$BUILD_CONFIG/$1 bin/$ARCH/$BUILD_CONFIG/$1.debug
-        strip --strip-debug --strip-unneeded  bin/$ARCH/$BUILD_CONFIG/$1
-		objcopy --add-gnu-debuglink=bin/$ARCH/$BUILD_CONFIG/$1.debug bin/$ARCH/$BUILD_CONFIG/$1
-		tar -zcvf deploy/$1.debug.tgz -C bin/$ARCH/$BUILD_CONFIG $1.debug
+		$OBJCOPY --only-keep-debug bin/$ARCH/$BUILD_CONFIG/$1 bin/$ARCH/$BUILD_CONFIG/$1.debug
+        $STRIP --strip-debug --strip-unneeded  bin/$ARCH/$BUILD_CONFIG/$1
+		$OBJCOPY --add-gnu-debuglink=bin/$ARCH/$BUILD_CONFIG/$1.debug bin/$ARCH/$BUILD_CONFIG/$1
+		tar -Jcvf deploy/$1.debug.tgx -C bin/$ARCH/$BUILD_CONFIG $1.debug
+		if [[ -n "${CV2PDB:-""}" ]]; then
+			PDBNAME=`echo "$1" | cut -d'.' -f1`.pdb
+			$CV2PDB -p$PDBNAME bin/$ARCH/$BUILD_CONFIG/$1
+		fi
     fi
 }
 
@@ -34,7 +51,7 @@ function bundle_if_exists {
     if [[ -f bin/$ARCH/$BUILD_CONFIG/$1.app ]]; then
         mkdir -p deploy/$1.app/Contents/MacOS
         # Binary seems to be incorrectly named with the current premake
-        cp bin/$ARCH/$BUILD_CONFIG/$1.app deploy/$1.app/Contents/MacOS/$1
+        cp bin/$ARCH/$BUILD_CONFIG/$1.app deploy/$1.app/Contents/MacOS/EDOPro
         # dylibbundler -x deploy/$1.app/Contents/MacOS/$1 -b -d deploy/$1.app/Contents/Frameworks/ -p @executable_path/../Frameworks/ -cd
 
         mkdir -p deploy/$1.app/Contents/Resources
@@ -64,6 +81,9 @@ function bundle_if_exists_ios {
 
         mkdir -p deploy/Payload
         cp -r deploy/$1.app deploy/Payload/EDOPro.app
+
+        rcodesign sign deploy/Payload/EDOPro.app
+
         cd deploy
         zip -0 -y -r EDOPro.ipa Payload
         rm -rf Payload
@@ -82,19 +102,24 @@ if [[ "$PLATFORM" == "windows" ]]; then
 	fi
 	copy_if_exists ygopro.exe
 	compress_if_exist ygopro.exe
+	copy_compressed_if_exists ygopro.pdb
 
 	if [[ -n "${MINGW_LITE_VARIANT:-""}" ]]; then
 		strip_if_exists ygoprodll.exe
 	fi
 	copy_if_exists ygoprodll.exe
 	compress_if_exist ygoprodll.exe
-	copy_if_exists ygoprodll.pdb
+	copy_compressed_if_exists ygoprodll.pdb
 fi
 if [[ "$PLATFORM" == "linux" ]]; then
-	# strip_if_exists ygopro
+	if [[ "$ARCH" == "arm64" ]]; then
+		OBJCOPY="aarch64-linux-gnu-objcopy"
+		STRIP="aarch64-linux-gnu-strip"
+	fi
+	strip_if_exists ygopro
 	copy_if_exists ygopro
 	compress_if_exist ygopro
-	# strip_if_exists ygoprodll
+	strip_if_exists ygoprodll
 	copy_if_exists ygoprodll
 	compress_if_exist ygoprodll
 fi

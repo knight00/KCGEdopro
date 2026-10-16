@@ -29,12 +29,10 @@ std::vector<ServerInfo> ServerLobby::serversVector2;
 std::atomic_bool ServerLobby::is_refreshing{ false };
 std::atomic_bool ServerLobby::has_refreshed{ false };
 
-static size_t WriteMemoryCallback(void* contents, size_t size, size_t nmemb, void* userp) {
+static size_t WriteMemoryCallback(char* contents, size_t size, size_t nmemb, void* userp) {
 	size_t realsize = size * nmemb;
 	auto buff = static_cast<std::string*>(userp);
-	size_t prev_size = buff->size();
-	buff->resize(prev_size + realsize);
-	memcpy((char*)buff->data() + prev_size, contents, realsize);
+	buff->append(contents, realsize);
 	return realsize;
 }
 
@@ -164,7 +162,7 @@ void ServerLobby::FillOnlineRooms() {
 		mainGame->roomListTable->orderRows(-1, irr::gui::EGOM_DESCENDING);
 	}
 
-	GUIUtils::ChangeCursor(mainGame->device, irr::gui::ECI_NORMAL);
+	GUIUtils::ChangeCursor(mainGame->device.get(), irr::gui::ECI_NORMAL);
 	mainGame->btnLanRefresh2->setEnabled(true);
 	mainGame->serverChoice->setEnabled(true);
 	mainGame->roomListTable->setVisible(true);
@@ -281,7 +279,7 @@ void ServerLobby::RefreshRooms() {
 		return;
 	is_refreshing = true;
 	mainGame->roomListTable->clearRows();
-	GUIUtils::ChangeCursor(mainGame->device, irr::gui::ECI_WAIT);
+	GUIUtils::ChangeCursor(mainGame->device.get(), irr::gui::ECI_WAIT);
 	epro::thread(GetRoomsThread).detach();
 }
 bool ServerLobby::HasRefreshedRooms() {

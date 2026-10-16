@@ -2216,30 +2216,24 @@ void Game::Initialize() {
 	Utils::CreateResourceFolders();
 
 	LoadGithubRepositories();
-	if(LoadCore()) {
-		(void)0;
-	}
-#ifdef YGOPRO_BUILD_DLL
-	else {
-		stMessage->setText(gDataManager->GetSysString(1430).data());
-		PopupElement(wMessage);
-	}
-#endif
-	btnSingleMode->setEnabled(coreloaded);
-	btnCreateHost->setEnabled(coreloaded);
-    //kdiy///////
-	//btnHandTest->setEnabled(coreloaded);
-    //kdiy///////
-	btnHandTestSettings->setEnabled(coreloaded);
-	stHandTestSettings->setEnabled(coreloaded);
-	//kdiy///////
-	btnEntertainmentMode->setEnabled(coreloaded);
-	moviecheck(5, true);
-	chantcheck(true);
-	//kdiy///////
+	LoadCore();
 	RefreshUICoreVersion();
 	ApplySkin(EPRO_TEXT(""), true);
 	auto selectedLocale = gSettings.cbCurrentLocale->getSelected();
+	//kdiy///////
+    if(!git_update) {
+		LoadJsonInfo();
+		mode->LoadJsonInfo();
+		git_update = true;
+		if(!git_error) {
+			mRepositoriesInfo->setVisible(false);
+			wMainMenu->setVisible(true);
+		}
+	}
+	if(first_play && git_update) {
+		ApplyLocale(gSettings.cbCurrentLocale->getSelected(), true);
+    } else
+    //kdiy///////
 	if(selectedLocale != 0)
 		ApplyLocale(selectedLocale, true);
 
@@ -2248,24 +2242,27 @@ void Game::Initialize() {
 	env->setFocus(wMainMenu);
 }
 
-bool Game::LoadCore() {
-	coreloaded = true;
+void Game::LoadCore() {
+	ocgcore = Core::LoadBundled();
 #ifdef YGOPRO_BUILD_DLL
-	coreJustLoaded = false;
-	ocgcore = LoadOCGcore(Utils::GetWorkingDirectory());
-	if(ocgcore){
+	corename = L"Bundled";
+	if(auto newcore = Core::Load(Utils::GetWorkingDirectory()); newcore) {
+		ocgcore = std::move(newcore);
 		corename = L"./";
 	} else {
 		const auto path = epro::format(EPRO_TEXT("{}/expansions/"), Utils::GetWorkingDirectory());
-		ocgcore = LoadOCGcore(path);
-		if(ocgcore)
+		if(newcore = Core::Load(path); newcore) {
+			ocgcore = std::move(newcore);
 			corename = L"./expansions/";
+		}
 	}
-	coreloaded = ocgcore != nullptr;
 	if(gRepoManager->IsReadOnly())
 		LoadCoreFromRepos();
 #endif
-	return coreloaded;
+	//kdiy///////
+	moviecheck(5, true);
+	chantcheck(true);
+	//kdiy///////
 }
 
 #ifdef YGOPRO_BUILD_DLL
@@ -2273,26 +2270,12 @@ void Game::LoadCoreFromRepos() {
 	if(cores_to_load.empty() || gRepoManager->GetUpdatingReposNumber() > 0)
 		return;
 	for(auto& path : cores_to_load) {
-		void* ncore = ChangeOCGcore(Utils::GetWorkingDirectory() + path, ocgcore);
-		if(!ncore)
-			continue;
-		corename = Utils::ToUnicodeIfNeeded(path);
-		coreJustLoaded = true;
-		ocgcore = ncore;
-		if(!coreloaded) {
-			coreloaded = true;
-			btnSingleMode->setEnabled(true);
-			btnCreateHost->setEnabled(true);
-            //kdiy///////
-			//btnHandTest->setEnabled(true);
-            //kdiy///////
-			btnHandTestSettings->setEnabled(true);
-			stHandTestSettings->setEnabled(true);
-			//kdiy///////
-			btnEntertainmentMode->setEnabled(true);
-			//kdiy///////
+		if(auto ncore = Core::Load(Utils::GetWorkingDirectory() + path); ncore) {
+			ocgcore = std::move(ncore);
+			corename = Utils::ToUnicodeIfNeeded(path);
+			RefreshUICoreVersion();
+			break;
 		}
-		break;
 	}
 	cores_to_load.clear();
 }
@@ -3650,6 +3633,7 @@ bool Game::MainLoop() {
 	bool was_connected = false;
 	bool update_prompted = false;
 	bool update_checked = false;
+#if (IRRLICHT_VERSION_MAJOR==1 && IRRLICHT_VERSION_MINOR==9)
 	if(auto driver_type = driver->getDriverType(); driver_type == irr::video::EDT_OGLES1 || driver_type == irr::video::EDT_OGLES2) {
 		auto SetClamp = [](irr::video::SMaterialLayer layer[irr::video::MATERIAL_MAX_TEXTURES]) {
 			layer[0].TextureWrapU = irr::video::ETC_CLAMP_TO_EDGE;
@@ -3666,10 +3650,11 @@ bool Game::MainLoop() {
 		SetClamp(matManager.mATK.TextureLayer);
 		SetClamp(matManager.mCard.TextureLayer);
 	}
+#endif
 	if (gGameConfig->fullscreen) {
 		// Synchronize actual fullscreen state with config struct
 		bool currentlyFullscreen = false;
-		GUIUtils::ToggleFullscreen(device, currentlyFullscreen);
+		GUIUtils::ToggleFullscreen(device.get(), currentlyFullscreen);
 	}
     /////////kdiy/////////
 	for(int p = 0; p < 2; p++) {
@@ -3686,6 +3671,10 @@ bool Game::MainLoop() {
 	/////////kdiy/////////
 	while(!restart && device->run()) {
 		DispatchQueue();
+		if(suspend) {
+			epro::this_thread::sleep_for(std::chrono::milliseconds(1));
+			continue;
+		}
 		if(should_reload_skin) {
 			should_reload_skin = false;
 			if(Utils::ToPathString(gSettings.cbCurrentSkin->getItem(gSettings.cbCurrentSkin->getSelected())) != gGameConfig->skin) {
@@ -3734,31 +3723,6 @@ bool Game::MainLoop() {
 			should_refresh_hands = true;
 			OnResize();
 		}
-#ifdef YGOPRO_BUILD_DLL
-		if(coreJustLoaded) {
-			if(stMessage->getText() == gDataManager->GetSysString(1430))
-				HideElement(wMessage);
-			RefreshUICoreVersion();
-			env->setFocus(stACMessage);
-			stACMessage->setText(epro::format(gDataManager->GetSysString(1431), corename).data());
-			PopupElement(wACMessage, 30);
-			coreJustLoaded = false;
-            //kdiy///////
-            if(!git_update) {
-				LoadJsonInfo();
-                mode->LoadJsonInfo();
-                git_update = true;
-				if(!git_error) {
-		    		mRepositoriesInfo->setVisible(false);
-					wMainMenu->setVisible(true);
-				}
-            }
-            if(first_play && git_update) {
-                mainGame->ApplyLocale(mainGame->gSettings.cbCurrentLocale->getSelected(), true);
-            }
-            //kdiy///////
-		}
-#endif //YGOPRO_BUILD_DLL
 		frame_counter += (float)delta_time * 60.0f/1000.0f;
 		float remainder;
 		frame_counter = std::modf(frame_counter, &remainder);
@@ -4092,9 +4056,6 @@ bool Game::MainLoop() {
 	ReplayMode::StopReplay(true);
 	ClearTextures();
 	SaveConfig();
-#ifdef YGOPRO_BUILD_DLL
-	UnloadCore(ocgcore);
-#endif //YGOPRO_BUILD_DLL
 	//device->drop();
 	return restart;
 }
@@ -4605,6 +4566,15 @@ void Game::SaveConfig() {
 	}
 #endif
 	gGameConfig->Save(EPRO_TEXT("./config/system.conf"));
+}
+void Game::Suspend() {
+	SaveConfig();
+	gSoundManager->PauseMusic(true);
+	suspend = true;
+}
+void Game::Resume() {
+	gSoundManager->PauseMusic(false);
+	suspend = false;
 }
 Game::RepoGui* Game::AddGithubRepositoryStatusWindow(const GitRepo* repo) {
 	std::wstring name = BufferIO::DecodeUTF8(repo->repo_name);
@@ -6273,22 +6243,16 @@ bool Game::HasFocus(irr::gui::EGUI_ELEMENT_TYPE type) const {
 	return focus && focus->hasType(type);
 }
 void Game::RefreshUICoreVersion() {
-	if (coreloaded) {
-		int major, minor;
-		OCG_GetVersion(&major, &minor);
-		auto label = corename.length()
-			? epro::format(gDataManager->GetSysString(2013), major, minor, corename)
-			: epro::format(gDataManager->GetSysString(2010), major, minor);
-		stCoreVersion->setText(label.data());
-	} else {
-		stCoreVersion->setText(L"");
-	}
+	auto label = corename.length()
+		? epro::format(gDataManager->GetSysString(2013), ocgcore->ver_major, ocgcore->ver_minor, corename)
+		: epro::format(gDataManager->GetSysString(2010), ocgcore->ver_major, ocgcore->ver_minor);
+	stCoreVersion->setText(label.data());
 	auto w1 = stVersion->getTextWidth();
 	auto w2 = stCoreVersion->getTextWidth();
 	wVersion->setRelativePosition(irr::core::recti(0, 0, Scale(20) + std::max({ Scale(280), w1, w2 }), Scale(135)));
 }
 std::wstring Game::GetLocalizedExpectedCore() {
-	return epro::format(gDataManager->GetSysString(2011), OCG_VERSION_MAJOR, OCG_VERSION_MINOR);
+	return epro::format(gDataManager->GetSysString(2011), Core::EXPECTED_VERSION_MAJOR, Core::EXPECTED_VERSION_MINOR);
 }
 std::wstring Game::GetLocalizedCompatVersion() {
 	return epro::format(gDataManager->GetSysString(2012), PRO_VERSION >> 12, (PRO_VERSION >> 4) & 0xff, PRO_VERSION & 0xf);
@@ -6301,28 +6265,42 @@ void Game::ReloadCBpic() {
 }
 /////kdiy//////////
 void Game::ReloadCBSortType() {
+	static constexpr std::array<std::pair<uint32_t, DeckBuilder::SORT_MODIFIER>, 6> items{{
+		{1370, DeckBuilder::SORT_MODIFIER_LEVEL_DESC},
+		{1371, DeckBuilder::SORT_MODIFIER_ATK_DESC},
+		{1372, DeckBuilder::SORT_MODIFIER_DEF_DESC},
+		{1373, DeckBuilder::SORT_MODIFIER_NAME_ASC},
+		{11374, DeckBuilder::SORT_MODIFIER_PASSCODE_DESC},
+		{11375, DeckBuilder::SORT_MODIFIER_PASSCODE_ASC},
+	}};
 	cbSortType->clear();
-	for (int i = 1370; i <= 1373; i++)
-		cbSortType->addItem(gDataManager->GetSysString(i).data());
+	for(const auto& [stringid, val] : items) {
+		cbSortType->addItem(gDataManager->GetSysString(stringid).data(), val);
+	}
 }
 void Game::ReloadCBCardType() {
+	static constexpr std::array<std::pair<uint32_t, DeckBuilder::CARD_TYPE_FILTER>, 5> items{ {
+		{1310, DeckBuilder::CARD_TYPE_FILTER_ALL},
+		{1312, DeckBuilder::CARD_TYPE_FILTER_MONSTER},
+		{1313, DeckBuilder::CARD_TYPE_FILTER_SPELL},
+		{1314, DeckBuilder::CARD_TYPE_FILTER_TRAP},
+		{1077, DeckBuilder::CARD_TYPE_FILTER_SKILL},
+	} };
 	cbCardType->clear();
-	cbCardType->addItem(gDataManager->GetSysString(1310).data());
-	cbCardType->addItem(gDataManager->GetSysString(1312).data());
-	cbCardType->addItem(gDataManager->GetSysString(1313).data());
-	cbCardType->addItem(gDataManager->GetSysString(1314).data());
-	cbCardType->addItem(gDataManager->GetSysString(1077).data());
+	for(const auto& [stringid, val] : items) {
+		cbCardType->addItem(gDataManager->GetSysString(stringid).data(), val);
+	}
 }
 void Game::ReloadCBCardType2() {
 	cbCardType2->clear();
 	cbCardType2->setEnabled(true);
-	switch (cbCardType->getSelected()) {
-	case 0:
-	case 4:
+	switch (cbCardType->getItemData(cbCardType->getSelected())) {
+	case DeckBuilder::CARD_TYPE_FILTER_ALL:
+	case DeckBuilder::CARD_TYPE_FILTER_SKILL:
 		cbCardType2->setEnabled(false);
 		cbCardType2->addItem(gDataManager->GetSysString(1310).data(), 0);
 		break;
-	case 1:
+	case DeckBuilder::CARD_TYPE_FILTER_MONSTER:
 		cbCardType2->addItem(gDataManager->GetSysString(1080).data(), 0);
 		cbCardType2->addItem(gDataManager->GetSysString(1054).data(), TYPE_MONSTER + TYPE_NORMAL);
 		cbCardType2->addItem(gDataManager->GetSysString(1055).data(), TYPE_MONSTER + TYPE_EFFECT);
@@ -6344,7 +6322,7 @@ void Game::ReloadCBCardType2() {
 		cbCardType2->addItem(gDataManager->GetSysString(1072).data(), TYPE_MONSTER + TYPE_TOON);
 		cbCardType2->addItem(gDataManager->GetSysString(1065).data(), TYPE_MONSTER + TYPE_MAXIMUM);
 		break;
-	case 2:
+	case DeckBuilder::CARD_TYPE_FILTER_SPELL:
 		cbCardType2->addItem(gDataManager->GetSysString(1080).data(), 0);
 		cbCardType2->addItem(gDataManager->GetSysString(1054).data(), TYPE_SPELL);
 		cbCardType2->addItem(gDataManager->GetSysString(1066).data(), TYPE_SPELL + TYPE_QUICKPLAY);
@@ -6354,7 +6332,7 @@ void Game::ReloadCBCardType2() {
 		cbCardType2->addItem(gDataManager->GetSysString(1069).data(), TYPE_SPELL + TYPE_FIELD);
 		cbCardType2->addItem(gDataManager->GetSysString(1076).data(), TYPE_SPELL + TYPE_LINK);
 		break;
-	case 3:
+	case DeckBuilder::CARD_TYPE_FILTER_TRAP:
 		cbCardType2->addItem(gDataManager->GetSysString(1080).data(), 0);
 		cbCardType2->addItem(gDataManager->GetSysString(1054).data(), TYPE_TRAP);
 		cbCardType2->addItem(gDataManager->GetSysString(1067).data(), TYPE_TRAP + TYPE_CONTINUOUS);
@@ -7179,9 +7157,9 @@ std::vector<char> Game::ReadScript(epro::path_stringview path, irr::io::IReadFil
 		return { std::istreambuf_iterator<char>(SkipBom(script)), std::istreambuf_iterator<char>() };
 	return {};
 }
-bool Game::LoadScript(OCG_Duel pduel, epro::stringview script_name) {
+bool Game::LoadScript(const Duel* pduel, epro::stringview script_name) {
 	auto buf = FindAndReadScript(script_name);
-	return buf.size() && OCG_LoadScript(pduel, buf.data(), static_cast<uint32_t>(buf.size()), script_name.data());
+	return buf.size() && pduel->LoadScript(buf.data(), static_cast<uint32_t>(buf.size()), script_name.data());
 }
 /////kdiy/////
 void* Game::ReadCardDataToCore() {
@@ -7356,7 +7334,7 @@ void Game::charactcomboselect(uint8_t player, int box, int sel) {
 	}
 }
 /////kdiy/////
-OCG_Duel Game::SetupDuel(OCG_DuelOptions opts) {
+DuelPtr Game::SetupDuel(OCG_DuelOptions opts) {
 	opts.cardReader = DataManager::CardReader;
 	opts.payload1 = gDataManager;
 	opts.scriptReader = ScriptReader;
@@ -7367,27 +7345,29 @@ OCG_Duel Game::SetupDuel(OCG_DuelOptions opts) {
 	/////kdiy/////
 	opts.payload5 = ReadCardDataToCore();
 	/////kdiy/////
-	OCG_Duel pduel = nullptr;
-	OCG_CreateDuel(&pduel, &opts);
-	LoadScript(pduel, "constant.lua");
-	LoadScript(pduel, "utility.lua");
+	auto pduel = ocgcore->CreateDuel(&opts);
+	if(!pduel)
+		return nullptr;
+	LoadScript(pduel.get(), "constant.lua");
+	LoadScript(pduel.get(), "utility.lua");
 	/////kdiy/////
 	if(gGameConfig->system_engine) {
 #ifdef VIP
-		LoadScript(pduel, "Kconstant.lua");
+		LoadScript(pduel.get(), "Kconstant.lua");
 #endif
-		LoadScript(pduel, "Kcore.lua");
+		LoadScript(pduel.get(), "Kcore.lua");
 	}
 	/////kdiy/////
 	for(const auto& script : init_scripts) {
 		auto buf = ReadScript(script);
 		if(buf.size())
-			OCG_LoadScript(pduel, buf.data(), static_cast<uint32_t>(buf.size()), Utils::ToUTF8IfNeeded(script).data());
+			pduel->LoadScript(buf.data(), static_cast<uint32_t>(buf.size()), Utils::ToUTF8IfNeeded(script).data());
 	}
 	return pduel;
 }
-int Game::ScriptReader(void* payload, OCG_Duel duel, const char* name) {
-	return static_cast<Game*>(payload)->LoadScript(duel, name);
+int Game::ScriptReader(void* ocg_payload, OCG_Duel duel, const char* name) {
+	auto* payload = static_cast<Duel::ScriptReaderPayload*>(ocg_payload);
+	return static_cast<Game*>(payload->ogPayload)->LoadScript(payload->duel, name);
 }
 void Game::MessageHandler(void* payload, const char* string, int type) {
 	Game* game = static_cast<Game*>(payload);

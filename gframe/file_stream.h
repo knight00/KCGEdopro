@@ -4,6 +4,18 @@
 #include "compiler_features.h"
 
 #if defined(__MINGW32__) && defined(UNICODE)
+
+#include <fstream>
+
+#if defined(__clang__) || (_GLIBCXX_HAVE__WFOPEN + 0 && _GLIBCXX_USE_WCHAR_T + 0)
+
+class FileStream final : public std::fstream {
+	using std::fstream::fstream;
+public:
+	explicit FileStream(const std::wstring& s, ios_base::openmode mode = ios_base::in) : std::fstream(s.data(), mode) {}
+};
+
+#else
 #include <fcntl.h>
 #include <io.h>
 #include <ext/stdio_filebuf.h>
@@ -24,12 +36,17 @@ protected:
 class FileStream : Filebuf, __gnu_cxx::stdio_filebuf<char>, public std::iostream {
 public:
 	FileStream(epro::path_stringview file, const FileMode& mode) : Filebuf(file, mode),
-		__gnu_cxx::stdio_filebuf<char>(m_fd, mode.streammode), std::iostream(m_fd == -1 ? nullptr : this) {}
+		__gnu_cxx::stdio_filebuf<char>(m_fd, static_cast<FileMode::mode_t>(mode.streammode & ~std::ios::ate)),
+		std::iostream(m_fd == -1 ? nullptr : this) {
+		if((mode.streammode & std::ios::ate) && !fail())
+			seekg(0, std::ios::end);
+	}
 	static constexpr inline FileMode in{ _O_RDONLY, std::ios::in, _S_IREAD };
 	static constexpr inline FileMode binary{ _O_BINARY, std::ios::binary };
 	static constexpr inline FileMode out{ _O_WRONLY | _O_CREAT, std::ios::out, _S_IWRITE };
 	static constexpr inline FileMode trunc{ _O_TRUNC, std::ios::trunc };
 	static constexpr inline FileMode app{ _O_APPEND, std::ios::app };
+	static constexpr inline FileMode ate{ 0, std::ios::ate };
 };
 
 constexpr inline FileMode operator|(const FileMode& flag1, const FileMode& flag2) {
@@ -43,6 +60,7 @@ constexpr inline FileMode operator|(const FileMode& flag1, const FileMode& flag2
 	auto new_read_perms = flag1.readperm | flag2.readperm;
 	return { new_cmode, new_mode, new_read_perms };
 }
+#endif // defined(__clang__) || (_GLIBCXX_HAVE__WFOPEN + 0 && _GLIBCXX_USE_WCHAR_T + 0)
 #elif EDOPRO_ANDROID
 #include <fstream>
 
@@ -69,6 +87,7 @@ public:
 	static constexpr inline FileMode out{ std::ios::out };
 	static constexpr inline FileMode trunc{ std::ios::trunc };
 	static constexpr inline FileMode app{ std::ios::app };
+	static constexpr inline FileMode ate{ std::ios::ate };
 };
 
 #else

@@ -306,9 +306,9 @@ loc_info ReadLocInfo(uint8_t*& p, bool compat) {
 	return info;
 }
 
-PacketStream ParseMessages(OCG_Duel duel) {
+PacketStream ParseMessages(const Duel* duel) {
 	uint32_t message_len;
-	auto msg = static_cast<uint8_t*>(OCG_DuelGetMessage(duel, &message_len));
+	auto msg = static_cast<uint8_t*>(duel->DuelGetMessage(&message_len));
 	if(message_len)
 		return PacketStream{ msg, message_len };
 	return PacketStream{};

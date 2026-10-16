@@ -15,13 +15,11 @@
 #include "logging.h"
 #include "game.h"
 #include "log.h"
+#include "porting.h"
 #include "joystick_wrapper.h"
 #include "utils_gui.h"
 #include "fmt.h"
 #include "curl.h"
-#if EDOPRO_MACOS
-#include "osx_menu.h"
-#endif
 
 bool is_from_discord = false;
 bool open_file = false;
@@ -40,8 +38,8 @@ JWrapper* gJWrapper = nullptr;
 namespace {
 void CheckArguments(const args_t& args) {
 	if(args[LAUNCH_PARAM::MUTE].enabled) {
-		ygo::GUIUtils::SetCheckbox(ygo::mainGame->device, ygo::mainGame->tabSettings.chkEnableSound, false);
-		ygo::GUIUtils::SetCheckbox(ygo::mainGame->device, ygo::mainGame->tabSettings.chkEnableMusic, false);
+		ygo::GUIUtils::SetCheckbox(ygo::mainGame->device.get(), ygo::mainGame->tabSettings.chkEnableSound, false);
+		ygo::GUIUtils::SetCheckbox(ygo::mainGame->device.get(), ygo::mainGame->tabSettings.chkEnableMusic, false);
 	}
 }
 
@@ -176,7 +174,7 @@ int edopro_main(const args_t& args) {
 	}
 #endif
 #if EDOPRO_MACOS
-	EDOPRO_SetupMenuBar([]() {
+	porting::setupMenuBar([]{
 		ygo::gGameConfig->fullscreen = !ygo::gGameConfig->fullscreen;
 		ygo::mainGame->gSettings.chkFullscreen->setChecked(ygo::gGameConfig->fullscreen);
 	});
