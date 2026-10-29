@@ -959,7 +959,6 @@ public:
 	std::vector<epro::path_string> pic_dirs;
 	std::vector<epro::path_string> cover_dirs;
 	///kdiy////////
-    bool git_update = false;
     bool git_error = false;
     bool first_play = false;
     uint32_t showcardalias;

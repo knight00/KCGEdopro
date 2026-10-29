@@ -283,14 +283,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				break;
 			}
 			case BUTTON_CREATE_HOST: {
-                ///////kdiy/////////////
-                if(!mainGame->git_update || mainGame->git_error) {
-                    mainGame->stACMessage->setText(gDataManager->GetSysString(8046).data());
-                    mainGame->PopupElement(mainGame->wACMessage, 20);
-					mainGame->mRepositoriesInfo->setVisible(true);
-                    break;
-                }
-                ///////kdiy/////////////
 				if (wcslen(mainGame->ebNickName->getText())) {
 					mainGame->isHostingOnline = false;
 					mainGame->btnHostConfirm->setEnabled(true);
@@ -471,7 +463,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 				if(DuelClient::IsConnected())
 					break;
 				mainGame->dInfo.isInLobby = false;
-				mainGame->btnCreateHost->setEnabled(mainGame->coreloaded);
 				if(mainGame->wRules->isVisible())
 					mainGame->HideElement(mainGame->wRules);
 				mainGame->HideElement(mainGame->wCreateHost2);
@@ -755,12 +746,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
 			/////kdiy//////
 			case BUTTON_ENTERTAUNMENT_MODE: {
-                if(!mainGame->git_update || mainGame->git_error) {
-                    mainGame->stACMessage->setText(gDataManager->GetSysString(8046).data());
-                    mainGame->PopupElement(mainGame->wACMessage, 20);
-					mainGame->mRepositoriesInfo->setVisible(true);
-                    break;
-                }
  				mainGame->HideElement(mainGame->wMainMenu);
 #ifdef EK
 				mainGame->HideElement(mainGame->wQQ);
@@ -790,13 +775,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
             /////kdiy//////
 			case BUTTON_SINGLE_MODE: {
-                //////kdiy/////
-                if(!mainGame->git_update || mainGame->git_error) {
-                    mainGame->stACMessage->setText(gDataManager->GetSysString(8046).data());
-					mainGame->mRepositoriesInfo->setVisible(true);
-                    break;
-                }
-                ////kdiy////////
 				mainGame->HideElement(mainGame->wMainMenu);
 				////kdiy////////
 #ifdef EK
@@ -1077,12 +1055,6 @@ bool MenuHandler::OnEvent(const irr::SEvent& event) {
 			}
 			case BUTTON_DECK_EDIT: {
 				//////kdiy/////
-                if(!mainGame->git_update || mainGame->git_error) {
-                    mainGame->stACMessage->setText(gDataManager->GetSysString(8046).data());
-                    mainGame->PopupElement(mainGame->wACMessage, 20);
-					mainGame->mRepositoriesInfo->setVisible(true);
-                    break;
-                }
 				//mainGame->RefreshDeck(mainGame->cbDBDecks);
 				// if(open_file && mainGame->deckBuilder.SetCurrentDeckFromFile(open_file_name, true)) {
 				// 	auto name = Utils::GetFileName(open_file_name);

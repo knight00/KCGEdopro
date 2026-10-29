@@ -620,17 +620,6 @@ char * calculate_file_md5(const char *filename) {
 //kdiy//////
 
 void Game::Initialize() {
-    //kdiy//////
-	cv = nullptr;
-	isEvent = false;
-    if(Utils::FileExists(EPRO_TEXT("./config/user_configs.json"))) {
-		LoadJsonInfo();
-		mode->LoadJsonInfo();
-        git_update = true;
-    }
-    if(!Utils::FileExists(EPRO_TEXT("./cdb/cards.cdb")))
-        first_play = true;
-    //kdiy//////
 	dpi_scale = gGameConfig->dpi_scale;
 	duel_param = gGameConfig->lastDuelParam;
 	if(!device)
@@ -752,9 +741,6 @@ void Game::Initialize() {
 	defaultStrings.emplace_back(chkCommitLogExpand, 1447);
 	mTopMenu = irr::gui::CGUICustomMenu::addCustomMenu(env);
 	mRepositoriesInfo = mTopMenu->getSubMenu(mTopMenu->addItem(gDataManager->GetSysString(2045).data(), 1, true, true));
-	/////kdiy/////
-	mRepositoriesInfo->setVisible(true);
-	/////kdiy/////
 	mAbout = mTopMenu->getSubMenu(mTopMenu->addItem(gDataManager->GetSysString(1970).data(), 2, true, true));
 	wAbout = env->addWindow(Scale(0, 0, 450, 700), false, L"", mAbout);
 	wAbout->getCloseButton()->setVisible(false);
@@ -799,6 +785,7 @@ void Game::Initialize() {
 	mainMenuLeftX = 510 - mainMenuWidth / 2;
 	mainMenuRightX = 510 + mainMenuWidth / 2;
 	////kdiy////////
+	mRepositoriesInfo->setVisible(true);
 	wQQ = env->addWindow(Scale(10, 438, 100, 570));
 	wQQ->getCloseButton()->setVisible(false);
 	wQQ->setDraggable(false);
@@ -812,7 +799,7 @@ void Game::Initialize() {
 	#endif
 	//wMainMenu = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 450), false, EDOPRO_VERSION_STRING);	
 	wMainMenu = env->addWindow(Scale(mainMenuLeftX, 200, mainMenuRightX, 520), false, EDOPRO_VERSION_STRING);
-	wMainMenu->setVisible(git_update);
+	wMainMenu->setVisible(false);
 	////kdiy////////
 	wMainMenu->getCloseButton()->setVisible(false);
 	//wMainMenu->setVisible(!is_from_discord);
@@ -2221,18 +2208,18 @@ void Game::Initialize() {
 	ApplySkin(EPRO_TEXT(""), true);
 	auto selectedLocale = gSettings.cbCurrentLocale->getSelected();
 	//kdiy///////
-    if(!git_update) {
-		LoadJsonInfo();
-		mode->LoadJsonInfo();
-		git_update = true;
-		if(!git_error) {
-			mRepositoriesInfo->setVisible(false);
-			wMainMenu->setVisible(true);
-		}
-	}
-	if(first_play && git_update) {
-		ApplyLocale(gSettings.cbCurrentLocale->getSelected(), true);
-    } else
+	cv = nullptr;
+	isEvent = false;
+	LoadJsonInfo();
+	mode->LoadJsonInfo();
+	moviecheck(5, true);
+	chantcheck(true);
+    if(Utils::FileExists(EPRO_TEXT("./config/user_configs.json"))) {
+		wMainMenu->setVisible(true);
+		mRepositoriesInfo->setVisible(false);
+    }
+    if(!Utils::FileExists(EPRO_TEXT("./cdb/cards.cdb")))
+        first_play = true;
     //kdiy///////
 	if(selectedLocale != 0)
 		ApplyLocale(selectedLocale, true);
@@ -2259,10 +2246,6 @@ void Game::LoadCore() {
 	if(gRepoManager->IsReadOnly())
 		LoadCoreFromRepos();
 #endif
-	//kdiy///////
-	moviecheck(5, true);
-	chantcheck(true);
-	//kdiy///////
 }
 
 #ifdef YGOPRO_BUILD_DLL
@@ -2274,6 +2257,11 @@ void Game::LoadCoreFromRepos() {
 			ocgcore = std::move(ncore);
 			corename = Utils::ToUnicodeIfNeeded(path);
 			RefreshUICoreVersion();
+			///kdiy//////
+			wMainMenu->setVisible(true);
+			mRepositoriesInfo->setVisible(git_error);
+			ApplyLocale(first_play ? 1 : gSettings.cbCurrentLocale->getSelected(), true);
+			///kdiy//////
 			break;
 		}
 	}
